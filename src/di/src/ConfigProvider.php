@@ -19,9 +19,7 @@ class ConfigProvider
                 PrettyPrinterAbstract::class => Standard::class,
             ],
             'scan' => [
-                'paths' => [
-                    "vendor/hyperflex/di/src"
-                ],
+                'paths' => [],
             ],
         ];
     }

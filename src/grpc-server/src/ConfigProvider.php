@@ -15,9 +15,7 @@ class ConfigProvider
                 Dispatcher::class => DispatcherFactory::class,
             ],
             'scan' => [
-                'paths' => [
-                    "vendor/hyperflex/grpc-server/src"
-                ],
+                'paths' => [],
             ],
         ];
     }

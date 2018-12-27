@@ -9,12 +9,9 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
+            'dependencies' => [],
             'scan' => [
-                'paths' => [
-                    'vendor/hyperflex/memory/src'
-                ],
+                'paths' => [],
             ]
         ];
     }

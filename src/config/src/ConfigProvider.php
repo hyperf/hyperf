@@ -15,9 +15,7 @@ class ConfigProvider
                 ConfigInterface::class => ConfigFactory::class,
             ],
             'scan' => [
-                'paths' => [
-                    'vendor/hyperflex/config/src'
-                ]
+                'paths' => []
             ],
         ];
     }

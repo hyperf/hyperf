@@ -3,6 +3,7 @@
 namespace Hyperflex\Framework;
 
 
+use Hyperflex\Contract\ApplicationInterface;
 use Hyperflex\Framework\ApplicationFactory;
 use Hyperflex\Framework\Contract\StdoutLoggerInterface;
 use Hyperflex\Framework\Logger\StdoutLogger;
@@ -18,10 +19,8 @@ class ConfigProvider
                 ApplicationInterface::class => ApplicationFactory::class,
                 StdoutLoggerInterface::class => StdoutLogger::class,
             ],
-            'scan'=>[
-                'paths'=>[
-                    'vendor/hyperflex/framework/src'
-                ]
+            'scan' => [
+                'paths' => []
             ]
         ];
     }

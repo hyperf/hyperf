@@ -13,9 +13,7 @@ class ConfigProvider
 
             ],
             'scan' => [
-                'paths' => [
-                    "vendor/hyperflex/dispatcher/src"
-                ],
+                'paths' => [],
             ],
         ];
     }

@@ -24,9 +24,7 @@ class ConfigProvider
                 StartServer::class,
             ],
             'scan' => [
-                'paths' => [
-                    "vendor/hyperflex/http-server/src"
-                ],
+                'paths' => [],
             ],
         ];
     }
