@@ -19,10 +19,8 @@
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpstan/phpstan": "^0.9.2",
-        "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperf/coding-standard": "~1.0.0"
+        "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
     },
@@ -50,16 +48,7 @@
     "bin": [
     ],
     "scripts": {
-        "check": [
-            "@license-check",
-            "@cs-check",
-            "@test"
-        ],
-        "cs-check": "phpcs",
-        "cs-fix": "phpcbf",
-        "phpstan": "phpstan analyze -l max -c phpstan.neon ./src",
-        "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "license-check": "docheader check src/ test/"
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
     }
 }
