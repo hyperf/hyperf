@@ -3,7 +3,7 @@
 namespace Hyperflex\Framework\Logger;
 
 
-use Hyperflex\Framework\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 use Hyperflex\Framework\Contracts\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
