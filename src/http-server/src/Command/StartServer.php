@@ -1,19 +1,26 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\HttpServer\Command;
 
-
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Framework\Server;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 
 class StartServer extends Command
 {
-
     /**
      * @var ContainerInterface
      */
@@ -60,5 +67,4 @@ class StartServer extends Command
             exit(0);
         }
     }
-
 }

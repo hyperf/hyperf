@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Utils;
-
 
 use ArrayAccess;
 use InvalidArgumentException;
@@ -12,7 +20,6 @@ use InvalidArgumentException;
  */
 class Arr
 {
-
     /**
      * Determine whether the given value is array accessible.
      */
@@ -323,19 +330,6 @@ class Arr
     }
 
     /**
-     * Explode the "value" and "key" arguments passed to "pluck".
-     *
-     * @param  string|array $value
-     * @param  string|array|null $key
-     */
-    protected static function explodePluckParameters($value, $key): array
-    {
-        $value = is_string($value) ? explode('.', $value) : $value;
-        $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
-        return [$value, $key];
-    }
-
-    /**
      * Push an item onto the beginning of an array.
      *
      * @param  mixed $value
@@ -506,5 +500,18 @@ class Arr
         }
 
         return $result;
+    }
+
+    /**
+     * Explode the "value" and "key" arguments passed to "pluck".
+     *
+     * @param  string|array $value
+     * @param  string|array|null $key
+     */
+    protected static function explodePluckParameters($value, $key): array
+    {
+        $value = is_string($value) ? explode('.', $value) : $value;
+        $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
+        return [$value, $key];
     }
 }

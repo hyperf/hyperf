@@ -1,13 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
-
 
 use Psr\Container\ContainerInterface;
 
 class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
 {
-
     /**
      * Entry name.
      *
@@ -30,6 +37,14 @@ class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
     public function __construct(string $targetEntryName)
     {
         $this->targetEntryName = $targetEntryName;
+    }
+
+    /**
+     * Definitions can be cast to string for debugging information.
+     */
+    public function __toString(): string
+    {
+        return sprintf('get(%s)', $this->targetEntryName);
     }
 
     /**
@@ -61,14 +76,6 @@ class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
     public function isResolvable(ContainerInterface $container): bool
     {
         return $container->has($this->getTargetEntryName());
-    }
-
-    /**
-     * Definitions can be cast to string for debugging information.
-     */
-    public function __toString(): string
-    {
-        return sprintf('get(%s)', $this->targetEntryName);
     }
 
     /**

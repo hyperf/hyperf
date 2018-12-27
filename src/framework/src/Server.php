@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Framework;
-
 
 use Hyperf\Framework\Constants\SwooleEvent;
 use Psr\Container\ContainerInterface;
@@ -10,7 +18,6 @@ use Swoole\Server\Port;
 
 class Server
 {
-
     /**
      * @var SwooleServer
      */
@@ -59,6 +66,11 @@ class Server
         return $this;
     }
 
+    public function run()
+    {
+        $this->server->start();
+    }
+
     /**
      * @param SwooleServer|Port $server
      * @param array $events
@@ -73,11 +85,6 @@ class Server
         }
     }
 
-    public function run()
-    {
-        $this->server->start();
-    }
-
     private function defaultCallbacks()
     {
         return [
@@ -86,5 +93,4 @@ class Server
             },
         ];
     }
-
 }

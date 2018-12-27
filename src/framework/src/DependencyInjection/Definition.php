@@ -1,22 +1,24 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Framework\DependencyInjection;
 
-use function \DI\factory as factory;
 use function \DI\autowire as autowire;
-use Hyperf\Bootstrap\WorkerStartCallback;
-use Hyperf\Di\Definition\FactoryDefinition;
-use Hyperf\Di\Definition\MethodInjection;
-use Hyperf\Di\Definition\ObjectDefinition;
-use Hyperf\Di\Definition\Reference;
-use Hyperf\Di\ReflectionManager;
-use function is_string;
+use function \DI\factory as factory;
 use function is_array;
 use function is_callable;
+use function is_string;
 
 class Definition
 {
-
     /**
      * Adapte more useful difinition syntax.
      */
@@ -35,5 +37,4 @@ class Definition
         }
         return $definitions;
     }
-
 }

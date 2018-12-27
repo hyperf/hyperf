@@ -1,12 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
 
-
 class MethodInjection implements DefinitionInterface
 {
-
-
     /**
      * @var string
      */
@@ -21,6 +27,11 @@ class MethodInjection implements DefinitionInterface
     {
         $this->parameters = $parameters;
         $this->methodName = $methodName;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('method(%s)', $this->methodName);
     }
 
     public function getName(): string
@@ -45,11 +56,6 @@ class MethodInjection implements DefinitionInterface
     {
         // In case of conflicts, the current definition prevails.
         $this->parameters = $this->parameters + $definition->parameters;
-    }
-
-    public function __toString(): string
-    {
-        return sprintf('method(%s)', $this->methodName);
     }
 
     /**

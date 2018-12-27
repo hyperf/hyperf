@@ -1,20 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Resolver;
 
-
-use DI\Invoker\FactoryParameterResolver;
-use Hyperf\ApplicationFactory;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Exception\InvalidDefinitionException;
 use Invoker\Exception\NotCallableException;
-use Invoker\Exception\NotEnoughParametersException;
-use Invoker\Invoker;
-use Invoker\ParameterResolver\AssociativeArrayResolver;
-use Invoker\ParameterResolver\DefaultValueResolver;
-use Invoker\ParameterResolver\NumericArrayResolver;
-use Invoker\ParameterResolver\ResolverChain;
 use Psr\Container\ContainerInterface;
 
 class FactoryResolver implements ResolverInterface

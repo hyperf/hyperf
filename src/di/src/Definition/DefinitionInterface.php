@@ -1,10 +1,22 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
 
-
 interface DefinitionInterface
 {
+    /**
+     * Definitions can be cast to string for debugging information.
+     */
+    public function __toString(): string;
 
     /**
      * Returns the name of the entry in the container.
@@ -20,10 +32,4 @@ interface DefinitionInterface
      * Determine if the definition need to transfer to a proxy class.
      */
     public function isNeedProxy(): bool;
-
-    /**
-     * Definitions can be cast to string for debugging information.
-     */
-    public function __toString(): string;
-
 }

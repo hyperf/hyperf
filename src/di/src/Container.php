@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di;
-
 
 use DI\FactoryInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
@@ -64,7 +72,6 @@ class Container implements ContainerInterface
             InvokerInterface::class => $this,
         ];
     }
-
 
     /**
      * Build an entry of the container by its name.
@@ -139,6 +146,35 @@ class Container implements ContainerInterface
         return true;
     }
 
+    public function getProxyFactory(): ProxyFactory
+    {
+        return $this->proxyFactory;
+    }
+
+    /**
+     * Init defined dependencies, not include dynamic definition.
+     *
+     * @throws DependencyException Error while resolving the entry.
+     */
+    public function initDependencies(): void
+    {
+        $definitions = $this->definitionSource->getDefinitions();
+        foreach ($definitions as $key => $definition) {
+            $this->get($key);
+        }
+    }
+
+    protected function setDefinition(string $name, DefinitionInterface $definition)
+    {
+        // Clear existing entry if it exists
+        if (array_key_exists($name, $this->resolvedEntries)) {
+            unset($this->resolvedEntries[$name]);
+        }
+        $this->fetchedDefinitions = []; // Completely clear this local cache
+
+        $this->definitionSource->addDefinition($definition);
+    }
+
     private function getDefinition(string $name)
     {
         // Local cache that avoids fetching the same definition twice
@@ -159,34 +195,5 @@ class Container implements ContainerInterface
     private function resolveDefinition(string $entryName, DefinitionInterface $definition, array $parameters = [])
     {
         return $this->definitionResolver->resolve($definition, $parameters);
-    }
-
-    protected function setDefinition(string $name, DefinitionInterface $definition)
-    {
-        // Clear existing entry if it exists
-        if (array_key_exists($name, $this->resolvedEntries)) {
-            unset($this->resolvedEntries[$name]);
-        }
-        $this->fetchedDefinitions = []; // Completely clear this local cache
-
-        $this->definitionSource->addDefinition($definition);
-    }
-
-    public function getProxyFactory(): ProxyFactory
-    {
-        return $this->proxyFactory;
-    }
-
-    /**
-     * Init defined dependencies, not include dynamic definition.
-     *
-     * @throws DependencyException Error while resolving the entry.
-     */
-    public function initDependencies(): void
-    {
-        $definitions = $this->definitionSource->getDefinitions();
-        foreach ($definitions as $key => $definition) {
-            $this->get($key);
-        }
     }
 }

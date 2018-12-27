@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\HttpServer\Router;
 
@@ -20,13 +29,13 @@ class Router
 {
     protected static $router;
 
-    public static function init(RouteCollector $routeCollector)
-    {
-        static::$router = $routeCollector;
-    }
-
     public static function __callStatic($name, $arguments)
     {
         return static::$router->$name(...$arguments);
+    }
+
+    public static function init(RouteCollector $routeCollector)
+    {
+        static::$router = $routeCollector;
     }
 }

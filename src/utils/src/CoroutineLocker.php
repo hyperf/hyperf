@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Utils;
 
@@ -24,11 +33,10 @@ class CoroutineLocker
         if (!self::has($key)) {
             self::add($key, 0);
             return true;
-        } else {
-            self::add($key, Coroutine::id());
-            SwooleCoroutine::suspend();
-            return false;
         }
+        self::add($key, Coroutine::id());
+        SwooleCoroutine::suspend();
+        return false;
     }
 
     public static function unlock($key): void

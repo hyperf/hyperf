@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
 
@@ -6,17 +15,6 @@ use Hyperf\Di\ReflectionManager;
 
 class ObjectDefinition implements DefinitionInterface
 {
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string|null
-     */
-    private $className;
-
     /**
      * @var MethodInjection
      */
@@ -28,6 +26,16 @@ class ObjectDefinition implements DefinitionInterface
     protected $propertyInjections = [];
 
     protected $methodInjections = [];
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string|null
+     */
+    private $className;
 
     /**
      * @var bool
@@ -53,6 +61,11 @@ class ObjectDefinition implements DefinitionInterface
     {
         $this->name = $name;
         $this->setClassName($className ?? $name);
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('Object[%s]' . $this->getClassName());
     }
 
     public function getName(): string
@@ -140,20 +153,6 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    private function updateCache()
-    {
-        $className = $this->getClassName();
-
-        $this->classExists = class_exists($className) || interface_exists($className);
-
-        if (! $this->classExists) {
-            $this->instantiable = false;
-            return;
-        }
-
-        $this->instantiable = ReflectionManager::reflectClass($className)->isInstantiable();
-    }
-
     /**
      * Determine if the definition need to transfer to a proxy class.
      */
@@ -168,9 +167,17 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function __toString(): string
+    private function updateCache()
     {
-        return sprintf('Object[%s]' . $this->getClassName());
-    }
+        $className = $this->getClassName();
 
+        $this->classExists = class_exists($className) || interface_exists($className);
+
+        if (! $this->classExists) {
+            $this->instantiable = false;
+            return;
+        }
+
+        $this->instantiable = ReflectionManager::reflectClass($className)->isInstantiable();
+    }
 }

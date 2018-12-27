@@ -1,10 +1,19 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Framework\Bootstrap;
 
+use Hyperf\Di\Container;
 use Hyperf\Framework\Constants\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Container;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;
 use Psr\Container\ContainerInterface;
@@ -12,7 +21,6 @@ use Swoole\Server as SwooleServer;
 
 class WorkerStartCallback
 {
-
     /**
      * @var Container
      */
@@ -58,5 +66,4 @@ class WorkerStartCallback
         LockManager::clear(SwooleEvent::ON_WORKER_START);
         AtomicManager::clear(SwooleEvent::ON_WORKER_START);
     }
-
 }

@@ -1,9 +1,16 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Resolver;
 
-
-use App\Controllers\IndexController;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
@@ -14,11 +21,9 @@ use Hyperf\Di\Exception\InvalidDefinitionException;
 use Hyperf\Di\ReflectionManager;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use ReflectionMethod;
 
 class ObjectResolver implements ResolverInterface
 {
-
     private $proxyFactory;
 
     /**
@@ -50,7 +55,6 @@ class ObjectResolver implements ResolverInterface
         $this->parameterResolver = new ParameterResolver($definitionResolver);
     }
 
-
     /**
      * Resolve a definition to a value.
      *
@@ -75,6 +79,14 @@ class ObjectResolver implements ResolverInterface
     public function isResolvable(DefinitionInterface $definition, array $parameters = []): bool
     {
         return $definition->isInstantiable();
+    }
+
+    protected function injectMethodsAndProperties($object, ObjectDefinition $objectDefinition)
+    {
+        // Property injections
+        foreach ($objectDefinition->getPropertyInjections() as $propertyInjection) {
+            $this->injectProperty($object, $propertyInjection);
+        }
     }
 
     private function createInstance(ObjectDefinition $definition, array $parameters)
@@ -110,14 +122,6 @@ class ObjectResolver implements ResolverInterface
         return $object;
     }
 
-    protected function injectMethodsAndProperties($object, ObjectDefinition $objectDefinition)
-    {
-        // Property injections
-        foreach ($objectDefinition->getPropertyInjections() as $propertyInjection) {
-            $this->injectProperty($object, $propertyInjection);
-        }
-    }
-
     private function injectProperty($object, PropertyInjection $propertyInjection)
     {
         $property = ReflectionManager::reflectProperty(get_class($object), $propertyInjection->getPropertyName());
@@ -134,5 +138,4 @@ class ObjectResolver implements ResolverInterface
         $reference = $propertyInjection->getValue();
         $property->setValue($object, $this->container->get($reference->getTargetEntryName()));
     }
-
 }

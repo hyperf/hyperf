@@ -1,5 +1,13 @@
 <?php
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\HttpServer;
 
@@ -7,11 +15,11 @@ use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Swoole\Http\Request as SwooleHttpRequest;
-use function strlen;
-use function substr;
 use const SEEK_CUR;
 use const SEEK_END;
 use const SEEK_SET;
+use function strlen;
+use function substr;
 
 final class SwooleStream implements StreamInterface
 {
@@ -21,18 +29,21 @@ final class SwooleStream implements StreamInterface
      * @var string
      */
     private $body;
+
     /**
      * Length of the request body content.
      *
      * @var int
      */
     private $bodySize;
+
     /**
      * Index to which we have seek'd or read within the request body.
      *
      * @var int
      */
     private $index = 0;
+
     /**
      * Swoole request containing the body contents.
      */
@@ -41,6 +52,15 @@ final class SwooleStream implements StreamInterface
     public function __construct(SwooleHttpRequest $request)
     {
         $this->request = $request;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        $this->body !== null || $this->initRawContent();
+        return $this->body;
     }
 
     /**
@@ -69,15 +89,6 @@ final class SwooleStream implements StreamInterface
             return substr($this->body, $index);
         }
         // If we're at the start of the content, return all of it.
-        return $this->body;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        $this->body !== null || $this->initRawContent();
         return $this->body;
     }
 

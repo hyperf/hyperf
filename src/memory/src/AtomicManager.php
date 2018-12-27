@@ -1,13 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Memory;
-
 
 use Swoole\Atomic;
 
 class AtomicManager
 {
-
     /**
      * A container that use to store atomic.
      *
@@ -18,7 +25,7 @@ class AtomicManager
     /**
      * You should initialize a Atomic with the identifier before use it.
      */
-    public static function initialize(string $identifier, $value = null): void
+    public static function initialize(string $identifier, $value = 0): void
     {
         static::$container[$identifier] = new Atomic($value);
     }
@@ -45,5 +52,4 @@ class AtomicManager
     {
         unset(static::$container[$identifier]);
     }
-
 }

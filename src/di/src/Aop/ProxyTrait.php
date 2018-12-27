@@ -1,18 +1,23 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Aop;
 
-
 use Closure;
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Framework\ApplicationContext;
 
 trait ProxyTrait
 {
-
     protected static function __proxyCall(
         string $originalClassName,
         string $method,
@@ -83,5 +88,4 @@ trait ProxyTrait
         }
         return $matchAspect;
     }
-
 }

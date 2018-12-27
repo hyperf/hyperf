@@ -1,17 +1,24 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Framework\Bootstrap;
 
-
-use Hyperf\Memory;
+use Hyperf\Framework\Constants\SwooleEvent;
 use Hyperf\Framework\Server;
+use Hyperf\Memory;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
-use Hyperf\Framework\Constants\SwooleEvent;
 
 class ServerStartCallback
 {
-
     /**
      * @var ContainerInterface
      */
@@ -30,8 +37,7 @@ class ServerStartCallback
 
     public function onStart(SwooleServer $server)
     {
-        Memory\LockManager::initialize(SwooleEvent::ON_WORKER_START, SWOOLE_RWLOCK);
+        Memory\LockManager::initialize(SwooleEvent::ON_WORKER_START, SWOOLE_RWLOCK, 'workerStart');
         Memory\AtomicManager::initialize(SwooleEvent::ON_WORKER_START);
     }
-
 }

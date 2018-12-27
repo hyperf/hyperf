@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
 
@@ -10,6 +19,7 @@ use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;
+use function array_key_exists;
 use function class_exists;
 use function count;
 use function explode;
@@ -29,15 +39,13 @@ use function is_readable;
 use function is_string;
 use function md5;
 use function method_exists;
-use function print_r;
-use function trim;
-use function array_key_exists;
 use function preg_match;
+use function print_r;
 use function str_replace;
+use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-
     /**
      * Path of annotation meta data cache
      *
@@ -183,7 +191,7 @@ class DefinitionSource implements DefinitionSourceInterface
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
             list(, $annotationMetadata, $aspectMetadata) = explode(PHP_EOL, file_get_contents($this->cachePath));
-            // Deserialize metadata when the cache is valid 
+            // Deserialize metadata when the cache is valid
             AnnotationCollector::deserialize($annotationMetadata);
             AspectCollector::deserialize($aspectMetadata);
             return false;
@@ -257,5 +265,4 @@ class DefinitionSource implements DefinitionSourceInterface
 
         return false;
     }
-
 }

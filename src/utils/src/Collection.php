@@ -1,19 +1,28 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Utils;
 
-use stdClass;
-use Countable;
-use Exception;
 use ArrayAccess;
-use Traversable;
 use ArrayIterator;
 use CachingIterator;
-use JsonSerializable;
-use IteratorAggregate;
-use Hyperf\Utils\Contracts\Jsonable;
-use Symfony\Component\VarDumper\VarDumper;
+use Countable;
+use Exception;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
+use IteratorAggregate;
+use JsonSerializable;
+use stdClass;
+use Symfony\Component\VarDumper\VarDumper;
+use Traversable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -41,7 +50,6 @@ use Hyperf\Utils\Contracts\Arrayable;
  */
 class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
-
     /**
      * The items contained in the collection.
      *
@@ -85,6 +93,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function __construct($items = [])
     {
         $this->items = $this->getArrayableItems($items);
+    }
+
+    /**
+     * Convert the collection to its string representation.
+     */
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
+
+    /**
+     * Dynamically access collection proxies.
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function __get(string $key)
+    {
+        if (! in_array($key, static::$proxies)) {
+            throw new Exception("Property [{$key}] does not exist on this collection instance.");
+        }
+        return new HigherOrderCollectionProxy($this, $key);
     }
 
     /**
@@ -434,51 +464,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get an operator checker callback.
-     */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
-    {
-        if (func_num_args() === 1) {
-            $value = true;
-            $operator = '=';
-        }
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = '=';
-        }
-        return function ($item) use ($key, $operator, $value) {
-            $retrieved = data_get($item, $key);
-            $strings = array_filter([$retrieved, $value], function ($value) {
-                return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
-            });
-            if (count($strings) < 2 && count(array_filter([$retrieved, $value], 'is_object')) == 1) {
-                return in_array($operator, ['!=', '<>', '!==']);
-            }
-            switch ($operator) {
-                default:
-                case '=':
-                case '==':
-                    return $retrieved == $value;
-                case '!=':
-                case '<>':
-                    return $retrieved != $value;
-                case '<':
-                    return $retrieved < $value;
-                case '>':
-                    return $retrieved > $value;
-                case '<=':
-                    return $retrieved <= $value;
-                case '>=':
-                    return $retrieved >= $value;
-                case '===':
-                    return $retrieved === $value;
-                case '!==':
-                    return $retrieved !== $value;
-            }
-        };
-    }
-
-    /**
      * Filter items by the given key value pair using strict comparison.
      */
     public function whereStrict(string $key, $value): self
@@ -703,14 +688,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
-    }
-
-    /**
-     * Determine if the given value is callable, but not a string.
-     */
-    protected function useAsCallable($value): bool
-    {
-        return ! is_string($value) && is_callable($value);
     }
 
     /**
@@ -1304,19 +1281,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get a value retrieving callback.
-     */
-    protected function valueRetriever(string $value): callable
-    {
-        if ($this->useAsCallable($value)) {
-            return $value;
-        }
-        return function ($item) use ($value) {
-            return data_get($item, $value);
-        };
-    }
-
-    /**
      * Zip the collection together with one or more arrays.
      * e.g. new Collection([1, 2, 3])->zip([4, 5, 6]);
      *      => [[1, 4], [2, 5], [3, 6]]
@@ -1464,11 +1428,77 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Convert the collection to its string representation.
+     * Add a method to the list of proxied methods.
      */
-    public function __toString(): string
+    public static function proxy(string $method): void
     {
-        return $this->toJson();
+        static::$proxies[] = $method;
+    }
+
+    /**
+     * Get an operator checker callback.
+     */
+    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
+    {
+        if (func_num_args() === 1) {
+            $value = true;
+            $operator = '=';
+        }
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+        return function ($item) use ($key, $operator, $value) {
+            $retrieved = data_get($item, $key);
+            $strings = array_filter([$retrieved, $value], function ($value) {
+                return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
+            });
+            if (count($strings) < 2 && count(array_filter([$retrieved, $value], 'is_object')) == 1) {
+                return in_array($operator, ['!=', '<>', '!==']);
+            }
+            switch ($operator) {
+                default:
+                case '=':
+                case '==':
+                    return $retrieved == $value;
+                case '!=':
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
+            }
+        };
+    }
+
+    /**
+     * Determine if the given value is callable, but not a string.
+     */
+    protected function useAsCallable($value): bool
+    {
+        return ! is_string($value) && is_callable($value);
+    }
+
+    /**
+     * Get a value retrieving callback.
+     */
+    protected function valueRetriever(string $value): callable
+    {
+        if ($this->useAsCallable($value)) {
+            return $value;
+        }
+        return function ($item) use ($value) {
+            return data_get($item, $value);
+        };
     }
 
     /**
@@ -1491,27 +1521,4 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         }
         return (array)$items;
     }
-
-    /**
-     * Add a method to the list of proxied methods.
-     */
-    public static function proxy(string $method): void
-    {
-        static::$proxies[] = $method;
-    }
-
-    /**
-     * Dynamically access collection proxies.
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function __get(string $key)
-    {
-        if (! in_array($key, static::$proxies)) {
-            throw new Exception("Property [{$key}] does not exist on this collection instance.");
-        }
-        return new HigherOrderCollectionProxy($this, $key);
-    }
-
 }

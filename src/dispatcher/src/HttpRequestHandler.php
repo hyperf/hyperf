@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Dispatcher;
-
 
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -13,7 +21,6 @@ use function is_string;
 
 class HttpRequestHandler implements RequestHandlerInterface
 {
-
     private $middlewares = [];
 
     private $offset = 0;

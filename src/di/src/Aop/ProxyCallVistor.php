@@ -1,36 +1,35 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Aop;
 
-
 use PhpParser\Node;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\Property;
-use PhpParser\Node\Stmt\PropertyProperty;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
-use Psr\Container\ContainerInterface;
 
 class ProxyCallVistor extends NodeVisitorAbstract
 {
-
     /**
      * Determine if the class used proxy trait.
      *
@@ -102,7 +101,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof ClassMethod:
-                if ($node->name->toString() === '__construct') {
+                if ($node->name && $node->name->toString() === '__construct') {
                     return $node;
                 }
                 // Rewrite the method to proxy call method.
@@ -118,7 +117,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 break;
             case $node instanceof StaticPropertyFetch && $this->extends:
                 // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
-                if ($node->class->toString() === 'parent') {
+                if ($node->class && $node->class->toString() === 'parent') {
                     $node->class = new Name($this->extends->toCodeString());
                     return $node;
                 }
@@ -170,6 +169,9 @@ class ProxyCallVistor extends NodeVisitorAbstract
     private function rewriteMethod(ClassMethod $node): ClassMethod
     {
         // Build the static proxy call method base on the original method.
+        if (! $this->class) {
+            return $node;
+        }
         $class = $this->class->toString();
         $node->stmts = [
             new Return_(new StaticCall(new Name('self'), '__proxyCall', [
@@ -213,5 +215,4 @@ class ProxyCallVistor extends NodeVisitorAbstract
         });
         return $parametersWithoutTypehint;
     }
-
 }

@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Dispatcher;
-
 
 use App\Middlewares\TestMiddleware;
 use Hyperf\Dispatcher\HttpDispatcher;
@@ -10,7 +18,6 @@ use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -21,7 +28,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpDispatcherTest extends TestCase
 {
-
     protected function setUp()
     {
         $this->container = $this->prophesize(ContainerInterface::class);
@@ -44,5 +50,4 @@ class HttpDispatcherTest extends TestCase
         $response = $dispatcher->dispatch($this->request, $this->response);
         $this->assertInstanceOf(ResponseInterface::class, $response);
     }
-
 }

@@ -1,17 +1,25 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Framework\Logger;
-
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
+use const PHP_EOL;
 use function printf;
 use function sprintf;
-use function str_replace;
 
-use const PHP_EOL;
+use function str_replace;
 
 /**
  * Default logger for logging server start and requests.
@@ -20,7 +28,6 @@ use const PHP_EOL;
  */
 class StdoutLogger implements StdoutLoggerInterface
 {
-
     /**
      * @var \Hyperf\Contracts\ConfigInterface
      */
@@ -110,5 +117,4 @@ class StdoutLogger implements StdoutLoggerInterface
         }
         printf('%s%s', $message, PHP_EOL);
     }
-
 }

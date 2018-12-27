@@ -1,22 +1,27 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Aop;
 
-use App\Controllers\IndexController;
 use Hyperf\Utils\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Parser as AstParserInterface;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-
     /**
      * @var \PhpParser\Parser
      */
@@ -58,10 +63,10 @@ class Ast
     {
         $namespace = $className = '';
         foreach ($stmts as $stmt) {
-            if ($stmt instanceof Namespace_) {
+            if ($stmt instanceof Namespace_ && $stmt->name) {
                 $namespace = $stmt->name->toString();
                 foreach ($stmt->stmts as $node) {
-                    if ($node instanceof Class_) {
+                    if ($node instanceof Class_ && $node->name) {
                         $className = $node->name->toString();
                         break;
                     }
@@ -79,6 +84,4 @@ class Ast
         }
         return file_get_contents($file);
     }
-
-
 }

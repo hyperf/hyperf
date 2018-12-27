@@ -1,10 +1,16 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Resolver;
 
-
-use App\Controllers\IndexController;
-use Hyperf\ApplicationFactory;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
@@ -91,5 +97,4 @@ class ResolverDispatcher implements ResolverInterface
                 throw new RuntimeException('No definition resolver was configured for definition of type ' . get_class($definition));
         }
     }
-
 }

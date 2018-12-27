@@ -1,20 +1,27 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Config;
 
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
-use function is_string;
 use function class_exists;
+use function is_string;
 use function method_exists;
-use function array_replace_recursive;
 
 /**
  * Provider config allow the components set the configs to application.
  */
 class ProviderConfig
 {
-
     /**
      * @var array
      */
@@ -47,5 +54,4 @@ class ProviderConfig
     {
         static::$privoderConfigs = [];
     }
-
 }

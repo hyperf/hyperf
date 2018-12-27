@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\GrpcServer\Utils;
 
@@ -37,9 +46,9 @@ class Parser
     {
         if (empty($value)) {
             return null;
-        } else {
-            $value = self::unpack($value);
         }
+        $value = self::unpack($value);
+        
         if (is_array($deserialize)) {
             list($className, $deserializeFunc) = $deserialize;
             /** @var $obj \Google\Protobuf\Internal\Message */
@@ -66,15 +75,14 @@ class Parser
             return ['No response', GRPC_ERROR_NO_RESPONSE, $response];
         } elseif ($response->statusCode !== 200) {
             return ['Http status Error', $response->errCode ?: $response->statusCode, $response];
-        } else {
-            $grpc_status = (int)($response->headers['grpc-status'] ?? 0);
-            if ($grpc_status !== 0) {
-                return [$response->headers['grpc-message'] ?? 'Unknown error', $grpc_status, $response];
-            }
-            $data = $response->data;
-            $reply = self::deserializeMessage($deserialize, $data);
-            $status = (int)($response->headers['grpc-status'] ?? 0 ?: 0);
-            return [$reply, $status, $response];
         }
+        $grpc_status = (int)($response->headers['grpc-status'] ?? 0);
+        if ($grpc_status !== 0) {
+            return [$response->headers['grpc-message'] ?? 'Unknown error', $grpc_status, $response];
+        }
+        $data = $response->data;
+        $reply = self::deserializeMessage($deserialize, $data);
+        $status = (int)($response->headers['grpc-status'] ?? 0 ?: 0);
+        return [$reply, $status, $response];
     }
 }

@@ -1,13 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Di\Definition;
-
 
 use Hyperf\Di\Aop\AstCollector;
 
 class FactoryDefinition implements DefinitionInterface
 {
-
     /**
      * @var string
      */
@@ -38,6 +45,11 @@ class FactoryDefinition implements DefinitionInterface
         $this->name = $name;
         $this->factory = $factory;
         $this->parameters = $parameters;
+    }
+
+    public function __toString(): string
+    {
+        return 'Factory';
     }
 
     public function getName(): string
@@ -73,11 +85,6 @@ class FactoryDefinition implements DefinitionInterface
             $this->ast = AstCollector::get($this->getFactory(), []);
         }
         return $this->ast;
-    }
-
-    public function __toString(): string
-    {
-        return 'Factory';
     }
 
     /**
