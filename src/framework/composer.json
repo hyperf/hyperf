@@ -1,12 +1,12 @@
 {
-    "name": "hyperflex/framework",
+    "name": "hyperf/framework",
     "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
         "framework",
-        "hyperflex",
+        "hyperf",
         "microservice",
         "middleware"
     ],
@@ -23,7 +23,7 @@
         "symfony/console": "^4.2",
         "symfony/routing": "^4.2",
         "symfony/http-foundation": "^4.2",
-        "hyperflex/utils": "dev-master"
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -31,7 +31,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0",
+        "hyperf/coding-standard": "~1.0.0",
         "symfony/console": "^4.1",
         "php-di/php-di": "^6.0",
         "doctrine/common": "@stable"
@@ -42,7 +42,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperflex\\Framework\\": "src"
+            "Hyperf\\Framework\\": "src"
         }
     },
     "autoload-dev": {
@@ -55,8 +55,8 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
-            "config": "Hyperflex\\Framework\\ConfigProvider"
+        "hyperf": {
+            "config": "Hyperf\\Framework\\ConfigProvider"
         }
     },
     "bin": [

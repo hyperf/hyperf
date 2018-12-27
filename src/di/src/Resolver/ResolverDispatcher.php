@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyperflex\Di\Resolver;
+namespace Hyperf\Di\Resolver;
 
 
 use App\Controllers\IndexController;
-use Hyperflex\ApplicationFactory;
-use Hyperflex\Di\Definition\DefinitionInterface;
-use Hyperflex\Di\Definition\FactoryDefinition;
-use Hyperflex\Di\Definition\ObjectDefinition;
-use Hyperflex\Di\Definition\SelfResolvingDefinitionInterface;
+use Hyperf\ApplicationFactory;
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\FactoryDefinition;
+use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Di\Definition\SelfResolvingDefinitionInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 

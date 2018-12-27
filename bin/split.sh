@@ -18,14 +18,14 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-remote config git@github.com:hyperflex-cloud/config.git
-remote di git@github.com:hyperflex-cloud/di.git
-remote dispatcher git@github.com:hyperflex-cloud/dispatcher.git
-remote framework git@github.com:hyperflex-cloud/framework.git
-remote grpc-server git@github.com:hyperflex-cloud/grpc-server.git
-remote http-server git@github.com:hyperflex-cloud/http-server.git
-remote memory git@github.com:hyperflex-cloud/memory.git
-remote utils git@github.com:hyperflex-cloud/utils.git
+remote config git@github.com:hyperf-cloud/config.git
+remote di git@github.com:hyperf-cloud/di.git
+remote dispatcher git@github.com:hyperf-cloud/dispatcher.git
+remote framework git@github.com:hyperf-cloud/framework.git
+remote grpc-server git@github.com:hyperf-cloud/grpc-server.git
+remote http-server git@github.com:hyperf-cloud/http-server.git
+remote memory git@github.com:hyperf-cloud/memory.git
+remote utils git@github.com:hyperf-cloud/utils.git
 
 split 'src/config' config
 split 'src/di' di

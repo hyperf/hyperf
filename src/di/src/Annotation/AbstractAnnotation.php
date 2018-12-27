@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
 abstract class AbstractAnnotation implements AnnotationInterface

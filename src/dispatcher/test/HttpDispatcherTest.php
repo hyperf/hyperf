@@ -1,12 +1,12 @@
 <?php
 
-namespace HyperflexTest\Dispatcher;
+namespace HyperfTest\Dispatcher;
 
 
 use App\Middlewares\TestMiddleware;
-use Hyperflex\Dispatcher\HttpDispatcher;
-use Hyperflex\Utils\Context;
-use HyperflexTest\Dispatcher\Middlewares\CoreMiddleware;
+use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Utils\Context;
+use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;

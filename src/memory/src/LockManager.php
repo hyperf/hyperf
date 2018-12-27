@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Memory;
+namespace Hyperf\Memory;
 
 
 use Swoole\Lock;

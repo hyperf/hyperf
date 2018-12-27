@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Dispatcher;
+namespace Hyperf\Dispatcher;
 
 
 use Psr\Container\ContainerInterface;

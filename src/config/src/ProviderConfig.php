@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Config;
+namespace Hyperf\Config;
 
-use Hyperflex\Utils\Arr;
-use Hyperflex\Utils\Composer;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Composer;
 use function is_string;
 use function class_exists;
 use function method_exists;
@@ -29,7 +29,7 @@ class ProviderConfig
     {
         if (! static::$privoderConfigs) {
             $config = [];
-            $providers = Composer::getMergedExtra('hyperflex')['config'];
+            $providers = Composer::getMergedExtra('hyperf')['config'];
             foreach ($providers ?? [] as $provider) {
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                     $providerConfig = (new $provider)();

@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyperflex\Framework\Logger;
+namespace Hyperf\Framework\Logger;
 
 
-use Hyperflex\Contract\ConfigInterface;
-use Hyperflex\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
 use function printf;
@@ -22,7 +22,7 @@ class StdoutLogger implements StdoutLoggerInterface
 {
 
     /**
-     * @var \Hyperflex\Contracts\ConfigInterface
+     * @var \Hyperf\Contracts\ConfigInterface
      */
     private $config;
 

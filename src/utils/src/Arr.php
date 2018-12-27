@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Utils;
+namespace Hyperf\Utils;
 
 
 use ArrayAccess;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Utils\Contracts;
+namespace Hyperf\Utils\Contracts;
 
 
 interface Arrayable

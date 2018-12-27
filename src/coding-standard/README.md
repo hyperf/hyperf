@@ -1,12 +1,12 @@
-# Hyperflex Coding Standard
-Repository with all coding standard ruleset for Hyperflex repositories.
+# Hyperf Coding Standard
+Repository with all coding standard ruleset for Hyperf repositories.
 
 # Installation
 
 1. Install the module via composer by running:
 
    ```bash
-   $ composer require --dev hyperflex/coding-standard
+   $ composer require --dev hyperf/coding-standard
    ```
 
 2. Add composer scripts into your `composer.json`:
@@ -22,8 +22,8 @@ Repository with all coding standard ruleset for Hyperflex repositories.
 
    ```xml
    <?xml version="1.0"?>
-   <ruleset name="Hyperflex Coding Standard">
-       <rule ref="./vendor/hyperflex/coding-standard/ruleset.xml"/>
+   <ruleset name="Hyperf Coding Standard">
+       <rule ref="./vendor/hyperf/coding-standard/ruleset.xml"/>
 
        <!-- Paths to check -->
        <file>config</file>

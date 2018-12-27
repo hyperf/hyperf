@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Dispatcher;
+namespace Hyperf\Dispatcher;
 
 
-use Hyperflex\Dispatcher\Exceptions\InvalidArgumentException;
+use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

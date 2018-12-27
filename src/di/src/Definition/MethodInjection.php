@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
 
 class MethodInjection implements DefinitionInterface

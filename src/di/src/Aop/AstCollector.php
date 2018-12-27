@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 
-use Hyperflex\Di\MetadataCollector;
+use Hyperf\Di\MetadataCollector;
 
 class AstCollector extends MetadataCollector
 {

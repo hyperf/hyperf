@@ -1,22 +1,22 @@
 <?php
 
-namespace Hyperflex\GrpcServer;
+namespace Hyperf\GrpcServer;
 
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
-use Hyperflex\Di\MethodDefinitionCollector;
-use Hyperflex\Di\ReflectionManager;
-use Hyperflex\Utils\Context;
+use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
-use Hyperflex\HttpServer\CoreMiddleware as HttpCoreMiddleware;
-use Hyperflex\GrpcServer\Router\Dispatcher as GrpcDispatcher;
+use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Hyperf\GrpcServer\Router\Dispatcher as GrpcDispatcher;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
-use Hyperflex\GrpcServer\Utils\Parser;
+use Hyperf\GrpcServer\Utils\Parser;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
@@ -169,7 +169,7 @@ class CoreMiddleware extends HttpCoreMiddleware
     {
         $response = $this->response()->withStatus($httpStatus)
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
-            ->withAddedHeader('Server', 'Hyperflex')
+            ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message');
 

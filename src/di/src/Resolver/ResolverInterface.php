@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Hyperflex\Di\Resolver;
+namespace Hyperf\Di\Resolver;
 
 
-use Hyperflex\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\DefinitionInterface;
 
 interface ResolverInterface
 {

@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/grpc-server",
-    "description": "A GRPC Server for Hyperflex.",
+    "name": "hyperf/grpc-server",
+    "description": "A GRPC Server for Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex",
+        "hyperf",
         "grpc",
         "grpc-server"
     ],
@@ -14,9 +14,9 @@
     "require": {
         "php": ">=7.1",
         "nikic/fast-route": "^1.3",
-        "hyperflex/framework": "dev-master",
-        "hyperflex/utils": "dev-master",
-        "hyperflex/http-server": "dev-master",
+        "hyperf/framework": "dev-master",
+        "hyperf/utils": "dev-master",
+        "hyperf/http-server": "dev-master",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15"
     },
@@ -26,7 +26,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0"
+        "hyperf/coding-standard": "~1.0.0"
     },
     "suggest": {
         "ext-grpc": "grpc/grpc require grpc extension.",
@@ -36,7 +36,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperflex\\GrpcServer\\": "src"
+            "Hyperf\\GrpcServer\\": "src"
         }
     },
     "autoload-dev": {
@@ -49,8 +49,8 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
-            "config": "Hyperflex\\GrpcServer\\ConfigProvider"
+        "hyperf": {
+            "config": "Hyperf\\GrpcServer\\ConfigProvider"
         }
     },
     "bin": [

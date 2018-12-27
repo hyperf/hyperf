@@ -1,9 +1,9 @@
 <?php
 
-namespace HyperflexTest\Dispatcher\Middlewares;
+namespace HyperfTest\Dispatcher\Middlewares;
 
 
-use Hyperflex\Utils\Context;
+use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -20,7 +20,7 @@ class CoreMiddleware implements MiddlewareInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
-        $response = $response->withAddedHeader('Server', 'Hyperflex');
+        $response = $response->withAddedHeader('Server', 'Hyperf');
         return $response;
     }
 }

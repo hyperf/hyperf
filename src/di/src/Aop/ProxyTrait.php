@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 
 use Closure;
 use Doctrine\Instantiator\Instantiator;
-use Hyperflex\Di\Annotation\AspectCollector;
-use Hyperflex\Di\ReflectionManager;
-use Hyperflex\Framework\Hyperflex;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\ReflectionManager;
+use Hyperf\Framework\Hyperf;
 
 trait ProxyTrait
 {
@@ -52,7 +52,7 @@ trait ProxyTrait
     {
         $arround = AspectCollector::get('arround');
         if ($aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method)) {
-            $pipeline = new Pipeline(Hyperflex::getContainer());
+            $pipeline = new Pipeline(Hyperf::getContainer());
             return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });

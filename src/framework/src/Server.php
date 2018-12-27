@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
 
-use Hyperflex\Framework\Constants\SwooleEvent;
+use Hyperf\Framework\Constants\SwooleEvent;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 use Swoole\Server\Port;

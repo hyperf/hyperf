@@ -1,15 +1,15 @@
 <?php
 
-namespace Hyperflex\Framework\DependencyInjection;
+namespace Hyperf\Framework\DependencyInjection;
 
 use function \DI\factory as factory;
 use function \DI\autowire as autowire;
-use Hyperflex\Bootstrap\WorkerStartCallback;
-use Hyperflex\Di\Definition\FactoryDefinition;
-use Hyperflex\Di\Definition\MethodInjection;
-use Hyperflex\Di\Definition\ObjectDefinition;
-use Hyperflex\Di\Definition\Reference;
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Bootstrap\WorkerStartCallback;
+use Hyperf\Di\Definition\FactoryDefinition;
+use Hyperf\Di\Definition\MethodInjection;
+use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Di\Definition\Reference;
+use Hyperf\Di\ReflectionManager;
 use function is_string;
 use function is_array;
 use function is_callable;

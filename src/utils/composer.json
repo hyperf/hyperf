@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/utils",
+    "name": "hyperf/utils",
     "description": "A tools package that could help developer solved the problem quickly.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex",
+        "hyperf",
         "utils"
     ],
     "support": {
@@ -19,7 +19,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0"
+        "hyperf/coding-standard": "~1.0.0"
     },
     "suggest": {
         "symfony/var-dumper": "Required to use the dd function (^4.1)."
@@ -29,7 +29,7 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Hyperflex\\Utils\\": "src"
+            "Hyperf\\Utils\\": "src"
         }
     },
     "autoload-dev": {

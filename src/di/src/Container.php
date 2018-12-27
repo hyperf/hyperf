@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
 use DI\FactoryInterface;
-use Hyperflex\Di\Definition\DefinitionInterface;
-use Hyperflex\Di\Exception\DependencyException;
-use Hyperflex\Di\Exception\NotFoundException;
-use Hyperflex\Di\Resolver\ResolverDispatcher;
-use Hyperflex\Dispatcher\Exceptions\InvalidArgumentException;
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Exception\DependencyException;
+use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\Di\Resolver\ResolverDispatcher;
+use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Invoker\InvokerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;

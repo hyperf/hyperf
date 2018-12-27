@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\HttpServer\Contract;
+namespace Hyperf\HttpServer\Contract;
 
 
 interface RouterInterface

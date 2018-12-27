@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
 use Psr\Http\Message\ResponseInterface;
 use Throwable;

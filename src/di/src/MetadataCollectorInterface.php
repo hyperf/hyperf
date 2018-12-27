@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
 interface MetadataCollectorInterface

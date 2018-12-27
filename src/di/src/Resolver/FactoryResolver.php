@@ -1,13 +1,13 @@
 <?php
 
-namespace Hyperflex\Di\Resolver;
+namespace Hyperf\Di\Resolver;
 
 
 use DI\Invoker\FactoryParameterResolver;
-use Hyperflex\ApplicationFactory;
-use Hyperflex\Di\Definition\DefinitionInterface;
-use Hyperflex\Di\Definition\FactoryDefinition;
-use Hyperflex\Di\Exception\InvalidDefinitionException;
+use Hyperf\ApplicationFactory;
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\FactoryDefinition;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 use Invoker\Exception\NotCallableException;
 use Invoker\Exception\NotEnoughParametersException;
 use Invoker\Invoker;

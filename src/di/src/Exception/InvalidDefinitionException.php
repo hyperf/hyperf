@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Exception;
+namespace Hyperf\Di\Exception;
 
 
-use Hyperflex\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\DefinitionInterface;
 
 class InvalidDefinitionException extends Exception
 {

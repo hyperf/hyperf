@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\HttpServer\Command;
+namespace Hyperf\HttpServer\Command;
 
 
-use Hyperflex\Di\Annotation\Scanner;
+use Hyperf\Di\Annotation\Scanner;
 use Psr\Container\ContainerInterface;
 
 class StartServerFactory

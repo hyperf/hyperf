@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\GrpcServer;
+namespace Hyperf\GrpcServer;
 
-use Hyperflex\GrpcServer\Router\Dispatcher;
-use Hyperflex\GrpcServer\Router\DispatcherFactory;
+use Hyperf\GrpcServer\Router\Dispatcher;
+use Hyperf\GrpcServer\Router\DispatcherFactory;
 
 class ConfigProvider
 {

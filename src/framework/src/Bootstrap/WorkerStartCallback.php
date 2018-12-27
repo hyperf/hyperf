@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\Framework\Bootstrap;
+namespace Hyperf\Framework\Bootstrap;
 
-use Hyperflex\Framework\Constants\SwooleEvent;
-use Hyperflex\Framework\Contract\StdoutLoggerInterface;
-use Hyperflex\Di\Container;
-use Hyperflex\Memory\AtomicManager;
-use Hyperflex\Memory\LockManager;
+use Hyperf\Framework\Constants\SwooleEvent;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
+use Hyperf\Memory\AtomicManager;
+use Hyperf\Memory\LockManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 

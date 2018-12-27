@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
 
-use Hyperflex\Contract\ApplicationInterface;
-use Hyperflex\Framework\ApplicationFactory;
-use Hyperflex\Framework\Contract\StdoutLoggerInterface;
-use Hyperflex\Framework\Logger\StdoutLogger;
+use Hyperf\Contract\ApplicationInterface;
+use Hyperf\Framework\ApplicationFactory;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Logger\StdoutLogger;
 use Symfony\Component\Console\Application;
 
 class ConfigProvider

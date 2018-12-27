@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/hyperflex",
+    "name": "hyperf/hyperf",
     "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices or middlewares.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex"
+        "hyperf"
     ],
     "support": {
     },
@@ -35,21 +35,21 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0",
+        "hyperf/coding-standard": "~1.0.0",
         "php-di/php-di": "^6.0",
         "doctrine/common": "@stable"
     },
     "replace": {
-        "hyperflex/coding-standard": "self.version",
-        "hyperflex/config": "self.version",
-        "hyperflex/contract": "self.version",
-        "hyperflex/di": "self.version",
-        "hyperflex/dispatcher": "self.version",
-        "hyperflex/grpc-server": "self.version",
-        "hyperflex/http-server": "self.version",
-        "hyperflex/framework": "self.version",
-        "hyperflex/memory": "self.version",
-        "hyperflex/utils": "self.version"
+        "hyperf/coding-standard": "self.version",
+        "hyperf/config": "self.version",
+        "hyperf/contract": "self.version",
+        "hyperf/di": "self.version",
+        "hyperf/dispatcher": "self.version",
+        "hyperf/grpc-server": "self.version",
+        "hyperf/http-server": "self.version",
+        "hyperf/framework": "self.version",
+        "hyperf/memory": "self.version",
+        "hyperf/utils": "self.version"
     },
     "suggest": {
     },
@@ -58,15 +58,15 @@
             "src/utils/src/Functions.php"
         ],
         "psr-4": {
-            "Hyperflex\\Config\\": "src/config/src/",
-            "Hyperflex\\Contract\\": "src/contract/src/",
-            "Hyperflex\\Di\\": "src/di/src/",
-            "Hyperflex\\Dispatcher\\": "src/dispatcher/src/",
-            "Hyperflex\\GrpcServer\\": "src/grpc-server/src/",
-            "Hyperflex\\HttpServer\\": "src/http-server/src/",
-            "Hyperflex\\Framework\\": "src/framework/src/",
-            "Hyperflex\\Memory\\": "src/memory/src/",
-            "Hyperflex\\Utils\\": "src/utils/src/"
+            "Hyperf\\Config\\": "src/config/src/",
+            "Hyperf\\Contract\\": "src/contract/src/",
+            "Hyperf\\Di\\": "src/di/src/",
+            "Hyperf\\Dispatcher\\": "src/dispatcher/src/",
+            "Hyperf\\GrpcServer\\": "src/grpc-server/src/",
+            "Hyperf\\HttpServer\\": "src/http-server/src/",
+            "Hyperf\\Framework\\": "src/framework/src/",
+            "Hyperf\\Memory\\": "src/memory/src/",
+            "Hyperf\\Utils\\": "src/utils/src/"
         }
     },
     "autoload-dev": {
@@ -79,16 +79,16 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
+        "hyperf": {
             "config": [
-                "Hyperflex\\Config\\ConfigProvider",
-                "Hyperflex\\Di\\ConfigProvider",
-                "Hyperflex\\Dispatcher\\ConfigProvider",
-                "Hyperflex\\Framework\\ConfigProvider",
-                "Hyperflex\\GrpcServer\\ConfigProvider",
-                "Hyperflex\\HttpServer\\ConfigProvider",
-                "Hyperflex\\Memory\\ConfigProvider",
-                "Hyperflex\\Utils\\ConfigProvider"
+                "Hyperf\\Config\\ConfigProvider",
+                "Hyperf\\Di\\ConfigProvider",
+                "Hyperf\\Dispatcher\\ConfigProvider",
+                "Hyperf\\Framework\\ConfigProvider",
+                "Hyperf\\GrpcServer\\ConfigProvider",
+                "Hyperf\\HttpServer\\ConfigProvider",
+                "Hyperf\\Memory\\ConfigProvider",
+                "Hyperf\\Utils\\ConfigProvider"
             ]
         }
     },

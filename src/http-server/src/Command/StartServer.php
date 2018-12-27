@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyperflex\HttpServer\Command;
+namespace Hyperf\HttpServer\Command;
 
 
-use Hyperflex\Framework\Server;
+use Hyperf\Framework\Server;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Hyperflex\Di\Annotation\Scanner;
-use Hyperflex\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 
 class StartServer extends Command

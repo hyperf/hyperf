@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
 
-use Hyperflex\Di\Aop\AstCollector;
+use Hyperf\Di\Aop\AstCollector;
 
 class FactoryDefinition implements DefinitionInterface
 {

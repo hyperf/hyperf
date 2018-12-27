@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Utils\Traits;
+namespace Hyperf\Utils\Traits;
 
 
 trait Container

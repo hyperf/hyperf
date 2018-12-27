@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
-use Hyperflex\Di\Aop\AstParserFactory;
+use Hyperf\Di\Aop\AstParserFactory;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;

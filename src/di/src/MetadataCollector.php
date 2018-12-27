@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
-use Hyperflex\Utils\Arr;
+use Hyperf\Utils\Arr;
 
 abstract class MetadataCollector implements MetadataCollectorInterface
 {

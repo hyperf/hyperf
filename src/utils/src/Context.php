@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Utils;
+namespace Hyperf\Utils;
 
 
-use Hyperflex\Utils\Traits\Container;
+use Hyperf\Utils\Traits\Container;
 
 class Context
 {

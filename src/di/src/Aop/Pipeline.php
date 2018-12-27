@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 
 use Closure;
-use Hyperflex\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 
-class Pipeline extends \Hyperflex\Utils\Pipeline
+class Pipeline extends \Hyperf\Utils\Pipeline
 {
     protected function carry(): Closure
     {

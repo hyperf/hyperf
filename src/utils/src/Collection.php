@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Utils;
+namespace Hyperf\Utils;
 
 use stdClass;
 use Countable;
@@ -11,9 +11,9 @@ use ArrayIterator;
 use CachingIterator;
 use JsonSerializable;
 use IteratorAggregate;
-use Hyperflex\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Jsonable;
 use Symfony\Component\VarDumper\VarDumper;
-use Hyperflex\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Arrayable;
 
 /**
  * Most of the methods in this file come from illuminate/support,

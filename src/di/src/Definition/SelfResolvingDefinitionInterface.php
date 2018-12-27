@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
 
 use Psr\Container\ContainerInterface;

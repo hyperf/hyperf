@@ -1,5 +1,5 @@
 <?php
-namespace Hyperflex\Framework\Constants;
+namespace Hyperf\Framework\Constants;
 
 class SwooleEvent
 {

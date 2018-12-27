@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/dispatcher",
-    "description": "A HTTP Server for Hyperflex.",
+    "name": "hyperf/dispatcher",
+    "description": "A HTTP Server for Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex",
+        "hyperf",
         "dispatcher",
         "middleware",
         "filter"
@@ -23,7 +23,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0"
+        "hyperf/coding-standard": "~1.0.0"
     },
     "suggest": {
     },
@@ -31,12 +31,12 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperflex\\Dispatcher\\": "src"
+            "Hyperf\\Dispatcher\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperflexTest\\Dispatcher\\": "test"
+            "HyperfTest\\Dispatcher\\": "test"
         }
     },
     "config": {
@@ -45,8 +45,8 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
-            "config": "Hyperflex\\Dispatcher\\ConfigProvider"
+        "hyperf": {
+            "config": "Hyperf\\Dispatcher\\ConfigProvider"
         }
     },
     "bin": [

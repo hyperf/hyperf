@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Exception;
+namespace Hyperf\Di\Exception;
 
 
 class Exception extends \Exception

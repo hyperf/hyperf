@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\GrpcServer\Utils;
+namespace Hyperf\GrpcServer\Utils;
 
 use Google\Protobuf\Internal\Message;
 

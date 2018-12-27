@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Dispatcher\Exceptions;
+namespace Hyperf\Dispatcher\Exceptions;
 
 
 class InvalidArgumentException extends \InvalidArgumentException

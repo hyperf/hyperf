@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
 /**
  * Describe an injection in a class property.

@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/memory",
+    "name": "hyperf/memory",
     "description": "An independent component that use to operate and manage memory.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex",
+        "hyperf",
         "memory"
     ],
     "support": {
@@ -19,7 +19,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0"
+        "hyperf/coding-standard": "~1.0.0"
     },
     "suggest": {
     },
@@ -27,7 +27,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperflex\\Memory\\": "src"
+            "Hyperf\\Memory\\": "src"
         }
     },
     "autoload-dev": {
@@ -40,8 +40,8 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
-            "config": "Hyperflex\\Memory\\ConfigProvider"
+        "hyperf": {
+            "config": "Hyperf\\Memory\\ConfigProvider"
         }
     },
     "bin": [

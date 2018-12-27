@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Config;
+namespace Hyperf\Config;
 
 
-use Hyperflex\Utils\Composer;
+use Hyperf\Utils\Composer;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 

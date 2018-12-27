@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\GrpcServer;
+namespace Hyperf\GrpcServer;
 
 interface Server
 {

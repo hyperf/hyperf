@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
-use Hyperflex\Contract\ConfigInterface;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 

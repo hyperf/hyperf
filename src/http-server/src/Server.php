@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\HttpServer;
+namespace Hyperf\HttpServer;
 
-use Hyperflex\Framework\Contract\StdoutLoggerInterface;
-use Hyperflex\Dispatcher\HttpDispatcher;
-use Hyperflex\Framework\ExceptionHandlerDispatcher;
-use Hyperflex\HttpServer\Exception\HttpException;
-use Hyperflex\Utils\Context;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Framework\ExceptionHandlerDispatcher;
+use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

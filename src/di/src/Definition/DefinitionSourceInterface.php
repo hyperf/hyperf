@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
 
-use Hyperflex\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 
 interface DefinitionSourceInterface
 {

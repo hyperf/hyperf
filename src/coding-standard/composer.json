@@ -1,9 +1,9 @@
 {
-    "name": "hyperflex/coding-standard",
-    "description": "Hyperflex coding standard",
+    "name": "hyperf/coding-standard",
+    "description": "Hyperf coding standard",
     "license": "Apache-2.0",
     "keywords": [
-        "hyperflex",
+        "hyperf",
         "coding standard"
     ],
     "require": {

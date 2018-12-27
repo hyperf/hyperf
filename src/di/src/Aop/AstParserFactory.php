@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 use PhpParser\Parser as ParserInterface;
 use PhpParser\ParserFactory;

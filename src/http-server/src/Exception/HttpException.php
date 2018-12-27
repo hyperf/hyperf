@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\HttpServer\Exception;
+namespace Hyperf\HttpServer\Exception;
 
 
 

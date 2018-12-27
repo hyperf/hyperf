@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Config;
+namespace Hyperf\Config;
 
 
-use Hyperflex\Contract\ConfigInterface;
+use Hyperf\Contract\ConfigInterface;
 
 class ConfigProvider
 {

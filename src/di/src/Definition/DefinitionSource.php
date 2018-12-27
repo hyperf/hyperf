@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
-use Hyperflex\Di\Annotation\AnnotationCollector;
-use Hyperflex\Di\Annotation\AspectCollector;
-use Hyperflex\Di\Annotation\Inject;
-use Hyperflex\Di\Annotation\Scanner;
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;

@@ -1,11 +1,11 @@
 {
-    "name": "hyperflex/contract",
-    "description": "The contracts of Hyperflex.",
+    "name": "hyperf/contract",
+    "description": "The contracts of Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "hyperflex"
+        "hyperf"
     ],
     "support": {
     },
@@ -18,7 +18,7 @@
         "phpstan/phpstan": "^0.9.2",
         "phpstan/phpstan-strict-rules": "^0.9",
         "phpunit/phpunit": "^7.0.0",
-        "hyperflex/coding-standard": "~1.0.0"
+        "hyperf/coding-standard": "~1.0.0"
     },
     "suggest": {
     },
@@ -26,7 +26,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperflex\\Contract\\": "src"
+            "Hyperf\\Contract\\": "src"
         }
     },
     "autoload-dev": {
@@ -39,7 +39,7 @@
     "extra": {
         "branch-alias": {
         },
-        "hyperflex": {
+        "hyperf": {
         }
     },
     "bin": [

@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 use App\Controllers\IndexController;
-use Hyperflex\Utils\Composer;
+use Hyperf\Utils\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;

@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyperflex\HttpServer;
+namespace Hyperf\HttpServer;
 
 
-use Hyperflex\HttpServer\Command\StartServer;
-use Hyperflex\HttpServer\Command\StartServerFactory;
+use Hyperf\HttpServer\Command\StartServer;
+use Hyperf\HttpServer\Command\StartServerFactory;
 use FastRoute\Dispatcher;
-use Hyperflex\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\DispatcherFactory;
 use FastRoute\RouteCollector;
-use Hyperflex\HttpServer\Router\RouteCollectorFactory;
+use Hyperf\HttpServer\Router\RouteCollectorFactory;
 
 class ConfigProvider
 {

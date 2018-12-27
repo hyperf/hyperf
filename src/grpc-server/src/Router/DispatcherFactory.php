@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyperflex\GrpcServer\Router;
+namespace Hyperf\GrpcServer\Router;
 
-use Hyperflex\HttpServer\Router\DispatcherFactory as HttpDispatcherFactory;
+use Hyperf\HttpServer\Router\DispatcherFactory as HttpDispatcherFactory;
 
 class DispatcherFactory extends HttpDispatcherFactory
 {

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
 interface MetadataHolderInterface

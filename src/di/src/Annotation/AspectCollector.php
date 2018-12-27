@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
-use Hyperflex\Di\MetadataCollector;
+use Hyperf\Di\MetadataCollector;
 
 class AspectCollector extends MetadataCollector
 {

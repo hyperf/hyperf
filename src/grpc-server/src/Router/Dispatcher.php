@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\GrpcServer\Router;
+namespace Hyperf\GrpcServer\Router;
 
 interface Dispatcher
 {

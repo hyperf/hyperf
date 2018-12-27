@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyperflex\Di\Resolver;
+namespace Hyperf\Di\Resolver;
 
 
-use Hyperflex\Di\Definition\DefinitionInterface;
-use Hyperflex\Di\Definition\MethodInjection;
-use Hyperflex\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\MethodInjection;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 use ReflectionMethod;
 use ReflectionParameter;
 

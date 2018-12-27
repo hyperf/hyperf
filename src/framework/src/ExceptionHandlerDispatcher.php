@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
 
-use Hyperflex\Dispatcher\AbstractDispatcher;
-use Hyperflex\Utils\Context;
+use Hyperf\Dispatcher\AbstractDispatcher;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hyperflex\Di\Aop;
+namespace Hyperf\Di\Aop;
 
 
 interface ArroundInterface

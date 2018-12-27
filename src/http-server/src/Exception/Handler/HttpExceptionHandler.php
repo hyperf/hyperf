@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyperflex\HttpServer\Exception\Handler;
+namespace Hyperf\HttpServer\Exception\Handler;
 
 
-use Hyperflex\Framework\ExceptionHandler;
-use Hyperflex\HttpServer\Exception\HttpException;
+use Hyperf\Framework\ExceptionHandler;
+use Hyperf\HttpServer\Exception\HttpException;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
 use Throwable;

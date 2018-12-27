@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\HttpServer\Router;
+namespace Hyperf\HttpServer\Router;
 
 use FastRoute\RouteCollector;
 use FastRoute\Dispatcher\GroupCountBased;

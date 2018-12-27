@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
 use InvalidArgumentException;

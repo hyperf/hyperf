@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyperflex\Framework;
+namespace Hyperf\Framework;
 
 
 use Psr\Container\ContainerInterface;
 
-class Hyperflex
+class Hyperf
 {
 
     /**

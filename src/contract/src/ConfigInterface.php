@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Contract;
+namespace Hyperf\Contract;
 
 
 interface ConfigInterface

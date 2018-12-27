@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Di\ReflectionManager;
 use PhpDocReader\PhpDocReader;
 
 /**

@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyperflex\HttpServer\Exception\Http;
+namespace Hyperf\HttpServer\Exception\Http;
 
 
-use Hyperflex\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\HttpException;
 
 class NotFoundException extends HttpException
 {

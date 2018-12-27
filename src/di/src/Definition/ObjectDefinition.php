@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyperflex\Di\Definition;
+namespace Hyperf\Di\Definition;
 
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Di\ReflectionManager;
 
 class ObjectDefinition implements DefinitionInterface
 {
@@ -93,7 +93,7 @@ class ObjectDefinition implements DefinitionInterface
     }
 
     /**
-     * @return \Hyperflex\Di\Definition\MethodInjection|null
+     * @return \Hyperf\Di\Definition\MethodInjection|null
      */
     public function getConstructorInjection()
     {

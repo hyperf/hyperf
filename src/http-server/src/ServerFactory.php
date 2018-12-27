@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyperflex\HttpServer;
+namespace Hyperf\HttpServer;
 
 
-use Hyperflex\Contract\ConfigInterface;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
-use Hyperflex\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 
 class ServerFactory
 {

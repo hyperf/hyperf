@@ -1,17 +1,17 @@
 <?php
 
-namespace Hyperflex\Di\Resolver;
+namespace Hyperf\Di\Resolver;
 
 
 use App\Controllers\IndexController;
-use Hyperflex\Di\Container;
-use Hyperflex\Di\Definition\DefinitionInterface;
-use Hyperflex\Di\Definition\ObjectDefinition;
-use Hyperflex\Di\Definition\PropertyInjection;
-use Hyperflex\Di\Definition\Reference;
-use Hyperflex\Di\Exception\DependencyException;
-use Hyperflex\Di\Exception\InvalidDefinitionException;
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Di\Definition\PropertyInjection;
+use Hyperf\Di\Definition\Reference;
+use Hyperf\Di\Exception\DependencyException;
+use Hyperf\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\ReflectionManager;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionMethod;

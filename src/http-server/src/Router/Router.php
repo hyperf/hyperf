@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\HttpServer\Router;
+namespace Hyperf\HttpServer\Router;
 
 use FastRoute\RouteCollector;
 
@@ -14,7 +14,7 @@ use FastRoute\RouteCollector;
  * @method static delete($route, $handler)
  * @method static patch($route, $handler)
  * @method static head($route, $handler)
- * @package Hyperflex\HttpServer\Router
+ * @package Hyperf\HttpServer\Router
  */
 class Router
 {

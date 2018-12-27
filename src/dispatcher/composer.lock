@@ -352,16 +352,16 @@
             "time": "2016-01-20T08:20:44+00:00"
         },
         {
-            "name": "hyperflex/coding-standard",
+            "name": "hyperf/coding-standard",
             "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hyperflex-cloud/coding-standard.git",
+                "url": "https://github.com/hyperf-cloud/coding-standard.git",
                 "reference": "69bedc347670cd2f06c9fb296bcc3dececb7c73d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperflex-cloud/coding-standard/zipball/69bedc347670cd2f06c9fb296bcc3dececb7c73d",
+                "url": "https://api.github.com/repos/hyperf-cloud/coding-standard/zipball/69bedc347670cd2f06c9fb296bcc3dececb7c73d",
                 "reference": "69bedc347670cd2f06c9fb296bcc3dececb7c73d",
                 "shasum": "",
                 "mirrors": [
@@ -379,10 +379,10 @@
             "license": [
                 "Apache-2.0"
             ],
-            "description": "Hyperflex coding standard",
+            "description": "Hyperf coding standard",
             "keywords": [
                 "Coding Standard",
-                "hyperflex"
+                "hyperf"
             ],
             "time": "2018-10-23T14:56:29+00:00"
         },

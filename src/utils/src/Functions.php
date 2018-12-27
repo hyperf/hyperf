@@ -1,7 +1,7 @@
 <?php
 
-use Hyperflex\Utils\Arr;
-use Hyperflex\Utils\Collection;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection;
 
 if (! function_exists('value')) {
     /**
@@ -563,7 +563,7 @@ if (! function_exists('go')) {
      */
     function go($callback)
     {
-        \Hyperflex\Utils\Coroutine::create($callback);
+        \Hyperf\Utils\Coroutine::create($callback);
     }
 }
 
@@ -573,6 +573,6 @@ if (! function_exists('defer')) {
      */
     function defer($callback): void
     {
-        \Hyperflex\Utils\Coroutine::defer($callback);
+        \Hyperf\Utils\Coroutine::defer($callback);
     }
 }

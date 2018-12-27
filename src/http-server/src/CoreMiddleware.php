@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyperflex\HttpServer;
+namespace Hyperf\HttpServer;
 
 
 use FastRoute\Dispatcher;
-use Hyperflex\Di\MethodDefinitionCollector;
-use Hyperflex\Utils\Context;
+use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
 
 /**
- * Core middleware of Hyperflex, main responsibility is use to handle route info
+ * Core middleware of Hyperf, main responsibility is use to handle route info
  * and then delegate to the specified handler (which is Controller) to handle the request,
  * generate a response object and delegate to next middleware (Because this middleware is the
  * core middleware, then the next middleware also means it's the previous middlewares object) .
@@ -75,7 +75,7 @@ class CoreMiddleware implements MiddlewareInterface
                 }
                 break;
         }
-        return $response->withAddedHeader('Server', 'Hyperflex');
+        return $response->withAddedHeader('Server', 'Hyperf');
     }
 
     /**

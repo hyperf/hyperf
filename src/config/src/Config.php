@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyperflex\Config;
+namespace Hyperf\Config;
 
 
-use Hyperflex\Contract\ConfigInterface;
-use Hyperflex\Utils\Arr;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Arr;
 
 class Config implements ConfigInterface
 {

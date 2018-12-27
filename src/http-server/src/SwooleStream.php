@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Hyperflex\HttpServer;
+namespace Hyperf\HttpServer;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;

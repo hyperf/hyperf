@@ -1,15 +1,15 @@
 <?php
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
 use App\Controllers\IndexController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Hyperflex\Contracts\ConfigInterface;
-use Hyperflex\Di\Aop\Ast;
-use Hyperflex\Di\Aop\AstCollector;
-use Hyperflex\Di\ReflectionManager;
+use Hyperf\Contracts\ConfigInterface;
+use Hyperf\Di\Aop\Ast;
+use Hyperf\Di\Aop\AstCollector;
+use Hyperf\Di\ReflectionManager;
 use PhpDocReader\PhpDocReader;
 use Symfony\Component\Finder\Finder;
 

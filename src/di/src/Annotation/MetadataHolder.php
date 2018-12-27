@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Di\Annotation;
+namespace Hyperf\Di\Annotation;
 
 
 class MetadataHolder implements MetadataHolderInterface

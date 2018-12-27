@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyperflex\Di;
+namespace Hyperf\Di;
 
 
-use Hyperflex\Di\Aop\Ast;
-use Hyperflex\Di\Definition\FactoryDefinition;
-use Hyperflex\Di\Definition\ObjectDefinition;
-use Hyperflex\Utils\CoroutineLocker;
+use Hyperf\Di\Aop\Ast;
+use Hyperf\Di\Definition\FactoryDefinition;
+use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Utils\CoroutineLocker;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
