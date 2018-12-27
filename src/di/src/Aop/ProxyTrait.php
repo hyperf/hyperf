@@ -39,6 +39,9 @@ trait ProxyTrait
         $reflectMethod = ReflectionManager::reflectMethod($className, $method);
         $reflectParameters = $reflectMethod->getParameters();
         foreach ($reflectParameters as $key => $reflectionParameter) {
+            if (! isset($args[$key])) {
+                $args[$key] = $reflectionParameter->getDefaultValue();
+            }
             $map['keys'][$reflectionParameter->getName()] = $args[$key];
             $map['order'][] = $reflectionParameter->getName();
         }

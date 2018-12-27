@@ -206,6 +206,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 // Should create a new param node, modify the original node will change the original status.
                 $newParam = clone $param;
                 $newParam->type = null;
+                $newParam->default = null;
                 $params[] = $newParam;
             }
             return $params;
