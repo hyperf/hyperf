@@ -7,6 +7,7 @@ use Hyperflex\Di\Annotation\AspectCollector;
 use Hyperflex\Di\Annotation\Inject;
 use Hyperflex\Di\Annotation\Scanner;
 use Hyperflex\Di\ReflectionManager;
+use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;
 use function class_exists;
@@ -233,16 +234,16 @@ class DefinitionSource implements DefinitionSourceInterface
         print_r($message . PHP_EOL);
     }
 
-    private function isNeedProxy(\ReflectionClass $class)
+    private function isNeedProxy(ReflectionClass $class)
     {
         $className = $class->getName();
         $aspect = AspectCollector::get('class.static');
-        if (array_key_exists($className, $aspect)) {
+        if (is_array($aspect) && array_key_exists($className, $aspect)) {
             return true;
         }
 
         $aspect = AspectCollector::get('class.dynamic');
-        foreach ($aspect as $preg => $aspects) {
+        foreach ($aspect ?? [] as $preg => $aspects) {
             $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $preg);
             $pattern = "/^$preg$/";
 
