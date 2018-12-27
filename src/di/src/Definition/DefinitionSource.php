@@ -2,8 +2,6 @@
 
 namespace Hyperflex\Di\Definition;
 
-
-use App\Controllers\IndexController;
 use Hyperflex\Di\Annotation\AnnotationCollector;
 use Hyperflex\Di\Annotation\AspectCollector;
 use Hyperflex\Di\Annotation\Inject;
@@ -32,6 +30,9 @@ use function md5;
 use function method_exists;
 use function print_r;
 use function trim;
+use function array_key_exists;
+use function preg_match;
+use function str_replace;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
@@ -170,12 +171,9 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        if ($className === IndexController::class) {
-            $definition->setNeedProxy(true);
-        }
+        $definition->setNeedProxy($this->isNeedProxy($class));
 
         return $definition;
-
     }
 
     private function scan(array $paths): bool
@@ -233,6 +231,30 @@ class DefinitionSource implements DefinitionSourceInterface
     private function printLn(string $message): void
     {
         print_r($message . PHP_EOL);
+    }
+
+    private function isNeedProxy(\ReflectionClass $class)
+    {
+        $className = $class->getName();
+        $aspect = AspectCollector::get('class.static');
+        if (array_key_exists($className, $aspect)) {
+            return true;
+        }
+
+        $aspect = AspectCollector::get('class.dynamic');
+        foreach ($aspect as $preg => $aspects) {
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $preg);
+            $pattern = "/^$preg$/";
+
+            if (preg_match($pattern, $className)) {
+                AspectCollector::collectClassAndAnnotation($aspects, [$className], []);
+                return true;
+            }
+        }
+
+        // TODO: Check class whether to contain the annotations.
+
+        return false;
     }
 
 }
