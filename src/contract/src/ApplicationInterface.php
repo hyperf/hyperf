@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hyperflex\Framework;
+namespace Hyperflex\Contract;
 
 
 interface ApplicationInterface
