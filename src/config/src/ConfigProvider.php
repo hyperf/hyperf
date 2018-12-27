@@ -3,7 +3,7 @@
 namespace Hyperflex\Config;
 
 
-use Hyperflex\Framework\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 
 class ConfigProvider
 {

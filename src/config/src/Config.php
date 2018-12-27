@@ -3,7 +3,7 @@
 namespace Hyperflex\Config;
 
 
-use Hyperflex\Framework\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 use Hyperflex\Utils\Arr;
 
 class Config implements ConfigInterface

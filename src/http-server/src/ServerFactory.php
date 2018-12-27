@@ -3,7 +3,7 @@
 namespace Hyperflex\HttpServer;
 
 
-use Hyperflex\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Hyperflex\HttpServer\Exception\Handler\HttpExceptionHandler;
 

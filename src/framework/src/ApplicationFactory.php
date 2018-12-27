@@ -2,7 +2,7 @@
 
 namespace Hyperflex\Framework;
 
-use Hyperflex\Framework\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 

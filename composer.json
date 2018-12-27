@@ -40,6 +40,7 @@
     },
     "replace": {
         "hyperflex/config": "self.version",
+        "hyperflex/contract": "self.version",
         "hyperflex/di": "self.version",
         "hyperflex/dispatcher": "self.version",
         "hyperflex/grpc-server": "self.version",
@@ -56,6 +57,7 @@
         ],
         "psr-4": {
             "Hyperflex\\Config\\": "src/config/src/",
+            "Hyperflex\\Contract\\": "src/contract/src/",
             "Hyperflex\\Di\\": "src/di/src/",
             "Hyperflex\\Dispatcher\\": "src/dispatcher/src/",
             "Hyperflex\\GrpcServer\\": "src/grpc-server/src/",

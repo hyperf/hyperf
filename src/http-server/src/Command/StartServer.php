@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Hyperflex\Di\Annotation\Scanner;
-use Hyperflex\Contracts\ConfigInterface;
+use Hyperflex\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 
 class StartServer extends Command
