@@ -1,0 +1,49 @@
+<?php
+
+namespace Hyperflex\Memory;
+
+
+use Swoole\Lock;
+
+class LockManager
+{
+
+    /**
+     * A container that use to store Lock.
+     *
+     * @var array
+     */
+    private static $container = [];
+
+    /**
+     * You should initialize a Lock with the identifier before use it.
+     */
+    public static function initialize(string $identifier, int $type = SWOOLE_RWLOCK, string $filename = null): void
+    {
+        static::$container[$identifier] = new Lock($type, $filename);
+    }
+
+    /**
+     * Get a initialized Lock from container by the identifier.
+     *
+     * @throws \RuntimeException When the Lock with the identifier has not initialization.
+     */
+    public static function get(string $identifier): Lock
+    {
+        if (! isset(static::$container[$identifier])) {
+            throw new \RuntimeException('The Lock has not initialization yet.');
+        }
+
+        return static::$container[$identifier];
+    }
+
+    /**
+     * Remove the Lock by the identifier from container after used,
+     * otherwise will occur memory leaks.
+     */
+    public static function clear(string $identifier): void
+    {
+        unset(static::$container[$identifier]);
+    }
+
+}

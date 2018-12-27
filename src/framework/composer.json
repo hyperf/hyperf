@@ -1,0 +1,77 @@
+{
+    "name": "hyperflex/framework",
+    "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "framework",
+        "hyperflex",
+        "microservice",
+        "middleware"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.1",
+        "ext-swoole": ">=4.2",
+        "fig/http-message-util": "^1.1.2",
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0.1",
+        "psr/http-server-middleware": "^1.0",
+        "psr/log": "^1.0",
+        "symfony/console": "^4.2",
+        "symfony/routing": "^4.2",
+        "symfony/http-foundation": "^4.2",
+        "hyperflex/utils": "dev-master"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan": "^0.9.2",
+        "phpstan/phpstan-strict-rules": "^0.9",
+        "phpunit/phpunit": "^7.0.0",
+        "hyperflex/coding-standard": "~1.0.0",
+        "symfony/console": "^4.1",
+        "php-di/php-di": "^6.0",
+        "doctrine/common": "@stable"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+        ],
+        "psr-4": {
+            "Hyperflex\\Framework\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+        },
+        "hyperflex": {
+            "config": "Hyperflex\\Framework\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "check": [
+            "@license-check",
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "phpstan": "phpstan analyze -l max -c phpstan.neon ./src",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+        "license-check": "docheader check src/ test/"
+    }
+}

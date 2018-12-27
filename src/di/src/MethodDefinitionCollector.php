@@ -1,0 +1,63 @@
+<?php
+
+namespace Hyperflex\Di;
+
+
+class MethodDefinitionCollector extends MetadataCollector
+{
+
+    /**
+     * @var array
+     */
+    protected static $container = [];
+
+    /**
+     * Get the method definition from metadata container,
+     * If the metadata not exist in container, then will
+     * parse it and save into container, and then return it.
+     */
+    public static function getOrParse(string $class, string $method): array
+    {
+        $key = $class . '::' . $method;
+        if (static::has($key)) {
+            return static::get($key);
+        }
+        $parameters = ReflectionManager::reflectMethod($class, $method)->getParameters();
+        $definitions = [];
+        foreach ($parameters as $parameter) {
+            $type = $parameter->getType()->getName();
+            switch ($type) {
+                case 'int':
+                case 'float':
+                case 'string':
+                    $definitions[] = [
+                        'type' => $type,
+                        'name' => $parameter->getName(),
+                        'ref' =>  '',
+                        'allowsNull' => $parameter->allowsNull(),
+                    ];
+                    break;
+                case 'bool':
+                    $definitions[] = [
+                        'type' => $type,
+                        'name' => $parameter->getName(),
+                        'ref' => '',
+                        'allowsNull' => $parameter->allowsNull(),
+                    ];
+                    break;
+                default:
+                    // Object
+                    $definitions[] = [
+                        'type' => 'object',
+                        'name' => $parameter->getName(),
+                        'ref' => $parameter->getClass()->getName() ?? null,
+                        'allowsNull' => $parameter->allowsNull(),
+                    ];
+                    break;
+            }
+        }
+        static::set($key, $definitions);
+        return $definitions;
+    }
+
+}
