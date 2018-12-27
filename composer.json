@@ -26,7 +26,8 @@
         "grpc/grpc": "^1.15",
         "symfony/finder": "^4.1",
         "symfony/console": "^4.2",
-        "swoft/http-message": "^1.0"
+        "swoft/http-message": "^1.0",
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -39,6 +40,7 @@
         "doctrine/common": "@stable"
     },
     "replace": {
+        "hyperflex/coding-standard": "self.version",
         "hyperflex/config": "self.version",
         "hyperflex/contract": "self.version",
         "hyperflex/di": "self.version",
