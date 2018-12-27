@@ -5,7 +5,7 @@ namespace Hyperf\Framework;
 
 use Psr\Container\ContainerInterface;
 
-class Hyperf
+class ApplicationContext
 {
 
     /**

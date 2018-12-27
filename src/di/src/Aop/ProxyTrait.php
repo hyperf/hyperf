@@ -8,7 +8,7 @@ use Closure;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Framework\Hyperf;
+use Hyperf\Framework\ApplicationContext;
 
 trait ProxyTrait
 {
@@ -52,7 +52,7 @@ trait ProxyTrait
     {
         $arround = AspectCollector::get('arround');
         if ($aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method)) {
-            $pipeline = new Pipeline(Hyperf::getContainer());
+            $pipeline = new Pipeline(ApplicationContext::getContainer());
             return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });
