@@ -21,6 +21,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
+use Swoft\Http\Message\Server\Request as Psr7Request;
+use Swoft\Http\Message\Server\Response as Psr7Response;
+use Throwable;
 
 class Server
 {
@@ -60,13 +63,13 @@ class Server
     {
         try {
             // Initialize PSR-7 Request and Response objects.
-            $psr7Request = \Swoft\Http\Message\Server\Request::loadFromSwooleRequest($request);
-            $psr7Response = new \Swoft\Http\Message\Server\Response($response);
+            $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+            $psr7Response = new Psr7Response($response);
             Context::set(ServerRequestInterface::class, $psr7Request);
             Context::set(ResponseInterface::class, $psr7Response);
             $dispatcher = $this->container->get(HttpDispatcher::class);
             $psr7Response = $dispatcher->dispatch($psr7Request, $this->middlewares, $this->coreHandler);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
                 $logger->error($throwable->getMessage());
