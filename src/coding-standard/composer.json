@@ -1,0 +1,12 @@
+{
+    "name": "hyperflex/coding-standard",
+    "description": "Hyperflex coding standard",
+    "license": "Apache-2.0",
+    "keywords": [
+        "hyperflex",
+        "coding standard"
+    ],
+    "require": {
+        "squizlabs/php_codesniffer": "^3.4"
+    }
+}
