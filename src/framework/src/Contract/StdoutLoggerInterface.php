@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperflex\Framework\Contracts;
+namespace Hyperflex\Framework\Contract;
 
 
 use Psr\Log\LoggerInterface;

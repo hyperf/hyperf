@@ -4,7 +4,7 @@ namespace Hyperflex\Framework\Logger;
 
 
 use Hyperflex\Contract\ConfigInterface;
-use Hyperflex\Framework\Contracts\StdoutLoggerInterface;
+use Hyperflex\Framework\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
 use function printf;

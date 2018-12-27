@@ -3,7 +3,7 @@
 namespace Hyperflex\Framework\Bootstrap;
 
 use Hyperflex\Framework\Constants\SwooleEvent;
-use Hyperflex\Framework\Contracts\StdoutLoggerInterface;
+use Hyperflex\Framework\Contract\StdoutLoggerInterface;
 use Hyperflex\Di\Container;
 use Hyperflex\Memory\AtomicManager;
 use Hyperflex\Memory\LockManager;

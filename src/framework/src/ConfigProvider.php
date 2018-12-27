@@ -4,7 +4,7 @@ namespace Hyperflex\Framework;
 
 
 use Hyperflex\Framework\ApplicationFactory;
-use Hyperflex\Framework\Contracts\StdoutLoggerInterface;
+use Hyperflex\Framework\Contract\StdoutLoggerInterface;
 use Hyperflex\Framework\Logger\StdoutLogger;
 use Symfony\Component\Console\Application;
 

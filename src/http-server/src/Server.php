@@ -2,7 +2,7 @@
 
 namespace Hyperflex\HttpServer;
 
-use Hyperflex\Framework\Contracts\StdoutLoggerInterface;
+use Hyperflex\Framework\Contract\StdoutLoggerInterface;
 use Hyperflex\Dispatcher\HttpDispatcher;
 use Hyperflex\Framework\ExceptionHandlerDispatcher;
 use Hyperflex\HttpServer\Exception\HttpException;
