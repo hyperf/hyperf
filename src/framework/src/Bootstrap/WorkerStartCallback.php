@@ -44,6 +44,7 @@ class WorkerStartCallback
             // Only running in one worker.
             $this->logger->debug("Worker $lockedWorkerId got the lock.");
             // @TODO Do something that you want only one worker do.
+            sleep(1);
             $lock->unlock();
             $atomic->wakeup($server->setting['worker_num'] - 1);
         } else {
