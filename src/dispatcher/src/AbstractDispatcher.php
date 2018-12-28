@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Dispatcher;
 
+use Hyperf\Contract\DispatcherInterface;
+
 abstract class AbstractDispatcher implements DispatcherInterface
 {
     /**
