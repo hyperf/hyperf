@@ -42,12 +42,13 @@ class InitProxyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $scanDirs = $this->getScanDir();
+
         $runtime = BASE_PATH . '/runtime/container/proxy/';
         if (is_dir($runtime)) {
             $this->clearRuntime($runtime);
         }
 
-        $scanDirs = $this->getScanDir();
         $classCollection = $this->scanner->scan($scanDirs);
 
         foreach ($classCollection as $item) {
