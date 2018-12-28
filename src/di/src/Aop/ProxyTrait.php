@@ -57,7 +57,12 @@ trait ProxyTrait
     {
         $arround = AspectCollector::get('arround');
         if ($aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method)) {
-            $pipeline = new Pipeline(ApplicationContext::getContainer());
+            $container = ApplicationContext::getContainer();
+            if (method_exists($container, 'make')) {
+                $pipeline = $container->make(Pipeline::class);
+            } else {
+                $pipeline = new Pipeline($container);
+            }
             return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });

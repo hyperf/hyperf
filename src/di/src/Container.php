@@ -13,7 +13,6 @@ namespace Hyperf\Di;
 
 use DI\FactoryInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
-use Hyperf\Di\Exception\DependencyException;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
@@ -84,7 +83,6 @@ class Container implements ContainerInterface
      *                           to specific values. Parameters not defined in this array will be resolved using
      *                           the container.
      * @throws InvalidArgumentException The name parameter must be of type string.
-     * @throws DependencyException Error while resolving the entry.
      * @throws NotFoundException No entry found for the given name.
      * @return mixed
      */
@@ -101,7 +99,7 @@ class Container implements ContainerInterface
             throw new NotFoundException("No entry or class found for '$name'");
         }
 
-        return $this->resolveDefinition($name, $definition, $parameters);
+        return $this->resolveDefinition($definition, $parameters);
     }
 
     /**
@@ -110,7 +108,6 @@ class Container implements ContainerInterface
      * @param string $name Identifier of the entry to look for.
      * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
      * @throws ContainerExceptionInterface Error while retrieving the entry.
-     * @throws DependencyException Error while resolving the entry.
      * @return mixed Entry.
      */
     public function get($name)
@@ -153,8 +150,6 @@ class Container implements ContainerInterface
 
     /**
      * Init defined dependencies, not include dynamic definition.
-     *
-     * @throws DependencyException Error while resolving the entry.
      */
     public function initDependencies(): void
     {
@@ -172,7 +167,7 @@ class Container implements ContainerInterface
         }
         $this->fetchedDefinitions = []; // Completely clear this local cache
 
-        $this->definitionSource->addDefinition($definition);
+        $this->definitionSource->addDefinition($name, $definition);
     }
 
     private function getDefinition(string $name)
@@ -187,12 +182,10 @@ class Container implements ContainerInterface
 
     /**
      * Resolves a definition.
-     * Checks for circular dependencies while resolving the definition.
      *
-     * @throws DependencyException Error while resolving the entry.
      * @return mixed
      */
-    private function resolveDefinition(string $entryName, DefinitionInterface $definition, array $parameters = [])
+    private function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
     {
         return $this->definitionResolver->resolve($definition, $parameters);
     }
