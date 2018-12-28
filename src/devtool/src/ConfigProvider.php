@@ -20,10 +20,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ProxyCreateCommand::class => ProxyCreateCommandFactory::class,
             ],
             'commands' => [
-                ProxyCreateCommand::class,
             ],
             'scan' => [
                 'paths' => [],

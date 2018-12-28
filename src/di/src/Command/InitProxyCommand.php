@@ -9,19 +9,19 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Devtool\Command;
+namespace Hyperf\Di\Command;
 
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Framework\Server;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class ProxyCreateCommand extends Command
+class InitProxyCommand extends Command
 {
     /**
      * @var ContainerInterface
@@ -35,29 +35,19 @@ class ProxyCreateCommand extends Command
 
     public function __construct(ContainerInterface $container, Scanner $scanner)
     {
-        parent::__construct('proxy:create');
+        parent::__construct('di:init-proxy');
         $this->container = $container;
         $this->scanner = $scanner;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $file = BASE_PATH . '/config/autoload/annotations.php';
-        if (!file_exists($file)) {
-            $output->writeln("<error>ERROR</error> Annotations config path[$file] is not exists.");
-            exit(0);
-        }
-
         $runtime = BASE_PATH . '/runtime/container/proxy/';
-        if(is_dir($runtime)){
+        if (is_dir($runtime)) {
             $this->clearRuntime($runtime);
         }
 
-        $annotations = include $file;
-        $configFromProviders = ProviderConfig::load();
-        $scanDirs = $configFromProviders['scan']['paths'];
-        $scanDirs = array_merge($scanDirs, $annotations['scan']['paths'] ?? []);
-
+        $scanDirs = $this->getScanDir();
         $classCollection = $this->scanner->scan($scanDirs);
 
         foreach ($classCollection as $item) {
@@ -77,9 +67,30 @@ class ProxyCreateCommand extends Command
         $finder->files()->in($paths)->name('*.php');
 
         /** @var SplFileInfo $file */
-        foreach ($finder as $file){
+        foreach ($finder as $file) {
             $path = $file->getRealPath();
             @unlink($path);
         }
+    }
+
+    protected function getScanDir()
+    {
+        if (!defined('BASE_PATH')) {
+            throw new LogicException('BASE_PATH is not defined.');
+        }
+
+        $file = BASE_PATH . '/config/autoload/annotations.php';
+        if (!file_exists($file)) {
+            throw new LogicException(sprintf('Annotations config path[%s] is not exists.', $file));
+        }
+
+        $annotations = include $file;
+        $scanDirs = $annotations['scan']['paths'] ?? [];
+        if (class_exists(ProviderConfig::class)) {
+            $configFromProviders = ProviderConfig::load();
+            $scanDirs = array_merge($configFromProviders['scan']['paths'] ?? [], $scanDirs);
+        }
+
+        return $scanDirs;
     }
 }

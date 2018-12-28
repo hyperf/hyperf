@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Di\Aop\AstParserFactory;
+use Hyperf\Di\Command\InitProxyCommand;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
@@ -24,6 +25,9 @@ class ConfigProvider
             'dependencies' => [
                 Parser::class => AstParserFactory::class,
                 PrettyPrinterAbstract::class => Standard::class,
+            ],
+            'commands' => [
+                InitProxyCommand::class,
             ],
             'scan' => [
                 'paths' => [],
