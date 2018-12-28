@@ -60,6 +60,9 @@ class ProxyCallVistor extends NodeVisitorAbstract
     public function beforeTraverse(array $nodes)
     {
         foreach ($nodes as $namespace) {
+            if ($namespace instanceof Node\Stmt\Declare_) {
+                continue;
+            }
             if (! $namespace instanceof Namespace_) {
                 return;
             }
