@@ -43,6 +43,7 @@
         "hyperf/coding-standard": "self.version",
         "hyperf/config": "self.version",
         "hyperf/contract": "self.version",
+        "hyperf/devtool": "self.version",
         "hyperf/di": "self.version",
         "hyperf/dispatcher": "self.version",
         "hyperf/grpc-server": "self.version",
@@ -60,6 +61,7 @@
         "psr-4": {
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
+            "Hyperf\\Devtool\\": "src/devtool/src/",
             "Hyperf\\Di\\": "src/di/src/",
             "Hyperf\\Dispatcher\\": "src/dispatcher/src/",
             "Hyperf\\GrpcServer\\": "src/grpc-server/src/",
@@ -82,6 +84,7 @@
         "hyperf": {
             "config": [
                 "Hyperf\\Config\\ConfigProvider",
+                "Hyperf\\Devtool\\ConfigProvider",
                 "Hyperf\\Di\\ConfigProvider",
                 "Hyperf\\Dispatcher\\ConfigProvider",
                 "Hyperf\\Framework\\ConfigProvider",

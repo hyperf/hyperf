@@ -81,7 +81,8 @@ class Scanner
                     }
                 }
             }
-            unset($classColletion);
         }
+
+        return $classColletion;
     }
 }
