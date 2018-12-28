@@ -1,17 +1,25 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Devtool\Command;
 
 use Hyperf\Config\ProviderConfig;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\Definition\DefinitionSourceInterface;
 use Hyperf\Framework\Server;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class ProxyCreateCommand extends Command
 {
@@ -19,11 +27,6 @@ class ProxyCreateCommand extends Command
      * @var ContainerInterface
      */
     private $container;
-
-    /**
-     * @var Server
-     */
-    private $server;
 
     /**
      * @var Scanner
@@ -45,6 +48,11 @@ class ProxyCreateCommand extends Command
             exit(0);
         }
 
+        $runtime = BASE_PATH . '/runtime/container/proxy/';
+        if(is_dir($runtime)){
+            $this->clearRuntime($runtime);
+        }
+
         $annotations = include $file;
         $configFromProviders = ProviderConfig::load();
         $scanDirs = $configFromProviders['scan']['paths'];
@@ -60,6 +68,18 @@ class ProxyCreateCommand extends Command
             }
         }
 
-        $output->writeln("<info>Proxy class create success.</info>");
+        $output->writeln('<info>Proxy class create success.</info>');
+    }
+
+    protected function clearRuntime($paths)
+    {
+        $finder = new Finder();
+        $finder->files()->in($paths)->name('*.php');
+
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file){
+            $path = $file->getRealPath();
+            @unlink($path);
+        }
     }
 }
