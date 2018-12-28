@@ -65,7 +65,7 @@ class ObjectDefinition implements DefinitionInterface
 
     public function __toString(): string
     {
-        return sprintf('Object[%s]' . $this->getClassName());
+        return sprintf('Object[%s]', $this->getClassName());
     }
 
     public function getName(): string
