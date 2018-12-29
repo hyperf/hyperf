@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -239,7 +240,7 @@ class Connection implements ConnectionInterface
      * @param  string $table
      * @return \Illuminate\Database\Query\Builder
      */
-    public function table($table)
+    public function table($table): Builder
     {
         return $this->query()->from($table);
     }
@@ -293,7 +294,7 @@ class Connection implements ConnectionInterface
      * @param  bool $useReadPdo
      * @return array
      */
-    public function select($query, $bindings = [], $useReadPdo = true)
+    public function select($query, $bindings = [], $useReadPdo = true): array
     {
         return $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -322,7 +323,7 @@ class Connection implements ConnectionInterface
      * @param  bool $useReadPdo
      * @return \Generator
      */
-    public function cursor($query, $bindings = [], $useReadPdo = true)
+    public function cursor($query, $bindings = [], $useReadPdo = true): \Generator
     {
         $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -360,7 +361,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return bool
      */
-    public function insert($query, $bindings = [])
+    public function insert($query, $bindings = []): bool
     {
         return $this->statement($query, $bindings);
     }
@@ -372,7 +373,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return int
      */
-    public function update($query, $bindings = [])
+    public function update($query, $bindings = []): int
     {
         return $this->affectingStatement($query, $bindings);
     }
@@ -384,7 +385,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return int
      */
-    public function delete($query, $bindings = [])
+    public function delete($query, $bindings = []): int
     {
         return $this->affectingStatement($query, $bindings);
     }
@@ -396,7 +397,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return bool
      */
-    public function statement($query, $bindings = [])
+    public function statement($query, $bindings = []): bool
     {
         return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
@@ -420,7 +421,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return int
      */
-    public function affectingStatement($query, $bindings = [])
+    public function affectingStatement($query, $bindings = []): int
     {
         return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
@@ -450,7 +451,7 @@ class Connection implements ConnectionInterface
      * @param  string $query
      * @return bool
      */
-    public function unprepared($query)
+    public function unprepared($query): bool
     {
         return $this->run($query, [], function ($query) {
             if ($this->pretending()) {
@@ -471,7 +472,7 @@ class Connection implements ConnectionInterface
      * @param  \Closure $callback
      * @return array
      */
-    public function pretend(Closure $callback)
+    public function pretend(Closure $callback): array
     {
         return $this->withFreshQueryLog(function () use ($callback) {
             $this->pretending = true;
@@ -511,7 +512,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @return array
      */
-    public function prepareBindings(array $bindings)
+    public function prepareBindings(array $bindings): array
     {
         $grammar = $this->getQueryGrammar();
 
@@ -591,7 +592,7 @@ class Connection implements ConnectionInterface
      * @param  mixed $value
      * @return \Illuminate\Database\Query\Expression
      */
-    public function raw($value)
+    public function raw($value): Expression
     {
         return new Expression($value);
     }
@@ -1164,9 +1165,9 @@ class Connection implements ConnectionInterface
             $result = $callback($query, $bindings);
         }
 
-        // If an exception occurs when attempting to run a query, we'll format the error
-        // message to include the bindings with SQL, which will make this exception a
-        // lot more helpful to the developer instead of just the database's errors.
+            // If an exception occurs when attempting to run a query, we'll format the error
+            // message to include the bindings with SQL, which will make this exception a
+            // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
             throw new QueryException(
                 $query,

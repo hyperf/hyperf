@@ -9,8 +9,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Pool\Exception;
+namespace Hyperf\DbConnection\Pool;
 
-class InvalidArgumentException extends \InvalidArgumentException
+use Hyperf\Pool\ConnectionInterface;
+use Hyperf\Pool\ConnectionPool;
+
+class DbPool extends ConnectionPool
 {
+    protected static function createConnection(): ConnectionInterface
+    {
+
+    }
 }

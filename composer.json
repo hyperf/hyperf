@@ -52,6 +52,7 @@
         "hyperf/http-server": "self.version",
         "hyperf/framework": "self.version",
         "hyperf/memory": "self.version",
+        "hyperf/pool": "self.version",
         "hyperf/utils": "self.version"
     },
     "suggest": {
@@ -72,6 +73,7 @@
             "Hyperf\\HttpServer\\": "src/http-server/src/",
             "Hyperf\\Framework\\": "src/framework/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
+            "Hyperf\\Pool\\": "src/pool/src/",
             "Hyperf\\Utils\\": "src/utils/src/"
         }
     },

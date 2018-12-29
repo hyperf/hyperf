@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool;
 
-use Hyperf\Devtool\Command\Factory\ProxyCreateCommandFactory;
-use Hyperf\Devtool\Command\ProxyCreateCommand;
-
 class ConfigProvider
 {
     public function __invoke()

@@ -1,14 +1,21 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Pool;
-
 
 use Hyperf\Pool\Exception\InvalidArgumentException;
 use Swoole\Coroutine\Channel;
 
 abstract class ConnectionPool
 {
-
     /**
      * @var array
      */
@@ -19,7 +26,7 @@ abstract class ConnectionPool
      */
     protected static $options = [];
 
-    abstract protected static function createConnection();
+    abstract protected static function createConnection(): ConnectionInterface;
 
     protected static function getConnection(string $key, int $timeout)
     {
@@ -55,5 +62,4 @@ abstract class ConnectionPool
     {
         unset(static::$container[$key]);
     }
-
 }
