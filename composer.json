@@ -43,6 +43,7 @@
         "hyperf/coding-standard": "self.version",
         "hyperf/config": "self.version",
         "hyperf/contract": "self.version",
+        "hyperf/database": "self.version",
         "hyperf/devtool": "self.version",
         "hyperf/di": "self.version",
         "hyperf/dispatcher": "self.version",
@@ -61,6 +62,7 @@
         "psr-4": {
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
+            "Hyperf\\Database\\": "src/database/src/",
             "Hyperf\\Devtool\\": "src/devtool/src/",
             "Hyperf\\Di\\": "src/di/src/",
             "Hyperf\\Dispatcher\\": "src/dispatcher/src/",

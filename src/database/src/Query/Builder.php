@@ -23,8 +23,8 @@ use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
 
-// use Illuminate\Database\Query\Grammars\Grammar;
-// use Illuminate\Database\Query\Processors\Processor;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
 // use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class Builder
@@ -212,9 +212,10 @@ class Builder
      */
     public function __construct(
         ConnectionInterface $connection,
-                                Grammar $grammar = null,
-                                Processor $processor = null
-    ) {
+        Grammar $grammar = null,
+        Processor $processor = null
+    )
+    {
         $this->connection = $connection;
         $this->grammar = $grammar ?: $connection->getQueryGrammar();
         $this->processor = $processor ?: $connection->getPostProcessor();
@@ -2423,8 +2424,8 @@ class Builder
         return $this->connection->delete(
             $this->grammar->compileDelete($this),
             $this->cleanBindings(
-            $this->grammar->prepareBindingsForDelete($this->bindings)
-        )
+                $this->grammar->prepareBindingsForDelete($this->bindings)
+            )
         );
     }
 
