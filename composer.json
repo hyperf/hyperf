@@ -44,6 +44,7 @@
         "hyperf/config": "self.version",
         "hyperf/contract": "self.version",
         "hyperf/database": "self.version",
+        "hyperf/db-connection": "self.version",
         "hyperf/devtool": "self.version",
         "hyperf/di": "self.version",
         "hyperf/dispatcher": "self.version",
@@ -63,6 +64,7 @@
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
             "Hyperf\\Database\\": "src/database/src/",
+            "Hyperf\\DbConnection\\": "src/db-connection/src/",
             "Hyperf\\Devtool\\": "src/devtool/src/",
             "Hyperf\\Di\\": "src/di/src/",
             "Hyperf\\Dispatcher\\": "src/dispatcher/src/",
@@ -87,6 +89,7 @@
             "config": [
                 "Hyperf\\Config\\ConfigProvider",
                 "Hyperf\\Devtool\\ConfigProvider",
+                "Hyperf\\DbConnection\\ConfigProvider",
                 "Hyperf\\Di\\ConfigProvider",
                 "Hyperf\\Dispatcher\\ConfigProvider",
                 "Hyperf\\Framework\\ConfigProvider",

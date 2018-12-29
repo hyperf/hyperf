@@ -28,7 +28,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\DBConnection\\": "src"
+            "Hyperf\\DbConnection\\": "src"
         }
     },
     "autoload-dev": {
