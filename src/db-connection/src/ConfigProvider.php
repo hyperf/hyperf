@@ -12,6 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection;
 
 use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Connectors\PostgresConnector;
+use Hyperf\Database\Connectors\SQLiteConnector;
+use Hyperf\Database\Connectors\SqlServerConnector;
 use Hyperf\DbConnection\Pool\DbPool;
 
 class ConfigProvider
@@ -22,6 +26,10 @@ class ConfigProvider
             'dependencies' => [
                 DbPool::class => DbPool::class,
                 ConnectionFactory::class => ConnectionFactory::class,
+                'db.connector.mysql' => MySqlConnector::class,
+                'db.connector.pgsql' => PostgresConnector::class,
+                'db.connector.sqlite' => SQLiteConnector::class,
+                'db.connector.sqlsrv' => SqlServerConnector::class,
             ],
             'commands' => [
             ],
