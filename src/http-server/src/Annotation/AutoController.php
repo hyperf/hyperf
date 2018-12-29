@@ -31,5 +31,4 @@ class AutoController extends AbstractAnnotation
             $this->prefix = $value['prefix'];
         }
     }
-
 }

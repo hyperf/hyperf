@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\HttpServer\Annotation;
-
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -13,7 +21,6 @@ use Hyperf\Utils\Str;
  */
 class RequestMapping extends AbstractAnnotation
 {
-
     /**
      * @var array
      */
@@ -45,5 +52,4 @@ class RequestMapping extends AbstractAnnotation
             ]);
         }
     }
-
 }
