@@ -1,11 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Utils;
 
 use ArrayAccess;
-use JsonSerializable;
-use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
+use JsonSerializable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -31,6 +40,70 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
         }
+    }
+
+    /**
+     * Handle dynamic calls to the fluent instance to set attributes.
+     *
+     * @param  string $method
+     * @param  array $parameters
+     * @return $this
+     */
+    public function __call($method, $parameters)
+    {
+        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
+
+        return $this;
+    }
+
+    /**
+     * Dynamically retrieve the value of an attribute.
+     *
+     * @param  string $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * Dynamically set the value of an attribute.
+     *
+     * @param  string $key
+     * @param  mixed $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->offsetSet($key, $value);
+    }
+
+    /**
+     * Dynamically check if an attribute is set.
+     *
+     * @param  string $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Dynamically unset an attribute.
+     *
+     * @param  string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    public function __toString(): string
+    {
+        return $this->toJson();
     }
 
     /**
@@ -133,69 +206,5 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function offsetUnset($offset)
     {
         unset($this->attributes[$offset]);
-    }
-
-    /**
-     * Handle dynamic calls to the fluent instance to set attributes.
-     *
-     * @param  string $method
-     * @param  array $parameters
-     * @return $this
-     */
-    public function __call($method, $parameters)
-    {
-        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
-
-        return $this;
-    }
-
-    /**
-     * Dynamically retrieve the value of an attribute.
-     *
-     * @param  string $key
-     * @return mixed
-     */
-    public function __get($key)
-    {
-        return $this->get($key);
-    }
-
-    /**
-     * Dynamically set the value of an attribute.
-     *
-     * @param  string $key
-     * @param  mixed $value
-     * @return void
-     */
-    public function __set($key, $value)
-    {
-        $this->offsetSet($key, $value);
-    }
-
-    /**
-     * Dynamically check if an attribute is set.
-     *
-     * @param  string $key
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        return $this->offsetExists($key);
-    }
-
-    /**
-     * Dynamically unset an attribute.
-     *
-     * @param  string $key
-     * @return void
-     */
-    public function __unset($key)
-    {
-        $this->offsetUnset($key);
-    }
-
-    public function __toString(): string
-    {
-        return $this->toJson();
     }
 }
