@@ -13,5 +13,11 @@ namespace Hyperf\Contract;
 
 interface ConnectionInterface
 {
+    public function getConnection();
+
+    public function reconnect(): bool;
+
+    public function check(): bool;
+
     public function close(): bool;
 }

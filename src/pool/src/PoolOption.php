@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-class PoolOption
+use Hyperf\Contract\PoolOptionInterface;
+
+class PoolOption implements PoolOptionInterface
 {
     /**
      * Min connections of pool.
@@ -20,22 +22,30 @@ class PoolOption
      *
      * @var int
      */
-    private $minConnections = 0;
+    private $minConnections = 1;
 
     /**
      * Max connections of pool.
      *
      * @var int
      */
-    private $maxConnections = 0;
+    private $maxConnections = 10;
 
     /**
      * The timeout of connect the connection.
      * Default value is 10 seconds.
      *
-     * @var int
+     * @var float
      */
-    private $connectTimeout = 10;
+    private $connectTimeout = 10.0;
+
+    /**
+     * The timeout of pop a connection.
+     * Default value is 3 seconds.
+     *
+     * @var float
+     */
+    private $waitTimeout = 3.0;
 
     /**
      * Heartbeat of connection.
@@ -43,7 +53,7 @@ class PoolOption
      * If the value is -1, then means does not need the heartbeat.
      * Default value is -1.
      *
-     * @var int
+     * @var float
      */
     private $heartbeat = -1;
 
@@ -69,25 +79,42 @@ class PoolOption
         return $this;
     }
 
-    public function getConnectTimeout(): int
+    public function getConnectTimeout(): float
     {
         return $this->connectTimeout;
     }
 
-    public function setConnectTimeout(int $connectTimeout): self
+    public function setConnectTimeout(float $connectTimeout): self
     {
         $this->connectTimeout = $connectTimeout;
         return $this;
     }
 
-    public function getHeartbeat(): int
+    public function getHeartbeat(): float
     {
         return $this->heartbeat;
     }
 
-    public function setHeartbeat(int $heartbeat): self
+    public function setHeartbeat(float $heartbeat): self
     {
         $this->heartbeat = $heartbeat;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getWaitTimeout(): float
+    {
+        return $this->waitTimeout;
+    }
+
+    /**
+     * @param float $waitTimeout
+     */
+    public function setWaitTimeout(float $waitTimeout): self
+    {
+        $this->waitTimeout = $waitTimeout;
         return $this;
     }
 }

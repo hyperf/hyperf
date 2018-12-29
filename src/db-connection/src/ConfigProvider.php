@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\DbConnection\Pool\DbPool;
 
 class ConfigProvider
@@ -19,7 +20,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                DbPool::class => DbPool::class
+                DbPool::class => DbPool::class,
+                ConnectionFactory::class => ConnectionFactory::class,
             ],
             'commands' => [
             ],

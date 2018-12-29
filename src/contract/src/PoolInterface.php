@@ -17,5 +17,5 @@ interface PoolInterface
 
     public function release(ConnectionInterface $connection): void;
 
-    public function flush(): ConnectionInterface;
+    public function flush(): void;
 }
