@@ -11,13 +11,23 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Pool;
 
-use Hyperf\Pool\ConnectionInterface;
-use Hyperf\Pool\ConnectionPool;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\DbConnection\Connection;
+use Hyperf\Framework\ApplicationContext;
+use Hyperf\Pool\Pool;
 
-class DbPool extends ConnectionPool
+class DbPool extends Pool
 {
-    protected static function createConnection(): ConnectionInterface
-    {
+    protected $name = 'default';
 
+    protected function createConnection(): ConnectionInterface
+    {
+        $container = ApplicationContext::getContainer();
+        $config = $container->get(ConfigInterface::class);
+
+        $key = sprintf('databases.%s', $this->name);
+
+        return new Connection($container, $config->get($key));
     }
 }

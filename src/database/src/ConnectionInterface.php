@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Database;
 
 use Closure;
+use Generator;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
-use Generator;
 
 interface ConnectionInterface
 {

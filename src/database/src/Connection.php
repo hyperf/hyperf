@@ -16,8 +16,8 @@ use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use Hyperf\Database\Events\QueryExecuted;
-use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -1165,9 +1165,9 @@ class Connection implements ConnectionInterface
             $result = $callback($query, $bindings);
         }
 
-            // If an exception occurs when attempting to run a query, we'll format the error
-            // message to include the bindings with SQL, which will make this exception a
-            // lot more helpful to the developer instead of just the database's errors.
+        // If an exception occurs when attempting to run a query, we'll format the error
+        // message to include the bindings with SQL, which will make this exception a
+        // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
             throw new QueryException(
                 $query,

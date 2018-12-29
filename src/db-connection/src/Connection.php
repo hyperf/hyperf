@@ -11,102 +11,70 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Closure;
-use Generator;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Expression;
-use Hyperf\Pool\ConnectionInterface as PoolConnInterface;
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Pool\Connection as BaseConnection;
+use Hyperf\Pool\Exception\ConnectionException;
+use Psr\Container\ContainerInterface;
 
-class Connection implements ConnectionInterface, PoolConnInterface
+class Connection extends BaseConnection implements ConnectionInterface
 {
-    public function table($table): Builder
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var DbConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @var ConnectionFactory
+     */
+    protected $factory;
+
+    /**
+     * @var array
+     */
+    protected $config;
+
+    public function __construct(ContainerInterface $container, array $config)
     {
-        // TODO: Implement table() method.
+        $this->container = $container;
+        $this->factory = $container->get(ConnectionFactory::class);
+        $this->config = $config;
+
+        $this->reconnect();
     }
 
-    public function raw($value): Expression
+    public function getConnection(): DbConnectionInterface
     {
-        // TODO: Implement raw() method.
+        if ($this->check()) {
+            return $this->connection;
+        }
+
+        if (!$this->reconnect()) {
+            throw new ConnectionException('Connection reconnect failed.');
+        }
+
+        return $this->connection;
     }
 
-    public function selectOne($query, $bindings = [], $useReadPdo = true)
+    public function reconnect(): bool
     {
-        // TODO: Implement selectOne() method.
+        $this->connection = $this->factory->make($this->config);
+        return true;
     }
 
-    public function select($query, $bindings = [], $useReadPdo = true): array
+    public function check(): bool
     {
-        // TODO: Implement select() method.
+        return true;
     }
 
-    public function cursor($query, $bindings = [], $useReadPdo = true): Generator
+    public function close(): bool
     {
-        // TODO: Implement cursor() method.
-    }
-
-    public function insert($query, $bindings = []): bool
-    {
-        // TODO: Implement insert() method.
-    }
-
-    public function update($query, $bindings = []): int
-    {
-        // TODO: Implement update() method.
-    }
-
-    public function delete($query, $bindings = []): int
-    {
-        // TODO: Implement delete() method.
-    }
-
-    public function statement($query, $bindings = []): bool
-    {
-        // TODO: Implement statement() method.
-    }
-
-    public function affectingStatement($query, $bindings = []): int
-    {
-        // TODO: Implement affectingStatement() method.
-    }
-
-    public function unprepared($query): bool
-    {
-        // TODO: Implement unprepared() method.
-    }
-
-    public function prepareBindings(array $bindings): array
-    {
-        // TODO: Implement prepareBindings() method.
-    }
-
-    public function transaction(Closure $callback, $attempts = 1)
-    {
-        // TODO: Implement transaction() method.
-    }
-
-    public function beginTransaction(): void
-    {
-        // TODO: Implement beginTransaction() method.
-    }
-
-    public function commit(): void
-    {
-        // TODO: Implement commit() method.
-    }
-
-    public function rollBack(): void
-    {
-        // TODO: Implement rollBack() method.
-    }
-
-    public function transactionLevel(): int
-    {
-        // TODO: Implement transactionLevel() method.
-    }
-
-    public function pretend(Closure $callback): array
-    {
-        // TODO: Implement pretend() method.
+        return true;
     }
 }
