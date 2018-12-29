@@ -11,11 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcServer\Router;
 
-use Hyperf\HttpServer\Router\DispatcherFactory as HttpDispatcherFactory;
-
-class DispatcherFactory extends HttpDispatcherFactory
+interface RouteCollector
 {
-    protected $routes = [BASE_PATH . '/config/grpc_routes.php'];
-
-    protected $routeCollector = RouteCollector::class;
 }

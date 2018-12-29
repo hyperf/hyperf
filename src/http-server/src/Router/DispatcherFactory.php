@@ -11,24 +11,20 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Router;
 
-use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
-use FastRoute\RouteParser\Std;
 use Psr\Container\ContainerInterface;
 
 class DispatcherFactory
 {
     protected $routes = [BASE_PATH . '/config/routes.php'];
 
+    protected $routeCollector = RouteCollector::class;
+
     public function __invoke(ContainerInterface $container): Dispatcher
     {
-        $parser = new Std();
-        $generator = new DataGenerator();
-        /** @var RouteCollector $routeCollector */
-        $router = new RouteCollector($parser, $generator);
-        Router::init($router);
+        $router = $container->get($this->routeCollector);
 
         foreach ($this->routes as $route) {
             require_once $route;

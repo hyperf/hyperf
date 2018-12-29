@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\RouteCollector;
+use Hyperf\Framework\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Router
@@ -27,15 +29,13 @@ use FastRoute\RouteCollector;
  */
 class Router
 {
-    protected static $router;
+    protected static $defautCollector = RouteCollector::class;
 
     public static function __callStatic($name, $arguments)
     {
-        return static::$router->$name(...$arguments);
-    }
-
-    public static function init(RouteCollector $routeCollector)
-    {
-        static::$router = $routeCollector;
+        /** @var ContainerInterface $container */
+        $container = ApplicationContext::getContainer();
+        $router = $container->get(static::$defautCollector);
+        return $router->$name(...$arguments);
     }
 }

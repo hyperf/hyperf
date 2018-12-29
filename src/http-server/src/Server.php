@@ -19,10 +19,10 @@ use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 use Swoft\Http\Message\Server\Request as Psr7Request;
 use Swoft\Http\Message\Server\Response as Psr7Response;
+use Swoole\Http\Request as SwooleRequest;
+use Swoole\Http\Response as SwooleResponse;
 use Throwable;
 
 class Server

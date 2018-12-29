@@ -13,6 +13,8 @@ namespace Hyperf\GrpcServer;
 
 use Hyperf\GrpcServer\Router\Dispatcher;
 use Hyperf\GrpcServer\Router\DispatcherFactory;
+use Hyperf\GrpcServer\Router\RouteCollector;
+use Hyperf\HttpServer\Router\RouteCollectorFactory;
 
 class ConfigProvider
 {
@@ -22,6 +24,7 @@ class ConfigProvider
             'dependencies' => [
                 Server::class => ServerFactory::class,
                 Dispatcher::class => DispatcherFactory::class,
+                RouteCollector::class => RouteCollectorFactory::class,
             ],
             'scan' => [
                 'paths' => [],
