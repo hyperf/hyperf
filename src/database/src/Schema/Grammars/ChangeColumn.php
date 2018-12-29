@@ -1,14 +1,14 @@
 <?php
 
-namespace Illuminate\Database\Schema\Grammars;
+namespace Hyperf\Database\Schema\Grammars;
 
 use RuntimeException;
 use Doctrine\DBAL\Types\Type;
-use Illuminate\Support\Fluent;
+use Hyperf\Support\Fluent;
 use Doctrine\DBAL\Schema\Table;
-use Illuminate\Database\Connection;
+use Hyperf\Database\Connection;
 use Doctrine\DBAL\Schema\Comparator;
-use Illuminate\Database\Schema\Blueprint;
+use Hyperf\Database\Schema\Blueprint;
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 
 class ChangeColumn

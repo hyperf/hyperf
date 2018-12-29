@@ -4,10 +4,10 @@ namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Utils\Fluent;
 use Doctrine\DBAL\Schema\TableDiff;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Grammar as BaseGrammar;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Grammar as BaseGrammar;
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 
 abstract class Grammar extends BaseGrammar

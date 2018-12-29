@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Concerns;
 
-use Illuminate\Container\Container;
+use Psr\Container\ContainerInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 

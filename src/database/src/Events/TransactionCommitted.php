@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace Hyperf\Database\Events;
 
 class TransactionCommitted extends ConnectionEvent
 {

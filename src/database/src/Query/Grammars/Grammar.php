@@ -6,7 +6,7 @@ use RuntimeException;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Database\Query\Builder;
-use Illuminate\Database\Query\JoinClause;
+use Hyperf\Database\Query\JoinClause;
 use Hyperf\Database\Grammar as BaseGrammar;
 
 class Grammar extends BaseGrammar

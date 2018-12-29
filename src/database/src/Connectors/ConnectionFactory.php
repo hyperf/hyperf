@@ -8,9 +8,9 @@ use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 use Hyperf\Database\Connection;
 use Hyperf\Database\MySqlConnection;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Database\PostgresConnection;
-use Illuminate\Database\SqlServerConnection;
+use Hyperf\Database\SQLiteConnection;
+use Hyperf\Database\PostgresConnection;
+use Hyperf\Database\SqlServerConnection;
 use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
