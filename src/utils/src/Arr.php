@@ -168,7 +168,7 @@ class Arr
     /**
      * Flatten a multi-dimensional array into a single level.
      */
-    public static function flatten(array $array, int $depth = INF): array
+    public static function flatten(array $array, $depth = INF): array
     {
         $result = [];
         foreach ($array as $item) {
