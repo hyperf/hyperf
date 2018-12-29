@@ -1,10 +1,19 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Query\Grammars;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Database\Query\Builder;
 
 class SQLiteGrammar extends Grammar
 {
@@ -57,109 +66,6 @@ class SQLiteGrammar extends Grammar
         }
 
         return $sql;
-    }
-
-    /**
-     * Compile a single union statement.
-     *
-     * @param  array  $union
-     * @return string
-     */
-    protected function compileUnion(array $union)
-    {
-        $conjunction = $union['all'] ? ' union all ' : ' union ';
-
-        return $conjunction.'select * from ('.$union['query']->toSql().')';
-    }
-
-    /**
-     * Compile a "where date" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereDate(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%Y-%m-%d', $query, $where);
-    }
-
-    /**
-     * Compile a "where day" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereDay(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%d', $query, $where);
-    }
-
-    /**
-     * Compile a "where month" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereMonth(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%m', $query, $where);
-    }
-
-    /**
-     * Compile a "where year" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereYear(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%Y', $query, $where);
-    }
-
-    /**
-     * Compile a "where time" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereTime(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%H:%M:%S', $query, $where);
-    }
-
-    /**
-     * Compile a date based where clause.
-     *
-     * @param  string  $type
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function dateBasedWhere($type, Builder $query, $where)
-    {
-        $value = $this->parameter($where['value']);
-
-        return "strftime('{$type}', {$this->wrap($where['column'])}) {$where['operator']} cast({$value} as text)";
-    }
-
-    /**
-     * Compile a "JSON length" statement into SQL.
-     *
-     * @param  string  $column
-     * @param  string  $operator
-     * @param  string  $value
-     * @return string
-     */
-    protected function compileJsonLength($column, $operator, $value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($column);
-
-        return 'json_array_length('.$field.$path.') '.$operator.' '.$value;
     }
 
     /**
@@ -264,6 +170,109 @@ class SQLiteGrammar extends Grammar
             'delete from sqlite_sequence where name = ?' => [$query->from],
             'delete from '.$this->wrapTable($query->from) => [],
         ];
+    }
+
+    /**
+     * Compile a single union statement.
+     *
+     * @param  array  $union
+     * @return string
+     */
+    protected function compileUnion(array $union)
+    {
+        $conjunction = $union['all'] ? ' union all ' : ' union ';
+
+        return $conjunction.'select * from ('.$union['query']->toSql().')';
+    }
+
+    /**
+     * Compile a "where date" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereDate(Builder $query, $where)
+    {
+        return $this->dateBasedWhere('%Y-%m-%d', $query, $where);
+    }
+
+    /**
+     * Compile a "where day" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereDay(Builder $query, $where)
+    {
+        return $this->dateBasedWhere('%d', $query, $where);
+    }
+
+    /**
+     * Compile a "where month" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereMonth(Builder $query, $where)
+    {
+        return $this->dateBasedWhere('%m', $query, $where);
+    }
+
+    /**
+     * Compile a "where year" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereYear(Builder $query, $where)
+    {
+        return $this->dateBasedWhere('%Y', $query, $where);
+    }
+
+    /**
+     * Compile a "where time" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereTime(Builder $query, $where)
+    {
+        return $this->dateBasedWhere('%H:%M:%S', $query, $where);
+    }
+
+    /**
+     * Compile a date based where clause.
+     *
+     * @param  string  $type
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function dateBasedWhere($type, Builder $query, $where)
+    {
+        $value = $this->parameter($where['value']);
+
+        return "strftime('{$type}', {$this->wrap($where['column'])}) {$where['operator']} cast({$value} as text)";
+    }
+
+    /**
+     * Compile a "JSON length" statement into SQL.
+     *
+     * @param  string  $column
+     * @param  string  $operator
+     * @param  string  $value
+     * @return string
+     */
+    protected function compileJsonLength($column, $operator, $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_array_length('.$field.$path.') '.$operator.' '.$value;
     }
 
     /**

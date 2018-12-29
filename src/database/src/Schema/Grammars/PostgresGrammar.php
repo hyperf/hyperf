@@ -1,9 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Schema\Grammars;
 
-use Illuminate\Support\Fluent;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Fluent;
 
 class PostgresGrammar extends Grammar
 {
@@ -64,7 +73,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('%s table %s (%s)',
+        return sprintf(
+            '%s table %s (%s)',
             $blueprint->temporary ? 'create temporary' : 'create',
             $this->wrapTable($blueprint),
             implode(', ', $this->getColumns($blueprint))
@@ -80,7 +90,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s %s',
+        return sprintf(
+            'alter table %s %s',
             $this->wrapTable($blueprint),
             implode(', ', $this->prefixArray('add column', $this->getColumns($blueprint)))
         );
@@ -109,7 +120,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s add constraint %s unique (%s)',
+        return sprintf(
+            'alter table %s add constraint %s unique (%s)',
             $this->wrapTable($blueprint),
             $this->wrap($command->index),
             $this->columnize($command->columns)
@@ -125,7 +137,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create index %s on %s%s (%s)',
+        return sprintf(
+            'create index %s on %s%s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $command->algorithm ? ' using '.$command->algorithm : '',
@@ -344,7 +357,8 @@ class PostgresGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter index %s rename to %s',
+        return sprintf(
+            'alter index %s rename to %s',
             $this->wrap($command->from),
             $this->wrap($command->to)
         );
@@ -379,11 +393,23 @@ class PostgresGrammar extends Grammar
      */
     public function compileComment(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('comment on column %s.%s is %s',
+        return sprintf(
+            'comment on column %s.%s is %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->column->name),
             "'".str_replace("'", "''", $command->value)."'"
         );
+    }
+
+    /**
+     * Create the column definition for a spatial MultiLineString type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiLineString(Fluent $column)
+    {
+        return $this->formatPostGisType('multilinestring');
     }
 
     /**
@@ -826,17 +852,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial MultiLineString type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiLineString(Fluent $column)
-    {
-        return $this->formatPostGisType('multilinestring');
-    }
-
-    /**
      * Create the column definition for a spatial MultiPolygon type.
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -845,17 +860,6 @@ class PostgresGrammar extends Grammar
     protected function typeMultiPolygon(Fluent $column)
     {
         return $this->formatPostGisType('multipolygon');
-    }
-
-    /**
-     * Format the column definition for a PostGIS spatial type.
-     *
-     * @param  string  $type
-     * @return string
-     */
-    private function formatPostGisType(string $type)
-    {
-        return "geography($type, 4326)";
     }
 
     /**
@@ -896,5 +900,16 @@ class PostgresGrammar extends Grammar
         if ((in_array($column->type, $this->serials) || ($column->generatedAs !== null)) && $column->autoIncrement) {
             return ' primary key';
         }
+    }
+
+    /**
+     * Format the column definition for a PostGIS spatial type.
+     *
+     * @param  string  $type
+     * @return string
+     */
+    private function formatPostGisType(string $type)
+    {
+        return "geography($type, 4326)";
     }
 }

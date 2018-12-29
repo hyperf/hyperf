@@ -1,9 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Schema\Grammars;
 
-use Illuminate\Support\Fluent;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Fluent;
 
 class SqlServerGrammar extends Grammar
 {
@@ -74,7 +83,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s add %s',
+        return sprintf(
+            'alter table %s add %s',
             $this->wrapTable($blueprint),
             implode(', ', $this->getColumns($blueprint))
         );
@@ -89,7 +99,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s add constraint %s primary key (%s)',
+        return sprintf(
+            'alter table %s add constraint %s primary key (%s)',
             $this->wrapTable($blueprint),
             $this->wrap($command->index),
             $this->columnize($command->columns)
@@ -105,7 +116,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create unique index %s on %s (%s)',
+        return sprintf(
+            'create unique index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -121,7 +133,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create index %s on %s (%s)',
+        return sprintf(
+            'create index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -137,7 +150,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create spatial index %s on %s (%s)',
+        return sprintf(
+            'create spatial index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -165,7 +179,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('if exists (select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = %s) drop table %s',
+        return sprintf(
+            'if exists (select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = %s) drop table %s',
             "'".str_replace("'", "''", $this->getTablePrefix().$blueprint->getTable())."'",
             $this->wrapTable($blueprint)
         );
@@ -286,7 +301,8 @@ class SqlServerGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf("sp_rename N'%s', %s, N'INDEX'",
+        return sprintf(
+            "sp_rename N'%s', %s, N'INDEX'",
             $this->wrap($blueprint->getTable().'.'.$command->from),
             $this->wrap($command->to)
         );
@@ -310,6 +326,109 @@ class SqlServerGrammar extends Grammar
     public function compileDisableForeignKeyConstraints()
     {
         return 'EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all";';
+    }
+
+    /**
+     * Create the column definition for a spatial Geometry type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeGeometry(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial Point type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typePoint(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial LineString type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeLineString(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial Polygon type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typePolygon(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial GeometryCollection type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeGeometryCollection(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPoint type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiPoint(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiLineString type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiLineString(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPolygon type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiPolygon(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Wrap a table in keyword identifiers.
+     *
+     * @param  \Illuminate\Database\Query\Expression|string  $table
+     * @return string
+     */
+    public function wrapTable($table)
+    {
+        if ($table instanceof Blueprint && $table->temporary) {
+            $this->setTablePrefix('#');
+        }
+
+        return parent::wrapTable($table);
     }
 
     /**
@@ -642,94 +761,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial Geometry type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeGeometry(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial Point type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typePoint(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial LineString type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeLineString(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial Polygon type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typePolygon(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial GeometryCollection type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeGeometryCollection(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPoint type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiPoint(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiLineString type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiLineString(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPolygon type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiPolygon(Fluent $column)
-    {
-        return 'geography';
-    }
-
-    /**
      * Get the SQL for a collation column modifier.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
@@ -781,20 +812,5 @@ class SqlServerGrammar extends Grammar
         if (in_array($column->type, $this->serials) && $column->autoIncrement) {
             return ' identity primary key';
         }
-    }
-
-    /**
-     * Wrap a table in keyword identifiers.
-     *
-     * @param  \Illuminate\Database\Query\Expression|string  $table
-     * @return string
-     */
-    public function wrapTable($table)
-    {
-        if ($table instanceof Blueprint && $table->temporary) {
-            $this->setTablePrefix('#');
-        }
-
-        return parent::wrapTable($table);
     }
 }

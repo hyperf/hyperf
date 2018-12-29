@@ -15,16 +15,17 @@ use Closure;
 use DateTimeInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
+
 use InvalidArgumentException;
 use RuntimeException;
 
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Query\Processors\Processor;
 // use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class Builder
@@ -214,8 +215,7 @@ class Builder
         ConnectionInterface $connection,
         Grammar $grammar = null,
         Processor $processor = null
-    )
-    {
+    ) {
         $this->connection = $connection;
         $this->grammar = $grammar ?: $connection->getQueryGrammar();
         $this->processor = $processor ?: $connection->getPostProcessor();

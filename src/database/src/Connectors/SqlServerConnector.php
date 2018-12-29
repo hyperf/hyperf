@@ -1,9 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Connectors;
 
-use PDO;
 use Hyperf\Utils\Arr;
+use PDO;
 
 class SqlServerConnector extends Connector implements ConnectorInterface
 {
@@ -49,9 +58,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
 
         if (in_array('sqlsrv', $this->getAvailableDrivers())) {
             return $this->getSqlSrvDsn($config);
-        } else {
-            return $this->getDblibDsn($config);
         }
+        return $this->getDblibDsn($config);
     }
 
     /**
@@ -153,8 +161,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     protected function buildConnectString($driver, array $arguments)
     {
         return $driver . ':' . implode(';', array_map(function ($key) use ($arguments) {
-                return sprintf('%s=%s', $key, $arguments[$key]);
-            }, array_keys($arguments)));
+            return sprintf('%s=%s', $key, $arguments[$key]);
+        }, array_keys($arguments)));
     }
 
     /**
@@ -168,9 +176,8 @@ class SqlServerConnector extends Connector implements ConnectorInterface
     {
         if (isset($config['port']) && !empty($config['port'])) {
             return $config['host'] . $separator . $config['port'];
-        } else {
-            return $config['host'];
         }
+        return $config['host'];
     }
 
     /**

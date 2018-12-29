@@ -1,13 +1,22 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Schema\Grammars;
 
-use RuntimeException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Fluent;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Fluent;
+use RuntimeException;
 
 class SQLiteGrammar extends Grammar
 {
@@ -55,75 +64,14 @@ class SQLiteGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('%s table %s (%s%s%s)',
+        return sprintf(
+            '%s table %s (%s%s%s)',
             $blueprint->temporary ? 'create temporary' : 'create',
             $this->wrapTable($blueprint),
             implode(', ', $this->getColumns($blueprint)),
             (string) $this->addForeignKeys($blueprint),
             (string) $this->addPrimaryKeys($blueprint)
         );
-    }
-
-    /**
-     * Get the foreign key syntax for a table creation statement.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @return string|null
-     */
-    protected function addForeignKeys(Blueprint $blueprint)
-    {
-        $foreigns = $this->getCommandsByName($blueprint, 'foreign');
-
-        return collect($foreigns)->reduce(function ($sql, $foreign) {
-            // Once we have all the foreign key commands for the table creation statement
-            // we'll loop through each of them and add them to the create table SQL we
-            // are building, since SQLite needs foreign keys on the tables creation.
-            $sql .= $this->getForeignKey($foreign);
-
-            if (! is_null($foreign->onDelete)) {
-                $sql .= " on delete {$foreign->onDelete}";
-            }
-
-            // If this foreign key specifies the action to be taken on update we will add
-            // that to the statement here. We'll append it to this SQL and then return
-            // the SQL so we can keep adding any other foreign constraints onto this.
-            if (! is_null($foreign->onUpdate)) {
-                $sql .= " on update {$foreign->onUpdate}";
-            }
-
-            return $sql;
-        }, '');
-    }
-
-    /**
-     * Get the SQL for the foreign key.
-     *
-     * @param  \Illuminate\Support\Fluent  $foreign
-     * @return string
-     */
-    protected function getForeignKey($foreign)
-    {
-        // We need to columnize the columns that the foreign key is being defined for
-        // so that it is a properly formatted list. Once we have done this, we can
-        // return the foreign key SQL declaration to the calling method for use.
-        return sprintf(', foreign key(%s) references %s(%s)',
-            $this->columnize($foreign->columns),
-            $this->wrapTable($foreign->on),
-            $this->columnize((array) $foreign->references)
-        );
-    }
-
-    /**
-     * Get the primary key syntax for a table creation statement.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @return string|null
-     */
-    protected function addPrimaryKeys(Blueprint $blueprint)
-    {
-        if (! is_null($primary = $this->getCommandByName($blueprint, 'primary'))) {
-            return ", primary key ({$this->columnize($primary->columns)})";
-        }
     }
 
     /**
@@ -151,7 +99,8 @@ class SQLiteGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create unique index %s on %s (%s)',
+        return sprintf(
+            'create unique index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -167,7 +116,8 @@ class SQLiteGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('create index %s on %s (%s)',
+        return sprintf(
+            'create index %s on %s (%s)',
             $this->wrap($command->index),
             $this->wrapTable($blueprint),
             $this->columnize($command->columns)
@@ -264,12 +214,14 @@ class SQLiteGrammar extends Grammar
     public function compileDropColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
         $tableDiff = $this->getDoctrineTableDiff(
-            $blueprint, $schema = $connection->getDoctrineSchemaManager()
+            $blueprint,
+            $schema = $connection->getDoctrineSchemaManager()
         );
 
         foreach ($command->columns as $name) {
             $tableDiff->removedColumns[$name] = $connection->getDoctrineColumn(
-                $this->getTablePrefix().$blueprint->getTable(), $name
+                $this->getTablePrefix().$blueprint->getTable(),
+                $name
             );
         }
 
@@ -352,8 +304,12 @@ class SQLiteGrammar extends Grammar
         }
 
         $newIndex = new Index(
-            $command->to, $index->getColumns(), $index->isUnique(),
-            $index->isPrimary(), $index->getFlags(), $index->getOptions()
+            $command->to,
+            $index->getColumns(),
+            $index->isUnique(),
+            $index->isPrimary(),
+            $index->getFlags(),
+            $index->getOptions()
         );
 
         $platform = $schemaManager->getDatabasePlatform();
@@ -402,6 +358,157 @@ class SQLiteGrammar extends Grammar
     public function compileDisableWriteableSchema()
     {
         return 'PRAGMA writable_schema = 0;';
+    }
+
+    /**
+     * Create the column definition for a spatial Geometry type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeGeometry(Fluent $column)
+    {
+        return 'geometry';
+    }
+
+    /**
+     * Create the column definition for a spatial Point type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typePoint(Fluent $column)
+    {
+        return 'point';
+    }
+
+    /**
+     * Create the column definition for a spatial LineString type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeLineString(Fluent $column)
+    {
+        return 'linestring';
+    }
+
+    /**
+     * Create the column definition for a spatial Polygon type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typePolygon(Fluent $column)
+    {
+        return 'polygon';
+    }
+
+    /**
+     * Create the column definition for a spatial GeometryCollection type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeGeometryCollection(Fluent $column)
+    {
+        return 'geometrycollection';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPoint type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiPoint(Fluent $column)
+    {
+        return 'multipoint';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiLineString type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiLineString(Fluent $column)
+    {
+        return 'multilinestring';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPolygon type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeMultiPolygon(Fluent $column)
+    {
+        return 'multipolygon';
+    }
+
+    /**
+     * Get the foreign key syntax for a table creation statement.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @return string|null
+     */
+    protected function addForeignKeys(Blueprint $blueprint)
+    {
+        $foreigns = $this->getCommandsByName($blueprint, 'foreign');
+
+        return collect($foreigns)->reduce(function ($sql, $foreign) {
+            // Once we have all the foreign key commands for the table creation statement
+            // we'll loop through each of them and add them to the create table SQL we
+            // are building, since SQLite needs foreign keys on the tables creation.
+            $sql .= $this->getForeignKey($foreign);
+
+            if (! is_null($foreign->onDelete)) {
+                $sql .= " on delete {$foreign->onDelete}";
+            }
+
+            // If this foreign key specifies the action to be taken on update we will add
+            // that to the statement here. We'll append it to this SQL and then return
+            // the SQL so we can keep adding any other foreign constraints onto this.
+            if (! is_null($foreign->onUpdate)) {
+                $sql .= " on update {$foreign->onUpdate}";
+            }
+
+            return $sql;
+        }, '');
+    }
+
+    /**
+     * Get the SQL for the foreign key.
+     *
+     * @param  \Illuminate\Support\Fluent  $foreign
+     * @return string
+     */
+    protected function getForeignKey($foreign)
+    {
+        // We need to columnize the columns that the foreign key is being defined for
+        // so that it is a properly formatted list. Once we have done this, we can
+        // return the foreign key SQL declaration to the calling method for use.
+        return sprintf(
+            ', foreign key(%s) references %s(%s)',
+            $this->columnize($foreign->columns),
+            $this->wrapTable($foreign->on),
+            $this->columnize((array) $foreign->references)
+        );
+    }
+
+    /**
+     * Get the primary key syntax for a table creation statement.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @return string|null
+     */
+    protected function addPrimaryKeys(Blueprint $blueprint)
+    {
+        if (! is_null($primary = $this->getCommandByName($blueprint, 'primary'))) {
+            return ", primary key ({$this->columnize($primary->columns)})";
+        }
     }
 
     /**
@@ -728,94 +835,6 @@ class SQLiteGrammar extends Grammar
     protected function typeMacAddress(Fluent $column)
     {
         return 'varchar';
-    }
-
-    /**
-     * Create the column definition for a spatial Geometry type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeGeometry(Fluent $column)
-    {
-        return 'geometry';
-    }
-
-    /**
-     * Create the column definition for a spatial Point type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typePoint(Fluent $column)
-    {
-        return 'point';
-    }
-
-    /**
-     * Create the column definition for a spatial LineString type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeLineString(Fluent $column)
-    {
-        return 'linestring';
-    }
-
-    /**
-     * Create the column definition for a spatial Polygon type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typePolygon(Fluent $column)
-    {
-        return 'polygon';
-    }
-
-    /**
-     * Create the column definition for a spatial GeometryCollection type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeGeometryCollection(Fluent $column)
-    {
-        return 'geometrycollection';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPoint type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiPoint(Fluent $column)
-    {
-        return 'multipoint';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiLineString type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiLineString(Fluent $column)
-    {
-        return 'multilinestring';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPolygon type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    public function typeMultiPolygon(Fluent $column)
-    {
-        return 'multipolygon';
     }
 
     /**

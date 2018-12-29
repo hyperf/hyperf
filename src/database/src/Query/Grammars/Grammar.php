@@ -1,13 +1,22 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Query\Grammars;
 
-use RuntimeException;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JoinClause;
-use Hyperf\Database\Grammar as BaseGrammar;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use RuntimeException;
 
 class Grammar extends BaseGrammar
 {
@@ -62,13 +71,264 @@ class Grammar extends BaseGrammar
         // To compile the query, we'll spin through each component of the query and
         // see if that component exists. If it does we'll just call the compiler
         // function for the component which is responsible for making the SQL.
-        $sql = trim($this->concatenate(
-            $this->compileComponents($query))
+        $sql = trim(
+            $this->concatenate(
+            $this->compileComponents($query)
+        )
         );
 
         $query->columns = $original;
 
         return $sql;
+    }
+
+    /**
+     * Prepare the binding for a "JSON contains" statement.
+     *
+     * @param  mixed $binding
+     * @return string
+     */
+    public function prepareBindingForJsonContains($binding)
+    {
+        return json_encode($binding);
+    }
+
+    /**
+     * Compile the random statement into SQL.
+     *
+     * @param  string $seed
+     * @return string
+     */
+    public function compileRandom($seed)
+    {
+        return 'RANDOM()';
+    }
+
+    /**
+     * Compile an exists statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @return string
+     */
+    public function compileExists(Builder $query)
+    {
+        $select = $this->compileSelect($query);
+
+        return "select exists({$select}) as {$this->wrap('exists')}";
+    }
+
+    /**
+     * Compile an insert statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  array $values
+     * @return string
+     */
+    public function compileInsert(Builder $query, array $values)
+    {
+        // Essentially we will force every insert to be treated as a batch insert which
+        // simply makes creating the SQL easier for us since we can utilize the same
+        // basic routine regardless of an amount of records given to us to insert.
+        $table = $this->wrapTable($query->from);
+
+        if (!is_array(reset($values))) {
+            $values = [$values];
+        }
+
+        $columns = $this->columnize(array_keys(reset($values)));
+
+        // We need to build a list of parameter place-holders of values that are bound
+        // to the query. Each insert should have the exact same amount of parameter
+        // bindings so we will loop through the record and parameterize them all.
+        $parameters = collect($values)->map(function ($record) {
+            return '(' . $this->parameterize($record) . ')';
+        })->implode(', ');
+
+        return "insert into $table ($columns) values $parameters";
+    }
+
+    /**
+     * Compile an insert and get ID statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  array $values
+     * @param  string $sequence
+     * @return string
+     */
+    public function compileInsertGetId(Builder $query, $values, $sequence)
+    {
+        return $this->compileInsert($query, $values);
+    }
+
+    /**
+     * Compile an insert statement using a subquery into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  array $columns
+     * @param  string $sql
+     * @return string
+     */
+    public function compileInsertUsing(Builder $query, array $columns, string $sql)
+    {
+        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) $sql";
+    }
+
+    /**
+     * Compile an update statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  array $values
+     * @return string
+     */
+    public function compileUpdate(Builder $query, $values)
+    {
+        $table = $this->wrapTable($query->from);
+
+        // Each one of the columns in the update statements needs to be wrapped in the
+        // keyword identifiers, also a place-holder needs to be created for each of
+        // the values in the list of bindings so we can make the sets statements.
+        $columns = collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+
+        // If the query has any "join" clauses, we will setup the joins on the builder
+        // and compile them so we can attach them to this update, as update queries
+        // can get join statements to attach to other tables when they're needed.
+        $joins = '';
+
+        if (isset($query->joins)) {
+            $joins = ' ' . $this->compileJoins($query, $query->joins);
+        }
+
+        // Of course, update queries may also be constrained by where clauses so we'll
+        // need to compile the where clauses and attach it to the query so only the
+        // intended records are updated by the SQL statements we generate to run.
+        $wheres = $this->compileWheres($query);
+
+        return trim("update {$table}{$joins} set $columns $wheres");
+    }
+
+    /**
+     * Prepare the bindings for an update statement.
+     *
+     * @param  array $bindings
+     * @param  array $values
+     * @return array
+     */
+    public function prepareBindingsForUpdate(array $bindings, array $values)
+    {
+        $cleanBindings = Arr::except($bindings, ['join', 'select']);
+
+        return array_values(
+            array_merge($bindings['join'], $values, Arr::flatten($cleanBindings))
+        );
+    }
+
+    /**
+     * Compile a delete statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @return string
+     */
+    public function compileDelete(Builder $query)
+    {
+        $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
+
+        return trim("delete from {$this->wrapTable($query->from)} $wheres");
+    }
+
+    /**
+     * Prepare the bindings for a delete statement.
+     *
+     * @param  array $bindings
+     * @return array
+     */
+    public function prepareBindingsForDelete(array $bindings)
+    {
+        return Arr::flatten($bindings);
+    }
+
+    /**
+     * Compile a truncate table statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @return array
+     */
+    public function compileTruncate(Builder $query)
+    {
+        return ['truncate ' . $this->wrapTable($query->from) => []];
+    }
+
+    /**
+     * Determine if the grammar supports savepoints.
+     *
+     * @return bool
+     */
+    public function supportsSavepoints()
+    {
+        return true;
+    }
+
+    /**
+     * Compile the SQL statement to define a savepoint.
+     *
+     * @param  string $name
+     * @return string
+     */
+    public function compileSavepoint($name)
+    {
+        return 'SAVEPOINT ' . $name;
+    }
+
+    /**
+     * Compile the SQL statement to execute a savepoint rollback.
+     *
+     * @param  string $name
+     * @return string
+     */
+    public function compileSavepointRollBack($name)
+    {
+        return 'ROLLBACK TO SAVEPOINT ' . $name;
+    }
+
+    /**
+     * Wrap a value in keyword identifiers.
+     *
+     * @param  \Illuminate\Database\Query\Expression|string $value
+     * @param  bool $prefixAlias
+     * @return string
+     */
+    public function wrap($value, $prefixAlias = false)
+    {
+        if ($this->isExpression($value)) {
+            return $this->getValue($value);
+        }
+
+        // If the value being wrapped has a column alias we will need to separate out
+        // the pieces so we can wrap each of the segments of the expression on its
+        // own, and then join these both back together using the "as" connector.
+        if (stripos($value, ' as ') !== false) {
+            return $this->wrapAliasedValue($value, $prefixAlias);
+        }
+
+        // If the given value is a JSON selector we will wrap it differently than a
+        // traditional value. We will need to split this path and wrap each part
+        // wrapped, etc. Otherwise, we will simply wrap the value as a string.
+        if ($this->isJsonSelector($value)) {
+            return $this->wrapJsonSelector($value);
+        }
+
+        return $this->wrapSegments(explode('.', $value));
+    }
+
+    /**
+     * Get the grammar specific operators.
+     *
+     * @return array
+     */
+    public function getOperators()
+    {
+        return $this->operators;
     }
 
     /**
@@ -551,7 +811,8 @@ class Grammar extends BaseGrammar
         $not = $where['not'] ? 'not ' : '';
 
         return $not . $this->compileJsonContains(
-                $where['column'], $this->parameter($where['value'])
+                $where['column'],
+            $this->parameter($where['value'])
             );
     }
 
@@ -570,17 +831,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Prepare the binding for a "JSON contains" statement.
-     *
-     * @param  mixed $binding
-     * @return string
-     */
-    public function prepareBindingForJsonContains($binding)
-    {
-        return json_encode($binding);
-    }
-
-    /**
      * Compile a "where JSON length" clause.
      *
      * @param  \Illuminate\Database\Query\Builder $query
@@ -590,7 +840,9 @@ class Grammar extends BaseGrammar
     protected function whereJsonLength(Builder $query, $where)
     {
         return $this->compileJsonLength(
-            $where['column'], $where['operator'], $this->parameter($where['value'])
+            $where['column'],
+            $where['operator'],
+            $this->parameter($where['value'])
         );
     }
 
@@ -722,17 +974,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile the random statement into SQL.
-     *
-     * @param  string $seed
-     * @return string
-     */
-    public function compileRandom($seed)
-    {
-        return 'RANDOM()';
-    }
-
-    /**
      * Compile the "limit" portions of the query.
      *
      * @param  \Illuminate\Database\Query\Builder $query
@@ -814,161 +1055,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile an exists statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @return string
-     */
-    public function compileExists(Builder $query)
-    {
-        $select = $this->compileSelect($query);
-
-        return "select exists({$select}) as {$this->wrap('exists')}";
-    }
-
-    /**
-     * Compile an insert statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @param  array $values
-     * @return string
-     */
-    public function compileInsert(Builder $query, array $values)
-    {
-        // Essentially we will force every insert to be treated as a batch insert which
-        // simply makes creating the SQL easier for us since we can utilize the same
-        // basic routine regardless of an amount of records given to us to insert.
-        $table = $this->wrapTable($query->from);
-
-        if (!is_array(reset($values))) {
-            $values = [$values];
-        }
-
-        $columns = $this->columnize(array_keys(reset($values)));
-
-        // We need to build a list of parameter place-holders of values that are bound
-        // to the query. Each insert should have the exact same amount of parameter
-        // bindings so we will loop through the record and parameterize them all.
-        $parameters = collect($values)->map(function ($record) {
-            return '(' . $this->parameterize($record) . ')';
-        })->implode(', ');
-
-        return "insert into $table ($columns) values $parameters";
-    }
-
-    /**
-     * Compile an insert and get ID statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @param  array $values
-     * @param  string $sequence
-     * @return string
-     */
-    public function compileInsertGetId(Builder $query, $values, $sequence)
-    {
-        return $this->compileInsert($query, $values);
-    }
-
-    /**
-     * Compile an insert statement using a subquery into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @param  array $columns
-     * @param  string $sql
-     * @return string
-     */
-    public function compileInsertUsing(Builder $query, array $columns, string $sql)
-    {
-        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) $sql";
-    }
-
-    /**
-     * Compile an update statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @param  array $values
-     * @return string
-     */
-    public function compileUpdate(Builder $query, $values)
-    {
-        $table = $this->wrapTable($query->from);
-
-        // Each one of the columns in the update statements needs to be wrapped in the
-        // keyword identifiers, also a place-holder needs to be created for each of
-        // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
-
-        // If the query has any "join" clauses, we will setup the joins on the builder
-        // and compile them so we can attach them to this update, as update queries
-        // can get join statements to attach to other tables when they're needed.
-        $joins = '';
-
-        if (isset($query->joins)) {
-            $joins = ' ' . $this->compileJoins($query, $query->joins);
-        }
-
-        // Of course, update queries may also be constrained by where clauses so we'll
-        // need to compile the where clauses and attach it to the query so only the
-        // intended records are updated by the SQL statements we generate to run.
-        $wheres = $this->compileWheres($query);
-
-        return trim("update {$table}{$joins} set $columns $wheres");
-    }
-
-    /**
-     * Prepare the bindings for an update statement.
-     *
-     * @param  array $bindings
-     * @param  array $values
-     * @return array
-     */
-    public function prepareBindingsForUpdate(array $bindings, array $values)
-    {
-        $cleanBindings = Arr::except($bindings, ['join', 'select']);
-
-        return array_values(
-            array_merge($bindings['join'], $values, Arr::flatten($cleanBindings))
-        );
-    }
-
-    /**
-     * Compile a delete statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @return string
-     */
-    public function compileDelete(Builder $query)
-    {
-        $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
-
-        return trim("delete from {$this->wrapTable($query->from)} $wheres");
-    }
-
-    /**
-     * Prepare the bindings for a delete statement.
-     *
-     * @param  array $bindings
-     * @return array
-     */
-    public function prepareBindingsForDelete(array $bindings)
-    {
-        return Arr::flatten($bindings);
-    }
-
-    /**
-     * Compile a truncate table statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @return array
-     */
-    public function compileTruncate(Builder $query)
-    {
-        return ['truncate ' . $this->wrapTable($query->from) => []];
-    }
-
-    /**
      * Compile the lock into SQL.
      *
      * @param  \Illuminate\Database\Query\Builder $query
@@ -978,68 +1064,6 @@ class Grammar extends BaseGrammar
     protected function compileLock(Builder $query, $value)
     {
         return is_string($value) ? $value : '';
-    }
-
-    /**
-     * Determine if the grammar supports savepoints.
-     *
-     * @return bool
-     */
-    public function supportsSavepoints()
-    {
-        return true;
-    }
-
-    /**
-     * Compile the SQL statement to define a savepoint.
-     *
-     * @param  string $name
-     * @return string
-     */
-    public function compileSavepoint($name)
-    {
-        return 'SAVEPOINT ' . $name;
-    }
-
-    /**
-     * Compile the SQL statement to execute a savepoint rollback.
-     *
-     * @param  string $name
-     * @return string
-     */
-    public function compileSavepointRollBack($name)
-    {
-        return 'ROLLBACK TO SAVEPOINT ' . $name;
-    }
-
-    /**
-     * Wrap a value in keyword identifiers.
-     *
-     * @param  \Illuminate\Database\Query\Expression|string $value
-     * @param  bool $prefixAlias
-     * @return string
-     */
-    public function wrap($value, $prefixAlias = false)
-    {
-        if ($this->isExpression($value)) {
-            return $this->getValue($value);
-        }
-
-        // If the value being wrapped has a column alias we will need to separate out
-        // the pieces so we can wrap each of the segments of the expression on its
-        // own, and then join these both back together using the "as" connector.
-        if (stripos($value, ' as ') !== false) {
-            return $this->wrapAliasedValue($value, $prefixAlias);
-        }
-
-        // If the given value is a JSON selector we will wrap it differently than a
-        // traditional value. We will need to split this path and wrap each part
-        // wrapped, etc. Otherwise, we will simply wrap the value as a string.
-        if ($this->isJsonSelector($value)) {
-            return $this->wrapJsonSelector($value);
-        }
-
-        return $this->wrapSegments(explode('.', $value));
     }
 
     /**
@@ -1115,15 +1139,5 @@ class Grammar extends BaseGrammar
     protected function removeLeadingBoolean($value)
     {
         return preg_replace('/and |or /i', '', $value, 1);
-    }
-
-    /**
-     * Get the grammar specific operators.
-     *
-     * @return array
-     */
-    public function getOperators()
-    {
-        return $this->operators;
     }
 }

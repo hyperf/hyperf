@@ -1,12 +1,21 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Connectors;
 
-use PDO;
-use Exception;
-use Throwable;
 use Doctrine\DBAL\Driver\PDOConnection;
+use Exception;
 use Hyperf\Database\DetectsLostConnections;
+use PDO;
+use Throwable;
 
 class Connector
 {
@@ -43,13 +52,54 @@ class Connector
 
         try {
             return $this->createPdoConnection(
-                $dsn, $username, $password, $options
+                $dsn,
+                $username,
+                $password,
+                $options
             );
         } catch (Exception $e) {
             return $this->tryAgainIfCausedByLostConnection(
-                $e, $dsn, $username, $password, $options
+                $e,
+                $dsn,
+                $username,
+                $password,
+                $options
             );
         }
+    }
+
+    /**
+     * Get the PDO options based on the configuration.
+     *
+     * @param  array $config
+     * @return array
+     */
+    public function getOptions(array $config)
+    {
+        $options = $config['options'] ?? [];
+
+        return array_diff_key($this->options, $options) + $options;
+    }
+
+    /**
+     * Get the default PDO connection options.
+     *
+     * @return array
+     */
+    public function getDefaultOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set the default PDO connection options.
+     *
+     * @param  array $options
+     * @return void
+     */
+    public function setDefaultOptions(array $options)
+    {
+        $this->options = $options;
     }
 
     /**
@@ -101,39 +151,5 @@ class Connector
         }
 
         throw $e;
-    }
-
-    /**
-     * Get the PDO options based on the configuration.
-     *
-     * @param  array $config
-     * @return array
-     */
-    public function getOptions(array $config)
-    {
-        $options = $config['options'] ?? [];
-
-        return array_diff_key($this->options, $options) + $options;
-    }
-
-    /**
-     * Get the default PDO connection options.
-     *
-     * @return array
-     */
-    public function getDefaultOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Set the default PDO connection options.
-     *
-     * @param  array $options
-     * @return void
-     */
-    public function setDefaultOptions(array $options)
-    {
-        $this->options = $options;
     }
 }

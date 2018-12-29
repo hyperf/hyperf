@@ -1,16 +1,25 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Connectors;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
-use PDOException;
+use Hyperf\Database\MySqlConnection;
+use Hyperf\Database\PostgresConnection;
+use Hyperf\Database\SQLiteConnection;
+use Hyperf\Database\SqlServerConnection;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlConnection;
-use Hyperf\Database\SQLiteConnection;
-use Hyperf\Database\PostgresConnection;
-use Hyperf\Database\SqlServerConnection;
+use PDOException;
 use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
@@ -52,6 +61,38 @@ class ConnectionFactory
     }
 
     /**
+     * Create a connector instance based on the configuration.
+     *
+     * @param  array $config
+     * @return \Illuminate\Database\Connectors\ConnectorInterface
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function createConnector(array $config)
+    {
+        if (!isset($config['driver'])) {
+            throw new InvalidArgumentException('A driver must be specified.');
+        }
+
+        if ($this->container->has($key = "db.connector.{$config['driver']}")) {
+            return $this->container->get($key);
+        }
+
+        switch ($config['driver']) {
+            case 'mysql':
+                return new MySqlConnector;
+            case 'pgsql':
+                return new PostgresConnector;
+            case 'sqlite':
+                return new SQLiteConnector;
+            case 'sqlsrv':
+                return new SqlServerConnector;
+        }
+
+        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
+    }
+
+    /**
      * Parse and prepare the database configuration.
      *
      * @param  array $config
@@ -74,7 +115,11 @@ class ConnectionFactory
         $pdo = $this->createPdoResolver($config);
 
         return $this->createConnection(
-            $config['driver'], $pdo, $config['database'], $config['prefix'], $config
+            $config['driver'],
+            $pdo,
+            $config['database'],
+            $config['prefix'],
+            $config
         );
     }
 
@@ -111,7 +156,8 @@ class ConnectionFactory
     protected function getReadConfig(array $config)
     {
         return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'read')
+            $config,
+            $this->getReadWriteConfig($config, 'read')
         );
     }
 
@@ -124,7 +170,8 @@ class ConnectionFactory
     protected function getWriteConfig(array $config)
     {
         return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'write')
+            $config,
+            $this->getReadWriteConfig($config, 'write')
         );
     }
 
@@ -218,38 +265,6 @@ class ConnectionFactory
         return function () use ($config) {
             return $this->createConnector($config)->connect($config);
         };
-    }
-
-    /**
-     * Create a connector instance based on the configuration.
-     *
-     * @param  array $config
-     * @return \Illuminate\Database\Connectors\ConnectorInterface
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function createConnector(array $config)
-    {
-        if (!isset($config['driver'])) {
-            throw new InvalidArgumentException('A driver must be specified.');
-        }
-
-        if ($this->container->has($key = "db.connector.{$config['driver']}")) {
-            return $this->container->get($key);
-        }
-
-        switch ($config['driver']) {
-            case 'mysql':
-                return new MySqlConnector;
-            case 'pgsql':
-                return new PostgresConnector;
-            case 'sqlite':
-                return new SQLiteConnector;
-            case 'sqlsrv':
-                return new SqlServerConnector;
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
     }
 
     /**

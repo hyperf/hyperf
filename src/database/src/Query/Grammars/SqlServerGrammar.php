@@ -1,9 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Query\Grammars;
 
-use Illuminate\Support\Arr;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Arr;
 
 class SqlServerGrammar extends Grammar
 {
@@ -38,8 +47,189 @@ class SqlServerGrammar extends Grammar
         }
 
         return $this->compileAnsiOffset(
-            $query, $this->compileComponents($query)
+            $query,
+            $this->compileComponents($query)
         );
+    }
+
+    /**
+     * Prepare the binding for a "JSON contains" statement.
+     *
+     * @param  mixed  $binding
+     * @return string
+     */
+    public function prepareBindingForJsonContains($binding)
+    {
+        return is_bool($binding) ? json_encode($binding) : $binding;
+    }
+
+    /**
+     * Compile the random statement into SQL.
+     *
+     * @param  string  $seed
+     * @return string
+     */
+    public function compileRandom($seed)
+    {
+        return 'NEWID()';
+    }
+
+    /**
+     * Compile an exists statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return string
+     */
+    public function compileExists(Builder $query)
+    {
+        $existsQuery = clone $query;
+
+        $existsQuery->columns = [];
+
+        return $this->compileSelect($existsQuery->selectRaw('1 [exists]')->limit(1));
+    }
+
+    /**
+     * Compile a delete statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return string
+     */
+    public function compileDelete(Builder $query)
+    {
+        $table = $this->wrapTable($query->from);
+
+        $where = is_array($query->wheres) ? $this->compileWheres($query) : '';
+
+        return isset($query->joins)
+                    ? $this->compileDeleteWithJoins($query, $table, $where)
+                    : trim("delete from {$table} {$where}");
+    }
+
+    /**
+     * Compile a truncate table statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return array
+     */
+    public function compileTruncate(Builder $query)
+    {
+        return ['truncate table '.$this->wrapTable($query->from) => []];
+    }
+
+    /**
+     * Compile an update statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $values
+     * @return string
+     */
+    public function compileUpdate(Builder $query, $values)
+    {
+        [$table, $alias] = $this->parseUpdateTable($query->from);
+
+        // Each one of the columns in the update statements needs to be wrapped in the
+        // keyword identifiers, also a place-holder needs to be created for each of
+        // the values in the list of bindings so we can make the sets statements.
+        $columns = collect($values)->map(function ($value, $key) {
+            return $this->wrap($key).' = '.$this->parameter($value);
+        })->implode(', ');
+
+        // If the query has any "join" clauses, we will setup the joins on the builder
+        // and compile them so we can attach them to this update, as update queries
+        // can get join statements to attach to other tables when they're needed.
+        $joins = '';
+
+        if (isset($query->joins)) {
+            $joins = ' '.$this->compileJoins($query, $query->joins);
+        }
+
+        // Of course, update queries may also be constrained by where clauses so we'll
+        // need to compile the where clauses and attach it to the query so only the
+        // intended records are updated by the SQL statements we generate to run.
+        $where = $this->compileWheres($query);
+
+        if (! empty($joins)) {
+            return trim("update {$alias} set {$columns} from {$table}{$joins} {$where}");
+        }
+
+        return trim("update {$table}{$joins} set $columns $where");
+    }
+
+    /**
+     * Prepare the bindings for an update statement.
+     *
+     * @param  array  $bindings
+     * @param  array  $values
+     * @return array
+     */
+    public function prepareBindingsForUpdate(array $bindings, array $values)
+    {
+        // Update statements with joins in SQL Servers utilize an unique syntax. We need to
+        // take all of the bindings and put them on the end of this array since they are
+        // added to the end of the "where" clause statements as typical where clauses.
+        $bindingsWithoutJoin = Arr::except($bindings, 'join');
+
+        return array_values(
+            array_merge($values, $bindings['join'], Arr::flatten($bindingsWithoutJoin))
+        );
+    }
+
+    /**
+     * Determine if the grammar supports savepoints.
+     *
+     * @return bool
+     */
+    public function supportsSavepoints()
+    {
+        return true;
+    }
+
+    /**
+     * Compile the SQL statement to define a savepoint.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    public function compileSavepoint($name)
+    {
+        return 'SAVE TRANSACTION '.$name;
+    }
+
+    /**
+     * Compile the SQL statement to execute a savepoint rollback.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    public function compileSavepointRollBack($name)
+    {
+        return 'ROLLBACK TRANSACTION '.$name;
+    }
+
+    /**
+     * Get the format for database stored dates.
+     *
+     * @return string
+     */
+    public function getDateFormat()
+    {
+        return 'Y-m-d H:i:s.v';
+    }
+
+    /**
+     * Wrap a table in keyword identifiers.
+     *
+     * @param  \Illuminate\Database\Query\Expression|string  $table
+     * @return string
+     */
+    public function wrapTable($table)
+    {
+        if (! $this->isExpression($table)) {
+            return $this->wrapTableValuedFunction(parent::wrapTable($table));
+        }
+
+        return $this->getValue($table);
     }
 
     /**
@@ -129,17 +319,6 @@ class SqlServerGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
         return $value.' in (select [value] from openjson('.$field.$path.'))';
-    }
-
-    /**
-     * Prepare the binding for a "JSON contains" statement.
-     *
-     * @param  mixed  $binding
-     * @return string
-     */
-    public function prepareBindingForJsonContains($binding)
-    {
-        return is_bool($binding) ? json_encode($binding) : $binding;
     }
 
     /**
@@ -233,17 +412,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Compile the random statement into SQL.
-     *
-     * @param  string  $seed
-     * @return string
-     */
-    public function compileRandom($seed)
-    {
-        return 'NEWID()';
-    }
-
-    /**
      * Compile the "limit" portions of the query.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -280,38 +448,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Compile an exists statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return string
-     */
-    public function compileExists(Builder $query)
-    {
-        $existsQuery = clone $query;
-
-        $existsQuery->columns = [];
-
-        return $this->compileSelect($existsQuery->selectRaw('1 [exists]')->limit(1));
-    }
-
-    /**
-     * Compile a delete statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return string
-     */
-    public function compileDelete(Builder $query)
-    {
-        $table = $this->wrapTable($query->from);
-
-        $where = is_array($query->wheres) ? $this->compileWheres($query) : '';
-
-        return isset($query->joins)
-                    ? $this->compileDeleteWithJoins($query, $table, $where)
-                    : trim("delete from {$table} {$where}");
-    }
-
-    /**
      * Compile a delete statement with joins into SQL.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -330,56 +466,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Compile a truncate table statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return array
-     */
-    public function compileTruncate(Builder $query)
-    {
-        return ['truncate table '.$this->wrapTable($query->from) => []];
-    }
-
-    /**
-     * Compile an update statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @return string
-     */
-    public function compileUpdate(Builder $query, $values)
-    {
-        [$table, $alias] = $this->parseUpdateTable($query->from);
-
-        // Each one of the columns in the update statements needs to be wrapped in the
-        // keyword identifiers, also a place-holder needs to be created for each of
-        // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key).' = '.$this->parameter($value);
-        })->implode(', ');
-
-        // If the query has any "join" clauses, we will setup the joins on the builder
-        // and compile them so we can attach them to this update, as update queries
-        // can get join statements to attach to other tables when they're needed.
-        $joins = '';
-
-        if (isset($query->joins)) {
-            $joins = ' '.$this->compileJoins($query, $query->joins);
-        }
-
-        // Of course, update queries may also be constrained by where clauses so we'll
-        // need to compile the where clauses and attach it to the query so only the
-        // intended records are updated by the SQL statements we generate to run.
-        $where = $this->compileWheres($query);
-
-        if (! empty($joins)) {
-            return trim("update {$alias} set {$columns} from {$table}{$joins} {$where}");
-        }
-
-        return trim("update {$table}{$joins} set $columns $where");
-    }
-
-    /**
      * Get the table and alias for the given table.
      *
      * @param  string  $table
@@ -394,67 +480,6 @@ class SqlServerGrammar extends Grammar
         }
 
         return [$table, $alias];
-    }
-
-    /**
-     * Prepare the bindings for an update statement.
-     *
-     * @param  array  $bindings
-     * @param  array  $values
-     * @return array
-     */
-    public function prepareBindingsForUpdate(array $bindings, array $values)
-    {
-        // Update statements with joins in SQL Servers utilize an unique syntax. We need to
-        // take all of the bindings and put them on the end of this array since they are
-        // added to the end of the "where" clause statements as typical where clauses.
-        $bindingsWithoutJoin = Arr::except($bindings, 'join');
-
-        return array_values(
-            array_merge($values, $bindings['join'], Arr::flatten($bindingsWithoutJoin))
-        );
-    }
-
-    /**
-     * Determine if the grammar supports savepoints.
-     *
-     * @return bool
-     */
-    public function supportsSavepoints()
-    {
-        return true;
-    }
-
-    /**
-     * Compile the SQL statement to define a savepoint.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    public function compileSavepoint($name)
-    {
-        return 'SAVE TRANSACTION '.$name;
-    }
-
-    /**
-     * Compile the SQL statement to execute a savepoint rollback.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    public function compileSavepointRollBack($name)
-    {
-        return 'ROLLBACK TRANSACTION '.$name;
-    }
-
-    /**
-     * Get the format for database stored dates.
-     *
-     * @return string
-     */
-    public function getDateFormat()
-    {
-        return 'Y-m-d H:i:s.v';
     }
 
     /**
@@ -479,21 +504,6 @@ class SqlServerGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
         return 'json_value('.$field.$path.')';
-    }
-
-    /**
-     * Wrap a table in keyword identifiers.
-     *
-     * @param  \Illuminate\Database\Query\Expression|string  $table
-     * @return string
-     */
-    public function wrapTable($table)
-    {
-        if (! $this->isExpression($table)) {
-            return $this->wrapTableValuedFunction(parent::wrapTable($table));
-        }
-
-        return $this->getValue($table);
     }
 
     /**

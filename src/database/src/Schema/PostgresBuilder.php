@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Schema;
 
@@ -17,7 +26,8 @@ class PostgresBuilder extends Builder
         $table = $this->connection->getTablePrefix().$table;
 
         return count($this->connection->select(
-            $this->grammar->compileTableExists(), [$schema, $table]
+            $this->grammar->compileTableExists(),
+            [$schema, $table]
         )) > 0;
     }
 
@@ -76,6 +86,26 @@ class PostgresBuilder extends Builder
     }
 
     /**
+     * Get the column listing for a given table.
+     *
+     * @param  string  $table
+     * @return array
+     */
+    public function getColumnListing($table)
+    {
+        [$schema, $table] = $this->parseSchemaAndTable($table);
+
+        $table = $this->connection->getTablePrefix().$table;
+
+        $results = $this->connection->select(
+            $this->grammar->compileColumnListing(),
+            [$schema, $table]
+        );
+
+        return $this->connection->getPostProcessor()->processColumnListing($results);
+    }
+
+    /**
      * Get all of the table names for the database.
      *
      * @return array
@@ -97,25 +127,6 @@ class PostgresBuilder extends Builder
         return $this->connection->select(
             $this->grammar->compileGetAllViews($this->connection->getConfig('schema'))
         );
-    }
-
-    /**
-     * Get the column listing for a given table.
-     *
-     * @param  string  $table
-     * @return array
-     */
-    public function getColumnListing($table)
-    {
-        [$schema, $table] = $this->parseSchemaAndTable($table);
-
-        $table = $this->connection->getTablePrefix().$table;
-
-        $results = $this->connection->select(
-            $this->grammar->compileColumnListing(), [$schema, $table]
-        );
-
-        return $this->connection->getPostProcessor()->processColumnListing($results);
     }
 
     /**

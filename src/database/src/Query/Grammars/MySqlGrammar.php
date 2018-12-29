@@ -1,10 +1,19 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Query\Grammars;
 
-use Hyperf\Utils\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JsonExpression;
+use Hyperf\Utils\Arr;
 
 class MySqlGrammar extends Grammar
 {
@@ -56,48 +65,6 @@ class MySqlGrammar extends Grammar
     }
 
     /**
-     * Compile a "JSON contains" statement into SQL.
-     *
-     * @param  string $column
-     * @param  string $value
-     * @return string
-     */
-    protected function compileJsonContains($column, $value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($column);
-
-        return 'json_contains(' . $field . ', ' . $value . $path . ')';
-    }
-
-    /**
-     * Compile a "JSON length" statement into SQL.
-     *
-     * @param  string $column
-     * @param  string $operator
-     * @param  string $value
-     * @return string
-     */
-    protected function compileJsonLength($column, $operator, $value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($column);
-
-        return 'json_length(' . $field . $path . ') ' . $operator . ' ' . $value;
-    }
-
-    /**
-     * Compile a single union statement.
-     *
-     * @param  array $union
-     * @return string
-     */
-    protected function compileUnion(array $union)
-    {
-        $conjunction = $union['all'] ? ' union all ' : ' union ';
-
-        return $conjunction . '(' . $union['query']->toSql() . ')';
-    }
-
-    /**
      * Compile the random statement into SQL.
      *
      * @param  string $seed
@@ -106,22 +73,6 @@ class MySqlGrammar extends Grammar
     public function compileRandom($seed)
     {
         return 'RAND(' . $seed . ')';
-    }
-
-    /**
-     * Compile the lock into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder $query
-     * @param  bool|string $value
-     * @return string
-     */
-    protected function compileLock(Builder $query, $value)
-    {
-        if (!is_string($value)) {
-            return $value ? 'for update' : 'lock in share mode';
-        }
-
-        return $value;
     }
 
     /**
@@ -174,37 +125,6 @@ class MySqlGrammar extends Grammar
     }
 
     /**
-     * Compile all of the columns for an update statement.
-     *
-     * @param  array $values
-     * @return string
-     */
-    protected function compileUpdateColumns($values)
-    {
-        return collect($values)->map(function ($value, $key) {
-            if ($this->isJsonSelector($key)) {
-                return $this->compileJsonUpdateColumn($key, new JsonExpression($value));
-            }
-
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
-    }
-
-    /**
-     * Prepares a JSON column being updated using the JSON_SET function.
-     *
-     * @param  string $key
-     * @param  \Illuminate\Database\Query\JsonExpression $value
-     * @return string
-     */
-    protected function compileJsonUpdateColumn($key, JsonExpression $value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($key);
-
-        return "{$field} = json_set({$field}{$path}, {$value->getValue()})";
-    }
-
-    /**
      * Prepare the bindings for an update statement.
      *
      * Booleans, integers, and doubles are inserted into JSON updates as raw values.
@@ -252,6 +172,95 @@ class MySqlGrammar extends Grammar
         return array_values(
             array_merge($bindings['join'], Arr::flatten($cleanBindings))
         );
+    }
+
+    /**
+     * Compile a "JSON contains" statement into SQL.
+     *
+     * @param  string $column
+     * @param  string $value
+     * @return string
+     */
+    protected function compileJsonContains($column, $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_contains(' . $field . ', ' . $value . $path . ')';
+    }
+
+    /**
+     * Compile a "JSON length" statement into SQL.
+     *
+     * @param  string $column
+     * @param  string $operator
+     * @param  string $value
+     * @return string
+     */
+    protected function compileJsonLength($column, $operator, $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_length(' . $field . $path . ') ' . $operator . ' ' . $value;
+    }
+
+    /**
+     * Compile a single union statement.
+     *
+     * @param  array $union
+     * @return string
+     */
+    protected function compileUnion(array $union)
+    {
+        $conjunction = $union['all'] ? ' union all ' : ' union ';
+
+        return $conjunction . '(' . $union['query']->toSql() . ')';
+    }
+
+    /**
+     * Compile the lock into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  bool|string $value
+     * @return string
+     */
+    protected function compileLock(Builder $query, $value)
+    {
+        if (!is_string($value)) {
+            return $value ? 'for update' : 'lock in share mode';
+        }
+
+        return $value;
+    }
+
+    /**
+     * Compile all of the columns for an update statement.
+     *
+     * @param  array $values
+     * @return string
+     */
+    protected function compileUpdateColumns($values)
+    {
+        return collect($values)->map(function ($value, $key) {
+            if ($this->isJsonSelector($key)) {
+                return $this->compileJsonUpdateColumn($key, new JsonExpression($value));
+            }
+
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+    }
+
+    /**
+     * Prepares a JSON column being updated using the JSON_SET function.
+     *
+     * @param  string $key
+     * @param  \Illuminate\Database\Query\JsonExpression $value
+     * @return string
+     */
+    protected function compileJsonUpdateColumn($key, JsonExpression $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($key);
+
+        return "{$field} = json_set({$field}{$path}, {$value->getValue()})";
     }
 
     /**

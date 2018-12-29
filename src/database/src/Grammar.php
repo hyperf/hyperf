@@ -1,9 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database;
 
-use Hyperf\Utils\Traits\Macroable;
 use Hyperf\Database\Query\Expression;
+use Hyperf\Utils\Traits\Macroable;
 
 abstract class Grammar
 {
@@ -63,59 +72,6 @@ abstract class Grammar
         }
 
         return $this->wrapSegments(explode('.', $value));
-    }
-
-    /**
-     * Wrap a value that has an alias.
-     *
-     * @param  string $value
-     * @param  bool $prefixAlias
-     * @return string
-     */
-    protected function wrapAliasedValue($value, $prefixAlias = false)
-    {
-        $segments = preg_split('/\s+as\s+/i', $value);
-
-        // If we are wrapping a table we need to prefix the alias with the table prefix
-        // as well in order to generate proper syntax. If this is a column of course
-        // no prefix is necessary. The condition will be true when from wrapTable.
-        if ($prefixAlias) {
-            $segments[1] = $this->tablePrefix . $segments[1];
-        }
-
-        return $this->wrap(
-                $segments[0]) . ' as ' . $this->wrapValue($segments[1]
-            );
-    }
-
-    /**
-     * Wrap the given value segments.
-     *
-     * @param  array $segments
-     * @return string
-     */
-    protected function wrapSegments($segments)
-    {
-        return collect($segments)->map(function ($segment, $key) use ($segments) {
-            return $key == 0 && count($segments) > 1
-                ? $this->wrapTable($segment)
-                : $this->wrapValue($segment);
-        })->implode('.');
-    }
-
-    /**
-     * Wrap a single string in keyword identifiers.
-     *
-     * @param  string $value
-     * @return string
-     */
-    protected function wrapValue($value)
-    {
-        if ($value !== '*') {
-            return '"' . str_replace('"', '""', $value) . '"';
-        }
-
-        return $value;
     }
 
     /**
@@ -219,5 +175,60 @@ abstract class Grammar
         $this->tablePrefix = $prefix;
 
         return $this;
+    }
+
+    /**
+     * Wrap a value that has an alias.
+     *
+     * @param  string $value
+     * @param  bool $prefixAlias
+     * @return string
+     */
+    protected function wrapAliasedValue($value, $prefixAlias = false)
+    {
+        $segments = preg_split('/\s+as\s+/i', $value);
+
+        // If we are wrapping a table we need to prefix the alias with the table prefix
+        // as well in order to generate proper syntax. If this is a column of course
+        // no prefix is necessary. The condition will be true when from wrapTable.
+        if ($prefixAlias) {
+            $segments[1] = $this->tablePrefix . $segments[1];
+        }
+
+        return $this->wrap(
+                $segments[0]
+        ) . ' as ' . $this->wrapValue(
+                    $segments[1]
+            );
+    }
+
+    /**
+     * Wrap the given value segments.
+     *
+     * @param  array $segments
+     * @return string
+     */
+    protected function wrapSegments($segments)
+    {
+        return collect($segments)->map(function ($segment, $key) use ($segments) {
+            return $key == 0 && count($segments) > 1
+                ? $this->wrapTable($segment)
+                : $this->wrapValue($segment);
+        })->implode('.');
+    }
+
+    /**
+     * Wrap a single string in keyword identifiers.
+     *
+     * @param  string $value
+     * @return string
+     */
+    protected function wrapValue($value)
+    {
+        if ($value !== '*') {
+            return '"' . str_replace('"', '""', $value) . '"';
+        }
+
+        return $value;
     }
 }

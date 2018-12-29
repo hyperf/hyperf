@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Schema;
 
@@ -15,7 +24,8 @@ class MySqlBuilder extends Builder
         $table = $this->connection->getTablePrefix().$table;
 
         return count($this->connection->select(
-            $this->grammar->compileTableExists(), [$this->connection->getDatabaseName(), $table]
+            $this->grammar->compileTableExists(),
+            [$this->connection->getDatabaseName(), $table]
         )) > 0;
     }
 
@@ -30,7 +40,8 @@ class MySqlBuilder extends Builder
         $table = $this->connection->getTablePrefix().$table;
 
         $results = $this->connection->select(
-            $this->grammar->compileColumnListing(), [$this->connection->getDatabaseName(), $table]
+            $this->grammar->compileColumnListing(),
+            [$this->connection->getDatabaseName(), $table]
         );
 
         return $this->connection->getPostProcessor()->processColumnListing($results);

@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Illuminate\Database\Query\Processors;
 
@@ -33,6 +42,19 @@ class SqlServerProcessor extends Processor
     }
 
     /**
+     * Process the results of a column listing query.
+     *
+     * @param  array  $results
+     * @return array
+     */
+    public function processColumnListing($results)
+    {
+        return array_map(function ($result) {
+            return ((object) $result)->name;
+        }, $results);
+    }
+
+    /**
      * Process an "insert get ID" query for ODBC.
      *
      * @param  \Illuminate\Database\Connection  $connection
@@ -53,18 +75,5 @@ class SqlServerProcessor extends Processor
         $row = $result[0];
 
         return is_object($row) ? $row->insertid : $row['insertid'];
-    }
-
-    /**
-     * Process the results of a column listing query.
-     *
-     * @param  array  $results
-     * @return array
-     */
-    public function processColumnListing($results)
-    {
-        return array_map(function ($result) {
-            return ((object) $result)->name;
-        }, $results);
     }
 }

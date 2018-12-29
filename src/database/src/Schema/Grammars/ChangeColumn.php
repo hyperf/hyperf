@@ -1,15 +1,24 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use RuntimeException;
-use Doctrine\DBAL\Types\Type;
-use Hyperf\Support\Fluent;
-use Doctrine\DBAL\Schema\Table;
-use Hyperf\Database\Connection;
-use Doctrine\DBAL\Schema\Comparator;
-use Hyperf\Database\Schema\Blueprint;
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
+use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Support\Fluent;
+use RuntimeException;
 
 class ChangeColumn
 {
@@ -34,7 +43,9 @@ class ChangeColumn
         }
 
         $tableDiff = static::getChangedDiff(
-            $grammar, $blueprint, $schema = $connection->getDoctrineSchemaManager()
+            $grammar,
+            $blueprint,
+            $schema = $connection->getDoctrineSchemaManager()
         );
 
         if ($tableDiff !== false) {
@@ -57,7 +68,8 @@ class ChangeColumn
         $current = $schema->listTableDetails($grammar->getTablePrefix().$blueprint->getTable());
 
         return (new Comparator)->diffTable(
-            $current, static::getTableWithColumnChanges($blueprint, $current)
+            $current,
+            static::getTableWithColumnChanges($blueprint, $current)
         );
     }
 
@@ -100,7 +112,8 @@ class ChangeColumn
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
     {
         return $table->changeColumn(
-            $fluent['name'], static::getDoctrineColumnChangeOptions($fluent)
+            $fluent['name'],
+            static::getDoctrineColumnChangeOptions($fluent)
         )->getColumn($fluent['name']);
     }
 

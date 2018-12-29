@@ -1,0 +1,51 @@
+{
+    "name": "hyperf/db-connection",
+    "description": "A hyperf db connection handler for hyperf/database.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "hyperf",
+        "database",
+        "connection"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.1",
+        "hyperf/database": "dev-master",
+        "hyperf/di": "dev-master",
+        "hyperf/pool": "dev-master"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+        ],
+        "psr-4": {
+            "Hyperf\\DBConnection\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}

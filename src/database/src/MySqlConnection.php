@@ -1,26 +1,25 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database;
 
-use PDO;
-use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
+use Hyperf\Database\Schema\MySqlBuilder;
+use PDO;
 
 class MySqlConnection extends Connection
 {
-    /**
-     * Get the default query grammar instance.
-     *
-     * @return \Illuminate\Database\Query\Grammars\MySqlGrammar
-     */
-    protected function getDefaultQueryGrammar()
-    {
-        return $this->withTablePrefix(new QueryGrammar);
-    }
-
     /**
      * Get a schema builder instance for the connection.
      *
@@ -33,6 +32,34 @@ class MySqlConnection extends Connection
         }
 
         return new MySqlBuilder($this);
+    }
+
+    /**
+     * Bind values to their parameters in the given statement.
+     *
+     * @param  \PDOStatement $statement
+     * @param  array $bindings
+     * @return void
+     */
+    public function bindValues($statement, $bindings)
+    {
+        foreach ($bindings as $key => $value) {
+            $statement->bindValue(
+                is_string($key) ? $key : $key + 1,
+                $value,
+                is_int($value) || is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+            );
+        }
+    }
+
+    /**
+     * Get the default query grammar instance.
+     *
+     * @return \Illuminate\Database\Query\Grammars\MySqlGrammar
+     */
+    protected function getDefaultQueryGrammar()
+    {
+        return $this->withTablePrefix(new QueryGrammar);
     }
 
     /**
@@ -63,22 +90,5 @@ class MySqlConnection extends Connection
     protected function getDoctrineDriver()
     {
         return new DoctrineDriver;
-    }
-
-    /**
-     * Bind values to their parameters in the given statement.
-     *
-     * @param  \PDOStatement $statement
-     * @param  array $bindings
-     * @return void
-     */
-    public function bindValues($statement, $bindings)
-    {
-        foreach ($bindings as $key => $value) {
-            $statement->bindValue(
-                is_string($key) ? $key : $key + 1, $value,
-                is_int($value) || is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
-            );
-        }
     }
 }

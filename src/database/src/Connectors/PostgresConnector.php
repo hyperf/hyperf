@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Connectors;
 
@@ -30,7 +39,9 @@ class PostgresConnector extends Connector implements ConnectorInterface
         // using the configuration option specified by the developer. We will also
         // set the default character set on the connections to UTF-8 by default.
         $connection = $this->createConnection(
-            $this->getDsn($config), $config, $this->getOptions($config)
+            $this->getDsn($config),
+            $config,
+            $this->getOptions($config)
         );
 
         $this->configureEncoding($connection, $config);

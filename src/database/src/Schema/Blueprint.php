@@ -1,18 +1,51 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Schema;
 
-use Closure;
 use BadMethodCallException;
-use Hyperf\Utils\Fluent;
+use Closure;
 use Hyperf\Database\Connection;
+use Hyperf\Database\Schema\Grammars\Grammar;
+use Hyperf\Utils\Fluent;
 use Hyperf\Utils\Traits\Macroable;
 use Illuminate\Database\SQLiteConnection;
-use Hyperf\Database\Schema\Grammars\Grammar;
 
 class Blueprint
 {
     use Macroable;
+
+    /**
+     * The storage engine that should be used for the table.
+     *
+     * @var string
+     */
+    public $engine;
+
+    /**
+     * The default character set that should be used for the table.
+     */
+    public $charset;
+
+    /**
+     * The collation that should be used for the table.
+     */
+    public $collation;
+
+    /**
+     * Whether to make the table temporary.
+     *
+     * @var bool
+     */
+    public $temporary = false;
 
     /**
      * The table the blueprint describes.
@@ -41,30 +74,6 @@ class Blueprint
      * @var \Illuminate\Support\Fluent[]
      */
     protected $commands = [];
-
-    /**
-     * The storage engine that should be used for the table.
-     *
-     * @var string
-     */
-    public $engine;
-
-    /**
-     * The default character set that should be used for the table.
-     */
-    public $charset;
-
-    /**
-     * The collation that should be used for the table.
-     */
-    public $collation;
-
-    /**
-     * Whether to make the table temporary.
-     *
-     * @var bool
-     */
-    public $temporary = false;
 
     /**
      * Create a new schema blueprint.
@@ -130,95 +139,6 @@ class Blueprint
     }
 
     /**
-     * Ensure the commands on the blueprint are valid for the connection type.
-     *
-     * @param  \Illuminate\Database\Connection $connection
-     * @return void
-     *
-     * @throws \BadMethodCallException
-     */
-    protected function ensureCommandsAreValid(Connection $connection)
-    {
-        if ($connection instanceof SQLiteConnection) {
-            if ($this->commandsNamed(['dropColumn', 'renameColumn'])->count() > 1) {
-                throw new BadMethodCallException(
-                    "SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification."
-                );
-            }
-
-            if ($this->commandsNamed(['dropForeign'])->count() > 0) {
-                throw new BadMethodCallException(
-                    "SQLite doesn't support dropping foreign keys (you would need to re-create the table)."
-                );
-            }
-        }
-    }
-
-    /**
-     * Get all of the commands matching the given names.
-     *
-     * @param  array $names
-     * @return \Illuminate\Support\Collection
-     */
-    protected function commandsNamed(array $names)
-    {
-        return collect($this->commands)->filter(function ($command) use ($names) {
-            return in_array($command->name, $names);
-        });
-    }
-
-    /**
-     * Add the commands that are implied by the blueprint's state.
-     *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar $grammar
-     * @return void
-     */
-    protected function addImpliedCommands(Grammar $grammar)
-    {
-        if (count($this->getAddedColumns()) > 0 && !$this->creating()) {
-            array_unshift($this->commands, $this->createCommand('add'));
-        }
-
-        if (count($this->getChangedColumns()) > 0 && !$this->creating()) {
-            array_unshift($this->commands, $this->createCommand('change'));
-        }
-
-        $this->addFluentIndexes();
-
-        $this->addFluentCommands($grammar);
-    }
-
-    /**
-     * Add the index commands fluently specified on columns.
-     *
-     * @return void
-     */
-    protected function addFluentIndexes()
-    {
-        foreach ($this->columns as $column) {
-            foreach (['primary', 'unique', 'index', 'spatialIndex'] as $index) {
-                // If the index has been specified on the given column, but is simply equal
-                // to "true" (boolean), no name has been specified for this index so the
-                // index method can be called without a name and it will generate one.
-                if ($column->{$index} === true) {
-                    $this->{$index}($column->name);
-
-                    continue 2;
-                }
-
-                // If the index has been specified on the given column, and it has a string
-                // value, we'll go ahead and call the index method and pass the name for
-                // the index since the developer specified the explicit name for this.
-                elseif (isset($column->{$index})) {
-                    $this->{$index}($column->name, $column->{$index});
-
-                    continue 2;
-                }
-            }
-        }
-    }
-
-    /**
      * Add the fluent commands specified on any columns.
      *
      * @param  \Illuminate\Database\Schema\Grammars\Grammar $grammar
@@ -237,22 +157,11 @@ class Blueprint
                 $value = $column->{$attributeName};
 
                 $this->addCommand(
-                    $commandName, compact('value', 'column')
+                    $commandName,
+                    compact('value', 'column')
                 );
             }
         }
-    }
-
-    /**
-     * Determine if the blueprint has a create command.
-     *
-     * @return bool
-     */
-    protected function creating()
-    {
-        return collect($this->commands)->contains(function ($command) {
-            return $command->name === 'create';
-        });
     }
 
     /**
@@ -1211,65 +1120,6 @@ class Blueprint
     }
 
     /**
-     * Add a new index command to the blueprint.
-     *
-     * @param  string $type
-     * @param  string|array $columns
-     * @param  string $index
-     * @param  string|null $algorithm
-     * @return \Illuminate\Support\Fluent
-     */
-    protected function indexCommand($type, $columns, $index, $algorithm = null)
-    {
-        $columns = (array)$columns;
-
-        // If no name was specified for this index, we will create one using a basic
-        // convention of the table name, followed by the columns, followed by an
-        // index type, such as primary or index, which makes the index unique.
-        $index = $index ?: $this->createIndexName($type, $columns);
-
-        return $this->addCommand(
-            $type, compact('index', 'columns', 'algorithm')
-        );
-    }
-
-    /**
-     * Create a new drop index command on the blueprint.
-     *
-     * @param  string $command
-     * @param  string $type
-     * @param  string|array $index
-     * @return \Illuminate\Support\Fluent
-     */
-    protected function dropIndexCommand($command, $type, $index)
-    {
-        $columns = [];
-
-        // If the given "index" is actually an array of columns, the developer means
-        // to drop an index merely by specifying the columns involved without the
-        // conventional name, so we will build the index name from the columns.
-        if (is_array($index)) {
-            $index = $this->createIndexName($type, $columns = $index);
-        }
-
-        return $this->indexCommand($command, $columns, $index);
-    }
-
-    /**
-     * Create a default index name for the table.
-     *
-     * @param  string $type
-     * @param  array $columns
-     * @return string
-     */
-    protected function createIndexName($type, array $columns)
-    {
-        $index = strtolower($this->prefix . $this->table . '_' . implode('_', $columns) . '_' . $type);
-
-        return str_replace(['-', '.'], '_', $index);
-    }
-
-    /**
      * Add a new column to the blueprint.
      *
      * @param  string $type
@@ -1299,32 +1149,6 @@ class Blueprint
         }));
 
         return $this;
-    }
-
-    /**
-     * Add a new command to the blueprint.
-     *
-     * @param  string $name
-     * @param  array $parameters
-     * @return \Illuminate\Support\Fluent
-     */
-    protected function addCommand($name, array $parameters = [])
-    {
-        $this->commands[] = $command = $this->createCommand($name, $parameters);
-
-        return $command;
-    }
-
-    /**
-     * Create a new Fluent command.
-     *
-     * @param  string $name
-     * @param  array $parameters
-     * @return \Illuminate\Support\Fluent
-     */
-    protected function createCommand($name, array $parameters = [])
-    {
-        return new Fluent(array_merge(compact('name'), $parameters));
     }
 
     /**
@@ -1379,5 +1203,192 @@ class Blueprint
         return array_filter($this->columns, function ($column) {
             return (bool)$column->change;
         });
+    }
+
+    /**
+     * Ensure the commands on the blueprint are valid for the connection type.
+     *
+     * @param  \Illuminate\Database\Connection $connection
+     * @return void
+     *
+     * @throws \BadMethodCallException
+     */
+    protected function ensureCommandsAreValid(Connection $connection)
+    {
+        if ($connection instanceof SQLiteConnection) {
+            if ($this->commandsNamed(['dropColumn', 'renameColumn'])->count() > 1) {
+                throw new BadMethodCallException(
+                    "SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification."
+                );
+            }
+
+            if ($this->commandsNamed(['dropForeign'])->count() > 0) {
+                throw new BadMethodCallException(
+                    "SQLite doesn't support dropping foreign keys (you would need to re-create the table)."
+                );
+            }
+        }
+    }
+
+    /**
+     * Get all of the commands matching the given names.
+     *
+     * @param  array $names
+     * @return \Illuminate\Support\Collection
+     */
+    protected function commandsNamed(array $names)
+    {
+        return collect($this->commands)->filter(function ($command) use ($names) {
+            return in_array($command->name, $names);
+        });
+    }
+
+    /**
+     * Add the commands that are implied by the blueprint's state.
+     *
+     * @param  \Illuminate\Database\Schema\Grammars\Grammar $grammar
+     * @return void
+     */
+    protected function addImpliedCommands(Grammar $grammar)
+    {
+        if (count($this->getAddedColumns()) > 0 && !$this->creating()) {
+            array_unshift($this->commands, $this->createCommand('add'));
+        }
+
+        if (count($this->getChangedColumns()) > 0 && !$this->creating()) {
+            array_unshift($this->commands, $this->createCommand('change'));
+        }
+
+        $this->addFluentIndexes();
+
+        $this->addFluentCommands($grammar);
+    }
+
+    /**
+     * Add the index commands fluently specified on columns.
+     *
+     * @return void
+     */
+    protected function addFluentIndexes()
+    {
+        foreach ($this->columns as $column) {
+            foreach (['primary', 'unique', 'index', 'spatialIndex'] as $index) {
+                // If the index has been specified on the given column, but is simply equal
+                // to "true" (boolean), no name has been specified for this index so the
+                // index method can be called without a name and it will generate one.
+                if ($column->{$index} === true) {
+                    $this->{$index}($column->name);
+
+                    continue 2;
+                }
+
+                // If the index has been specified on the given column, and it has a string
+                // value, we'll go ahead and call the index method and pass the name for
+                // the index since the developer specified the explicit name for this.
+                elseif (isset($column->{$index})) {
+                    $this->{$index}($column->name, $column->{$index});
+
+                    continue 2;
+                }
+            }
+        }
+    }
+
+    /**
+     * Determine if the blueprint has a create command.
+     *
+     * @return bool
+     */
+    protected function creating()
+    {
+        return collect($this->commands)->contains(function ($command) {
+            return $command->name === 'create';
+        });
+    }
+
+    /**
+     * Add a new index command to the blueprint.
+     *
+     * @param  string $type
+     * @param  string|array $columns
+     * @param  string $index
+     * @param  string|null $algorithm
+     * @return \Illuminate\Support\Fluent
+     */
+    protected function indexCommand($type, $columns, $index, $algorithm = null)
+    {
+        $columns = (array)$columns;
+
+        // If no name was specified for this index, we will create one using a basic
+        // convention of the table name, followed by the columns, followed by an
+        // index type, such as primary or index, which makes the index unique.
+        $index = $index ?: $this->createIndexName($type, $columns);
+
+        return $this->addCommand(
+            $type,
+            compact('index', 'columns', 'algorithm')
+        );
+    }
+
+    /**
+     * Create a new drop index command on the blueprint.
+     *
+     * @param  string $command
+     * @param  string $type
+     * @param  string|array $index
+     * @return \Illuminate\Support\Fluent
+     */
+    protected function dropIndexCommand($command, $type, $index)
+    {
+        $columns = [];
+
+        // If the given "index" is actually an array of columns, the developer means
+        // to drop an index merely by specifying the columns involved without the
+        // conventional name, so we will build the index name from the columns.
+        if (is_array($index)) {
+            $index = $this->createIndexName($type, $columns = $index);
+        }
+
+        return $this->indexCommand($command, $columns, $index);
+    }
+
+    /**
+     * Create a default index name for the table.
+     *
+     * @param  string $type
+     * @param  array $columns
+     * @return string
+     */
+    protected function createIndexName($type, array $columns)
+    {
+        $index = strtolower($this->prefix . $this->table . '_' . implode('_', $columns) . '_' . $type);
+
+        return str_replace(['-', '.'], '_', $index);
+    }
+
+    /**
+     * Add a new command to the blueprint.
+     *
+     * @param  string $name
+     * @param  array $parameters
+     * @return \Illuminate\Support\Fluent
+     */
+    protected function addCommand($name, array $parameters = [])
+    {
+        $this->commands[] = $command = $this->createCommand($name, $parameters);
+
+        return $command;
+    }
+
+    /**
+     * Create a new Fluent command.
+     *
+     * @param  string $name
+     * @param  array $parameters
+     * @return \Illuminate\Support\Fluent
+     */
+    protected function createCommand($name, array $parameters = [])
+    {
+        return new Fluent(array_merge(compact('name'), $parameters));
     }
 }

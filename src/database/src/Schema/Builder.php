@@ -1,13 +1,29 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Schema;
 
 use Closure;
-use LogicException;
 use Hyperf\Database\Connection;
+use LogicException;
 
 class Builder
 {
+    /**
+     * The default string length for migrations.
+     *
+     * @var int
+     */
+    public static $defaultStringLength = 255;
+
     /**
      * The database connection instance.
      *
@@ -28,13 +44,6 @@ class Builder
      * @var \Closure
      */
     protected $resolver;
-
-    /**
-     * The default string length for migrations.
-     *
-     * @var int
-     */
-    public static $defaultStringLength = 255;
 
     /**
      * Create a new database Schema manager.
@@ -70,7 +79,8 @@ class Builder
         $table = $this->connection->getTablePrefix() . $table;
 
         return count($this->connection->selectFromWriteConnection(
-                $this->grammar->compileTableExists(), [$table]
+                $this->grammar->compileTableExists(),
+            [$table]
             )) > 0;
     }
 
@@ -84,7 +94,8 @@ class Builder
     public function hasColumn($table, $column)
     {
         return in_array(
-            strtolower($column), array_map('strtolower', $this->getColumnListing($table))
+            strtolower($column),
+            array_map('strtolower', $this->getColumnListing($table))
         );
     }
 
@@ -254,37 +265,6 @@ class Builder
     }
 
     /**
-     * Execute the blueprint to build / modify the table.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
-     * @return void
-     */
-    protected function build(Blueprint $blueprint)
-    {
-        $blueprint->build($this->connection, $this->grammar);
-    }
-
-    /**
-     * Create a new command set with a Closure.
-     *
-     * @param  string $table
-     * @param  \Closure|null $callback
-     * @return \Illuminate\Database\Schema\Blueprint
-     */
-    protected function createBlueprint($table, Closure $callback = null)
-    {
-        $prefix = $this->connection->getConfig('prefix_indexes')
-            ? $this->connection->getConfig('prefix')
-            : '';
-
-        if (isset($this->resolver)) {
-            return call_user_func($this->resolver, $table, $callback, $prefix);
-        }
-
-        return new Blueprint($table, $callback, $prefix);
-    }
-
-    /**
      * Get the database connection instance.
      *
      * @return \Illuminate\Database\Connection
@@ -316,5 +296,36 @@ class Builder
     public function blueprintResolver(Closure $resolver)
     {
         $this->resolver = $resolver;
+    }
+
+    /**
+     * Execute the blueprint to build / modify the table.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
+     * @return void
+     */
+    protected function build(Blueprint $blueprint)
+    {
+        $blueprint->build($this->connection, $this->grammar);
+    }
+
+    /**
+     * Create a new command set with a Closure.
+     *
+     * @param  string $table
+     * @param  \Closure|null $callback
+     * @return \Illuminate\Database\Schema\Blueprint
+     */
+    protected function createBlueprint($table, Closure $callback = null)
+    {
+        $prefix = $this->connection->getConfig('prefix_indexes')
+            ? $this->connection->getConfig('prefix')
+            : '';
+
+        if (isset($this->resolver)) {
+            return call_user_func($this->resolver, $table, $callback, $prefix);
+        }
+
+        return new Blueprint($table, $callback, $prefix);
     }
 }

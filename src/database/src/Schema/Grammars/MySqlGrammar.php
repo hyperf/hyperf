@@ -1,10 +1,19 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use Hyperf\Utils\Fluent;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Utils\Fluent;
 
 class MySqlGrammar extends Grammar
 {
@@ -56,89 +65,28 @@ class MySqlGrammar extends Grammar
     public function compileCreate(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
         $sql = $this->compileCreateTable(
-            $blueprint, $command, $connection
+            $blueprint,
+            $command,
+            $connection
         );
 
         // Once we have the primary SQL, we can add the encoding option to the SQL for
         // the table.  Then, we can check if a storage engine has been supplied for
         // the table. If so, we will add the engine declaration to the SQL query.
         $sql = $this->compileCreateEncoding(
-            $sql, $connection, $blueprint
+            $sql,
+            $connection,
+            $blueprint
         );
 
         // Finally, we will append the engine configuration onto this SQL statement as
         // the final thing we do before returning this finished SQL. Once this gets
         // added the query will be ready to execute against the real connections.
         return $this->compileCreateEngine(
-            $sql, $connection, $blueprint
+            $sql,
+            $connection,
+            $blueprint
         );
-    }
-
-    /**
-     * Create the main create table clause.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
-     * @param  \Illuminate\Support\Fluent $command
-     * @param  \Illuminate\Database\Connection $connection
-     * @return string
-     */
-    protected function compileCreateTable($blueprint, $command, $connection)
-    {
-        return sprintf('%s table %s (%s)',
-            $blueprint->temporary ? 'create temporary' : 'create',
-            $this->wrapTable($blueprint),
-            implode(', ', $this->getColumns($blueprint))
-        );
-    }
-
-    /**
-     * Append the character set specifications to a command.
-     *
-     * @param  string $sql
-     * @param  \Illuminate\Database\Connection $connection
-     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
-     * @return string
-     */
-    protected function compileCreateEncoding($sql, Connection $connection, Blueprint $blueprint)
-    {
-        // First we will set the character set if one has been set on either the create
-        // blueprint itself or on the root configuration for the connection that the
-        // table is being created on. We will add these to the create table query.
-        if (isset($blueprint->charset)) {
-            $sql .= ' default character set ' . $blueprint->charset;
-        } elseif (!is_null($charset = $connection->getConfig('charset'))) {
-            $sql .= ' default character set ' . $charset;
-        }
-
-        // Next we will add the collation to the create table statement if one has been
-        // added to either this create table blueprint or the configuration for this
-        // connection that the query is targeting. We'll add it to this SQL query.
-        if (isset($blueprint->collation)) {
-            $sql .= " collate '{$blueprint->collation}'";
-        } elseif (!is_null($collation = $connection->getConfig('collation'))) {
-            $sql .= " collate '{$collation}'";
-        }
-
-        return $sql;
-    }
-
-    /**
-     * Append the engine specifications to a command.
-     *
-     * @param  string $sql
-     * @param  \Illuminate\Database\Connection $connection
-     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
-     * @return string
-     */
-    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
-    {
-        if (isset($blueprint->engine)) {
-            return $sql . ' engine = ' . $blueprint->engine;
-        } elseif (!is_null($engine = $connection->getConfig('engine'))) {
-            return $sql . ' engine = ' . $engine;
-        }
-
-        return $sql;
     }
 
     /**
@@ -203,25 +151,6 @@ class MySqlGrammar extends Grammar
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
     {
         return $this->compileKey($blueprint, $command, 'spatial index');
-    }
-
-    /**
-     * Compile an index creation command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
-     * @param  \Illuminate\Support\Fluent $command
-     * @param  string $type
-     * @return string
-     */
-    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
-    {
-        return sprintf('alter table %s add %s %s%s(%s)',
-            $this->wrapTable($blueprint),
-            $type,
-            $this->wrap($command->index),
-            $command->algorithm ? ' using ' . $command->algorithm : '',
-            $this->columnize($command->columns)
-        );
     }
 
     /**
@@ -351,7 +280,8 @@ class MySqlGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s rename index %s to %s',
+        return sprintf(
+            'alter table %s rename index %s to %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->from),
             $this->wrap($command->to)
@@ -418,6 +348,182 @@ class MySqlGrammar extends Grammar
     public function compileDisableForeignKeyConstraints()
     {
         return 'SET FOREIGN_KEY_CHECKS=0;';
+    }
+
+    /**
+     * Create the column definition for a spatial Geometry type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeGeometry(Fluent $column)
+    {
+        return 'geometry';
+    }
+
+    /**
+     * Create the column definition for a spatial Point type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typePoint(Fluent $column)
+    {
+        return 'point';
+    }
+
+    /**
+     * Create the column definition for a spatial LineString type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeLineString(Fluent $column)
+    {
+        return 'linestring';
+    }
+
+    /**
+     * Create the column definition for a spatial Polygon type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typePolygon(Fluent $column)
+    {
+        return 'polygon';
+    }
+
+    /**
+     * Create the column definition for a spatial GeometryCollection type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeGeometryCollection(Fluent $column)
+    {
+        return 'geometrycollection';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPoint type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeMultiPoint(Fluent $column)
+    {
+        return 'multipoint';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiLineString type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeMultiLineString(Fluent $column)
+    {
+        return 'multilinestring';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPolygon type.
+     *
+     * @param  \Illuminate\Support\Fluent $column
+     * @return string
+     */
+    public function typeMultiPolygon(Fluent $column)
+    {
+        return 'multipolygon';
+    }
+
+    /**
+     * Create the main create table clause.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
+     * @param  \Illuminate\Support\Fluent $command
+     * @param  \Illuminate\Database\Connection $connection
+     * @return string
+     */
+    protected function compileCreateTable($blueprint, $command, $connection)
+    {
+        return sprintf(
+            '%s table %s (%s)',
+            $blueprint->temporary ? 'create temporary' : 'create',
+            $this->wrapTable($blueprint),
+            implode(', ', $this->getColumns($blueprint))
+        );
+    }
+
+    /**
+     * Append the character set specifications to a command.
+     *
+     * @param  string $sql
+     * @param  \Illuminate\Database\Connection $connection
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
+     * @return string
+     */
+    protected function compileCreateEncoding($sql, Connection $connection, Blueprint $blueprint)
+    {
+        // First we will set the character set if one has been set on either the create
+        // blueprint itself or on the root configuration for the connection that the
+        // table is being created on. We will add these to the create table query.
+        if (isset($blueprint->charset)) {
+            $sql .= ' default character set ' . $blueprint->charset;
+        } elseif (!is_null($charset = $connection->getConfig('charset'))) {
+            $sql .= ' default character set ' . $charset;
+        }
+
+        // Next we will add the collation to the create table statement if one has been
+        // added to either this create table blueprint or the configuration for this
+        // connection that the query is targeting. We'll add it to this SQL query.
+        if (isset($blueprint->collation)) {
+            $sql .= " collate '{$blueprint->collation}'";
+        } elseif (!is_null($collation = $connection->getConfig('collation'))) {
+            $sql .= " collate '{$collation}'";
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Append the engine specifications to a command.
+     *
+     * @param  string $sql
+     * @param  \Illuminate\Database\Connection $connection
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
+     * @return string
+     */
+    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
+    {
+        if (isset($blueprint->engine)) {
+            return $sql . ' engine = ' . $blueprint->engine;
+        } elseif (!is_null($engine = $connection->getConfig('engine'))) {
+            return $sql . ' engine = ' . $engine;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Compile an index creation command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
+     * @param  \Illuminate\Support\Fluent $command
+     * @param  string $type
+     * @return string
+     */
+    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
+    {
+        return sprintf(
+            'alter table %s add %s %s%s(%s)',
+            $this->wrapTable($blueprint),
+            $type,
+            $this->wrap($command->index),
+            $command->algorithm ? ' using ' . $command->algorithm : '',
+            $this->columnize($command->columns)
+        );
     }
 
     /**
@@ -745,94 +851,6 @@ class MySqlGrammar extends Grammar
     protected function typeMacAddress(Fluent $column)
     {
         return 'varchar(17)';
-    }
-
-    /**
-     * Create the column definition for a spatial Geometry type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeGeometry(Fluent $column)
-    {
-        return 'geometry';
-    }
-
-    /**
-     * Create the column definition for a spatial Point type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typePoint(Fluent $column)
-    {
-        return 'point';
-    }
-
-    /**
-     * Create the column definition for a spatial LineString type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeLineString(Fluent $column)
-    {
-        return 'linestring';
-    }
-
-    /**
-     * Create the column definition for a spatial Polygon type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typePolygon(Fluent $column)
-    {
-        return 'polygon';
-    }
-
-    /**
-     * Create the column definition for a spatial GeometryCollection type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeGeometryCollection(Fluent $column)
-    {
-        return 'geometrycollection';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPoint type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeMultiPoint(Fluent $column)
-    {
-        return 'multipoint';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiLineString type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeMultiLineString(Fluent $column)
-    {
-        return 'multilinestring';
-    }
-
-    /**
-     * Create the column definition for a spatial MultiPolygon type.
-     *
-     * @param  \Illuminate\Support\Fluent $column
-     * @return string
-     */
-    public function typeMultiPolygon(Fluent $column)
-    {
-        return 'multipolygon';
     }
 
     /**
