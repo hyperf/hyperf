@@ -24,10 +24,17 @@ class DispatcherFactory
 
     public function __invoke(ContainerInterface $container): Dispatcher
     {
+        /** @var RouteCollector $router */
         $router = $container->get($this->routeCollector);
 
         foreach ($this->routes as $route) {
             require_once $route;
+        }
+
+        // Add routes from RouteMetadataCollector.
+        $metadata = RouteMetadataCollector::getContainer();
+        foreach ($metadata ?? [] as $path => $item) {
+            $router->addRoute($item['method'], $path, $item['handler']);
         }
 
         return new GroupCountBased($router->getData());
