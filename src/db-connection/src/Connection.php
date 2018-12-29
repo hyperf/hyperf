@@ -11,17 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Closure;
-use Generator;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\Connectors\Connector;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Expression;
-use Hyperf\Framework\ApplicationContext;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Psr\Container\ContainerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface

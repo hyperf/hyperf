@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DbConnection\Connection;
 use Hyperf\Framework\ApplicationContext;
 use Hyperf\Pool\Pool;
-use Hyperf\Contract\ConnectionInterface;
 
 class DbPool extends Pool
 {

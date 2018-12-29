@@ -1,17 +1,18 @@
 <?php
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: limx
- * Date: 2018/12/29
- * Time: 3:44 PM
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Pool;
-
 
 use Hyperf\Contract\ConnectionInterface;
 
 abstract class Connection implements ConnectionInterface
 {
-
 }
