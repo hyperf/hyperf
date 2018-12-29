@@ -29,4 +29,9 @@ class AnnotationCollector extends MetadataCollector
     {
         static::$container[$class]['_p'][$property][$annotation] = $value;
     }
+
+    public static function collectMethod(string $class, string $method, string $annotation, $value): void
+    {
+        static::$container[$class]['_m'][$method][$annotation] = $value;
+    }
 }

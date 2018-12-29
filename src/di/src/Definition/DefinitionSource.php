@@ -16,7 +16,6 @@ use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\HttpServer\Router\RouteMetadataCollector;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;
@@ -191,11 +190,10 @@ class DefinitionSource implements DefinitionSourceInterface
         $pathsHash = md5(implode(',', $paths));
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
-            list(, $annotationMetadata, $aspectMetadata, $routeMetadata) = explode(PHP_EOL, file_get_contents($this->cachePath));
+            list(, $annotationMetadata, $aspectMetadata) = explode(PHP_EOL, file_get_contents($this->cachePath));
             // Deserialize metadata when the cache is valid
             AnnotationCollector::deserialize($annotationMetadata);
             AspectCollector::deserialize($aspectMetadata);
-            RouteMetadataCollector::deserialize($routeMetadata);
             return false;
         }
         $this->printLn('Scanning ...');
@@ -208,7 +206,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 mkdir($dirPath, 0755, true);
             }
         }
-        $data = implode(PHP_EOL, [$pathsHash, AnnotationCollector::serialize(), AspectCollector::serialize(), RouteMetadataCollector::serialize()]);
+        $data = implode(PHP_EOL, [$pathsHash, AnnotationCollector::serialize(), AspectCollector::serialize()]);
         file_put_contents($this->cachePath, $data);
         $this->printLn('Scan completed.');
         return true;
