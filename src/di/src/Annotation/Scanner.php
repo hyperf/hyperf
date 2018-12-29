@@ -72,6 +72,7 @@ class Scanner
                 }
             }
 
+            // Parse properties annotations.
             $properties = $reflectionClass->getProperties();
             foreach ($properties as $property) {
                 $propertyAnnotations = $reader->getPropertyAnnotations($property);
@@ -81,6 +82,19 @@ class Scanner
                     }
                 }
             }
+
+            // Parse methods annotations.
+            $methods = $reflectionClass->getMethods();
+            foreach ($methods as $method) {
+                $methodAnnotations = $reader->getMethodAnnotations($method);
+                if (! empty($methodAnnotations)) {
+                    foreach ($methodAnnotations as $methodAnnotation) {
+                        $methodAnnotation instanceof AnnotationInterface && $methodAnnotation->collect($className, $method->getName());
+                    }
+                }
+            }
+
+
         }
 
         return $classColletion;
