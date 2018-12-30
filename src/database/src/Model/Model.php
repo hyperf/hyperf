@@ -14,8 +14,6 @@ namespace Hyperf\Database\Model;
 use ArrayAccess;
 use Exception;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
@@ -163,9 +161,9 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function __construct(array $attributes = [])
     {
-        // $this->bootIfNotBooted();
-        //
-        // $this->initializeTraits();
+        $this->bootIfNotBooted();
+
+        $this->initializeTraits();
 
         $this->syncOriginal();
 
