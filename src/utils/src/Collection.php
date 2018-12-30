@@ -713,7 +713,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @param  string|array $value
      */
-    public function pluck($value, string $key = null): self
+    public function pluck($value, ?string $key = null): self
     {
         return new static(Arr::pluck($this->items, $value, $key));
     }

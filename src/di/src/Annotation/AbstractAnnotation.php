@@ -23,9 +23,12 @@ abstract class AbstractAnnotation implements AnnotationInterface
         $this->value = $value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function collect(string $className, ?string $target): void
     {
-        if (isset($this->value)) {
+        if (null !== $this->value) {
             AnnotationCollector::collectClass($className, static::class, $this->value);
         }
     }

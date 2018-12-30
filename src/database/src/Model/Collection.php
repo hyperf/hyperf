@@ -46,7 +46,7 @@ class Collection extends BaseCollection
         }
 
         return Arr::first($this->items, function ($model) use ($key) {
-            return $model->getKey() == $key;
+            return $model->getKey() === $key;
         }, $default);
     }
 
@@ -234,7 +234,6 @@ class Collection extends BaseCollection
      * Run a map over each of the items.
      *
      * @param  callable $callback
-     * @return \Illuminate\Support\Collection|static
      */
     public function map(callable $callback): BaseCollection
     {
@@ -318,9 +317,8 @@ class Collection extends BaseCollection
      *
      * @param  string|callable|null $key
      * @param  bool $strict
-     * @return static|\Illuminate\Support\Collection
      */
-    public function unique($key = null, $strict = false): BaseCollection
+    public function unique($key = null, bool $strict = false): BaseCollection
     {
         if (!is_null($key)) {
             return parent::unique($key, $strict);
@@ -409,9 +407,8 @@ class Collection extends BaseCollection
      *
      * @param  string $value
      * @param  string|null $key
-     * @return \Illuminate\Support\Collection
      */
-    public function pluck($value, $key = null): BaseCollection
+    public function pluck($value, ?string $key = null): BaseCollection
     {
         return $this->toBase()->pluck($value, $key);
     }
@@ -419,7 +416,6 @@ class Collection extends BaseCollection
     /**
      * Get the keys of the collection items.
      *
-     * @return \Illuminate\Support\Collection
      */
     public function keys(): BaseCollection
     {
@@ -430,7 +426,6 @@ class Collection extends BaseCollection
      * Zip the collection together with one or more arrays.
      *
      * @param  mixed ...$items
-     * @return \Illuminate\Support\Collection
      */
     public function zip($items): BaseCollection
     {
@@ -440,7 +435,6 @@ class Collection extends BaseCollection
     /**
      * Collapse the collection of items into a single array.
      *
-     * @return \Illuminate\Support\Collection
      */
     public function collapse(): BaseCollection
     {
@@ -449,11 +443,8 @@ class Collection extends BaseCollection
 
     /**
      * Get a flattened array of the items in the collection.
-     *
-     * @param  int $depth
-     * @return \Illuminate\Support\Collection
      */
-    public function flatten($depth = INF): BaseCollection
+    public function flatten(int $depth = INF): BaseCollection
     {
         return $this->toBase()->flatten($depth);
     }
@@ -461,7 +452,6 @@ class Collection extends BaseCollection
     /**
      * Flip the items in the collection.
      *
-     * @return \Illuminate\Support\Collection
      */
     public function flip(): BaseCollection
     {
@@ -470,12 +460,8 @@ class Collection extends BaseCollection
 
     /**
      * Pad collection to the specified length with a value.
-     *
-     * @param  int $size
-     * @param  mixed $value
-     * @return \Illuminate\Support\Collection
      */
-    public function pad($size, $value): BaseCollection
+    public function pad(int $size, $value): BaseCollection
     {
         return $this->toBase()->pad($size, $value);
     }
