@@ -1,0 +1,51 @@
+<?php
+
+namespace Hyperf\Event;
+
+
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Psr\EventDispatcher\MessageInterface;
+use Psr\EventDispatcher\MessageNotifierInterface;
+use Throwable;
+
+class MessageNotifier implements MessageNotifierInterface
+{
+
+    /**
+     * @var ListenerProviderInterface
+     */
+    private $listeners;
+
+    public function __construct(ListenerProviderInterface $listeners)
+    {
+        $this->listeners = $listeners;
+    }
+
+
+    /**
+     * Notify listeners of a message event.
+     * This method MAY act asynchronously.  Callers SHOULD NOT
+     * assume that any action has been taken when this method
+     * returns.
+     *
+     * @param MessageInterface $event
+     *   The event to notify listeners of.
+     */
+    public function notify(MessageInterface $event): void
+    {
+        $position   = 0;
+        $exceptions = [];
+        foreach ($this->listeners->getListenersForEvent($event) as $listener) {
+            try {
+                $listener($event);
+            } catch (Throwable $e) {
+                $exceptions[$position] = $e;
+            }
+            $position += 1;
+        }
+        if ([] !== $exceptions) {
+            echo '<pre>';var_dump($exceptions);echo '</pre>';exit();
+            // throw Exception\ExceptionAggregate::fromExceptions($exceptions);
+        }
+    }
+}

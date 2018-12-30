@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Router;
 
 /**
- * Class Router
  * @method static addRoute($httpMethod, $route, $handler)
  * @method static addGroup($prefix, callable $callback)
  * @method static get($route, $handler)
@@ -21,7 +20,6 @@ namespace Hyperf\HttpServer\Router;
  * @method static delete($route, $handler)
  * @method static patch($route, $handler)
  * @method static head($route, $handler)
- * @package Hyperf\HttpServer\Router
  */
 class Router
 {
@@ -41,10 +39,10 @@ class Router
         return $router->$name(...$arguments);
     }
 
-    public static function addServer($serverName, $callback)
+    public static function addServer(string $serverName, callable $callback)
     {
         static::$serverName = $serverName;
-        $callback();
+        call($callback);
         static::$serverName = 'httpServer';
     }
 
