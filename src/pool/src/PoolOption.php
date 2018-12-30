@@ -101,17 +101,11 @@ class PoolOption implements PoolOptionInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getWaitTimeout(): float
     {
         return $this->waitTimeout;
     }
 
-    /**
-     * @param float $waitTimeout
-     */
     public function setWaitTimeout(float $waitTimeout): self
     {
         $this->waitTimeout = $waitTimeout;

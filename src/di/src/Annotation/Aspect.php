@@ -20,6 +20,10 @@ use Hyperf\Di\Aop\ArroundInterface;
  */
 class Aspect extends AbstractAnnotation
 {
+
+    /**
+     * {@inheritDoc}
+     */
     public function collect(string $className, ?string $target): void
     {
         // @TODO Add order property.

@@ -39,6 +39,9 @@ abstract class Pool implements PoolInterface
      */
     protected $option;
 
+    /**
+     * @var int
+     */
     protected $currentConnections = 0;
 
     public function __construct(ContainerInterface $container)
@@ -77,9 +80,6 @@ abstract class Pool implements PoolInterface
         }
     }
 
-    /**
-     * @return int
-     */
     public function getCurrentConnections(): int
     {
         return $this->currentConnections;

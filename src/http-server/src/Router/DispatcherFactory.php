@@ -21,6 +21,11 @@ use Hyperf\Di\Exception\ConflictAnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\DeleteMapping;
+use Hyperf\HttpServer\Annotation\GetMapping;
+use Hyperf\HttpServer\Annotation\PatchMapping;
+use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
@@ -128,15 +133,25 @@ class DispatcherFactory
 
         $router->addGroup($prefix, function ($router) use ($className, $methodMetadata) {
             foreach ($methodMetadata as $method => $values) {
-                if (isset($values[RequestMapping::class])) {
-                    $item = $values[RequestMapping::class];
-                    if ($item['path'][0] !== '/') {
-                        $item['path'] = '/' . $item['path'];
+                $mappingAnnotations = [
+                    RequestMapping::class,
+                    GetMapping::class,
+                    PostMapping::class,
+                    PutMapping::class,
+                    PatchMapping::class,
+                    DeleteMapping::class,
+                ];
+                foreach ($mappingAnnotations as $mappingAnnotation) {
+                    if (isset($values[$mappingAnnotation])) {
+                        $item = $values[$mappingAnnotation];
+                        if ($item['path'][0] !== '/') {
+                            $item['path'] = '/' . $item['path'];
+                        }
+                        $router->addRoute($item['methods'], $item['path'], [
+                            $className,
+                            $method
+                        ]);
                     }
-                    $router->addRoute($item['methods'], $item['path'], [
-                        $className,
-                        $method
-                    ]);
                 }
             }
         });
