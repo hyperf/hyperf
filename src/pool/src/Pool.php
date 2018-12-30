@@ -41,9 +41,6 @@ abstract class Pool implements PoolInterface
 
     protected $currentConnections = 0;
 
-    /**
-     * @param Channel $channel
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -55,7 +52,7 @@ abstract class Pool implements PoolInterface
     {
         $num = $this->getConnectionsInChannel();
 
-        if ($num == 0 && $this->currentConnections < $this->option->getMaxConnections()) {
+        if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
             $connection = $this->createConnection();
             $this->currentConnections++;
             return $connection;
