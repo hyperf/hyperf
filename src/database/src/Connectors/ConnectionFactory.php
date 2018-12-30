@@ -64,7 +64,7 @@ class ConnectionFactory
      * Create a connector instance based on the configuration.
      *
      * @param  array $config
-     * @return \Illuminate\Database\Connectors\ConnectorInterface
+     * @return ConnectorInterface
      *
      * @throws \InvalidArgumentException
      */
@@ -108,7 +108,7 @@ class ConnectionFactory
      * Create a single database connection instance.
      *
      * @param  array $config
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function createSingleConnection(array $config)
     {
@@ -127,7 +127,7 @@ class ConnectionFactory
      * Create a single database connection instance.
      *
      * @param  array $config
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function createReadWriteConnection(array $config)
     {
