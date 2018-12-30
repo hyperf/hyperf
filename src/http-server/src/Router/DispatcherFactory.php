@@ -131,35 +131,33 @@ class DispatcherFactory
         $prefix = $this->getPrefix($className, $controllerMetadata['prefix'] ?? '');
         $router = $this->getRouter($controllerMetadata['prefix'] ?? 'httpServer');
 
-        $router->addGroup($prefix, function ($router) use ($className, $methodMetadata) {
-            foreach ($methodMetadata as $method => $values) {
-                $mappingAnnotations = [
-                    RequestMapping::class,
-                    GetMapping::class,
-                    PostMapping::class,
-                    PutMapping::class,
-                    PatchMapping::class,
-                    DeleteMapping::class,
-                ];
-                foreach ($mappingAnnotations as $mappingAnnotation) {
-                    if (isset($values[$mappingAnnotation])) {
-                        $item = $values[$mappingAnnotation];
-                        if ($item['path'][0] !== '/') {
-                            $item['path'] = '/' . $item['path'];
-                        }
-                        $router->addRoute($item['methods'], $item['path'], [
-                            $className,
-                            $method
-                        ]);
+        foreach ($methodMetadata as $method => $values) {
+            $mappingAnnotations = [
+                RequestMapping::class,
+                GetMapping::class,
+                PostMapping::class,
+                PutMapping::class,
+                PatchMapping::class,
+                DeleteMapping::class,
+            ];
+            foreach ($mappingAnnotations as $mappingAnnotation) {
+                if (isset($values[$mappingAnnotation])) {
+                    $item = $values[$mappingAnnotation];
+                    if ($item['path'][0] !== '/') {
+                        $item['path'] = $prefix . '/' . $item['path'];
                     }
+                    $router->addRoute($item['methods'], $item['path'], [
+                        $className,
+                        $method
+                    ]);
                 }
             }
-        });
+        }
     }
 
     private function getPrefix(string $className, string $prefix): string
     {
-        if (!$prefix) {
+        if (! $prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controllers\\'));
             $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
             $prefix = Str::snake($handledNamespace);
