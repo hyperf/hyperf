@@ -14,7 +14,6 @@ namespace Hyperf\DbConnection\Pool;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DbConnection\Connection;
-use Hyperf\Framework\ApplicationContext;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 

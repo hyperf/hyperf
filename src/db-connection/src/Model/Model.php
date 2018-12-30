@@ -1,17 +1,20 @@
 <?php
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: limx
- * Date: 2018/12/30
- * Time: 2:48 PM
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DbConnection\Model;
 
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Model as BaseModel;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Framework\ApplicationContext;
-use Hyperf\Database\ConnectionInterface;
 
 class Model extends BaseModel
 {
