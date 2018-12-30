@@ -29,13 +29,31 @@ use Psr\Container\ContainerInterface;
  */
 class Router
 {
-    protected static $defautCollector = RouteCollector::class;
+    /**
+     * @var string
+     */
+    protected static $serverName = 'httpServer';
+
+    /**
+     * @var DispatcherFactory
+     */
+    protected static $factory;
+
+    public static function addServer($serverName, $callback)
+    {
+        static::$serverName = $serverName;
+        $callback();
+        static::$serverName = 'httpServer';
+    }
+
+    public static function init(DispatcherFactory $factory)
+    {
+        static::$factory = $factory;
+    }
 
     public static function __callStatic($name, $arguments)
     {
-        /** @var ContainerInterface $container */
-        $container = ApplicationContext::getContainer();
-        $router = $container->get(static::$defautCollector);
+        $router = static::$factory->getRouter(static::$serverName);
         return $router->$name(...$arguments);
     }
 }

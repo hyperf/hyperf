@@ -11,10 +11,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
+use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Framework\Constants\SwooleEvent;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 use Swoole\Server\Port;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Server
 {
@@ -38,6 +41,11 @@ class Server
      */
     private $container;
 
+    /**
+     * @var array
+     */
+    private $requests = [];
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -45,7 +53,7 @@ class Server
 
     public function initConfigs(array $serverConfigs): self
     {
-        foreach ($serverConfigs as $serverConfig) {
+        foreach ($serverConfigs as $i => $serverConfig) {
             $server = $serverConfig['server'];
             $constructor = $serverConfig['constructor'];
             $callbacks = $serverConfig['callbacks'];
@@ -54,13 +62,15 @@ class Server
                 throw new \InvalidArgumentException('Server not exist.');
             }
             if (! $this->server) {
+                $serverName = $serverConfig['name'] ?? 'httpServer';
                 $this->server = new $server(...$constructor);
                 $callbacks = array_replace($this->defaultCallbacks(), $callbacks);
-                $this->registerSwooleEvents($this->server, $callbacks);
+                $this->registerSwooleEvents($this->server, $callbacks, $serverName);
                 $this->server->set($settings);
             } else {
+                $serverName = $serverConfig['name'] ?? 'httpServer' . $i;
                 $slaveServer = $this->server->addlistener(...$constructor);
-                $this->registerSwooleEvents($slaveServer, $callbacks);
+                $this->registerSwooleEvents($slaveServer, $callbacks, $serverName);
             }
         }
         return $this;
@@ -75,11 +85,30 @@ class Server
      * @param SwooleServer|Port $server
      * @param array $events
      */
-    protected function registerSwooleEvents($server, array $events): void
+    protected function registerSwooleEvents($server, array $events,string $serverName): void
     {
         foreach ($events as $event => $callback) {
             if (is_array($callback)) {
-                $callback = [$this->container->get($callback[0]), $callback[1]];
+                if (array_key_exists($callback[0], $this->requests)) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+
+                    $logger->warning(sprintf(
+                        'WARN: %s will be replaced by %s, please check your server.callbacks.request! ',
+                        $this->requests[$callback[0]],
+                        $serverName
+                    ));
+                }
+
+                $this->requests[$callback[0]] = $serverName;
+                $class = $this->container->get($callback[0]);
+                if ($event == 'request') {
+                    if (!$class instanceof ServerOnRequestInterface) {
+                        throw new \InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
+                    }
+
+                    $class->initCoreMiddleware($serverName);
+                }
+                $callback = [$class, $callback[1]];
             }
             $server->on($event, $callback);
         }

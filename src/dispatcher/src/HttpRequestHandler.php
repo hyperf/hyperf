@@ -15,6 +15,7 @@ use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use function array_unique;
 use function is_string;
@@ -35,7 +36,7 @@ class HttpRequestHandler implements RequestHandlerInterface
      */
     private $container;
 
-    public function __construct(array $middlewares, string $coreHandler, ContainerInterface $container)
+    public function __construct(array $middlewares, MiddlewareInterface $coreHandler, ContainerInterface $container)
     {
         $this->middlewares = array_unique($middlewares);
         $this->coreHandler = $coreHandler;
@@ -49,7 +50,7 @@ class HttpRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! isset($this->middlewares[$this->offset]) && ! empty($this->coreHandler)) {
-            $handler = $this->container->get($this->coreHandler);
+            $handler = $this->coreHandler;
         } else {
             $handler = $this->middlewares[$this->offset];
             is_string($handler) && $handler = $this->container->get($handler);

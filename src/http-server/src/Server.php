@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
@@ -19,13 +20,14 @@ use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Swoft\Http\Message\Server\Request as Psr7Request;
 use Swoft\Http\Message\Server\Response as Psr7Response;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
 
-class Server
+class Server implements ServerOnRequestInterface
 {
     /**
      * @var array
@@ -38,6 +40,11 @@ class Server
     private $coreHandler;
 
     /**
+     * @var MiddlewareInterface
+     */
+    private $coreMiddleware;
+
+    /**
      * @var array
      */
     private $exceptionHandlers;
@@ -46,6 +53,11 @@ class Server
      * @var \Psr\Container\ContainerInterface
      */
     private $container;
+
+    /**
+     * @var string
+     */
+    private $serverName = 'httpServer';
 
     public function __construct(
         array $middlewares,
@@ -59,6 +71,13 @@ class Server
         $this->container = $container;
     }
 
+    public function initCoreMiddleware(string $serverName): void
+    {
+        $this->serverName = $serverName;
+        $coreHandler = $this->coreHandler;
+        $this->coreMiddleware = new $coreHandler($this->container, $serverName);
+    }
+
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
@@ -68,11 +87,12 @@ class Server
             Context::set(ServerRequestInterface::class, $psr7Request);
             Context::set(ResponseInterface::class, $psr7Response);
             $dispatcher = $this->container->get(HttpDispatcher::class);
-            $psr7Response = $dispatcher->dispatch($psr7Request, $this->middlewares, $this->coreHandler);
+
+            $psr7Response = $dispatcher->dispatch($psr7Request, $this->middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
-                $logger->error($throwable->getMessage());
+                $logger->error($throwable->getMessage().$throwable->getFile());
             }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);

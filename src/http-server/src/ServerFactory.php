@@ -26,6 +26,7 @@ class ServerFactory
         $exceptionHandlers = $config->get('exceptions.handler.http', [
             HttpExceptionHandler::class,
         ]);
+
         return new Server($middlewares, $this->coreMiddleware, $exceptionHandlers, $container);
     }
 }

@@ -24,11 +24,19 @@ class AutoController extends AbstractAnnotation
      */
     public $prefix;
 
+    /**
+     * @var string
+     */
+    public $server = 'httpServer';
+
     public function __construct($value = null)
     {
         $this->value = $value;
         if (isset($value['prefix'])) {
             $this->prefix = $value['prefix'];
+        }
+        if (isset($value['server'])) {
+            $this->server = $value['server'];
         }
     }
 }

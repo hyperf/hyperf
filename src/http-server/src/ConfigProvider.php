@@ -26,8 +26,7 @@ class ConfigProvider
             'dependencies' => [
                 Server::class => ServerFactory::class,
                 StartServer::class => StartServerFactory::class,
-                Dispatcher::class => DispatcherFactory::class,
-                RouteCollector::class => RouteCollectorFactory::class,
+                DispatcherFactory::class => DispatcherFactory::class,
             ],
             'commands' => [
                 StartServer::class,

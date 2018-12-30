@@ -39,12 +39,6 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected $dispatcher;
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-        $this->dispatcher = $container->get(GrpcDispatcher::class);
-    }
-
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.

@@ -23,31 +23,62 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
+use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
+use FastRoute\RouteParser\Std;
 
 class DispatcherFactory
 {
     protected $routes = [BASE_PATH . '/config/routes.php'];
 
-    protected $routeCollector = RouteCollector::class;
+    /**
+     * @var \FastRoute\RouteCollector[]
+     */
+    private $routers = [];
 
     /**
-     * @var \FastRoute\RouteCollector
+     * @var Dispatcher[]
      */
-    private $router;
+    private $dispatchers = [];
 
-    public function __invoke(ContainerInterface $container): Dispatcher
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(ContainerInterface $container)
     {
-        /** @var RouteCollector $router */
-        // @TODO Use a Interface instead of the specified class.
-        $this->router = $router = $container->get($this->routeCollector);
+        $this->container = $container;
+        $this->initAnnotationRoute(AnnotationCollector::getContainer());
+        $this->initConfigRoute();
+    }
 
+    public function getDispatcher(string $serverName): Dispatcher
+    {
+        if (isset($this->dispatchers[$serverName])) {
+            return $this->dispatchers[$serverName];
+        }
+
+        $router = $this->getRouter($serverName);
+        return $this->dispatchers[$serverName] = new GroupCountBased($router->getData());
+    }
+
+    public function initConfigRoute()
+    {
+        Router::init($this);
         foreach ($this->routes as $route) {
             require_once $route;
         }
+    }
 
-        $this->initAnnotationRoute(AnnotationCollector::getContainer());
+    public function getRouter(string $serverName): RouteCollector
+    {
+        if (isset($this->routers[$serverName])) {
+            return $this->routers[$serverName];
+        }
 
-        return new GroupCountBased($this->router->getData());
+        $parser = new Std();
+        $generator = new DataGenerator();
+        return $this->routers[$serverName] = new RouteCollector($parser, $generator);
     }
 
     private function initAnnotationRoute(array $collector): void
@@ -74,12 +105,14 @@ class DispatcherFactory
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         $prefix = $this->getPrefix($className, $values['prefix'] ?? '');
+        $router = $this->getRouter($values['server'] ?? 'httpServer');
+
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
-            $this->router->addRoute(['GET'], $path, [$className, $method->getName()]);
+            $router->addRoute(['GET'], $path, [$className, $method->getName()]);
             if (Str::endsWith($path, '/index')) {
                 $path = Str::replaceLast('/index', '', $path);
-                $this->router->addRoute(['GET'], $path, [$className, $method->getName()]);
+                $router->addRoute(['GET'], $path, [$className, $method->getName()]);
             }
         }
     }
@@ -91,14 +124,16 @@ class DispatcherFactory
     private function handleController(string $className, array $controllerMetadata, array $methodMetadata): void
     {
         $prefix = $this->getPrefix($className, $controllerMetadata['prefix'] ?? '');
-        $this->router->addGroup($prefix, function () use ($className, $methodMetadata) {
+        $router = $this->getRouter($controllerMetadata['prefix'] ?? 'httpServer');
+
+        $router->addGroup($prefix, function ($router) use ($className, $methodMetadata) {
             foreach ($methodMetadata as $method => $values) {
                 if (isset($values[RequestMapping::class])) {
                     $item = $values[RequestMapping::class];
                     if ($item['path'][0] !== '/') {
                         $item['path'] = '/' . $item['path'];
                     }
-                    $this->router->addRoute($item['methods'], $item['path'], [
+                    $router->addRoute($item['methods'], $item['path'], [
                         $className,
                         $method
                     ]);
@@ -109,7 +144,7 @@ class DispatcherFactory
 
     private function getPrefix(string $className, string $prefix): string
     {
-        if (! $prefix) {
+        if (!$prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controllers\\'));
             $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
             $prefix = Str::snake($handledNamespace);

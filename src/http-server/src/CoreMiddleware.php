@@ -13,6 +13,7 @@ namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
 use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -39,10 +40,11 @@ class CoreMiddleware implements MiddlewareInterface
      */
     protected $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, string $serverName)
     {
         $this->container = $container;
-        $this->dispatcher = $container->get(Dispatcher::class);
+        $factory = $container->get(DispatcherFactory::class);
+        $this->dispatcher = $factory->getDispatcher($serverName);
     }
 
     /**
