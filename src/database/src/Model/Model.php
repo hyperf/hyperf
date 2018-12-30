@@ -121,13 +121,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected $perPage = 15;
 
     /**
-     * The connection resolver instance.
-     *
-     * @var ConnectionResolverInterface
-     */
-    protected static $resolver;
-
-    /**
      * The event dispatcher instance.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
@@ -996,7 +989,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function getConnection(): ConnectionInterface
     {
-        return static::resolveConnection($this->getConnectionName());
+        return Register::resolveConnection($this->getConnectionName());
     }
 
     /**
@@ -1020,48 +1013,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->connection = $name;
 
         return $this;
-    }
-
-    /**
-     * Resolve a connection instance.
-     *
-     * @param  string|null $connection
-     * @return \Illuminate\Database\Connection
-     */
-    public static function resolveConnection($connection = null)
-    {
-        return static::$resolver->connection($connection);
-    }
-
-    /**
-     * Get the connection resolver instance.
-     *
-     * @return \Illuminate\Database\ConnectionResolverInterface
-     */
-    public static function getConnectionResolver()
-    {
-        return static::$resolver;
-    }
-
-    /**
-     * Set the connection resolver instance.
-     *
-     * @param  \Illuminate\Database\ConnectionResolverInterface $resolver
-     * @return void
-     */
-    public static function setConnectionResolver(Resolver $resolver)
-    {
-        static::$resolver = $resolver;
-    }
-
-    /**
-     * Unset the connection resolver for models.
-     *
-     * @return void
-     */
-    public static function unsetConnectionResolver()
-    {
-        static::$resolver = null;
     }
 
     /**
