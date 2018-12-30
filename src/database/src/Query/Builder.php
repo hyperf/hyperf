@@ -15,18 +15,17 @@ use Closure;
 use DateTimeInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 
+use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
-
-// use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class Builder
 {
@@ -789,7 +788,7 @@ class Builder
         // look for any values that exists within this given query. So we will add the
         // query accordingly so that this query is properly executed when it is run.
         if ($values instanceof self ||
-            $values instanceof EloquentBuilder ||
+            $values instanceof ModelBuilder ||
             $values instanceof Closure) {
             [$query, $bindings] = $this->createSub($values);
 
@@ -2639,7 +2638,7 @@ class Builder
      */
     protected function parseSub($query)
     {
-        if ($query instanceof self || $query instanceof EloquentBuilder) {
+        if ($query instanceof self || $query instanceof ModelBuilder) {
             return [$query->toSql(), $query->getBindings()];
         } elseif (is_string($query)) {
             return [$query, []];
