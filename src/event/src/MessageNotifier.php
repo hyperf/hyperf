@@ -50,11 +50,7 @@ class MessageNotifier implements MessageNotifierInterface
             $position += 1;
         }
         if ([] !== $exceptions) {
-            echo '<pre>';
-            var_dump($exceptions);
-            echo '</pre>';
-            exit();
-            // throw Exception\ExceptionAggregate::fromExceptions($exceptions);
+            throw Exception\ExceptionAggregate::fromExceptions($exceptions);
         }
     }
 }
