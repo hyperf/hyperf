@@ -80,18 +80,18 @@ abstract class Pool implements PoolInterface
         }
     }
 
-    protected function getConnectionsInChannel(): int
-    {
-        $stats = $this->channel->stats();
-        return $stats['queue_num'];
-    }
-
     /**
      * @return int
      */
     public function getCurrentConnections(): int
     {
         return $this->currentConnections;
+    }
+
+    protected function getConnectionsInChannel(): int
+    {
+        $stats = $this->channel->stats();
+        return $stats['queue_num'];
     }
 
     abstract protected function createConnection(): ConnectionInterface;

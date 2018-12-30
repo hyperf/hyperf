@@ -14,16 +14,13 @@ namespace Hyperf\DbConnection;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
-class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
+class Connection extends BaseConnection implements ConnectionInterface
 {
-    use DbConnection;
-
     /**
      * @var DbConnectionInterface
      */
@@ -48,17 +45,22 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         $this->reconnect();
     }
 
+    public function __call($name, $arguments)
+    {
+        return $this->connection->$name(...$arguments);
+    }
+
     public function getConnection(): DbConnectionInterface
     {
         if ($this->check()) {
-            return $this;
+            return $this->connection;
         }
 
         if (!$this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
-        return $this;
+        return $this->connection;
     }
 
     public function reconnect(): bool
@@ -80,10 +82,5 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function release(): void
     {
         parent::release();
-    }
-
-    public function __call($name, $arguments)
-    {
-        return $this->connection->$name(...$arguments);
     }
 }

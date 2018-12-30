@@ -64,35 +64,11 @@ class ConnectionResolver implements ConnectionResolverInterface
         }
 
         $pool = $this->factory->getDbPool($name);
-
         $connection = $pool->get()->getConnection();
         $connections[$name] = $connection;
         Context::set('databases', $connections);
 
         return $connection;
-    }
-
-    /**
-     * Add a connection to the resolver.
-     *
-     * @param  string $name
-     * @param  \Illuminate\Database\ConnectionInterface $connection
-     * @return void
-     */
-    public function addConnection($name, ConnectionInterface $connection)
-    {
-        $this->connections[$name] = $connection;
-    }
-
-    /**
-     * Check if a connection has been registered.
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function hasConnection($name)
-    {
-        return isset($this->connections[$name]);
     }
 
     /**
