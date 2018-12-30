@@ -16,7 +16,6 @@ use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\GrpcServer\Router\Dispatcher as GrpcDispatcher;
 use Hyperf\GrpcServer\Utils\Parser;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\Utils\Context;

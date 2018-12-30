@@ -93,8 +93,6 @@ class Scanner
                     }
                 }
             }
-
-
         }
 
         return $classColletion;

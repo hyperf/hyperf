@@ -11,10 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Router;
 
-use FastRoute\RouteCollector;
-use Hyperf\Framework\ApplicationContext;
-use Psr\Container\ContainerInterface;
-
 /**
  * Class Router
  * @method static addRoute($httpMethod, $route, $handler)
@@ -39,6 +35,12 @@ class Router
      */
     protected static $factory;
 
+    public static function __callStatic($name, $arguments)
+    {
+        $router = static::$factory->getRouter(static::$serverName);
+        return $router->$name(...$arguments);
+    }
+
     public static function addServer($serverName, $callback)
     {
         static::$serverName = $serverName;
@@ -49,11 +51,5 @@ class Router
     public static function init(DispatcherFactory $factory)
     {
         static::$factory = $factory;
-    }
-
-    public static function __callStatic($name, $arguments)
-    {
-        $router = static::$factory->getRouter(static::$serverName);
-        return $router->$name(...$arguments);
     }
 }

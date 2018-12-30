@@ -17,7 +17,6 @@ use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 use Swoole\Server\Port;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class Server
 {
@@ -85,7 +84,7 @@ class Server
      * @param SwooleServer|Port $server
      * @param array $events
      */
-    protected function registerSwooleEvents($server, array $events,string $serverName): void
+    protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
         foreach ($events as $event => $callback) {
             if (is_array($callback)) {

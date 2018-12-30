@@ -11,9 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Router;
 
+use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Exception\ConflictAnnotationException;
 use Hyperf\Di\ReflectionManager;
@@ -23,8 +25,6 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
-use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
-use FastRoute\RouteParser\Std;
 
 class DispatcherFactory
 {

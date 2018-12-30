@@ -1,20 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Contract;
 
-use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
-use Hyperf\Framework\ExceptionHandlerDispatcher;
-use Hyperf\HttpServer\Exception\HttpException;
-use Hyperf\Utils\Context;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Swoft\Http\Message\Server\Request as Psr7Request;
-use Swoft\Http\Message\Server\Response as Psr7Response;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
-use Throwable;
 
 interface ServerOnRequestInterface
 {

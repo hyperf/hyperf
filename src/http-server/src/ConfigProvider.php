@@ -11,12 +11,9 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
 use Hyperf\HttpServer\Command\StartServer;
 use Hyperf\HttpServer\Command\StartServerFactory;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\HttpServer\Router\RouteCollectorFactory;
 
 class ConfigProvider
 {
