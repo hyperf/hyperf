@@ -38,7 +38,7 @@ class DeleteMapping extends AbstractAnnotation
      */
     public function collect(string $className, ?string $target): void
     {
-        if ($this->methods && $this->path) {
+        if ($this->path) {
             AnnotationCollector::collectMethod($className, $target, static::class, [
                 'methods' => ['DELETE'],
                 'path' => $this->path,

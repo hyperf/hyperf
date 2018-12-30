@@ -38,8 +38,8 @@ class GetMapping extends AbstractAnnotation
      */
     public function collect(string $className, ?string $target): void
     {
-        if ($this->methods && $this->path) {
-            AnnotationCollector::collectMethod($className, $target, static::class, [
+        if ($this->path) {
+            AnnotationCollector::collectMethod($className, $target, self::class, [
                 'methods' => ['GET'],
                 'path' => $this->path,
             ]);

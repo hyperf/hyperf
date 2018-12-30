@@ -90,7 +90,7 @@ class DispatcherFactory
                 $this->handleAutoController($className, $metadata['_c'][AutoController::class]);
             }
             if (isset($metadata['_c'][Controller::class])) {
-                $this->handleController($className, $metadata['_c'][Controller::class], $metadata['_m']);
+                $this->handleController($className, $metadata['_c'][Controller::class], $metadata['_m'] ?? []);
             }
         }
     }
