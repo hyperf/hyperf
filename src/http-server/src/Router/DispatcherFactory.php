@@ -45,14 +45,8 @@ class DispatcherFactory
      */
     private $dispatchers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->container = $container;
         $this->initAnnotationRoute(AnnotationCollector::getContainer());
         $this->initConfigRoute();
     }
