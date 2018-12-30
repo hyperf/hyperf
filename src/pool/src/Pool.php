@@ -86,5 +86,13 @@ abstract class Pool implements PoolInterface
         return $stats['queue_num'];
     }
 
+    /**
+     * @return int
+     */
+    public function getCurrentConnections(): int
+    {
+        return $this->currentConnections;
+    }
+
     abstract protected function createConnection(): ConnectionInterface;
 }

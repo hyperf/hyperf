@@ -14,7 +14,7 @@ namespace Hyperf\Di;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
-use Hyperf\Utils\CoroutineLocker;
+use Hyperf\Utils\Coroutine\Locker;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
@@ -65,14 +65,14 @@ class ProxyFactory
         $path = $dir . $proxyFileName . '.proxy.php';
 
         $key = md5($path);
-        if (CoroutineLocker::lock($key)) {
+        if (Locker::lock($key)) {
             // @TODO handle unlink mechanism.
             @unlink($path);
             if (! file_exists($path)) {
                 $this->createProxyFile($path, $className, $proxyClassName);
             }
             include_once $path;
-            CoroutineLocker::unlock($key);
+            Locker::unlock($key);
         }
     }
 

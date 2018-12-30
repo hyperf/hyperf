@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\Utils\Coroutine;
 
 use Hyperf\Utils\Traits\Container;
 use Swoole\Coroutine as SwooleCoroutine;
 
-class CoroutineLocker
+class Locker
 {
     use Container;
 
