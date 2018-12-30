@@ -13,7 +13,9 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
@@ -74,7 +76,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * The table associated with the model.
@@ -121,7 +123,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * The connection resolver instance.
      *
-     * @var \Illuminate\Database\ConnectionResolverInterface
+     * @var ConnectionResolverInterface
      */
     protected static $resolver;
 
@@ -990,9 +992,9 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get the database connection for the model.
      *
-     * @return \Illuminate\Database\Connection
+     * @return ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return static::resolveConnection($this->getConnectionName());
     }

@@ -16,7 +16,7 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Connectors\PostgresConnector;
 use Hyperf\Database\Connectors\SQLiteConnector;
 use Hyperf\Database\Connectors\SqlServerConnector;
-use Hyperf\DbConnection\Pool\DbPool;
+use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
 {
@@ -24,7 +24,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                DbPool::class => DbPool::class,
+                PoolFactory::class => PoolFactory::class,
                 ConnectionFactory::class => ConnectionFactory::class,
                 'db.connector.mysql' => MySqlConnector::class,
                 'db.connector.pgsql' => PostgresConnector::class,
