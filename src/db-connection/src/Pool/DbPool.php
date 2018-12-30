@@ -38,6 +38,6 @@ class DbPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
-        return new Connection($this->container, $this->config);
+        return new Connection($this->container, $this, $this->config);
     }
 }

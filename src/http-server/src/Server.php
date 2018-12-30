@@ -92,7 +92,7 @@ class Server implements ServerOnRequestInterface
         } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
-                $logger->error($throwable->getMessage().$throwable->getFile());
+                $logger->error($throwable->getMessage());
             }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);

@@ -20,4 +20,6 @@ interface ConnectionInterface
     public function check(): bool;
 
     public function close(): bool;
+
+    public function release(): void;
 }

@@ -14,16 +14,15 @@ namespace Hyperf\DbConnection;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
+use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
-class Connection extends BaseConnection implements ConnectionInterface
+class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use DbConnection;
 
     /**
      * @var DbConnectionInterface
@@ -40,9 +39,9 @@ class Connection extends BaseConnection implements ConnectionInterface
      */
     protected $config;
 
-    public function __construct(ContainerInterface $container, array $config)
+    public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
-        $this->container = $container;
+        parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
         $this->config = $config;
 
@@ -52,14 +51,14 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function getConnection(): DbConnectionInterface
     {
         if ($this->check()) {
-            return $this->connection;
+            return $this;
         }
 
         if (!$this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
-        return $this->connection;
+        return $this;
     }
 
     public function reconnect(): bool
@@ -76,5 +75,15 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         return true;
+    }
+
+    public function release(): void
+    {
+        parent::release();
+    }
+
+    public function __call($name, $arguments)
+    {
+        return $this->connection->$name(...$arguments);
     }
 }
