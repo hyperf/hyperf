@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Event;
-
 
 use Psr\EventDispatcher\EventInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -9,7 +17,6 @@ use SplPriorityQueue;
 
 class ListenerProvider implements ListenerProviderInterface
 {
-
     /**
      * @var callable[]
      */
@@ -37,5 +44,4 @@ class ListenerProvider implements ListenerProviderInterface
     {
         $this->listeners[] = new ListenerData($event, $listener, $priority);
     }
-
 }

@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Event;
-
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\MessageListenerInterface;
@@ -10,7 +18,6 @@ use Psr\Container\ContainerInterface;
 
 class ListenerProviderFactory
 {
-
     public function __invoke(ContainerInterface $container)
     {
         $listenerProvider = new ListenerProvider();
@@ -24,7 +31,7 @@ class ListenerProviderFactory
         return $listenerProvider;
     }
 
-    private function registerConfig(ListenerProvider $provider,  ContainerInterface $container): void
+    private function registerConfig(ListenerProvider $provider, ContainerInterface $container): void
     {
         $config = $container->get(ConfigInterface::class);
         foreach ($config->get('listeners', []) as $listener) {
@@ -42,11 +49,9 @@ class ListenerProviderFactory
                 }
             }
         }
-
     }
 
     private function registerAnnotations(ListenerProvider $listenerProvider): void
     {
     }
-
 }

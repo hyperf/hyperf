@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Event;
-
 
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\MessageInterface;
@@ -10,7 +18,6 @@ use Throwable;
 
 class MessageNotifier implements MessageNotifierInterface
 {
-
     /**
      * @var ListenerProviderInterface
      */
@@ -20,7 +27,6 @@ class MessageNotifier implements MessageNotifierInterface
     {
         $this->listeners = $listeners;
     }
-
 
     /**
      * Notify listeners of a message event.
@@ -44,7 +50,10 @@ class MessageNotifier implements MessageNotifierInterface
             $position += 1;
         }
         if ([] !== $exceptions) {
-            echo '<pre>';var_dump($exceptions);echo '</pre>';exit();
+            echo '<pre>';
+            var_dump($exceptions);
+            echo '</pre>';
+            exit();
             // throw Exception\ExceptionAggregate::fromExceptions($exceptions);
         }
     }
