@@ -23,5 +23,5 @@ interface TaskListenerInterface
     /**
      * Handler the task event when the event triggered.
      */
-    public function process(EventInterface $event): EventInterface;
+    public function process(EventInterface $event);
 }

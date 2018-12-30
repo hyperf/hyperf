@@ -13,6 +13,7 @@ namespace Hyperf\Event;
 
 use Psr\EventDispatcher\MessageInterface;
 use Psr\EventDispatcher\MessageNotifierInterface;
+use Psr\EventDispatcher\TaskInterface;
 use Psr\EventDispatcher\TaskProcessorInterface;
 
 class EventManager
@@ -35,12 +36,12 @@ class EventManager
         $this->processor = $processor;
     }
 
-    public function trigger($event)
+    public function trigger($event): TaskInterface
     {
         return $this->processor->process($event);
     }
 
-    public function notify(MessageInterface $event)
+    public function notify(MessageInterface $event): void
     {
         $this->notifer->notify($event);
     }
