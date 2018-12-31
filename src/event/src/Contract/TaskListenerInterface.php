@@ -11,17 +11,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Event\Contract;
 
-use Psr\EventDispatcher\EventInterface;
+use Psr\EventDispatcher\TaskInterface;
 
-interface TaskListenerInterface
+interface TaskListenerInterface extends BaseListenerInterface
 {
-    /**
-     * @return string[] Returns the events that you want to listen.
-     */
-    public function listen(): array;
 
     /**
      * Handler the task event when the event triggered.
      */
-    public function process(EventInterface $event);
+    public function process(TaskInterface $event);
 }
