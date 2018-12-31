@@ -49,22 +49,17 @@ class ListenerProviderFactory
             if (! isset($values['_c'][TaskListener::class]) && ! isset($values['_c'][MessageListener::class])) {
                 continue;
             }
-            $this->register($provider, $container, $className);
+            $priority = $values['priority'] ?? 1;
+            $this->register($provider, $container, $className, (int)$priority);
         }
-
     }
 
-    /**
-     * @param \Hyperf\Event\ListenerProvider $provider
-     * @param \Psr\Container\ContainerInterface $container
-     * @param string $listener
-     */
-    private function register(ListenerProvider $provider, ContainerInterface $container, string $listener): void
+    private function register(ListenerProvider $provider, ContainerInterface $container, string $listener, int $priority = 1): void
     {
         $instance = $container->get($listener);
         if (method_exists($instance, 'process')) {
             foreach ($instance->listen() as $event) {
-                $provider->on($event, [$instance, 'process']);
+                $provider->on($event, [$instance, 'process'], $priority);
             }
         }
         if (method_exists($instance, 'notify')) {
