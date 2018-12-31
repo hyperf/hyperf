@@ -60,13 +60,13 @@ class CoreMiddleware extends HttpCoreMiddleware
                 [$controller, $action] = $this->prepareHandler($routes[1]);
                 $controllerInstance = $this->container->get($controller);
                 if (!method_exists($controller, $action)) {
-                    $grpcMessage = sprintf('%s:%s is not implemented!', $controller, $action);
+                    $grpcMessage = sprintf('%s:%s is not implemented.', $controller, $action);
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
                 }
                 $parameters = $this->parseParameters($controller, $action, $routes[2]);
                 $result = $controllerInstance->$action(...$parameters);
                 if (!$result instanceof Message) {
-                    $grpcMessage = 'The result is not a valid message!';
+                    $grpcMessage = 'The result is not a valid message.';
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
                 }
 
@@ -75,7 +75,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             case Dispatcher::NOT_FOUND:
             case Dispatcher::METHOD_NOT_ALLOWED:
             default:
-                return $this->handleResponse(null, 404, '404', 'Route Not Find!');
+                return $this->handleResponse(null, 404, '404', 'Route Not Found.');
         }
     }
 
@@ -94,7 +94,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 ->withBody(new SwooleStream($body));
 
             $response->getSwooleResponse()->trailer('grpc-status', '0');
-            $response->getSwooleResponse()->trailer('grpc-message', '');
+            $response->getSwooleResponse()->tariler('grpc-message', '');
 
             return $response;
         }
