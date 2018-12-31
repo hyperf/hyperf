@@ -20,13 +20,11 @@ trait ManagesTransactions
     /**
      * Execute a Closure within a transaction.
      *
-     * @param  \Closure $callback
-     * @param  int $attempts
      * @return mixed
      *
      * @throws \Exception|\Throwable
      */
-    public function transaction(Closure $callback, $attempts = 1)
+    public function transaction(Closure $callback, int $attempts = 1)
     {
         for ($currentAttempt = 1; $currentAttempt <= $attempts; $currentAttempt++) {
             $this->beginTransaction();
@@ -59,9 +57,6 @@ trait ManagesTransactions
 
     /**
      * Start a new database transaction.
-     *
-     * @return void
-     *
      * @throws \Exception
      */
     public function beginTransaction(): void
@@ -75,8 +70,6 @@ trait ManagesTransactions
 
     /**
      * Commit the active database transaction.
-     *
-     * @return void
      */
     public function commit(): void
     {

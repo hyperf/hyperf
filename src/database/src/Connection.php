@@ -23,7 +23,7 @@ use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
 use Hyperf\Utils\Arr;
-use Illuminate\Contracts\Events\Dispatcher;
+use Hyperf\Contracts\Events\Dispatcher;
 use LogicException;
 use PDO;
 use PDOStatement;
@@ -79,28 +79,28 @@ class Connection implements ConnectionInterface
     /**
      * The query grammar implementation.
      *
-     * @var \Illuminate\Database\Query\Grammars\Grammar
+     * @var \Hyperf\Database\Query\Grammars\Grammar
      */
     protected $queryGrammar;
 
     /**
      * The schema grammar implementation.
      *
-     * @var \Illuminate\Database\Schema\Grammars\Grammar
+     * @var \Hyperf\Database\Schema\Grammars\Grammar
      */
     protected $schemaGrammar;
 
     /**
      * The query post processor implementation.
      *
-     * @var \Illuminate\Database\Query\Processors\Processor
+     * @var \Hyperf\Database\Query\Processors\Processor
      */
     protected $postProcessor;
 
     /**
      * The event dispatcher instance.
      *
-     * @var \Illuminate\Contracts\Events\Dispatcher
+     * @var \Hyperf\Contracts\Events\Dispatcher
      */
     protected $events;
 
@@ -192,38 +192,31 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the query grammar to the default implementation.
-     *
-     * @return void
      */
-    public function useDefaultQueryGrammar()
+    public function useDefaultQueryGrammar():void
     {
         $this->queryGrammar = $this->getDefaultQueryGrammar();
     }
 
     /**
      * Set the schema grammar to the default implementation.
-     *
-     * @return void
      */
-    public function useDefaultSchemaGrammar()
+    public function useDefaultSchemaGrammar():void
     {
         $this->schemaGrammar = $this->getDefaultSchemaGrammar();
     }
 
     /**
      * Set the query post processor to the default implementation.
-     *
-     * @return void
      */
-    public function useDefaultPostProcessor()
+    public function useDefaultPostProcessor():void
     {
         $this->postProcessor = $this->getDefaultPostProcessor();
     }
 
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return SchemaBuilder
      */
     public function getSchemaBuilder()
     {
@@ -236,21 +229,16 @@ class Connection implements ConnectionInterface
 
     /**
      * Begin a fluent query against a database table.
-     *
-     * @param  string $table
-     * @return \Illuminate\Database\Query\Builder
      */
-    public function table($table): Builder
+    public function table(string $table): Builder
     {
         return $this->query()->from($table);
     }
 
     /**
      * Get a new query builder instance.
-     *
-     * @return \Illuminate\Database\Query\Builder
      */
-    public function query()
+    public function query(): QueryBuilder
     {
         return new QueryBuilder(
             $this,
@@ -261,13 +249,9 @@ class Connection implements ConnectionInterface
 
     /**
      * Run a select statement and return a single result.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @param  bool $useReadPdo
      * @return mixed
      */
-    public function selectOne($query, $bindings = [], $useReadPdo = true)
+    public function selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
     {
         $records = $this->select($query, $bindings, $useReadPdo);
 
@@ -276,25 +260,16 @@ class Connection implements ConnectionInterface
 
     /**
      * Run a select statement against the database.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return array
      */
-    public function selectFromWriteConnection($query, $bindings = [])
+    public function selectFromWriteConnection(string $query, array $bindings = []):array
     {
         return $this->select($query, $bindings, false);
     }
 
     /**
      * Run a select statement against the database.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @param  bool $useReadPdo
-     * @return array
      */
-    public function select($query, $bindings = [], $useReadPdo = true): array
+    public function select(string $query, array $bindings = [], bool $useReadPdo = true): array
     {
         return $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -317,13 +292,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Run a select statement against the database and returns a generator.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @param  bool $useReadPdo
-     * @return \Generator
      */
-    public function cursor($query, $bindings = [], $useReadPdo = true): \Generator
+    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): \Generator
     {
         $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -356,48 +326,32 @@ class Connection implements ConnectionInterface
 
     /**
      * Run an insert statement against the database.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return bool
      */
-    public function insert($query, $bindings = []): bool
+    public function insert(string $query, array $bindings = []): bool
     {
         return $this->statement($query, $bindings);
     }
 
     /**
      * Run an update statement against the database.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return int
      */
-    public function update($query, $bindings = []): int
+    public function update(string $query, array $bindings = []): int
     {
         return $this->affectingStatement($query, $bindings);
     }
 
     /**
      * Run a delete statement against the database.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return int
      */
-    public function delete($query, $bindings = []): int
+    public function delete(string $query, array $bindings = []): int
     {
         return $this->affectingStatement($query, $bindings);
     }
 
     /**
      * Execute an SQL statement and return the boolean result.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return bool
      */
-    public function statement($query, $bindings = []): bool
+    public function statement(string $query, array $bindings = []): bool
     {
         return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
@@ -416,12 +370,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Run an SQL statement and get the number of rows affected.
-     *
-     * @param  string $query
-     * @param  array $bindings
-     * @return int
      */
-    public function affectingStatement($query, $bindings = []): int
+    public function affectingStatement(string $query, array $bindings = []): int
     {
         return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
@@ -447,11 +397,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Run a raw, unprepared query against the PDO connection.
-     *
-     * @param  string $query
-     * @return bool
      */
-    public function unprepared($query): bool
+    public function unprepared(string $query): bool
     {
         return $this->run($query, [], function ($query) {
             if ($this->pretending()) {
@@ -468,9 +415,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Execute the given callback in "dry run" mode.
-     *
-     * @param  \Closure $callback
-     * @return array
      */
     public function pretend(Closure $callback): array
     {
@@ -490,12 +434,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Bind values to their parameters in the given statement.
-     *
-     * @param  \PDOStatement $statement
-     * @param  array $bindings
-     * @return void
      */
-    public function bindValues($statement, $bindings)
+    public function bindValues(\PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
@@ -508,9 +448,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Prepare the query bindings for execution.
-     *
-     * @param  array $bindings
-     * @return array
      */
     public function prepareBindings(array $bindings): array
     {
@@ -590,7 +527,7 @@ class Connection implements ConnectionInterface
      * Get a new raw query expression.
      *
      * @param  mixed $value
-     * @return \Illuminate\Database\Query\Expression
+     * @return \Hyperf\Database\Query\Expression
      */
     public function raw($value): Expression
     {
@@ -775,7 +712,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the query grammar used by the connection.
      *
-     * @return \Illuminate\Database\Query\Grammars\Grammar
+     * @return \Hyperf\Database\Query\Grammars\Grammar
      */
     public function getQueryGrammar()
     {
@@ -785,7 +722,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param  \Illuminate\Database\Query\Grammars\Grammar $grammar
+     * @param  \Hyperf\Database\Query\Grammars\Grammar $grammar
      * @return $this
      */
     public function setQueryGrammar(Query\Grammars\Grammar $grammar)
@@ -798,7 +735,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the schema grammar used by the connection.
      *
-     * @return \Illuminate\Database\Schema\Grammars\Grammar
+     * @return \Hyperf\Database\Schema\Grammars\Grammar
      */
     public function getSchemaGrammar()
     {
@@ -808,7 +745,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar $grammar
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return $this
      */
     public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
@@ -821,7 +758,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the query post processor used by the connection.
      *
-     * @return \Illuminate\Database\Query\Processors\Processor
+     * @return \Hyperf\Database\Query\Processors\Processor
      */
     public function getPostProcessor()
     {
@@ -831,7 +768,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query post processor used by the connection.
      *
-     * @param  \Illuminate\Database\Query\Processors\Processor $processor
+     * @param  \Hyperf\Database\Query\Processors\Processor $processor
      * @return $this
      */
     public function setPostProcessor(Processor $processor)
@@ -844,7 +781,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the event dispatcher used by the connection.
      *
-     * @return \Illuminate\Contracts\Events\Dispatcher
+     * @return \Hyperf\Contracts\Events\Dispatcher
      */
     public function getEventDispatcher()
     {
@@ -854,7 +791,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the event dispatcher instance on the connection.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  \Hyperf\Contracts\Events\Dispatcher $events
      * @return $this
      */
     public function setEventDispatcher(Dispatcher $events)
@@ -985,8 +922,8 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix and return the grammar.
      *
-     * @param  \Illuminate\Database\Grammar $grammar
-     * @return \Illuminate\Database\Grammar
+     * @param  \Hyperf\Database\Grammar $grammar
+     * @return \Hyperf\Database\Grammar
      */
     public function withTablePrefix(Grammar $grammar)
     {
@@ -1021,7 +958,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the default query grammar instance.
      *
-     * @return \Illuminate\Database\Query\Grammars\Grammar
+     * @return \Hyperf\Database\Query\Grammars\Grammar
      */
     protected function getDefaultQueryGrammar()
     {
@@ -1031,7 +968,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the default schema grammar instance.
      *
-     * @return \Illuminate\Database\Schema\Grammars\Grammar
+     * @return \Hyperf\Database\Schema\Grammars\Grammar
      */
     protected function getDefaultSchemaGrammar()
     {
@@ -1041,7 +978,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the default post processor instance.
      *
-     * @return \Illuminate\Database\Query\Processors\Processor
+     * @return \Hyperf\Database\Query\Processors\Processor
      */
     protected function getDefaultPostProcessor()
     {
@@ -1112,7 +1049,7 @@ class Connection implements ConnectionInterface
      * @param  \Closure $callback
      * @return mixed
      *
-     * @throws \Illuminate\Database\QueryException
+     * @throws \Hyperf\Database\QueryException
      */
     protected function run($query, $bindings, Closure $callback)
     {
@@ -1154,7 +1091,7 @@ class Connection implements ConnectionInterface
      * @param  \Closure $callback
      * @return mixed
      *
-     * @throws \Illuminate\Database\QueryException
+     * @throws \Hyperf\Database\QueryException
      */
     protected function runQueryCallback($query, $bindings, Closure $callback)
     {
@@ -1218,13 +1155,13 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
-     * @param  \Illuminate\Database\QueryException $e
+     * @param  \Hyperf\Database\QueryException $e
      * @param  string $query
      * @param  array $bindings
      * @param  \Closure $callback
      * @return mixed
      *
-     * @throws \Illuminate\Database\QueryException
+     * @throws \Hyperf\Database\QueryException
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
     {

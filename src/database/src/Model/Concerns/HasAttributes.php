@@ -15,12 +15,12 @@ use Carbon\CarbonInterface;
 use DateTimeInterface;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection as BaseCollection;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Str;
+use Hyperf\Contracts\Support\Arrayable;
+use Hyperf\Support\Arr;
+use Hyperf\Support\Carbon;
+use Hyperf\Support\Collection as BaseCollection;
+use Hyperf\Support\Facades\Date;
+use Hyperf\Support\Str;
 use LogicException;
 
 trait HasAttributes
@@ -1110,7 +1110,7 @@ trait HasAttributes
      * Return a timestamp as DateTime object with time set to 00:00:00.
      *
      * @param  mixed  $value
-     * @return \Illuminate\Support\Carbon
+     * @return \Hyperf\Support\Carbon
      */
     protected function asDate($value)
     {
@@ -1121,7 +1121,7 @@ trait HasAttributes
      * Return a timestamp as DateTime object.
      *
      * @param  mixed  $value
-     * @return \Illuminate\Support\Carbon
+     * @return \Hyperf\Support\Carbon
      */
     protected function asDateTime($value)
     {

@@ -275,7 +275,7 @@ class ConnectionFactory
      * @param  string $database
      * @param  string $prefix
      * @param  array $config
-     * @return \Illuminate\Database\Connection
+     * @return \Hyperf\Database\Connection
      *
      * @throws \InvalidArgumentException
      */

@@ -78,7 +78,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile an update statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  array $values
      * @return string
      */
@@ -145,7 +145,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @return string
      */
     public function compileDelete(Builder $query)
@@ -219,7 +219,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile the lock into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  bool|string $value
      * @return string
      */
@@ -253,7 +253,7 @@ class MySqlGrammar extends Grammar
      * Prepares a JSON column being updated using the JSON_SET function.
      *
      * @param  string $key
-     * @param  \Illuminate\Database\Query\JsonExpression $value
+     * @param  \Hyperf\Database\Query\JsonExpression $value
      * @return string
      */
     protected function compileJsonUpdateColumn($key, JsonExpression $value)
@@ -266,7 +266,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that does not use joins.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  string $table
      * @param  array $where
      * @return string
@@ -292,7 +292,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that uses joins.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  string $table
      * @param  array $where
      * @return string

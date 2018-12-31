@@ -19,10 +19,10 @@ use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
-use Illuminate\Pagination\Paginator;
+use Hyperf\Pagination\Paginator;
 
 /**
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
 {
@@ -31,7 +31,7 @@ class Builder
     /**
      * The base query builder instance.
      *
-     * @var \Illuminate\Database\Query\Builder
+     * @var \Hyperf\Database\Query\Builder
      */
     protected $query;
 
@@ -97,7 +97,7 @@ class Builder
     /**
      * Create a new Model query builder instance.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @return void
      */
     public function __construct(QueryBuilder $query)
@@ -419,7 +419,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|array $ids
+     * @param  \Hyperf\Contracts\Support\Arrayable|array $ids
      * @param  array $columns
      * @return \Hyperf\Database\Model\Collection
      */
@@ -722,7 +722,7 @@ class Builder
      *
      * @param  string $column
      * @param  string|null $key
-     * @return \Illuminate\Support\Collection
+     * @return \Hyperf\Support\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -749,7 +749,7 @@ class Builder
      * @param  array $columns
      * @param  string $pageName
      * @param  int|null $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
      */
@@ -776,7 +776,7 @@ class Builder
      * @param  array $columns
      * @param  string $pageName
      * @param  int|null $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -1017,7 +1017,7 @@ class Builder
     /**
      * Get the underlying query builder instance.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public function getQuery()
     {
@@ -1027,7 +1027,7 @@ class Builder
     /**
      * Set the underlying query builder instance.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @return $this
      */
     public function setQuery($query)
@@ -1040,7 +1040,7 @@ class Builder
     /**
      * Get a base query builder instance.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public function toBase()
     {
@@ -1243,7 +1243,7 @@ class Builder
     /**
      * Nest where conditions by slicing them at the given where count.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  int $originalWhereCount
      * @return void
      */
@@ -1270,7 +1270,7 @@ class Builder
     /**
      * Slice where conditions at the given offset and add them to the query as a nested condition.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  array $whereSlice
      * @return void
      */

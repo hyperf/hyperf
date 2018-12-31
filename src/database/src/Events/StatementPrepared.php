@@ -16,7 +16,7 @@ class StatementPrepared
     /**
      * The database connection instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Hyperf\Database\Connection
      */
     public $connection;
 
@@ -30,7 +30,7 @@ class StatementPrepared
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Hyperf\Database\Connection  $connection
      * @param  \PDOStatement  $statement
      * @return void
      */

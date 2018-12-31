@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Illuminate\Support\Facades\Date;
+use Hyperf\Support\Facades\Date;
 
 trait HasTimestamps
 {
@@ -67,7 +67,7 @@ trait HasTimestamps
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \Illuminate\Support\Carbon
+     * @return \Hyperf\Support\Carbon
      */
     public function freshTimestamp()
     {

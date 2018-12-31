@@ -21,7 +21,7 @@ use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
-use Illuminate\Contracts\Queue\QueueableCollection;
+use Hyperf\Contracts\Queue\QueueableCollection;
 use JsonSerializable;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
@@ -121,7 +121,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * The event dispatcher instance.
      *
-     * @var \Illuminate\Contracts\Events\Dispatcher
+     * @var \Hyperf\Contracts\Events\Dispatcher
      */
     protected static $dispatcher;
 
@@ -449,7 +449,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model on the write connection.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function onWriteConnection()
     {
@@ -638,7 +638,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param  \Illuminate\Support\Collection|array|int $ids
+     * @param  \Hyperf\Support\Collection|array|int $ids
      * @return int
      */
     public static function destroy($ids)
@@ -815,7 +815,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Create a new Model query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function newEloquentBuilder($query)
@@ -1564,7 +1564,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder instance for the connection.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     protected function newBaseQueryBuilder()
     {

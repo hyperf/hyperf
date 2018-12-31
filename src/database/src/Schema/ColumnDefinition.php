@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Illuminate\Database\Schema;
+namespace Hyperf\Database\Schema;
 
-use Illuminate\Support\Fluent;
+use Hyperf\Utils\Fluent;
 
 /**
  * @method ColumnDefinition after(string $column) Place the column "after" another column (MySQL)

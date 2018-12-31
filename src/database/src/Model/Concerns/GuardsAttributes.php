@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Illuminate\Support\Str;
+use Hyperf\Support\Str;
 
 trait GuardsAttributes
 {
