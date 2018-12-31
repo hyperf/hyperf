@@ -22,10 +22,8 @@ class MySqlConnection extends Connection
 {
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Schema\MySqlBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): MySqlBuilder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -36,12 +34,8 @@ class MySqlConnection extends Connection
 
     /**
      * Bind values to their parameters in the given statement.
-     *
-     * @param  \PDOStatement $statement
-     * @param  array $bindings
-     * @return void
      */
-    public function bindValues($statement, $bindings)
+    public function bindValues(\PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
@@ -55,7 +49,7 @@ class MySqlConnection extends Connection
     /**
      * Get the default query grammar instance.
      *
-     * @return \Illuminate\Database\Query\Grammars\MySqlGrammar
+     * @return \Hyperf\Database\Query\Grammars\MySqlGrammar
      */
     protected function getDefaultQueryGrammar()
     {
@@ -65,7 +59,7 @@ class MySqlConnection extends Connection
     /**
      * Get the default schema grammar instance.
      *
-     * @return \Illuminate\Database\Schema\Grammars\MySqlGrammar
+     * @return \Hyperf\Database\Schema\Grammars\MySqlGrammar
      */
     protected function getDefaultSchemaGrammar()
     {
@@ -75,7 +69,7 @@ class MySqlConnection extends Connection
     /**
      * Get the default post processor instance.
      *
-     * @return \Illuminate\Database\Query\Processors\MySqlProcessor
+     * @return \Hyperf\Database\Query\Processors\MySqlProcessor
      */
     protected function getDefaultPostProcessor()
     {

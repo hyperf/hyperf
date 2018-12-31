@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
-use Illuminate\Support\Str;
+use Hyperf\Support\Str;
 use InvalidArgumentException;
 
 class BelongsToMany extends Relation
@@ -366,7 +366,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return \Illuminate\Support\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Support\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -564,7 +564,7 @@ class BelongsToMany extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -582,7 +582,7 @@ class BelongsToMany extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -671,7 +671,7 @@ class BelongsToMany extends Relation
     /**
      * Get all of the IDs for the related models.
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Hyperf\Support\Collection
      */
     public function allRelatedIds()
     {
@@ -698,7 +698,7 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param  \Illuminate\Support\Collection|array  $models
+     * @param  \Hyperf\Support\Collection|array  $models
      * @param  array  $pivotAttributes
      * @return array
      */

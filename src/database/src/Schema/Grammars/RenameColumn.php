@@ -9,24 +9,24 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Illuminate\Database\Schema\Grammars;
+namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\TableDiff;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Fluent;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Support\Fluent;
 
 class RenameColumn
 {
     /**
      * Compile a rename column command.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
+     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
+     * @param  \Hyperf\Support\Fluent  $command
+     * @param  \Hyperf\Database\Connection  $connection
      * @return array
      */
     public static function compile(Grammar $grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
@@ -50,9 +50,9 @@ class RenameColumn
     /**
      * Get a new column instance with the new column name.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
+     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
+     * @param  \Hyperf\Support\Fluent  $command
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
      * @return \Doctrine\DBAL\Schema\TableDiff
@@ -70,7 +70,7 @@ class RenameColumn
      * Set the renamed columns on the table diff.
      *
      * @param  \Doctrine\DBAL\Schema\TableDiff  $tableDiff
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Hyperf\Support\Fluent  $command
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \Doctrine\DBAL\Schema\TableDiff
      */

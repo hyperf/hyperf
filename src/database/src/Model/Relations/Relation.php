@@ -15,10 +15,10 @@ use Closure;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Support\Traits\Macroable;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Support\Arr;
+use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Utils\Traits\Macroable;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder
@@ -271,7 +271,7 @@ abstract class Relation
     /**
      * Get the base query builder driving the Model builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public function getBaseQuery()
     {

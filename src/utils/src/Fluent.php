@@ -134,10 +134,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Convert the fluent instance to an array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->attributes;
     }

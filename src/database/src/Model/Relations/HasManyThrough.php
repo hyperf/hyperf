@@ -350,7 +350,7 @@ class HasManyThrough extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -366,7 +366,7 @@ class HasManyThrough extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {

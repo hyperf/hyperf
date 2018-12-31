@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Illuminate\Database\Query;
+namespace Hyperf\Database\Query;
 
 use Closure;
 
@@ -32,14 +32,14 @@ class JoinClause extends Builder
     /**
      * The parent query builder instance.
      *
-     * @var \Illuminate\Database\Query\Builder
+     * @var \Hyperf\Database\Query\Builder
      */
     private $parentQuery;
 
     /**
      * Create a new join clause instance.
      *
-     * @param  \Illuminate\Database\Query\Builder $parentQuery
+     * @param  \Hyperf\Database\Query\Builder $parentQuery
      * @param  string  $type
      * @param  string  $table
      * @return void
@@ -92,7 +92,7 @@ class JoinClause extends Builder
      * @param  \Closure|string  $first
      * @param  string|null  $operator
      * @param  string|null  $second
-     * @return \Illuminate\Database\Query\JoinClause
+     * @return \Hyperf\Database\Query\JoinClause
      */
     public function orOn($first, $operator = null, $second = null)
     {
@@ -102,7 +102,7 @@ class JoinClause extends Builder
     /**
      * Get a new instance of the join clause builder.
      *
-     * @return \Illuminate\Database\Query\JoinClause
+     * @return \Hyperf\Database\Query\JoinClause
      */
     public function newQuery()
     {
@@ -112,7 +112,7 @@ class JoinClause extends Builder
     /**
      * Create a new query instance for sub-query.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     protected function forSubQuery()
     {

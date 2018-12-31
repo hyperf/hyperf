@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Arr;
+use Hyperf\Contracts\Events\Dispatcher;
+use Hyperf\Support\Arr;
 
 trait HasEvents
 {
@@ -231,7 +231,7 @@ trait HasEvents
     /**
      * Get the event dispatcher instance.
      *
-     * @return \Illuminate\Contracts\Events\Dispatcher
+     * @return \Hyperf\Contracts\Events\Dispatcher
      */
     public static function getEventDispatcher()
     {
@@ -241,7 +241,7 @@ trait HasEvents
     /**
      * Set the event dispatcher instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
+     * @param  \Hyperf\Contracts\Events\Dispatcher  $dispatcher
      * @return void
      */
     public static function setEventDispatcher(Dispatcher $dispatcher)

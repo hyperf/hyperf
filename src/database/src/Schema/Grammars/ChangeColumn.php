@@ -25,10 +25,10 @@ class ChangeColumn
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @param  \Illuminate\Database\Connection $connection
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
+     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
+     * @param  \Hyperf\Support\Fluent  $command
+     * @param  \Hyperf\Database\Connection $connection
      * @return array
      *
      * @throws \RuntimeException
@@ -58,8 +58,8 @@ class ChangeColumn
     /**
      * Get the Doctrine table difference for the given changes.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
+     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
      * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
      * @return \Doctrine\DBAL\Schema\TableDiff|bool
      */
@@ -76,7 +76,7 @@ class ChangeColumn
     /**
      * Get a copy of the given Doctrine table after making the column changes.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @return \Doctrine\DBAL\Schema\Table
      */
@@ -106,7 +106,7 @@ class ChangeColumn
      * Get the Doctrine column instance for a column change.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Illuminate\Support\Fluent  $fluent
+     * @param  \Hyperf\Support\Fluent  $fluent
      * @return \Doctrine\DBAL\Schema\Column
      */
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
@@ -120,7 +120,7 @@ class ChangeColumn
     /**
      * Get the Doctrine column change options.
      *
-     * @param  \Illuminate\Support\Fluent  $fluent
+     * @param  \Hyperf\Support\Fluent  $fluent
      * @return array
      */
     protected static function getDoctrineColumnChangeOptions(Fluent $fluent)

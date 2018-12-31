@@ -15,9 +15,9 @@ use Closure;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Support\Str;
 use RuntimeException;
 
 trait QueriesRelationships
@@ -298,7 +298,7 @@ trait QueriesRelationships
     /**
      * Add a sub-query count clause to this query.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Hyperf\Database\Query\Builder $query
      * @param  string  $operator
      * @param  int  $count
      * @param  string  $boolean

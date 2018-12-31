@@ -13,7 +13,7 @@ namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Illuminate\Support\Collection as BaseCollection;
+use Hyperf\Support\Collection as BaseCollection;
 
 trait InteractsWithPivotTable
 {
@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  \Illuminate\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
+     * @param  \Hyperf\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,7 +84,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  \Illuminate\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
+     * @param  \Hyperf\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
      * @param  bool   $detaching
      * @return array
      */
@@ -251,7 +251,7 @@ trait InteractsWithPivotTable
     /**
      * Get a new plain query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public function newPivotStatement()
     {
@@ -262,7 +262,7 @@ trait InteractsWithPivotTable
      * Get a new pivot statement for a given "other" ID.
      *
      * @param  mixed  $id
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     public function newPivotStatementForId($id)
     {
@@ -468,7 +468,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     protected function newPivotQuery()
     {

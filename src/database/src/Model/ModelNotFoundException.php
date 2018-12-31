@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Illuminate\Support\Arr;
+use Hyperf\Support\Arr;
 use RuntimeException;
 
 class ModelNotFoundException extends RuntimeException

@@ -25,8 +25,8 @@ use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Hyperf\Support\Arr;
+use Hyperf\Support\Str;
 
 trait HasRelationships
 {

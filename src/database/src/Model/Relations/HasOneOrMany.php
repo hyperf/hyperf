@@ -129,7 +129,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return \Illuminate\Support\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Support\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
     {

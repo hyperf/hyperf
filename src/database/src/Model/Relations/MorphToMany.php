@@ -13,7 +13,7 @@ namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Illuminate\Support\Arr;
+use Hyperf\Support\Arr;
 
 class MorphToMany extends BelongsToMany
 {
@@ -196,7 +196,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Hyperf\Database\Query\Builder
      */
     protected function newPivotQuery()
     {
