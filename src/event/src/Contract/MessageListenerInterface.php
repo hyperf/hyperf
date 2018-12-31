@@ -15,7 +15,6 @@ use Psr\EventDispatcher\MessageInterface;
 
 interface MessageListenerInterface extends BaseListenerInterface
 {
-
     /**
      * Handler the message event when the event triggered.
      * Notice that this action maybe defered.

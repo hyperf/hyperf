@@ -15,7 +15,6 @@ use Psr\EventDispatcher\TaskInterface;
 
 interface TaskListenerInterface extends BaseListenerInterface
 {
-
     /**
      * Handler the task event when the event triggered.
      */
