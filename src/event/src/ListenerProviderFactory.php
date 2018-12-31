@@ -35,9 +35,13 @@ class ListenerProviderFactory
     private function registerConfig(ListenerProvider $provider, ContainerInterface $container): void
     {
         $config = $container->get(ConfigInterface::class);
-        foreach ($config->get('listeners', []) as $listener) {
+        foreach ($config->get('listeners', []) as $listener => $priority) {
+            if (is_int($listener)) {
+                $listener = $priority;
+                $priority = 1;
+            }
             if (is_string($listener)) {
-                $this->register($provider, $container, $listener);
+                $this->register($provider, $container, $listener, $priority);
             }
         }
     }
