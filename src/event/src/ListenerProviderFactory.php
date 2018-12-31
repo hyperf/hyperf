@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Event;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Contract\MessageListenerInterface;
-use Hyperf\Event\Contract\TaskListenerInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Event\Annotation\MessageListener;
+use Hyperf\Event\Annotation\TaskListener;
 use Psr\Container\ContainerInterface;
 
 class ListenerProviderFactory
@@ -26,7 +27,7 @@ class ListenerProviderFactory
         $this->registerConfig($listenerProvider, $container);
 
         // Register annotation listeners.
-        $this->registerAnnotations($listenerProvider);
+        $this->registerAnnotations($listenerProvider, $container);
 
         return $listenerProvider;
     }
@@ -36,22 +37,40 @@ class ListenerProviderFactory
         $config = $container->get(ConfigInterface::class);
         foreach ($config->get('listeners', []) as $listener) {
             if (is_string($listener)) {
-                $instance = $container->get($listener);
-                if ($instance instanceof TaskListenerInterface) {
-                    foreach ($instance->listen() as $event) {
-                        $provider->on($event, [$instance, 'process']);
-                    }
-                }
-                if ($instance instanceof MessageListenerInterface) {
-                    foreach ($instance->listen() as $event) {
-                        $provider->on($event, [$instance, 'notify']);
-                    }
-                }
+                $this->register($provider, $container, $listener);
             }
         }
     }
 
-    private function registerAnnotations(ListenerProvider $listenerProvider): void
+    private function registerAnnotations(ListenerProvider $provider, ContainerInterface $container): void
     {
+        $collector = AnnotationCollector::getContainer();
+        foreach ($collector as $className => $values) {
+            if (! isset($values['_c'][TaskListener::class]) && ! isset($values['_c'][MessageListener::class])) {
+                continue;
+            }
+            $this->register($provider, $container, $className);
+        }
+
+    }
+
+    /**
+     * @param \Hyperf\Event\ListenerProvider $provider
+     * @param \Psr\Container\ContainerInterface $container
+     * @param string $listener
+     */
+    private function register(ListenerProvider $provider, ContainerInterface $container, string $listener): void
+    {
+        $instance = $container->get($listener);
+        if (method_exists($instance, 'process')) {
+            foreach ($instance->listen() as $event) {
+                $provider->on($event, [$instance, 'process']);
+            }
+        }
+        if (method_exists($instance, 'notify')) {
+            foreach ($instance->listen() as $event) {
+                $provider->on($event, [$instance, 'notify']);
+            }
+        }
     }
 }
