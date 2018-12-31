@@ -44,7 +44,7 @@ class ListenerProviderFactory
                 }
                 if ($instance instanceof MessageListenerInterface) {
                     foreach ($instance->listen() as $event) {
-                        $provider->on($event, [$instance, 'process']);
+                        $provider->on($event, [$instance, 'notify']);
                     }
                 }
             }
