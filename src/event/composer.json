@@ -12,9 +12,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "psr/event-dispatcher": "0.6.0",
-        "psr/event-dispatcher-message": "0.6.0",
-        "psr/event-dispatcher-task": "0.6.0"
+        "psr/event-dispatcher": "^0.7"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
