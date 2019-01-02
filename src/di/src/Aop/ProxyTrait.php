@@ -105,7 +105,7 @@ trait ProxyTrait
     {
         $matchAspect = [];
         $collector = AnnotationCollector::getContainer();
-        // @TODO 
+        // @TODO
         return $matchAspect;
     }
 

@@ -14,7 +14,7 @@ namespace Hyperf\Event;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\MessageListener;
-use Hyperf\Event\Annotation\TaskListener;
+use Hyperf\Event\Annotation\Listener;
 use Psr\Container\ContainerInterface;
 
 class ListenerProviderFactory
@@ -50,7 +50,7 @@ class ListenerProviderFactory
     {
         $collector = AnnotationCollector::getContainer();
         foreach ($collector as $className => $values) {
-            if (! isset($values['_c'][TaskListener::class]) && ! isset($values['_c'][MessageListener::class])) {
+            if (! isset($values['_c'][Listener::class])) {
                 continue;
             }
             $priority = $values['priority'] ?? 1;
@@ -61,14 +61,9 @@ class ListenerProviderFactory
     private function register(ListenerProvider $provider, ContainerInterface $container, string $listener, int $priority = 1): void
     {
         $instance = $container->get($listener);
-        if (method_exists($instance, 'process')) {
+        if (method_exists($instance, 'process') && method_exists($instance, 'listen')) {
             foreach ($instance->listen() as $event) {
                 $provider->on($event, [$instance, 'process'], $priority);
-            }
-        }
-        if (method_exists($instance, 'notify')) {
-            foreach ($instance->listen() as $event) {
-                $provider->on($event, [$instance, 'notify']);
             }
         }
     }

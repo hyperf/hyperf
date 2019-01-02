@@ -9,7 +9,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  * @Annotation
  * @Target({"CLASS"})
  */
-class TaskListener extends AbstractAnnotation
+class Listener extends AbstractAnnotation
 {
 
     /**

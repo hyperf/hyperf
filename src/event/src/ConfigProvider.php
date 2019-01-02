@@ -22,8 +22,6 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
-                MessageNotifierInterface::class => MessageNotifier::class,
-                TaskProcessorInterface::class => TaskProcessor::class,
             ],
             'scan' => [
                 'paths' => [],

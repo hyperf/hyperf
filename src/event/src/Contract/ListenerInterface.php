@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Event\Contract;
 
-interface BaseListenerInterface
+interface ListenerInterface
 {
     /**
-     * @return string[] Returns the events that you want to listen.
+     * Handle the Event when the event is triggered, all listeners will
+     * complete before the event is returned to the EventDispatcher.
      */
-    public function listen(): array;
+    public function process($event);
 }
