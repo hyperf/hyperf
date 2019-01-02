@@ -3,6 +3,7 @@
 namespace Hyperf\Event\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 /**
  * @Annotation
