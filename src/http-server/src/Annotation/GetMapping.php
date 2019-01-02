@@ -36,7 +36,7 @@ class GetMapping extends AbstractAnnotation
     /**
      * {@inheritDoc}
      */
-    public function collectClass(string $className, ?string $target): void
+    public function collectMethod(string $className, ?string $target): void
     {
         if ($this->path) {
             AnnotationCollector::collectMethod($className, $target, self::class, [

@@ -121,18 +121,21 @@ class DispatcherFactory
      */
     private function handleController(string $className, array $controllerMetadata, array $methodMetadata): void
     {
+        if (! $methodMetadata) {
+            return;
+        }
         $prefix = $this->getPrefix($className, $controllerMetadata['prefix'] ?? '');
         $router = $this->getRouter($controllerMetadata['prefix'] ?? 'http');
+        $mappingAnnotations = [
+            RequestMapping::class,
+            GetMapping::class,
+            PostMapping::class,
+            PutMapping::class,
+            PatchMapping::class,
+            DeleteMapping::class,
+        ];
 
         foreach ($methodMetadata as $method => $values) {
-            $mappingAnnotations = [
-                RequestMapping::class,
-                GetMapping::class,
-                PostMapping::class,
-                PutMapping::class,
-                PatchMapping::class,
-                DeleteMapping::class,
-            ];
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 if (isset($values[$mappingAnnotation])) {
                     $item = $values[$mappingAnnotation];

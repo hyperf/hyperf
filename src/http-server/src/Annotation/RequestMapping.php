@@ -46,7 +46,7 @@ class RequestMapping extends AbstractAnnotation
     /**
      * {@inheritDoc}
      */
-    public function collectClass(string $className, ?string $target): void
+    public function collectMethod(string $className, ?string $target): void
     {
         if ($this->methods && $this->path) {
             AnnotationCollector::collectMethod($className, $target, static::class, [
