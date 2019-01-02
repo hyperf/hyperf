@@ -46,6 +46,9 @@ use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
+
+    private $enableCache = false;
+
     /**
      * Path of annotation meta data cache
      *
@@ -214,6 +217,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function hasAvailableCache(array $paths, string $pathsHash, string $filename): bool
     {
+        if (! $this->enableCache) {
+            return false;
+        }
         if (! file_exists($filename) || ! is_readable($filename)) {
             return false;
         }
@@ -260,6 +266,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 return true;
             }
         }
+
 
         // TODO: Check class whether to contain the annotations.
 
