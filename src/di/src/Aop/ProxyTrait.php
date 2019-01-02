@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Closure;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Framework\ApplicationContext;
@@ -55,15 +56,21 @@ trait ProxyTrait
 
     private static function handleArround(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        // @TODO Use new storage structure.
         $arround = AspectCollector::get('arround');
-        if ($aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method)) {
+        $aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method);
+        $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
+        $aspects = array_replace($aspects, $annotationAspects);
+        if ($aspects) {
             $container = ApplicationContext::getContainer();
             if (method_exists($container, 'make')) {
                 $pipeline = $container->make(Pipeline::class);
             } else {
                 $pipeline = new Pipeline($container);
             }
-            return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
+            return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (
+                ProceedingJoinPoint $proceedingJoinPoint
+            ) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });
         } else {
@@ -71,7 +78,7 @@ trait ProxyTrait
         }
     }
 
-    private static function isMatchClassName(array $aspects, string $className, string $method)
+    private static function isMatchClassName(array $aspects, string $className, string $method): array
     {
         // @TODO Handle wildcard character
         $matchAspect = [];
@@ -93,4 +100,13 @@ trait ProxyTrait
         }
         return $matchAspect;
     }
+
+    private function getAnnotationAspects(string $className, string $method): array
+    {
+        $matchAspect = [];
+        $collector = AnnotationCollector::getContainer();
+        // @TODO 
+        return $matchAspect;
+    }
+
 }

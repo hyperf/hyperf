@@ -3,6 +3,7 @@
 namespace Hyperf\Event\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 /**
  * @Annotation
@@ -27,7 +28,7 @@ class TaskListener extends AbstractAnnotation
     /**
      * {@inheritDoc}
      */
-    public function collect(string $className, ?string $target): void
+    public function collectClass(string $className, ?string $target): void
     {
         if (null !== $this->value) {
             AnnotationCollector::collectClass($className, static::class, [

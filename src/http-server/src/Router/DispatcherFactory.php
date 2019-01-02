@@ -136,6 +136,9 @@ class DispatcherFactory
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 if (isset($values[$mappingAnnotation])) {
                     $item = $values[$mappingAnnotation];
+                    if (! isset($item['path']) || ! isset($item['methods'])) {
+                        continue;
+                    }
                     if ($item['path'][0] !== '/') {
                         $item['path'] = $prefix . '/' . $item['path'];
                     }

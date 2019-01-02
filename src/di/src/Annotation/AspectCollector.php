@@ -22,6 +22,7 @@ class AspectCollector extends MetadataCollector
 
     public static function setArround(string $aspect, array $classes, array $annotations)
     {
+        // @TODO Remove this method, use collectClassAndAnnotation instead of.
         $arround = static::get('arround');
         $arround['classes'][$aspect] = array_replace($arround['classes'][$aspect] ?? [], $classes);
         $arround['annotations'][$aspect] = array_replace($arround['annotations'][$aspect] ?? [], $annotations);
