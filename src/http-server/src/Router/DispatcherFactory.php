@@ -103,7 +103,7 @@ class DispatcherFactory
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         $prefix = $this->getPrefix($className, $values['prefix'] ?? '');
-        $router = $this->getRouter($values['server'] ?? 'httpServer');
+        $router = $this->getRouter($values['server'] ?? 'http');
 
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
@@ -122,7 +122,7 @@ class DispatcherFactory
     private function handleController(string $className, array $controllerMetadata, array $methodMetadata): void
     {
         $prefix = $this->getPrefix($className, $controllerMetadata['prefix'] ?? '');
-        $router = $this->getRouter($controllerMetadata['prefix'] ?? 'httpServer');
+        $router = $this->getRouter($controllerMetadata['prefix'] ?? 'http');
 
         foreach ($methodMetadata as $method => $values) {
             $mappingAnnotations = [

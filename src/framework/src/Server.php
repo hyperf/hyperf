@@ -61,13 +61,13 @@ class Server
                 throw new \InvalidArgumentException('Server not exist.');
             }
             if (! $this->server) {
-                $serverName = $serverConfig['name'] ?? 'httpServer';
+                $serverName = $serverConfig['name'] ?? 'http';
                 $this->server = new $server(...$constructor);
                 $callbacks = array_replace($this->defaultCallbacks(), $callbacks);
                 $this->registerSwooleEvents($this->server, $callbacks, $serverName);
                 $this->server->set($settings);
             } else {
-                $serverName = $serverConfig['name'] ?? 'httpServer' . $i;
+                $serverName = $serverConfig['name'] ?? 'http' . $i;
                 $slaveServer = $this->server->addlistener(...$constructor);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $serverName);
             }

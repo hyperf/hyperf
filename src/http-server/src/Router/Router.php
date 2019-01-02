@@ -26,7 +26,7 @@ class Router
     /**
      * @var string
      */
-    protected static $serverName = 'httpServer';
+    protected static $serverName = 'http';
 
     /**
      * @var DispatcherFactory
@@ -43,7 +43,7 @@ class Router
     {
         static::$serverName = $serverName;
         call($callback);
-        static::$serverName = 'httpServer';
+        static::$serverName = 'http';
     }
 
     public static function init(DispatcherFactory $factory)

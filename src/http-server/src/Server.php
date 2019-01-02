@@ -57,7 +57,7 @@ class Server implements ServerOnRequestInterface
     /**
      * @var string
      */
-    private $serverName = 'httpServer';
+    private $serverName = 'http';
 
     public function __construct(
         array $middlewares,

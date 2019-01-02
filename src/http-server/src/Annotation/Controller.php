@@ -27,7 +27,7 @@ class Controller extends AbstractAnnotation
     /**
      * @var string
      */
-    public $server = 'httpServer';
+    public $server = 'http';
 
     public function __construct($value = null)
     {
