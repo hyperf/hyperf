@@ -130,7 +130,6 @@ trait ProxyTrait
                     }
                     $matchAspect[] = $aspect;
                 }
-
             }
         }
         return $matchAspect;

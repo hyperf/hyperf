@@ -11,16 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
-use App\Controllers\AnnotationController;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\ReflectionManager;
-use ReflectionClass;
-use ReflectionFunctionAbstract;
-use Symfony\Component\Finder\Finder;
-use function array_key_exists;
 use function class_exists;
 use function count;
 use function explode;
@@ -31,6 +21,11 @@ use function file_exists;
 use function file_put_contents;
 use function filemtime;
 use function fopen;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\ReflectionManager;
 use function implode;
 use function interface_exists;
 use function is_array;
@@ -42,7 +37,10 @@ use function md5;
 use function method_exists;
 use function preg_match;
 use function print_r;
+use ReflectionClass;
+use ReflectionFunctionAbstract;
 use function str_replace;
+use Symfony\Component\Finder\Finder;
 use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
@@ -295,15 +293,14 @@ class DefinitionSource implements DefinitionSourceInterface
     {
         if (strpos($rule, '*') === false && $rule === $target) {
             return true;
-        } else {
-            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-            $pattern = "/^$preg$/";
-
-            if (preg_match($pattern, $target)) {
-                return true;
-            }
         }
+        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+        $pattern = "/^$preg$/";
+
+        if (preg_match($pattern, $target)) {
+            return true;
+        }
+        
         return false;
     }
-
 }

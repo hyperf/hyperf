@@ -27,5 +27,4 @@ class AspectCollector extends MetadataCollector
         static::set('classes.' . $aspect, array_replace($savedClasses, $classes));
         static::set('annotations.' . $aspect, array_replace($savedAnnotations, $annotations));
     }
-
 }

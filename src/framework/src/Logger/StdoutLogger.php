@@ -13,10 +13,10 @@ namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
-use Psr\Log\LogLevel;
-
 use const PHP_EOL;
+
 use function printf;
+use Psr\Log\LogLevel;
 use function sprintf;
 
 use function str_replace;
