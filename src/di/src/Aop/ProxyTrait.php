@@ -101,7 +101,7 @@ trait ProxyTrait
         return $matchAspect;
     }
 
-    private function getAnnotationAspects(string $className, string $method): array
+    private static function getAnnotationAspects(string $className, string $method): array
     {
         $matchAspect = [];
         $collector = AnnotationCollector::getContainer();
