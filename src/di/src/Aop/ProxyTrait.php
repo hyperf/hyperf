@@ -25,10 +25,8 @@ trait ProxyTrait
         array $arguments,
         Closure $closure
     ) {
-        echo $originalClassName . '::' . $method . '.pre' . PHP_EOL;
         $proceedingJoinPoint = new ProceedingJoinPoint($closure, $originalClassName, $method, $arguments);
         $result = self::handleArround($proceedingJoinPoint);
-        echo $originalClassName . '::' . $method . '.post' . PHP_EOL;
         unset($proceedingJoinPoint);
         return $result;
     }
@@ -56,9 +54,7 @@ trait ProxyTrait
 
     private static function handleArround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        // @TODO Use new storage structure.
-        $arround = AspectCollector::get('arround');
-        $aspects = self::isMatchClassName($arround['classes'] ?? [], $proceedingJoinPoint->className, $proceedingJoinPoint->method);
+        $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
         $aspects = array_replace($aspects, $annotationAspects);
         if ($aspects) {
@@ -78,34 +74,65 @@ trait ProxyTrait
         }
     }
 
-    private static function isMatchClassName(array $aspects, string $className, string $method): array
+    private static function parseAspects(string $className, string $method): array
     {
-        // @TODO Handle wildcard character
+        $aspects = AspectCollector::get('classes');
         $matchAspect = [];
-        foreach ($aspects as $aspect => $item) {
-            foreach ($item as $class) {
-                if (strpos($class, '::') !== false) {
-                    [$expectedClass, $expectedMethod] = explode('::', $class);
-                    if ($expectedClass === $className && $expectedMethod === $method) {
-                        $matchAspect[] = $aspect;
-                        break;
-                    }
-                } else {
-                    if ($class === $className) {
-                        $matchAspect[] = $aspect;
-                        break;
-                    }
+        foreach ($aspects as $aspect => [$rule]) {
+            if (strpos($rule, '*') !== false) {
+                $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+                $pattern = "/^$preg$/";
+                if (! preg_match($pattern, $className)) {
+                    continue;
+                }
+            } elseif ($rule !== $className) {
+                continue;
+            }
+            if (strpos($rule, '::') !== false) {
+                [$expectedClass, $expectedMethod] = explode('::', $rule);
+                if ($expectedClass === $className && $expectedMethod === $method) {
+                    $matchAspect[] = $aspect;
+                    break;
+                }
+            } else {
+                if ($rule === $className) {
+                    $matchAspect[] = $aspect;
+                    break;
                 }
             }
         }
-        return $matchAspect;
+        return array_unique($matchAspect);
     }
 
-    private function getAnnotationAspects(string $className, string $method): array
+    private static function getAnnotationAspects(string $className, string $method): array
     {
-        $matchAspect = [];
-        $collector = AnnotationCollector::getContainer();
-        // @TODO
+        $matchAspect = $annotations = $rules = [];
+
+        $classAnnotations = AnnotationCollector::get($className . '._c', []);
+        $methodAnnotations = AnnotationCollector::get($className . '._m.' . $method, []);
+        $annotations = array_unique(array_merge(array_keys($classAnnotations), array_keys($methodAnnotations)));
+        if (! $annotations) {
+            return $matchAspect;
+        }
+
+        $aspects = AspectCollector::get('annotations', []);
+        foreach ($aspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                foreach ($annotations as $annotation) {
+                    if (strpos($rule, '*') !== false) {
+                        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+                        $pattern = "/^$preg$/";
+                        if (! preg_match($pattern, $annotation)) {
+                            continue;
+                        }
+                    } elseif ($rule !== $annotation) {
+                        continue;
+                    }
+                    $matchAspect[] = $aspect;
+                }
+
+            }
+        }
         return $matchAspect;
     }
 

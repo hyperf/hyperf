@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
+use App\Controllers\AnnotationController;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
@@ -182,7 +183,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 $definition->addPropertyInjection($propertyInjection);
             }
         }
-
+        
         $definition->setNeedProxy($this->isNeedProxy($class));
 
         return $definition;
@@ -248,28 +249,62 @@ class DefinitionSource implements DefinitionSourceInterface
         print_r($message . PHP_EOL);
     }
 
-    private function isNeedProxy(ReflectionClass $class)
+    private function isNeedProxy(ReflectionClass $reflectionClass)
     {
-        $className = $class->getName();
-        $aspect = AspectCollector::get('class.static');
-        if (is_array($aspect) && array_key_exists($className, $aspect)) {
-            return true;
-        }
-
-        $aspect = AspectCollector::get('class.dynamic');
-        foreach ($aspect ?? [] as $preg => $aspects) {
-            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $preg);
-            $pattern = "/^$preg$/";
-
-            if (preg_match($pattern, $className)) {
-                AspectCollector::collectClassAndAnnotation($aspects, [$className], []);
-                return true;
+        $className = $reflectionClass->getName();
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                if ($this->isMatch($rule, $className)) {
+                    return true;
+                }
             }
         }
 
-
-        // TODO: Check class whether to contain the annotations.
+        // Get the controller annotations.
+        $classAnnotations = value(function () use ($className) {
+            $annotations = AnnotationCollector::get($className . '._c', []);
+            return array_keys($annotations);
+        });
+        // Aggregate all methods annotations.
+        $methodAnnotations = value(function () use ($className) {
+            $defined = [];
+            $annotations = AnnotationCollector::get($className . '._m', []);
+            foreach ($annotations as $method => $annotation) {
+                $defined = array_replace($defined, array_keys($annotation));
+            }
+            return $defined;
+        });
+        $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations));
+        if ($annotations) {
+            $annotationsAspects = AspectCollector::get('annotations', []);
+            foreach ($annotationsAspects as $aspect => $rules) {
+                foreach ($rules as $rule) {
+                    foreach ($annotations as $annotation) {
+                        if ($this->isMatch($rule, $annotation)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
         return false;
     }
+
+    private function isMatch(string $rule, string $target):bool
+    {
+        if (strpos($rule, '*') === false && $rule === $target) {
+            return true;
+        } else {
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+            $pattern = "/^$preg$/";
+
+            if (preg_match($pattern, $target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
