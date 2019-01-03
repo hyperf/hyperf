@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
-use Hyperf\Contracts\Support\Arrayable;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Support\Arr;
-use Carbon\Carbon;
-use Hyperf\Support\Collection as BaseCollection;
-use Hyperf\Support\Str;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Str;
 use LogicException;
 
 trait HasAttributes
