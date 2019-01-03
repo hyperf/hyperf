@@ -11,9 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Listeners;
 
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\HttpServer\Event\AfterResponse;
+use Hyperf\Utils\Context;
 
 /**
  * @Listener
@@ -30,5 +32,14 @@ class AfterResponseListener implements ListenerInterface
     public function process(object $event)
     {
         echo 'afterResponse' . PHP_EOL;
+
+        if (Context::has('databases')) {
+            $dbs = Context::get('databases');
+            foreach ($dbs as $conn) {
+                if ($conn instanceof ConnectionInterface) {
+                    $conn->release();
+                }
+            }
+        }
     }
 }
