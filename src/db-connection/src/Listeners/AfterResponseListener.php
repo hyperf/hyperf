@@ -31,8 +31,6 @@ class AfterResponseListener implements ListenerInterface
 
     public function process(object $event)
     {
-        echo 'afterResponse' . PHP_EOL;
-
         if (Context::has('databases')) {
             $dbs = Context::get('databases');
             foreach ($dbs as $conn) {

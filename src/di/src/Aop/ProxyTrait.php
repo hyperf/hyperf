@@ -25,10 +25,10 @@ trait ProxyTrait
         array $arguments,
         Closure $closure
     ) {
-        echo $originalClassName . '::' . $method . '.pre' . PHP_EOL;
+        // echo $originalClassName . '::' . $method . '.pre' . PHP_EOL;
         $proceedingJoinPoint = new ProceedingJoinPoint($closure, $originalClassName, $method, $arguments);
         $result = self::handleArround($proceedingJoinPoint);
-        echo $originalClassName . '::' . $method . '.post' . PHP_EOL;
+        // echo $originalClassName . '::' . $method . '.post' . PHP_EOL;
         unset($proceedingJoinPoint);
         return $result;
     }
