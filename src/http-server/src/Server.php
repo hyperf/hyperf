@@ -13,8 +13,10 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Event\EventDispatcher;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
+use Hyperf\HttpServer\Event\AfterResponse;
 use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -55,6 +57,11 @@ class Server implements ServerOnRequestInterface
     private $container;
 
     /**
+     * @var EventDispatcher
+     */
+    private $event;
+
+    /**
      * @var string
      */
     private $serverName = 'http';
@@ -69,6 +76,8 @@ class Server implements ServerOnRequestInterface
         $this->coreHandler = $coreHandler;
         $this->exceptionHandlers = $exceptionHandlers;
         $this->container = $container;
+
+        $this->event = $container->get(EventDispatcher::class);
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -100,6 +109,9 @@ class Server implements ServerOnRequestInterface
         } finally {
             // Response and Recycle resources.
             $psr7Response->send();
+
+            $this->event->dispatch(new AfterResponse());
+
             Context::destroy();
         }
     }

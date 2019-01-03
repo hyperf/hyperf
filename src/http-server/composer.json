@@ -17,6 +17,7 @@
         "hyperf/di": "dev-master",
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
+        "hyperf/event": "dev-master",
         "swoft/http-message": "^1.0"
     },
     "require-dev": {
