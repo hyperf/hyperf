@@ -1,13 +1,15 @@
 <?php
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: limx
- * Date: 2019/1/3
- * Time: 5:59 PM
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Redis;
-
 
 use Hyperf\Redis\Pool\PoolFactory;
 use Psr\Container\ContainerInterface;
@@ -30,7 +32,7 @@ class Redis
     {
         $factory = $this->container->get(PoolFactory::class);
         $pool = $factory->getRedisPool($this->name);
-        
+
         $connection = $pool->get()->getConnection();
         // TODO: Handle multi ...
         $res = $connection->$name(...$arguments);

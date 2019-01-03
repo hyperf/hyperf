@@ -11,12 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis;
 
-use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Connectors\PostgresConnector;
-use Hyperf\Database\Connectors\SQLiteConnector;
-use Hyperf\Database\Connectors\SqlServerConnector;
-use Hyperf\Redis\RedisConnection;
 use Hyperf\Redis\Pool\PoolFactory;
 
 class ConfigProvider

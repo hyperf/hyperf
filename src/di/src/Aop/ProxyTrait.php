@@ -108,5 +108,4 @@ trait ProxyTrait
         // @TODO
         return $matchAspect;
     }
-
 }

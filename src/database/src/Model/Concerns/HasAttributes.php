@@ -13,9 +13,9 @@ namespace Hyperf\Database\Model\Concerns;
 
 use Carbon\CarbonInterface;
 use DateTimeInterface;
+use Hyperf\Contracts\Support\Arrayable;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Contracts\Support\Arrayable;
 use Hyperf\Support\Arr;
 use Hyperf\Support\Carbon;
 use Hyperf\Support\Collection as BaseCollection;

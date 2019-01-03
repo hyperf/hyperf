@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Event;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\EventDispatcher\MessageNotifierInterface;
-use Psr\EventDispatcher\TaskProcessorInterface;
 
 class ConfigProvider
 {

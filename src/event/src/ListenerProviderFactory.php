@@ -13,7 +13,6 @@ namespace Hyperf\Event;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\MessageListener;
 use Hyperf\Event\Annotation\Listener;
 use Psr\Container\ContainerInterface;
 

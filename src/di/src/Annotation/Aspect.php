@@ -20,7 +20,6 @@ use Hyperf\Di\Aop\ArroundInterface;
  */
 class Aspect extends AbstractAnnotation
 {
-
     /**
      * {@inheritDoc}
      */

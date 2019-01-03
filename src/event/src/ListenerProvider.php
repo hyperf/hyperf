@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Event;
 
-use Psr\EventDispatcher\EventInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use SplPriorityQueue;
 

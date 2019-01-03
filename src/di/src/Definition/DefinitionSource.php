@@ -46,7 +46,6 @@ use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-
     private $enableCache = false;
 
     /**
