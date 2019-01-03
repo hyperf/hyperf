@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Support\Facades\Date;
+use Carbon\Carbon;
 
 trait HasTimestamps
 {
@@ -71,7 +71,7 @@ trait HasTimestamps
      */
     public function freshTimestamp()
     {
-        return Date::now();
+        return Carbon::now();
     }
 
     /**
