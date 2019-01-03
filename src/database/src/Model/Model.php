@@ -13,6 +13,7 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
+use Hyperf\Contracts\Queue\QueueableCollection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -21,8 +22,8 @@ use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
-use Hyperf\Contracts\Queue\QueueableCollection;
 use JsonSerializable;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
@@ -982,12 +983,24 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the database connection for the model.
+     * You can write it by yourself.
      *
      * @return ConnectionInterface
      */
     public function getConnection(): ConnectionInterface
     {
         return Register::resolveConnection($this->getConnectionName());
+    }
+
+    /**
+     * Get the event dispatcher for the model.
+     * You can write it by yourself.
+     *
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        return Register::getEventDispatcher();
     }
 
     /**

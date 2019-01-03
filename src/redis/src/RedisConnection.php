@@ -9,30 +9,20 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection;
+namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
-use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
-class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
+class RedisConnection extends BaseConnection implements ConnectionInterface
 {
-    use DbConnection;
-
     /**
-     * @var DbConnectionInterface
+     * @var \Redis
      */
     protected $connection;
-
-    /**
-     * @var ConnectionFactory
-     */
-    protected $factory;
 
     /**
      * @var array
@@ -42,7 +32,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
-        $this->factory = $container->get(ConnectionFactory::class);
         $this->config = $config;
 
         $this->reconnect();
@@ -53,7 +42,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return $this->connection->$name(...$arguments);
     }
 
-    public function getConnection(): DbConnectionInterface
+    public function getConnection()
     {
         if ($this->check()) {
             return $this;
@@ -68,7 +57,25 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function reconnect(): bool
     {
-        $this->connection = $this->factory->make($this->config);
+        $host = $this->config['host'] ?? 'localhost';
+        $port = $this->config['port'] ?? 6379;
+        $auth = $this->config['auth'] ?? null;
+        $db = $this->config['db'] ?? 0;
+
+        $redis = new \Redis();
+        if (!$redis->connect($host, $port)) {
+            throw new ConnectionException('Connection reconnect failed.');
+        }
+
+        if (isset($auth)) {
+            $redis->auth($auth);
+        }
+
+        if ($db > 0) {
+            $redis->select($db);
+        }
+
+        $this->connection = $redis;
         return true;
     }
 
@@ -80,10 +87,5 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function close(): bool
     {
         return true;
-    }
-
-    public function release(): void
-    {
-        parent::release();
     }
 }

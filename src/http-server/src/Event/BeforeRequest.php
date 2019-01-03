@@ -9,12 +9,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Di\Annotation;
+namespace Hyperf\HttpServer\Event;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
-class Debug extends AbstractAnnotation
+class BeforeRequest
 {
 }

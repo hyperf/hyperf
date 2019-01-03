@@ -13,6 +13,7 @@ namespace Hyperf\Database\Model;
 
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Register
 {
@@ -22,6 +23,11 @@ class Register
      * @var ConnectionResolverInterface
      */
     protected static $resolver;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected static $dispatcher;
 
     /**
      * Resolve a connection instance.
@@ -63,5 +69,36 @@ class Register
     public static function unsetConnectionResolver()
     {
         static::$resolver = null;
+    }
+
+    /**
+     * Get the event dispatcher instance.
+     *
+     * @return EventDispatcherInterface
+     */
+    public static function getEventDispatcher()
+    {
+        return static::$dispatcher;
+    }
+
+    /**
+     * Set the event dispatcher instance.
+     *
+     * @param  EventDispatcherInterface $dispatcher
+     * @return void
+     */
+    public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    {
+        static::$dispatcher = $dispatcher;
+    }
+
+    /**
+     * Unset the event dispatcher for models.
+     *
+     * @return void
+     */
+    public static function unsetEventDispatcher()
+    {
+        static::$dispatcher = null;
     }
 }

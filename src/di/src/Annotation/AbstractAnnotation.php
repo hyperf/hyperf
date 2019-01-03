@@ -46,5 +46,4 @@ abstract class AbstractAnnotation implements AnnotationInterface
             AnnotationCollector::collectProperty($className, $target, static::class, $this->value);
         }
     }
-
 }

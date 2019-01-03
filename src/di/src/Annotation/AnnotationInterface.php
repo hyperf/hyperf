@@ -27,5 +27,4 @@ interface AnnotationInterface
      * Collect the annotation metadata to a container that you wants.
      */
     public function collectProperty(string $className, ?string $target): void;
-
 }

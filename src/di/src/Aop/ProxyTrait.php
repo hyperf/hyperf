@@ -135,5 +135,4 @@ trait ProxyTrait
         }
         return $matchAspect;
     }
-
 }

@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/db-connection",
-    "description": "A hyperf db connection handler for hyperf/database.",
+    "name": "hyperf/redis",
+    "description": "A redis component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "hyperf",
-        "database",
-        "connection"
+        "redis",
+        "pool"
     ],
     "support": {
     },
@@ -29,7 +29,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\DbConnection\\": "src"
+            "Hyperf\\Redis\\": "src/"
         }
     },
     "autoload-dev": {
@@ -43,7 +43,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\DbConnection\\ConfigProvider"
+            "config": "Hyperf\\Redis\\ConfigProvider"
         }
     },
     "bin": [

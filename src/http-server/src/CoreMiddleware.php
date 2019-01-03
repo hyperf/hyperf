@@ -116,7 +116,7 @@ class CoreMiddleware implements MiddlewareInterface
         if (is_array($response)) {
             return $this->response()
                 ->withAddedHeader('Content-Type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response)));
+                ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 
         return $this->response()->withBody(new SwooleStream((string)$response));

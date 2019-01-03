@@ -17,7 +17,7 @@ use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Support\Str;
+use Hyperf\Utils\Str;
 use RuntimeException;
 
 trait QueriesRelationships

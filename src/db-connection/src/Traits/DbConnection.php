@@ -16,6 +16,9 @@ use Generator;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 
+/**
+ * TODO: release connection except transaction.
+ */
 trait DbConnection
 {
     public function table($table): Builder

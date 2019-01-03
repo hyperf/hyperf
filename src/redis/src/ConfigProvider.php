@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Event;
+namespace Hyperf\Redis;
 
-use Psr\EventDispatcher\ListenerProviderInterface;
+use Hyperf\Redis\Pool\PoolFactory;
 
 class ConfigProvider
 {
@@ -19,7 +19,10 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ListenerProviderInterface::class => ListenerProviderFactory::class,
+                \Redis::class => Redis::class,
+                PoolFactory::class => PoolFactory::class,
+            ],
+            'commands' => [
             ],
             'scan' => [
                 'paths' => [],

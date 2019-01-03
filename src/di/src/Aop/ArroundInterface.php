@@ -13,7 +13,6 @@ namespace Hyperf\Di\Aop;
 
 interface ArroundInterface
 {
-
     /**
      * @return mixed
      * Return the value from process method of ProceedingJoinPoint,

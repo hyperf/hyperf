@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Hyperf\Contracts\Events\Dispatcher;
-use Hyperf\Support\Arr;
+use Hyperf\Utils\Arr;
 
 trait HasEvents
 {

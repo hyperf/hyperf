@@ -28,7 +28,8 @@
         "symfony/finder": "^4.1",
         "symfony/console": "^4.2",
         "swoft/http-message": "^1.0",
-        "squizlabs/php_codesniffer": "^3.4"
+        "squizlabs/php_codesniffer": "^3.4",
+        "nesbot/carbon": "^2.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -55,6 +56,7 @@
         "hyperf/framework": "self.version",
         "hyperf/memory": "self.version",
         "hyperf/pool": "self.version",
+        "hyperf/redis": "self.version",
         "hyperf/utils": "self.version"
     },
     "suggest": {
@@ -77,6 +79,7 @@
             "Hyperf\\Framework\\": "src/framework/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
+            "Hyperf\\Redis\\": "src/redis/src/",
             "Hyperf\\Utils\\": "src/utils/src/"
         }
     },
@@ -103,6 +106,7 @@
                 "Hyperf\\GrpcServer\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
+                "Hyperf\\Redis\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider"
             ]
         }
