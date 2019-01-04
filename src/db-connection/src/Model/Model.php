@@ -15,6 +15,7 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Model as BaseModel;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Framework\ApplicationContext;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Model extends BaseModel
 {
@@ -28,5 +29,10 @@ class Model extends BaseModel
         $connectionName = $this->getConnectionName();
         $resolver = ApplicationContext::getContainer()->get(ConnectionResolver::class);
         return $resolver->connection($connectionName);
+    }
+
+    public function getEventDispatcher()
+    {
+        return ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
     }
 }

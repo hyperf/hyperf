@@ -10,10 +10,11 @@
     "support": {
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "hyperf/utils": "dev-master",
         "psr/container": "^1.0",
-        "nesbot/carbon": "^2.0"
+        "nesbot/carbon": "^2.0",
+        "psr/event-dispatcher": "^0.7"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

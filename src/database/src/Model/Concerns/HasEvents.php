@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Hyperf\Contracts\Events\Dispatcher;
+use Hyperf\Database\Model\Events\Event;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 trait HasEvents
 {
@@ -229,37 +232,6 @@ trait HasEvents
     }
 
     /**
-     * Get the event dispatcher instance.
-     *
-     * @return \Hyperf\Contracts\Events\Dispatcher
-     */
-    public static function getEventDispatcher()
-    {
-        return static::$dispatcher;
-    }
-
-    /**
-     * Set the event dispatcher instance.
-     *
-     * @param  \Hyperf\Contracts\Events\Dispatcher  $dispatcher
-     * @return void
-     */
-    public static function setEventDispatcher(Dispatcher $dispatcher)
-    {
-        static::$dispatcher = $dispatcher;
-    }
-
-    /**
-     * Unset the event dispatcher for models.
-     *
-     * @return void
-     */
-    public static function unsetEventDispatcher()
-    {
-        static::$dispatcher = null;
-    }
-
-    /**
      * Register a single observer with the model.
      *
      * @param  object|string $class
@@ -302,29 +274,23 @@ trait HasEvents
      * @param  bool  $halt
      * @return mixed
      */
-    protected function fireModelEvent($event, $halt = true)
+    protected function fireModelEvent(string $event)
     {
-        if (! isset(static::$dispatcher)) {
+        $dispatcher = $this->getEventDispatcher();
+        if (!$dispatcher instanceof EventDispatcherInterface) {
             return true;
         }
 
-        // First, we will get the proper method to call on the event dispatcher, and then we
-        // will attempt to fire a custom, object based event for the given event. If that
-        // returns a result we can return that result, or we'll call the string events.
-        $method = $halt ? 'until' : 'dispatch';
-
         $result = $this->filterModelEventResults(
-            $this->fireCustomModelEvent($event, $method)
+            $this->fireCustomModelEvent($event, 'dispatch')
         );
 
         if ($result === false) {
             return false;
         }
 
-        return ! empty($result) ? $result : static::$dispatcher->{$method}(
-            "eloquent.{$event}: ".static::class,
-            $this
-        );
+        $eventName = 'Hyperf\\Database\\Model\\Events\\' . Str::studly($event);
+        return !empty($result) ? $result : $dispatcher->dispatch(new $eventName($this, $event));
     }
 
     /**
