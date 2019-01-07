@@ -25,7 +25,10 @@ class ConfigProvider
                 StdoutLoggerInterface::class => StdoutLogger::class,
             ],
             'scan' => [
-                'paths' => []
+                'paths' => [
+                    'vendor/hyperf/framework/src',
+                    'vendor/hyperf/hyperf/src/framework/src'
+                ]
             ]
         ];
     }

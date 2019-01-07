@@ -20,7 +20,10 @@ class ConfigProvider
 
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/dispatcher/src',
+                    'vendor/hyperf/hyperf/src/dispatcher/src'
+                ],
             ],
         ];
     }

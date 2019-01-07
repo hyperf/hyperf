@@ -25,7 +25,10 @@ class ConfigProvider
             'commands' => [
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/redis/src',
+                    'vendor/hyperf/hyperf/src/redis/src'
+                ],
             ],
         ];
     }

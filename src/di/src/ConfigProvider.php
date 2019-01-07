@@ -24,7 +24,10 @@ class ConfigProvider
                 InitProxyCommand::class,
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/di/src',
+                    'vendor/hyperf/hyperf/src/di/src'
+                ],
             ],
         ];
     }

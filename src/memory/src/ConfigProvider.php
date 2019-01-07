@@ -18,7 +18,10 @@ class ConfigProvider
         return [
             'dependencies' => [],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/memory/src',
+                    'vendor/hyperf/hyperf/src/memory/src'
+                ],
             ]
         ];
     }

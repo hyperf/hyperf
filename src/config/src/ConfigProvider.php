@@ -22,7 +22,10 @@ class ConfigProvider
                 ConfigInterface::class => ConfigFactory::class,
             ],
             'scan' => [
-                'paths' => []
+                'paths' => [
+                    'vendor/hyperf/config/src',
+                    'vendor/hyperf/hyperf/src/config/src'
+                ]
             ],
         ];
     }
