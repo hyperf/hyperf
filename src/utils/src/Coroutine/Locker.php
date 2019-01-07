@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Coroutine;
 
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Traits\Container;
 use Swoole\Coroutine as SwooleCoroutine;
 
