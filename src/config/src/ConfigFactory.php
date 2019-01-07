@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Config;
 
+use Dotenv\Dotenv;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -18,6 +19,11 @@ class ConfigFactory
 {
     public function __invoke(ContainerInterface $container)
     {
+        // Load env before config.
+        Dotenv::create([
+            BASE_PATH,
+        ])->load();
+
         $configPath = BASE_PATH . '/config/';
         $config = $this->readConfig($configPath . 'config.php');
         $serverConfig = $this->readConfig($configPath . 'server.php');

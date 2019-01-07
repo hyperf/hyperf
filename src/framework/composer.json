@@ -23,7 +23,8 @@
         "symfony/console": "^4.2",
         "symfony/routing": "^4.2",
         "symfony/http-foundation": "^4.2",
-        "hyperf/utils": "dev-master"
+        "hyperf/utils": "dev-master",
+        "vlucas/phpdotenv": "^3.1"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
