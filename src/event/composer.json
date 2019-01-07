@@ -11,7 +11,7 @@
     "support": {
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "psr/event-dispatcher": "^0.7"
     },
     "require-dev": {

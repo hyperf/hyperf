@@ -13,7 +13,7 @@
     "support": {
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "ext-swoole": ">=4.2",
         "fig/http-message-util": "^1.1.2",
         "psr/container": "^1.0",

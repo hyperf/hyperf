@@ -12,7 +12,7 @@
     "support": {
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "hyperf/framework": "dev-master",
         "nikic/php-parser": "^4.1",
         "doctrine/annotations": "^1.6",
