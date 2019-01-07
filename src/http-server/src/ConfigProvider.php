@@ -29,7 +29,10 @@ class ConfigProvider
                 StartServer::class,
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/http-server/src',
+                    'vendor/hyperf/hyperf/src/http-server/src'
+                ],
             ],
         ];
     }

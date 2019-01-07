@@ -41,6 +41,8 @@ class Scanner
 
     public function scan(array $paths)
     {
+        $paths = $this->normalizeDir($paths);
+
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
 
@@ -96,5 +98,24 @@ class Scanner
         }
 
         return $classColletion;
+    }
+
+    /**
+     * Normalizes given directory names by removing directory not exist.
+     *
+     * @param array $dir
+     *
+     * @return array
+     */
+    public function normalizeDir(array $paths): array
+    {
+        $result = [];
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                $result[] = $path;
+            }
+        }
+
+        return $result;
     }
 }

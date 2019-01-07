@@ -22,7 +22,10 @@ class ConfigProvider
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/event/src',
+                    'vendor/hyperf/hyperf/src/event/src'
+                ],
             ],
         ];
     }

@@ -20,7 +20,10 @@ class ConfigProvider
                 Server::class => ServerFactory::class,
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    'vendor/hyperf/grpc-server/src',
+                    'vendor/hyperf/hyperf/src/grpc-server/src'
+                ],
             ],
         ];
     }
