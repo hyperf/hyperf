@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Event\EventDispatcher;
@@ -67,14 +68,10 @@ class Server implements ServerOnRequestInterface
     private $serverName = 'http';
 
     public function __construct(
-        array $middlewares,
         string $coreHandler,
-        array $exceptionHandlers,
         ContainerInterface $container
     ) {
-        $this->middlewares = $middlewares;
         $this->coreHandler = $coreHandler;
-        $this->exceptionHandlers = $exceptionHandlers;
         $this->container = $container;
 
         $this->event = $container->get(EventDispatcher::class);
@@ -85,6 +82,12 @@ class Server implements ServerOnRequestInterface
         $this->serverName = $serverName;
         $coreHandler = $this->coreHandler;
         $this->coreMiddleware = new $coreHandler($this->container, $serverName);
+
+        $config = $this->container->get(ConfigInterface::class);
+        $this->middlewares = $config->get('middlewares.' . $serverName, []);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
+            HttpExceptionHandler::class,
+        ]);
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void

@@ -21,12 +21,6 @@ class ServerFactory
 
     public function __invoke(ContainerInterface $container): Server
     {
-        $config = $container->get(ConfigInterface::class);
-        $middlewares = $config->get('middlewares.http', []);
-        $exceptionHandlers = $config->get('exceptions.handler.http', [
-            HttpExceptionHandler::class,
-        ]);
-
-        return new Server($middlewares, $this->coreMiddleware, $exceptionHandlers, $container);
+        return new Server($this->coreMiddleware, $container);
     }
 }
