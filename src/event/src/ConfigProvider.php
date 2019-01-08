@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Event;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 class ConfigProvider
@@ -20,6 +21,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
+                EventDispatcherInterface::class => EventDispatcher::class,
             ],
             'scan' => [
                 'paths' => [
