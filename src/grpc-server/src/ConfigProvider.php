@@ -21,8 +21,7 @@ class ConfigProvider
             ],
             'scan' => [
                 'paths' => [
-                    'vendor/hyperf/grpc-server/src',
-                    'vendor/hyperf/hyperf/src/grpc-server/src'
+                    __DIR__
                 ],
             ],
         ];

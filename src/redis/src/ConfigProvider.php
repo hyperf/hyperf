@@ -26,8 +26,7 @@ class ConfigProvider
             ],
             'scan' => [
                 'paths' => [
-                    'vendor/hyperf/redis/src',
-                    'vendor/hyperf/hyperf/src/redis/src'
+                    __DIR__
                 ],
             ],
         ];

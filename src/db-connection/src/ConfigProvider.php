@@ -35,8 +35,7 @@ class ConfigProvider
             ],
             'scan' => [
                 'paths' => [
-                    'vendor/hyperf/db-connection/src',
-                    'vendor/hyperf/hyperf/src/db-connection/src'
+                    __DIR__
                 ],
             ],
         ];

@@ -19,8 +19,7 @@ class ConfigProvider
             'dependencies' => [],
             'scan' => [
                 'paths' => [
-                    'vendor/hyperf/memory/src',
-                    'vendor/hyperf/hyperf/src/memory/src'
+                    __DIR__
                 ],
             ]
         ];

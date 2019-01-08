@@ -23,8 +23,7 @@ class ConfigProvider
             ],
             'scan' => [
                 'paths' => [
-                    'vendor/hyperf/config/src',
-                    'vendor/hyperf/hyperf/src/config/src'
+                    __DIR__
                 ]
             ],
         ];

@@ -37,6 +37,9 @@
     },
     "extra": {
         "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\Pool\\ConfigProvider"
         }
     },
     "bin": [

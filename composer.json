@@ -107,6 +107,7 @@
                 "Hyperf\\GrpcServer\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
+                "Hyperf\\Pool\\ConfigProvider",
                 "Hyperf\\Redis\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider"
             ]

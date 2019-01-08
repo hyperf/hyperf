@@ -21,7 +21,9 @@ class ConfigProvider
             'commands' => [
             ],
             'scan' => [
-                'paths' => [],
+                'paths' => [
+                    __DIR__
+                ],
             ],
         ];
     }

@@ -66,11 +66,6 @@ class DefinitionSource implements DefinitionSourceInterface
 
     public function __construct(array $source, array $scanDir, Scanner $scanner)
     {
-        // Format relative paths into absolute paths
-        $scanDir = array_map(function ($value) {
-            return BASE_PATH . '/' . $value;
-        }, $scanDir);
-
         $this->scanner = $scanner;
         // Scan the specified paths and collect the ast and annotations.
         $this->scan($scanDir);
