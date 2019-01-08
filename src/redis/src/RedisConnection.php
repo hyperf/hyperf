@@ -63,7 +63,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $db = $this->config['db'] ?? 0;
 
         $redis = new \Redis();
-        if (!$redis->connect($host, $port)) {
+        if (!$redis->connect($host, (int)$port)) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -72,7 +72,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         if ($db > 0) {
-            $redis->select($db);
+            $redis->select((int)$db);
         }
 
         $this->connection = $redis;
