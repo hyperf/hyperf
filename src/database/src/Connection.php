@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -1048,8 +1049,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @param  \Closure $callback
      * @return mixed
-     *
-     * @throws \Hyperf\Database\QueryException
+     * @throws QueryException
      */
     protected function run($query, $bindings, Closure $callback)
     {
@@ -1090,8 +1090,7 @@ class Connection implements ConnectionInterface
      * @param  array $bindings
      * @param  \Closure $callback
      * @return mixed
-     *
-     * @throws \Hyperf\Database\QueryException
+     * @throws QueryException
      */
     protected function runQueryCallback($query, $bindings, Closure $callback)
     {
@@ -1155,13 +1154,12 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
-     * @param  \Hyperf\Database\QueryException $e
+     * @param  QueryException $e
      * @param  string $query
      * @param  array $bindings
      * @param  \Closure $callback
      * @return mixed
-     *
-     * @throws \Hyperf\Database\QueryException
+     * @throws QueryException
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
     {
