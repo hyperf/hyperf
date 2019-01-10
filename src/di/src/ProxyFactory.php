@@ -30,9 +30,7 @@ class ProxyFactory
 
     public function __construct(ContainerInterface $container)
     {
-        $parserFactory = new ParserFactory();
-        $astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
-        $this->ast = new Ast($astParser, new Standard());
+        $this->ast = new Ast();
     }
 
     public function createProxyDefinition(ObjectDefinition $definition): ObjectDefinition
