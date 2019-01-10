@@ -157,6 +157,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected static $ignoreOnTouch = [];
 
     /**
+     * @var string
+     */
+    protected static $observer = '';
+
+    /**
+     * @var Observer
+     */
+    protected $observerInstance;
+
+    /**
      * Create a new Model model instance.
      *
      * @param  array $attributes
@@ -1006,14 +1016,21 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Get the container for the model.
+     * Get the observer for the model.
      * You can write it by yourself.
      *
-     * @return ContainerInterface
+     * @return Observer|null
      */
-    public static function getContainer()
+    public function getObserver()
     {
-        return Container::getContainer();
+        if ($this->observerInstance instanceof Observer) {
+            return $this->observerInstance;
+        }
+        $class = static::$observer;
+        if (!empty($class)) {
+            return $this->observerInstance = new $class();
+        }
+        return null;
     }
 
     /**

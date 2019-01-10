@@ -24,17 +24,29 @@ abstract class Event
         $this->model = $model;
         $this->method = $method;
     }
-    
+
     public function getModel(): Model
     {
         return $this->model;
     }
 
+    /**
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
     public function handle()
     {
-        $method = $this->method;
-        if (method_exists($this->model, $method)) {
-            return $this->model->$method();
+        $model = $this->getModel();
+        $method = $this->getMethod();
+        $observer = $model->getObserver();
+        if ($observer && method_exists($observer, $method)) {
+            return $observer->$method($model);
         }
+
+        return true;
     }
 }
