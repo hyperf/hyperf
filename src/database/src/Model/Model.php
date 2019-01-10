@@ -155,16 +155,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected static $ignoreOnTouch = [];
 
     /**
-     * @var string
-     */
-    protected static $listener = '';
-
-    /**
-     * @var Listener
-     */
-    protected $listenerInstance;
-
-    /**
      * Create a new Model model instance.
      *
      * @param  array $attributes
@@ -1011,24 +1001,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function getEventDispatcher()
     {
         return Register::getEventDispatcher();
-    }
-
-    /**
-     * Get the observer for the model.
-     * You can write it by yourself.
-     *
-     * @return Listener|null
-     */
-    public function getListener()
-    {
-        if ($this->observerInstance instanceof Listener) {
-            return $this->listenerInstance;
-        }
-        $class = static::$listener;
-        if (!empty($class)) {
-            return $this->listenerInstance = new $class();
-        }
-        return null;
     }
 
     /**

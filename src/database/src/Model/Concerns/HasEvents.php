@@ -14,7 +14,22 @@ namespace Hyperf\Database\Model\Concerns;
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Database\Model\Model;
 
+/**
+ * @method retrieved(Model $model)
+ * @method creating(Model $model)
+ * @method created(Model $model)
+ * @method updating(Model $model)
+ * @method updated(Model $model)
+ * @method saving(Model $model)
+ * @method saved(Model $model)
+ * @method restoring(Model $model)
+ * @method restored(Model $model)
+ * @method deleting(Model $model)
+ * @method deleted(Model $model)
+ * @method forceDeleted(Model $model)
+ */
 trait HasEvents
 {
     /**
