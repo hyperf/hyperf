@@ -1,6 +1,6 @@
 <?php
 
-namespace \HyperfTest\Database;
+namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Console\Migrations\TableGuesser;

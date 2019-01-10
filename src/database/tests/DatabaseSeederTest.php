@@ -1,6 +1,6 @@
 <?php
 
-namespace \HyperfTest\Database;
+namespace HyperfTest\Database;
 
 use Mockery as m;
 use Mockery\Mock;

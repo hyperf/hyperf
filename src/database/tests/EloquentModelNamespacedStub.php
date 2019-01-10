@@ -1,6 +1,6 @@
 <?php
 
-namespace Foo\Bar;
+namespace HyperfTest\Database;
 
 use Illuminate\Database\Eloquent\Model;
 

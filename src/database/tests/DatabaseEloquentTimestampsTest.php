@@ -1,6 +1,6 @@
 <?php
 
-namespace \HyperfTest\Database;
+namespace HyperfTest\Database;
 
 use Illuminate\Support\Carbon;
 use PHPUnit\Framework\TestCase;

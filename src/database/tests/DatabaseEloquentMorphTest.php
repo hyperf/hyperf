@@ -1,11 +1,11 @@
 <?php
 
-namespace \HyperfTest\Database;
+namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Eloquent\Model;
-use Foo\Bar\EloquentModelNamespacedStub;
+use HyperfTest\Database\EloquentModelNamespacedStub;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -286,7 +286,7 @@ class DatabaseEloquentMorphTest extends TestCase
 
     protected function getNamespacedRelation($alias)
     {
-        require_once __DIR__.'/stubs/EloquentModelNamespacedStub.php';
+        require_once __DIR__ . '/EloquentModelNamespacedStub.php';
 
         Relation::morphMap([
             $alias => EloquentModelNamespacedStub::class,
