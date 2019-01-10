@@ -157,12 +157,12 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * @var string
      */
-    protected static $observer = '';
+    protected static $listener = '';
 
     /**
-     * @var Observer
+     * @var Listener
      */
-    protected $observerInstance;
+    protected $listenerInstance;
 
     /**
      * Create a new Model model instance.
@@ -1017,16 +1017,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get the observer for the model.
      * You can write it by yourself.
      *
-     * @return Observer|null
+     * @return Listener|null
      */
     public function getObserver()
     {
-        if ($this->observerInstance instanceof Observer) {
-            return $this->observerInstance;
+        if ($this->observerInstance instanceof Listener) {
+            return $this->listenerInstance;
         }
-        $class = static::$observer;
+        $class = static::$listener;
         if (!empty($class)) {
-            return $this->observerInstance = new $class();
+            return $this->listenerInstance = new $class();
         }
         return null;
     }

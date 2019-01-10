@@ -25,6 +25,6 @@ namespace Hyperf\Database\Model;
  * @method deleted(Model $model)
  * @method forceDeleted(Model $model)
  */
-abstract class Observer
+abstract class Listener
 {
 }
