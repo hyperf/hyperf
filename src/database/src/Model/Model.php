@@ -15,6 +15,7 @@ use ArrayAccess;
 use Exception;
 use Hyperf\Contracts\Queue\QueueableCollection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Container;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
@@ -23,6 +24,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
@@ -1001,6 +1003,17 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function getEventDispatcher()
     {
         return Register::getEventDispatcher();
+    }
+
+    /**
+     * Get the container for the model.
+     * You can write it by yourself.
+     *
+     * @return ContainerInterface
+     */
+    public static function getContainer()
+    {
+        return Container::getContainer();
     }
 
     /**
