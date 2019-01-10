@@ -87,7 +87,8 @@
     "autoload-dev": {
         "psr-4": {
             "HyperfTest\\Dispatcher\\": "./src/Dispatcher/test",
-            "HyperfTest\\Database\\": "./src/database/tests"
+            "HyperfTest\\Database\\": "./src/database/tests",
+            "Foo\\Bar\\": "./src/database/tests/stubs"
         }
     },
     "config": {
