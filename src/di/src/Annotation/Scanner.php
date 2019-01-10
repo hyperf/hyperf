@@ -50,7 +50,7 @@ class Scanner
             AnnotationReader::addGlobalIgnoredName($value);
         });
         $reader = new AnnotationReader();
-        $classColletion = [];
+        $classCollection = [];
         foreach ($finder as $file) {
             try {
                 $stmts = $this->parser->parse($file->getContents());
@@ -59,13 +59,13 @@ class Scanner
                     continue;
                 }
                 AstCollector::set($className, $stmts);
-                $classColletion[] = $className;
+                $classCollection[] = $className;
             } catch (\RuntimeException $e) {
                 continue;
             }
         }
         // Because the annotation class should loaded before use it, so load file via $finder previous, and then parse annotation here.
-        foreach ($classColletion as $className) {
+        foreach ($classCollection as $className) {
             $reflectionClass = ReflectionManager::reflectClass($className);
             $annotations = $reader->getClassAnnotations($reflectionClass);
             foreach ($annotations as $annotation) {
@@ -97,13 +97,13 @@ class Scanner
             }
         }
 
-        return $classColletion;
+        return $classCollection;
     }
 
     /**
      * Normalizes given directory names by removing directory not exist.
      *
-     * @param array $dir
+     * @param array $paths
      *
      * @return array
      */
