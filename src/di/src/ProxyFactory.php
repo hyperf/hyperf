@@ -15,9 +15,6 @@ use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Utils\Coroutine\Locker;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter\Standard;
-use Psr\Container\ContainerInterface;
 
 class ProxyFactory
 {
@@ -28,11 +25,9 @@ class ProxyFactory
      */
     private $ast;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $parserFactory = new ParserFactory();
-        $astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
-        $this->ast = new Ast($astParser, new Standard());
+        $this->ast = new Ast();
     }
 
     public function createProxyDefinition(ObjectDefinition $definition): ObjectDefinition
