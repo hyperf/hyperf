@@ -1019,7 +1019,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @return Listener|null
      */
-    public function getObserver()
+    public function getListener()
     {
         if ($this->observerInstance instanceof Listener) {
             return $this->listenerInstance;

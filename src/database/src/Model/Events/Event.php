@@ -42,7 +42,7 @@ abstract class Event
     {
         $model = $this->getModel();
         $method = $this->getMethod();
-        $observer = $model->getObserver();
+        $observer = $model->getListener();
         if ($observer && method_exists($observer, $method)) {
             return $observer->$method($model);
         }
