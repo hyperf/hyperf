@@ -20,9 +20,9 @@ class ConfigFactory
     public function __invoke(ContainerInterface $container)
     {
         // Load env before config.
-        Dotenv::create([
-            BASE_PATH,
-        ])->load();
+        if (file_exists(BASE_PATH . '/.env')) {
+            Dotenv::create([BASE_PATH])->load();
+        }
 
         $configPath = BASE_PATH . '/config/';
         $config = $this->readConfig($configPath . 'config.php');
