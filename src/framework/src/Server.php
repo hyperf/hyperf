@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
+use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Framework\Constants\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
@@ -57,6 +58,7 @@ class Server
             $constructor = $serverConfig['constructor'];
             $callbacks = $serverConfig['callbacks'];
             $settings = $serverConfig['settings'] ?? [];
+            $processes = $serverConfig['processes'] ?? [];
             if (! class_exists($server)) {
                 throw new \InvalidArgumentException('Server not exist.');
             }
@@ -71,7 +73,15 @@ class Server
                 $slaveServer = $this->server->addlistener(...$constructor);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $serverName);
             }
+
+            foreach ($processes as $process) {
+                $instance = $this->container->get($process);
+                if ($instance instanceof ProcessInterface) {
+                    $instance->bind($this->server);
+                }
+            }
         }
+
         return $this;
     }
 

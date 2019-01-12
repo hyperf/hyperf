@@ -57,6 +57,7 @@ class StartServer extends Command
         if (! $serverConfigs) {
             throw new \InvalidArgumentException('No available server.');
         }
+
         $this->server = $this->container->get(Server::class)->initConfigs($serverConfigs);
     }
 

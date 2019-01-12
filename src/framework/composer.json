@@ -24,6 +24,7 @@
         "symfony/routing": "^4.2",
         "symfony/http-foundation": "^4.2",
         "hyperf/utils": "dev-master",
+        "hyperf/contract": "dev-master",
         "vlucas/phpdotenv": "^3.1"
     },
     "require-dev": {
