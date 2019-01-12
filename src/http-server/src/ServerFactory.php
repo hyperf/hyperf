@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Psr\Container\ContainerInterface;
 
 class ServerFactory
