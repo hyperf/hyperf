@@ -16,20 +16,21 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
 
 abstract class Process implements ProcessInterface
 {
     /**
+     * @var string
+     */
+    public $name = 'process';
+
+    /**
      * @var int
      */
     protected $num = 1;
-
-    /**
-     * @var string
-     */
-    protected $name = 'process';
 
     /**
      * @var ContainerInterface
@@ -53,11 +54,11 @@ abstract class Process implements ProcessInterface
     {
         $num = $this->num;
         for ($i = 0; $i < $num; $i++) {
-            $server->addProcess(new SwooleProcess(function () {
-                go(function () {
-                    $this->event && $this->event->dispatch(new BeforeProcessHandle());
+            $server->addProcess(new SwooleProcess(function () use ($i) {
+                Coroutine::create(function () use ($i) {
+                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
                     $this->handle();
-                    $this->event && $this->event->dispatch(new AfterProcessHandle());
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 });
             }));
         }

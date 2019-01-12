@@ -11,6 +11,23 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Event;
 
+use Hyperf\Process\Process;
+
 class BeforeProcessHandle
 {
+    /**
+     * @var Process
+     */
+    public $process;
+
+    /**
+     * @var int
+     */
+    public $index;
+
+    public function __construct(Process $process, int $index)
+    {
+        $this->process = $process;
+        $this->index = $index;
+    }
 }
