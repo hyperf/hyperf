@@ -57,6 +57,7 @@
         "hyperf/framework": "self.version",
         "hyperf/memory": "self.version",
         "hyperf/pool": "self.version",
+        "hyperf/process": "self.version",
         "hyperf/redis": "self.version",
         "hyperf/redis-queue": "self.version",
         "hyperf/utils": "self.version"
@@ -81,6 +82,7 @@
             "Hyperf\\Framework\\": "src/framework/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
+            "Hyperf\\Process\\": "src/process/src/",
             "Hyperf\\Redis\\": "src/redis/src/",
             "Hyperf\\RedisQueue\\": "src/redis-queue/src/",
             "Hyperf\\Utils\\": "src/utils/src/"
@@ -112,6 +114,7 @@
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
                 "Hyperf\\Pool\\ConfigProvider",
+                "Hyperf\\Process\\ConfigProvider",
                 "Hyperf\\Redis\\ConfigProvider",
                 "Hyperf\\RedisQueue\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider"
