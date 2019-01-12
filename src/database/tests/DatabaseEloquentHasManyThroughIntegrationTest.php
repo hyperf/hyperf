@@ -3,9 +3,9 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model as Eloquent;
+use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model as Eloquent;
 
 class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
 {
@@ -119,7 +119,7 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      * @expectedExceptionMessage No query results for model [\HyperfTest\Database\HasManyThroughTestPost].
      */
     public function testFirstOrFailThrowsAnException()
@@ -131,7 +131,7 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      * @expectedExceptionMessage No query results for model [\HyperfTest\Database\HasManyThroughTestPost] 1
      */
     public function testFindOrFailThrowsAnException()
@@ -364,7 +364,7 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
     /**
      * Get a database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return \Hyperf\Database\Connection
      */
     protected function connection()
     {
@@ -374,7 +374,7 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
     /**
      * Get a schema builder instance.
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return \Hyperf\Database\Schema\Builder
      */
     protected function schema()
     {

@@ -4,14 +4,14 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Foundation\Application;
-use Illuminate\Database\Migrations\Migrator;
+use Hyperf\Foundation\Application;
+use Hyperf\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand;
-use Illuminate\Database\Console\Migrations\RollbackCommand;
+use Hyperf\Database\Console\Migrations\ResetCommand;
+use Hyperf\Database\Console\Migrations\MigrateCommand;
+use Hyperf\Database\Console\Migrations\RefreshCommand;
+use Hyperf\Database\Console\Migrations\RollbackCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 
 class DatabaseMigrationRefreshCommandTest extends TestCase

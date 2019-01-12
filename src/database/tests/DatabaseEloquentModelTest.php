@@ -2,28 +2,29 @@
 
 namespace HyperfTest\Database;
 
+use Carbon\Carbon;
 use DateTime;
+use Hyperf\Database\ConnectionInterface;
 use stdClass;
 use Exception;
 use Mockery as m;
 use ReflectionClass;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Illuminate\Support\Carbon;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Eloquent\Model;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Model\Model;
 use HyperfTest\Database\EloquentModelNamespacedStub;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\InteractsWithTime;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection as BaseCollection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Contracts\Events\Dispatcher;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Database\Model\Relations\BelongsTo;
 
 class DatabaseEloquentModelTest extends TestCase
 {
@@ -963,7 +964,7 @@ class DatabaseEloquentModelTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\MassAssignmentException
+     * @expectedException \Hyperf\Database\Model\MassAssignmentException
      * @expectedExceptionMessage name
      */
     public function testGlobalGuarded()
@@ -1622,7 +1623,7 @@ class DatabaseEloquentModelTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\JsonEncodingException
+     * @expectedException \Hyperf\Database\Model\JsonEncodingException
      * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [\HyperfTest\Database\EloquentModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
      */
     public function testModelAttributeCastingFailsOnUnencodableData()
@@ -1982,7 +1983,7 @@ class EloquentModelSaveStub extends Model
         $this->incrementing = $value;
     }
 
-    public function getConnection()
+    public function getConnection():ConnectionInterface
     {
         $mock = m::mock(Connection::class);
         $mock->shouldReceive('getQueryGrammar')->andReturn(m::mock(Grammar::class));
@@ -2030,7 +2031,7 @@ class EloquentModelHydrateRawStub extends Model
         return 'hydrated';
     }
 
-    public function getConnection()
+    public function getConnection():ConnectionInterface
     {
         $mock = m::mock(Connection::class);
         $mock->shouldReceive('select')->once()->with('SELECT ?', ['foo'])->andReturn([]);

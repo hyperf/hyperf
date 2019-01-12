@@ -3,9 +3,9 @@
 namespace HyperfTest\Database;
 
 use Mockery as m;
-use Illuminate\Support\Carbon;
+use Hyperf\Support\Carbon;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Hyperf\Database\Model\SoftDeletes;
 
 class DatabaseSoftDeletingTraitTest extends TestCase
 {

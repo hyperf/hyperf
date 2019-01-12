@@ -3,9 +3,9 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model as Eloquent;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model as Eloquent;
 
 class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
 {

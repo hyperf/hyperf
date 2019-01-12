@@ -6,9 +6,9 @@ use PDO;
 use Mockery as m;
 use ReflectionProperty;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Container\Container;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Connectors\ConnectionFactory;
+use Hyperf\Container\Container;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Connectors\ConnectionFactory;
 
 class DatabaseConnectionFactoryTest extends TestCase
 {

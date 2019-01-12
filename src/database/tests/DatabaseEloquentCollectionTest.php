@@ -4,9 +4,9 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as BaseCollection;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Support\Collection as BaseCollection;
 
 class DatabaseEloquentCollectionTest extends TestCase
 {

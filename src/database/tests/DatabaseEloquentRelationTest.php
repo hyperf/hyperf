@@ -4,13 +4,13 @@ namespace HyperfTest\Database;
 
 use Exception;
 use Mockery as m;
-use Illuminate\Support\Carbon;
+use Hyperf\Support\Carbon;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Relations\HasOne;
+use Hyperf\Database\Model\Relations\Relation;
 
 class DatabaseEloquentRelationTest extends TestCase
 {

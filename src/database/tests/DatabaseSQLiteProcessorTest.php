@@ -3,7 +3,7 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Query\Processors\SQLiteProcessor;
+use Hyperf\Database\Query\Processors\SQLiteProcessor;
 
 class DatabaseSQLiteProcessorTest extends TestCase
 {

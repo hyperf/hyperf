@@ -5,10 +5,10 @@ namespace HyperfTest\Database;
 use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Relations\HasMany;
 
 class DatabaseEloquentHasManyTest extends TestCase
 {

@@ -3,21 +3,21 @@
 namespace HyperfTest\Database;
 
 use Exception;
-use Illuminate\Support\Carbon;
+use Hyperf\Support\Carbon;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Tests\Integration\Database\Post;
-use Illuminate\Tests\Integration\Database\User;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Pagination\AbstractPaginator as Paginator;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Pagination\LengthAwarePaginator;
+use Hyperf\Tests\Integration\Database\Post;
+use Hyperf\Tests\Integration\Database\User;
+use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Database\Model\Model as Eloquent;
+use Hyperf\Database\Model\SoftDeletingScope;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Pagination\AbstractPaginator as Paginator;
 
 class DatabaseEloquentIntegrationTest extends TestCase
 {
@@ -440,7 +440,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      * @expectedExceptionMessage No query results for model [\HyperfTest\Database\EloquentTestUser] 1
      */
     public function testFindOrFailWithSingleIdThrowsModelNotFoundException()
@@ -449,7 +449,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      * @expectedExceptionMessage No query results for model [\HyperfTest\Database\EloquentTestUser] 1, 2
      */
     public function testFindOrFailWithMultipleIdsThrowsModelNotFoundException()
@@ -924,7 +924,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\QueryException
+     * @expectedException \Hyperf\Database\QueryException
      * @expectedExceptionMessage SQLSTATE[23000]:
      */
     public function testSaveOrFailWithDuplicatedEntry()
@@ -1559,7 +1559,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     /**
      * Get a database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return \Hyperf\Database\Connection
      */
     protected function connection($connection = 'default')
     {
@@ -1569,7 +1569,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
     /**
      * Get a schema builder instance.
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return \Hyperf\Database\Schema\Builder
      */
     protected function schema($connection = 'default')
     {

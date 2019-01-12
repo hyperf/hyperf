@@ -4,12 +4,12 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
+use Hyperf\Database\Model\Model;
 use HyperfTest\Database\EloquentModelNamespacedStub;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Relations\MorphOne;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Model\Relations\MorphMany;
 
 class DatabaseEloquentMorphTest extends TestCase
 {

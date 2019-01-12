@@ -2,7 +2,7 @@
 
 namespace HyperfTest\Database;
 
-use Illuminate\Database\Eloquent\Model;
+use Hyperf\Database\Model\Model;
 
 class EloquentModelNamespacedStub extends Model
 {

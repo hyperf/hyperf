@@ -3,7 +3,7 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Concerns\BuildsQueries;
 
 class DatabaseConcernsBuildsQueriesTraitTest extends TestCase
 {

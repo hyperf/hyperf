@@ -3,14 +3,14 @@
 namespace HyperfTest\Database;
 
 use Mockery as m;
-use Illuminate\Database\Seeder;
+use Hyperf\Database\Seeder;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Console\OutputStyle;
-use Illuminate\Container\Container;
+use Hyperf\Console\OutputStyle;
+use Hyperf\Container\Container;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-use Illuminate\Database\Console\Seeds\SeedCommand;
-use Illuminate\Database\ConnectionResolverInterface;
+use Hyperf\Database\Console\Seeds\SeedCommand;
+use Hyperf\Database\ConnectionResolverInterface;
 
 class SeedCommandTest extends TestCase
 {

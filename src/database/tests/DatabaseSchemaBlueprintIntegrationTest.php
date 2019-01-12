@@ -3,14 +3,14 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Schema\Grammars\MySqlGrammar;
-use Illuminate\Database\Schema\Grammars\SQLiteGrammar;
-use Illuminate\Database\Schema\Grammars\PostgresGrammar;
-use Illuminate\Database\Schema\Grammars\SqlServerGrammar;
+use Hyperf\Container\Container;
+use Hyperf\Support\Facades\Facade;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Schema\Grammars\MySqlGrammar;
+use Hyperf\Database\Schema\Grammars\SQLiteGrammar;
+use Hyperf\Database\Schema\Grammars\PostgresGrammar;
+use Hyperf\Database\Schema\Grammars\SqlServerGrammar;
 
 class DatabaseSchemaBlueprintIntegrationTest extends TestCase
 {

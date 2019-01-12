@@ -4,12 +4,12 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder as BaseBuilder;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Relations\HasOne;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 
 class DatabaseEloquentHasOneTest extends TestCase
 {

@@ -4,10 +4,10 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Scope;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Capsule\Manager as DB;
 
 class DatabaseEloquentGlobalScopesTest extends TestCase
 {

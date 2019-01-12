@@ -3,10 +3,10 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model as Eloquent;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model;
 
 class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
 {
@@ -99,7 +99,7 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
      */
     protected function connection()
     {
-        return Eloquent::getConnectionResolver()->connection();
+        return Model::getConnectionResolver()->connection();
     }
 
     /**
@@ -113,7 +113,7 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
     }
 }
 
-class BelongsToManyChunkByIdTestTestUser extends Eloquent
+class BelongsToManyChunkByIdTestTestUser extends Model
 {
     protected $table = 'users';
     protected $fillable = ['id', 'email'];
@@ -125,7 +125,7 @@ class BelongsToManyChunkByIdTestTestUser extends Eloquent
     }
 }
 
-class BelongsToManyChunkByIdTestTestArticle extends Eloquent
+class BelongsToManyChunkByIdTestTestArticle extends Model
 {
     protected $primaryKey = 'aid';
     protected $table = 'articles';

@@ -11,17 +11,17 @@ use PDOStatement;
 use ErrorException;
 use ReflectionClass;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\QueryException;
-use Illuminate\Database\Schema\Builder;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Events\TransactionBeginning;
-use Illuminate\Database\Events\TransactionCommitted;
-use Illuminate\Database\Events\TransactionRolledBack;
-use Illuminate\Database\Query\Builder as BaseBuilder;
+use Hyperf\Database\Connection;
+use Hyperf\Database\QueryException;
+use Hyperf\Database\Schema\Builder;
+use Hyperf\Contracts\Events\Dispatcher;
+use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Events\TransactionBeginning;
+use Hyperf\Database\Events\TransactionCommitted;
+use Hyperf\Database\Events\TransactionRolledBack;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 
 class DatabaseConnectionTest extends TestCase
 {
@@ -241,7 +241,7 @@ class DatabaseConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\QueryException
+     * @expectedException \Hyperf\Database\QueryException
      * @expectedExceptionMessage Deadlock found when trying to get lock (SQL: )
      */
     public function testTransactionMethodRetriesOnDeadlock()
@@ -273,7 +273,7 @@ class DatabaseConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\QueryException
+     * @expectedException \Hyperf\Database\QueryException
      * @expectedExceptionMessage server has gone away (SQL: foo)
      */
     public function testOnLostConnectionPDOIsNotSwappedWithinATransaction()
@@ -327,7 +327,7 @@ class DatabaseConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\QueryException
+     * @expectedException \Hyperf\Database\QueryException
      * @expectedExceptionMessage  (SQL: ) (SQL: )
      */
     public function testRunMethodNeverRetriesIfWithinTransaction()

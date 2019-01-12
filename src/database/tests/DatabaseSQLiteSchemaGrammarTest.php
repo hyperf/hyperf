@@ -4,11 +4,11 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Schema\Blueprint;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Capsule\Manager;
+use Hyperf\Database\Schema\Blueprint;
 use Doctrine\DBAL\Schema\SqliteSchemaManager;
-use Illuminate\Database\Schema\Grammars\SQLiteGrammar;
+use Hyperf\Database\Schema\Grammars\SQLiteGrammar;
 
 class DatabaseSQLiteSchemaGrammarTest extends TestCase
 {

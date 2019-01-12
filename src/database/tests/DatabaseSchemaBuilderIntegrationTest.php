@@ -3,9 +3,9 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\Capsule\Manager as DB;
+use Hyperf\Container\Container;
+use Hyperf\Support\Facades\Facade;
+use Hyperf\Database\Capsule\Manager as DB;
 
 class DatabaseSchemaBuilderIntegrationTest extends TestCase
 {

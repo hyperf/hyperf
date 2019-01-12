@@ -5,11 +5,11 @@ namespace HyperfTest\Database;
 use PDO;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connectors\Connector;
-use Illuminate\Database\Connectors\MySqlConnector;
-use Illuminate\Database\Connectors\SQLiteConnector;
-use Illuminate\Database\Connectors\PostgresConnector;
-use Illuminate\Database\Connectors\SqlServerConnector;
+use Hyperf\Database\Connectors\Connector;
+use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Connectors\SQLiteConnector;
+use Hyperf\Database\Connectors\PostgresConnector;
+use Hyperf\Database\Connectors\SqlServerConnector;
 
 class DatabaseConnectorTest extends TestCase
 {

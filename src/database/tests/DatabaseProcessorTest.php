@@ -5,9 +5,9 @@ namespace HyperfTest\Database;
 use PDO;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Processors\Processor;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Processors\Processor;
 
 class DatabaseProcessorTest extends TestCase
 {

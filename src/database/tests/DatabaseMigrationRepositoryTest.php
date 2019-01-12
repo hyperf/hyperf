@@ -6,10 +6,10 @@ use Closure;
 use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Connection;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Migrations\DatabaseMigrationRepository;
+use Hyperf\Support\Collection;
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 
 class DatabaseMigrationRepositoryTest extends TestCase
 {

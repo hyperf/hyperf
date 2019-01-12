@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Migrations\Migration;
+use Hyperf\Support\Facades\Schema;
+use Hyperf\Database\Migrations\Migration;
 
 class CreateFlightsTable extends Migration
 {

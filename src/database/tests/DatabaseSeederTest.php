@@ -4,10 +4,10 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use Mockery\Mock;
-use Illuminate\Console\Command;
-use Illuminate\Database\Seeder;
+use Hyperf\Console\Command;
+use Hyperf\Database\Seeder;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Container\Container;
+use Hyperf\Container\Container;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TestSeeder extends Seeder

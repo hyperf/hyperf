@@ -3,15 +3,15 @@
 namespace HyperfTest\Database;
 
 use Mockery as m;
-use Illuminate\Support\Str;
+use Hyperf\Support\Str;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Console\OutputStyle;
-use Illuminate\Container\Container;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\Migrations\Migrator;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Migrations\DatabaseMigrationRepository;
+use Hyperf\Console\OutputStyle;
+use Hyperf\Container\Container;
+use Hyperf\Filesystem\Filesystem;
+use Hyperf\Support\Facades\Facade;
+use Hyperf\Database\Migrations\Migrator;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 
 class DatabaseMigratorIntegrationTest extends TestCase
 {

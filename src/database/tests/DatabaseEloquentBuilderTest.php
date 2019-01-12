@@ -6,16 +6,16 @@ use Closure;
 use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Support\Collection as BaseCollection;
-use Illuminate\Database\Query\Builder as BaseBuilder;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Support\Collection as BaseCollection;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 
 class DatabaseEloquentBuilderTest extends TestCase
 {
@@ -67,7 +67,7 @@ class DatabaseEloquentBuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      */
     public function testFindOrFailMethodThrowsModelNotFoundException()
     {
@@ -79,7 +79,7 @@ class DatabaseEloquentBuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      */
     public function testFindOrFailMethodWithManyThrowsModelNotFoundException()
     {
@@ -91,7 +91,7 @@ class DatabaseEloquentBuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @expectedException \Hyperf\Database\ModelNotFoundException
      */
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
@@ -417,7 +417,7 @@ class DatabaseEloquentBuilderTest extends TestCase
 
     /**
      * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Call to undefined method Illuminate\Database\Eloquent\Builder::missingMacro()
+     * @expectedExceptionMessage Call to undefined method Hyperf\Database\Model\Builder::missingMacro()
      */
     public function testMissingStaticMacrosThrowsProperException()
     {
@@ -508,7 +508,7 @@ class DatabaseEloquentBuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\Eloquent\RelationNotFoundException
+     * @expectedException \Hyperf\Database\Model\RelationNotFoundException
      */
     public function testGetRelationThrowsException()
     {
@@ -1063,8 +1063,8 @@ class DatabaseEloquentBuilderTest extends TestCase
 
     protected function mockConnectionForModel($model, $database)
     {
-        $grammarClass = 'Illuminate\Database\Query\Grammars\\'.$database.'Grammar';
-        $processorClass = 'Illuminate\Database\Query\Processors\\'.$database.'Processor';
+        $grammarClass = 'Hyperf\Database\Query\Grammars\\'.$database.'Grammar';
+        $processorClass = 'Hyperf\Database\Query\Processors\\'.$database.'Processor';
         $grammar = new $grammarClass;
         $processor = new $processorClass;
         $connection = m::mock(ConnectionInterface::class, ['getQueryGrammar' => $grammar, 'getPostProcessor' => $processor]);

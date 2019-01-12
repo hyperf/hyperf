@@ -3,7 +3,7 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Console\Migrations\TableGuesser;
+use Hyperf\Database\Console\Migrations\TableGuesser;
 
 class TableGuesserTest extends TestCase
 {

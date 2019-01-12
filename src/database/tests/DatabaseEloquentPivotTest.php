@@ -4,8 +4,8 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Relations\Pivot;
 
 class DatabaseEloquentPivotTest extends TestCase
 {

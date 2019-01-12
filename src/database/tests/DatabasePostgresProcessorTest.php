@@ -3,7 +3,7 @@
 namespace HyperfTest\Database;
 
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Query\Processors\PostgresProcessor;
+use Hyperf\Database\Query\Processors\PostgresProcessor;
 
 class DatabasePostgresProcessorTest extends TestCase
 {

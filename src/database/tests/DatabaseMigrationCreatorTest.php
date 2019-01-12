@@ -4,8 +4,8 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Database\Migrations\MigrationCreator;
+use Hyperf\Filesystem\Filesystem;
+use Hyperf\Database\Migrations\MigrationCreator;
 
 class DatabaseMigrationCreatorTest extends TestCase
 {

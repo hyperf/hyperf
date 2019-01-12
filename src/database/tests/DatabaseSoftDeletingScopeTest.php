@@ -5,13 +5,13 @@ namespace HyperfTest\Database;
 use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Query\Builder as BaseBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Model\SoftDeletingScope;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Query\Builder as BaseBuilder;
+use Hyperf\Database\Model\Builder as EloquentBuilder;
 
 class DatabaseSoftDeletingScopeTest extends TestCase
 {

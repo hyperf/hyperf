@@ -4,11 +4,11 @@ namespace HyperfTest\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Foundation\Application;
+use Hyperf\Foundation\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Hyperf\Database\Console\Migrations\InstallCommand;
+use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 
 class DatabaseMigrationInstallCommandTest extends TestCase
 {

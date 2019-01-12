@@ -6,19 +6,19 @@ use stdClass;
 use Mockery as m;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Query\Expression as Raw;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Query\Grammars\MySqlGrammar;
-use Illuminate\Database\Query\Grammars\SQLiteGrammar;
-use Illuminate\Database\Query\Grammars\PostgresGrammar;
-use Illuminate\Database\Query\Grammars\SqlServerGrammar;
-use Illuminate\Database\Query\Processors\MySqlProcessor;
-use Illuminate\Pagination\AbstractPaginator as Paginator;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Pagination\LengthAwarePaginator;
+use Hyperf\Database\Query\Expression as Raw;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Query\Grammars\MySqlGrammar;
+use Hyperf\Database\Query\Grammars\SQLiteGrammar;
+use Hyperf\Database\Query\Grammars\PostgresGrammar;
+use Hyperf\Database\Query\Grammars\SqlServerGrammar;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
+use Hyperf\Pagination\AbstractPaginator as Paginator;
+use Hyperf\Database\Model\Builder as EloquentBuilder;
 
 class DatabaseQueryBuilderTest extends TestCase
 {

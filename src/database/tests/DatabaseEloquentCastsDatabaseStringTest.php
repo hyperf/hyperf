@@ -4,8 +4,8 @@ namespace HyperfTest\Database;
 
 use stdClass;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model as Eloquent;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model as Eloquent;
 
 class DatabaseEloquentCastsDatabaseStringTest extends TestCase
 {
@@ -94,7 +94,7 @@ class DatabaseEloquentCastsDatabaseStringTest extends TestCase
     /**
      * Get a database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return \Hyperf\Database\Connection
      */
     protected function connection()
     {
@@ -104,7 +104,7 @@ class DatabaseEloquentCastsDatabaseStringTest extends TestCase
     /**
      * Get a schema builder instance.
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return \Hyperf\Database\Schema\Builder
      */
     protected function schema()
     {

@@ -2,14 +2,14 @@
 
 namespace HyperfTest\Database;
 
-use Illuminate\Support\Carbon;
+use Hyperf\Support\Carbon;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Hyperf\Pagination\Paginator;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Capsule\Manager as DB;
+use Hyperf\Database\Model\Model as Eloquent;
+use Hyperf\Database\Model\SoftDeletingScope;
 
 class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
 {
@@ -717,7 +717,7 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
     /**
      * Get a database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return \Hyperf\Database\Connection
      */
     protected function connection()
     {
@@ -727,7 +727,7 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
     /**
      * Get a schema builder instance.
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return \Hyperf\Database\Schema\Builder
      */
     protected function schema()
     {

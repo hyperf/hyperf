@@ -5,8 +5,8 @@ namespace HyperfTest\Database;
 use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Schema\Builder;
+use Hyperf\Database\Connection;
+use Hyperf\Database\Schema\Builder;
 
 class DatabaseSchemaBuilderTest extends TestCase
 {
