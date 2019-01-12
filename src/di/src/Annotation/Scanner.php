@@ -41,6 +41,9 @@ class Scanner
 
     public function scan(array $paths)
     {
+        if (! $paths) {
+            return [];
+        }
         $paths = $this->normalizeDir($paths);
 
         $finder = new Finder();
