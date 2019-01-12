@@ -58,6 +58,7 @@
         "hyperf/memory": "self.version",
         "hyperf/pool": "self.version",
         "hyperf/redis": "self.version",
+        "hyperf/redis-queue": "self.version",
         "hyperf/utils": "self.version"
     },
     "suggest": {
@@ -81,6 +82,7 @@
             "Hyperf\\Memory\\": "src/memory/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
             "Hyperf\\Redis\\": "src/redis/src/",
+            "Hyperf\\RedisQueue\\": "src/redis-queue/src/",
             "Hyperf\\Utils\\": "src/utils/src/"
         }
     },
@@ -111,6 +113,7 @@
                 "Hyperf\\Memory\\ConfigProvider",
                 "Hyperf\\Pool\\ConfigProvider",
                 "Hyperf\\Redis\\ConfigProvider",
+                "Hyperf\\RedisQueue\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider"
             ]
         }
