@@ -11,7 +11,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "dev-master",
+        "psr/container": "^1.0",
+        "hyperf/utils": "dev-master",
+        "hyperf/contract": "dev-master",
         "hyperf/event": "dev-master"
     },
     "require-dev": {
