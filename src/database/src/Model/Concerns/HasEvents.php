@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Hyperf\Database\Model\Events\Event;
+use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Hyperf\Database\Model\Model;
 
 /**
  * @method retrieved(Model $model)
