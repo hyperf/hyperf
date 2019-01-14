@@ -107,10 +107,10 @@ class DispatcherFactory
 
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
-            $router->addRoute(['GET'], $path, [$className, $method->getName()]);
+            $router->addRoute(['GET', 'POST'], $path, [$className, $method->getName()]);
             if (Str::endsWith($path, '/index')) {
                 $path = Str::replaceLast('/index', '', $path);
-                $router->addRoute(['GET'], $path, [$className, $method->getName()]);
+                $router->addRoute(['GET', 'POST'], $path, [$className, $method->getName()]);
             }
         }
     }
