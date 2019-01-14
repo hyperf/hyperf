@@ -105,12 +105,14 @@ class DispatcherFactory
         $prefix = $this->getPrefix($className, $values['prefix'] ?? '');
         $router = $this->getRouter($values['server'] ?? 'http');
 
+        $autoMethods = ['GET', 'POST', 'HEAD'];
+        $defaultAction = '/index';
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
-            $router->addRoute(['GET', 'POST'], $path, [$className, $method->getName()]);
-            if (Str::endsWith($path, '/index')) {
-                $path = Str::replaceLast('/index', '', $path);
-                $router->addRoute(['GET', 'POST'], $path, [$className, $method->getName()]);
+            $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
+            if (Str::endsWith($path, $defaultAction)) {
+                $path = Str::replaceLast($defaultAction, '', $path);
+                $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
             }
         }
     }
