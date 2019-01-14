@@ -34,10 +34,15 @@ class HttpRequest implements HttpRequestInterface
             $contentType = $request->getHeaderLine('Content-Type');
             if ($contentType && Str::startsWith($contentType, 'application/json')) {
                 $body = $request->getBody();
-                $data = json_decode($body->getContents(), true);
+                $data = json_decode($body->getContents(), true) ?? [];
             } else {
-                $data = $request->getParsedBody();
+                if (is_array($request->getParsedBody())) {
+                    $data = $request->getParsedBody();
+                } else {
+                    $data = [];
+                }
             }
+
             $data = array_merge($data, $request->getQueryParams());
             Context::set(HttpRequest::CONTEXT_KEY, $data);
         }
@@ -47,5 +52,12 @@ class HttpRequest implements HttpRequestInterface
         }
 
         return Arr::get($data, $key, $default);
+    }
+
+    public function header(string $key = null, $default = null)
+    {
+        /** @var ServerRequestInterface $request */
+        $request = Context::get(ServerRequestInterface::class);
+        return $request->getHeaderLine($key);
     }
 }

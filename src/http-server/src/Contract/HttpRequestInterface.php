@@ -14,4 +14,6 @@ namespace Hyperf\HttpServer\Contract;
 interface HttpRequestInterface
 {
     public function input(?string $key = null, $default = null);
+
+    public function header(string $key = null, $default = null);
 }
