@@ -31,16 +31,10 @@ class StartServer extends Command
      */
     private $server;
 
-    /**
-     * @var Scanner
-     */
-    private $scanner;
-
-    public function __construct(ContainerInterface $container, Scanner $scanner)
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct('start');
         $this->container = $container;
-        $this->scanner = $scanner;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
