@@ -1491,7 +1491,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get a value retrieving callback.
      */
-    protected function valueRetriever(string $value): callable
+    protected function valueRetriever($value): callable
     {
         if ($this->useAsCallable($value)) {
             return $value;
