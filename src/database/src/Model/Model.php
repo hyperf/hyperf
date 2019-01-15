@@ -120,13 +120,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected $perPage = 15;
 
     /**
-     * The list of models classes that should not be affected with touch.
-     *
-     * @var array
-     */
-    protected static $ignoreOnTouch = [];
-
-    /**
      * Create a new Model model instance.
      *
      * @param  array $attributes
@@ -254,12 +247,12 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public static function withoutTouchingOn(array $models, callable $callback)
     {
-        static::$ignoreOnTouch = array_values(array_merge(static::$ignoreOnTouch, $models));
+        IgnoreOnTouch::$container = array_values(array_merge(IgnoreOnTouch::$container, $models));
 
         try {
             call_user_func($callback);
         } finally {
-            static::$ignoreOnTouch = array_values(array_diff(static::$ignoreOnTouch, $models));
+            IgnoreOnTouch::$container = array_values(array_diff(IgnoreOnTouch::$container, $models));
         }
     }
 
@@ -273,7 +266,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     {
         $class = $class ?: static::class;
 
-        foreach (static::$ignoreOnTouch as $ignoredClass) {
+        foreach (IgnoreOnTouch::$container as $ignoredClass) {
             if ($class === $ignoredClass || is_subclass_of($class, $ignoredClass)) {
                 return true;
             }
