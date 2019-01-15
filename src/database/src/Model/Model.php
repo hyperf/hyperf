@@ -120,27 +120,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected $perPage = 15;
 
     /**
-     * The event dispatcher instance.
-     *
-     * @var \Hyperf\Contracts\Events\Dispatcher
-     */
-    protected static $dispatcher;
-
-    /**
-     * The array of booted models.
-     *
-     * @var array
-     */
-    protected static $booted = [];
-
-    /**
-     * The array of trait initializers that will be called on each new instance.
-     *
-     * @var array
-     */
-    protected static $traitInitializers = [];
-
-    /**
      * The array of global scopes on the model.
      *
      * @var array
@@ -163,8 +142,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function __construct(array $attributes = [])
     {
         $this->bootIfNotBooted();
-
-        $this->initializeTraits();
 
         $this->syncOriginal();
 
@@ -262,18 +239,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function __wakeup()
     {
         $this->bootIfNotBooted();
-    }
-
-    /**
-     * Clear the list of booted models so they will be re-booted.
-     *
-     * @return void
-     */
-    public static function clearBootedModels()
-    {
-        static::$booted = [];
-
-        static::$globalScopes = [];
     }
 
     /**
@@ -1306,15 +1271,11 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function bootIfNotBooted()
     {
-        if (!isset(static::$booted[static::class])) {
-            static::$booted[static::class] = true;
+        $this->fireModelEvent('booting', false);
 
-            $this->fireModelEvent('booting', false);
+        static::boot();
 
-            static::boot();
-
-            $this->fireModelEvent('booted', false);
-        }
+        $this->fireModelEvent('booted', false);
     }
 
     /**
@@ -1324,18 +1285,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected static function boot()
     {
-    }
-
-    /**
-     * Initialize any initializable traits on the model.
-     *
-     * @return void
-     */
-    protected function initializeTraits()
-    {
-        foreach (static::$traitInitializers[static::class] ?? [] as $method) {
-            $this->{$method}();
-        }
     }
 
     /**

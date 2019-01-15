@@ -80,7 +80,7 @@ trait HasEvents
             return;
         }
 
-        $result = static::$dispatcher->$method(new $this->dispatchesEvents[$event]($this));
+        $result = $this->getEventDispatcher()->$method(new $this->dispatchesEvents[$event]($this));
 
         if (!is_null($result)) {
             return $result;
