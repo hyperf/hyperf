@@ -17,6 +17,21 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @method array getServerParams()
+ * @method array getCookieParams()
+ * @method ServerRequestInterface withCookieParams(array $cookies)
+ * @method method getQueryParams()
+ * @method ServerRequestInterface withQueryParams(array $query)
+ * @method array getUploadedFiles()
+ * @method ServerRequestInterface withUploadedFiles(array $uploadedFiles)
+ * @method null|null|object getParsedBody()
+ * @method ServerRequestInterface withParsedBody($data)
+ * @method array getAttributes()
+ * @method mixed getAttribute($name, $default = null)
+ * @method ServerRequestInterface withAttribute($name, $value)
+ * @method ServerRequestInterface withoutAttribute($name)
+ */
 class HttpRequest implements HttpRequestInterface
 {
     const CONTEXT_KEY = 'httpRequestData';
@@ -29,8 +44,7 @@ class HttpRequest implements HttpRequestInterface
         }
 
         if (empty($data)) {
-            /** @var ServerRequestInterface $request */
-            $request = Context::get(ServerRequestInterface::class);
+            $request = $this->getRequest();
             $contentType = $request->getHeaderLine('Content-Type');
             if ($contentType && Str::startsWith($contentType, 'application/json')) {
                 $body = $request->getBody();
@@ -56,8 +70,20 @@ class HttpRequest implements HttpRequestInterface
 
     public function header(string $key = null, $default = null)
     {
-        /** @var ServerRequestInterface $request */
-        $request = Context::get(ServerRequestInterface::class);
-        return $request->getHeaderLine($key);
+        return $this->getRequest()->getHeaderLine($key);
+    }
+
+    public function __call($name, $arguments)
+    {
+        $request = $this->getRequest();
+        if (! method_exists($request, $name)) {
+            throw new \RuntimeException('Method not exist.');
+        }
+        return $request->$name(...$arguments);
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return Context::get(ServerRequestInterface::class);
     }
 }
