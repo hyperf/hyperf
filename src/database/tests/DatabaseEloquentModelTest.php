@@ -5,6 +5,7 @@ namespace HyperfTest\Database;
 use Carbon\Carbon;
 use DateTime;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Register;
 use stdClass;
 use Exception;
 use Mockery as m;
@@ -44,7 +45,7 @@ class DatabaseEloquentModelTest extends TestCase
         m::close();
         Carbon::setTestNow(null);
 
-        Model::unsetEventDispatcher();
+        Register::unsetEventDispatcher();
         Carbon::resetToStringFormat();
     }
 

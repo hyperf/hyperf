@@ -20,6 +20,7 @@ use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swoft\Http\Message\Server\Response;
 
 /**
  * @property ProphecyInterface container
@@ -30,24 +31,36 @@ class HttpDispatcherTest extends TestCase
 {
     protected function setUp()
     {
-        $this->container = $this->prophesize(ContainerInterface::class);
         $this->request = $this->prophesize(ServerRequestInterface::class)->reveal();
-        $this->response = $this->prophesize(ResponseInterface::class)->reveal();
+        $this->response = $this->prophesize(ResponseInterface::class);
+        $swooleResponse = $this->getMockBuilder(\Swoole\Http\Response::class)->getMock();
+        $this->response->withAddedHeader('Server', 'Hyperf')
+            ->shouldBeCalled()
+            ->willReturn((new Response($swooleResponse))->withAddedHeader('Server', 'Hyperf'));
+        $this->response = $this->response->reveal();
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->get(CoreMiddleware::class)->willReturn(new CoreMiddleware());
+        $container->get(TestMiddleware::class)->willReturn(new TestMiddleware());
+        $this->container = $container->reveal();
         Context::set(ServerRequestInterface::class, $this->request);
         Context::set(ResponseInterface::class, $this->response);
     }
 
+    protected function tearDown()
+    {
+        Context::destroy();
+    }
+
     public function testA()
     {
-        $this->container->get(TestMiddleware::class)->willReturn(new TestMiddleware());
-        $this->container->get(CoreMiddleware::class)->willReturn(new CoreMiddleware());
         $middlewares = [
             TestMiddleware::class,
         ];
-        $coreHandler = CoreMiddleware::class;
-        $dispatcher = new HttpDispatcher($middlewares, $coreHandler, $this->container->reveal());
+        $coreHandler = $this->container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($this->container);
         $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
-        $response = $dispatcher->dispatch($this->request, $this->response);
+        $response = $dispatcher->dispatch($this->request, $middlewares, $coreHandler);
         $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
     }
 }
