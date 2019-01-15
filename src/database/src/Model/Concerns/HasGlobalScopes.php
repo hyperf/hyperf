@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
+use Hyperf\Database\Model\GlobalScope;
 use Hyperf\Database\Model\Scope;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
@@ -30,11 +31,11 @@ trait HasGlobalScopes
     public static function addGlobalScope($scope, Closure $implementation = null)
     {
         if (is_string($scope) && !is_null($implementation)) {
-            return static::$globalScopes[static::class][$scope] = $implementation;
+            return GlobalScope::$container[static::class][$scope] = $implementation;
         } elseif ($scope instanceof Closure) {
-            return static::$globalScopes[static::class][spl_object_hash($scope)] = $scope;
+            return GlobalScope::$container[static::class][spl_object_hash($scope)] = $scope;
         } elseif ($scope instanceof Scope) {
-            return static::$globalScopes[static::class][get_class($scope)] = $scope;
+            return GlobalScope::$container[static::class][get_class($scope)] = $scope;
         }
 
         throw new InvalidArgumentException('Global scope must be an instance of Closure or Scope.');
@@ -60,11 +61,11 @@ trait HasGlobalScopes
     public static function getGlobalScope($scope)
     {
         if (is_string($scope)) {
-            return Arr::get(static::$globalScopes, static::class . '.' . $scope);
+            return Arr::get(GlobalScope::$container, static::class . '.' . $scope);
         }
 
         return Arr::get(
-            static::$globalScopes,
+            GlobalScope::$container,
             static::class . '.' . get_class($scope)
         );
     }
@@ -76,6 +77,6 @@ trait HasGlobalScopes
      */
     public function getGlobalScopes()
     {
-        return Arr::get(static::$globalScopes, static::class, []);
+        return Arr::get(GlobalScope::$container, static::class, []);
     }
 }

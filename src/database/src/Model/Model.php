@@ -120,13 +120,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected $perPage = 15;
 
     /**
-     * The array of global scopes on the model.
-     *
-     * @var array
-     */
-    protected static $globalScopes = [];
-
-    /**
      * The list of models classes that should not be affected with touch.
      *
      * @var array
