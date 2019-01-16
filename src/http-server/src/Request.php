@@ -47,7 +47,38 @@ class Request implements RequestInterface
 
     public function input(?string $key = null, $default = null)
     {
-        $data = $this->storeParsedData(function () {
+        $data = $this->getInputData();
+
+        if (is_null($key)) {
+            return $data;
+        }
+
+        return Arr::get($data, $key, $default);
+    }
+
+    /**
+     * @return []array [found, not-found]
+     */
+    public function hasInput(array $keys = []): array
+    {
+        $data = $this->getInputData();
+        $found = [];
+
+        foreach ($keys as $key) {
+            if (Arr::has($data, $key)) {
+                $found[] = $key;
+            }
+        }
+
+        return [
+            $found,
+            array_diff($keys, $found),
+        ];
+    }
+
+    private function getInputData(): array
+    {
+        return $this->storeParsedData(function () {
             $request = $this->getRequest();
             $contentType = $request->getHeaderLine('Content-Type');
             if ($contentType && Str::startsWith($contentType, 'application/json')) {
@@ -61,12 +92,6 @@ class Request implements RequestInterface
 
             return array_merge($data, $request->getQueryParams());
         });
-
-        if (is_null($key)) {
-            return $data;
-        }
-
-        return Arr::get($data, $key, $default);
     }
 
     public function header(string $key = null, $default = null)
