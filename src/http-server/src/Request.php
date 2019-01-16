@@ -34,7 +34,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Request implements RequestInterface
 {
-    const CONTEXT_KEY = 'httpRequestData';
+    const CONTEXT_KEY = 'httpRequestParsedData';
 
     public function __call($name, $arguments)
     {
@@ -47,24 +47,20 @@ class Request implements RequestInterface
 
     public function input(?string $key = null, $default = null)
     {
-        $data = $this->getData();
-        if (empty($data)) {
+        $data = $this->storeParsedData(function () {
             $request = $this->getRequest();
             $contentType = $request->getHeaderLine('Content-Type');
             if ($contentType && Str::startsWith($contentType, 'application/json')) {
                 $body = $request->getBody();
                 $data = json_decode($body->getContents(), true) ?? [];
+            } elseif (is_array($request->getParsedBody())) {
+                $data = $request->getParsedBody();
             } else {
-                if (is_array($request->getParsedBody())) {
-                    $data = $request->getParsedBody();
-                } else {
-                    $data = [];
-                }
+                $data = [];
             }
 
-            $data = array_merge($data, $request->getQueryParams());
-            $this->setData($data);
-        }
+            return array_merge($data, $request->getQueryParams());
+        });
 
         if (is_null($key)) {
             return $data;
@@ -83,17 +79,11 @@ class Request implements RequestInterface
         return Context::get(ServerRequestInterface::class);
     }
 
-    private function getData(): array
+    private function storeParsedData(callable $callback)
     {
-        $data = [];
-        if (Context::has(Request::CONTEXT_KEY)) {
-            $data = Context::get(Request::CONTEXT_KEY);
+        if (! Context::has(self::CONTEXT_KEY)) {
+            return Context::set(self::CONTEXT_KEY, call($callback));
         }
-        return $data;
-    }
-
-    private function setData($data): void
-    {
-        Context::set(Request::CONTEXT_KEY, $data);
+        return Context::get(self::CONTEXT_KEY);
     }
 }
