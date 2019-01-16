@@ -34,7 +34,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Request implements RequestInterface
 {
-    const CONTEXT_KEY = 'httpRequestData';
+    const CONTEXT_KEY = 'httpRequestParsedData';
 
     public function __call($name, $arguments)
     {
@@ -47,30 +47,63 @@ class Request implements RequestInterface
 
     public function input(?string $key = null, $default = null)
     {
-        $data = $this->getData();
-        if (empty($data)) {
-            $request = $this->getRequest();
-            $contentType = $request->getHeaderLine('Content-Type');
-            if ($contentType && Str::startsWith($contentType, 'application/json')) {
-                $body = $request->getBody();
-                $data = json_decode($body->getContents(), true) ?? [];
-            } else {
-                if (is_array($request->getParsedBody())) {
-                    $data = $request->getParsedBody();
-                } else {
-                    $data = [];
-                }
-            }
-
-            $data = array_merge($data, $request->getQueryParams());
-            $this->setData($data);
-        }
+        $data = $this->getInputData();
 
         if (is_null($key)) {
             return $data;
         }
 
         return Arr::get($data, $key, $default);
+    }
+
+    public function inputs(array $keys, $default = null): array
+    {
+        $data = $this->getInputData();
+        $result = $default ?? [];
+
+        foreach ($keys as $key) {
+            $result[$key] = Arr::get($data, $key);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return []array [found, not-found]
+     */
+    public function hasInput(array $keys = []): array
+    {
+        $data = $this->getInputData();
+        $found = [];
+
+        foreach ($keys as $key) {
+            if (Arr::has($data, $key)) {
+                $found[] = $key;
+            }
+        }
+
+        return [
+            $found,
+            array_diff($keys, $found),
+        ];
+    }
+
+    private function getInputData(): array
+    {
+        return $this->storeParsedData(function () {
+            $request = $this->getRequest();
+            $contentType = $request->getHeaderLine('Content-Type');
+            if ($contentType && Str::startsWith($contentType, 'application/json')) {
+                $body = $request->getBody();
+                $data = json_decode($body->getContents(), true) ?? [];
+            } elseif (is_array($request->getParsedBody())) {
+                $data = $request->getParsedBody();
+            } else {
+                $data = [];
+            }
+
+            return array_merge($data, $request->getQueryParams());
+        });
     }
 
     public function header(string $key = null, $default = null)
@@ -83,17 +116,11 @@ class Request implements RequestInterface
         return Context::get(ServerRequestInterface::class);
     }
 
-    private function getData(): array
+    private function storeParsedData(callable $callback)
     {
-        $data = [];
-        if (Context::has(Request::CONTEXT_KEY)) {
-            $data = Context::get(Request::CONTEXT_KEY);
+        if (! Context::has(self::CONTEXT_KEY)) {
+            return Context::set(self::CONTEXT_KEY, call($callback));
         }
-        return $data;
-    }
-
-    private function setData($data): void
-    {
-        Context::set(Request::CONTEXT_KEY, $data);
+        return Context::get(self::CONTEXT_KEY);
     }
 }

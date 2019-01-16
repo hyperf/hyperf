@@ -15,5 +15,12 @@ interface RequestInterface
 {
     public function input(?string $key = null, $default = null);
 
+    public function inputs(array $keys, $default = null): array;
+
     public function header(string $key = null, $default = null);
+
+    /**
+     * @return []array [found, not-found]
+     */
+    public function hasInput(array $keys = []): array;
 }

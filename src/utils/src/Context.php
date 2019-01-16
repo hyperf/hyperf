@@ -23,6 +23,7 @@ class Context
     public static function set($id, $value)
     {
         static::$container[static::getCoroutineId()][$id] = $value;
+        return $value;
     }
 
     /**
