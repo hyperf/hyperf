@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\GuzzleHandler\RingPHP;
+namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;

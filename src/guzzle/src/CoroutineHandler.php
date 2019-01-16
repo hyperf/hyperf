@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\GuzzleHandler;
+namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;

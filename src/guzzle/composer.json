@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/guzzle-handler",
+    "name": "hyperf/guzzle",
     "type": "library",
     "license": "Apache-2.0",
     "keywords": [
@@ -11,12 +11,12 @@
     "description": "Swoole coroutine handler for guzzle",
     "autoload": {
         "psr-4": {
-            "Hyperf\\GuzzleHandler\\": "src/"
+            "Hyperf\\Guzzle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\GuzzleHandler\\": "test/"
+            "HyperfTest\\Guzzle\\": "test/"
         }
     },
     "require": {

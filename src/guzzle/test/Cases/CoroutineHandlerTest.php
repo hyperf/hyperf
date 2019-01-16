@@ -9,14 +9,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\GuzzleHandler\Cases;
+namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Request;
-use Hyperf\GuzzleHandler\CoroutineHandler;
+use Hyperf\Guzzle\CoroutineHandler;
 use Swoole\Coroutine;
-use HyperfTest\GuzzleHandler\TestCase;
+use HyperfTest\Guzzle\TestCase;
 
 class CoroutineHandlerTest extends TestCase
 {

@@ -8,11 +8,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
-namespace HyerfTest\GuzzleHandler\Cases;
+namespace HyerfTest\Guzzle\Cases;
 
 use Hyperf\GuzzleHandler\RingPHP\CoroutineHandler;
 use Swoole\Coroutine;
-use HyperfTest\GuzzleHandler\TestCase;
+use HyperfTest\Guzzle\TestCase;
 
 class RingPHPCoroutineHandlerTest extends TestCase
 {
