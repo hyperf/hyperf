@@ -56,6 +56,18 @@ class Request implements RequestInterface
         return Arr::get($data, $key, $default);
     }
 
+    public function inputs(array $keys, $default = null): array
+    {
+        $data = $this->getInputData();
+        $result = $default ?? [];
+
+        foreach ($keys as $key) {
+            $result[$key] = Arr::get($data, $key);
+        }
+
+        return $result;
+    }
+
     /**
      * @return []array [found, not-found]
      */
