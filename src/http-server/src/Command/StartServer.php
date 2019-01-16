@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Command;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Framework\Server;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;

@@ -13,8 +13,9 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\HttpServer\Command\StartServer;
 use Hyperf\HttpServer\Command\StartServerFactory;
-use Hyperf\HttpServer\Contract\HttpRequestInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ConfigProvider
 {
@@ -25,7 +26,8 @@ class ConfigProvider
                 Server::class => ServerFactory::class,
                 StartServer::class => StartServerFactory::class,
                 DispatcherFactory::class => DispatcherFactory::class,
-                HttpRequestInterface::class => HttpRequest::class,
+                RequestInterface::class => Request::class,
+                ServerRequestInterface::class => Request::class,
             ],
             'commands' => [
                 StartServer::class,

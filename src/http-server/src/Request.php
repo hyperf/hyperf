@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\HttpServer\Contract\HttpRequestInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @method array getServerParams()
  * @method array getCookieParams()
  * @method ServerRequestInterface withCookieParams(array $cookies)
- * @method method getQueryParams()
+ * @method array getQueryParams()
  * @method ServerRequestInterface withQueryParams(array $query)
  * @method array getUploadedFiles()
  * @method ServerRequestInterface withUploadedFiles(array $uploadedFiles)
@@ -32,17 +32,22 @@ use Psr\Http\Message\ServerRequestInterface;
  * @method ServerRequestInterface withAttribute($name, $value)
  * @method ServerRequestInterface withoutAttribute($name)
  */
-class HttpRequest implements HttpRequestInterface
+class Request implements RequestInterface
 {
     const CONTEXT_KEY = 'httpRequestData';
 
+    public function __call($name, $arguments)
+    {
+        $request = $this->getRequest();
+        if (! method_exists($request, $name)) {
+            throw new \RuntimeException('Method not exist.');
+        }
+        return $request->$name(...$arguments);
+    }
+
     public function input(?string $key = null, $default = null)
     {
-        $data = [];
-        if (Context::has(HttpRequest::CONTEXT_KEY)) {
-            $data = Context::get(HttpRequest::CONTEXT_KEY);
-        }
-
+        $data = $this->getData();
         if (empty($data)) {
             $request = $this->getRequest();
             $contentType = $request->getHeaderLine('Content-Type');
@@ -58,7 +63,7 @@ class HttpRequest implements HttpRequestInterface
             }
 
             $data = array_merge($data, $request->getQueryParams());
-            Context::set(HttpRequest::CONTEXT_KEY, $data);
+            $this->setData($data);
         }
 
         if (is_null($key)) {
@@ -73,17 +78,22 @@ class HttpRequest implements HttpRequestInterface
         return $this->getRequest()->getHeaderLine($key);
     }
 
-    public function __call($name, $arguments)
-    {
-        $request = $this->getRequest();
-        if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
-        }
-        return $request->$name(...$arguments);
-    }
-
     private function getRequest(): ServerRequestInterface
     {
         return Context::get(ServerRequestInterface::class);
+    }
+
+    private function getData(): array
+    {
+        $data = [];
+        if (Context::has(Request::CONTEXT_KEY)) {
+            $data = Context::get(Request::CONTEXT_KEY);
+        }
+        return $data;
+    }
+
+    private function setData($data): void
+    {
+        Context::set(Request::CONTEXT_KEY, $data);
     }
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Contract;
 
-interface HttpRequestInterface
+interface RequestInterface
 {
     public function input(?string $key = null, $default = null);
 
