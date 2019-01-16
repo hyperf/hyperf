@@ -1,0 +1,35 @@
+{
+    "name": "hyperf/guzzle-handler",
+    "type": "library",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "guzzle",
+        "handler"
+    ],
+    "description": "Swoole coroutine handler for guzzle",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\GuzzleHandler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\GuzzleHandler\\": "test/"
+        }
+    },
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "swoft/swoole-ide-helper": "dev-master",
+        "phpunit/phpunit": "^5.7",
+        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/ringphp": "~1.0"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml",
+        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
+    }
+}
