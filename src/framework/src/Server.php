@@ -15,6 +15,7 @@ use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Framework\Constants\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 use Swoole\Server\Port;
@@ -51,6 +52,9 @@ class Server
         $this->container = $container;
     }
 
+    /**
+     * @throws \InvalidArgumentException When the server class not exist.
+     */
     public function initConfigs(array $serverConfigs): self
     {
         foreach ($serverConfigs as $i => $serverConfig) {
@@ -60,7 +64,7 @@ class Server
             $settings = $serverConfig['settings'] ?? [];
             $processes = $serverConfig['processes'] ?? [];
             if (! class_exists($server)) {
-                throw new \InvalidArgumentException('Server not exist.');
+                throw new InvalidArgumentException('Server not exist.');
             }
             if (! $this->server) {
                 $serverName = $serverConfig['name'] ?? 'http';
@@ -72,6 +76,11 @@ class Server
                 $serverName = $serverConfig['name'] ?? 'http' . $i;
                 $slaveServer = $this->server->addlistener(...$constructor);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $serverName);
+            }
+            // Trigger beforeStart event.
+            if (isset($callbacks[SwooleEvent::ON_BEFORE_START])) {
+                [$class, $method] = $callbacks[SwooleEvent::ON_BEFORE_START];
+                $this->container->get($class)->$method();
             }
 
             foreach ($processes as $process) {
@@ -97,6 +106,9 @@ class Server
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
         foreach ($events as $event => $callback) {
+            if (! SwooleEvent::isSwooleEvent($event)) {
+                continue;
+            }
             if (is_array($callback)) {
                 if (array_key_exists($callback[0], $this->requests)) {
                     $logger = $this->container->get(StdoutLoggerInterface::class);
@@ -112,7 +124,7 @@ class Server
                 $class = $this->container->get($callback[0]);
                 if ($event == 'request') {
                     if (!$class instanceof ServerOnRequestInterface) {
-                        throw new \InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
+                        throw new InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
                     }
 
                     $class->initCoreMiddleware($serverName);
