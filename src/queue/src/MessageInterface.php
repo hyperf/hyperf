@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue;
 
-class Config
+interface MessageInterface
 {
+    public function job(): JobInterface;
+
+    public function attempts(): bool;
 }

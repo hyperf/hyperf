@@ -21,7 +21,9 @@ interface DriverInterface
 
     public function pop(int $timeout = 0);
 
-    public function ack($key);
+    public function ack($data);
+
+    public function fail($data);
 
     public function consume();
 }

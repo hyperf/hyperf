@@ -11,8 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue;
 
-class Queue implements QueueInterface
+class Message implements MessageInterface
 {
+    /**
+     * @var JobInterface
+     */
     protected $job;
 
     /**
@@ -20,17 +23,21 @@ class Queue implements QueueInterface
      */
     protected $attempts = 0;
 
-    public function __construct(JobInterface $job, Config $config)
+    public function __construct(JobInterface $job)
     {
         $this->job = $job;
-        $this->config = $config;
     }
 
-    public function handle()
+    public function job(): JobInterface
     {
-        try {
-            $this->job->handle();
-        } catch (\Throwable $ex) {
+        return $this->job;
+    }
+
+    public function attempts(): bool
+    {
+        if ($this->job->getMaxAttempts() > ++$this->attempts) {
+            return true;
         }
+        return false;
     }
 }

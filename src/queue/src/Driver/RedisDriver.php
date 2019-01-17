@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Queue\Driver;
 
 use Hyperf\Queue\JobInterface;
+use Hyperf\Queue\Message;
+use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
 
 class RedisDriver extends Driver
@@ -38,7 +40,7 @@ class RedisDriver extends Driver
         parent::__construct($container, $config);
         $this->redis = $container->get(\Redis::class);
 
-        $this->timeout = $config['timeout'] ?? 10;
+        $this->timeout = $config['timeout'] ?? 5;
         $this->waiting = "{$this->channel}.waiting";
         $this->reserved = "{$this->channel}.reserved";
         $this->delayed = "{$this->channel}.delayed";
@@ -48,7 +50,8 @@ class RedisDriver extends Driver
 
     public function push(JobInterface $job)
     {
-        $data = $this->packer->pack($job);
+        $message = new Message($job);
+        $data = $this->packer->pack($message);
         $this->redis->lPush($this->waiting, $data);
     }
 
@@ -58,7 +61,8 @@ class RedisDriver extends Driver
             return $this->push($job);
         }
 
-        $data = $this->packer->pack($job);
+        $message = new Message($job);
+        $data = $this->packer->pack($message);
         $this->redis->zAdd($this->delayed, time() + $delay, $data);
     }
 
@@ -72,38 +76,57 @@ class RedisDriver extends Driver
             return [false, null];
         }
 
-        $key = $res[1];
-        $job = $this->packer->unpack($key);
-        if (!$job) {
+        $data = $res[1];
+        $message = $this->packer->unpack($data);
+        if (!$message) {
             return [false, null];
         }
 
-        $this->redis->zadd($this->reserved, time() + 10, $key);
+        $this->redis->zadd($this->reserved, time() + 10, $data);
 
-        return [$key, $job];
+        return [$data, $message];
     }
 
-    public function ack($key)
+    public function remove($data): bool
     {
-        $this->redis->zrem($this->reserved, $key);
+        return $this->redis->zrem($this->reserved, $data) > 0;
+    }
+
+    public function ack($data)
+    {
+        $this->remove($data);
+    }
+
+    public function fail($data)
+    {
+        if ($this->remove($data)) {
+            $this->redis->lPush($this->failed, $data);
+        }
     }
 
     public function consume()
     {
         while (true) {
-            list($key, $job) = $this->pop($this->timeout);
+            list($key, $message) = $this->pop($this->timeout);
 
             if ($key === false) {
                 continue;
             }
 
             try {
-                if ($job instanceof JobInterface) {
-                    $job->handle();
+                if ($message instanceof MessageInterface) {
+                    $message->job()->handle();
                 }
 
                 $this->ack($key);
             } catch (\Throwable $ex) {
+                if ($message->attempts() && $this->remove($key)) {
+                    // 10 seconds later handle it.
+                    $data = $this->packer->pack($message);
+                    $this->redis->zAdd($this->delayed, time() + 10, $data);
+                } else {
+                    $this->fail($key);
+                }
             }
         }
     }
