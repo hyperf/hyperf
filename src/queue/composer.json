@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/redis-queue",
+    "name": "hyperf/queue",
     "description": "A queue component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
@@ -11,8 +11,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "dev-master",
-        "hyperf/redis": "dev-master"
+        "hyperf/di": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -26,7 +25,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\RedisQueue\\": "src/"
+            "Hyperf\\Queue\\": "src/"
         }
     },
     "autoload-dev": {
@@ -40,7 +39,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\RedisQueue\\ConfigProvider"
+            "config": "Hyperf\\Queue\\ConfigProvider"
         }
     },
     "bin": [

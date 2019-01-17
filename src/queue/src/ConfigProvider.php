@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisQueue;
+namespace Hyperf\Queue;
 
 class ConfigProvider
 {
