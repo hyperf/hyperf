@@ -55,8 +55,7 @@ class Ast
         $traverser->addVisitor(new ProxyClassNameVistor($proxyClassName));
         $traverser->addVisitor(new ProxyCallVistor());
         $modifiedStmts = $traverser->traverse($stmts);
-        $code = $this->printer->prettyPrintFile($modifiedStmts);
-        return $code;
+        return $this->printer->prettyPrintFile($modifiedStmts);
     }
 
     public function parseClassByStmts(array $stmts): string

@@ -57,21 +57,22 @@ trait ProxyTrait
         $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
         $aspects = array_replace($aspects, $annotationAspects);
-        if ($aspects) {
-            $container = ApplicationContext::getContainer();
-            if (method_exists($container, 'make')) {
-                $pipeline = $container->make(Pipeline::class);
-            } else {
-                $pipeline = new Pipeline($container);
-            }
-            return $pipeline->via('process')->through($aspects)->send($proceedingJoinPoint)->then(function (
-                ProceedingJoinPoint $proceedingJoinPoint
-            ) {
-                return $proceedingJoinPoint->processOriginalMethod();
-            });
-        } else {
+        if (empty($aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
+
+        $container = ApplicationContext::getContainer();
+        if (method_exists($container, 'make')) {
+            $pipeline = $container->make(Pipeline::class);
+        } else {
+            $pipeline = new Pipeline($container);
+        }
+        return $pipeline->via('process')
+            ->through($aspects)
+            ->send($proceedingJoinPoint)
+            ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
+                return $proceedingJoinPoint->processOriginalMethod();
+            });
     }
 
     private static function parseAspects(string $className, string $method): array
