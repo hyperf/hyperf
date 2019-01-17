@@ -13,7 +13,14 @@ namespace Hyperf\Queue;
 
 interface MessageInterface
 {
+    /**
+     * @return JobInterface
+     */
     public function job(): JobInterface;
 
+    /**
+     * whether the queue can be handle again.
+     * @return bool
+     */
     public function attempts(): bool;
 }

@@ -13,7 +13,13 @@ namespace Hyperf\Queue;
 
 interface JobInterface
 {
+    /**
+     * handle the job
+     */
     public function handle();
 
+    /**
+     * @return int
+     */
     public function getMaxAttempts(): int;
 }

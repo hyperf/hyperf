@@ -23,16 +23,33 @@ class RedisDriver extends Driver
      */
     protected $redis;
 
+    /**
+     * Key for waiting message.
+     * @var string
+     */
     protected $waiting;
 
+    /**
+     * Key for reserved message.
+     * @var string
+     */
     protected $reserved;
 
+    /**
+     * Key for delayed message.
+     * @var string
+     */
     protected $delayed;
 
+    /**
+     * Key for failed message.
+     * @var string
+     */
     protected $failed;
 
-    protected $moving;
-
+    /**
+     * @var int
+     */
     protected $timeout;
 
     public function __construct(ContainerInterface $container, $config)
@@ -41,11 +58,10 @@ class RedisDriver extends Driver
         $this->redis = $container->get(\Redis::class);
 
         $this->timeout = $config['timeout'] ?? 5;
-        $this->waiting = "{$this->channel}.waiting";
-        $this->reserved = "{$this->channel}.reserved";
-        $this->delayed = "{$this->channel}.delayed";
-        $this->failed = "{$this->channel}.failed";
-        $this->moving = "{$this->channel}.moving";
+        $this->waiting = "{$this->channel}:waiting";
+        $this->reserved = "{$this->channel}:reserved";
+        $this->delayed = "{$this->channel}:delayed";
+        $this->failed = "{$this->channel}:failed";
     }
 
     public function push(JobInterface $job)
@@ -85,11 +101,6 @@ class RedisDriver extends Driver
         $this->redis->zadd($this->reserved, time() + 10, $data);
 
         return [$data, $message];
-    }
-
-    public function remove($data): bool
-    {
-        return $this->redis->zrem($this->reserved, $data) > 0;
     }
 
     public function ack($data)
@@ -132,6 +143,16 @@ class RedisDriver extends Driver
     }
 
     /**
+     * Remove data from reserved queue.
+     * @return bool
+     */
+    protected function remove($data): bool
+    {
+        return $this->redis->zrem($this->reserved, $data) > 0;
+    }
+
+    /**
+     * Move message to the waiting queue.
      * @param string $from
      */
     protected function move($from)
