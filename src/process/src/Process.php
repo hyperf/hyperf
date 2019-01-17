@@ -55,11 +55,9 @@ abstract class Process implements ProcessInterface
         $num = $this->num;
         for ($i = 0; $i < $num; $i++) {
             $server->addProcess(new SwooleProcess(function () use ($i) {
-                Coroutine::create(function () use ($i) {
-                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
-                    $this->handle();
-                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
-                });
+                $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                $this->handle();
+                $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
             }));
         }
     }
