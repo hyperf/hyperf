@@ -13,8 +13,6 @@ namespace Hyperf\Queue\Driver;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Queue\Exception\InvalidDriverException;
-use Hyperf\Queue\Exception\InvalidPackerException;
-use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
 
 class DriverFactory

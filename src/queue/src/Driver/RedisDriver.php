@@ -104,7 +104,6 @@ class RedisDriver extends Driver
 
                 $this->ack($key);
             } catch (\Throwable $ex) {
-
             }
         }
     }
