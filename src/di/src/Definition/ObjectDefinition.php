@@ -25,8 +25,6 @@ class ObjectDefinition implements DefinitionInterface
      */
     protected $propertyInjections = [];
 
-    protected $methodInjections = [];
-
     /**
      * @var string
      */
