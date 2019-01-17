@@ -9,10 +9,10 @@ use GuzzleHttp\HandlerStack;
 class ClientFactory
 {
 
-    public function createClient(): Client
+    public function createClient(array $options = []): Client
     {
         $stack = HandlerStack::create(new CoroutineHandler());
-        return new Client(['handler' => $stack]);
+        return new Client(array_replace(['handler' => $stack], $options));
     }
 
 }
