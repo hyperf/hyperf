@@ -70,10 +70,12 @@ class Scanner
         // Because the annotation class should loaded before use it, so load file via $finder previous, and then parse annotation here.
         foreach ($classCollection as $className) {
             $reflectionClass = ReflectionManager::reflectClass($className);
-            $annotations = $reader->getClassAnnotations($reflectionClass);
-            foreach ($annotations as $annotation) {
-                if ($annotation instanceof AbstractAnnotation) {
-                    $annotation->collectClass($className, null);
+            $classAnnotations = $reader->getClassAnnotations($reflectionClass);
+            if (! empty($classAnnotations)) {
+                foreach ($classAnnotations as $classAnnotation) {
+                    if ($classAnnotation instanceof AbstractAnnotation) {
+                        $classAnnotation->collectClass($className, null);
+                    }
                 }
             }
 
