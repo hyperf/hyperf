@@ -24,6 +24,11 @@ class RedisDriver extends Driver
     protected $redis;
 
     /**
+     * @var string
+     */
+    protected $channel;
+
+    /**
      * Key for waiting message.
      * @var string
      */
@@ -52,12 +57,19 @@ class RedisDriver extends Driver
      */
     protected $timeout;
 
+    /**
+     * @var int
+     */
+    protected $retrySeconds;
+
     public function __construct(ContainerInterface $container, $config)
     {
         parent::__construct($container, $config);
         $this->redis = $container->get(\Redis::class);
-
+        $this->channel = $config['channel'] ?? 'queue';
         $this->timeout = $config['timeout'] ?? 5;
+        $this->retrySeconds = $config['retry_seconds'] ?? 10;
+
         $this->waiting = "{$this->channel}:waiting";
         $this->reserved = "{$this->channel}:reserved";
         $this->delayed = "{$this->channel}:delayed";
@@ -134,7 +146,7 @@ class RedisDriver extends Driver
                 if ($message->attempts() && $this->remove($key)) {
                     // 10 seconds later handle it.
                     $data = $this->packer->pack($message);
-                    $this->redis->zAdd($this->delayed, time() + 10, $data);
+                    $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
                 } else {
                     $this->fail($key);
                 }

@@ -19,11 +19,6 @@ use Psr\Container\ContainerInterface;
 abstract class Driver implements DriverInterface
 {
     /**
-     * @var string
-     */
-    protected $channel;
-
-    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -36,7 +31,6 @@ abstract class Driver implements DriverInterface
     public function __construct(ContainerInterface $container, $config)
     {
         $this->container = $container;
-        $this->channel = $config['channel'] ?? 'queue';
         $this->packer = $container->get($config['packer'] ?? PhpSerializer::class);
 
         if (!$this->packer instanceof PackerInterface) {
