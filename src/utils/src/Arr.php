@@ -495,7 +495,7 @@ class Arr
             }
         }
 
-        if (!self::isAssoc($result)) {
+        if (! self::isAssoc($result)) {
             return array_unique($result);
         }
 
