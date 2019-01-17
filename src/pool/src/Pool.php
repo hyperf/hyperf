@@ -15,7 +15,6 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 abstract class Pool implements PoolInterface
 {
@@ -87,8 +86,7 @@ abstract class Pool implements PoolInterface
 
     protected function getConnectionsInChannel(): int
     {
-        $stats = $this->channel->stats();
-        return $stats['queue_num'];
+        return $this->channel->length();
     }
 
     abstract protected function createConnection(): ConnectionInterface;
