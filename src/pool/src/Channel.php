@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: limx
- * Date: 2019/1/17
- * Time: 2:18 PM
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Pool;
@@ -32,11 +35,6 @@ class Channel
         $this->queue = new \SplQueue();
     }
 
-    protected function isCoroutine()
-    {
-        return Coroutine::id() > 0;
-    }
-
     public function pop(float $timeout)
     {
         if ($this->isCoroutine()) {
@@ -59,5 +57,10 @@ class Channel
             return $this->channel->length();
         }
         return $this->queue->count();
+    }
+
+    protected function isCoroutine(): bool
+    {
+        return Coroutine::id() > 0;
     }
 }
