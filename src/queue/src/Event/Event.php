@@ -11,6 +11,17 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Event;
 
-class BeforeHandle extends Event
+use Hyperf\Queue\MessageInterface;
+
+class Event
 {
+    /**
+     * @var MessageInterface
+     */
+    public $message;
+
+    public function __construct(MessageInterface $message)
+    {
+        $this->message = $message;
+    }
 }

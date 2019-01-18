@@ -127,31 +127,10 @@ class RedisDriver extends Driver
         }
     }
 
-    public function consume()
+    protected function retry(MessageInterface $message)
     {
-        while (true) {
-            list($key, $message) = $this->pop($this->timeout);
-
-            if ($key === false) {
-                continue;
-            }
-
-            try {
-                if ($message instanceof MessageInterface) {
-                    $message->job()->handle();
-                }
-
-                $this->ack($key);
-            } catch (\Throwable $ex) {
-                if ($message->attempts() && $this->remove($key)) {
-                    // 10 seconds later handle it.
-                    $data = $this->packer->pack($message);
-                    $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
-                } else {
-                    $this->fail($key);
-                }
-            }
-        }
+        $data = $this->packer->pack($message);
+        $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
     }
 
     /**
