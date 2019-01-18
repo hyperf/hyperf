@@ -22,14 +22,14 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
-
+use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
 
 class Builder
 {
-    use BuildsQueries, Macroable {
+    use BuildsQueries, ForwardsCalls, Macroable {
         __call as macroCall;
     }
 
@@ -258,7 +258,6 @@ class Builder
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
         }
-
         if (Str::startsWith($method, 'where')) {
             return $this->dynamicWhere($method, $parameters);
         }
@@ -1456,7 +1455,6 @@ class Builder
                 $connector = $segment;
             }
         }
-
         return $this;
     }
 

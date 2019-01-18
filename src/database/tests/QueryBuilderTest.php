@@ -14,6 +14,7 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Hyperf\Database\Query\Expression as Raw;
 use Hyperf\Database\Model\Builder as ModelBuilder;
+use InvalidArgumentException;
 
 class QueryBuilderTest extends TestCase
 {
@@ -2123,6 +2124,8 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('update `users` set `options` = json_set(`options`, \'$."size"\', 45)', []);
         $builder->from('users')->update(['options->size' => new Raw('45')]);
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testMySqlWrappingJsonWithString()
@@ -2254,6 +2257,7 @@ class QueryBuilderTest extends TestCase
         $builder->shouldReceive('where')->with('orientation', '=', 'Vertical', 'or')->once()->andReturnSelf();
 
         $builder->dynamicWhere($method, $parameters);
+        $this->assertTrue(true);
     }
 
     public function testCallTriggersDynamicWhere()
@@ -2272,7 +2276,6 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select');
         $builder->getProcessor()->shouldReceive('processSelect')->andReturn([]);
-
         $builder->noValidMethodHere();
     }
 
@@ -2303,6 +2306,9 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getMySqlBuilderWithProcessor();
         $builder->getConnection()->shouldReceive('select')->once()->with(Mockery::any(), Mockery::any(), false);
         $builder->select('*')->from('foo')->where('bar', '=', 'baz')->lock(false)->get();
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testBindingOrder()
@@ -2417,6 +2423,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunk(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkWithLastChunkPartial()
@@ -2437,6 +2446,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunk(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkCanBeStoppedByReturningFalse()
@@ -2459,6 +2471,9 @@ class QueryBuilderTest extends TestCase
 
             return false;
         });
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkWithCountZero()
@@ -2476,6 +2491,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunk(0, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithLastChunkComplete()
@@ -2499,6 +2517,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithLastChunkPartial()
@@ -2519,6 +2540,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithCountZero()
@@ -2536,6 +2560,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunkById(0, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithAlias()
@@ -2556,6 +2583,9 @@ class QueryBuilderTest extends TestCase
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'table.id', 'table_id');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testPaginate()
@@ -2696,57 +2726,6 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals([1], $builder->getBindings());
     }
 
-    public function testWhereJsonContainsPostgres()
-    {
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')->from('users')->whereJsonContains('options', ['en']);
-        $this->assertEquals('select * from "users" where ("options")::jsonb @> ?', $builder->toSql());
-        $this->assertEquals(['["en"]'], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')->from('users')->whereJsonContains('users.options->languages', ['en']);
-        $this->assertEquals('select * from "users" where ("users"."options"->\'languages\')::jsonb @> ?', $builder->toSql());
-        $this->assertEquals(['["en"]'], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonContains('options->languages', new Raw("'[\"en\"]'"));
-        $this->assertEquals('select * from "users" where "id" = ? or ("options"->\'languages\')::jsonb @> \'["en"]\'', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testWhereJsonContainsSqlite()
-    {
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')->from('users')->whereJsonContains('options->languages', ['en'])->toSql();
-    }
-
-    public function testWhereJsonContainsSqlServer()
-    {
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('users')->whereJsonContains('options', true);
-        $this->assertEquals('select * from [users] where ? in (select [value] from openjson([options]))', $builder->toSql());
-        $this->assertEquals(['true'], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('users')->whereJsonContains('users.options->languages', 'en');
-        $this->assertEquals('select * from [users] where ? in (select [value] from openjson([users].[options], \'$."languages"\'))', $builder->toSql());
-        $this->assertEquals(['en'], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonContains('options->languages', new Raw("'en'"));
-        $this->assertEquals('select * from [users] where [id] = ? or \'en\' in (select [value] from openjson([options], \'$."languages"\'))', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
     public function testWhereJsonDoesntContainMySql()
     {
         $builder = $this->getMySqlBuilder();
@@ -2760,47 +2739,6 @@ class QueryBuilderTest extends TestCase
             ->where('id', '=', 1)
             ->orWhereJsonDoesntContain('options->languages', new Raw("'[\"en\"]'"));
         $this->assertEquals('select * from `users` where `id` = ? or not json_contains(`options`->\'$."languages"\', \'["en"]\')', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
-    public function testWhereJsonDoesntContainPostgres()
-    {
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')->from('users')->whereJsonDoesntContain('options->languages', ['en']);
-        $this->assertEquals('select * from "users" where not ("options"->\'languages\')::jsonb @> ?', $builder->toSql());
-        $this->assertEquals(['["en"]'], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonDoesntContain('options->languages', new Raw("'[\"en\"]'"));
-        $this->assertEquals('select * from "users" where "id" = ? or not ("options"->\'languages\')::jsonb @> \'["en"]\'', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testWhereJsonDoesntContainSqlite()
-    {
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')->from('users')->whereJsonDoesntContain('options->languages', ['en'])->toSql();
-    }
-
-    public function testWhereJsonDoesntContainSqlServer()
-    {
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('users')->whereJsonDoesntContain('options->languages', 'en');
-        $this->assertEquals('select * from [users] where not ? in (select [value] from openjson([options], \'$."languages"\'))', $builder->toSql());
-        $this->assertEquals(['en'], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonDoesntContain('options->languages', new Raw("'en'"));
-        $this->assertEquals('select * from [users] where [id] = ? or not \'en\' in (select [value] from openjson([options], \'$."languages"\'))', $builder->toSql());
         $this->assertEquals([1], $builder->getBindings());
     }
 
@@ -2833,93 +2771,6 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals([1], $builder->getBindings());
     }
 
-    public function testWhereJsonLengthPostgres()
-    {
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('options', 0);
-        $this->assertEquals('select * from "users" where json_array_length(("options")::json) = ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('users.options->languages', '>', 0);
-        $this->assertEquals('select * from "users" where json_array_length(("users"."options"->\'languages\')::json) > ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', new Raw('0'));
-        $this->assertEquals('select * from "users" where "id" = ? or json_array_length(("options"->\'languages\')::json) = 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-
-        $builder = $this->getPostgresBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', '>', new Raw('0'));
-        $this->assertEquals('select * from "users" where "id" = ? or json_array_length(("options"->\'languages\')::json) > 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
-    public function testWhereJsonLengthSqlite()
-    {
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('options', 0);
-        $this->assertEquals('select * from "users" where json_array_length("options") = ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('users.options->languages', '>', 0);
-        $this->assertEquals('select * from "users" where json_array_length("users"."options", \'$."languages"\') > ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', new Raw('0'));
-        $this->assertEquals('select * from "users" where "id" = ? or json_array_length("options", \'$."languages"\') = 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-
-        $builder = $this->getSQLiteBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', '>', new Raw('0'));
-        $this->assertEquals('select * from "users" where "id" = ? or json_array_length("options", \'$."languages"\') > 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
-    public function testWhereJsonLengthSqlServer()
-    {
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('options', 0);
-        $this->assertEquals('select * from [users] where (select count(*) from openjson([options])) = ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('users')->whereJsonLength('users.options->languages', '>', 0);
-        $this->assertEquals('select * from [users] where (select count(*) from openjson([users].[options], \'$."languages"\')) > ?', $builder->toSql());
-        $this->assertEquals([0], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', new Raw('0'));
-        $this->assertEquals('select * from [users] where [id] = ? or (select count(*) from openjson([options], \'$."languages"\')) = 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')
-            ->from('users')
-            ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', '>', new Raw('0'));
-        $this->assertEquals('select * from [users] where [id] = ? or (select count(*) from openjson([options], \'$."languages"\')) > 0', $builder->toSql());
-        $this->assertEquals([1], $builder->getBindings());
-    }
-
     public function testFromSub()
     {
         $builder = $this->getBuilder();
@@ -2944,13 +2795,6 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->fromRaw(new Raw('(select max(last_seen_at) as last_seen_at from "user_sessions") as "sessions"'));
         $this->assertEquals('select * from (select max(last_seen_at) as last_seen_at from "user_sessions") as "sessions"', $builder->toSql());
-    }
-
-    public function testFromRawOnSqlServer()
-    {
-        $builder = $this->getSqlServerBuilder();
-        $builder->fromRaw('dbo.[SomeNameWithRoundBrackets (test)]');
-        $this->assertEquals('select * from dbo.[SomeNameWithRoundBrackets (test)]', $builder->toSql());
     }
 
     public function testFromRawWithWhereOnTheMainQuery()
