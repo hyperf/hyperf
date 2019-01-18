@@ -9,18 +9,19 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\Queue\Event;
 
-interface MessageInterface
+use Hyperf\Queue\MessageInterface;
+
+class Event
 {
     /**
-     * @return JobInterface
+     * @var MessageInterface
      */
-    public function job(): JobInterface;
+    public $message;
 
-    /**
-     * Whether the queue can be handle again.
-     * @return bool
-     */
-    public function attempts(): bool;
+    public function __construct(MessageInterface $message)
+    {
+        $this->message = $message;
+    }
 }

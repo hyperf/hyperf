@@ -11,6 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Event;
 
-class AfterHandle
+class AfterHandle extends Event
 {
 }

@@ -11,7 +11,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "dev-master"
+        "psr/container": "^1.0",
+        "psr/event-dispatcher": "^0.7",
+        "hyperf/contract": "dev-master",
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -20,6 +23,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/event": "Required to dispatch a event.",
+        "hyperf/process": "Auto register a consumer process for server."
     },
     "autoload": {
         "files": [

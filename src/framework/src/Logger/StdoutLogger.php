@@ -14,9 +14,9 @@ namespace Hyperf\Framework\Logger;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
-use const PHP_EOL;
-use function printf;
 use function sprintf;
 
 use function str_replace;
@@ -33,9 +33,15 @@ class StdoutLogger implements StdoutLoggerInterface
      */
     private $config;
 
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
+        $this->output = new ConsoleOutput();
     }
 
     /**
@@ -115,6 +121,31 @@ class StdoutLogger implements StdoutLoggerInterface
             $search = sprintf('{%s}', $key);
             $message = str_replace($search, $value, $message);
         }
-        printf('%s%s', $message, PHP_EOL);
+
+        $this->output->writeln($this->getMessage($message, $level));
+    }
+
+    protected function getMessage($message, $level = LogLevel::INFO)
+    {
+        $tag = null;
+        switch ($level) {
+            case LogLevel::EMERGENCY:
+            case LogLevel::ALERT:
+            case LogLevel::CRITICAL:
+                $tag = 'error';
+                break;
+            case LogLevel::ERROR:
+                $tag = 'fg=red';
+                break;
+            case LogLevel::WARNING:
+            case LogLevel::NOTICE:
+                $tag = 'comment';
+                break;
+            default:
+                $tag = 'info';
+                break;
+        }
+
+        return sprintf('<%s>%s</>', $tag, $message);
     }
 }

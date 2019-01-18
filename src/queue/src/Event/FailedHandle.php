@@ -9,17 +9,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\Queue\Event;
 
-interface JobInterface
+class FailedHandle extends Event
 {
-    /**
-     * Handle the job.
-     */
-    public function handle();
-
-    /**
-     * @return int
-     */
-    public function getMaxAttempts(): int;
 }
