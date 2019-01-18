@@ -19,7 +19,7 @@ interface MessageInterface
     public function job(): JobInterface;
 
     /**
-     * whether the queue can be handle again.
+     * Whether the queue can be handle again.
      * @return bool
      */
     public function attempts(): bool;

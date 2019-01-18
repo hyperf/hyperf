@@ -14,7 +14,7 @@ namespace Hyperf\Queue;
 interface JobInterface
 {
     /**
-     * handle the job
+     * Handle the job.
      */
     public function handle();
 
