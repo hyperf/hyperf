@@ -30,6 +30,7 @@ interface ConnectionInterface
 
     /**
      * Run a select statement and return a single result.
+     *
      * @return mixed
      */
     public function selectOne(string $query, array $bindings = [], bool $useReadPdo = true);
