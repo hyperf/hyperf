@@ -22,16 +22,24 @@ class DriverFactory
      */
     protected $container;
 
+    /**
+     * @var DriverInterface[]
+     */
     protected $drivers = [];
+
+    /**
+     * @var array
+     */
+    protected $configs = [];
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $config = $container->get(ConfigInterface::class);
 
-        $queueConfig = $config->get('queue', []);
+        $this->configs = $config->get('queue', []);
 
-        foreach ($queueConfig as $key => $item) {
+        foreach ($this->configs as $key => $item) {
             $driverClass = $item['driver'];
 
             if (!class_exists($driverClass)) {
@@ -55,5 +63,10 @@ class DriverFactory
         }
 
         return $driver;
+    }
+
+    public function getConfig($name): array
+    {
+        return $this->configs[$name] ?? [];
     }
 }

@@ -23,7 +23,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/event": "Required to dispatch a event."
+        "hyperf/event": "Required to dispatch a event.",
+        "hyperf/process": "Auto register a consumer process for server."
     },
     "autoload": {
         "files": [
