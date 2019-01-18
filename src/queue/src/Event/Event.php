@@ -9,18 +9,19 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\Queue\Event;
 
-abstract class Job implements JobInterface
+use Hyperf\Queue\MessageInterface;
+
+class Event
 {
-
     /**
-     * @var int
+     * @var MessageInterface
      */
-    protected $maxAttempts = 1;
+    public $message;
 
-    public function getMaxAttempts(): int
+    public function __construct(MessageInterface $message)
     {
-        return $this->maxAttempts;
+        $this->message = $message;
     }
 }

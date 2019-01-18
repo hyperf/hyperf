@@ -15,15 +15,44 @@ use Hyperf\Queue\JobInterface;
 
 interface DriverInterface
 {
-    public function push(JobInterface $job);
+    /**
+     * Push a job to queue.
+     *
+     * @param JobInterface $job
+     */
+    public function push(JobInterface $job): bool;
 
-    public function delay(JobInterface $job, int $delay = 0);
+    /**
+     * Push a delay job to queue.
+     *
+     * @param JobInterface $job
+     * @param int $delay
+     */
+    public function delay(JobInterface $job, int $delay = 0): bool;
 
-    public function pop(int $timeout = 0);
+    /**
+     * Pop a job from queue.
+     *
+     * @param int $timeout
+     */
+    public function pop(int $timeout = 0): array;
 
-    public function ack($data);
+    /**
+     * Ack a job.
+     *
+     * @param $data
+     */
+    public function ack($data): bool;
 
-    public function fail($data);
+    /**
+     * Push a job to failed queue.
+     *
+     * @param $data
+     */
+    public function fail($data): bool;
 
-    public function consume();
+    /**
+     * Consume jobs from a queue.
+     */
+    public function consume(): void;
 }

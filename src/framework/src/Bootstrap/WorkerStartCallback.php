@@ -17,6 +17,7 @@ use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Swoole\Server as SwooleServer;
 
 class WorkerStartCallback
@@ -64,8 +65,8 @@ class WorkerStartCallback
                 // @TODO Do something that the workers who does not got the lock should do.
             }
             $this->logger->info("Worker $workerId started.");
-        } catch (\RuntimeException $e) {
-            // Do nothing.
+        } catch (RuntimeException $e) {
+            $this->logger->warning('Worker atomic and lock initialize fail.');
         } finally {
             LockManager::clear(SwooleEvent::ON_WORKER_START);
             AtomicManager::clear(SwooleEvent::ON_WORKER_START);

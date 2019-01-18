@@ -16,7 +16,6 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
 
@@ -30,7 +29,7 @@ abstract class Process implements ProcessInterface
     /**
      * @var int
      */
-    protected $num = 1;
+    protected $processes = 1;
 
     /**
      * @var ContainerInterface
@@ -52,7 +51,7 @@ abstract class Process implements ProcessInterface
 
     public function bind(Server $server)
     {
-        $num = $this->num;
+        $num = $this->processes;
         for ($i = 0; $i < $num; $i++) {
             $server->addProcess(new SwooleProcess(function () use ($i) {
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));

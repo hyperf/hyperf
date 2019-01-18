@@ -15,6 +15,7 @@ use Hyperf\Queue\JobInterface;
 use Hyperf\Queue\Message;
 use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
+use Redis;
 
 class RedisDriver extends Driver
 {
@@ -23,39 +24,71 @@ class RedisDriver extends Driver
      */
     protected $redis;
 
+    /**
+     * @var string
+     */
+    protected $channel;
+
+    /**
+     * Key for waiting message.
+     *
+     * @var string
+     */
     protected $waiting;
 
+    /**
+     * Key for reserved message.
+     *
+     * @var string
+     */
     protected $reserved;
 
+    /**
+     * Key for delayed message.
+     *
+     * @var string
+     */
     protected $delayed;
 
+    /**
+     * Key for failed message.
+     *
+     * @var string
+     */
     protected $failed;
 
-    protected $moving;
-
+    /**
+     * @var int
+     */
     protected $timeout;
+
+    /**
+     * @var int
+     */
+    protected $retrySeconds;
 
     public function __construct(ContainerInterface $container, $config)
     {
         parent::__construct($container, $config);
-        $this->redis = $container->get(\Redis::class);
-
+        $this->redis = $container->get(Redis::class);
+        $this->channel = $config['channel'] ?? 'queue';
         $this->timeout = $config['timeout'] ?? 5;
-        $this->waiting = "{$this->channel}.waiting";
-        $this->reserved = "{$this->channel}.reserved";
-        $this->delayed = "{$this->channel}.delayed";
-        $this->failed = "{$this->channel}.failed";
-        $this->moving = "{$this->channel}.moving";
+        $this->retrySeconds = $config['retry_seconds'] ?? 10;
+
+        $this->waiting = "{$this->channel}:waiting";
+        $this->reserved = "{$this->channel}:reserved";
+        $this->delayed = "{$this->channel}:delayed";
+        $this->failed = "{$this->channel}:failed";
     }
 
-    public function push(JobInterface $job)
+    public function push(JobInterface $job): bool
     {
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        $this->redis->lPush($this->waiting, $data);
+        return (bool)$this->redis->lPush($this->waiting, $data);
     }
 
-    public function delay(JobInterface $job, int $delay = 0)
+    public function delay(JobInterface $job, int $delay = 0): bool
     {
         if ($delay === 0) {
             return $this->push($job);
@@ -63,22 +96,22 @@ class RedisDriver extends Driver
 
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        $this->redis->zAdd($this->delayed, time() + $delay, $data);
+        return $this->redis->zAdd($this->delayed, time() + $delay, $data) > 0;
     }
 
-    public function pop(int $timeout = 0)
+    public function pop(int $timeout = 0): array
     {
         $this->move($this->delayed);
         $this->move($this->reserved);
 
         $res = $this->redis->brPop($this->waiting, $timeout);
-        if (!isset($res[1])) {
+        if (! isset($res[1])) {
             return [false, null];
         }
 
         $data = $res[1];
         $message = $this->packer->unpack($data);
-        if (!$message) {
+        if (! $message) {
             return [false, null];
         }
 
@@ -87,54 +120,37 @@ class RedisDriver extends Driver
         return [$data, $message];
     }
 
-    public function remove($data): bool
+    public function ack($data): bool
+    {
+        return $this->remove($data);
+    }
+
+    public function fail($data): bool
+    {
+        if ($this->remove($data)) {
+            return (bool)$this->redis->lPush($this->failed, $data);
+        }
+        return false;
+    }
+
+    protected function retry(MessageInterface $message): bool
+    {
+        $data = $this->packer->pack($message);
+        return $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data) > 0;
+    }
+
+    /**
+     * Remove data from reserved queue.
+     */
+    protected function remove($data): bool
     {
         return $this->redis->zrem($this->reserved, $data) > 0;
     }
 
-    public function ack($data)
-    {
-        $this->remove($data);
-    }
-
-    public function fail($data)
-    {
-        if ($this->remove($data)) {
-            $this->redis->lPush($this->failed, $data);
-        }
-    }
-
-    public function consume()
-    {
-        while (true) {
-            list($key, $message) = $this->pop($this->timeout);
-
-            if ($key === false) {
-                continue;
-            }
-
-            try {
-                if ($message instanceof MessageInterface) {
-                    $message->job()->handle();
-                }
-
-                $this->ack($key);
-            } catch (\Throwable $ex) {
-                if ($message->attempts() && $this->remove($key)) {
-                    // 10 seconds later handle it.
-                    $data = $this->packer->pack($message);
-                    $this->redis->zAdd($this->delayed, time() + 10, $data);
-                } else {
-                    $this->fail($key);
-                }
-            }
-        }
-    }
-
     /**
-     * @param string $from
+     * Move message to the waiting queue.
      */
-    protected function move($from)
+    protected function move(string $from): void
     {
         $now = time();
         if ($expired = $this->redis->zrevrangebyscore($from, (string)$now, '-inf')) {

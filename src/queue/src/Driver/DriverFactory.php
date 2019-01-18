@@ -22,16 +22,27 @@ class DriverFactory
      */
     protected $container;
 
+    /**
+     * @var DriverInterface[]
+     */
     protected $drivers = [];
 
+    /**
+     * @var array
+     */
+    protected $configs = [];
+
+    /**
+     * @throws InvalidDriverException When the driver class not exist or the class is not implemented DriverInterface.
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $config = $container->get(ConfigInterface::class);
 
-        $queueConfig = $config->get('queue', []);
+        $this->configs = $config->get('queue', []);
 
-        foreach ($queueConfig as $key => $item) {
+        foreach ($this->configs as $key => $item) {
             $driverClass = $item['driver'];
 
             if (!class_exists($driverClass)) {
@@ -47,7 +58,10 @@ class DriverFactory
         }
     }
 
-    public function __get($name)
+    /**
+     * @throws InvalidDriverException When the driver invalid.
+     */
+    public function __get($name): ?DriverInterface
     {
         $driver = $this->drivers[$name] ?? null;
         if (!$driver || !$driver instanceof DriverInterface) {
@@ -55,5 +69,10 @@ class DriverFactory
         }
 
         return $driver;
+    }
+
+    public function getConfig($name): array
+    {
+        return $this->configs[$name] ?? [];
     }
 }
