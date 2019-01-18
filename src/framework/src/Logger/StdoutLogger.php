@@ -132,8 +132,10 @@ class StdoutLogger implements StdoutLoggerInterface
             case LogLevel::EMERGENCY:
             case LogLevel::ALERT:
             case LogLevel::CRITICAL:
-            case LogLevel::ERROR:
                 $tag = 'error';
+                break;
+            case LogLevel::ERROR:
+                $tag = 'fg=red';
                 break;
             case LogLevel::WARNING:
             case LogLevel::NOTICE:
