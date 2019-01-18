@@ -17,7 +17,7 @@ use Hyperf\Queue\Driver\DriverFactory;
 use Hyperf\Queue\Driver\DriverInterface;
 use Psr\Container\ContainerInterface;
 
-class QueueProcess extends Process
+class ConsumerProcess extends Process
 {
     /**
      * @var string
@@ -49,7 +49,7 @@ class QueueProcess extends Process
             $logger->critical(
                 sprintf(
                     '[CRITICAL] process %s not work expected, please check config [%s]',
-                    QueueProcess::class,
+                    ConsumerProcess::class,
                     'config/autoload/queue.php'
                 )
             );

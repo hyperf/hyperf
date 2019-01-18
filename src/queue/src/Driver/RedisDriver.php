@@ -81,14 +81,14 @@ class RedisDriver extends Driver
         $this->failed = "{$this->channel}:failed";
     }
 
-    public function push(JobInterface $job): void
+    public function push(JobInterface $job): bool
     {
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        $this->redis->lPush($this->waiting, $data);
+        return (bool)$this->redis->lPush($this->waiting, $data);
     }
 
-    public function delay(JobInterface $job, int $delay = 0): void
+    public function delay(JobInterface $job, int $delay = 0): bool
     {
         if ($delay === 0) {
             return $this->push($job);
@@ -96,7 +96,7 @@ class RedisDriver extends Driver
 
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        $this->redis->zAdd($this->delayed, time() + $delay, $data);
+        return $this->redis->zAdd($this->delayed, time() + $delay, $data) > 0;
     }
 
     public function pop(int $timeout = 0): array
@@ -120,22 +120,23 @@ class RedisDriver extends Driver
         return [$data, $message];
     }
 
-    public function ack($data): void
+    public function ack($data): bool
     {
-        $this->remove($data);
+        return $this->remove($data);
     }
 
-    public function fail($data): void
+    public function fail($data): bool
     {
         if ($this->remove($data)) {
-            $this->redis->lPush($this->failed, $data);
+            return (bool)$this->redis->lPush($this->failed, $data);
         }
+        return false;
     }
 
-    protected function retry(MessageInterface $message): void
+    protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);
-        $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
+        return $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data) > 0;
     }
 
     /**
@@ -159,13 +160,5 @@ class RedisDriver extends Driver
                 }
             }
         }
-    }
-
-    /**
-     * Consume jobs from a queue.
-     */
-    public function consume(): void
-    {
-        // @TODO
     }
 }
