@@ -13,6 +13,10 @@ namespace Hyperf\Queue;
 
 abstract class Job implements JobInterface
 {
+
+    /**
+     * @var int
+     */
     protected $maxAttempts = 1;
 
     public function getMaxAttempts(): int

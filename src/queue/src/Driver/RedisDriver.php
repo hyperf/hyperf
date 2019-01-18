@@ -15,6 +15,7 @@ use Hyperf\Queue\JobInterface;
 use Hyperf\Queue\Message;
 use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
+use Redis;
 
 class RedisDriver extends Driver
 {
@@ -30,24 +31,28 @@ class RedisDriver extends Driver
 
     /**
      * Key for waiting message.
+     *
      * @var string
      */
     protected $waiting;
 
     /**
      * Key for reserved message.
+     *
      * @var string
      */
     protected $reserved;
 
     /**
      * Key for delayed message.
+     *
      * @var string
      */
     protected $delayed;
 
     /**
      * Key for failed message.
+     *
      * @var string
      */
     protected $failed;
@@ -65,7 +70,7 @@ class RedisDriver extends Driver
     public function __construct(ContainerInterface $container, $config)
     {
         parent::__construct($container, $config);
-        $this->redis = $container->get(\Redis::class);
+        $this->redis = $container->get(Redis::class);
         $this->channel = $config['channel'] ?? 'queue';
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
@@ -100,13 +105,13 @@ class RedisDriver extends Driver
         $this->move($this->reserved);
 
         $res = $this->redis->brPop($this->waiting, $timeout);
-        if (!isset($res[1])) {
+        if (! isset($res[1])) {
             return [false, null];
         }
 
         $data = $res[1];
         $message = $this->packer->unpack($data);
-        if (!$message) {
+        if (! $message) {
             return [false, null];
         }
 
@@ -125,17 +130,17 @@ class RedisDriver extends Driver
         if ($this->remove($data)) {
             return (bool)$this->redis->lPush($this->failed, $data);
         }
+        return false;
     }
 
-    protected function retry(MessageInterface $message)
+    protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);
-        $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
+        return $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data) > 0;
     }
 
     /**
      * Remove data from reserved queue.
-     * @return bool
      */
     protected function remove($data): bool
     {
@@ -144,9 +149,8 @@ class RedisDriver extends Driver
 
     /**
      * Move message to the waiting queue.
-     * @param string $from
      */
-    protected function move($from)
+    protected function move(string $from): void
     {
         $now = time();
         if ($expired = $this->redis->zrevrangebyscore($from, (string)$now, '-inf')) {

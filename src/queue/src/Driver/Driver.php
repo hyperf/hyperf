@@ -50,7 +50,7 @@ abstract class Driver implements DriverInterface
         }
     }
 
-    public function consume()
+    public function consume(): void
     {
         while (true) {
             list($data, $message) = $this->pop($this->timeout);
@@ -81,7 +81,8 @@ abstract class Driver implements DriverInterface
 
     /**
      * Handle a job again some seconds later.
+     *
      * @param MessageInterface $message
      */
-    abstract protected function retry(MessageInterface $message);
+    abstract protected function retry(MessageInterface $message): bool;
 }

@@ -32,6 +32,9 @@ class DriverFactory
      */
     protected $configs = [];
 
+    /**
+     * @throws InvalidDriverException When the driver class not exist or the class is not implemented DriverInterface.
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -55,7 +58,10 @@ class DriverFactory
         }
     }
 
-    public function __get($name)
+    /**
+     * @throws InvalidDriverException When the driver invalid.
+     */
+    public function __get($name): ?DriverInterface
     {
         $driver = $this->drivers[$name] ?? null;
         if (!$driver || !$driver instanceof DriverInterface) {
