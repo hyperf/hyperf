@@ -16,22 +16,9 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
-/**
- * @method array getServerParams()
- * @method array getCookieParams()
- * @method ServerRequestInterface withCookieParams(array $cookies)
- * @method array getQueryParams()
- * @method ServerRequestInterface withQueryParams(array $query)
- * @method array getUploadedFiles()
- * @method ServerRequestInterface withUploadedFiles(array $uploadedFiles)
- * @method null|null|object getParsedBody()
- * @method ServerRequestInterface withParsedBody($data)
- * @method array getAttributes()
- * @method mixed getAttribute($name, $default = null)
- * @method ServerRequestInterface withAttribute($name, $value)
- * @method ServerRequestInterface withoutAttribute($name)
- */
 class Request implements RequestInterface
 {
     const CONTEXT_KEY = 'httpRequestParsedData';
@@ -123,4 +110,155 @@ class Request implements RequestInterface
         }
         return Context::get(self::CONTEXT_KEY);
     }
+
+    public function getProtocolVersion()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withProtocolVersion($version)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getHeaders()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function hasHeader($name)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getHeader($name)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getHeaderLine($name)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withHeader($name, $value)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withAddedHeader($name, $value)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withoutHeader($name)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getBody()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withBody(StreamInterface $body)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getRequestTarget()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withRequestTarget($requestTarget)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getMethod()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withMethod($method)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getUri()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withUri(UriInterface $uri, $preserveHost = false)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getServerParams()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getCookieParams()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withCookieParams(array $cookies)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getQueryParams()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withQueryParams(array $query)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getUploadedFiles()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withUploadedFiles(array $uploadedFiles)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getParsedBody()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withParsedBody($data)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getAttributes()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getAttribute($name, $default = null)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withAttribute($name, $value)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function withoutAttribute($name)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
 }
