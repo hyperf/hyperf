@@ -13,11 +13,14 @@ namespace Hyperf\Database\Query;
 
 use Closure;
 use DateTimeInterface;
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Framework\ApplicationContext;
+use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -1860,42 +1863,32 @@ class Builder
      * @param  array $columns
      * @param  string $pageName
      * @param  int|null $page
-     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
+     * @return \Hyperf\Contract\PaginatorInterface
      */
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $page = $page ? : Paginator::resolveCurrentPage($pageName);
 
-        $total = $this->getCountForPagination($columns);
+        $this->skip(($page - 1) * $perPage)->take($perPage + 1);
 
-        $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
-
-        return $this->paginator($results, $total, $perPage, $page, [
+        return $this->paginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
     }
 
     /**
-     * Get a paginator only supporting simple next and previous links.
-     * This is more efficient on larger data-sets, etc.
-     *
-     * @param  int $perPage
-     * @param  array $columns
-     * @param  string $pageName
-     * @param  int|null $page
-     * @return \Hyperf\Contracts\Pagination\Paginator
+     * Create a new simple paginator instance.
      */
-    public function simplePaginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
+    protected function paginator(Collection $items, int $perPage,int $currentPage, array $options)
     {
-        $page = $page ? : Paginator::resolveCurrentPage($pageName);
-
-        $this->skip(($page - 1) * $perPage)->take($perPage + 1);
-
-        return $this->simplePaginator($this->get($columns), $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => $pageName,
-        ]);
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(PaginatorInterface::class, compact(
+            'items', 'perPage', 'currentPage', 'options'
+        ));
     }
 
     /**

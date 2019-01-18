@@ -9,6 +9,8 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\Context;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
@@ -47,7 +49,10 @@ class QueryBuilderTest extends TestCase
         return new Builder(Mockery::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    protected function getMockQueryBuilder(): MockInterface
+    /**
+     * @return \Mockery\MockInterface|Builder
+     */
+    protected function getMockQueryBuilder()
     {
         return Mockery::mock(Builder::class, [
             Mockery::mock(ConnectionInterface::class),
@@ -2603,16 +2608,18 @@ class QueryBuilderTest extends TestCase
         $builder->shouldReceive('forPage')->once()->with($page, $perPage)->andReturnSelf();
         $builder->shouldReceive('get')->once()->andReturn($results);
 
-        Paginator::currentPathResolver(function () use ($path) {
-            return $path;
+        Context::set('path', $path);
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
         });
 
         $result = $builder->paginate($perPage, $columns, $pageName, $page);
 
-        $this->assertEquals(new LengthAwarePaginator($results, 2, $perPage, $page, [
+        $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);
+        Context::destroy();
     }
 
     public function testPaginateWithDefaultArguments()

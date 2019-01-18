@@ -1,21 +1,17 @@
 {
-    "name": "hyperf/database",
-    "description": "A flexible database library.",
+    "name": "hyperf/paginator",
+    "description": "A paginator component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "hyperf",
-        "database"
+        "paginator"
     ],
     "support": {
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "dev-master",
-        "hyperf/paginator": "dev-master",
-        "psr/container": "^1.0",
-        "nesbot/carbon": "^2.0",
-        "psr/event-dispatcher": "^0.7"
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -24,18 +20,16 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.6)."
     },
     "autoload": {
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\Database\\": "src"
+            "Hyperf\\Paginator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Database\\": "tests/"
         }
     },
     "config": {
@@ -43,6 +37,9 @@
     },
     "extra": {
         "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\Paginator\\ConfigProvider"
         }
     },
     "bin": [
