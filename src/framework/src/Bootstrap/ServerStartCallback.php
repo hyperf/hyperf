@@ -16,7 +16,6 @@ use Hyperf\Memory;
 
 class ServerStartCallback
 {
-
     public function beforeStart()
     {
         Memory\LockManager::initialize(SwooleEvent::ON_WORKER_START, SWOOLE_RWLOCK, 'workerStart');

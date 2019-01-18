@@ -13,7 +13,6 @@ namespace Hyperf\Framework\Constants;
 
 class SwooleEvent
 {
-
     /**
      * Swoole onStart event.
      */

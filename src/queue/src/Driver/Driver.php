@@ -13,6 +13,8 @@ namespace Hyperf\Queue\Driver;
 
 use Hyperf\Queue\Event\AfterHandle;
 use Hyperf\Queue\Event\BeforeHandle;
+use Hyperf\Queue\Event\FailedHandle;
+use Hyperf\Queue\Event\RetryHandle;
 use Hyperf\Queue\Exception\InvalidPackerException;
 use Hyperf\Queue\MessageInterface;
 use Hyperf\Queue\Packer\PackerInterface;
@@ -67,8 +69,10 @@ abstract class Driver implements DriverInterface
                 $this->ack($data);
             } catch (\Throwable $ex) {
                 if ($message->attempts() && $this->remove($data)) {
+                    $this->event && $this->event->dispatch(new RetryHandle($message));
                     $this->retry($message);
                 } else {
+                    $this->event && $this->event->dispatch(new FailedHandle($message));
                     $this->fail($data);
                 }
             }
