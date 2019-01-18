@@ -45,12 +45,12 @@ abstract class Driver implements DriverInterface
         $this->packer = $container->get($config['packer'] ?? PhpSerializer::class);
         $this->event = $container->get(EventDispatcherInterface::class);
 
-        if (!$this->packer instanceof PackerInterface) {
+        if (! $this->packer instanceof PackerInterface) {
             throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
         }
     }
 
-    public function consume()
+    public function consume(): void
     {
         while (true) {
             list($data, $message) = $this->pop($this->timeout);
@@ -81,6 +81,7 @@ abstract class Driver implements DriverInterface
 
     /**
      * Handle a job again some seconds later.
+     *
      * @param MessageInterface $message
      */
     abstract protected function retry(MessageInterface $message);

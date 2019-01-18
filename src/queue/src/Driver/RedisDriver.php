@@ -15,6 +15,7 @@ use Hyperf\Queue\JobInterface;
 use Hyperf\Queue\Message;
 use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
+use Redis;
 
 class RedisDriver extends Driver
 {
@@ -30,24 +31,28 @@ class RedisDriver extends Driver
 
     /**
      * Key for waiting message.
+     *
      * @var string
      */
     protected $waiting;
 
     /**
      * Key for reserved message.
+     *
      * @var string
      */
     protected $reserved;
 
     /**
      * Key for delayed message.
+     *
      * @var string
      */
     protected $delayed;
 
     /**
      * Key for failed message.
+     *
      * @var string
      */
     protected $failed;
@@ -65,7 +70,7 @@ class RedisDriver extends Driver
     public function __construct(ContainerInterface $container, $config)
     {
         parent::__construct($container, $config);
-        $this->redis = $container->get(\Redis::class);
+        $this->redis = $container->get(Redis::class);
         $this->channel = $config['channel'] ?? 'queue';
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
@@ -76,14 +81,14 @@ class RedisDriver extends Driver
         $this->failed = "{$this->channel}:failed";
     }
 
-    public function push(JobInterface $job)
+    public function push(JobInterface $job): void
     {
         $message = new Message($job);
         $data = $this->packer->pack($message);
         $this->redis->lPush($this->waiting, $data);
     }
 
-    public function delay(JobInterface $job, int $delay = 0)
+    public function delay(JobInterface $job, int $delay = 0): void
     {
         if ($delay === 0) {
             return $this->push($job);
@@ -94,19 +99,19 @@ class RedisDriver extends Driver
         $this->redis->zAdd($this->delayed, time() + $delay, $data);
     }
 
-    public function pop(int $timeout = 0)
+    public function pop(int $timeout = 0): array
     {
         $this->move($this->delayed);
         $this->move($this->reserved);
 
         $res = $this->redis->brPop($this->waiting, $timeout);
-        if (!isset($res[1])) {
+        if (! isset($res[1])) {
             return [false, null];
         }
 
         $data = $res[1];
         $message = $this->packer->unpack($data);
-        if (!$message) {
+        if (! $message) {
             return [false, null];
         }
 
@@ -115,19 +120,19 @@ class RedisDriver extends Driver
         return [$data, $message];
     }
 
-    public function ack($data)
+    public function ack($data): void
     {
         $this->remove($data);
     }
 
-    public function fail($data)
+    public function fail($data): void
     {
         if ($this->remove($data)) {
             $this->redis->lPush($this->failed, $data);
         }
     }
 
-    protected function retry(MessageInterface $message)
+    protected function retry(MessageInterface $message): void
     {
         $data = $this->packer->pack($message);
         $this->redis->zAdd($this->delayed, time() + $this->retrySeconds, $data);
@@ -135,7 +140,6 @@ class RedisDriver extends Driver
 
     /**
      * Remove data from reserved queue.
-     * @return bool
      */
     protected function remove($data): bool
     {
@@ -144,9 +148,8 @@ class RedisDriver extends Driver
 
     /**
      * Move message to the waiting queue.
-     * @param string $from
      */
-    protected function move($from)
+    protected function move(string $from): void
     {
         $now = time();
         if ($expired = $this->redis->zrevrangebyscore($from, (string)$now, '-inf')) {
@@ -156,5 +159,13 @@ class RedisDriver extends Driver
                 }
             }
         }
+    }
+
+    /**
+     * Consume jobs from a queue.
+     */
+    public function consume(): void
+    {
+        // @TODO
     }
 }

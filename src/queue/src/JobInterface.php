@@ -18,8 +18,5 @@ interface JobInterface
      */
     public function handle();
 
-    /**
-     * @return int
-     */
     public function getMaxAttempts(): int;
 }
