@@ -49,7 +49,7 @@ class Context
             $connection = $connections[$name];
             if (! $connection instanceof PoolConnectionInterface) {
                 $this->logger->warning(sprintf(
-                    'Connection[] is not instanceof %s',
+                    'Connection[%s] is not instanceof %s',
                     get_class($connection),
                     PoolConnectionInterface::class
                 ));
