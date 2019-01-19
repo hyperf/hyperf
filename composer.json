@@ -29,7 +29,8 @@
         "swoft/http-message": "^1.0",
         "squizlabs/php_codesniffer": "^3.4",
         "nesbot/carbon": "^2.0",
-        "vlucas/phpdotenv": "^3.1"
+        "vlucas/phpdotenv": "^3.1",
+        "php-amqplib/php-amqplib": "^2.7"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -39,6 +40,7 @@
         "doctrine/common": "@stable"
     },
     "replace": {
+        "hyperf/amqp": "self.version",
         "hyperf/config": "self.version",
         "hyperf/contract": "self.version",
         "hyperf/database": "self.version",
@@ -66,6 +68,7 @@
             "src/utils/src/Functions.php"
         ],
         "psr-4": {
+            "Hyperf\\Amqp\\": "src/amqp/src/",
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
             "Hyperf\\Database\\": "src/database/src/",
@@ -101,6 +104,7 @@
         },
         "hyperf": {
             "config": [
+                "Hyperf\\Amqp\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
                 "Hyperf\\Devtool\\ConfigProvider",
                 "Hyperf\\DbConnection\\ConfigProvider",
