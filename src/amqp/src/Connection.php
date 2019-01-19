@@ -115,7 +115,7 @@ class Connection extends BaseConnection implements ConnectionInterface
         return new $class(
             $this->config['host'] ?? 'localhost',
             $this->config['port'] ?? 5672,
-            $this->config['user'] ?? 'guext',
+            $this->config['user'] ?? 'guest',
             $this->config['password'] ?? 'guest',
             $this->config['vhost'] ?? '/',
             $this->params->isInsist(),
