@@ -3,13 +3,19 @@
 namespace HyperfTest\Database;
 
 
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Framework\ApplicationContext;
 use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\Collection;
 use Hyperf\Utils\Context;
 use Mockery;
 use Mockery\MockInterface;
@@ -17,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use Hyperf\Database\Query\Expression as Raw;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 
 class QueryBuilderTest extends TestCase
 {
@@ -2604,11 +2611,16 @@ class QueryBuilderTest extends TestCase
 
         $results = collect([['test' => 'foo'], ['test' => 'bar']]);
 
-        $builder->shouldReceive('getCountForPagination')->once()->with($columns)->andReturn(2);
-        $builder->shouldReceive('forPage')->once()->with($page, $perPage)->andReturnSelf();
         $builder->shouldReceive('get')->once()->andReturn($results);
 
         Context::set('path', $path);
+        define('BASE_PATH', __DIR__);
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
         Paginator::currentPathResolver(function () {
             return Context::get('path');
         });
@@ -2633,21 +2645,29 @@ class QueryBuilderTest extends TestCase
 
         $results = collect([['test' => 'foo'], ['test' => 'bar']]);
 
-        $builder->shouldReceive('getCountForPagination')->once()->with($columns)->andReturn(2);
-        $builder->shouldReceive('forPage')->once()->with($page, $perPage)->andReturnSelf();
         $builder->shouldReceive('get')->once()->andReturn($results);
 
+        Context::set('path', $path);
+        Context::set('page', $page);
+        define('BASE_PATH', __DIR__);
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
         Paginator::currentPageResolver(function () {
-            return 1;
+            return Context::get('page');
         });
 
-        Paginator::currentPathResolver(function () use ($path) {
-            return $path;
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
         });
 
         $result = $builder->paginate();
 
-        $this->assertEquals(new LengthAwarePaginator($results, 2, $perPage, $page, [
+        $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);
@@ -2656,7 +2676,6 @@ class QueryBuilderTest extends TestCase
     public function testPaginateWhenNoResults()
     {
         $perPage = 15;
-        $columns = ['*'];
         $pageName = 'page';
         $page = 1;
         $builder = $this->getMockQueryBuilder();
@@ -2664,21 +2683,33 @@ class QueryBuilderTest extends TestCase
 
         $results = [];
 
-        $builder->shouldReceive('getCountForPagination')->once()->with($columns)->andReturn(0);
-        $builder->shouldNotReceive('forPage');
         $builder->shouldNotReceive('get');
 
+        Context::set('path', $path);
+        Context::set('page', $page);
+        define('BASE_PATH', __DIR__);
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            /** @var Collection $items */
+            $items = $args['items'];
+            $items->shouldReceive('count')->andReturn(0);
+            $items->shouldReceive('slice')->andReturn($items->slice(0, $args['perPage']));
+            return new Paginator($items, $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
         Paginator::currentPageResolver(function () {
-            return 1;
+            return Context::get('page');
         });
 
-        Paginator::currentPathResolver(function () use ($path) {
-            return $path;
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
         });
 
         $result = $builder->paginate();
 
-        $this->assertEquals(new LengthAwarePaginator($results, 0, $perPage, $page, [
+        $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);

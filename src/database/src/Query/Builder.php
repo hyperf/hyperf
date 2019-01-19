@@ -1847,9 +1847,8 @@ class Builder
      * Execute the query as a "select" statement.
      *
      * @param  array|string $columns
-     * @return \Hyperf\Support\Collection
      */
-    public function get($columns = ['*'])
+    public function get($columns = ['*']): Collection
     {
         return collect($this->onceWithColumns(Arr::wrap($columns), function () {
             return $this->processor->processSelect($this, $this->runSelect());
@@ -1863,9 +1862,8 @@ class Builder
      * @param  array $columns
      * @param  string $pageName
      * @param  int|null $page
-     * @return \Hyperf\Contract\PaginatorInterface
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): PaginatorInterface
     {
         $page = $page ? : Paginator::resolveCurrentPage($pageName);
 
@@ -1880,15 +1878,13 @@ class Builder
     /**
      * Create a new simple paginator instance.
      */
-    protected function paginator(Collection $items, int $perPage,int $currentPage, array $options)
+    protected function paginator(Collection $items, int $perPage, int $currentPage, array $options)
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new \RuntimeException('The DI container does not support make() method.');
         }
-        return $container->make(PaginatorInterface::class, compact(
-            'items', 'perPage', 'currentPage', 'options'
-        ));
+        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }
 
     /**
