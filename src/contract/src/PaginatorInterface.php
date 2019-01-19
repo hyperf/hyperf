@@ -1,12 +1,18 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Contract;
 
-
 interface PaginatorInterface
 {
-
     /**
      * Get the URL for a given page.
      */
@@ -88,5 +94,4 @@ interface PaginatorInterface
      * Render the paginator using a given view.
      */
     public function render(?string $view = null, array $data = []): string;
-
 }

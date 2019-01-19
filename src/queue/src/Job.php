@@ -13,7 +13,6 @@ namespace Hyperf\Queue;
 
 abstract class Job implements JobInterface
 {
-
     /**
      * @var int
      */

@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Driver;
 
+use Hyperf\Contract\PackerInterface;
 use Hyperf\Queue\Event\AfterHandle;
 use Hyperf\Queue\Event\BeforeHandle;
 use Hyperf\Queue\Event\FailedHandle;
 use Hyperf\Queue\Event\RetryHandle;
 use Hyperf\Queue\Exception\InvalidPackerException;
 use Hyperf\Queue\MessageInterface;
-use Hyperf\Contract\PackerInterface;
 use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

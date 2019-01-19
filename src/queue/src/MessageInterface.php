@@ -13,7 +13,6 @@ namespace Hyperf\Queue;
 
 interface MessageInterface
 {
-
     public function job(): JobInterface;
 
     /**
