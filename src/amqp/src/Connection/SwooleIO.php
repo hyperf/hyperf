@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Amqp\Connections;
+namespace Hyperf\Amqp\Connection;
 
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
