@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Hyperf\Contract\ConnectionInterface as PoolConnectionInterface;
-use Hyperf\Database\ConnectionInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Context as RequestContext;
 use Psr\Container\ContainerInterface;
@@ -47,16 +46,8 @@ class Context
 
         if (isset($connections[$name]) && $connections[$name] instanceof ConnectionInterface) {
             $connection = $connections[$name];
-            if (! $connection instanceof PoolConnectionInterface) {
-                $this->logger->warning(sprintf(
-                    'Connection[%s] is not instanceof %s',
-                    get_class($connection),
-                    PoolConnectionInterface::class
-                ));
-                return $connection;
-            }
 
-            return $connection->getConnection();
+            return $connection;
         }
 
         return null;

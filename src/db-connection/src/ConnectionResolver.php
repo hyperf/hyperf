@@ -56,16 +56,16 @@ class ConnectionResolver implements ConnectionResolverInterface
         $context = $this->container->get(Context::class);
         $connection = $context->connection($name);
         if ($connection) {
-            return $connection;
+            return $connection->getConnection();
         }
 
         $pool = $this->factory->getDbPool($name);
 
-        $connection = $pool->get()->getConnection();
+        $connection = $pool->get();
 
         $context->set($name, $connection);
 
-        return $connection;
+        return $connection->getConnection();
     }
 
     /**
