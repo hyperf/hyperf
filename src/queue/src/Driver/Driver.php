@@ -17,7 +17,7 @@ use Hyperf\Queue\Event\FailedHandle;
 use Hyperf\Queue\Event\RetryHandle;
 use Hyperf\Queue\Exception\InvalidPackerException;
 use Hyperf\Queue\MessageInterface;
-use Hyperf\Queue\Packer\PackerInterface;
+use Hyperf\Contract\PackerInterface;
 use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Packer;
 
+use Hyperf\Contract\PackerInterface;
+
 class PhpSerializer implements PackerInterface
 {
     public function pack($data): string
