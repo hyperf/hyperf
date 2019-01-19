@@ -18,12 +18,19 @@ use Hyperf\Amqp\Exceptions\MessageException;
 use Hyperf\Amqp\Packer\JsonPacker;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Framework\ApplicationContext;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
+use Psr\Container\ContainerInterface;
 
 abstract class Message
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
     /**
      * @var string
      */
@@ -33,7 +40,7 @@ abstract class Message
 
     protected $type = 'topic';
 
-    protected $routingKey = '';
+    protected $routingKey;
 
     /** @var AbstractConnection */
     protected $connection;
@@ -50,6 +57,8 @@ abstract class Message
     public function __construct()
     {
         $this->check();
+
+        $this->container = ApplicationContext::getContainer();
 
         if (!isset($this->channel)) {
             /** @var Connection $conn */
