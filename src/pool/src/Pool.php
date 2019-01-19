@@ -46,7 +46,8 @@ abstract class Pool implements PoolInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->option = $container->get($this->optionName);
+        $this->initOption();
+
         $this->channel = new Channel($this->option->getMaxConnections());
     }
 
@@ -87,6 +88,11 @@ abstract class Pool implements PoolInterface
     protected function getConnectionsInChannel(): int
     {
         return $this->channel->length();
+    }
+
+    protected function initOption()
+    {
+        $this->option = $this->container->get($this->optionName);
     }
 
     abstract protected function createConnection(): ConnectionInterface;
