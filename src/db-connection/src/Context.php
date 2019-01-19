@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Contract\ConnectionInterface as PoolConnectionInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Context as RequestContext;
-use Hyperf\Contract\ConnectionInterface as PoolConnectionInterface;
 use Psr\Container\ContainerInterface;
 
 class Context
