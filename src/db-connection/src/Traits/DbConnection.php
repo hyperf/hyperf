@@ -23,91 +23,94 @@ trait DbConnection
 {
     public function table($table): Builder
     {
-        return $this->connection->table($table);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function raw($value): Expression
     {
-        return $this->connection->table($value);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function selectOne($query, $bindings = [], $useReadPdo = true)
     {
-        return $this->connection->selectOne($query, $bindings, $useReadPdo);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function select($query, $bindings = [], $useReadPdo = true): array
     {
-        return $this->connection->select($query, $bindings, $useReadPdo);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function cursor($query, $bindings = [], $useReadPdo = true): Generator
     {
-        return $this->connection->cursor($query, $bindings, $useReadPdo);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function insert($query, $bindings = []): bool
     {
-        return $this->connection->insert($query, $bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function update($query, $bindings = []): int
     {
-        return $this->connection->update($query, $bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function delete($query, $bindings = []): int
     {
-        return $this->connection->delete($query, $bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function statement($query, $bindings = []): bool
     {
-        return $this->connection->statement($query, $bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function affectingStatement($query, $bindings = []): int
     {
-        return $this->connection->affectingStatement($query, $bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function unprepared($query): bool
     {
-        return $this->connection->unprepared($query);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function prepareBindings(array $bindings): array
     {
-        return $this->connection->prepareBindings($bindings);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function transaction(Closure $callback, $attempts = 1)
     {
-        return $this->connection->transaction($callback, $attempts);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function beginTransaction(): void
     {
-        $this->connection->beginTransaction();
+        $this->setTransaction(true);
+        $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function commit(): void
     {
-        $this->connection->commit();
+        $this->setTransaction(false);
+        $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function rollBack(): void
     {
-        $this->connection->rollBack();
+        $this->setTransaction(false);
+        $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function transactionLevel(): int
     {
-        return $this->connection->transactionLevel();
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function pretend(Closure $callback): array
     {
-        return $this->connection->pretend($callback);
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 }

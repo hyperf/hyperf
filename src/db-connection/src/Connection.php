@@ -14,15 +14,20 @@ namespace Hyperf\DbConnection;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\DbConnection\Pool\DbPool;
 use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
     use DbConnection;
+
+    /**
+     * @var DbPool
+     */
+    protected $pool;
 
     /**
      * @var DbConnectionInterface
@@ -40,15 +45,23 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     protected $config;
 
     /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
      * @var float
      */
     protected $lastUseTime = 0.0;
 
-    public function __construct(ContainerInterface $container, Pool $pool, array $config)
+    protected $transaction = false;
+
+    public function __construct(ContainerInterface $container, DbPool $pool, array $config)
     {
         parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
         $this->config = $config;
+        $this->context = $container->get(Context::class);
 
         $this->reconnect();
     }
@@ -98,5 +111,15 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function release(): void
     {
         parent::release();
+    }
+
+    public function setTransaction(bool $transaction): void
+    {
+        $this->transaction = $transaction;
+    }
+
+    public function isTransaction(): bool
+    {
+        return $this->transaction;
     }
 }

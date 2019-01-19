@@ -12,16 +12,41 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Listeners;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\DbConnection\Connection;
+use Hyperf\DbConnection\Context;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\HttpServer\Event\AfterResponse;
-use Hyperf\Utils\Context;
+use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
  */
 class AfterResponseListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        $this->context = $container->get(Context::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+    }
+
     public function listen(): array
     {
         return [
@@ -31,12 +56,14 @@ class AfterResponseListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (Context::has('databases')) {
-            $dbs = Context::get('databases');
-            foreach ($dbs as $conn) {
-                if ($conn instanceof ConnectionInterface) {
-                    $conn->release();
+        $connections = $this->context->connections();
+        foreach ($connections as $conn) {
+            if ($conn instanceof ConnectionInterface) {
+                if ($conn instanceof Connection && $conn->isTransaction()) {
+                    $conn->rollBack();
+                    $this->logger->error('The Mysql Connection forget commit or rollback.');
                 }
+                $conn->release();
             }
         }
     }

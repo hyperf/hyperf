@@ -14,7 +14,6 @@ namespace Hyperf\DbConnection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 
 class ConnectionResolver implements ConnectionResolverInterface
@@ -54,19 +53,17 @@ class ConnectionResolver implements ConnectionResolverInterface
             $name = $this->getDefaultConnection();
         }
 
-        $connections = [];
-        if (Context::has('databases')) {
-            $connections = Context::get('databases');
-        }
-
-        if (isset($connections[$name])) {
-            return $connections[$name];
+        $context = $this->container->get(Context::class);
+        $connection = $context->connection($name);
+        if ($connection) {
+            return $connection;
         }
 
         $pool = $this->factory->getDbPool($name);
+
         $connection = $pool->get()->getConnection();
-        $connections[$name] = $connection;
-        Context::set('databases', $connections);
+
+        $context->set($name, $connection);
 
         return $connection;
     }

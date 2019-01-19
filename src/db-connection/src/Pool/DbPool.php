@@ -36,6 +36,11 @@ class DbPool extends Pool
         parent::__construct($container);
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     protected function createConnection(): ConnectionInterface
     {
         return new Connection($this->container, $this, $this->config);

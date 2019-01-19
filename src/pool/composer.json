@@ -11,7 +11,8 @@
     "support": {
     },
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
