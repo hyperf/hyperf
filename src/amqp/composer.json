@@ -11,6 +11,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "ext-pcntl": "*",
         "hyperf/framework": "dev-master",
         "hyperf/pool": "dev-master",
         "php-amqplib/php-amqplib": "^2.7"

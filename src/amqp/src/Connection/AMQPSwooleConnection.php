@@ -15,50 +15,36 @@ use PhpAmqpLib\Connection\AbstractConnection;
 
 class AMQPSwooleConnection extends AbstractConnection
 {
-    /**
-     * @param string $host
-     * @param int    $port
-     * @param string $user
-     * @param string $password
-     * @param string $vhost
-     * @param bool   $insist
-     * @param string $login_method
-     * @param null   $login_response
-     * @param string $locale
-     * @param float  $read_timeout
-     * @param bool   $keepalive
-     * @param int    $write_timeout
-     * @param int    $heartbeat
-     */
+
     public function __construct(
-        $host,
-        $port,
-        $user,
-        $password,
-        $vhost = '/',
-        $insist = false,
-        $login_method = 'AMQPLAIN',
-        $login_response = null,
-        $locale = 'en_US',
-        $connection_timeout = 3.0,
-        $read_write_timeout = 3.0,
+        string $host,
+        int $port,
+        string $user,
+        string $password,
+        string $vhost = '/',
+        bool $insist = false,
+        string $loginMethod = 'AMQPLAIN',
+        $loginResponse = null,
+        string $locale = 'en_US',
+        float $connectionTimeout = 3.0,
+        float $readWriteTimeout = 3.0,
         $context = null,
-        $keepalive = false,
-        $heartbeat = 0
+        bool $keepalive = false,
+        int $heartbeat = 0
     ) {
-        $io = new SwooleIO($host, $port, $connection_timeout, $read_write_timeout, $context, $keepalive, $heartbeat);
+        $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
 
         parent::__construct(
             $user,
             $password,
             $vhost,
             $insist,
-            $login_method,
-            $login_response,
+            $loginMethod,
+            $loginResponse,
             $locale,
             $io,
             $heartbeat,
-            $connection_timeout
+            $connectionTimeout
         );
     }
 }

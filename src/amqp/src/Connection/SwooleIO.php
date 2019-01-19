@@ -11,49 +11,71 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Connection;
 
+use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Swoole;
+use Swoole\Coroutine\Client;
 
 class SwooleIO extends AbstractIO
 {
     const READ_BUFFER_WAIT_INTERVAL = 100000;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $host;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $port;
 
-    /** @var float */
-    protected $connection_timeout;
+    /**
+     * @var float
+     */
+    protected $connectionTimeout;
 
-    /** @var float */
-    protected $read_write_timeout;
+    /**
+     * @var float
+     */
+    protected $readWriteTimeout;
 
-    /** @var resource */
+    /**
+     * @var resource
+     */
     protected $context;
-
-    /** @var bool */
-    protected $keepalive;
-
-    /** @var int */
-    protected $heartbeat;
-
-    /** @var float */
-    protected $last_read;
-
-    /** @var float */
-    protected $last_write;
-
-    /** @var array */
-    protected $last_error;
 
     /**
      * @var bool
      */
-    protected $tcp_nodelay = false;
+    protected $keepalive;
+
+    /**
+     * @var int
+     */
+    protected $heartbeat;
+
+    /**
+     * @var float
+     */
+    protected $lastRead;
+
+    /**
+     * @var float
+     */
+    protected $lastWrite;
+
+    /**
+     * @var array
+     */
+    protected $lastError;
+
+    /**
+     * @var bool
+     */
+    protected $tcpNodelay = false;
 
     /**
      * @var bool
@@ -61,7 +83,7 @@ class SwooleIO extends AbstractIO
     protected $ssl = false;
 
     /** @var int */
-    private $initial_heartbeat;
+    private $initialHeartbeat;
 
     /** @var Swoole\Coroutine\Client */
     private $sock;
@@ -69,46 +91,42 @@ class SwooleIO extends AbstractIO
     private $buffer = '';
 
     /**
-     * @param string $host
-     * @param int    $port
-     * @param float  $connection_timeout
-     * @param float  $read_write_timeout
-     * @param null   $context
-     * @param bool   $keepalive
-     * @param int    $heartbeat
+     * SwooleIO constructor.
+     *
+     * @throws \InvalidArgumentException When readWriteTimeout argument does not 2x the heartbeat.
      */
     public function __construct(
-        $host,
-        $port,
-        $connection_timeout,
-        $read_write_timeout,
+        string $host,
+        int $port,
+        float $connectionTimeout,
+        float $readWriteTimeout,
         $context = null,
-        $keepalive = false,
-        $heartbeat = 0
+        bool $keepalive = false,
+        int $heartbeat = 0
     ) {
-        if ($heartbeat !== 0 && ($read_write_timeout < ($heartbeat * 2))) {
-            throw new \InvalidArgumentException('read_write_timeout must be at least 2x the heartbeat');
+        if ($heartbeat !== 0 && ($readWriteTimeout < ($heartbeat * 2))) {
+            throw new InvalidArgumentException('Argument readWriteTimeout must be at least 2x the heartbeat.');
         }
         $this->host = $host;
         $this->port = $port;
-        $this->connection_timeout = $connection_timeout;
-        $this->read_write_timeout = $read_write_timeout;
+        $this->connectionTimeout = $connectionTimeout;
+        $this->readWriteTimeout = $readWriteTimeout;
         $this->context = $context;
         $this->keepalive = $keepalive;
         $this->heartbeat = $heartbeat;
-        $this->initial_heartbeat = $heartbeat;
+        $this->initialHeartbeat = $heartbeat;
     }
 
     /**
      * Sets up the stream connection
      *
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws AMQPRuntimeException
      * @throws \Exception
      */
     public function connect()
     {
-        $sock = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
-        if (!$sock->connect($this->host, $this->port, $this->connection_timeout)) {
+        $sock = new Client(SWOOLE_SOCK_TCP);
+        if (!$sock->connect($this->host, $this->port, $this->connectionTimeout)) {
             throw new AMQPRuntimeException(
                 sprintf(
                     'Error Connecting to server(%s): %s ',
@@ -132,7 +150,7 @@ class SwooleIO extends AbstractIO
 
     /**
      * @param int $len
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws AMQPRuntimeException
      * @return mixed|string
      */
     public function read($len)
@@ -143,7 +161,7 @@ class SwooleIO extends AbstractIO
             if ($len <= strlen($this->buffer)) {
                 $data = substr($this->buffer, 0, $len);
                 $this->buffer = substr($this->buffer, $len);
-                $this->last_read = microtime(true);
+                $this->lastRead = microtime(true);
 
                 return $data;
             }
@@ -152,7 +170,7 @@ class SwooleIO extends AbstractIO
                 throw new AMQPRuntimeException('Broken pipe or closed connection');
             }
 
-            $read_buffer = $this->sock->recv($this->read_write_timeout ? $this->read_write_timeout : -1);
+            $read_buffer = $this->sock->recv($this->readWriteTimeout ? $this->readWriteTimeout : -1);
             if ($read_buffer === false) {
                 throw new AMQPRuntimeException('Error receiving data, errno=' . $this->sock->errCode);
             }
@@ -174,7 +192,7 @@ class SwooleIO extends AbstractIO
     /**
      * @param string $data
      * @return mixed|void
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function write($data)
@@ -189,7 +207,7 @@ class SwooleIO extends AbstractIO
             throw new AMQPRuntimeException('Broken pipe or closed connection');
         }
 
-        $this->last_write = microtime(true);
+        $this->lastWrite = microtime(true);
     }
 
     /**
@@ -198,10 +216,10 @@ class SwooleIO extends AbstractIO
     public function check_heartbeat()
     {
         // ignore unless heartbeat interval is set
-        if ($this->heartbeat !== 0 && $this->last_read && $this->last_write) {
+        if ($this->heartbeat !== 0 && $this->lastRead && $this->lastWrite) {
             $t = microtime(true);
-            $t_read = round($t - $this->last_read);
-            $t_write = round($t - $this->last_write);
+            $t_read = round($t - $this->lastRead);
+            $t_write = round($t - $this->lastWrite);
 
             // server has gone away
             if (($this->heartbeat * 2) < $t_read) {
@@ -217,12 +235,12 @@ class SwooleIO extends AbstractIO
 
     public function close()
     {
-        if (isset($this->sock) && $this->sock instanceof Swoole\Coroutine\Client) {
+        if (isset($this->sock) && $this->sock instanceof Client) {
             $this->sock->close();
         }
         $this->sock = null;
-        $this->last_read = null;
-        $this->last_write = null;
+        $this->lastRead = null;
+        $this->lastWrite = null;
     }
 
     /**
@@ -268,7 +286,7 @@ class SwooleIO extends AbstractIO
      */
     public function reenableHeartbeat()
     {
-        $this->heartbeat = $this->initial_heartbeat;
+        $this->heartbeat = $this->initialHeartbeat;
 
         return $this;
     }

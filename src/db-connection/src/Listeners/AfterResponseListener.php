@@ -61,7 +61,7 @@ class AfterResponseListener implements ListenerInterface
             if ($conn instanceof ConnectionInterface) {
                 if ($conn instanceof Connection && $conn->isTransaction()) {
                     $conn->rollBack();
-                    $this->logger->error('The Mysql Connection forget commit or rollback.');
+                    $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
                 }
                 $conn->release();
             }
