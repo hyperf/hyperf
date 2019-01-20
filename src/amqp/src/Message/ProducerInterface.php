@@ -16,5 +16,5 @@ interface ProducerInterface
     /**
      * Produce a message.
      */
-    public function produce(): void;
+    public function produce(MessageInterface $message): void;
 }
