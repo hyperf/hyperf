@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-interface PublisherInterface
+interface ProducerInterface
 {
     /**
      * Publish a message.
      */
-    public function publish(): void;
+    public function produce(): void;
 }

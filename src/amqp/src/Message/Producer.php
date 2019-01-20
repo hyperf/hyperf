@@ -15,7 +15,7 @@ use Hyperf\Amqp\Constants;
 use Hyperf\Amqp\Exceptions\MessageException;
 use PhpAmqpLib\Message\AMQPMessage;
 
-abstract class Publisher extends Message implements PublisherInterface
+abstract class Producer extends Message implements ProducerInterface
 {
     protected $data;
 
@@ -29,7 +29,7 @@ abstract class Publisher extends Message implements PublisherInterface
         $this->channel->close();
     }
 
-    public function publish(): void
+    public function produce(): void
     {
         $data = $this->getData();
         if (!isset($data)) {
