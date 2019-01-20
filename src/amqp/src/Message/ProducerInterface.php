@@ -14,7 +14,7 @@ namespace Hyperf\Amqp\Message;
 interface ProducerInterface
 {
     /**
-     * Publish a message.
+     * Produce a message.
      */
     public function produce(): void;
 }
