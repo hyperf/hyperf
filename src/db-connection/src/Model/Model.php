@@ -26,9 +26,8 @@ class Model extends BaseModel
      */
     public function getConnection(): ConnectionInterface
     {
-        $connectionName = $this->getConnectionName();
         $resolver = ApplicationContext::getContainer()->get(ConnectionResolver::class);
-        return $resolver->connection($connectionName);
+        return $resolver->connection($this->getConnectionName());
     }
 
     public function getEventDispatcher()

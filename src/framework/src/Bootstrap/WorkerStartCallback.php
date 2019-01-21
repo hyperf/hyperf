@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Di\Container;
-use Hyperf\Framework\Constants\SwooleEvent;
+use Hyperf\Framework\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;

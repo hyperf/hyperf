@@ -13,7 +13,6 @@ namespace Hyperf\Framework;
 
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
-use Hyperf\Framework\Constants\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
