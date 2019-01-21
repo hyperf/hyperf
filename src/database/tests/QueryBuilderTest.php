@@ -2577,7 +2577,9 @@ class QueryBuilderTest extends TestCase
         $builder->shouldReceive('get')->once()->andReturn($results);
 
         Context::set('path', $path);
-        define('BASE_PATH', __DIR__);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
 
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
