@@ -11,20 +11,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-use Hyperf\Amqp\CacheManager\CacheInterface;
-use Hyperf\Amqp\CacheManager\Memory;
-use Hyperf\Amqp\Connection;
 use Hyperf\Amqp\Exceptions\MessageException;
-use Hyperf\Amqp\Packer\JsonPacker;
-use Hyperf\Amqp\Pool\PoolFactory;
-use Hyperf\Contract\PackerInterface;
-use Hyperf\Framework\ApplicationContext;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AbstractConnection;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
 use Psr\Container\ContainerInterface;
 
-abstract class Message
+abstract class Message implements MessageInterface
 {
     /**
      * @var ContainerInterface
@@ -34,118 +24,48 @@ abstract class Message
     /**
      * @var string
      */
-    protected $name = 'default';
+    protected $poolName = 'default';
 
     protected $exchange;
 
-    protected $type = 'topic';
+    protected $type = Type::TOPIC;
 
     protected $routingKey;
 
-    /** @var AbstractConnection */
-    protected $connection;
-
-    /** @var AMQPChannel */
-    protected $channel;
-
-    /** @var PackerInterface */
-    protected $packer;
-
-    /** @var CacheInterface */
-    protected $cacheManager;
-
-    public function __construct()
+    // $passive = false,
+    // $durable = false,
+    // $auto_delete = true,
+    // $internal = false,
+    // $nowait = false,
+    // $arguments = array(),
+    // $ticket = null
+    public function getType(): string
     {
-        $this->check();
-
-        $this->container = ApplicationContext::getContainer();
-
-        if (!isset($this->channel)) {
-            /** @var Connection $conn */
-            $conn = $this->getConnection();
-            $this->connection = $conn->getConnection();
-            try {
-                $this->channel = $this->connection->channel();
-            } catch (AMQPRuntimeException $ex) {
-                // 获取channel时失败，重连Connection并获取channel
-                $this->connection->reconnect();
-                $this->channel = $this->connection->channel();
-            }
-        }
-
-        $this->declare();
+        return $this->type;
     }
 
-    public static function make()
+    public function getExchange(): string
     {
-        $args = func_get_args();
-        return new static(...$args);
+        return $this->exchange;
     }
 
-    public function close()
+    public function getRoutingKey(): string
     {
-        $this->connection->close();
+        return $this->routingKey;
     }
 
-    /**
-     * @return PackerInterface
-     */
-    public function getPacker(): PackerInterface
+    public function getPoolName(): string
     {
-        return $this->packer ?? new JsonPacker();
+        return $this->poolName;
     }
 
-    /**
-     * @param PackerInterface $packer
-     */
-    public function setPacker(PackerInterface $packer)
+    public function serialize(): string
     {
-        $this->packer = $packer;
-        return $this;
+        throw new MessageException('You must rewrite this method.');
     }
 
-    /**
-     * @return CacheInterface
-     */
-    public function getCacheManager(): CacheInterface
+    public function unserialize(string $data)
     {
-        return $this->cacheManager ?? new Memory();
-    }
-
-    /**
-     * @param CacheInterface $cacheManager
-     */
-    public function setCacheManager(CacheInterface $cacheManager)
-    {
-        $this->cacheManager = $cacheManager;
-        return $this;
-    }
-
-    protected function getConnection(): Connection
-    {
-        /** @var PoolFactory $factory */
-        $factory = $this->container->get(PoolFactory::class);
-        $pool = $factory->getAmqpPool($this->name);
-        return $pool->get();
-    }
-
-    abstract protected function declare();
-
-    /**
-     * @throws MessageException
-     */
-    protected function check()
-    {
-        if (!isset($this->exchange)) {
-            throw new MessageException('exchange is required!');
-        }
-
-        if (!isset($this->type)) {
-            throw new MessageException('type is required!');
-        }
-
-        if (!isset($this->routingKey)) {
-            throw new MessageException('routingKey is required!');
-        }
+        throw new MessageException('You must rewrite this method.');
     }
 }

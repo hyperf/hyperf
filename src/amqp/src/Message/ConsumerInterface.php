@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-interface ConsumerInterface
+interface ConsumerInterface extends MessageInterface
 {
-    /**
-     * Consume the message.
-     */
-    public function consume(): void;
+    public function getQueue(): string;
+
+    public function consume($data): bool;
+
+    public function isRequeue(): bool;
 }

@@ -12,70 +12,33 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Constants;
-use Hyperf\Amqp\Exceptions\MessageException;
-use PhpAmqpLib\Message\AMQPMessage;
+use Hyperf\Amqp\Packer\Packer;
+use Hyperf\Framework\ApplicationContext;
 
 abstract class Producer extends Message implements ProducerInterface
 {
-    protected $data;
+    protected $payload;
 
     protected $properties = [
         'content_type' => 'text/plain',
         'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT
     ];
 
-    public function __destruct()
+    public function getProperties(): array
     {
-        $this->channel->close();
+        return $this->properties;
     }
 
-    public function produce(): void
+    public function payload(): string
     {
-        $data = $this->getData();
-        if (!isset($data)) {
-            throw new MessageException('data is required!');
-        }
-
-        $packer = $this->getPacker();
-
-        $body = $packer->pack($data);
-        $msg = new AMQPMessage($body, $this->properties);
-        $this->channel->basic_publish($msg, $this->exchange, $this->routingKey);
+        return $this->serialize();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function serialize(): string
     {
-        return $this->data;
-    }
+        $application = ApplicationContext::getContainer();
+        $packer = $application->get(Packer::class);
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    protected function declare()
-    {
-        if (!$this->isDeclare()) {
-            $this->channel->exchange_declare($this->exchange, $this->type, false, true, false);
-
-            $key = sprintf('publisher:%s:%s', $this->exchange, $this->type);
-            $this->getCacheManager()->set($key, 1);
-        }
-    }
-
-    protected function isDeclare()
-    {
-        $key = sprintf('publisher:%s:%s', $this->exchange, $this->type);
-        if ($this->getCacheManager()->has($key)) {
-            return true;
-        }
-        return false;
+        return $packer->pack($this->payload);
     }
 }

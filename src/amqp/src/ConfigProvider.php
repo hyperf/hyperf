@@ -11,12 +11,17 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Packer\JsonPacker;
+use Hyperf\Amqp\Packer\Packer;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dependencies' => [
+                Producer::class => Producer::class,
+                Packer::class => JsonPacker::class,
             ],
             'commands' => [
             ],

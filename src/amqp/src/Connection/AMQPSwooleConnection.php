@@ -15,7 +15,6 @@ use PhpAmqpLib\Connection\AbstractConnection;
 
 class AMQPSwooleConnection extends AbstractConnection
 {
-
     public function __construct(
         string $host,
         int $port,
