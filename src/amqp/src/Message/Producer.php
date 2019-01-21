@@ -29,7 +29,7 @@ abstract class Producer extends Message implements ProducerInterface
         $this->channel->close();
     }
 
-    public function produce(): void
+    public function produce(MessageInterface $message): void
     {
         $data = $this->getData();
         if (!isset($data)) {
