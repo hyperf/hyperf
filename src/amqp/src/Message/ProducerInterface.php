@@ -11,10 +11,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-interface ProducerInterface
+interface ProducerInterface extends MessageInterface
 {
     /**
-     * Produce a message.
+     * @return mixed
      */
-    public function produce(MessageInterface $message): void;
+    public function payload(): string;
+
+    public function getProperties(): array;
 }

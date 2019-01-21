@@ -9,13 +9,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Amqp\CacheManager;
+namespace Hyperf\Amqp\Packer;
 
-interface CacheInterface
+use Hyperf\Contract\PackerInterface;
+
+interface Packer extends PackerInterface
 {
-    public function set($key, $value);
-
-    public function get($key, $default = null);
-
-    public function has($key): bool;
 }
