@@ -1,23 +1,31 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Database\Capsule;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\DatabaseManager;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Definition\DefinitionSource;
 use PDO;
 use Psr\Container\ContainerInterface as Container;
-use Hyperf\Database\DatabaseManager;
-use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Connectors\ConnectionFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 class Manager
 {
-
     /**
      * The database manager instance.
      *
@@ -58,18 +66,15 @@ class Manager
     }
 
     /**
-     * Setup the IoC container instance.
+     * Dynamically pass methods to the default connection.
      *
-     * @param  \Psr\Container\ContainerInterface  $container
-     * @return void
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
      */
-    protected function setupContainer(Container $container)
+    public static function __callStatic($method, $parameters)
     {
-        $this->container = $container;
-
-        if (! $this->container->has(ConfigInterface::class)) {
-            $this->container->instance(ConfigInterface::class, new Config([]));
-        }
+        return static::connection()->$method(...$parameters);
     }
 
     /**
@@ -101,30 +106,6 @@ class Manager
     public function setContainer(Container $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * Setup the default database configuration options.
-     *
-     * @return void
-     */
-    protected function setupDefaultConfiguration()
-    {
-        $this->container['config']['database.fetch'] = PDO::FETCH_OBJ;
-
-        $this->container['config']['database.default'] = 'default';
-    }
-
-    /**
-     * Build the database manager instance.
-     *
-     * @return void
-     */
-    protected function setupManager()
-    {
-        $factory = new ConnectionFactory($this->container);
-
-        $this->manager = new DatabaseManager($this->container, $factory);
     }
 
     /**
@@ -252,14 +233,41 @@ class Manager
     }
 
     /**
-     * Dynamically pass methods to the default connection.
+     * Setup the IoC container instance.
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @param  \Psr\Container\ContainerInterface  $container
+     * @return void
      */
-    public static function __callStatic($method, $parameters)
+    protected function setupContainer(Container $container)
     {
-        return static::connection()->$method(...$parameters);
+        $this->container = $container;
+
+        if (! $this->container->has(ConfigInterface::class)) {
+            $this->container->instance(ConfigInterface::class, new Config([]));
+        }
+    }
+
+    /**
+     * Setup the default database configuration options.
+     *
+     * @return void
+     */
+    protected function setupDefaultConfiguration()
+    {
+        $this->container['config']['database.fetch'] = PDO::FETCH_OBJ;
+
+        $this->container['config']['database.default'] = 'default';
+    }
+
+    /**
+     * Build the database manager instance.
+     *
+     * @return void
+     */
+    protected function setupManager()
+    {
+        $factory = new ConnectionFactory($this->container);
+
+        $this->manager = new DatabaseManager($this->container, $factory);
     }
 }

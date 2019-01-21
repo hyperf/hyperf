@@ -1,33 +1,35 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Database;
 
-
-use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression as Raw;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
-use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Framework\ApplicationContext;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Context;
-use Mockery;
-use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Database\Query\Expression as Raw;
-use Hyperf\Database\Model\Builder as ModelBuilder;
 use InvalidArgumentException;
-use Psr\Container\ContainerInterface;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase
 {
-
     public function tearDown()
     {
         Mockery::close();
@@ -38,36 +40,10 @@ class QueryBuilderTest extends TestCase
         return new Builder(Mockery::mock(ConnectionInterface::class), new Grammar(), Mockery::mock(Processor::class));
     }
 
-    protected function getBuilderWithProcessor(): Builder
-    {
-        return new Builder(Mockery::mock(ConnectionInterface::class), new Grammar(), new Processor());
-    }
-
     public function getMysqlBuilder(): Builder
     {
         return new Builder(Mockery::mock(ConnectionInterface::class), new MySqlGrammar(), Mockery::mock(Processor::class));
     }
-
-    protected function getMySqlBuilderWithProcessor(): Builder
-    {
-        $grammar = new MySqlGrammar;
-        $processor = new MySqlProcessor();
-
-        return new Builder(Mockery::mock(ConnectionInterface::class), $grammar, $processor);
-    }
-
-    /**
-     * @return \Mockery\MockInterface|Builder
-     */
-    protected function getMockQueryBuilder()
-    {
-        return Mockery::mock(Builder::class, [
-            Mockery::mock(ConnectionInterface::class),
-            new Grammar,
-            Mockery::mock(Processor::class),
-        ])->makePartial();
-    }
-
 
     public function testQueryBuilder()
     {
@@ -2844,4 +2820,28 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(['1520652582'], $builder->getBindings());
     }
 
+    protected function getBuilderWithProcessor(): Builder
+    {
+        return new Builder(Mockery::mock(ConnectionInterface::class), new Grammar(), new Processor());
+    }
+
+    protected function getMySqlBuilderWithProcessor(): Builder
+    {
+        $grammar = new MySqlGrammar;
+        $processor = new MySqlProcessor();
+
+        return new Builder(Mockery::mock(ConnectionInterface::class), $grammar, $processor);
+    }
+
+    /**
+     * @return \Mockery\MockInterface|Builder
+     */
+    protected function getMockQueryBuilder()
+    {
+        return Mockery::mock(Builder::class, [
+            Mockery::mock(ConnectionInterface::class),
+            new Grammar,
+            Mockery::mock(Processor::class),
+        ])->makePartial();
+    }
 }
