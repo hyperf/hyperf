@@ -1876,18 +1876,6 @@ class Builder
     }
 
     /**
-     * Create a new simple paginator instance.
-     */
-    protected function paginator(Collection $items, int $perPage, int $currentPage, array $options)
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
-    }
-
-    /**
      * Get the count of the total records for the paginator.
      *
      * @param  array $columns
@@ -2490,6 +2478,18 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Create a new simple paginator instance.
+     */
+    protected function paginator(Collection $items, int $perPage, int $currentPage, array $options)
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }
 
     /**
