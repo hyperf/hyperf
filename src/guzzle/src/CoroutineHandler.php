@@ -140,6 +140,9 @@ class CoroutineHandler
 
     protected function getResponse()
     {
+        if ($this->client->set_cookie_headers) {
+            $this->client->headers['set-cookie'] = $this->client->set_cookie_headers;
+        }
         $response = new \GuzzleHttp\Psr7\Response(
             $this->client->statusCode,
             isset($this->client->headers) ? $this->client->headers : [],
