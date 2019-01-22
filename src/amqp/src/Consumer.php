@@ -51,7 +51,7 @@ class Consumer extends Builder
         $this->message = $message;
         $this->channel = $this->getChannel($message->getPoolName());
 
-        $this->declare($message);
+        $this->declare($message, $this->channel);
 
         $this->channel->basic_consume(
             $this->message->getQueue(),
@@ -92,25 +92,19 @@ class Consumer extends Builder
             $channel = $this->getChannel($message->getPoolName());
         }
 
-        $channel->exchange_declare(
-            $message->getExchange(),
-            $message->getType(),
-            false,
-            true,
-            false
-        );
+        parent::declare($message, $channel);
 
-        $header = [
-            'x-ha-policy' => ['S', 'all']
-        ];
+        $builder = $message->getQueueDeclareBuilder();
+
         $channel->queue_declare(
-            $message->getQueue(),
-            false,
-            true,
-            false,
-            false,
-            false,
-            $header
+            $builder->getQueue(),
+            $builder->isPassive(),
+            $builder->isDurable(),
+            $builder->isExclusive(),
+            $builder->isAutoDelete(),
+            $builder->isNowait(),
+            $builder->getArguments(),
+            $builder->getTicket()
         );
 
         $channel->queue_bind(

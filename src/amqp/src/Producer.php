@@ -27,21 +27,4 @@ class Producer extends Builder
             $message->getRoutingKey()
         );
     }
-
-    public function declare(ProducerInterface $message): void
-    {
-        $builder = $message->getExchangeDeclareBuilder();
-
-        $this->getChannel($message->getPoolName())->exchange_declare(
-            $builder->getExchange(),
-            $builder->getType(),
-            $builder->isPassive(),
-            $builder->isDurable(),
-            $builder->isAutoDelete(),
-            $builder->isInternal(),
-            $builder->isNowait(),
-            $builder->getArguments(),
-            $builder->getTicket()
-        );
-    }
 }

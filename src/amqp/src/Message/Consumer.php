@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
+use Hyperf\Amqp\DeclareBuilder\QueueDeclareBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
 
@@ -28,6 +29,12 @@ abstract class Consumer extends Message implements ConsumerInterface
     public function isRequeue(): bool
     {
         return $this->requeue;
+    }
+
+    public function getQueueDeclareBuilder(): QueueDeclareBuilder
+    {
+        return (new QueueDeclareBuilder())
+            ->setQueue($this->getQueue());
     }
 
     public function unserialize(string $data)

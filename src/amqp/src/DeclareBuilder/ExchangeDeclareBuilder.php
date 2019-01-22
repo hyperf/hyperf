@@ -19,11 +19,7 @@ class ExchangeDeclareBuilder extends DeclareBuilder
 
     protected $type;
 
-    public function __construct(MessageInterface $message)
-    {
-        $this->setExchange($message->getExchange());
-        $this->setType($message->getType());
-    }
+    protected $internal = false;
 
     /**
      * @return string
@@ -58,6 +54,24 @@ class ExchangeDeclareBuilder extends DeclareBuilder
     public function setType(string $type): ExchangeDeclareBuilder
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInternal(): bool
+    {
+        return $this->internal;
+    }
+
+    /**
+     * @param bool $internal
+     * @return ExchangeDeclareBuilder
+     */
+    public function setInternal(bool $internal): ExchangeDeclareBuilder
+    {
+        $this->internal = $internal;
         return $this;
     }
 }

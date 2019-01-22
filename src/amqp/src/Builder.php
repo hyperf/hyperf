@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
@@ -28,6 +29,27 @@ class Builder
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+    }
+
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    {
+        if (!$channel) {
+            $channel = $this->getChannel($message->getPoolName());
+        }
+
+        $builder = $message->getExchangeDeclareBuilder();
+
+        $channel->exchange_declare(
+            $builder->getExchange(),
+            $builder->getType(),
+            $builder->isPassive(),
+            $builder->isDurable(),
+            $builder->isAutoDelete(),
+            $builder->isInternal(),
+            $builder->isNowait(),
+            $builder->getArguments(),
+            $builder->getTicket()
+        );
     }
 
     protected function getChannel(string $poolName): AMQPChannel

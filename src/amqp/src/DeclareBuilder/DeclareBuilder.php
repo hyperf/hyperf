@@ -17,9 +17,7 @@ class DeclareBuilder
 
     protected $durable = true;
 
-    protected $autoDelete = true;
-
-    protected $internal = false;
+    protected $autoDelete = false;
 
     protected $nowait = false;
 
@@ -78,24 +76,6 @@ class DeclareBuilder
     public function setAutoDelete(bool $autoDelete): self
     {
         $this->autoDelete = $autoDelete;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInternal(): bool
-    {
-        return $this->internal;
-    }
-
-    /**
-     * @param bool $internal
-     * @return ExchangeDeclareBuilder
-     */
-    public function setInternal(bool $internal): self
-    {
-        $this->internal = $internal;
         return $this;
     }
 
