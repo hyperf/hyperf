@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Constants;
-use Hyperf\Amqp\ExchangeDeclareBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
 

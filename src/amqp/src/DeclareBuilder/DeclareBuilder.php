@@ -1,15 +1,18 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
-namespace Hyperf\Amqp;
+namespace Hyperf\Amqp\DeclareBuilder;
 
-use Hyperf\Amqp\Message\MessageInterface;
-
-class ExchangeDeclareBuilder
+class DeclareBuilder
 {
-    protected $exchange;
-
-    protected $type;
-
     protected $passive = false;
 
     protected $durable = true;
@@ -24,48 +27,6 @@ class ExchangeDeclareBuilder
 
     protected $ticket = null;
 
-    public function __construct(MessageInterface $message)
-    {
-        $this->setExchange($message->getExchange());
-        $this->setType($message->getType());
-    }
-
-    /**
-     * @return string
-     */
-    public function getExchange(): string
-    {
-        return $this->exchange;
-    }
-
-    /**
-     * @param string $exchange
-     * @return ExchangeDeclareBuilder
-     */
-    public function setExchange(string $exchange): ExchangeDeclareBuilder
-    {
-        $this->exchange = $exchange;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return ExchangeDeclareBuilder
-     */
-    public function setType(string $type): ExchangeDeclareBuilder
-    {
-        $this->type = $type;
-        return $this;
-    }
-
     /**
      * @return bool
      */
@@ -78,7 +39,7 @@ class ExchangeDeclareBuilder
      * @param bool $passive
      * @return ExchangeDeclareBuilder
      */
-    public function setPassive(bool $passive): ExchangeDeclareBuilder
+    public function setPassive(bool $passive): self
     {
         $this->passive = $passive;
         return $this;
@@ -96,7 +57,7 @@ class ExchangeDeclareBuilder
      * @param bool $durable
      * @return ExchangeDeclareBuilder
      */
-    public function setDurable(bool $durable): ExchangeDeclareBuilder
+    public function setDurable(bool $durable): self
     {
         $this->durable = $durable;
         return $this;
@@ -114,7 +75,7 @@ class ExchangeDeclareBuilder
      * @param bool $autoDelete
      * @return ExchangeDeclareBuilder
      */
-    public function setAutoDelete(bool $autoDelete): ExchangeDeclareBuilder
+    public function setAutoDelete(bool $autoDelete): self
     {
         $this->autoDelete = $autoDelete;
         return $this;
@@ -132,7 +93,7 @@ class ExchangeDeclareBuilder
      * @param bool $internal
      * @return ExchangeDeclareBuilder
      */
-    public function setInternal(bool $internal): ExchangeDeclareBuilder
+    public function setInternal(bool $internal): self
     {
         $this->internal = $internal;
         return $this;
@@ -150,7 +111,7 @@ class ExchangeDeclareBuilder
      * @param bool $nowait
      * @return ExchangeDeclareBuilder
      */
-    public function setNowait(bool $nowait): ExchangeDeclareBuilder
+    public function setNowait(bool $nowait): self
     {
         $this->nowait = $nowait;
         return $this;
@@ -168,7 +129,7 @@ class ExchangeDeclareBuilder
      * @param array $arguments
      * @return ExchangeDeclareBuilder
      */
-    public function setArguments(array $arguments): ExchangeDeclareBuilder
+    public function setArguments(array $arguments): self
     {
         $this->arguments = $arguments;
         return $this;

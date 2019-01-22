@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
+use Hyperf\Amqp\DeclareBuilder\ExchangeDeclareBuilder;
 use Hyperf\Amqp\Exceptions\MessageException;
-use Hyperf\Amqp\ExchangeDeclareBuilder;
 use Psr\Container\ContainerInterface;
 
 abstract class Message implements MessageInterface
