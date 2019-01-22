@@ -13,7 +13,7 @@ namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Support\Arr;
+use Hyperf\Utils\Arr;
 
 class MorphToMany extends BelongsToMany
 {

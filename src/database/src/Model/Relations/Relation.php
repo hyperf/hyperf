@@ -16,7 +16,7 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Support\Arr;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Utils\Traits\Macroable;
 
