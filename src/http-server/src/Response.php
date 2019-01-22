@@ -21,7 +21,6 @@ use Swoft\Http\Message\Stream\SwooleStream;
 
 class Response implements ResponseInterface
 {
-
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
      *
@@ -75,5 +74,4 @@ class Response implements ResponseInterface
     {
         return Context::get(PsrResponseInterface::class);
     }
-
 }

@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Exceptions\MessageException;
 use Hyperf\Amqp\Message\ConsumerInterface;
+use Hyperf\Amqp\Message\MessageInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -51,7 +53,7 @@ class Consumer extends Builder
         $this->message = $message;
         $this->channel = $this->getChannel($message->getPoolName());
 
-        $this->declare();
+        $this->declare($message, $this->channel);
 
         $this->channel->basic_consume(
             $this->message->getQueue(),
@@ -84,5 +86,37 @@ class Consumer extends Builder
         } catch (\Throwable $ex) {
             $this->channel->basic_reject($msg->delivery_info['delivery_tag'], $this->message->isRequeue());
         }
+    }
+
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    {
+        if (!$message instanceof ConsumerInterface) {
+            throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
+        }
+
+        if (!$channel) {
+            $channel = $this->getChannel($message->getPoolName());
+        }
+
+        parent::declare($message, $channel);
+
+        $builder = $message->getQueueDeclareBuilder();
+
+        $channel->queue_declare(
+            $builder->getQueue(),
+            $builder->isPassive(),
+            $builder->isDurable(),
+            $builder->isExclusive(),
+            $builder->isAutoDelete(),
+            $builder->isNowait(),
+            $builder->getArguments(),
+            $builder->getTicket()
+        );
+
+        $channel->queue_bind(
+            $message->getQueue(),
+            $message->getExchange(),
+            $message->getRoutingKey()
+        );
     }
 }

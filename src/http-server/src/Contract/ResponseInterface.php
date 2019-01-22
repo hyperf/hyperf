@@ -17,7 +17,6 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 interface ResponseInterface
 {
-
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
      *

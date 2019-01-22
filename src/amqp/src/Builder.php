@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Message\ConsumerInterface;
-use Hyperf\Amqp\Message\ProducerInterface;
+use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
@@ -32,44 +31,25 @@ class Builder
         $this->container = $container;
     }
 
-    public function declare(): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
-        if ($this->message instanceof ProducerInterface) {
-            $this->channel->exchange_declare(
-                $this->message->getExchange(),
-                $this->message->getType(),
-                false,
-                true,
-                false
-            );
-        } elseif ($this->message instanceof ConsumerInterface) {
-            $this->channel->exchange_declare(
-                $this->message->getExchange(),
-                $this->message->getType(),
-                false,
-                true,
-                false
-            );
-
-            $header = [
-                'x-ha-policy' => ['S', 'all']
-            ];
-            $this->channel->queue_declare(
-                $this->message->getQueue(),
-                false,
-                true,
-                false,
-                false,
-                false,
-                $header
-            );
-
-            $this->channel->queue_bind(
-                $this->message->getQueue(),
-                $this->message->getExchange(),
-                $this->message->getRoutingKey()
-            );
+        if (!$channel) {
+            $channel = $this->getChannel($message->getPoolName());
         }
+
+        $builder = $message->getExchangeDeclareBuilder();
+
+        $channel->exchange_declare(
+            $builder->getExchange(),
+            $builder->getType(),
+            $builder->isPassive(),
+            $builder->isDurable(),
+            $builder->isAutoDelete(),
+            $builder->isInternal(),
+            $builder->isNowait(),
+            $builder->getArguments(),
+            $builder->getTicket()
+        );
     }
 
     protected function getChannel(string $poolName): AMQPChannel

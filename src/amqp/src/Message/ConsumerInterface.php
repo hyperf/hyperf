@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
+use Hyperf\Amqp\DeclareBuilder\QueueDeclareBuilder;
+
 interface ConsumerInterface extends MessageInterface
 {
     public function getQueue(): string;
@@ -18,4 +20,6 @@ interface ConsumerInterface extends MessageInterface
     public function consume($data): bool;
 
     public function isRequeue(): bool;
+
+    public function getQueueDeclareBuilder(): QueueDeclareBuilder;
 }
