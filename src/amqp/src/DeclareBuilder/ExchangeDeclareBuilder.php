@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\DeclareBuilder;
 
-use Hyperf\Amqp\Message\MessageInterface;
-
 class ExchangeDeclareBuilder extends DeclareBuilder
 {
     protected $exchange;

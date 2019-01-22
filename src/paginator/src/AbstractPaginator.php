@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Paginator;
 
@@ -6,13 +15,20 @@ use ArrayIterator;
 use Closure;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
 use Hyperf\Utils\Collection;
+use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
 abstract class AbstractPaginator implements PaginatorInterface
 {
     use ForwardsCalls;
+
+    /**
+     * The number of links to display on each side of current page link.
+     *
+     * @var int
+     */
+    public $onEachSide = 3;
 
     /**
      * All of the items being paginated.
@@ -64,13 +80,6 @@ abstract class AbstractPaginator implements PaginatorInterface
     protected $pageName = 'page';
 
     /**
-     * The number of links to display on each side of current page link.
-     *
-     * @var int
-     */
-    public $onEachSide = 3;
-
-    /**
      * The current path resolver callback.
      *
      * @var \Closure
@@ -85,11 +94,21 @@ abstract class AbstractPaginator implements PaginatorInterface
     protected static $currentPageResolver;
 
     /**
-     * Determine if the given value is a valid page number.
+     * Make dynamic calls into the collection.
+     *
+     * @return mixed
      */
-    protected function isValidPageNumber(int $page): bool
+    public function __call(string $method, array $parameters)
     {
-        return $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false;
+        return $this->forwardCallTo($this->getCollection(), $method, $parameters);
+    }
+
+    /**
+     * Render the contents of the paginator when casting to string.
+     */
+    public function __toString(): string
+    {
+        return (string)$this->render();
     }
 
     /**
@@ -168,38 +187,6 @@ abstract class AbstractPaginator implements PaginatorInterface
         }
 
         return $this->addQuery($key, $value);
-    }
-
-    /**
-     * Add an array of query string values.
-     */
-    protected function appendArray(array $keys): self
-    {
-        foreach ($keys as $key => $value) {
-            $this->addQuery($key, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a query string value to the paginator.
-     */
-    protected function addQuery(string $key, string $value): self
-    {
-        if ($key !== $this->pageName) {
-            $this->query[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Build the full fragment portion of a URL.
-     */
-    protected function buildFragment(): string
-    {
-        return $this->fragment ? '#' . $this->fragment : '';
     }
 
     /**
@@ -437,20 +424,42 @@ abstract class AbstractPaginator implements PaginatorInterface
     }
 
     /**
-     * Make dynamic calls into the collection.
-     *
-     * @return mixed
+     * Determine if the given value is a valid page number.
      */
-    public function __call(string $method, array $parameters)
+    protected function isValidPageNumber(int $page): bool
     {
-        return $this->forwardCallTo($this->getCollection(), $method, $parameters);
+        return $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false;
     }
 
     /**
-     * Render the contents of the paginator when casting to string.
+     * Add an array of query string values.
      */
-    public function __toString(): string
+    protected function appendArray(array $keys): self
     {
-        return (string)$this->render();
+        foreach ($keys as $key => $value) {
+            $this->addQuery($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a query string value to the paginator.
+     */
+    protected function addQuery(string $key, string $value): self
+    {
+        if ($key !== $this->pageName) {
+            $this->query[$key] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Build the full fragment portion of a URL.
+     */
+    protected function buildFragment(): string
+    {
+        return $this->fragment ? '#' . $this->fragment : '';
     }
 }

@@ -75,40 +75,9 @@ class Request implements RequestInterface
         ];
     }
 
-    private function getInputData(): array
-    {
-        return $this->storeParsedData(function () {
-            $request = $this->getRequest();
-            $contentType = $request->getHeaderLine('Content-Type');
-            if ($contentType && Str::startsWith($contentType, 'application/json')) {
-                $body = $request->getBody();
-                $data = json_decode($body->getContents(), true) ?? [];
-            } elseif (is_array($request->getParsedBody())) {
-                $data = $request->getParsedBody();
-            } else {
-                $data = [];
-            }
-
-            return array_merge($data, $request->getQueryParams());
-        });
-    }
-
     public function header(string $key = null, $default = null)
     {
         return $this->getRequest()->getHeaderLine($key);
-    }
-
-    private function getRequest(): ServerRequestInterface
-    {
-        return Context::get(ServerRequestInterface::class);
-    }
-
-    private function storeParsedData(callable $callback)
-    {
-        if (! Context::has(self::CONTEXT_KEY)) {
-            return Context::set(self::CONTEXT_KEY, call($callback));
-        }
-        return Context::get(self::CONTEXT_KEY);
     }
 
     public function getProtocolVersion()
@@ -261,4 +230,34 @@ class Request implements RequestInterface
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
+    private function getInputData(): array
+    {
+        return $this->storeParsedData(function () {
+            $request = $this->getRequest();
+            $contentType = $request->getHeaderLine('Content-Type');
+            if ($contentType && Str::startsWith($contentType, 'application/json')) {
+                $body = $request->getBody();
+                $data = json_decode($body->getContents(), true) ?? [];
+            } elseif (is_array($request->getParsedBody())) {
+                $data = $request->getParsedBody();
+            } else {
+                $data = [];
+            }
+
+            return array_merge($data, $request->getQueryParams());
+        });
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return Context::get(ServerRequestInterface::class);
+    }
+
+    private function storeParsedData(callable $callback)
+    {
+        if (! Context::has(self::CONTEXT_KEY)) {
+            return Context::set(self::CONTEXT_KEY, call($callback));
+        }
+        return Context::get(self::CONTEXT_KEY);
+    }
 }

@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\Paginator;
 
@@ -35,28 +44,6 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
         $this->path = $this->path !== '/' ? rtrim($this->path, '/') : $this->path;
 
         $this->setItems($items);
-    }
-
-    /**
-     * Get the current page for the request.
-     */
-    protected function setCurrentPage(int $currentPage): int
-    {
-        $currentPage = $currentPage ? : static::resolveCurrentPage();
-
-        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
-    }
-
-    /**
-     * Set the items for the paginator.
-     */
-    protected function setItems($items): void
-    {
-        $this->items = $items instanceof Collection ? $items : Collection::make($items);
-
-        $this->hasMore = $this->items->count() > $this->perPage;
-
-        $this->items = $this->items->slice(0, $this->perPage);
     }
 
     /**
@@ -128,5 +115,27 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
+    }
+
+    /**
+     * Get the current page for the request.
+     */
+    protected function setCurrentPage(int $currentPage): int
+    {
+        $currentPage = $currentPage ? : static::resolveCurrentPage();
+
+        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
+    }
+
+    /**
+     * Set the items for the paginator.
+     */
+    protected function setItems($items): void
+    {
+        $this->items = $items instanceof Collection ? $items : Collection::make($items);
+
+        $this->hasMore = $this->items->count() > $this->perPage;
+
+        $this->items = $this->items->slice(0, $this->perPage);
     }
 }

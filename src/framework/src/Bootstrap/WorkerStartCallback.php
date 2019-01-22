@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Di\Container;
-use Hyperf\Framework\SwooleEvent;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\SwooleEvent;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;
 use Psr\Container\ContainerInterface;
