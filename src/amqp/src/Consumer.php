@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Exceptions\MessageException;
 use Hyperf\Amqp\Message\ConsumerInterface;
+use Hyperf\Amqp\Message\MessageInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -86,8 +88,12 @@ class Consumer extends Builder
         }
     }
 
-    public function declare(ConsumerInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
+        if (!$message instanceof ConsumerInterface) {
+            throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
+        }
+
         if (!$channel) {
             $channel = $this->getChannel($message->getPoolName());
         }
