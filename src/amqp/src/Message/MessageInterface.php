@@ -11,18 +11,30 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
+use Hyperf\Amqp\ExchangeDeclareBuilder;
+
 interface MessageInterface
 {
+    /**
+     * Pool name for amqp.
+     */
     public function getPoolName(): string;
 
-    /**
-     * @return string Enum value of \Hyperf\Amqp\Message\Type
-     */
     public function getType(): string;
 
     public function getExchange(): string;
 
     public function getRoutingKey(): string;
+
+    public function getExchangeDeclareBuilder(): ExchangeDeclareBuilder;
+
+    // $passive = false,
+    // $durable = false,
+    // $auto_delete = true,
+    // $internal = false,
+    // $nowait = false,
+    // $arguments = array(),
+    // $ticket = null
 
     /**
      * Serialize the message body to a string.

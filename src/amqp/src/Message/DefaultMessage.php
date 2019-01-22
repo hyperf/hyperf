@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
+use Hyperf\Amqp\ExchangeDeclareBuilder;
+
 class DefaultMessage implements MessageInterface
 {
     public $payload;
@@ -49,5 +51,10 @@ class DefaultMessage implements MessageInterface
     public function getPoolName(): string
     {
         return 'default';
+    }
+
+    public function getExchangeDeclareBuilder(): ExchangeDeclareBuilder
+    {
+        // TODO: Implement getExchangeDeclareParams() method.
     }
 }

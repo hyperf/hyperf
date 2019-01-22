@@ -51,7 +51,7 @@ class Consumer extends Builder
         $this->message = $message;
         $this->channel = $this->getChannel($message->getPoolName());
 
-        $this->declare();
+        $this->declare($message);
 
         $this->channel->basic_consume(
             $this->message->getQueue(),
@@ -84,5 +84,39 @@ class Consumer extends Builder
         } catch (\Throwable $ex) {
             $this->channel->basic_reject($msg->delivery_info['delivery_tag'], $this->message->isRequeue());
         }
+    }
+
+    public function declare(ConsumerInterface $message, ?AMQPChannel $channel = null): void
+    {
+        if (!$channel) {
+            $channel = $this->getChannel($message->getPoolName());
+        }
+
+        $channel->exchange_declare(
+            $message->getExchange(),
+            $message->getType(),
+            false,
+            true,
+            false
+        );
+
+        $header = [
+            'x-ha-policy' => ['S', 'all']
+        ];
+        $channel->queue_declare(
+            $message->getQueue(),
+            false,
+            true,
+            false,
+            false,
+            false,
+            $header
+        );
+
+        $channel->queue_bind(
+            $message->getQueue(),
+            $message->getExchange(),
+            $message->getRoutingKey()
+        );
     }
 }

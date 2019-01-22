@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Exceptions\MessageException;
+use Hyperf\Amqp\ExchangeDeclareBuilder;
 use Psr\Container\ContainerInterface;
 
 abstract class Message implements MessageInterface
@@ -57,6 +58,13 @@ abstract class Message implements MessageInterface
     public function getPoolName(): string
     {
         return $this->poolName;
+    }
+
+    public function getExchangeDeclareBuilder(): ExchangeDeclareBuilder
+    {
+        return (new ExchangeDeclareBuilder())
+            ->setExchange($this->getExchange())
+            ->setType($this->getType());
     }
 
     public function serialize(): string
