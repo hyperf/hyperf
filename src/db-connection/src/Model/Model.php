@@ -47,8 +47,8 @@ class Model extends BaseModel
      */
     public function getRepository()
     {
-        if (! $this->repository || ! class_exists($this->repository) || ! interface_exists($this->repository)) {
-            throw new RuntimeException('Cannot detect the repository of %s', static::class);
+        if (! $this->repository || ! class_exists($this->repository) && ! interface_exists($this->repository)) {
+            throw new RuntimeException(sprintf('Cannot detect the repository of %s', static::class));
         }
         return $this->getContainer()->get($this->repository);
     }
