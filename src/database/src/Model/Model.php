@@ -590,7 +590,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param  \Hyperf\Support\Collection|array|int $ids
+     * @param  \Hyperf\Utils\Collection|array|int $ids
      * @return int
      */
     public static function destroy($ids)
@@ -698,7 +698,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function newModelQuery()
     {
-        return $this->newEloquentBuilder(
+        return $this->newModelBuilder(
             $this->newBaseQueryBuilder()
         )->setModel($this);
     }
@@ -770,7 +770,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * @param  \Hyperf\Database\Query\Builder $query
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function newEloquentBuilder($query)
+    public function newModelBuilder($query)
     {
         return new Builder($query);
     }
@@ -986,7 +986,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     {
         return isset($this->table)
             ? $this->table
-            : Str::snake(class_basename($this));
+            : Str::snake(Str::pluralStudly(class_basename($this)));
     }
 
     /**
