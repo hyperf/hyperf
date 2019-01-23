@@ -21,6 +21,7 @@
         "nikic/php-parser": "^4.1",
         "doctrine/annotations": "^1.6",
         "doctrine/instantiator": "^1.0",
+        "doctrine/inflector": "^1.3",
         "php-di/phpdoc-reader": "^2.0.1",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",

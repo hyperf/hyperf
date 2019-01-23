@@ -11,7 +11,8 @@
     "support": {
     },
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "doctrine/inflector": "^1.3"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
