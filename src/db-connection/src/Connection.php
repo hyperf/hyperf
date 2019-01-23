@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -77,7 +78,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 

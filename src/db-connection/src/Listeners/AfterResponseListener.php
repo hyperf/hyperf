@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -50,7 +51,7 @@ class AfterResponseListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            AfterResponse::class
+            AfterResponse::class,
         ];
     }
 

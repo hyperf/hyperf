@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -44,7 +45,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param  string $name
+     * @param  string              $name
      * @return ConnectionInterface
      */
     public function connection($name = null)
@@ -81,8 +82,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Set the default connection name.
      *
-     * @param  string $name
-     * @return void
+     * @param string $name
      */
     public function setDefaultConnection($name)
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -23,7 +24,7 @@ class ModelEventListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            Event::class
+            Event::class,
         ];
     }
 
