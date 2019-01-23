@@ -39,7 +39,7 @@ class ConsumerProcess extends Process
         $this->config = $factory->getConfig($this->queue);
 
         $this->name = "queue.{$this->queue}";
-        $this->processes = $this->config['processes'] ?? 1;
+        $this->nums = $this->config['processes'] ?? 1;
     }
 
     public function handle()

@@ -29,7 +29,7 @@ abstract class Process implements ProcessInterface
     /**
      * @var int
      */
-    protected $processes = 1;
+    protected $nums = 1;
 
     /**
      * @var ContainerInterface
@@ -51,7 +51,7 @@ abstract class Process implements ProcessInterface
 
     public function bind(Server $server)
     {
-        $num = $this->processes;
+        $num = $this->nums;
         for ($i = 0; $i < $num; $i++) {
             $server->addProcess(new SwooleProcess(function () use ($i) {
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
