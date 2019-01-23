@@ -39,7 +39,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a rename column command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @param  \Hyperf\Database\Connection $connection
      * @return array
      */
@@ -52,7 +52,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a change column command into a series of SQL statements.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @param  \Hyperf\Database\Connection $connection
      * @return array
      *
@@ -67,7 +67,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a foreign key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -208,7 +208,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the SQL for the column data type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function getType(Fluent $column)
@@ -221,7 +221,7 @@ abstract class Grammar extends BaseGrammar
      *
      * @param  string $sql
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -240,7 +240,7 @@ abstract class Grammar extends BaseGrammar
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
      * @param  string $name
-     * @return \Hyperf\Support\Fluent|null
+     * @return \Hyperf\Utils\Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {

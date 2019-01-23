@@ -17,7 +17,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Support\Fluent;
+use Hyperf\Utils\Fluent;
 use RuntimeException;
 
 class ChangeColumn
@@ -27,7 +27,7 @@ class ChangeColumn
      *
      * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
      * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Hyperf\Support\Fluent  $command
+     * @param  \Hyperf\Utils\Fluent  $command
      * @param  \Hyperf\Database\Connection $connection
      * @return array
      *
@@ -106,7 +106,7 @@ class ChangeColumn
      * Get the Doctrine column instance for a column change.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Hyperf\Support\Fluent  $fluent
+     * @param  \Hyperf\Utils\Fluent  $fluent
      * @return \Doctrine\DBAL\Schema\Column
      */
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
@@ -120,7 +120,7 @@ class ChangeColumn
     /**
      * Get the Doctrine column change options.
      *
-     * @param  \Hyperf\Support\Fluent  $fluent
+     * @param  \Hyperf\Utils\Fluent  $fluent
      * @return array
      */
     protected static function getDoctrineColumnChangeOptions(Fluent $fluent)

@@ -13,7 +13,7 @@ namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Support\Collection as BaseCollection;
+use Hyperf\Utils\Collection as BaseCollection;
 
 trait InteractsWithPivotTable
 {
@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  \Hyperf\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
+     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array  $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,7 +84,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  \Hyperf\Support\Collection|\Hyperf\Database\Model\Model|array  $ids
+     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array  $ids
      * @param  bool   $detaching
      * @return array
      */

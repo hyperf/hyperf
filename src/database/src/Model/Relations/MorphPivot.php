@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
-use Hyperf\Support\Str;
+use Hyperf\Utils\Str;
 
 class MorphPivot extends Pivot
 {

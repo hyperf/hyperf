@@ -20,13 +20,14 @@ use Hyperf\Pagination\Paginator;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\ForwardsCalls;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
 {
-    use BuildsQueries, Concerns\QueriesRelationships;
+    use BuildsQueries, ForwardsCalls, Concerns\QueriesRelationships;
 
     /**
      * The base query builder instance.
@@ -722,7 +723,7 @@ class Builder
      *
      * @param  string $column
      * @param  string|null $key
-     * @return \Hyperf\Support\Collection
+     * @return \Hyperf\Utils\Collection
      */
     public function pluck($column, $key = null)
     {

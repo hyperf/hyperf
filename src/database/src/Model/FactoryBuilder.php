@@ -256,7 +256,7 @@ class FactoryBuilder
     /**
      * Run after making callbacks on a collection of models.
      *
-     * @param  \Hyperf\Support\Collection  $models
+     * @param  \Hyperf\Utils\Collection  $models
      * @return void
      */
     public function callAfterMaking($models)
@@ -267,7 +267,7 @@ class FactoryBuilder
     /**
      * Run after creating callbacks on a collection of models.
      *
-     * @param  \Hyperf\Support\Collection  $models
+     * @param  \Hyperf\Utils\Collection  $models
      * @return void
      */
     public function callAfterCreating($models)
@@ -278,7 +278,7 @@ class FactoryBuilder
     /**
      * Set the connection name on the results and store them.
      *
-     * @param  \Hyperf\Support\Collection  $results
+     * @param  \Hyperf\Utils\Collection  $results
      * @return void
      */
     protected function store($results)
@@ -418,7 +418,7 @@ class FactoryBuilder
      * Call after callbacks for each model and state.
      *
      * @param  array  $afterCallbacks
-     * @param  \Hyperf\Support\Collection  $models
+     * @param  \Hyperf\Utils\Collection  $models
      * @return void
      */
     protected function callAfter(array $afterCallbacks, $models)

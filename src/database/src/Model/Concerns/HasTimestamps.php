@@ -67,7 +67,7 @@ trait HasTimestamps
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \Hyperf\Support\Carbon
+     * @return \Hyperf\Utils\Carbon
      */
     public function freshTimestamp()
     {

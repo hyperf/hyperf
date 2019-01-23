@@ -58,7 +58,7 @@ class MySqlGrammar extends Grammar
      * Compile a create table command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @param  \Hyperf\Database\Connection $connection
      * @return string
      */
@@ -93,7 +93,7 @@ class MySqlGrammar extends Grammar
      * Compile an add column command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
@@ -107,7 +107,7 @@ class MySqlGrammar extends Grammar
      * Compile a primary key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
@@ -121,7 +121,7 @@ class MySqlGrammar extends Grammar
      * Compile a unique key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
@@ -133,7 +133,7 @@ class MySqlGrammar extends Grammar
      * Compile a plain index key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
@@ -145,7 +145,7 @@ class MySqlGrammar extends Grammar
      * Compile a spatial index key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
@@ -157,7 +157,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop table command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDrop(Blueprint $blueprint, Fluent $command)
@@ -169,7 +169,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop table (if exists) command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command)
@@ -181,7 +181,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop column command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropColumn(Blueprint $blueprint, Fluent $command)
@@ -195,7 +195,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop primary key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropPrimary(Blueprint $blueprint, Fluent $command)
@@ -207,7 +207,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop unique key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropUnique(Blueprint $blueprint, Fluent $command)
@@ -221,7 +221,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop index command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropIndex(Blueprint $blueprint, Fluent $command)
@@ -235,7 +235,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop spatial index command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
@@ -247,7 +247,7 @@ class MySqlGrammar extends Grammar
      * Compile a drop foreign key command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileDropForeign(Blueprint $blueprint, Fluent $command)
@@ -261,7 +261,7 @@ class MySqlGrammar extends Grammar
      * Compile a rename table command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileRename(Blueprint $blueprint, Fluent $command)
@@ -275,7 +275,7 @@ class MySqlGrammar extends Grammar
      * Compile a rename index command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
@@ -353,7 +353,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial Geometry type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeGeometry(Fluent $column)
@@ -364,7 +364,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial Point type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typePoint(Fluent $column)
@@ -375,7 +375,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial LineString type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeLineString(Fluent $column)
@@ -386,7 +386,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial Polygon type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typePolygon(Fluent $column)
@@ -397,7 +397,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial GeometryCollection type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeGeometryCollection(Fluent $column)
@@ -408,7 +408,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial MultiPoint type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeMultiPoint(Fluent $column)
@@ -419,7 +419,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial MultiLineString type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeMultiLineString(Fluent $column)
@@ -430,7 +430,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial MultiPolygon type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     public function typeMultiPolygon(Fluent $column)
@@ -442,7 +442,7 @@ class MySqlGrammar extends Grammar
      * Create the main create table clause.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @param  \Hyperf\Database\Connection $connection
      * @return string
      */
@@ -510,7 +510,7 @@ class MySqlGrammar extends Grammar
      * Compile an index creation command.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $command
+     * @param  \Hyperf\Utils\Fluent $command
      * @param  string $type
      * @return string
      */
@@ -529,7 +529,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a char type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeChar(Fluent $column)
@@ -540,7 +540,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a string type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeString(Fluent $column)
@@ -551,7 +551,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a text type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeText(Fluent $column)
@@ -562,7 +562,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a medium text type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeMediumText(Fluent $column)
@@ -573,7 +573,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a long text type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeLongText(Fluent $column)
@@ -584,7 +584,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a big integer type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeBigInteger(Fluent $column)
@@ -595,7 +595,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an integer type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeInteger(Fluent $column)
@@ -606,7 +606,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a medium integer type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeMediumInteger(Fluent $column)
@@ -617,7 +617,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a tiny integer type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeTinyInteger(Fluent $column)
@@ -628,7 +628,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a small integer type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeSmallInteger(Fluent $column)
@@ -639,7 +639,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a float type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeFloat(Fluent $column)
@@ -650,7 +650,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a double type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeDouble(Fluent $column)
@@ -665,7 +665,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a decimal type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeDecimal(Fluent $column)
@@ -676,7 +676,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a boolean type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeBoolean(Fluent $column)
@@ -687,7 +687,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an enumeration type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeEnum(Fluent $column)
@@ -698,7 +698,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a json type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeJson(Fluent $column)
@@ -709,7 +709,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a jsonb type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeJsonb(Fluent $column)
@@ -720,7 +720,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeDate(Fluent $column)
@@ -731,7 +731,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date-time type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeDateTime(Fluent $column)
@@ -744,7 +744,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date-time (with time zone) type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeDateTimeTz(Fluent $column)
@@ -755,7 +755,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a time type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeTime(Fluent $column)
@@ -766,7 +766,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a time (with time zone) type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeTimeTz(Fluent $column)
@@ -777,7 +777,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a timestamp type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeTimestamp(Fluent $column)
@@ -790,7 +790,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a timestamp (with time zone) type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeTimestampTz(Fluent $column)
@@ -801,7 +801,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a year type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeYear(Fluent $column)
@@ -812,7 +812,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a binary type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeBinary(Fluent $column)
@@ -823,7 +823,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a uuid type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeUuid(Fluent $column)
@@ -834,7 +834,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an IP address type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeIpAddress(Fluent $column)
@@ -845,7 +845,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a MAC address type.
      *
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function typeMacAddress(Fluent $column)
@@ -857,7 +857,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a generated virtual column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
@@ -871,7 +871,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a generated stored column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column)
@@ -885,7 +885,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for an unsigned column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyUnsigned(Blueprint $blueprint, Fluent $column)
@@ -899,7 +899,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a character set column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyCharset(Blueprint $blueprint, Fluent $column)
@@ -913,7 +913,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a collation column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyCollate(Blueprint $blueprint, Fluent $column)
@@ -927,7 +927,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a nullable column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
@@ -941,7 +941,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a default column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
@@ -955,7 +955,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for an auto-increment column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
@@ -969,7 +969,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a "first" column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyFirst(Blueprint $blueprint, Fluent $column)
@@ -983,7 +983,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for an "after" column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyAfter(Blueprint $blueprint, Fluent $column)
@@ -997,7 +997,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a "comment" column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifyComment(Blueprint $blueprint, Fluent $column)
@@ -1011,7 +1011,7 @@ class MySqlGrammar extends Grammar
      * Get the SQL for a SRID column modifier.
      *
      * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Support\Fluent $column
+     * @param  \Hyperf\Utils\Fluent $column
      * @return string|null
      */
     protected function modifySrid(Blueprint $blueprint, Fluent $column)

@@ -1962,7 +1962,7 @@ class Builder
      *
      * @param  string $column
      * @param  string|null $key
-     * @return \Hyperf\Support\Collection
+     * @return \Hyperf\Utils\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -2766,7 +2766,7 @@ class Builder
      * @param  array $queryResult
      * @param  string $column
      * @param  string $key
-     * @return \Hyperf\Support\Collection
+     * @return \Hyperf\Utils\Collection
      */
     protected function pluckFromObjectColumn($queryResult, $column, $key)
     {
@@ -2791,7 +2791,7 @@ class Builder
      * @param  array $queryResult
      * @param  string $column
      * @param  string $key
-     * @return \Hyperf\Support\Collection
+     * @return \Hyperf\Utils\Collection
      */
     protected function pluckFromArrayColumn($queryResult, $column, $key)
     {
