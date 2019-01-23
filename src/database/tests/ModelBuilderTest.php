@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Tests\Database;
+namespace HyperfTest\Database;
 
 use Carbon\Carbon;
 use Closure;
@@ -14,6 +14,7 @@ use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Collection as BaseCollection;
+use HyperfTest\Database\Stubs\ModelStub;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Mockery;
@@ -140,7 +141,7 @@ class ModelBuilderTest extends TestCase
         $builder = new Builder(Mockery::mock(BaseBuilder::class));
         $builder->shouldReceive('from')->with('stub');
 
-        $builder->setModel(new ModelStub);
+        $builder->setModel(new ModelStub());
 
         $this->assertEquals('stub.column', $builder->qualifyColumn('column'));
     }
