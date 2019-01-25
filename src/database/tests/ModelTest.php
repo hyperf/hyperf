@@ -4,6 +4,18 @@ namespace HyperfTest\Database;
 
 use DateTime;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Register;
+use HyperfTest\Database\Stubs\DateModelStub;
+use HyperfTest\Database\Stubs\ModelCamelStub;
+use HyperfTest\Database\Stubs\ModelCastingStub;
+use HyperfTest\Database\Stubs\ModelDestroyStub;
+use HyperfTest\Database\Stubs\ModelDynamicVisibleStub;
+use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
+use HyperfTest\Database\Stubs\ModelSaveStub;
+use HyperfTest\Database\Stubs\ModelStub;
+use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
+use HyperfTest\Database\Stubs\ModelWithoutTableStub;
+use HyperfTest\Database\Stubs\ModelWithStub;
 use Mockery;
 use stdClass;
 use Exception;
@@ -44,13 +56,13 @@ class ModelTest extends TestCase
         Mockery::close();
         Carbon::setTestNow(null);
 
-        Model::unsetEventDispatcher();
+        Register::unsetEventDispatcher();
         Carbon::resetToStringFormat();
     }
 
     public function testAttributeManipulation()
     {
-        $model = new ModelStub;
+        $model = new ModelStub();
         $model->name = 'foo';
         $this->assertEquals('foo', $model->name);
         $this->assertTrue(isset($model->name));
@@ -81,7 +93,7 @@ class ModelTest extends TestCase
 
     public function testDirtyOnCastOrDateAttributes()
     {
-        $model = new ModelCastingStub;
+        $model = new ModelCastingStub();
         $model->setDateFormat('Y-m-d H:i:s');
         $model->boolAttribute = 1;
         $model->foo = 1;
@@ -180,25 +192,25 @@ class ModelTest extends TestCase
 
     public function testCreateMethodSavesNewModel()
     {
-        $_SERVER['__eloquent.saved'] = false;
+        $_SERVER['__model.saved'] = false;
         $model = ModelSaveStub::create(['name' => 'taylor']);
-        $this->assertTrue($_SERVER['__eloquent.saved']);
+        $this->assertTrue($_SERVER['__model.saved']);
         $this->assertEquals('taylor', $model->name);
     }
 
     public function testMakeMethodDoesNotSaveNewModel()
     {
-        $_SERVER['__eloquent.saved'] = false;
+        $_SERVER['__model.saved'] = false;
         $model = ModelSaveStub::make(['name' => 'taylor']);
-        $this->assertFalse($_SERVER['__eloquent.saved']);
+        $this->assertFalse($_SERVER['__model.saved']);
         $this->assertEquals('taylor', $model->name);
     }
 
     public function testForceCreateMethodSavesNewModelWithGuardedAttributes()
     {
-        $_SERVER['__eloquent.saved'] = false;
+        $_SERVER['__model.saved'] = false;
         $model = ModelSaveStub::forceCreate(['id' => 21]);
-        $this->assertTrue($_SERVER['__eloquent.saved']);
+        $this->assertTrue($_SERVER['__model.saved']);
         $this->assertEquals(21, $model->id);
     }
 
@@ -225,7 +237,7 @@ class ModelTest extends TestCase
 
     public function testWithoutMethodRemovesEagerLoadedRelationshipCorrectly()
     {
-        $model = new ModelWithoutRelationStub;
+        $model = new ModelWithoutRelationStub();
         $this->addMockConnection($model);
         $instance = $model->newInstance()->newQuery()->without('foo');
         $this->assertEmpty($instance->getEagerLoads());
@@ -233,7 +245,7 @@ class ModelTest extends TestCase
 
     public function testEagerLoadingWithColumns()
     {
-        $model = new ModelWithoutRelationStub;
+        $model = new ModelWithoutRelationStub();
         $instance = $model->newInstance()->newQuery()->with('foo:bar,baz', 'hadi');
         $builder = Mockery::mock(Builder::class);
         $builder->shouldReceive('select')->once()->with(['bar', 'baz']);
@@ -257,11 +269,11 @@ class ModelTest extends TestCase
         $query->shouldReceive('update')->once()->with(['name' => 'taylor'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model)->andReturn(true);
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.updating: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.updated: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.saved: '.get_class($model), $model)->andReturn(true);
 
         $model->id = 1;
         $model->foo = 'bar';
@@ -279,7 +291,7 @@ class ModelTest extends TestCase
         $query->shouldReceive('where')->once()->with('id', '=', 1);
         $query->shouldReceive('update')->once()->with(['created_at' => 'foo', 'updated_at' => 'bar'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('until');
         $events->shouldReceive('dispatch');
 
@@ -297,7 +309,7 @@ class ModelTest extends TestCase
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(false);
         $model->exists = true;
 
         $this->assertFalse($model->save());
@@ -309,8 +321,8 @@ class ModelTest extends TestCase
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.updating: '.get_class($model), $model)->andReturn(false);
         $model->exists = true;
         $model->foo = 'bar';
 
@@ -322,7 +334,7 @@ class ModelTest extends TestCase
         $model = $this->getMockBuilder(ModelEventObjectStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('until')->once()->with(Mockery::type(ModelSavingEventStub::class))->andReturn(false);
         $model->exists = true;
 
@@ -356,10 +368,10 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.updating: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.updated: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.saved: '.get_class($model), $model)->andReturn(true);
 
         $model->id = 1;
         $model->syncOriginal();
@@ -490,10 +502,10 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('updateTimestamps');
 
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.created: '.get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.creating: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.created: '.get_class($model), $model);
+        $events->shouldReceive('dispatch')->once()->with('model.saved: '.get_class($model), $model);
 
         $model->name = 'taylor';
         $model->exists = false;
@@ -510,10 +522,10 @@ class ModelTest extends TestCase
         $model->setIncrementing(false);
 
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.created: '.get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.creating: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('model.created: '.get_class($model), $model);
+        $events->shouldReceive('dispatch')->once()->with('model.saved: '.get_class($model), $model);
 
         $model->name = 'taylor';
         $model->exists = false;
@@ -529,8 +541,8 @@ class ModelTest extends TestCase
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('model.saving: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('model.creating: '.get_class($model), $model)->andReturn(false);
 
         $this->assertFalse($model->save());
         $this->assertFalse($model->exists);
@@ -680,7 +692,7 @@ class ModelTest extends TestCase
         $processor = Mockery::mock(Processor::class);
         $conn->shouldReceive('getQueryGrammar')->once()->andReturn($grammar);
         $conn->shouldReceive('getPostProcessor')->once()->andReturn($processor);
-        ModelStub::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
         $resolver->shouldReceive('connection')->andReturn($conn);
         $model = new ModelStub;
         $builder = $model->newQuery();
@@ -705,7 +717,7 @@ class ModelTest extends TestCase
 
     public function testConnectionManagement()
     {
-        ModelStub::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
         $model = Mockery::mock(ModelStub::class.'[getConnectionName,connection]');
 
         $retval = $model->setConnection('foo');
@@ -797,7 +809,7 @@ class ModelTest extends TestCase
         $this->assertEquals('baz', $array['names_list'][0]['bar']);
         $this->assertEquals('boom', $array['names_list'][1]['bam']);
 
-        $model = new ModelCamelStub;
+        $model = new ModelCamelStub();
         $model->setRelation('namesList', new BaseCollection([
             new ModelStub(['bar' => 'baz']), new ModelStub(['bam' => 'boom']),
         ]));
@@ -1011,7 +1023,7 @@ class ModelTest extends TestCase
         $model = new ModelStub;
         $this->addMockConnection($model);
         $relation = $model->hasOne(ModelSaveStub::class);
-        $this->assertEquals('save_stub.eloquent_model_stub_id', $relation->getQualifiedForeignKeyName());
+        $this->assertEquals('save_stub.model_stub_id', $relation->getQualifiedForeignKeyName());
 
         $model = new ModelStub;
         $this->addMockConnection($model);
@@ -1048,7 +1060,7 @@ class ModelTest extends TestCase
         $model = new ModelStub;
         $this->addMockConnection($model);
         $relation = $model->hasMany(ModelSaveStub::class);
-        $this->assertEquals('save_stub.eloquent_model_stub_id', $relation->getQualifiedForeignKeyName());
+        $this->assertEquals('save_stub.model_stub_id', $relation->getQualifiedForeignKeyName());
 
         $model = new ModelStub;
         $this->addMockConnection($model);
@@ -1122,8 +1134,8 @@ class ModelTest extends TestCase
         $this->addMockConnection($model);
 
         $relation = $model->belongsToMany(ModelSaveStub::class);
-        $this->assertEquals('eloquent_model_save_stub_eloquent_model_stub.eloquent_model_stub_id', $relation->getQualifiedForeignPivotKeyName());
-        $this->assertEquals('eloquent_model_save_stub_eloquent_model_stub.eloquent_model_save_stub_id', $relation->getQualifiedRelatedPivotKeyName());
+        $this->assertEquals('model_save_stub_model_stub.model_stub_id', $relation->getQualifiedForeignPivotKeyName());
+        $this->assertEquals('model_save_stub_model_stub.model_save_stub_id', $relation->getQualifiedRelatedPivotKeyName());
         $this->assertSame($model, $relation->getParent());
         $this->assertInstanceOf(ModelSaveStub::class, $relation->getQuery()->getModel());
         $this->assertEquals(__FUNCTION__, $relation->getRelationName());
@@ -1220,13 +1232,11 @@ class ModelTest extends TestCase
 
     public function testModelsAssumeTheirName()
     {
-        require_once __DIR__.'/stubs/ModelNamespacedStub.php';
+        $model = new ModelWithoutTableStub();
+        $this->assertEquals('model_without_table_stubs', $model->getTable());
 
-        $model = new ModelWithoutTableStub;
-        $this->assertEquals('eloquent_model_without_table_stubs', $model->getTable());
-
-        $namespacedModel = new ModelNamespacedStub;
-        $this->assertEquals('eloquent_model_namespaced_stubs', $namespacedModel->getTable());
+        $namespacedModel = new ModelNamespacedStub();
+        $this->assertEquals('model_namespaced_stubs', $namespacedModel->getTable());
     }
 
     public function testTheMutatorCacheIsPopulated()
@@ -1280,8 +1290,8 @@ class ModelTest extends TestCase
     public function testModelObserversCanBeAttachedToModels()
     {
         ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
         $events->shouldReceive('forget');
         ModelStub::observe(new TestObserverStub);
         ModelStub::flushEventListeners();
@@ -1290,8 +1300,8 @@ class ModelTest extends TestCase
     public function testModelObserversCanBeAttachedToModelsWithString()
     {
         ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
         $events->shouldReceive('forget');
         ModelStub::observe(TestObserverStub::class);
         ModelStub::flushEventListeners();
@@ -1300,8 +1310,8 @@ class ModelTest extends TestCase
     public function testModelObserversCanBeAttachedToModelsThroughAnArray()
     {
         ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
         $events->shouldReceive('forget');
         ModelStub::observe([TestObserverStub::class]);
         ModelStub::flushEventListeners();
@@ -1310,11 +1320,11 @@ class ModelTest extends TestCase
     public function testModelObserversCanBeAttachedToModelsThroughCallingObserveMethodOnlyOnce()
     {
         ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class.'@saved');
 
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class.'@saved');
 
         $events->shouldReceive('forget');
 
@@ -1815,7 +1825,7 @@ class ModelTest extends TestCase
 
     protected function addMockConnection($model)
     {
-        $model->setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
         $resolver->shouldReceive('connection')->andReturn(Mockery::mock(Connection::class));
         $model->getConnection()->shouldReceive('getQueryGrammar')->andReturn(Mockery::mock(Grammar::class));
         $model->getConnection()->shouldReceive('getPostProcessor')->andReturn(Mockery::mock(Processor::class));
