@@ -64,9 +64,10 @@ class Manager
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
             if ($data) {
-                return $instance->newFromBuilder($data);
+                return $instance->newInstance($data, true);
             }
 
+            // Fetch it from database, because it not exist in cache handler.
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
@@ -77,10 +78,11 @@ class Manager
                 return $model;
             }
 
+            // It not exist in cache handler and database.
             return null;
         }
 
-        $this->logger->warning('Cache handler not exist, fetch data from database.');
+        $this->logger->alert('Cache handler not exist, fetch data from database.');
         return $instance->newQuery()->where($primaryKey, '=', $id)->first();
     }
 
@@ -98,41 +100,43 @@ class Manager
                 $keys[] = $this->getCacheKey($id, $instance, $handler->getConfig());
             }
             $data = $handler->getMultiple($keys);
-            $result = [];
+            $items = [];
             $fetchIds = [];
-            if ($data) {
-                foreach ($data as $item) {
-                    if (isset($item[$primaryKey])) {
-                        $result[] = $item;
-                        $fetchIds[] = $item[$primaryKey];
-                    }
+            foreach ($data ?? [] as $item) {
+                if (isset($item[$primaryKey])) {
+                    $items[] = $item;
+                    $fetchIds[] = $item[$primaryKey];
                 }
             }
 
-            // 验证缺少哪些实体
+            // Get ids that not exist in cache handler.
             $targetIds = array_diff($ids, $fetchIds);
             $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
             /** @var Model $model */
             foreach ($models as $model) {
                 $id = $model->getKey();
-                unset($targetIds['id']);
-
                 $key = $this->getCacheKey($id, $instance, $handler->getConfig());
                 $handler->set($key, $model->toArray());
             }
 
-            foreach ($targetIds as $id) {
-                $key = $this->getCacheKey($id, $instance, $handler->getConfig());
-                $handler->set($key, []);
+            $items = array_merge($items, $models->toArray());
+            $map = [];
+            foreach ($items as $item) {
+                $map[$item[$primaryKey]] = $item;
             }
 
-            $result = array_merge($result, $models->toArray());
+            $result = [];
+            foreach ($ids as $id) {
+                if (isset($map[$id])) {
+                    $result[] = $map[$id];
+                }
+            }
 
             return $instance->hydrate($result);
         }
 
-        $this->logger->warning('Cache handler not exist, fetch data from database.');
-        return $instance->newQuery()->where($primaryKey, '=', $id)->first();
+        $this->logger->alert('Cache handler not exist, fetch data from database.');
+        return $instance->newQuery()->whereIn($primaryKey, $ids)->get();
     }
 
     protected function getCacheKey($id, Model $model, Config $config)
