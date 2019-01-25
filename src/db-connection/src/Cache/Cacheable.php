@@ -16,6 +16,9 @@ use Hyperf\Framework\ApplicationContext;
 
 trait Cacheable
 {
+    /**
+     * @return self|null
+     */
     public static function findFromCache($id)
     {
         $container = ApplicationContext::getContainer();
@@ -24,6 +27,9 @@ trait Cacheable
         return $manager->findFromCache($id, static::class);
     }
 
+    /**
+     * @return \Hyperf\Database\Model\Collection
+     */
     public static function findManyFromCache($ids)
     {
         $container = ApplicationContext::getContainer();
