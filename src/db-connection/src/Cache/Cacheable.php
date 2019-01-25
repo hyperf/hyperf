@@ -31,4 +31,12 @@ trait Cacheable
 
         return $manager->findManyFromCache($ids, static::class);
     }
+
+    public function deleteCache()
+    {
+        $container = ApplicationContext::getContainer();
+        $manager = $container->get(Manager::class);
+
+        return $manager->destroy([$this->getKey()], get_called_class());
+    }
 }

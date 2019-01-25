@@ -139,6 +139,27 @@ class Manager
         return $instance->newQuery()->whereIn($primaryKey, $ids)->get();
     }
 
+    /**
+     * Destroy the models for the given IDs from cache.
+     */
+    public function destroy($ids, string $class)
+    {
+        /** @var Model $instance */
+        $instance = new $class();
+
+        $name = $instance->getConnectionName();
+        if ($handler = $this->handlers[$name] ?? null) {
+            $keys = [];
+            foreach ($ids as $id) {
+                $keys[] = $this->getCacheKey($id, $instance, $handler->getConfig());
+            }
+
+            return $handler->deleteMultiple($keys);
+        }
+
+        return 0;
+    }
+
     protected function getCacheKey($id, Model $model, Config $config)
     {
         // mc:$prefix:m:$model:$pk:$id
