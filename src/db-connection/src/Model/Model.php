@@ -43,7 +43,7 @@ class Model extends BaseModel
     }
 
     /**
-     * @throws RuntimeException When the model does not define the repository class.
+     * @throws RuntimeException when the model does not define the repository class
      */
     public function getRepository()
     {
