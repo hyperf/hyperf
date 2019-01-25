@@ -26,5 +26,9 @@ trait Cacheable
 
     public static function findManyFromCache($ids)
     {
+        $container = ApplicationContext::getContainer();
+        $manager = $container->get(Manager::class);
+
+        return $manager->findManyFromCache($ids, static::class);
     }
 }

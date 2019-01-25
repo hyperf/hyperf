@@ -43,7 +43,9 @@ class RedisHandler implements HandlerInterface
 
     protected $luaSha = '';
 
-    protected $defaultHash = ['HF-DATA' => 'DEFAULT'];
+    protected $defaultKey = 'HF-DATA';
+
+    protected $defaultValue = 'DEFAULT';
 
     public function __construct(ContainerInterface $container, Config $config)
     {
@@ -64,8 +66,10 @@ class RedisHandler implements HandlerInterface
             return $default;
         }
 
-        if ($data == $this->defaultHash) {
-            return $default;
+        unset($data[$this->defaultKey]);
+
+        if (empty($data)) {
+            return [];
         }
 
         return $data;
@@ -81,7 +85,7 @@ class RedisHandler implements HandlerInterface
             throw new CacheException(sprintf('The value must is array.'));
         }
 
-        $data = array_merge($data, $this->defaultHash);
+        $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
         $res = $this->redis->hMSet($key, $data);
         if ($ttl && $ttl > 0) {
             $this->redis->expire($key, $ttl);
@@ -113,22 +117,30 @@ class RedisHandler implements HandlerInterface
             $list = $this->redis->eval($script, $keys, count($keys));
         }
 
-        return $list;
+        $result = [];
+        foreach ($this->multiple->parseResponse($list) as $item) {
+            unset($item[$this->defaultKey]);
+            if ($item) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
     }
 
     public function setMultiple($values, $ttl = null)
     {
-        // TODO: Implement setMultiple() method.
+        throw new CacheException('Method setMultiple is forbidden.');
     }
 
     public function deleteMultiple($keys)
     {
-        // TODO: Implement deleteMultiple() method.
+        $this->redis->delete(...$keys);
     }
 
     public function has($key)
     {
-        // TODO: Implement has() method.
+        return (bool) $this->redis->exists($key);
     }
 
     public function getConfig(): Config

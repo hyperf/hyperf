@@ -86,6 +86,53 @@ class Manager
 
     public function findManyFromCache(array $ids, string $class)
     {
+        /** @var Model $instance */
+        $instance = new $class();
+
+        $name = $instance->getConnectionName();
+        $primaryKey = $instance->getKeyName();
+
+        if ($handler = $this->handlers[$name] ?? null) {
+            $keys = [];
+            foreach ($ids as $id) {
+                $keys[] = $this->getCacheKey($id, $instance, $handler->getConfig());
+            }
+            $data = $handler->getMultiple($keys);
+            $result = [];
+            $fetchIds = [];
+            if ($data) {
+                foreach ($data as $item) {
+                    if (isset($item[$primaryKey])) {
+                        $result[] = $item;
+                        $fetchIds[] = $item[$primaryKey];
+                    }
+                }
+            }
+
+            // 验证缺少哪些实体
+            $targetIds = array_diff($ids, $fetchIds);
+            $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
+            /** @var Model $model */
+            foreach ($models as $model) {
+                $id = $model->getKey();
+                unset($targetIds['id']);
+
+                $key = $this->getCacheKey($id, $instance, $handler->getConfig());
+                $handler->set($key, $model->toArray());
+            }
+
+            foreach ($targetIds as $id) {
+                $key = $this->getCacheKey($id, $instance, $handler->getConfig());
+                $handler->set($key, []);
+            }
+
+            $result = array_merge($result, $models->toArray());
+
+            return $instance->hydrate($result);
+        }
+
+        $this->logger->warning('Cache handler not exist, fetch data from database.');
+        return $instance->newQuery()->where($primaryKey, '=', $id)->first();
     }
 
     protected function getCacheKey($id, Model $model, Config $config)
