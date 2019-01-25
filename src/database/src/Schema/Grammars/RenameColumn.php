@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -23,16 +24,13 @@ class RenameColumn
     /**
      * Compile a rename column command.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Hyperf\Utils\Fluent  $command
-     * @param  \Hyperf\Database\Connection  $connection
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return array
      */
     public static function compile(Grammar $grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
     {
         $column = $connection->getDoctrineColumn(
-            $grammar->getTablePrefix().$blueprint->getTable(),
+            $grammar->getTablePrefix() . $blueprint->getTable(),
             $command->from
         );
 
@@ -50,11 +48,7 @@ class RenameColumn
     /**
      * Get a new column instance with the new column name.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Hyperf\Utils\Fluent  $command
-     * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return \Doctrine\DBAL\Schema\TableDiff
      */
     protected static function getRenamedDiff(Grammar $grammar, Blueprint $blueprint, Fluent $command, Column $column, SchemaManager $schema)
@@ -69,9 +63,6 @@ class RenameColumn
     /**
      * Set the renamed columns on the table diff.
      *
-     * @param  \Doctrine\DBAL\Schema\TableDiff  $tableDiff
-     * @param  \Hyperf\Utils\Fluent  $command
-     * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \Doctrine\DBAL\Schema\TableDiff
      */
     protected static function setRenamedColumns(TableDiff $tableDiff, Fluent $command, Column $column)

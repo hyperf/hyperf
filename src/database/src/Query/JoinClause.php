@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -39,10 +40,9 @@ class JoinClause extends Builder
     /**
      * Create a new join clause instance.
      *
-     * @param  \Hyperf\Database\Query\Builder $parentQuery
-     * @param  string  $type
-     * @param  string  $table
-     * @return void
+     * @param \Hyperf\Database\Query\Builder $parentQuery
+     * @param string                         $type
+     * @param string                         $table
      */
     public function __construct(Builder $parentQuery, $type, $table)
     {
@@ -69,10 +69,10 @@ class JoinClause extends Builder
      *
      * on `contacts`.`user_id` = `users`.`id` and `contacts`.`info_id` = `info`.`id`
      *
-     * @param  \Closure|string  $first
-     * @param  string|null  $operator
-     * @param  string|null  $second
-     * @param  string  $boolean
+     * @param  \Closure|string $first
+     * @param  string|null     $operator
+     * @param  string|null     $second
+     * @param  string          $boolean
      * @return $this
      *
      * @throws \InvalidArgumentException
@@ -89,9 +89,9 @@ class JoinClause extends Builder
     /**
      * Add an "or on" clause to the join.
      *
-     * @param  \Closure|string  $first
-     * @param  string|null  $operator
-     * @param  string|null  $second
+     * @param  \Closure|string                   $first
+     * @param  string|null                       $operator
+     * @param  string|null                       $second
      * @return \Hyperf\Database\Query\JoinClause
      */
     public function orOn($first, $operator = null, $second = null)

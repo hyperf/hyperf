@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -13,5 +14,4 @@ namespace Hyperf\Database\Events;
 
 class TransactionBeginning extends ConnectionEvent
 {
-    //
 }

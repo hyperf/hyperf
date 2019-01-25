@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -92,14 +93,8 @@ class FactoryBuilder
     /**
      * Create an new builder instance.
      *
-     * @param  string  $class
-     * @param  string  $name
-     * @param  array  $definitions
-     * @param  array  $states
-     * @param  array  $afterMaking
-     * @param  array  $afterCreating
-     * @param  \Faker\Generator  $faker
-     * @return void
+     * @param string $class
+     * @param string $name
      */
     public function __construct(
         $class,
@@ -122,7 +117,7 @@ class FactoryBuilder
     /**
      * Set the amount of models you wish to create / make.
      *
-     * @param  int  $amount
+     * @param  int   $amount
      * @return $this
      */
     public function times($amount)
@@ -135,7 +130,7 @@ class FactoryBuilder
     /**
      * Set the state to be applied to the model.
      *
-     * @param  string  $state
+     * @param  string $state
      * @return $this
      */
     public function state($state)
@@ -146,7 +141,7 @@ class FactoryBuilder
     /**
      * Set the states to be applied to the model.
      *
-     * @param  array|mixed  $states
+     * @param  array|mixed $states
      * @return $this
      */
     public function states($states)
@@ -159,7 +154,7 @@ class FactoryBuilder
     /**
      * Set the database connection on which the model instance should be persisted.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return $this
      */
     public function connection($name)
@@ -172,7 +167,6 @@ class FactoryBuilder
     /**
      * Create a model and persist it in the database if requested.
      *
-     * @param  array  $attributes
      * @return \Closure
      */
     public function lazy(array $attributes = [])
@@ -184,9 +178,6 @@ class FactoryBuilder
 
     /**
      * Create a collection of models and persist them to the database.
-     *
-     * @param  array  $attributes
-     * @return mixed
      */
     public function create(array $attributes = [])
     {
@@ -207,23 +198,20 @@ class FactoryBuilder
 
     /**
      * Create a collection of models.
-     *
-     * @param  array  $attributes
-     * @return mixed
      */
     public function make(array $attributes = [])
     {
-        if ($this->amount === null) {
+        if (null === $this->amount) {
             return tap($this->makeInstance($attributes), function ($instance) {
                 $this->callAfterMaking(collect([$instance]));
             });
         }
 
         if ($this->amount < 1) {
-            return (new $this->class)->newCollection();
+            return (new $this->class())->newCollection();
         }
 
-        $instances = (new $this->class)->newCollection(array_map(function () use ($attributes) {
+        $instances = (new $this->class())->newCollection(array_map(function () use ($attributes) {
             return $this->makeInstance($attributes);
         }, range(1, $this->amount)));
 
@@ -234,13 +222,10 @@ class FactoryBuilder
 
     /**
      * Create an array of raw attribute arrays.
-     *
-     * @param  array  $attributes
-     * @return mixed
      */
     public function raw(array $attributes = [])
     {
-        if ($this->amount === null) {
+        if (null === $this->amount) {
             return $this->getRawAttributes($attributes);
         }
 
@@ -256,8 +241,7 @@ class FactoryBuilder
     /**
      * Run after making callbacks on a collection of models.
      *
-     * @param  \Hyperf\Utils\Collection  $models
-     * @return void
+     * @param \Hyperf\Utils\Collection $models
      */
     public function callAfterMaking($models)
     {
@@ -267,8 +251,7 @@ class FactoryBuilder
     /**
      * Run after creating callbacks on a collection of models.
      *
-     * @param  \Hyperf\Utils\Collection  $models
-     * @return void
+     * @param \Hyperf\Utils\Collection $models
      */
     public function callAfterCreating($models)
     {
@@ -278,8 +261,7 @@ class FactoryBuilder
     /**
      * Set the connection name on the results and store them.
      *
-     * @param  \Hyperf\Utils\Collection  $results
-     * @return void
+     * @param \Hyperf\Utils\Collection $results
      */
     protected function store($results)
     {
@@ -295,8 +277,6 @@ class FactoryBuilder
     /**
      * Get a raw attributes array for the model.
      *
-     * @param  array  $attributes
-     * @return mixed
      *
      * @throws \InvalidArgumentException
      */
@@ -320,7 +300,6 @@ class FactoryBuilder
     /**
      * Make an instance of the model with the given attributes.
      *
-     * @param  array  $attributes
      * @return \Hyperf\Database\Model\Model
      */
     protected function makeInstance(array $attributes = [])
@@ -341,8 +320,6 @@ class FactoryBuilder
     /**
      * Apply the active states to the model definition array.
      *
-     * @param  array  $definition
-     * @param  array  $attributes
      * @return array
      *
      * @throws \InvalidArgumentException
@@ -370,8 +347,7 @@ class FactoryBuilder
     /**
      * Get the state attributes.
      *
-     * @param  string  $state
-     * @param  array  $attributes
+     * @param  string $state
      * @return array
      */
     protected function stateAttributes($state, array $attributes)
@@ -392,7 +368,6 @@ class FactoryBuilder
     /**
      * Expand all attributes to their underlying values.
      *
-     * @param  array  $attributes
      * @return array
      */
     protected function expandAttributes(array $attributes)
@@ -417,9 +392,7 @@ class FactoryBuilder
     /**
      * Call after callbacks for each model and state.
      *
-     * @param  array  $afterCallbacks
-     * @param  \Hyperf\Utils\Collection  $models
-     * @return void
+     * @param \Hyperf\Utils\Collection $models
      */
     protected function callAfter(array $afterCallbacks, $models)
     {
@@ -435,10 +408,8 @@ class FactoryBuilder
     /**
      * Call after callbacks for each model and state.
      *
-     * @param  array  $afterCallbacks
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @param  string  $state
-     * @return void
+     * @param \Hyperf\Database\Model\Model $model
+     * @param string                       $state
      */
     protected function callAfterCallbacks(array $afterCallbacks, $model, $state)
     {
@@ -454,7 +425,7 @@ class FactoryBuilder
     /**
      * Determine if the given state has an "after" callback.
      *
-     * @param  string  $state
+     * @param  string $state
      * @return bool
      */
     protected function stateHasAfterCallback($state)

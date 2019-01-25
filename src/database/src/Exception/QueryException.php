@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -71,8 +72,8 @@ class QueryException extends PDOException
     /**
      * Format the SQL error message.
      *
-     * @param  string $sql
-     * @param  array $bindings
+     * @param  string     $sql
+     * @param  array      $bindings
      * @param  \Exception $previous
      * @return string
      */

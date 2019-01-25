@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -49,7 +50,6 @@ trait GuardsAttributes
     /**
      * Set the fillable attributes for the model.
      *
-     * @param  array  $fillable
      * @return $this
      */
     public function fillable(array $fillable)
@@ -72,7 +72,6 @@ trait GuardsAttributes
     /**
      * Set the guarded attributes for the model.
      *
-     * @param  array  $guarded
      * @return $this
      */
     public function guard(array $guarded)
@@ -85,8 +84,7 @@ trait GuardsAttributes
     /**
      * Disable all mass assignable restrictions.
      *
-     * @param  bool  $state
-     * @return void
+     * @param bool $state
      */
     public static function unguard($state = true)
     {
@@ -95,8 +93,6 @@ trait GuardsAttributes
 
     /**
      * Enable the mass assignment restrictions.
-     *
-     * @return void
      */
     public static function reguard()
     {
@@ -115,9 +111,6 @@ trait GuardsAttributes
 
     /**
      * Run the given callable while being unguarded.
-     *
-     * @param  callable  $callback
-     * @return mixed
      */
     public static function unguarded(callable $callback)
     {
@@ -137,7 +130,7 @@ trait GuardsAttributes
     /**
      * Determine if the given attribute may be mass assigned.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return bool
      */
     public function isFillable($key)
@@ -167,7 +160,7 @@ trait GuardsAttributes
     /**
      * Determine if the given key is guarded.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return bool
      */
     public function isGuarded($key)
@@ -182,13 +175,12 @@ trait GuardsAttributes
      */
     public function totallyGuarded()
     {
-        return count($this->getFillable()) === 0 && $this->getGuarded() == ['*'];
+        return 0 === count($this->getFillable()) && $this->getGuarded() == ['*'];
     }
 
     /**
      * Get the fillable attributes of a given array.
      *
-     * @param  array  $attributes
      * @return array
      */
     protected function fillableFromArray(array $attributes)

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,8 +31,6 @@ interface ConnectionInterface
 
     /**
      * Run a select statement and return a single result.
-     *
-     * @return mixed
      */
     public function selectOne(string $query, array $bindings = [], bool $useReadPdo = true);
 
@@ -83,7 +82,6 @@ interface ConnectionInterface
     /**
      * Execute a Closure within a transaction.
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1);

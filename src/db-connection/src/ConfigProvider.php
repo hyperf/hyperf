@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Commands\ModelCommand;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Connectors\PostgresConnector;
@@ -33,6 +34,7 @@ class ConfigProvider
                 'db.connector.sqlsrv' => SqlServerConnector::class,
             ],
             'commands' => [
+                ModelCommand::class
             ],
             'scan' => [
                 'paths' => [

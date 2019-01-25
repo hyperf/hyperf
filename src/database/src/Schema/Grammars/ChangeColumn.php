@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -25,10 +26,7 @@ class ChangeColumn
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Hyperf\Utils\Fluent  $command
-     * @param  \Hyperf\Database\Connection $connection
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return array
      *
      * @throws \RuntimeException
@@ -48,7 +46,7 @@ class ChangeColumn
             $schema = $connection->getDoctrineSchemaManager()
         );
 
-        if ($tableDiff !== false) {
+        if (false !== $tableDiff) {
             return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
         }
 
@@ -58,16 +56,14 @@ class ChangeColumn
     /**
      * Get the Doctrine table difference for the given changes.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar  $grammar
-     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
+     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return \Doctrine\DBAL\Schema\TableDiff|bool
      */
     protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
     {
-        $current = $schema->listTableDetails($grammar->getTablePrefix().$blueprint->getTable());
+        $current = $schema->listTableDetails($grammar->getTablePrefix() . $blueprint->getTable());
 
-        return (new Comparator)->diffTable(
+        return (new Comparator())->diffTable(
             $current,
             static::getTableWithColumnChanges($blueprint, $current)
         );
@@ -76,8 +72,6 @@ class ChangeColumn
     /**
      * Get a copy of the given Doctrine table after making the column changes.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint  $blueprint
-     * @param  \Doctrine\DBAL\Schema\Table  $table
      * @return \Doctrine\DBAL\Schema\Table
      */
     protected static function getTableWithColumnChanges(Blueprint $blueprint, Table $table)
@@ -92,7 +86,7 @@ class ChangeColumn
             // use some different terminology for various column attributes on the tables.
             foreach ($fluent->getAttributes() as $key => $value) {
                 if (! is_null($option = static::mapFluentOptionToDoctrine($key))) {
-                    if (method_exists($column, $method = 'set'.ucfirst($option))) {
+                    if (method_exists($column, $method = 'set' . ucfirst($option))) {
                         $column->{$method}(static::mapFluentValueToDoctrine($option, $value));
                     }
                 }
@@ -105,8 +99,6 @@ class ChangeColumn
     /**
      * Get the Doctrine column instance for a column change.
      *
-     * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Hyperf\Utils\Fluent  $fluent
      * @return \Doctrine\DBAL\Schema\Column
      */
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
@@ -120,7 +112,6 @@ class ChangeColumn
     /**
      * Get the Doctrine column change options.
      *
-     * @param  \Hyperf\Utils\Fluent  $fluent
      * @return array
      */
     protected static function getDoctrineColumnChangeOptions(Fluent $fluent)
@@ -131,7 +122,7 @@ class ChangeColumn
             $options['length'] = static::calculateDoctrineTextLength($fluent['type']);
         }
 
-        if ($fluent['type'] === 'json') {
+        if ('json' === $fluent['type']) {
             $options['customSchemaOptions'] = [
                 'collation' => '',
             ];
@@ -143,7 +134,7 @@ class ChangeColumn
     /**
      * Get the doctrine column type.
      *
-     * @param  string  $type
+     * @param  string                    $type
      * @return \Doctrine\DBAL\Types\Type
      */
     protected static function getDoctrineColumnType($type)
@@ -172,7 +163,7 @@ class ChangeColumn
     /**
      * Calculate the proper column length to force the Doctrine text type.
      *
-     * @param  string  $type
+     * @param  string $type
      * @return int
      */
     protected static function calculateDoctrineTextLength($type)
@@ -190,7 +181,7 @@ class ChangeColumn
     /**
      * Get the matching Doctrine option for a given Fluent attribute name.
      *
-     * @param  string  $attribute
+     * @param  string      $attribute
      * @return string|null
      */
     protected static function mapFluentOptionToDoctrine($attribute)
@@ -213,12 +204,10 @@ class ChangeColumn
     /**
      * Get the matching Doctrine value for a given Fluent attribute.
      *
-     * @param  string  $option
-     * @param  mixed  $value
-     * @return mixed
+     * @param string $option
      */
     protected static function mapFluentValueToDoctrine($option, $value)
     {
-        return $option === 'notnull' ? ! $value : $value;
+        return 'notnull' === $option ? ! $value : $value;
     }
 }

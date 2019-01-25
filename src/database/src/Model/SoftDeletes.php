@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -22,12 +23,10 @@ trait SoftDeletes
 
     /**
      * Boot the soft deleting trait for a model.
-     *
-     * @return void
      */
     public static function bootSoftDeletes()
     {
-        static::addGlobalScope(new SoftDeletingScope);
+        static::addGlobalScope(new SoftDeletingScope());
     }
 
     /**
@@ -58,7 +57,7 @@ trait SoftDeletes
         // If the restoring event does not return false, we will proceed with this
         // restore operation. Otherwise, we bail out so the developer will stop
         // the restore totally. We will clear the deleted timestamp and save.
-        if ($this->fireModelEvent('restoring') === false) {
+        if (false === $this->fireModelEvent('restoring')) {
             return false;
         }
 
@@ -89,8 +88,7 @@ trait SoftDeletes
     /**
      * Register a restoring model event with the dispatcher.
      *
-     * @param  \Closure|string  $callback
-     * @return void
+     * @param \Closure|string $callback
      */
     public static function restoring($callback)
     {
@@ -100,8 +98,7 @@ trait SoftDeletes
     /**
      * Register a restored model event with the dispatcher.
      *
-     * @param  \Closure|string  $callback
-     * @return void
+     * @param \Closure|string $callback
      */
     public static function restored($callback)
     {
@@ -140,8 +137,6 @@ trait SoftDeletes
 
     /**
      * Perform the actual delete query on this model instance.
-     *
-     * @return mixed
      */
     protected function performDeleteOnModel()
     {
@@ -156,8 +151,6 @@ trait SoftDeletes
 
     /**
      * Perform the actual delete query on this model instance.
-     *
-     * @return void
      */
     protected function runSoftDelete()
     {

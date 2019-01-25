@@ -24,7 +24,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.6)."
+        "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.6).",
+        "nikic/php-parser": "Required to use ModelCommand (^4.1)."
     },
     "autoload": {
         "files": [

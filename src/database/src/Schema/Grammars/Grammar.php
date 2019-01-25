@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -38,9 +39,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a rename column command.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Utils\Fluent $command
-     * @param  \Hyperf\Database\Connection $connection
      * @return array
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
@@ -51,9 +49,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Utils\Fluent $command
-     * @param  \Hyperf\Database\Connection $connection
      * @return array
      *
      * @throws \RuntimeException
@@ -66,8 +61,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a foreign key command.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Utils\Fluent $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -88,17 +81,17 @@ abstract class Grammar extends BaseGrammar
             'foreign key (%s) references %s (%s)',
             $this->columnize($command->columns),
             $this->wrapTable($command->on),
-            $this->columnize((array)$command->references)
+            $this->columnize((array) $command->references)
         );
 
         // Once we have the basic foreign key creation statement constructed we can
         // build out the syntax for what should happen on an update or delete of
         // the affected columns, which will get something like "cascade", etc.
-        if (!is_null($command->onDelete)) {
+        if (! is_null($command->onDelete)) {
             $sql .= " on delete {$command->onDelete}";
         }
 
-        if (!is_null($command->onUpdate)) {
+        if (! is_null($command->onUpdate)) {
             $sql .= " on update {$command->onUpdate}";
         }
 
@@ -109,7 +102,6 @@ abstract class Grammar extends BaseGrammar
      * Add a prefix to an array of values.
      *
      * @param  string $prefix
-     * @param  array $values
      * @return array
      */
     public function prefixArray($prefix, array $values)
@@ -122,7 +114,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a table in keyword identifiers.
      *
-     * @param  mixed $table
      * @return string
      */
     public function wrapTable($table)
@@ -136,7 +127,7 @@ abstract class Grammar extends BaseGrammar
      * Wrap a value in keyword identifiers.
      *
      * @param  \Hyperf\Database\Query\Expression|string $value
-     * @param  bool $prefixAlias
+     * @param  bool                                     $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -150,8 +141,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create an empty Doctrine DBAL TableDiff from the Blueprint.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager $schema
      * @return \Doctrine\DBAL\Schema\TableDiff
      */
     public function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
@@ -186,7 +175,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile the blueprint's column definitions.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
      * @return array
      */
     protected function getColumns(Blueprint $blueprint)
@@ -208,7 +196,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the SQL for the column data type.
      *
-     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function getType(Fluent $column)
@@ -220,8 +207,6 @@ abstract class Grammar extends BaseGrammar
      * Add the column modifiers to the definition.
      *
      * @param  string $sql
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Utils\Fluent $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -238,8 +223,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the primary key command if it exists on the blueprint.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  string $name
+     * @param  string                    $name
      * @return \Hyperf\Utils\Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
@@ -254,7 +238,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get all of the commands with a given name.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
      * @param  string $name
      * @return array
      */
@@ -268,7 +251,6 @@ abstract class Grammar extends BaseGrammar
     /**
      * Format a value so that it can be used in "default" clauses.
      *
-     * @param  mixed $value
      * @return string
      */
     protected function getDefaultValue($value)
@@ -278,7 +260,7 @@ abstract class Grammar extends BaseGrammar
         }
 
         return is_bool($value)
-            ? "'" . (int)$value . "'"
-            : "'" . (string)$value . "'";
+            ? "'" . (int) $value . "'"
+            : "'" . (string) $value . "'";
     }
 }

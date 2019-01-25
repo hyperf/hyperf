@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -29,9 +30,6 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Create a new connection resolver instance.
-     *
-     * @param  array  $connections
-     * @return void
      */
     public function __construct(array $connections = [])
     {
@@ -43,7 +41,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param  string  $name
+     * @param  string                               $name
      * @return \Hyperf\Database\ConnectionInterface
      */
     public function connection($name = null)
@@ -58,9 +56,8 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Add a connection to the resolver.
      *
-     * @param  string  $name
-     * @param  \Hyperf\Database\ConnectionInterface  $connection
-     * @return void
+     * @param string                               $name
+     * @param \Hyperf\Database\ConnectionInterface $connection
      */
     public function addConnection($name, ConnectionInterface $connection)
     {
@@ -70,7 +67,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Check if a connection has been registered.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return bool
      */
     public function hasConnection($name)
@@ -91,8 +88,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Set the default connection name.
      *
-     * @param  string  $name
-     * @return void
+     * @param string $name
      */
     public function setDefaultConnection($name)
     {

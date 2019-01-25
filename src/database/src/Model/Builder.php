@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -97,9 +98,6 @@ class Builder
 
     /**
      * Create a new Model query builder instance.
-     *
-     * @param  \Hyperf\Database\Query\Builder $query
-     * @return void
      */
     public function __construct(QueryBuilder $query)
     {
@@ -109,13 +107,12 @@ class Builder
     /**
      * Dynamically handle calls into the query instance.
      *
-     * @param  string $method
-     * @param  array $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      */
     public function __call($method, $parameters)
     {
-        if ($method === 'macro') {
+        if ('macro' === $method) {
             $this->localMacros[$parameters[0]] = $parameters[1];
 
             return;
@@ -151,21 +148,20 @@ class Builder
     /**
      * Dynamically handle calls into the query instance.
      *
-     * @param  string $method
-     * @param  array $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      *
      * @throws \BadMethodCallException
      */
     public static function __callStatic($method, $parameters)
     {
-        if ($method === 'macro') {
+        if ('macro' === $method) {
             static::$macros[$parameters[0]] = $parameters[1];
 
             return;
         }
 
-        if (!isset(static::$macros[$method])) {
+        if (! isset(static::$macros[$method])) {
             static::throwBadMethodCallException($method);
         }
 
@@ -178,8 +174,6 @@ class Builder
 
     /**
      * Force a clone of the underlying query builder when cloning.
-     *
-     * @return void
      */
     public function __clone()
     {
@@ -189,7 +183,6 @@ class Builder
     /**
      * Create and return an un-saved model instance.
      *
-     * @param  array $attributes
      * @return \Hyperf\Database\Model\Model
      */
     public function make(array $attributes = [])
@@ -200,7 +193,7 @@ class Builder
     /**
      * Register a new global scope.
      *
-     * @param  string $identifier
+     * @param  string                                $identifier
      * @param  \Hyperf\Database\Model\Scope|\Closure $scope
      * @return $this
      */
@@ -223,7 +216,7 @@ class Builder
      */
     public function withoutGlobalScope($scope)
     {
-        if (!is_string($scope)) {
+        if (! is_string($scope)) {
             $scope = get_class($scope);
         }
 
@@ -237,12 +230,11 @@ class Builder
     /**
      * Remove all or passed registered global scopes.
      *
-     * @param  array|null $scopes
      * @return $this
      */
     public function withoutGlobalScopes(array $scopes = null)
     {
-        if (!is_array($scopes)) {
+        if (! is_array($scopes)) {
             $scopes = array_keys($this->scopes);
         }
 
@@ -266,7 +258,6 @@ class Builder
     /**
      * Add a where clause on the primary key to the query.
      *
-     * @param  mixed $id
      * @return $this
      */
     public function whereKey($id)
@@ -283,7 +274,6 @@ class Builder
     /**
      * Add a where clause on the primary key to the query.
      *
-     * @param  mixed $id
      * @return $this
      */
     public function whereKeyNot($id)
@@ -301,9 +291,7 @@ class Builder
      * Add a basic where clause to the query.
      *
      * @param  string|array|\Closure $column
-     * @param  mixed $operator
-     * @param  mixed $value
-     * @param  string $boolean
+     * @param  string                $boolean
      * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
@@ -322,9 +310,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|array|string $column
-     * @param  mixed $operator
-     * @param  mixed $value
+     * @param  \Closure|array|string                 $column
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function orWhere($column, $operator = null, $value = null)
@@ -332,7 +318,7 @@ class Builder
         [$value, $operator] = $this->query->prepareValueAndOperator(
             $value,
             $operator,
-            func_num_args() === 2
+            2 === func_num_args()
         );
 
         return $this->where($column, $operator, $value, 'or');
@@ -375,7 +361,6 @@ class Builder
     /**
      * Create a collection of models from plain arrays.
      *
-     * @param  array $items
      * @return \Hyperf\Database\Model\Collection
      */
     public function hydrate(array $items)
@@ -390,8 +375,8 @@ class Builder
     /**
      * Create a collection of models from a raw query.
      *
-     * @param  string $query
-     * @param  array $bindings
+     * @param  string                            $query
+     * @param  array                             $bindings
      * @return \Hyperf\Database\Model\Collection
      */
     public function fromQuery($query, $bindings = [])
@@ -404,8 +389,7 @@ class Builder
     /**
      * Find a model by its primary key.
      *
-     * @param  mixed $id
-     * @param  array $columns
+     * @param  array                                                                               $columns
      * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|static[]|static|null
      */
     public function find($id, $columns = ['*'])
@@ -421,7 +405,7 @@ class Builder
      * Find multiple models by their primary keys.
      *
      * @param  \Hyperf\Contracts\Support\Arrayable|array $ids
-     * @param  array $columns
+     * @param  array                                     $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -436,8 +420,7 @@ class Builder
     /**
      * Find a model by its primary key or throw an exception.
      *
-     * @param  mixed $id
-     * @param  array $columns
+     * @param  array                                                                          $columns
      * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|static|static[]
      *
      * @throws \Hyperf\Database\Model\ModelNotFoundException
@@ -450,11 +433,11 @@ class Builder
             if (count($result) === count(array_unique($id))) {
                 return $result;
             }
-        } elseif (!is_null($result)) {
+        } elseif (! is_null($result)) {
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel(
+        throw (new ModelNotFoundException())->setModel(
             get_class($this->model),
             $id
         );
@@ -463,13 +446,12 @@ class Builder
     /**
      * Find a model by its primary key or return fresh model instance.
      *
-     * @param  mixed $id
-     * @param  array $columns
+     * @param  array                               $columns
      * @return \Hyperf\Database\Model\Model|static
      */
     public function findOrNew($id, $columns = ['*'])
     {
-        if (!is_null($model = $this->find($id, $columns))) {
+        if (! is_null($model = $this->find($id, $columns))) {
             return $model;
         }
 
@@ -479,13 +461,11 @@ class Builder
     /**
      * Get the first record matching the attributes or instantiate it.
      *
-     * @param  array $attributes
-     * @param  array $values
      * @return \Hyperf\Database\Model\Model|static
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
-        if (!is_null($instance = $this->where($attributes)->first())) {
+        if (! is_null($instance = $this->where($attributes)->first())) {
             return $instance;
         }
 
@@ -495,13 +475,11 @@ class Builder
     /**
      * Get the first record matching the attributes or create it.
      *
-     * @param  array $attributes
-     * @param  array $values
      * @return \Hyperf\Database\Model\Model|static
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
-        if (!is_null($instance = $this->where($attributes)->first())) {
+        if (! is_null($instance = $this->where($attributes)->first())) {
             return $instance;
         }
 
@@ -513,8 +491,6 @@ class Builder
     /**
      * Create or update a record matching the attributes, and fill it with values.
      *
-     * @param  array $attributes
-     * @param  array $values
      * @return \Hyperf\Database\Model\Model|static
      */
     public function updateOrCreate(array $attributes, array $values = [])
@@ -527,25 +503,24 @@ class Builder
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array $columns
+     * @param  array                               $columns
      * @return \Hyperf\Database\Model\Model|static
      *
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
-        if (!is_null($model = $this->first($columns))) {
+        if (! is_null($model = $this->first($columns))) {
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->model));
+        throw (new ModelNotFoundException())->setModel(get_class($this->model));
     }
 
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param  \Closure|array $columns
-     * @param  \Closure|null $callback
+     * @param  \Closure|array                            $columns
      * @return \Hyperf\Database\Model\Model|static|mixed
      */
     public function firstOr($columns = ['*'], Closure $callback = null)
@@ -556,7 +531,7 @@ class Builder
             $columns = ['*'];
         }
 
-        if (!is_null($model = $this->first($columns))) {
+        if (! is_null($model = $this->first($columns))) {
             return $model;
         }
 
@@ -566,8 +541,7 @@ class Builder
     /**
      * Get a single column's value from the first result of a query.
      *
-     * @param  string $column
-     * @return mixed
+     * @param string $column
      */
     public function value($column)
     {
@@ -579,7 +553,7 @@ class Builder
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array $columns
+     * @param  array                                      $columns
      * @return \Hyperf\Database\Model\Collection|static[]
      */
     public function get($columns = ['*'])
@@ -599,7 +573,7 @@ class Builder
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param  array $columns
+     * @param  array                                   $columns
      * @return \Hyperf\Database\Model\Model[]|static[]
      */
     public function getModels($columns = ['*'])
@@ -612,7 +586,6 @@ class Builder
     /**
      * Eager load the relationships for the models.
      *
-     * @param  array $models
      * @return array
      */
     public function eagerLoadRelations(array $models)
@@ -621,7 +594,7 @@ class Builder
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
             // loaded on that query, because that is where they get hydrated as models.
-            if (strpos($name, '.') === false) {
+            if (false === strpos($name, '.')) {
                 $models = $this->eagerLoadRelation($models, $name, $constraints);
             }
         }
@@ -632,7 +605,7 @@ class Builder
     /**
      * Get the relation instance for the given relation name.
      *
-     * @param  string $name
+     * @param  string                                    $name
      * @return \Hyperf\Database\Model\Relations\Relation
      */
     public function getRelation($name)
@@ -675,8 +648,7 @@ class Builder
     /**
      * Chunk the results of a query by comparing numeric IDs.
      *
-     * @param  int $count
-     * @param  callable $callback
+     * @param  int         $count
      * @param  string|null $column
      * @param  string|null $alias
      * @return bool
@@ -699,14 +671,14 @@ class Builder
 
             $countResults = $results->count();
 
-            if ($countResults == 0) {
+            if (0 == $countResults) {
                 break;
             }
 
             // On each chunk result set, we will pass them to the callback and then let the
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
-            if ($callback($results) === false) {
+            if (false === $callback($results)) {
                 return false;
             }
 
@@ -721,8 +693,8 @@ class Builder
     /**
      * Get an array with the values of a given column.
      *
-     * @param  string $column
-     * @param  string|null $key
+     * @param  string                   $column
+     * @param  string|null              $key
      * @return \Hyperf\Utils\Collection
      */
     public function pluck($column, $key = null)
@@ -732,9 +704,9 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Model models.
-        if (!$this->model->hasGetMutator($column) &&
-            !$this->model->hasCast($column) &&
-            !in_array($column, $this->model->getDates())) {
+        if (! $this->model->hasGetMutator($column) &&
+            ! $this->model->hasCast($column) &&
+            ! in_array($column, $this->model->getDates())) {
             return $results;
         }
 
@@ -746,10 +718,10 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @param  int $perPage
-     * @param  array $columns
-     * @param  string $pageName
-     * @param  int|null $page
+     * @param  int                                               $perPage
+     * @param  array                                             $columns
+     * @param  string                                            $pageName
+     * @param  int|null                                          $page
      * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
@@ -773,10 +745,10 @@ class Builder
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int $perPage
-     * @param  array $columns
-     * @param  string $pageName
-     * @param  int|null $page
+     * @param  int                                    $perPage
+     * @param  array                                  $columns
+     * @param  string                                 $pageName
+     * @param  int|null                               $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -799,7 +771,6 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @param  array $attributes
      * @return \Hyperf\Database\Model\Model|$this
      */
     public function create(array $attributes = [])
@@ -812,7 +783,6 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @param  array $attributes
      * @return \Hyperf\Database\Model\Model|$this
      */
     public function forceCreate(array $attributes)
@@ -825,7 +795,6 @@ class Builder
     /**
      * Update a record in the database.
      *
-     * @param  array $values
      * @return int
      */
     public function update(array $values)
@@ -836,9 +805,8 @@ class Builder
     /**
      * Increment a column's value by a given amount.
      *
-     * @param  string $column
+     * @param  string    $column
      * @param  float|int $amount
-     * @param  array $extra
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -853,9 +821,8 @@ class Builder
     /**
      * Decrement a column's value by a given amount.
      *
-     * @param  string $column
+     * @param  string    $column
      * @param  float|int $amount
-     * @param  array $extra
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -869,8 +836,6 @@ class Builder
 
     /**
      * Delete a record from the database.
-     *
-     * @return mixed
      */
     public function delete()
     {
@@ -885,8 +850,6 @@ class Builder
      * Run the default delete function on the builder.
      *
      * Since we do not apply scopes here, the row will actually be deleted.
-     *
-     * @return mixed
      */
     public function forceDelete()
     {
@@ -895,9 +858,6 @@ class Builder
 
     /**
      * Register a replacement for the default delete function.
-     *
-     * @param  \Closure $callback
-     * @return void
      */
     public function onDelete(Closure $callback)
     {
@@ -906,9 +866,6 @@ class Builder
 
     /**
      * Call the given local model scopes.
-     *
-     * @param  array $scopes
-     * @return mixed
      */
     public function scopes(array $scopes)
     {
@@ -927,7 +884,7 @@ class Builder
             // messed up when adding scopes. Then we'll return back out the builder.
             $builder = $builder->callScope(
                 [$this->model, 'scope' . ucfirst($scope)],
-                (array)$parameters
+                (array) $parameters
             );
         }
 
@@ -941,14 +898,14 @@ class Builder
      */
     public function applyScopes()
     {
-        if (!$this->scopes) {
+        if (! $this->scopes) {
             return $this;
         }
 
         $builder = clone $this;
 
         foreach ($this->scopes as $identifier => $scope) {
-            if (!isset($builder->scopes[$identifier])) {
+            if (! isset($builder->scopes[$identifier])) {
                 continue;
             }
 
@@ -975,7 +932,6 @@ class Builder
     /**
      * Set the relationships that should be eager loaded.
      *
-     * @param  mixed $relations
      * @return $this
      */
     public function with($relations)
@@ -990,7 +946,6 @@ class Builder
     /**
      * Prevent the specified relations from being eager loaded.
      *
-     * @param  mixed $relations
      * @return $this
      */
     public function without($relations)
@@ -1005,7 +960,7 @@ class Builder
     /**
      * Create a new instance of the model being queried.
      *
-     * @param  array $attributes
+     * @param  array                               $attributes
      * @return \Hyperf\Database\Model\Model|static
      */
     public function newModelInstance($attributes = [])
@@ -1061,7 +1016,6 @@ class Builder
     /**
      * Set the relationships being eagerly loaded.
      *
-     * @param  array $eagerLoad
      * @return $this
      */
     public function setEagerLoads(array $eagerLoad)
@@ -1110,7 +1064,7 @@ class Builder
     /**
      * Get the given macro by name.
      *
-     * @param  string $name
+     * @param  string   $name
      * @return \Closure
      */
     public function getMacro($name)
@@ -1121,9 +1075,7 @@ class Builder
     /**
      * Eagerly load the relationship on a set of models.
      *
-     * @param  array $models
      * @param  string $name
-     * @param  \Closure $constraints
      * @return array
      */
     protected function eagerLoadRelation(array $models, $name, Closure $constraints)
@@ -1183,8 +1135,6 @@ class Builder
 
     /**
      * Add a generic "order by" clause if the query doesn't already have one.
-     *
-     * @return void
      */
     protected function enforceOrderBy()
     {
@@ -1196,12 +1146,11 @@ class Builder
     /**
      * Add the "updated at" column to an array of values.
      *
-     * @param  array $values
      * @return array
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (!$this->model->usesTimestamps()) {
+        if (! $this->model->usesTimestamps()) {
             return $values;
         }
 
@@ -1216,9 +1165,7 @@ class Builder
     /**
      * Apply the given scope on the current builder instance.
      *
-     * @param  callable $scope
-     * @param  array $parameters
-     * @return mixed
+     * @param array $parameters
      */
     protected function callScope(callable $scope, $parameters = [])
     {
@@ -1234,7 +1181,7 @@ class Builder
 
         $result = $scope(...array_values($parameters)) ?? $this;
 
-        if (count((array)$query->wheres) > $originalWhereCount) {
+        if (count((array) $query->wheres) > $originalWhereCount) {
             $this->addNewWheresWithinGroup($query, $originalWhereCount);
         }
 
@@ -1244,9 +1191,7 @@ class Builder
     /**
      * Nest where conditions by slicing them at the given where count.
      *
-     * @param  \Hyperf\Database\Query\Builder $query
-     * @param  int $originalWhereCount
-     * @return void
+     * @param int $originalWhereCount
      */
     protected function addNewWheresWithinGroup(QueryBuilder $query, $originalWhereCount)
     {
@@ -1271,9 +1216,7 @@ class Builder
     /**
      * Slice where conditions at the given offset and add them to the query as a nested condition.
      *
-     * @param  \Hyperf\Database\Query\Builder $query
-     * @param  array $whereSlice
-     * @return void
+     * @param array $whereSlice
      */
     protected function groupWhereSliceForScope(QueryBuilder $query, $whereSlice)
     {
@@ -1295,7 +1238,7 @@ class Builder
     /**
      * Create a where array with nested where conditions.
      *
-     * @param  array $whereSlice
+     * @param  array  $whereSlice
      * @param  string $boolean
      * @return array
      */
@@ -1311,7 +1254,6 @@ class Builder
     /**
      * Parse a list of relations into individuals.
      *
-     * @param  array $relations
      * @return array
      */
     protected function parseWithRelations(array $relations)
@@ -1328,7 +1270,6 @@ class Builder
                 [$name, $constraints] = Str::contains($name, ':')
                     ? $this->createSelectWithConstraint($name)
                     : [$name, function () {
-                        //
                     }];
             }
 
@@ -1360,7 +1301,7 @@ class Builder
      * Parse the nested relationships in a relation.
      *
      * @param  string $name
-     * @param  array $results
+     * @param  array  $results
      * @return array
      */
     protected function addNestedWiths($name, $results)
@@ -1373,9 +1314,8 @@ class Builder
         foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
 
-            if (!isset($results[$last = implode('.', $progress)])) {
+            if (! isset($results[$last = implode('.', $progress)])) {
                 $results[$last] = function () {
-                    //
                 };
             }
         }

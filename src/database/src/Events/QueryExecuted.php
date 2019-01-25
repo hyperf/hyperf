@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -53,11 +54,10 @@ class QueryExecuted
     /**
      * Create a new event instance.
      *
-     * @param  string $sql
-     * @param  array $bindings
-     * @param  float|null $time
-     * @param  ConnectionInterface $connection
-     * @return void
+     * @param string              $sql
+     * @param array               $bindings
+     * @param float|null          $time
+     * @param ConnectionInterface $connection
      */
     public function __construct($sql, $bindings, $time, $connection)
     {

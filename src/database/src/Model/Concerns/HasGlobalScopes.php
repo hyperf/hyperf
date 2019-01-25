@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -22,15 +23,13 @@ trait HasGlobalScopes
     /**
      * Register a new global scope on the model.
      *
-     * @param  \Hyperf\Database\Model\Scope|\Closure|string $scope
-     * @param  \Closure|null $implementation
-     * @return mixed
+     * @param \Hyperf\Database\Model\Scope|\Closure|string $scope
      *
      * @throws \InvalidArgumentException
      */
     public static function addGlobalScope($scope, Closure $implementation = null)
     {
-        if (is_string($scope) && !is_null($implementation)) {
+        if (is_string($scope) && ! is_null($implementation)) {
             return GlobalScope::$container[static::class][$scope] = $implementation;
         } elseif ($scope instanceof Closure) {
             return GlobalScope::$container[static::class][spl_object_hash($scope)] = $scope;
@@ -49,13 +48,13 @@ trait HasGlobalScopes
      */
     public static function hasGlobalScope($scope)
     {
-        return !is_null(static::getGlobalScope($scope));
+        return ! is_null(static::getGlobalScope($scope));
     }
 
     /**
      * Get a global scope registered with the model.
      *
-     * @param  \Hyperf\Database\Model\Scope|string $scope
+     * @param  \Hyperf\Database\Model\Scope|string        $scope
      * @return \Hyperf\Database\Model\Scope|\Closure|null
      */
     public static function getGlobalScope($scope)

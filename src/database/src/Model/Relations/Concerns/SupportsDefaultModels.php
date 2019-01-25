@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -27,7 +28,7 @@ trait SupportsDefaultModels
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param  \Closure|array|bool  $callback
+     * @param  \Closure|array|bool $callback
      * @return $this
      */
     public function withDefault($callback = true)
@@ -40,7 +41,6 @@ trait SupportsDefaultModels
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \Hyperf\Database\Model\Model  $parent
      * @return \Hyperf\Database\Model\Model
      */
     abstract protected function newRelatedInstanceFor(Model $parent);
@@ -48,7 +48,6 @@ trait SupportsDefaultModels
     /**
      * Get the default value for this relation.
      *
-     * @param  \Hyperf\Database\Model\Model  $parent
      * @return \Hyperf\Database\Model\Model|null
      */
     protected function getDefaultFor(Model $parent)

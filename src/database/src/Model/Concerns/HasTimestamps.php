@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -41,7 +42,6 @@ trait HasTimestamps
     /**
      * Set the value of the "created at" attribute.
      *
-     * @param  mixed  $value
      * @return $this
      */
     public function setCreatedAt($value)
@@ -54,7 +54,6 @@ trait HasTimestamps
     /**
      * Set the value of the "updated at" attribute.
      *
-     * @param  mixed  $value
      * @return $this
      */
     public function setUpdatedAt($value)
@@ -116,8 +115,6 @@ trait HasTimestamps
 
     /**
      * Update the creation and update timestamps.
-     *
-     * @return void
      */
     protected function updateTimestamps()
     {

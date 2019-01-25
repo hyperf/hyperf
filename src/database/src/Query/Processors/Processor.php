@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,7 +19,6 @@ class Processor
     /**
      * Process the results of a "select" query.
      *
-     * @param  Builder $query
      * @param  array $results
      * @return array
      */
@@ -30,9 +30,8 @@ class Processor
     /**
      * Process an  "insert get ID" query.
      *
-     * @param  Builder $query
      * @param  string $sql
-     * @param  array $values
+     * @param  array  $values
      * @param  string $sequence
      * @return int
      */
@@ -42,7 +41,7 @@ class Processor
 
         $id = $query->getConnection()->getPdo()->lastInsertId($sequence);
 
-        return is_numeric($id) ? (int)$id : $id;
+        return is_numeric($id) ? (int) $id : $id;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,8 +31,7 @@ abstract class ConnectionEvent
     /**
      * Create a new event instance.
      *
-     * @param  \Hyperf\Database\Connection  $connection
-     * @return void
+     * @param \Hyperf\Database\Connection $connection
      */
     public function __construct($connection)
     {
