@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,8 +19,7 @@ trait BuildsQueries
     /**
      * Chunk the results of the query.
      *
-     * @param  int $count
-     * @param  callable $callback
+     * @param  int  $count
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -36,20 +36,20 @@ trait BuildsQueries
 
             $countResults = $results->count();
 
-            if ($countResults == 0) {
+            if (0 == $countResults) {
                 break;
             }
 
             // On each chunk result set, we will pass them to the callback and then let the
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
-            if ($callback($results, $page) === false) {
+            if (false === $callback($results, $page)) {
                 return false;
             }
 
             unset($results);
 
-            $page++;
+            ++$page;
         } while ($countResults == $count);
 
         return true;
@@ -58,15 +58,14 @@ trait BuildsQueries
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  callable $callback
-     * @param  int $count
+     * @param  int  $count
      * @return bool
      */
     public function each(callable $callback, $count = 1000)
     {
         return $this->chunk($count, function ($results) use ($callback) {
             foreach ($results as $key => $value) {
-                if ($callback($value, $key) === false) {
+                if (false === $callback($value, $key)) {
                     return false;
                 }
             }
@@ -76,7 +75,7 @@ trait BuildsQueries
     /**
      * Execute the query and get the first result.
      *
-     * @param  array $columns
+     * @param  array                    $columns
      * @return Model|object|static|null
      */
     public function first($columns = ['*'])
@@ -87,9 +86,8 @@ trait BuildsQueries
     /**
      * Apply the callback's query changes if the given "value" is true.
      *
-     * @param  mixed $value
-     * @param  callable $callback
-     * @param  callable $default
+     * @param  callable    $callback
+     * @param  callable    $default
      * @return mixed|$this
      */
     public function when($value, $callback, $default = null)
@@ -106,7 +104,7 @@ trait BuildsQueries
     /**
      * Pass the query to a given callback.
      *
-     * @param  \Closure $callback
+     * @param  \Closure    $callback
      * @return mixed|$this
      */
     public function tap($callback)
@@ -117,14 +115,13 @@ trait BuildsQueries
     /**
      * Apply the callback's query changes if the given "value" is false.
      *
-     * @param  mixed $value
-     * @param  callable $callback
-     * @param  callable $default
+     * @param  callable    $callback
+     * @param  callable    $default
      * @return mixed|$this
      */
     public function unless($value, $callback, $default = null)
     {
-        if (!$value) {
+        if (! $value) {
             return $callback($this, $value) ?: $this;
         } elseif ($default) {
             return $default($this, $value) ?: $this;

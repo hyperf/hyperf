@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -23,9 +24,8 @@ class SoftDeletingScope implements Scope
     /**
      * Apply the scope to a given Model query builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
+     * @param \Hyperf\Database\Model\Model   $model
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -35,8 +35,7 @@ class SoftDeletingScope implements Scope
     /**
      * Extend the query builder with the needed functions.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
      */
     public function extend(Builder $builder)
     {
@@ -56,7 +55,7 @@ class SoftDeletingScope implements Scope
     /**
      * Get the "deleted at" column for the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
+     * @param  \Hyperf\Database\Model\Builder $builder
      * @return string
      */
     protected function getDeletedAtColumn(Builder $builder)
@@ -71,8 +70,7 @@ class SoftDeletingScope implements Scope
     /**
      * Add the restore extension to the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addRestore(Builder $builder)
     {
@@ -86,8 +84,7 @@ class SoftDeletingScope implements Scope
     /**
      * Add the with-trashed extension to the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addWithTrashed(Builder $builder)
     {
@@ -103,8 +100,7 @@ class SoftDeletingScope implements Scope
     /**
      * Add the without-trashed extension to the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addWithoutTrashed(Builder $builder)
     {
@@ -122,8 +118,7 @@ class SoftDeletingScope implements Scope
     /**
      * Add the only-trashed extension to the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addOnlyTrashed(Builder $builder)
     {

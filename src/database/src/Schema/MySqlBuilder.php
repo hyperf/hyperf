@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -16,12 +17,12 @@ class MySqlBuilder extends Builder
     /**
      * Determine if the given table exists.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return bool
      */
     public function hasTable($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
+        $table = $this->connection->getTablePrefix() . $table;
 
         return count($this->connection->select(
             $this->grammar->compileTableExists(),
@@ -32,12 +33,12 @@ class MySqlBuilder extends Builder
     /**
      * Get the column listing for a given table.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return array
      */
     public function getColumnListing($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
+        $table = $this->connection->getTablePrefix() . $table;
 
         $results = $this->connection->select(
             $this->grammar->compileColumnListing(),
@@ -49,8 +50,6 @@ class MySqlBuilder extends Builder
 
     /**
      * Drop all tables from the database.
-     *
-     * @return void
      */
     public function dropAllTables()
     {
@@ -77,8 +76,6 @@ class MySqlBuilder extends Builder
 
     /**
      * Drop all views from the database.
-     *
-     * @return void
      */
     public function dropAllViews()
     {
@@ -104,7 +101,7 @@ class MySqlBuilder extends Builder
      *
      * @return array
      */
-    protected function getAllTables()
+    public function getAllTables()
     {
         return $this->connection->select(
             $this->grammar->compileGetAllTables()

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -19,7 +20,6 @@ trait DetectsDeadlocks
     /**
      * Determine if the given exception was caused by a deadlock.
      *
-     * @param  \Exception  $e
      * @return bool
      */
     protected function causedByDeadlock(Exception $e)

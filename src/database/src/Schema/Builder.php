@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -13,6 +14,7 @@ namespace Hyperf\Database\Schema;
 
 use Closure;
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionInterface;
 use LogicException;
 
 class Builder
@@ -48,10 +50,9 @@ class Builder
     /**
      * Create a new database Schema manager.
      *
-     * @param  \Hyperf\Database\Connection $connection
-     * @return void
+     * @param \Hyperf\Database\Connection $connection
      */
-    public function __construct(Connection $connection)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
         $this->grammar = $connection->getSchemaGrammar();
@@ -60,8 +61,7 @@ class Builder
     /**
      * Set the default string length for migrations.
      *
-     * @param  int $length
-     * @return void
+     * @param int $length
      */
     public static function defaultStringLength($length)
     {
@@ -103,7 +103,6 @@ class Builder
      * Determine if the given table has given columns.
      *
      * @param  string $table
-     * @param  array $columns
      * @return bool
      */
     public function hasColumns($table, array $columns)
@@ -111,7 +110,7 @@ class Builder
         $tableColumns = array_map('strtolower', $this->getColumnListing($table));
 
         foreach ($columns as $column) {
-            if (!in_array(strtolower($column), $tableColumns)) {
+            if (! in_array(strtolower($column), $tableColumns)) {
                 return false;
             }
         }
@@ -151,9 +150,7 @@ class Builder
     /**
      * Modify a table on the schema.
      *
-     * @param  string $table
-     * @param  \Closure $callback
-     * @return void
+     * @param string $table
      */
     public function table($table, Closure $callback)
     {
@@ -163,9 +160,7 @@ class Builder
     /**
      * Create a new table on the schema.
      *
-     * @param  string $table
-     * @param  \Closure $callback
-     * @return void
+     * @param string $table
      */
     public function create($table, Closure $callback)
     {
@@ -179,8 +174,7 @@ class Builder
     /**
      * Drop a table from the schema.
      *
-     * @param  string $table
-     * @return void
+     * @param string $table
      */
     public function drop($table)
     {
@@ -192,8 +186,7 @@ class Builder
     /**
      * Drop a table from the schema if it exists.
      *
-     * @param  string $table
-     * @return void
+     * @param string $table
      */
     public function dropIfExists($table)
     {
@@ -205,7 +198,6 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     * @return void
      *
      * @throws \LogicException
      */
@@ -217,7 +209,6 @@ class Builder
     /**
      * Drop all views from the database.
      *
-     * @return void
      *
      * @throws \LogicException
      */
@@ -229,9 +220,8 @@ class Builder
     /**
      * Rename a table on the schema.
      *
-     * @param  string $from
-     * @param  string $to
-     * @return void
+     * @param string $from
+     * @param string $to
      */
     public function rename($from, $to)
     {
@@ -277,7 +267,6 @@ class Builder
     /**
      * Set the database connection instance.
      *
-     * @param  \Hyperf\Database\Connection $connection
      * @return $this
      */
     public function setConnection(Connection $connection)
@@ -289,9 +278,6 @@ class Builder
 
     /**
      * Set the Schema Blueprint resolver callback.
-     *
-     * @param  \Closure $resolver
-     * @return void
      */
     public function blueprintResolver(Closure $resolver)
     {
@@ -301,8 +287,7 @@ class Builder
     /**
      * Execute the blueprint to build / modify the table.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @return void
+     * @param \Hyperf\Database\Schema\Blueprint $blueprint
      */
     protected function build(Blueprint $blueprint)
     {
@@ -312,8 +297,7 @@ class Builder
     /**
      * Create a new command set with a Closure.
      *
-     * @param  string $table
-     * @param  \Closure|null $callback
+     * @param  string                            $table
      * @return \Hyperf\Database\Schema\Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)

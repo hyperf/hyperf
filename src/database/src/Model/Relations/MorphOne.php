@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -21,8 +22,6 @@ class MorphOne extends MorphOneOrMany
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
     public function getResults()
     {
@@ -32,8 +31,7 @@ class MorphOne extends MorphOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -48,9 +46,7 @@ class MorphOne extends MorphOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -61,7 +57,6 @@ class MorphOne extends MorphOneOrMany
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \Hyperf\Database\Model\Model  $parent
      * @return \Hyperf\Database\Model\Model
      */
     public function newRelatedInstanceFor(Model $parent)

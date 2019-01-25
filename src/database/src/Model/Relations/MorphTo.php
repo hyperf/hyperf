@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -49,13 +50,10 @@ class MorphTo extends BelongsTo
     /**
      * Create a new morph to relationship instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $parent
-     * @param  string  $foreignKey
-     * @param  string  $ownerKey
-     * @param  string  $type
-     * @param  string  $relation
-     * @return void
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $type
+     * @param string $relation
      */
     public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
     {
@@ -67,9 +65,8 @@ class MorphTo extends BelongsTo
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      */
     public function __call($method, $parameters)
     {
@@ -95,9 +92,6 @@ class MorphTo extends BelongsTo
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     public function addEagerConstraints(array $models)
     {
@@ -106,8 +100,6 @@ class MorphTo extends BelongsTo
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
     public function getResults()
     {
@@ -118,8 +110,6 @@ class MorphTo extends BelongsTo
      * Get the results of the relationship.
      *
      * Called via eager load method of Model query builder.
-     *
-     * @return mixed
      */
     public function getEager()
     {
@@ -133,22 +123,20 @@ class MorphTo extends BelongsTo
     /**
      * Create a new model instance by type.
      *
-     * @param  string  $type
+     * @param  string                       $type
      * @return \Hyperf\Database\Model\Model
      */
     public function createModelByType($type)
     {
         $class = Model::getActualClassNameForMorph($type);
 
-        return new $class;
+        return new $class();
     }
 
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -159,7 +147,7 @@ class MorphTo extends BelongsTo
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  \Hyperf\Database\Model\Model  $model
+     * @param  \Hyperf\Database\Model\Model $model
      * @return \Hyperf\Database\Model\Model
      */
     public function associate($model)
@@ -193,8 +181,6 @@ class MorphTo extends BelongsTo
 
     /**
      * Touch all of the related models for the relationship.
-     *
-     * @return void
      */
     public function touch()
     {
@@ -225,9 +211,6 @@ class MorphTo extends BelongsTo
 
     /**
      * Build a dictionary with the models.
-     *
-     * @param  \Hyperf\Database\Model\Collection  $models
-     * @return void
      */
     protected function buildDictionary(Collection $models)
     {
@@ -241,7 +224,7 @@ class MorphTo extends BelongsTo
     /**
      * Get all of the relation results for a type.
      *
-     * @param  string  $type
+     * @param  string                            $type
      * @return \Hyperf\Database\Model\Collection
      */
     protected function getResultsByType($type)
@@ -255,7 +238,7 @@ class MorphTo extends BelongsTo
                             ->with($this->getQuery()->getEagerLoads());
 
         return $query->whereIn(
-            $instance->getTable().'.'.$ownerKey,
+            $instance->getTable() . '.' . $ownerKey,
             $this->gatherKeysByType($type)
         )->get();
     }
@@ -263,7 +246,7 @@ class MorphTo extends BelongsTo
     /**
      * Gather all of the foreign keys for a given type.
      *
-     * @param  string  $type
+     * @param  string $type
      * @return array
      */
     protected function gatherKeysByType($type)
@@ -276,9 +259,7 @@ class MorphTo extends BelongsTo
     /**
      * Match the results for a given type to their parents.
      *
-     * @param  string  $type
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @return void
+     * @param string $type
      */
     protected function matchToMorphParents($type, Collection $results)
     {
@@ -296,7 +277,6 @@ class MorphTo extends BelongsTo
     /**
      * Replay stored macro calls on the actual related instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
      * @return \Hyperf\Database\Model\Builder
      */
     protected function replayMacros(Builder $query)

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -17,8 +18,6 @@ class MorphMany extends MorphOneOrMany
 {
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
     public function getResults()
     {
@@ -28,8 +27,7 @@ class MorphMany extends MorphOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -44,9 +42,7 @@ class MorphMany extends MorphOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)

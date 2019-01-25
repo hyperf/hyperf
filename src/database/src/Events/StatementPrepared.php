@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,9 +31,8 @@ class StatementPrepared
     /**
      * Create a new event instance.
      *
-     * @param  \Hyperf\Database\Connection  $connection
-     * @param  \PDOStatement  $statement
-     * @return void
+     * @param \Hyperf\Database\Connection $connection
+     * @param \PDOStatement               $statement
      */
     public function __construct($connection, $statement)
     {

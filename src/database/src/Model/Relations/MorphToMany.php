@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -43,17 +44,14 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new morph to many relationship instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $parent
-     * @param  string  $name
-     * @param  string  $table
-     * @param  string  $foreignPivotKey
-     * @param  string  $relatedPivotKey
-     * @param  string  $parentKey
-     * @param  string  $relatedKey
-     * @param  string  $relationName
-     * @param  bool  $inverse
-     * @return void
+     * @param string $name
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
+     * @param bool   $inverse
      */
     public function __construct(
         Builder $query,
@@ -68,7 +66,7 @@ class MorphToMany extends BelongsToMany
         $inverse = false
     ) {
         $this->inverse = $inverse;
-        $this->morphType = $name.'_type';
+        $this->morphType = $name . '_type';
         $this->morphClass = $inverse ? $query->getModel()->getMorphClass() : $parent->getMorphClass();
 
         parent::__construct(
@@ -85,29 +83,24 @@ class MorphToMany extends BelongsToMany
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     public function addEagerConstraints(array $models)
     {
         parent::addEagerConstraints($models);
 
-        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
+        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
     }
 
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         return parent::getRelationExistenceQuery($query, $parentQuery, $columns)->where(
-            $this->table.'.'.$this->morphType,
+            $this->table . '.' . $this->morphType,
             $this->morphClass
         );
     }
@@ -115,8 +108,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot model instance.
      *
-     * @param  array  $attributes
-     * @param  bool   $exists
+     * @param  bool                                   $exists
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
@@ -172,7 +164,7 @@ class MorphToMany extends BelongsToMany
     {
         parent::addWhereConstraints();
 
-        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
+        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
 
         return $this;
     }
@@ -215,7 +207,7 @@ class MorphToMany extends BelongsToMany
         $defaults = [$this->foreignPivotKey, $this->relatedPivotKey, $this->morphType];
 
         return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
-            return $this->table.'.'.$column.' as pivot_'.$column;
+            return $this->table . '.' . $column . ' as pivot_' . $column;
         })->unique()->all();
     }
 }

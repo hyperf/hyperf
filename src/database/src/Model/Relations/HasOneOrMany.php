@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -41,11 +42,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $parent
-     * @param  string  $foreignKey
-     * @param  string  $localKey
-     * @return void
+     * @param string $foreignKey
+     * @param string $localKey
      */
     public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
     {
@@ -58,7 +56,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @param  array  $attributes
      * @return \Hyperf\Database\Model\Model
      */
     public function make(array $attributes = [])
@@ -70,8 +67,6 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
     public function addConstraints()
     {
@@ -84,9 +79,6 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     public function addEagerConstraints(array $models)
     {
@@ -101,9 +93,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function matchOne(array $models, Collection $results, $relation)
@@ -114,9 +104,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function matchMany(array $models, Collection $results, $relation)
@@ -127,8 +115,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Find a model by its primary key or return new instance of the related model.
      *
-     * @param  mixed  $id
-     * @param  array  $columns
+     * @param  array                                                 $columns
      * @return \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
@@ -145,8 +132,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Hyperf\Database\Model\Model
      */
     public function firstOrNew(array $attributes, array $values = [])
@@ -163,8 +148,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Hyperf\Database\Model\Model
      */
     public function firstOrCreate(array $attributes, array $values = [])
@@ -179,8 +162,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Hyperf\Database\Model\Model
      */
     public function updateOrCreate(array $attributes, array $values = [])
@@ -195,7 +176,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @param  \Hyperf\Database\Model\Model  $model
      * @return \Hyperf\Database\Model\Model|false
      */
     public function save(Model $model)
@@ -208,7 +188,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param  \Traversable|array  $models
+     * @param  \Traversable|array $models
      * @return \Traversable|array
      */
     public function saveMany($models)
@@ -223,7 +203,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @param  array  $attributes
      * @return \Hyperf\Database\Model\Model
      */
     public function create(array $attributes = [])
@@ -238,7 +217,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @param  array  $records
      * @return \Hyperf\Database\Model\Collection
      */
     public function createMany(array $records)
@@ -255,7 +233,6 @@ abstract class HasOneOrMany extends Relation
     /**
      * Perform an update on all the related models.
      *
-     * @param  array  $attributes
      * @return int
      */
     public function update(array $attributes)
@@ -270,9 +247,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -287,21 +262,19 @@ abstract class HasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
+        $query->from($query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash());
 
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $hash.'.'.$this->getForeignKeyName()
+            $hash . '.' . $this->getForeignKeyName()
         );
     }
 
@@ -312,7 +285,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function getRelationCountHash()
     {
-        return 'laravel_reserved_'.static::$selfJoinCount++;
+        return 'laravel_reserved_' . static::$selfJoinCount++;
     }
 
     /**
@@ -327,8 +300,6 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Get the key value of the parent's local key.
-     *
-     * @return mixed
      */
     public function getParentKey()
     {
@@ -380,10 +351,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
-     * @param  string  $type
+     * @param  string $relation
+     * @param  string $type
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
@@ -408,22 +377,19 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param  array   $dictionary
-     * @param  string  $key
-     * @param  string  $type
-     * @return mixed
+     * @param string $key
+     * @param string $type
      */
     protected function getRelationValue(array $dictionary, $key, $type)
     {
         $value = $dictionary[$key];
 
-        return $type === 'one' ? reset($value) : $this->related->newCollection($value);
+        return 'one' === $type ? reset($value) : $this->related->newCollection($value);
     }
 
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Hyperf\Database\Model\Collection  $results
      * @return array
      */
     protected function buildDictionary(Collection $results)
@@ -437,9 +403,6 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Set the foreign ID for creating a related model.
-     *
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @return void
      */
     protected function setForeignAttributesForCreate(Model $model)
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -66,10 +67,6 @@ abstract class Relation
 
     /**
      * Create a new relation instance.
-     *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $parent
-     * @return void
      */
     public function __construct(Builder $query, Model $parent)
     {
@@ -83,9 +80,8 @@ abstract class Relation
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      */
     public function __call($method, $parameters)
     {
@@ -104,8 +100,6 @@ abstract class Relation
 
     /**
      * Force a clone of the underlying query builder when cloning.
-     *
-     * @return void
      */
     public function __clone()
     {
@@ -114,9 +108,6 @@ abstract class Relation
 
     /**
      * Run a callback with constraints disabled on the relation.
-     *
-     * @param  \Closure  $callback
-     * @return mixed
      */
     public static function noConstraints(Closure $callback)
     {
@@ -136,24 +127,18 @@ abstract class Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
     abstract public function addConstraints();
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     abstract public function addEagerConstraints(array $models);
 
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     abstract public function initRelation(array $models, $relation);
@@ -161,17 +146,13 @@ abstract class Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     abstract public function match(array $models, Collection $results, $relation);
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
     abstract public function getResults();
 
@@ -188,7 +169,7 @@ abstract class Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
+     * @param  array                             $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function get($columns = ['*'])
@@ -198,8 +179,6 @@ abstract class Relation
 
     /**
      * Touch all of the related models for the relationship.
-     *
-     * @return void
      */
     public function touch()
     {
@@ -215,7 +194,6 @@ abstract class Relation
     /**
      * Run a raw update against the base query.
      *
-     * @param  array  $attributes
      * @return int
      */
     public function rawUpdate(array $attributes = [])
@@ -226,8 +204,6 @@ abstract class Relation
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
@@ -244,9 +220,7 @@ abstract class Relation
      *
      * Essentially, these queries compare on column names like whereColumn.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -341,7 +315,6 @@ abstract class Relation
     /**
      * Set or get the morph map for polymorphic relations.
      *
-     * @param  array|null  $map
      * @param  bool  $merge
      * @return array
      */
@@ -360,7 +333,7 @@ abstract class Relation
     /**
      * Get the model associated with a custom polymorphic type.
      *
-     * @param  string  $alias
+     * @param  string      $alias
      * @return string|null
      */
     public static function getMorphedModel($alias)
@@ -371,8 +344,7 @@ abstract class Relation
     /**
      * Get all of the primary keys for an array of models.
      *
-     * @param  array   $models
-     * @param  string  $key
+     * @param  string $key
      * @return array
      */
     protected function getKeys(array $models, $key = null)
@@ -385,8 +357,7 @@ abstract class Relation
     /**
      * Get the name of the "where in" method for eager loading.
      *
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @param  string  $key
+     * @param  string $key
      * @return string
      */
     protected function whereInMethod(Model $model, $key)
@@ -401,7 +372,7 @@ abstract class Relation
     /**
      * Builds a table-keyed array from model class names.
      *
-     * @param  string[]|null  $models
+     * @param  string[]|null $models
      * @return array|null
      */
     protected static function buildMorphMapFromModels(array $models = null)
@@ -411,7 +382,7 @@ abstract class Relation
         }
 
         return array_combine(array_map(function ($model) {
-            return (new $model)->getTable();
+            return (new $model())->getTable();
         }, $models), $models);
     }
 }

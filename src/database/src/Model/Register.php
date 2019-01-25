@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -32,7 +33,7 @@ class Register
     /**
      * Resolve a connection instance.
      *
-     * @param  string|null $connection
+     * @param  string|null         $connection
      * @return ConnectionInterface
      */
     public static function resolveConnection($connection = null)
@@ -52,9 +53,6 @@ class Register
 
     /**
      * Set the connection resolver instance.
-     *
-     * @param  ConnectionResolverInterface $resolver
-     * @return void
      */
     public static function setConnectionResolver(ConnectionResolverInterface $resolver)
     {
@@ -63,8 +61,6 @@ class Register
 
     /**
      * Unset the connection resolver for models.
-     *
-     * @return void
      */
     public static function unsetConnectionResolver()
     {
@@ -83,9 +79,6 @@ class Register
 
     /**
      * Set the event dispatcher instance.
-     *
-     * @param  EventDispatcherInterface $dispatcher
-     * @return void
      */
     public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
@@ -94,8 +87,6 @@ class Register
 
     /**
      * Unset the event dispatcher for models.
-     *
-     * @return void
      */
     public static function unsetEventDispatcher()
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -28,7 +29,6 @@ abstract class Grammar
     /**
      * Wrap an array of values.
      *
-     * @param  array $values
      * @return array
      */
     public function wrapArray(array $values)
@@ -44,7 +44,7 @@ abstract class Grammar
      */
     public function wrapTable($table)
     {
-        if (!$this->isExpression($table)) {
+        if (! $this->isExpression($table)) {
             return $this->wrap($this->tablePrefix . $table, true);
         }
 
@@ -55,7 +55,7 @@ abstract class Grammar
      * Wrap a value in keyword identifiers.
      *
      * @param  \Hyperf\Database\Query\Expression|string $value
-     * @param  bool $prefixAlias
+     * @param  bool                                     $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -67,7 +67,7 @@ abstract class Grammar
         // If the value being wrapped has a column alias we will need to separate out
         // the pieces so we can wrap each of the segments of the expression on its
         // own, and then join these both back together using the "as" connector.
-        if (stripos($value, ' as ') !== false) {
+        if (false !== stripos($value, ' as ')) {
             return $this->wrapAliasedValue($value, $prefixAlias);
         }
 
@@ -77,7 +77,6 @@ abstract class Grammar
     /**
      * Convert an array of column names into a delimited string.
      *
-     * @param  array $columns
      * @return string
      */
     public function columnize(array $columns)
@@ -88,7 +87,6 @@ abstract class Grammar
     /**
      * Create query parameter place-holders for an array.
      *
-     * @param  array $values
      * @return string
      */
     public function parameterize(array $values)
@@ -99,7 +97,6 @@ abstract class Grammar
     /**
      * Get the appropriate query parameter place-holder for a value.
      *
-     * @param  mixed $value
      * @return string
      */
     public function parameter($value)
@@ -125,7 +122,6 @@ abstract class Grammar
     /**
      * Determine if the given value is a raw expression.
      *
-     * @param  mixed $value
      * @return bool
      */
     public function isExpression($value)
@@ -181,7 +177,7 @@ abstract class Grammar
      * Wrap a value that has an alias.
      *
      * @param  string $value
-     * @param  bool $prefixAlias
+     * @param  bool   $prefixAlias
      * @return string
      */
     protected function wrapAliasedValue($value, $prefixAlias = false)
@@ -205,13 +201,13 @@ abstract class Grammar
     /**
      * Wrap the given value segments.
      *
-     * @param  array $segments
+     * @param  array  $segments
      * @return string
      */
     protected function wrapSegments($segments)
     {
         return collect($segments)->map(function ($segment, $key) use ($segments) {
-            return $key == 0 && count($segments) > 1
+            return 0 == $key && count($segments) > 1
                 ? $this->wrapTable($segment)
                 : $this->wrapValue($segment);
         })->implode('.');
@@ -225,7 +221,7 @@ abstract class Grammar
      */
     protected function wrapValue($value)
     {
-        if ($value !== '*') {
+        if ('*' !== $value) {
             return '"' . str_replace('"', '""', $value) . '"';
         }
 

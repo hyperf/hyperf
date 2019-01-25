@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -22,9 +23,6 @@ class Expression
 
     /**
      * Create a new raw query expression.
-     *
-     * @param  mixed  $value
-     * @return void
      */
     public function __construct($value)
     {
@@ -43,8 +41,6 @@ class Expression
 
     /**
      * Get the value of the expression.
-     *
-     * @return mixed
      */
     public function getValue()
     {

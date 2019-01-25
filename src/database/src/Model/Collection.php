@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -23,8 +24,6 @@ class Collection extends BaseCollection
     /**
      * Find a model in the collection by key.
      *
-     * @param  mixed $key
-     * @param  mixed $default
      * @return \Hyperf\Database\Model\Model|static
      */
     public function find($key, $default = null)
@@ -39,7 +38,7 @@ class Collection extends BaseCollection
 
         if (is_array($key)) {
             if ($this->isEmpty()) {
-                return new static;
+                return new static();
             }
 
             return $this->whereIn($this->first()->getKeyName(), $key);
@@ -142,7 +141,7 @@ class Collection extends BaseCollection
      * Load a set of relationships onto the mixed relationship collection.
      *
      * @param  string $relation
-     * @param  array $relations
+     * @param  array  $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -166,7 +165,6 @@ class Collection extends BaseCollection
     /**
      * Add an item to the collection.
      *
-     * @param  mixed $item
      * @return $this
      */
     public function add($item)
@@ -178,11 +176,6 @@ class Collection extends BaseCollection
 
     /**
      * Determine if a key exists in the collection.
-     *
-     * @param  mixed $key
-     * @param  mixed $operator
-     * @param  mixed $value
-     * @return bool
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -232,15 +225,13 @@ class Collection extends BaseCollection
 
     /**
      * Run a map over each of the items.
-     *
-     * @param  callable $callback
      */
     public function map(callable $callback): BaseCollection
     {
         $result = parent::map($callback);
 
         return $result->contains(function ($item) {
-            return !$item instanceof Model;
+            return ! $item instanceof Model;
         }) ? $result->toBase() : $result;
     }
 
@@ -253,7 +244,7 @@ class Collection extends BaseCollection
     public function fresh($with = [])
     {
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
 
         $model = $this->first();
@@ -278,12 +269,12 @@ class Collection extends BaseCollection
      */
     public function diff($items): BaseCollection
     {
-        $diff = new static;
+        $diff = new static();
 
         $dictionary = $this->getDictionary($items);
 
         foreach ($this->items as $item) {
-            if (!isset($dictionary[$item->getKey()])) {
+            if (! isset($dictionary[$item->getKey()])) {
                 $diff->add($item);
             }
         }
@@ -299,7 +290,7 @@ class Collection extends BaseCollection
      */
     public function intersect($items): BaseCollection
     {
-        $intersect = new static;
+        $intersect = new static();
 
         $dictionary = $this->getDictionary($items);
 
@@ -315,12 +306,11 @@ class Collection extends BaseCollection
     /**
      * Return only unique items from the collection.
      *
-     * @param  string|callable|null $key
-     * @param  bool $strict
+     * @param string|callable|null $key
      */
     public function unique($key = null, bool $strict = false): BaseCollection
     {
-        if (!is_null($key)) {
+        if (! is_null($key)) {
             return parent::unique($key, $strict);
         }
 
@@ -330,7 +320,6 @@ class Collection extends BaseCollection
     /**
      * Returns only the models from the collection with the specified keys.
      *
-     * @param  mixed $keys
      * @return static
      */
     public function only($keys): BaseCollection
@@ -347,7 +336,6 @@ class Collection extends BaseCollection
     /**
      * Returns all models in the collection except the models with specified keys.
      *
-     * @param  mixed $keys
      * @return static
      */
     public function except($keys): BaseCollection
@@ -405,8 +393,7 @@ class Collection extends BaseCollection
     /**
      * Get an array with the values of a given key.
      *
-     * @param  string $value
-     * @param  string|null $key
+     * @param string $value
      */
     public function pluck($value, ?string $key = null): BaseCollection
     {
@@ -415,7 +402,6 @@ class Collection extends BaseCollection
 
     /**
      * Get the keys of the collection items.
-     *
      */
     public function keys(): BaseCollection
     {
@@ -425,7 +411,7 @@ class Collection extends BaseCollection
     /**
      * Zip the collection together with one or more arrays.
      *
-     * @param  mixed ...$items
+     * @param mixed ...$items
      */
     public function zip($items): BaseCollection
     {
@@ -434,7 +420,6 @@ class Collection extends BaseCollection
 
     /**
      * Collapse the collection of items into a single array.
-     *
      */
     public function collapse(): BaseCollection
     {
@@ -451,7 +436,6 @@ class Collection extends BaseCollection
 
     /**
      * Flip the items in the collection.
-     *
      */
     public function flip(): BaseCollection
     {
@@ -543,9 +527,7 @@ class Collection extends BaseCollection
     /**
      * Load a relationship path if it is not already eager loaded.
      *
-     * @param  \Hyperf\Database\Model\Collection $models
-     * @param  array $path
-     * @return void
+     * @param \Hyperf\Database\Model\Collection $models
      */
     protected function loadMissingRelation(Collection $models, array $path)
     {
@@ -558,7 +540,7 @@ class Collection extends BaseCollection
         }
 
         $models->filter(function ($model) use ($name) {
-            return !is_null($model) && !$model->relationLoaded($name);
+            return ! is_null($model) && ! $model->relationLoaded($name);
         })->load($relation);
 
         if (empty($path)) {

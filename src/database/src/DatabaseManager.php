@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -53,9 +54,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Create a new database manager instance.
      *
-     * @param  \Hyperf\Contracts\Foundation\Application $app
-     * @param  \Hyperf\Database\Connectors\ConnectionFactory $factory
-     * @return void
+     * @param \Hyperf\Contracts\Foundation\Application $app
      */
     public function __construct($app, ConnectionFactory $factory)
     {
@@ -66,9 +65,8 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Dynamically pass methods to the default connection.
      *
-     * @param  string $method
-     * @param  array $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      */
     public function __call($method, $parameters)
     {
@@ -78,7 +76,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param  string $name
+     * @param  string                      $name
      * @return \Hyperf\Database\Connection
      */
     public function connection($name = null)
@@ -90,7 +88,7 @@ class DatabaseManager implements ConnectionResolverInterface
         // If we haven't created this connection, we'll create it based on the config
         // provided in the application. Once we've created the connections we will
         // set the "fetch mode" for PDO which determines the query return types.
-        if (!isset($this->connections[$name])) {
+        if (! isset($this->connections[$name])) {
             $this->connections[$name] = $this->configure(
                 $this->makeConnection($database),
                 $type
@@ -103,8 +101,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Disconnect from the given database and remove from local cache.
      *
-     * @param  string $name
-     * @return void
+     * @param string $name
      */
     public function purge($name = null)
     {
@@ -118,8 +115,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Disconnect from the given database.
      *
-     * @param  string $name
-     * @return void
+     * @param string $name
      */
     public function disconnect($name = null)
     {
@@ -131,14 +127,14 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Reconnect to the given database.
      *
-     * @param  string $name
+     * @param  string                      $name
      * @return \Hyperf\Database\Connection
      */
     public function reconnect($name = null)
     {
         $this->disconnect($name = $name ?: $this->getDefaultConnection());
 
-        if (!isset($this->connections[$name])) {
+        if (! isset($this->connections[$name])) {
             return $this->connection($name);
         }
 
@@ -158,8 +154,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Set the default connection name.
      *
-     * @param  string $name
-     * @return void
+     * @param string $name
      */
     public function setDefaultConnection($name)
     {
@@ -192,9 +187,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Register an extension connection resolver.
      *
-     * @param  string $name
-     * @param  callable $resolver
-     * @return void
+     * @param string $name
      */
     public function extend($name, callable $resolver)
     {
@@ -228,7 +221,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Make the database connection instance.
      *
-     * @param  string $name
+     * @param  string                      $name
      * @return \Hyperf\Database\Connection
      */
     protected function makeConnection($name)
@@ -280,7 +273,7 @@ class DatabaseManager implements ConnectionResolverInterface
      * Prepare the database connection instance.
      *
      * @param  \Hyperf\Database\Connection $connection
-     * @param  string $type
+     * @param  string                      $type
      * @return \Hyperf\Database\Connection
      */
     protected function configure(Connection $connection, $type)
@@ -308,14 +301,14 @@ class DatabaseManager implements ConnectionResolverInterface
      * Prepare the read / write mode for database connection instance.
      *
      * @param  \Hyperf\Database\Connection $connection
-     * @param  string $type
+     * @param  string                      $type
      * @return \Hyperf\Database\Connection
      */
     protected function setPdoForType(Connection $connection, $type = null)
     {
-        if ($type === 'read') {
+        if ('read' === $type) {
             $connection->setPdo($connection->getReadPdo());
-        } elseif ($type === 'write') {
+        } elseif ('write' === $type) {
             $connection->setReadPdo($connection->getPdo());
         }
 
@@ -325,7 +318,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Refresh the PDO connections on a given connection.
      *
-     * @param  string $name
+     * @param  string                      $name
      * @return \Hyperf\Database\Connection
      */
     protected function refreshPdoConnections($name)

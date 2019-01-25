@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -22,8 +23,7 @@ trait InteractsWithPivotTable
      *
      * Each existing model is detached, and non existing ones are attached.
      *
-     * @param  mixed  $ids
-     * @param  bool   $touch
+     * @param  bool  $touch
      * @return array
      */
     public function toggle($ids, $touch = true)
@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array  $ids
+     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,8 +84,8 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array  $ids
-     * @param  bool   $detaching
+     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array $ids
+     * @param  bool                                                        $detaching
      * @return array
      */
     public function sync($ids, $detaching = true)
@@ -136,9 +136,7 @@ trait InteractsWithPivotTable
     /**
      * Update an existing pivot record on the table.
      *
-     * @param  mixed  $id
-     * @param  array  $attributes
-     * @param  bool   $touch
+     * @param  bool $touch
      * @return int
      */
     public function updateExistingPivot($id, array $attributes, $touch = true)
@@ -161,10 +159,7 @@ trait InteractsWithPivotTable
     /**
      * Attach a model to the parent.
      *
-     * @param  mixed  $id
-     * @param  array  $attributes
-     * @param  bool   $touch
-     * @return void
+     * @param bool $touch
      */
     public function attach($id, array $attributes = [], $touch = true)
     {
@@ -184,8 +179,7 @@ trait InteractsWithPivotTable
     /**
      * Detach models from the relationship.
      *
-     * @param  mixed  $ids
-     * @param  bool  $touch
+     * @param  bool $touch
      * @return int
      */
     public function detach($ids = null, $touch = true)
@@ -220,8 +214,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new pivot model instance.
      *
-     * @param  array  $attributes
-     * @param  bool   $exists
+     * @param  bool                                   $exists
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
@@ -240,7 +233,6 @@ trait InteractsWithPivotTable
     /**
      * Create a new existing pivot model instance.
      *
-     * @param  array  $attributes
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newExistingPivot(array $attributes = [])
@@ -261,7 +253,6 @@ trait InteractsWithPivotTable
     /**
      * Get a new pivot statement for a given "other" ID.
      *
-     * @param  mixed  $id
      * @return \Hyperf\Database\Query\Builder
      */
     public function newPivotStatementForId($id)
@@ -272,7 +263,7 @@ trait InteractsWithPivotTable
     /**
      * Set the columns on the pivot table to retrieve.
      *
-     * @param  array|mixed  $columns
+     * @param  array|mixed $columns
      * @return $this
      */
     public function withPivot($columns)
@@ -288,7 +279,6 @@ trait InteractsWithPivotTable
     /**
      * Format the sync / toggle record list so that it is keyed by ID.
      *
-     * @param  array  $records
      * @return array
      */
     protected function formatRecordsList(array $records)
@@ -305,9 +295,7 @@ trait InteractsWithPivotTable
     /**
      * Attach all of the records that aren't in the given current records.
      *
-     * @param  array  $records
-     * @param  array  $current
-     * @param  bool   $touch
+     * @param  bool  $touch
      * @return array
      */
     protected function attachNew(array $records, array $current, $touch = true)
@@ -339,8 +327,7 @@ trait InteractsWithPivotTable
     /**
      * Create an array of records to insert into the pivot table.
      *
-     * @param  array  $ids
-     * @param  array  $attributes
+     * @param  array $ids
      * @return array
      */
     protected function formatAttachRecords($ids, array $attributes)
@@ -368,10 +355,9 @@ trait InteractsWithPivotTable
     /**
      * Create a full attachment record payload.
      *
-     * @param  int    $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @param  bool   $hasTimestamps
+     * @param  int   $key
+     * @param  array $attributes
+     * @param  bool  $hasTimestamps
      * @return array
      */
     protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps)
@@ -387,9 +373,6 @@ trait InteractsWithPivotTable
     /**
      * Get the attach record ID and extra attributes.
      *
-     * @param  mixed  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
      * @return array
      */
     protected function extractAttachIdAndAttributes($key, $value, array $attributes)
@@ -429,8 +412,7 @@ trait InteractsWithPivotTable
     /**
      * Set the creation and update timestamps on an attach record.
      *
-     * @param  array  $record
-     * @param  bool   $exists
+     * @param  bool  $exists
      * @return array
      */
     protected function addTimestampsToAttachment(array $record, $exists = false)
@@ -438,7 +420,7 @@ trait InteractsWithPivotTable
         $fresh = $this->parent->freshTimestamp();
 
         if ($this->using) {
-            $pivotModel = new $this->using;
+            $pivotModel = new $this->using();
 
             $fresh = $fresh->format($pivotModel->getDateFormat());
         }
@@ -457,7 +439,7 @@ trait InteractsWithPivotTable
     /**
      * Determine whether the given column is defined as a pivot column.
      *
-     * @param  string  $column
+     * @param  string $column
      * @return bool
      */
     protected function hasPivotColumn($column)
@@ -488,7 +470,6 @@ trait InteractsWithPivotTable
     /**
      * Get all of the IDs from the given mixed value.
      *
-     * @param  mixed  $value
      * @return array
      */
     protected function parseIds($value)
@@ -510,9 +491,6 @@ trait InteractsWithPivotTable
 
     /**
      * Get the ID from the given mixed value.
-     *
-     * @param  mixed  $value
-     * @return mixed
      */
     protected function parseId($value)
     {
@@ -522,7 +500,6 @@ trait InteractsWithPivotTable
     /**
      * Cast the given keys to integers if they are numeric and string otherwise.
      *
-     * @param  array  $keys
      * @return array
      */
     protected function castKeys(array $keys)
@@ -534,9 +511,6 @@ trait InteractsWithPivotTable
 
     /**
      * Cast the given key to convert to primary key type.
-     *
-     * @param  mixed  $key
-     * @return mixed
      */
     protected function castKey($key)
     {
@@ -562,9 +536,7 @@ trait InteractsWithPivotTable
     /**
      * Converts a given value to a given type value.
      *
-     * @param  string $type
-     * @param  mixed  $value
-     * @return mixed
+     * @param string $type
      */
     protected function getTypeSwapValue($type, $value)
     {

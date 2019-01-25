@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -43,15 +44,11 @@ trait HasEvents
 
     /**
      * Fire the given event for the model.
-     *
-     * @param  string $event
-     * @param  bool $halt
-     * @return mixed
      */
     protected function fireModelEvent(string $event)
     {
         $dispatcher = $this->getEventDispatcher();
-        if (!$dispatcher instanceof EventDispatcherInterface) {
+        if (! $dispatcher instanceof EventDispatcherInterface) {
             return true;
         }
 
@@ -59,45 +56,42 @@ trait HasEvents
             $this->fireCustomModelEvent($event, 'dispatch')
         );
 
-        if ($result === false) {
+        if (false === $result) {
             return false;
         }
 
         $eventName = 'Hyperf\\Database\\Model\\Events\\' . Str::studly($event);
-        return !empty($result) ? $result : $dispatcher->dispatch(new $eventName($this, $event));
+        return ! empty($result) ? $result : $dispatcher->dispatch(new $eventName($this, $event));
     }
 
     /**
      * Fire a custom model event for the given event.
      *
-     * @param  string $event
-     * @param  string $method
+     * @param  string     $event
+     * @param  string     $method
      * @return mixed|null
      */
     protected function fireCustomModelEvent($event, $method)
     {
-        if (!isset($this->dispatchesEvents[$event])) {
+        if (! isset($this->dispatchesEvents[$event])) {
             return;
         }
 
         $result = $this->getEventDispatcher()->$method(new $this->dispatchesEvents[$event]($this));
 
-        if (!is_null($result)) {
+        if (! is_null($result)) {
             return $result;
         }
     }
 
     /**
      * Filter the model event results.
-     *
-     * @param  mixed $result
-     * @return mixed
      */
     protected function filterModelEventResults($result)
     {
         if (is_array($result)) {
             $result = array_filter($result, function ($response) {
-                return !is_null($response);
+                return ! is_null($response);
             });
         }
 

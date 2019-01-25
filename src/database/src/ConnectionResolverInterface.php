@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -16,7 +17,7 @@ interface ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param  string  $name
+     * @param  string              $name
      * @return ConnectionInterface
      */
     public function connection($name = null);
@@ -31,8 +32,7 @@ interface ConnectionResolverInterface
     /**
      * Set the default connection name.
      *
-     * @param  string  $name
-     * @return void
+     * @param string $name
      */
     public function setDefaultConnection($name);
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -33,12 +34,9 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new morph one or many relationship instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $parent
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
-     * @return void
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
      */
     public function __construct(Builder $query, Model $parent, $type, $id, $localKey)
     {
@@ -51,8 +49,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
     public function addConstraints()
     {
@@ -65,9 +61,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     public function addEagerConstraints(array $models)
     {
@@ -79,9 +72,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Get the relationship query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -124,9 +115,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
 
     /**
      * Set the foreign ID and type for creating a related model.
-     *
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @return void
      */
     protected function setForeignAttributesForCreate(Model $model)
     {

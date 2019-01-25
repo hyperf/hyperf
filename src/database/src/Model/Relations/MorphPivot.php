@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -51,7 +52,7 @@ class MorphPivot extends Pivot
     /**
      * Set the morph type for the pivot.
      *
-     * @param  string  $morphType
+     * @param  string $morphType
      * @return $this
      */
     public function setMorphType($morphType)
@@ -64,7 +65,7 @@ class MorphPivot extends Pivot
     /**
      * Set the morph class for the pivot.
      *
-     * @param  string  $morphClass
+     * @param  string                                      $morphClass
      * @return \Hyperf\Database\Model\Relations\MorphPivot
      */
     public function setMorphClass($morphClass)
@@ -76,8 +77,6 @@ class MorphPivot extends Pivot
 
     /**
      * Get the queueable identity for the entity.
-     *
-     * @return mixed
      */
     public function getQueueableId()
     {
@@ -99,7 +98,7 @@ class MorphPivot extends Pivot
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
-     * @param  array|int  $ids
+     * @param  array|int                      $ids
      * @return \Hyperf\Database\Model\Builder
      */
     public function newQueryForRestoration($ids)
@@ -123,7 +122,6 @@ class MorphPivot extends Pivot
     /**
      * Set the keys for a save update query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
      * @return \Hyperf\Database\Model\Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
@@ -136,7 +134,7 @@ class MorphPivot extends Pivot
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
-     * @param  array<int>  $ids
+     * @param  array<int>                     $ids
      * @return \Hyperf\Database\Model\Builder
      */
     protected function newQueryForCollectionRestoration(array $ids)

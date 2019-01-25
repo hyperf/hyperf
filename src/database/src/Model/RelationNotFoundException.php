@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -32,8 +33,7 @@ class RelationNotFoundException extends RuntimeException
     /**
      * Create a new exception instance.
      *
-     * @param  mixed  $model
-     * @param  string  $relation
+     * @param  string $relation
      * @return static
      */
     public static function make($model, $relation)

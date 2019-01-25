@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -16,9 +17,8 @@ interface Scope
     /**
      * Apply the scope to a given Model query builder.
      *
-     * @param  \Hyperf\Database\Model\Builder  $builder
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @return void
+     * @param \Hyperf\Database\Model\Builder $builder
+     * @param \Hyperf\Database\Model\Model   $model
      */
     public function apply(Builder $builder, Model $model);
 }

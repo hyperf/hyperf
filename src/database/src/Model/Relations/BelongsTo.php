@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -56,13 +57,9 @@ class BelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Model  $child
-     * @param  string  $foreignKey
-     * @param  string  $ownerKey
-     * @param  string  $relationName
-     *
-     * @return void
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $relationName
      */
     public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName)
     {
@@ -80,8 +77,6 @@ class BelongsTo extends Relation
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
     public function getResults()
     {
@@ -90,8 +85,6 @@ class BelongsTo extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
     public function addConstraints()
     {
@@ -101,22 +94,19 @@ class BelongsTo extends Relation
             // of the related models matching on the foreign key that's on a parent.
             $table = $this->related->getTable();
 
-            $this->query->where($table.'.'.$this->ownerKey, '=', $this->child->{$this->foreignKey});
+            $this->query->where($table . '.' . $this->ownerKey, '=', $this->child->{$this->foreignKey});
         }
     }
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @param  array  $models
-     * @return void
      */
     public function addEagerConstraints(array $models)
     {
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
-        $key = $this->related->getTable().'.'.$this->ownerKey;
+        $key = $this->related->getTable() . '.' . $this->ownerKey;
 
         $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
 
@@ -126,8 +116,7 @@ class BelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -142,9 +131,7 @@ class BelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Hyperf\Database\Model\Collection  $results
-     * @param  string  $relation
+     * @param  string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -176,9 +163,6 @@ class BelongsTo extends Relation
 
     /**
      * Update the parent model on the relationship.
-     *
-     * @param  array  $attributes
-     * @return mixed
      */
     public function update(array $attributes)
     {
@@ -188,7 +172,7 @@ class BelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  \Hyperf\Database\Model\Model|int|string  $model
+     * @param  \Hyperf\Database\Model\Model|int|string $model
      * @return \Hyperf\Database\Model\Model
      */
     public function associate($model)
@@ -221,9 +205,7 @@ class BelongsTo extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -242,21 +224,19 @@ class BelongsTo extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Hyperf\Database\Model\Builder  $query
-     * @param  \Hyperf\Database\Model\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param  array|mixed                    $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         $query->select($columns)->from(
-            $query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash()
+            $query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash()
         );
 
         $query->getModel()->setTable($hash);
 
         return $query->whereColumn(
-            $hash.'.'.$this->ownerKey,
+            $hash . '.' . $this->ownerKey,
             '=',
             $this->getQualifiedForeignKeyName()
         );
@@ -269,7 +249,7 @@ class BelongsTo extends Relation
      */
     public function getRelationCountHash()
     {
-        return 'laravel_reserved_'.static::$selfJoinCount++;
+        return 'laravel_reserved_' . static::$selfJoinCount++;
     }
 
     /**
@@ -346,7 +326,6 @@ class BelongsTo extends Relation
     /**
      * Gather the keys from an array of related models.
      *
-     * @param  array  $models
      * @return array
      */
     protected function getEagerModelKeys(array $models)
@@ -365,7 +344,7 @@ class BelongsTo extends Relation
         // If there are no keys that were not null we will just return an array with null
         // so this query wont fail plus returns zero results, which should be what the
         // developer expects to happen in this situation. Otherwise we'll sort them.
-        if (count($keys) === 0) {
+        if (0 === count($keys)) {
             return [null];
         }
 
@@ -382,13 +361,12 @@ class BelongsTo extends Relation
     protected function relationHasIncrementingId()
     {
         return $this->related->getIncrementing() &&
-                                $this->related->getKeyType() === 'int';
+                                'int' === $this->related->getKeyType();
     }
 
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \Hyperf\Database\Model\Model  $parent
      * @return \Hyperf\Database\Model\Model
      */
     protected function newRelatedInstanceFor(Model $parent)

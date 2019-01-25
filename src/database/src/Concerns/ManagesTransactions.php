@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -20,13 +21,12 @@ trait ManagesTransactions
     /**
      * Execute a Closure within a transaction.
      *
-     * @return mixed
      *
      * @throws \Exception|\Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1)
     {
-        for ($currentAttempt = 1; $currentAttempt <= $attempts; $currentAttempt++) {
+        for ($currentAttempt = 1; $currentAttempt <= $attempts; ++$currentAttempt) {
             $this->beginTransaction();
 
             // We'll simply execute the given callback within a try / catch block and if we
@@ -63,7 +63,7 @@ trait ManagesTransactions
     {
         $this->createTransaction();
 
-        $this->transactions++;
+        ++$this->transactions;
 
         $this->fireConnectionEvent('beganTransaction');
     }
@@ -73,7 +73,7 @@ trait ManagesTransactions
      */
     public function commit(): void
     {
-        if ($this->transactions == 1) {
+        if (1 == $this->transactions) {
             $this->getPdo()->commit();
         }
 
@@ -85,8 +85,7 @@ trait ManagesTransactions
     /**
      * Rollback the active database transaction.
      *
-     * @param  int|null $toLevel
-     * @return void
+     * @param int|null $toLevel
      *
      * @throws \Exception
      */
@@ -119,8 +118,6 @@ trait ManagesTransactions
 
     /**
      * Get the number of active transactions.
-     *
-     * @return int
      */
     public function transactionLevel(): int
     {
@@ -130,10 +127,9 @@ trait ManagesTransactions
     /**
      * Handle an exception encountered when running a transacted statement.
      *
-     * @param  \Exception $e
-     * @param  int $currentAttempt
-     * @param  int $maxAttempts
-     * @return void
+     * @param \Exception $e
+     * @param int        $currentAttempt
+     * @param int        $maxAttempts
      *
      * @throws \Exception
      */
@@ -144,7 +140,7 @@ trait ManagesTransactions
         // let the developer handle it in another way. We will decrement too.
         if ($this->causedByDeadlock($e) &&
             $this->transactions > 1) {
-            $this->transactions--;
+            --$this->transactions;
 
             throw $e;
         }
@@ -164,12 +160,10 @@ trait ManagesTransactions
 
     /**
      * Create a transaction within the database.
-     *
-     * @return void
      */
     protected function createTransaction()
     {
-        if ($this->transactions == 0) {
+        if (0 == $this->transactions) {
             try {
                 $this->getPdo()->beginTransaction();
             } catch (Exception $e) {
@@ -182,8 +176,6 @@ trait ManagesTransactions
 
     /**
      * Create a save point within the database.
-     *
-     * @return void
      */
     protected function createSavepoint()
     {
@@ -195,8 +187,7 @@ trait ManagesTransactions
     /**
      * Handle an exception from a transaction beginning.
      *
-     * @param  \Throwable $e
-     * @return void
+     * @param \Throwable $e
      *
      * @throws \Exception
      */
@@ -214,12 +205,11 @@ trait ManagesTransactions
     /**
      * Perform a rollback within the database.
      *
-     * @param  int $toLevel
-     * @return void
+     * @param int $toLevel
      */
     protected function performRollBack($toLevel)
     {
-        if ($toLevel == 0) {
+        if (0 == $toLevel) {
             $this->getPdo()->rollBack();
         } elseif ($this->queryGrammar->supportsSavepoints()) {
             $this->getPdo()->exec(
