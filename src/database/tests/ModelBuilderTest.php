@@ -4,7 +4,9 @@ namespace HyperfTest\Database;
 
 use Carbon\Carbon;
 use Closure;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
@@ -16,12 +18,18 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\ModelStub;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Mockery;
 
 class ModelBuilderTest extends TestCase
 {
+    protected function setUp()
+    {
+        Register::setConnectionResolver(new ConnectionResolver(['default' => new Connection(Mockery::mock(PDO::class))]));
+    }
+
     public function tearDown()
     {
         Mockery::close();
@@ -634,22 +642,22 @@ class ModelBuilderTest extends TestCase
     public function testRealNestedWhereWithScopes()
     {
         $model = new ModelBuilderTestNestedStub;
-        $this->mockConnectionForModel($model, 'MySQL');
+        $this->mockConnectionForModel($model, 'MySql');
         $query = $model->newQuery()->where('foo', '=', 'bar')->where(function ($query) {
             $query->where('baz', '>', 9000);
         });
-        $this->assertEquals('select * from "table" where "foo" = ? and ("baz" > ?) and "table"."deleted_at" is null', $query->toSql());
+        $this->assertEquals('select * from `table` where `foo` = ? and (`baz` > ?) and `table`.`deleted_at` is null', $query->toSql());
         $this->assertEquals(['bar', 9000], $query->getBindings());
     }
 
     public function testRealNestedWhereWithMultipleScopesAndOneDeadScope()
     {
         $model = new ModelBuilderTestNestedStub;
-        $this->mockConnectionForModel($model, 'MySQL');
+        $this->mockConnectionForModel($model, 'MySql');
         $query = $model->newQuery()->empty()->where('foo', '=', 'bar')->empty()->where(function ($query) {
             $query->empty()->where('baz', '>', 9000);
         });
-        $this->assertEquals('select * from "table" where "foo" = ? and ("baz" > ?) and "table"."deleted_at" is null', $query->toSql());
+        $this->assertEquals('select * from `table` where `foo` = ? and (`baz` > ?) and `table`.`deleted_at` is null', $query->toSql());
         $this->assertEquals(['bar', 9000], $query->getBindings());
     }
 
@@ -683,6 +691,7 @@ class ModelBuilderTest extends TestCase
         $model = new ModelBuilderTestModelParentStub;
 
         $builder = $model->withCount('foo');
+
 
         $this->assertEquals('select "model_builder_test_model_parent_stubs".*, (select count(*) from "model_builder_test_model_close_related_stubs" where "model_builder_test_model_parent_stubs"."foo_id" = "model_builder_test_model_close_related_stubs"."id") as "foo_count" from "model_builder_test_model_parent_stubs"', $builder->toSql());
     }
@@ -955,6 +964,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '=', $int);
 
         $builder->whereKey($int);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereKeyMethodWithArray()
@@ -968,6 +980,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereIn')->once()->with($keyName, $array);
 
         $builder->whereKey($array);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereKeyMethodWithCollection()
@@ -981,6 +996,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereIn')->once()->with($keyName, $collection);
 
         $builder->whereKey($collection);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithInt()
@@ -994,6 +1012,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '!=', $int);
 
         $builder->whereKeyNot($int);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithArray()
@@ -1007,6 +1028,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, $array);
 
         $builder->whereKeyNot($array);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithCollection()
@@ -1020,6 +1044,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, $collection);
 
         $builder->whereKeyNot($collection);
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWhereIn()
@@ -1040,6 +1067,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('foo');
 
         $builder->latest();
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testLatestWithoutColumnWithoutCreatedAt()
@@ -1051,6 +1081,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('created_at');
 
         $builder->latest();
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testLatestWithColumn()
@@ -1061,6 +1094,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('foo');
 
         $builder->latest('foo');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testOldestWithoutColumnWithCreatedAt()
@@ -1072,6 +1108,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('foo');
 
         $builder->oldest();
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testOldestWithoutColumnWithoutCreatedAt()
@@ -1083,6 +1122,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('created_at');
 
         $builder->oldest();
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testOldestWithColumn()
@@ -1093,6 +1135,9 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('foo');
 
         $builder->oldest('foo');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testUpdate()
@@ -1149,7 +1194,6 @@ class ModelBuilderTest extends TestCase
         $processor = new $processorClass;
         $connection = Mockery::mock(ConnectionInterface::class, ['getQueryGrammar' => $grammar, 'getPostProcessor' => $processor]);
         $resolver = Mockery::mock(ConnectionResolverInterface::class, ['connection' => $connection]);
-        // @TODO How to register different connection to different model ?
         Register::setConnectionResolver($resolver);
     }
 

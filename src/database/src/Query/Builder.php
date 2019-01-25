@@ -638,7 +638,7 @@ class Builder
         // If the column is making a JSON reference we'll check to see if the value
         // is a boolean. If it is, we'll add the raw boolean string as an actual
         // value to the query to ensure this is properly handled by the query.
-        if (Str::contains($column, '->') && is_bool($value)) {
+        if (Str::contains((string)$column, '->') && is_bool($value)) {
             $value = new Expression($value ? 'true' : 'false');
         }
 
