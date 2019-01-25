@@ -53,8 +53,6 @@ class ModelUpdateVistor extends NodeVisitorAbstract
         }
 
         $node->default = new Node\Expr\Array_($items);
-        $node->setDocComment(new Doc('The attributes that are mass assignable.'));
-
         return $node;
     }
 }
