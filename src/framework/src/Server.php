@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -52,7 +53,7 @@ class Server
     }
 
     /**
-     * @throws \InvalidArgumentException When the server class not exist.
+     * @throws \InvalidArgumentException when the server class not exist
      */
     public function initConfigs(array $serverConfigs): self
     {
@@ -100,7 +101,6 @@ class Server
 
     /**
      * @param SwooleServer|Port $server
-     * @param array $events
      */
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
@@ -121,8 +121,8 @@ class Server
 
                 $this->requests[$callback[0]] = $serverName;
                 $class = $this->container->get($callback[0]);
-                if ($event == 'request') {
-                    if (!$class instanceof ServerOnRequestInterface) {
+                if ('request' == $event) {
+                    if (! $class instanceof ServerOnRequestInterface) {
                         throw new InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
                     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -14,12 +15,10 @@ namespace Hyperf\Framework\Logger;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
+use function sprintf;
+use function str_replace;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function sprintf;
-
-use function str_replace;
 
 /**
  * Default logger for logging server start and requests.
@@ -45,7 +44,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function emergency($message, array $context = [])
     {
@@ -53,7 +52,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function alert($message, array $context = [])
     {
@@ -61,7 +60,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function critical($message, array $context = [])
     {
@@ -69,7 +68,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function error($message, array $context = [])
     {
@@ -77,7 +76,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function warning($message, array $context = [])
     {
@@ -85,7 +84,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function notice($message, array $context = [])
     {
@@ -93,7 +92,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function info($message, array $context = [])
     {
@@ -101,7 +100,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function debug($message, array $context = [])
     {
@@ -109,7 +108,7 @@ class StdoutLogger implements StdoutLoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function log($level, $message, array $context = [])
     {
@@ -141,9 +140,11 @@ class StdoutLogger implements StdoutLoggerInterface
             case LogLevel::NOTICE:
                 $tag = 'comment';
                 break;
-            default:
+            case LogLevel::INFO:
                 $tag = 'info';
                 break;
+            default:
+                return $message;
         }
 
         return sprintf('<%s>%s</>', $tag, $message);

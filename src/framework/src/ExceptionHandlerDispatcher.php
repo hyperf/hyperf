@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,7 +31,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function dispatch(...$params): ResponseInterface
     {
@@ -38,13 +39,13 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function handle(...$params)
     {
         /**
-         * @var Throwable $throwable
-         * @var string[] $handlers
+         * @var Throwable
+         * @var string[]  $handlers
          */
         [$throwable, $handlers] = $params;
         $response = Context::get(ResponseInterface::class);
