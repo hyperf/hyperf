@@ -38,7 +38,7 @@ class ModelCommand extends Command
     protected $astParser;
 
     /**
-     * @var Standard
+     * @var \PhpParser\PrettyPrinterAbstract
      */
     protected $printer;
 
