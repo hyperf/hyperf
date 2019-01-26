@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands\Ast;
 
-use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Name;

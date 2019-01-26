@@ -1146,7 +1146,6 @@ class Builder
     /**
      * Add the "updated at" column to an array of values.
      *
-     * @param  array  $values
      * @return array
      */
     protected function addUpdatedAtColumn(array $values)
