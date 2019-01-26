@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands\Ast;
 
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
-use PhpParser\Node\Expr\StaticPropertyFetch;
-use PhpParser\Node\Name;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelUpdateVistor extends NodeVisitorAbstract
@@ -35,12 +34,14 @@ class ModelUpdateVistor extends NodeVisitorAbstract
                 }
 
                 return $node;
-            case $node instanceof StaticPropertyFetch && $this->extends:
-                // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
-                if ($node->class && 'parent' === $node->class->toString()) {
-                    $node->class = new Name($this->extends->toCodeString());
-                    return $node;
+            case $node instanceof Node\Stmt\Class_:
+                $doc = '/**' . PHP_EOL;
+                foreach ($this->columns as $column) {
+                    $doc .= ' * @property $' . $column . PHP_EOL;
                 }
+                $doc .= ' */';
+                $node->setDocComment(new Doc($doc));
+                return $node;
         }
     }
 
