@@ -13,9 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands;
 
 use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
-use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -35,9 +34,9 @@ class ModelCommand extends Command
     protected $container;
 
     /**
-     * @var PoolFactory
+     * @var ConnectionResolver
      */
-    protected $factory;
+    protected $resolver;
 
     /**
      * @var \PhpParser\Parser
@@ -58,7 +57,7 @@ class ModelCommand extends Command
     {
         parent::__construct('db:model');
         $this->container = $container;
-        $this->factory = $container->get(PoolFactory::class);
+        $this->resolver = $container->get(ConnectionResolver::class);
 
         $parserFactory = new ParserFactory();
         $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
@@ -69,7 +68,8 @@ class ModelCommand extends Command
     {
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want create.')
             ->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which pool you want use.', 'default')
-            ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'Which pool you want use.', 'app/Models');
+            ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'Which path you want Models create.', 'app/Models')
+            ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'Which prefix you want Model set.', '');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -79,11 +79,14 @@ class ModelCommand extends Command
         $table = $input->getArgument('table');
         $pool = $input->getOption('pool');
         $path = $input->getOption('path');
+        $prefix = $input->getOption('prefix');
+
         $path = BASE_PATH . '/' . $path;
         if ($table) {
+            $table = Str::replaceFirst($prefix, '', $table);
             $this->createModel($table, $pool, $path);
         } else {
-            $this->createModels($pool, $path);
+            $this->createModels($pool, $path, $prefix);
         }
     }
 
@@ -92,13 +95,11 @@ class ModelCommand extends Command
      */
     protected function getSchemaBuilder($poolName)
     {
-        $pool = $this->factory->getDbPool($poolName);
-        /** @var Connection $connection */
-        $connection = $pool->get()->getConnection();
+        $connection = $this->resolver->connection($poolName);
         return $connection->getSchemaBuilder();
     }
 
-    protected function createModels($pool, $path)
+    protected function createModels($pool, $path, $prefix)
     {
         $builder = $this->getSchemaBuilder($pool);
         $tables = [];
@@ -109,6 +110,7 @@ class ModelCommand extends Command
         }
 
         foreach ($tables as $table) {
+            $table = Str::replaceFirst($prefix, '', $table);
             $this->createModel($table, $pool, $path);
         }
     }
