@@ -44,6 +44,7 @@
     "replace": {
         "hyperf/amqp": "self.version",
         "hyperf/config": "self.version",
+        "hyperf/constants": "self.version",
         "hyperf/contract": "self.version",
         "hyperf/database": "self.version",
         "hyperf/db-connection": "self.version",
@@ -72,6 +73,7 @@
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
             "Hyperf\\Config\\": "src/config/src/",
+            "Hyperf\\Constants\\": "src/constants/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
             "Hyperf\\Database\\": "src/database/src/",
             "Hyperf\\DbConnection\\": "src/db-connection/src/",
