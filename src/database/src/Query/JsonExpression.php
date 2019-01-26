@@ -29,9 +29,8 @@ class JsonExpression extends Expression
     /**
      * Translate the given value into the appropriate JSON binding parameter.
      *
-     * @return string
-     *
      * @throws \InvalidArgumentException
+     * @return string
      */
     protected function getJsonBindingParameter($value)
     {

@@ -39,14 +39,14 @@ class Connection implements ConnectionInterface
     /**
      * The active PDO connection.
      *
-     * @var \PDO|\Closure
+     * @var \Closure|\PDO
      */
     protected $pdo;
 
     /**
      * The active PDO connection used for reads.
      *
-     * @var \PDO|\Closure
+     * @var \Closure|\PDO
      */
     protected $readPdo;
 
@@ -165,7 +165,7 @@ class Connection implements ConnectionInterface
     /**
      * Create a new database connection instance.
      *
-     * @param \PDO|\Closure $pdo
+     * @param \Closure|\PDO $pdo
      * @param string        $database
      * @param string        $tablePrefix
      */
@@ -405,7 +405,7 @@ class Connection implements ConnectionInterface
             }
 
             $this->recordsHaveBeenModified(
-                $change = false !== $this->getPdo()->exec($query)
+                $change = $this->getPdo()->exec($query) !== false
             );
 
             return $change;
@@ -434,7 +434,7 @@ class Connection implements ConnectionInterface
     /**
      * Bind values to their parameters in the given statement.
      */
-    public function bindValues(\PDOStatement $statement, array $bindings): void
+    public function bindValues(PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
@@ -471,7 +471,7 @@ class Connection implements ConnectionInterface
      *
      * @param string     $query
      * @param array      $bindings
-     * @param float|null $time
+     * @param null|float $time
      */
     public function logQuery($query, $bindings, $time = null)
     {
@@ -628,7 +628,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection.
      *
-     * @param  \PDO|\Closure|null $pdo
+     * @param  null|\Closure|\PDO $pdo
      * @return $this
      */
     public function setPdo($pdo)
@@ -643,7 +643,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection used for reading.
      *
-     * @param  \PDO|\Closure|null $pdo
+     * @param  null|\Closure|\PDO $pdo
      * @return $this
      */
     public function setReadPdo($pdo)
@@ -668,7 +668,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the database connection name.
      *
-     * @return string|null
+     * @return null|string
      */
     public function getName()
     {
@@ -678,7 +678,7 @@ class Connection implements ConnectionInterface
     /**
      * Get an option from the configuration options.
      *
-     * @param string|null $option
+     * @param null|string $option
      */
     public function getConfig($option = null)
     {
@@ -800,7 +800,7 @@ class Connection implements ConnectionInterface
      */
     public function pretending()
     {
-        return true === $this->pretending;
+        return $this->pretending === true;
     }
 
     /**
@@ -1147,7 +1147,7 @@ class Connection implements ConnectionInterface
      * Fire an event for this connection.
      *
      * @param  string     $event
-     * @return array|null
+     * @return null|array
      */
     protected function fireConnectionEvent($event)
     {

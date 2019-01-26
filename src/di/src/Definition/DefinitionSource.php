@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,14 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\ReflectionManager;
-use ReflectionClass;
-use ReflectionFunctionAbstract;
-use Symfony\Component\Finder\Finder;
 use function class_exists;
 use function count;
 use function explode;
@@ -29,6 +22,11 @@ use function file_exists;
 use function file_put_contents;
 use function filemtime;
 use function fopen;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\ReflectionManager;
 use function implode;
 use function interface_exists;
 use function is_array;
@@ -40,7 +38,10 @@ use function md5;
 use function method_exists;
 use function preg_match;
 use function print_r;
+use ReflectionClass;
+use ReflectionFunctionAbstract;
 use function str_replace;
+use Symfony\Component\Finder\Finder;
 use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
@@ -48,7 +49,7 @@ class DefinitionSource implements DefinitionSourceInterface
     private $enableCache = false;
 
     /**
-     * Path of annotation meta data cache
+     * Path of annotation meta data cache.
      *
      * @var string
      */
@@ -74,8 +75,6 @@ class DefinitionSource implements DefinitionSourceInterface
 
     /**
      * Returns the DI definition for the entry name.
-     *
-     * @return DefinitionInterface|null
      */
     public function getDefinition(string $name): ?DefinitionInterface
     {
@@ -86,7 +85,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @return array Definitions indexed by their name.
+     * @return array definitions indexed by their name
      */
     public function getDefinitions(): array
     {
@@ -154,7 +153,7 @@ class DefinitionSource implements DefinitionSourceInterface
             return $definition;
         }
 
-        $definition = $definition ? : new ObjectDefinition($name);
+        $definition = $definition ?: new ObjectDefinition($name);
 
         // Constructor
         $class = ReflectionManager::reflectClass($className);
@@ -175,7 +174,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 $definition->addPropertyInjection($propertyInjection);
             }
         }
-        
+
         $definition->setNeedProxy($this->isNeedProxy($class));
 
         return $definition;
@@ -186,7 +185,7 @@ class DefinitionSource implements DefinitionSourceInterface
         $pathsHash = md5(implode(',', $paths));
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
-            list(, $annotationMetadata, $aspectMetadata) = explode(PHP_EOL, file_get_contents($this->cachePath));
+            [, $annotationMetadata, $aspectMetadata] = explode(PHP_EOL, file_get_contents($this->cachePath));
             // Deserialize metadata when the cache is valid
             AnnotationCollector::deserialize($annotationMetadata);
             AspectCollector::deserialize($aspectMetadata);
@@ -284,18 +283,18 @@ class DefinitionSource implements DefinitionSourceInterface
         return false;
     }
 
-    private function isMatch(string $rule, string $target):bool
+    private function isMatch(string $rule, string $target): bool
     {
         if (strpos($rule, '*') === false && $rule === $target) {
             return true;
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^$preg$/";
+        $pattern = "/^${preg}$/";
 
         if (preg_match($pattern, $target)) {
             return true;
         }
-        
+
         return false;
     }
 }

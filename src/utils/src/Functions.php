@@ -26,7 +26,8 @@ if (! function_exists('env')) {
     /**
      * Gets the value of an environment variable.
      *
-     * @param string $key
+     * @param string     $key
+     * @param null|mixed $default
      */
     function env($key, $default = null)
     {
@@ -158,7 +159,8 @@ if (! function_exists('array_first')) {
     /**
      * Return the first element in an array passing a given truth test.
      *
-     * @param array $array
+     * @param array      $array
+     * @param null|mixed $default
      */
     function array_first($array, callable $callback = null, $default = null)
     {
@@ -196,6 +198,7 @@ if (! function_exists('array_get')) {
      *
      * @param array|\ArrayAccess $array
      * @param string             $key
+     * @param null|mixed         $default
      */
     function array_get($array, $key, $default = null)
     {
@@ -219,7 +222,8 @@ if (! function_exists('array_last')) {
     /**
      * Return the last element in an array passing a given truth test.
      *
-     * @param array $array
+     * @param array      $array
+     * @param null|mixed $default
      */
     function array_last($array, callable $callback = null, $default = null)
     {
@@ -257,7 +261,8 @@ if (! function_exists('array_prepend')) {
     /**
      * Push an item onto the beginning of an array.
      *
-     * @param  array $array
+     * @param  array      $array
+     * @param  null|mixed $key
      * @return array
      */
     function array_prepend($array, $value, $key = null)
@@ -269,8 +274,9 @@ if (! function_exists('array_pull')) {
     /**
      * Get a value from the array, and remove it.
      *
-     * @param array  $array
-     * @param string $key
+     * @param array      $array
+     * @param string     $key
+     * @param null|mixed $default
      */
     function array_pull(&$array, $key, $default = null)
     {
@@ -355,6 +361,7 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
+     * @param  null|mixed $value
      * @return Collection
      */
     function collect($value = null)
@@ -379,6 +386,7 @@ if (! function_exists('data_get')) {
      * Get an item from an array or object using "dot" notation.
      *
      * @param array|string $key
+     * @param null|mixed   $default
      */
     function data_get($target, $key, $default = null)
     {

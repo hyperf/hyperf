@@ -178,7 +178,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function __call($method, $parameters)
     {
         if (in_array($method, ['increment', 'decrement'])) {
-            return $this->$method(...$parameters);
+            return $this->{$method}(...$parameters);
         }
 
         return call([$this->newQuery(), $method], $parameters);
@@ -192,7 +192,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public static function __callStatic($method, $parameters)
     {
-        return (new static())->$method(...$parameters);
+        return (new static())->{$method}(...$parameters);
     }
 
     /**
@@ -236,12 +236,12 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if the given model is ignoring touches.
      *
-     * @param  string|null $class
+     * @param  null|string $class
      * @return bool
      */
     public static function isIgnoringTouch($class = null)
     {
-        $class = $class ? : static::class;
+        $class = $class ?: static::class;
 
         foreach (IgnoreOnTouch::$container as $ignoredClass) {
             if ($class === $ignoredClass || is_subclass_of($class, $ignoredClass)) {
@@ -255,8 +255,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Fill the model with an array of attributes.
      *
-     * @return $this
      * @throws \Hyperf\Database\Model\MassAssignmentException
+     * @return $this
      */
     public function fill(array $attributes)
     {
@@ -332,7 +332,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Create a new model instance that is existing.
      *
      * @param  array       $attributes
-     * @param  string|null $connection
+     * @param  null|string $connection
      * @return static
      */
     public function newFromBuilder($attributes = [], $connection = null)
@@ -341,7 +341,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $model->setRawAttributes((array) $attributes, true);
 
-        $model->setConnection($connection ? : $this->getConnectionName());
+        $model->setConnection($connection ?: $this->getConnectionName());
 
         $model->fireModelEvent('retrieved', false);
 
@@ -351,7 +351,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model on a given connection.
      *
-     * @param  string|null                    $connection
+     * @param  null|string                    $connection
      * @return \Hyperf\Database\Model\Builder
      */
     public static function on($connection = null)
@@ -496,7 +496,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         // If the "saving" event returns false we'll bail out of the save and return
         // false, indicating that the save failed. This provides a chance for any
         // listeners to cancel save operations if validations fail or whatever.
-        if (false === $this->fireModelEvent('saving')) {
+        if ($this->fireModelEvent('saving') === false) {
             return false;
         }
 
@@ -531,8 +531,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Save the model to the database using transaction.
      *
-     * @return bool
      * @throws \Throwable
+     * @return bool
      */
     public function saveOrFail(array $options = [])
     {
@@ -544,7 +544,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param  \Hyperf\Utils\Collection|array|int $ids
+     * @param  array|\Hyperf\Utils\Collection|int $ids
      * @return int
      */
     public static function destroy($ids)
@@ -577,8 +577,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Delete the model from the database.
      *
-     * @return bool|null
      * @throws \Exception
+     * @return null|bool
      */
     public function delete()
     {
@@ -593,7 +593,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             return;
         }
 
-        if (false === $this->fireModelEvent('deleting')) {
+        if ($this->fireModelEvent('deleting') === false) {
             return false;
         }
 
@@ -616,7 +616,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Force a hard delete on a soft deleted model.
      * This method protects developers from running forceDelete when trait is missing.
      *
-     * @return bool|null
+     * @return null|bool
      */
     public function forceDelete()
     {
@@ -738,7 +738,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * @param  \Hyperf\Database\Model\Model           $parent
      * @param  string                                 $table
      * @param  bool                                   $exists
-     * @param  string|null                            $using
+     * @param  null|string                            $using
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
@@ -757,15 +757,15 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Convert the model instance to JSON.
      *
-     * @param  int    $options
-     * @return string
+     * @param  int                                          $options
      * @throws \Hyperf\Database\Model\JsonEncodingException
+     * @return string
      */
     public function toJson($options = 0)
     {
         $json = json_encode($this->jsonSerialize(), $options);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw JsonEncodingException::forModel($this, json_last_error_msg());
         }
 
@@ -786,7 +786,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Reload a fresh model instance from the database.
      *
      * @param  array|string $with
-     * @return static|null
+     * @return null|static
      */
     public function fresh($with = [])
     {
@@ -797,7 +797,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         return static::newQueryWithoutScopes()
             ->with(is_string($with) ? func_get_args() : $with)
             ->where($this->getKeyName(), $this->getKey())
-            ->first();
+            ->first()
+        ;
     }
 
     /**
@@ -845,7 +846,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if two models have the same ID and belong to the same table.
      *
-     * @param  \Hyperf\Database\Model\Model|null $model
+     * @param  null|\Hyperf\Database\Model\Model $model
      * @return bool
      */
     public function is($model)
@@ -859,7 +860,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if two models are not the same.
      *
-     * @param  \Hyperf\Database\Model\Model|null $model
+     * @param  null|\Hyperf\Database\Model\Model $model
      * @return bool
      */
     public function isNot($model)
@@ -1087,7 +1088,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Retrieve the model for a bound value.
      *
-     * @return \Hyperf\Database\Model\Model|null
+     * @return null|\Hyperf\Database\Model\Model
      */
     public function resolveRouteBinding($value)
     {
@@ -1273,7 +1274,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function incrementOrDecrementAttributeValue($column, $amount, $extra, $method)
     {
-        $this->{$column} = $this->{$column} + ('increment' === $method ? $amount : $amount * -1);
+        $this->{$column} = $this->{$column} + ($method === 'increment' ? $amount : $amount * -1);
 
         $this->forceFill($extra);
 
@@ -1305,7 +1306,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         // If the updating event returns false, we will cancel the update operation so
         // developers can hook Validation systems into their models and cancel this
         // operation if the model does not pass validation. Otherwise, we update.
-        if (false === $this->fireModelEvent('updating')) {
+        if ($this->fireModelEvent('updating') === false) {
             return false;
         }
 
@@ -1361,7 +1362,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function performInsert(Builder $query)
     {
-        if (false === $this->fireModelEvent('creating')) {
+        if ($this->fireModelEvent('creating') === false) {
             return false;
         }
 

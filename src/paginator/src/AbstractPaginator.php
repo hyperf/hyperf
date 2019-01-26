@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -68,7 +69,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * The URL fragment to add to all URLs.
      *
-     * @var string|null
+     * @var null|string
      */
     protected $fragment;
 
@@ -95,8 +96,6 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * Make dynamic calls into the collection.
-     *
-     * @return mixed
      */
     public function __call(string $method, array $parameters)
     {
@@ -108,7 +107,7 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function __toString(): string
     {
-        return (string)$this->render();
+        return (string) $this->render();
     }
 
     /**
@@ -156,7 +155,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
-     * @return $this|string|null
+     * @return null|$this|string
      */
     public function fragment(?string $fragment = null)
     {
@@ -172,8 +171,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Add a set of query string values to the paginator.
      *
-     * @param  array|string|null $key
-     * @param  string|null $value
+     * @param  null|array|string $key
      * @return $this
      */
     public function appends($key, ?string $value = null)

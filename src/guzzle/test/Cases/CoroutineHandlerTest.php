@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -15,9 +16,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Request;
 use Hyperf\Guzzle\CoroutineHandler;
-use Swoole\Coroutine;
 use HyperfTest\Guzzle\TestCase;
+use Swoole\Coroutine;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class CoroutineHandlerTest extends TestCase
 {
     const URL = 'https://api.tb.swoft.lmx0536.cn';
@@ -76,10 +81,11 @@ class CoroutineHandlerTest extends TestCase
                     $called = true;
                     $this->assertArrayHasKey('errCode', $e->getHandlerContext());
                     $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
-                });
+                })
+            ;
             $p->wait();
             $this->assertTrue($called);
-        };
+        }
 
         $this->assertTrue(true);
     }
@@ -88,16 +94,16 @@ class CoroutineHandlerTest extends TestCase
     {
         if (Coroutine::getuid() > 0) {
             $client = new Client([
-                'base_uri' => static::URL
+                'base_uri' => static::URL,
             ]);
             $res = $client->get('/echo', [
                 'timeout' => 10,
                 'headers' => [
-                    'X-TOKEN' => md5('1234')
+                    'X-TOKEN' => md5('1234'),
                 ],
                 'json' => [
-                    'id' => 1
-                ]
+                    'id' => 1,
+                ],
             ])->getBody()->getContents();
             $res = \GuzzleHttp\json_decode($res, true);
 

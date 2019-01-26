@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,7 +31,7 @@ class AmqpPool extends Pool
         $this->name = $name;
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('amqp.%s', $this->name);
-        if (!$config->has($key)) {
+        if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 

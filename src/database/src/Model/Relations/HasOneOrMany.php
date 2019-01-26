@@ -116,7 +116,7 @@ abstract class HasOneOrMany extends Relation
      * Find a model by its primary key or return new instance of the related model.
      *
      * @param  array                                                 $columns
-     * @return \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -176,7 +176,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @return \Hyperf\Database\Model\Model|false
+     * @return false|\Hyperf\Database\Model\Model
      */
     public function save(Model $model)
     {
@@ -188,8 +188,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param  \Traversable|array $models
-     * @return \Traversable|array
+     * @param  array|\Traversable $models
+     * @return array|\Traversable
      */
     public function saveMany($models)
     {
@@ -384,7 +384,7 @@ abstract class HasOneOrMany extends Relation
     {
         $value = $dictionary[$key];
 
-        return 'one' === $type ? reset($value) : $this->related->newCollection($value);
+        return $type === 'one' ? reset($value) : $this->related->newCollection($value);
     }
 
     /**

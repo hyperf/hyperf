@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Database\Stubs;
 
 use Hyperf\Database\Model\Builder;
@@ -8,9 +18,13 @@ use Hyperf\Database\Model\Model;
 class ModelStub extends Model
 {
     public $connection;
+
     public $scopesCalled = [];
+
     protected $table = 'stub';
+
     protected $guarded = [];
+
     protected $morph_to_stub_type = ModelSaveStub::class;
 
     public function getListItemsAttribute($value)

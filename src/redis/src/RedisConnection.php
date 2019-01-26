@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -44,7 +45,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function __call($name, $arguments)
     {
-        return $this->connection->$name(...$arguments);
+        return $this->connection->{$name}(...$arguments);
     }
 
     public function getConnection()
@@ -53,7 +54,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -68,7 +69,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $db = $this->config['db'] ?? 0;
 
         $redis = new \Redis();
-        if (!$redis->connect($host, $port)) {
+        if (! $redis->connect($host, $port)) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 

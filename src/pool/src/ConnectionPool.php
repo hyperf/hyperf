@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -45,7 +46,7 @@ abstract class ConnectionPool
         }
         $channel = new Channel($option->getMaxConnections());
         if ($option->getMinConnections() > 0) {
-            for ($i = 0; $i < $option->getMinConnections(); $i++) {
+            for ($i = 0; $i < $option->getMinConnections(); ++$i) {
                 $channel->push(static::createConnection());
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -8,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
@@ -23,23 +25,20 @@ use Swoole\Coroutine\Http\Client;
 class CoroutineHandler
 {
     /**
-     * Swoole 协程 Http 客户端
+     * Swoole 协程 Http 客户端.
      *
      * @var \Swoole\Coroutine\Http\Client
      */
     private $client;
 
     /**
-     * 配置选项
+     * 配置选项.
      *
      * @var array
      */
     private $settings = [];
 
     /**
-     * @author limx
-     * @param RequestInterface $request
-     * @param array            $options
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function __invoke(RequestInterface $request, array $options)
@@ -47,7 +46,7 @@ class CoroutineHandler
         $uri = $request->getUri();
         $host = $uri->getHost();
         $port = $uri->getPort();
-        $ssl = 'https' === $uri->getScheme();
+        $ssl = $uri->getScheme() === 'https';
         $path = $uri->getPath();
         $query = $uri->getQuery();
 
@@ -63,14 +62,14 @@ class CoroutineHandler
 
         $this->client = new Client($host, $port, $ssl);
         $this->client->setMethod($request->getMethod());
-        $this->client->setData((string)$request->getBody());
+        $this->client->setData((string) $request->getBody());
 
         // 初始化Headers
         $this->initHeaders($request, $options);
         // 初始化配置
         $this->initSettings($request, $options);
         // 设置客户端参数
-        if (!empty($this->settings)) {
+        if (! empty($this->settings)) {
             $this->client->set($this->settings);
         }
         $this->client->execute($path);
@@ -104,7 +103,7 @@ class CoroutineHandler
     protected function initSettings(RequestInterface $request, $options)
     {
         if (isset($options['delay'])) {
-            Coroutine::sleep((float)$options['delay'] / 1000);
+            Coroutine::sleep((float) $options['delay'] / 1000);
         }
 
         // 验证服务端证书
@@ -117,7 +116,7 @@ class CoroutineHandler
                 $this->settings['ssl_host_name'] = $request->getUri()->getHost();
                 if (is_string($options['verify'])) {
                     // Throw an error if the file/folder/link path is not valid or doesn't exist.
-                    if (!file_exists($options['verify'])) {
+                    if (! file_exists($options['verify'])) {
                         throw new \InvalidArgumentException("SSL CA bundle not found: {$options['verify']}");
                     }
                     // If it's a directory or a link to a directory use CURLOPT_CAPATH.
@@ -143,12 +142,11 @@ class CoroutineHandler
         if ($this->client->set_cookie_headers) {
             $this->client->headers['set-cookie'] = $this->client->set_cookie_headers;
         }
-        $response = new \GuzzleHttp\Psr7\Response(
+        return new \GuzzleHttp\Psr7\Response(
             $this->client->statusCode,
             isset($this->client->headers) ? $this->client->headers : [],
             $this->client->body
         );
-        return $response;
     }
 
     protected function checkStatusCode($request)
@@ -161,7 +159,8 @@ class CoroutineHandler
         ];
         if ($statusCode === -1) {
             return new ConnectException(sprintf('Connection timed out errCode=%s', $errCode), $request, null, $ctx);
-        } elseif ($statusCode === -2) {
+        }
+        if ($statusCode === -2) {
             return new RequestException('Request timed out', $request, null, null, $ctx);
         }
 

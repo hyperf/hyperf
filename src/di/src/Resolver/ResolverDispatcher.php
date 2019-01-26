@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -43,10 +44,10 @@ class ResolverDispatcher implements ResolverInterface
     /**
      * Resolve a definition to a value.
      *
-     * @param DefinitionInterface $definition Object that defines how the value should be obtained.
-     * @param array $parameters Optional parameters to use to build the entry.
-     * @throws InvalidDefinition If the definition cannot be resolved.
-     * @return mixed Value obtained from the definition.
+     * @param  DefinitionInterface $definition object that defines how the value should be obtained
+     * @param  array               $parameters optional parameters to use to build the entry
+     * @throws InvalidDefinition   if the definition cannot be resolved
+     * @return mixed               value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
@@ -61,9 +62,8 @@ class ResolverDispatcher implements ResolverInterface
     /**
      * Check if a definition can be resolved.
      *
-     * @param DefinitionInterface $definition Object that defines how the value should be obtained.
-     * @param array $parameters Optional parameters to use to build the entry.
-     * @return bool
+     * @param DefinitionInterface $definition object that defines how the value should be obtained
+     * @param array               $parameters optional parameters to use to build the entry
      */
     public function isResolvable(DefinitionInterface $definition, array $parameters = []): bool
     {
@@ -78,7 +78,7 @@ class ResolverDispatcher implements ResolverInterface
     /**
      * Returns a resolver capable of handling the given definition.
      *
-     * @throws RuntimeException No definition resolver was found for this type of definition.
+     * @throws RuntimeException no definition resolver was found for this type of definition
      */
     private function getDefinitionResolver(DefinitionInterface $definition): ResolverInterface
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,7 +32,7 @@ class ObjectDefinition implements DefinitionInterface
     private $name;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $className;
 
@@ -104,7 +105,7 @@ class ObjectDefinition implements DefinitionInterface
     }
 
     /**
-     * @return \Hyperf\Di\Definition\MethodInjection|null
+     * @return null|\Hyperf\Di\Definition\MethodInjection
      */
     public function getConstructorInjection()
     {

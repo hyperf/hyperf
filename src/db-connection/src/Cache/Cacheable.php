@@ -17,7 +17,7 @@ use Hyperf\Framework\ApplicationContext;
 trait Cacheable
 {
     /**
-     * @return self|null
+     * @return null|self
      */
     public static function findFromCache($id)
     {

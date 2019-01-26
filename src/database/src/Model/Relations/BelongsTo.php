@@ -344,7 +344,7 @@ class BelongsTo extends Relation
         // If there are no keys that were not null we will just return an array with null
         // so this query wont fail plus returns zero results, which should be what the
         // developer expects to happen in this situation. Otherwise we'll sort them.
-        if (0 === count($keys)) {
+        if (count($keys) === 0) {
             return [null];
         }
 
@@ -361,7 +361,7 @@ class BelongsTo extends Relation
     protected function relationHasIncrementingId()
     {
         return $this->related->getIncrementing() &&
-                                'int' === $this->related->getKeyType();
+                                $this->related->getKeyType() === 'int';
     }
 
     /**

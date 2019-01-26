@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -34,7 +35,8 @@ abstract class Consumer extends Message implements ConsumerInterface
     public function getQueueDeclareBuilder(): QueueDeclareBuilder
     {
         return (new QueueDeclareBuilder())
-            ->setQueue($this->getQueue());
+            ->setQueue($this->getQueue())
+        ;
     }
 
     public function unserialize(string $data)

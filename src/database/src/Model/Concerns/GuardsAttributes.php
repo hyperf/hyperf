@@ -175,7 +175,7 @@ trait GuardsAttributes
      */
     public function totallyGuarded()
     {
-        return 0 === count($this->getFillable()) && $this->getGuarded() == ['*'];
+        return count($this->getFillable()) === 0 && $this->getGuarded() == ['*'];
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -8,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
@@ -22,14 +24,14 @@ use Swoole\Coroutine\Http\Client;
 class CoroutineHandler
 {
     /**
-     * Swoole 协程 Http 客户端
+     * Swoole 协程 Http 客户端.
      *
      * @var \Swoole\Coroutine\Http\Client
      */
     private $client;
 
     /**
-     * 配置选项
+     * 配置选项.
      *
      * @var array
      */
@@ -50,13 +52,13 @@ class CoroutineHandler
     {
         $method = $request['http_method'] ?? 'GET';
         $scheme = $request['scheme'] ?? 'http';
-        $ssl = 'https' === $scheme;
+        $ssl = $scheme === 'https';
         $uri = $request['uri'] ?? '/';
         $body = $request['body'] ?? '';
         $this->effectiveUrl = Core::url($request);
         $params = parse_url($this->effectiveUrl);
         $host = $params['host'];
-        if (!isset($params['port'])) {
+        if (! isset($params['port'])) {
             $params['port'] = $ssl ? 443 : 80;
         }
         $port = $params['port'];
@@ -74,7 +76,7 @@ class CoroutineHandler
         $this->initSettings($this->options);
 
         // 设置客户端参数
-        if (!empty($this->settings)) {
+        if (! empty($this->settings)) {
             $this->client->set($this->settings);
         }
 
@@ -87,7 +89,7 @@ class CoroutineHandler
                 'status' => null,
                 'reason' => null,
                 'headers' => [],
-                'error' => $ex
+                'error' => $ex,
             ];
         }
 
@@ -97,7 +99,7 @@ class CoroutineHandler
     protected function initSettings($options)
     {
         if (isset($options['delay'])) {
-            Coroutine::sleep((float)$options['delay'] / 1000);
+            Coroutine::sleep((float) $options['delay'] / 1000);
         }
 
         // 超时
@@ -133,7 +135,7 @@ class CoroutineHandler
             'effective_url' => $this->effectiveUrl,
             'headers' => isset($this->client->headers) ? $this->client->headers : [],
             'status' => $this->client->statusCode,
-            'body' => $this->client->body
+            'body' => $this->client->body,
         ]);
     }
 
@@ -144,7 +146,8 @@ class CoroutineHandler
 
         if ($statusCode === -1) {
             return new RingException(sprintf('Connection timed out errCode=%s', $errCode));
-        } elseif ($statusCode === -2) {
+        }
+        if ($statusCode === -2) {
             return new RingException('Request timed out');
         }
 

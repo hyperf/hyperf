@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -26,8 +27,6 @@ interface ResponseInterface
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     *
-     * @param mixed $data
      */
     public function raw($data): PsrResponseInterface;
 }

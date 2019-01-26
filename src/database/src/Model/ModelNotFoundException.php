@@ -27,7 +27,7 @@ class ModelNotFoundException extends RuntimeException
     /**
      * The affected model IDs.
      *
-     * @var int|array
+     * @var array|int
      */
     protected $ids;
 
@@ -35,7 +35,7 @@ class ModelNotFoundException extends RuntimeException
      * Set the affected Model model and instance ids.
      *
      * @param  string    $model
-     * @param  int|array $ids
+     * @param  array|int $ids
      * @return $this
      */
     public function setModel($model, $ids = [])
@@ -67,7 +67,7 @@ class ModelNotFoundException extends RuntimeException
     /**
      * Get the affected Model model IDs.
      *
-     * @return int|array
+     * @return array|int
      */
     public function getIds()
     {

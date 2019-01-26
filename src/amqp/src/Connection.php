@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -66,7 +67,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function __call($name, $arguments)
     {
-        return $this->connection->$name(...$arguments);
+        return $this->connection->{$name}(...$arguments);
     }
 
     public function getConnection(): AbstractConnection
@@ -91,7 +92,7 @@ class Connection extends BaseConnection implements ConnectionInterface
         return isset($this->connection)
             && $this->connection instanceof AbstractConnection
             && $this->connection->isConnected()
-            && !$this->isHeartbeatTimeout();
+            && ! $this->isHeartbeatTimeout();
     }
 
     public function close(): bool

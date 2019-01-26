@@ -282,7 +282,7 @@ trait HasAttributes
         // If an attribute is listed as a "date", we'll convert it from a DateTime
         // instance into a form proper for storage on the database tables using
         // the connection grammar's date format. We will auto set the values.
-        elseif ($value && $this->isDateAttribute($key)) {
+        if ($value && $this->isDateAttribute($key)) {
             $value = $this->fromDateTime($value);
         }
 
@@ -363,7 +363,7 @@ trait HasAttributes
     /**
      * Convert a DateTime to a storable string.
      *
-     * @return string|null
+     * @return null|string
      */
     public function fromDateTime($value)
     {
@@ -413,7 +413,7 @@ trait HasAttributes
      * Determine whether an attribute should be cast to a native type.
      *
      * @param  string            $key
-     * @param  array|string|null $types
+     * @param  null|array|string $types
      * @return bool
      */
     public function hasCast($key, $types = null)
@@ -469,8 +469,9 @@ trait HasAttributes
     /**
      * Get the model's original attribute values.
      *
-     * @param  string|null $key
-     * @return mixed|array
+     * @param  null|string $key
+     * @param  null|mixed  $default
+     * @return array|mixed
      */
     public function getOriginal($key = null, $default = null)
     {
@@ -549,7 +550,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have been modified.
      *
-     * @param  array|string|null $attributes
+     * @param  null|array|string $attributes
      * @return bool
      */
     public function isDirty($attributes = null)
@@ -563,7 +564,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have remained the same.
      *
-     * @param  array|string|null $attributes
+     * @param  null|array|string $attributes
      * @return bool
      */
     public function isClean($attributes = null)
@@ -574,7 +575,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have been modified.
      *
-     * @param  array|string|null $attributes
+     * @param  null|array|string $attributes
      * @return bool
      */
     public function wasChanged($attributes = null)
@@ -629,18 +630,21 @@ trait HasAttributes
 
         if ($current === $original) {
             return true;
-        } elseif (is_null($current)) {
+        }
+        if (is_null($current)) {
             return false;
-        } elseif ($this->isDateAttribute($key)) {
+        }
+        if ($this->isDateAttribute($key)) {
             return $this->fromDateTime($current) ===
                    $this->fromDateTime($original);
-        } elseif ($this->hasCast($key)) {
+        }
+        if ($this->hasCast($key)) {
             return $this->castAttribute($key, $current) ===
                    $this->castAttribute($key, $original);
         }
 
         return is_numeric($current) && is_numeric($original)
-                && 0 === strcmp((string) $current, (string) $original);
+                && strcmp((string) $current, (string) $original) === 0;
     }
 
     /**
@@ -769,7 +773,7 @@ trait HasAttributes
             // a string. This allows the developers to customize how dates are serialized
             // into an array without affecting how they are persisted into the storage.
             if ($attributes[$key] &&
-                ('date' === $value || 'datetime' === $value)) {
+                ($value === 'date' || $value === 'datetime')) {
                 $attributes[$key] = $this->serializeDate($attributes[$key]);
             }
 
@@ -856,7 +860,7 @@ trait HasAttributes
      */
     protected function getRelationshipFromMethod($method)
     {
-        $relation = $this->$method();
+        $relation = $this->{$method}();
 
         if (! $relation instanceof Relation) {
             throw new LogicException(sprintf(
@@ -965,8 +969,8 @@ trait HasAttributes
      */
     protected function isCustomDateTimeCast($cast)
     {
-        return 0 === strncmp($cast, 'date:', 5) ||
-               0 === strncmp($cast, 'datetime:', 9);
+        return strncmp($cast, 'date:', 5) === 0 ||
+               strncmp($cast, 'datetime:', 9) === 0;
     }
 
     /**
@@ -977,7 +981,7 @@ trait HasAttributes
      */
     protected function isDecimalCast($cast)
     {
-        return 0 === strncmp($cast, 'decimal:', 8);
+        return strncmp($cast, 'decimal:', 8) === 0;
     }
 
     /**
@@ -1038,7 +1042,7 @@ trait HasAttributes
     {
         $value = $this->asJson($value);
 
-        if (false === $value) {
+        if ($value === false) {
             throw JsonEncodingException::forAttribute(
                 $this,
                 $key,
@@ -1185,7 +1189,7 @@ trait HasAttributes
      * Determine if the given attributes were changed.
      *
      * @param  array             $changes
-     * @param  array|string|null $attributes
+     * @param  null|array|string $attributes
      * @return bool
      */
     protected function hasChanges($changes, $attributes = null)

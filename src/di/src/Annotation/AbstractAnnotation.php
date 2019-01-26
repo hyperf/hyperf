@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -24,25 +25,25 @@ abstract class AbstractAnnotation implements AnnotationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectClass(string $className, ?string $target): void
     {
-        if (null !== $this->value) {
+        if ($this->value !== null) {
             AnnotationCollector::collectClass($className, static::class, $this->value);
         }
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
-        if (null !== $this->value) {
+        if ($this->value !== null) {
             AnnotationCollector::collectMethod($className, $target, static::class, $this->value);
         }
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
-        if (null !== $this->value) {
+        if ($this->value !== null) {
             AnnotationCollector::collectProperty($className, $target, static::class, $this->value);
         }
     }

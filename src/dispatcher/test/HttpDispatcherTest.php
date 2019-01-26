@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -26,6 +27,9 @@ use Swoft\Http\Message\Server\Response;
  * @property ProphecyInterface container
  * @property ProphecyInterface request
  * @property ProphecyInterface response
+ *
+ * @internal
+ * @coversNothing
  */
 class HttpDispatcherTest extends TestCase
 {
@@ -36,7 +40,8 @@ class HttpDispatcherTest extends TestCase
         $swooleResponse = $this->getMockBuilder(\Swoole\Http\Response::class)->getMock();
         $this->response->withAddedHeader('Server', 'Hyperf')
             ->shouldBeCalled()
-            ->willReturn((new Response($swooleResponse))->withAddedHeader('Server', 'Hyperf'));
+            ->willReturn((new Response($swooleResponse))->withAddedHeader('Server', 'Hyperf'))
+        ;
         $this->response = $this->response->reveal();
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(CoreMiddleware::class)->willReturn(new CoreMiddleware());

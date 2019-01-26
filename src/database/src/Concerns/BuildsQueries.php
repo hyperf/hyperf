@@ -36,14 +36,14 @@ trait BuildsQueries
 
             $countResults = $results->count();
 
-            if (0 == $countResults) {
+            if ($countResults == 0) {
                 break;
             }
 
             // On each chunk result set, we will pass them to the callback and then let the
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
-            if (false === $callback($results, $page)) {
+            if ($callback($results, $page) === false) {
                 return false;
             }
 
@@ -65,7 +65,7 @@ trait BuildsQueries
     {
         return $this->chunk($count, function ($results) use ($callback) {
             foreach ($results as $key => $value) {
-                if (false === $callback($value, $key)) {
+                if ($callback($value, $key) === false) {
                     return false;
                 }
             }
@@ -76,7 +76,7 @@ trait BuildsQueries
      * Execute the query and get the first result.
      *
      * @param  array                    $columns
-     * @return Model|object|static|null
+     * @return null|Model|object|static
      */
     public function first($columns = ['*'])
     {
@@ -88,13 +88,14 @@ trait BuildsQueries
      *
      * @param  callable    $callback
      * @param  callable    $default
-     * @return mixed|$this
+     * @return $this|mixed
      */
     public function when($value, $callback, $default = null)
     {
         if ($value) {
             return $callback($this, $value) ?: $this;
-        } elseif ($default) {
+        }
+        if ($default) {
             return $default($this, $value) ?: $this;
         }
 
@@ -105,7 +106,7 @@ trait BuildsQueries
      * Pass the query to a given callback.
      *
      * @param  \Closure    $callback
-     * @return mixed|$this
+     * @return $this|mixed
      */
     public function tap($callback)
     {
@@ -117,13 +118,14 @@ trait BuildsQueries
      *
      * @param  callable    $callback
      * @param  callable    $default
-     * @return mixed|$this
+     * @return $this|mixed
      */
     public function unless($value, $callback, $default = null)
     {
         if (! $value) {
             return $callback($this, $value) ?: $this;
-        } elseif ($default) {
+        }
+        if ($default) {
             return $default($this, $value) ?: $this;
         }
 

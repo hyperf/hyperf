@@ -49,9 +49,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @return array
-     *
      * @throws \RuntimeException
+     * @return array
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
@@ -224,7 +223,7 @@ abstract class Grammar extends BaseGrammar
      * Get the primary key command if it exists on the blueprint.
      *
      * @param  string                    $name
-     * @return \Hyperf\Utils\Fluent|null
+     * @return null|\Hyperf\Utils\Fluent
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {

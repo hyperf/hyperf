@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -87,7 +88,7 @@ class ParameterResolver
         }
     }
 
-    private function getFunctionName(ReflectionMethod $method) : string
+    private function getFunctionName(ReflectionMethod $method): string
     {
         return $method->getName() . '()';
     }

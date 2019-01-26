@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -32,11 +33,11 @@ class Inject extends AbstractAnnotation
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectProperty(string $className, ?string $target): void
     {
-        if (null !== $this->value) {
+        if ($this->value !== null) {
             $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
             AnnotationCollector::collectProperty($className, $target, static::class, $this->value);
         }

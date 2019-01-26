@@ -67,7 +67,7 @@ abstract class Grammar
         // If the value being wrapped has a column alias we will need to separate out
         // the pieces so we can wrap each of the segments of the expression on its
         // own, and then join these both back together using the "as" connector.
-        if (false !== stripos($value, ' as ')) {
+        if (stripos($value, ' as ') !== false) {
             return $this->wrapAliasedValue($value, $prefixAlias);
         }
 
@@ -107,7 +107,7 @@ abstract class Grammar
     /**
      * Quote the given string literal.
      *
-     * @param  string|array $value
+     * @param  array|string $value
      * @return string
      */
     public function quoteString($value)
@@ -116,7 +116,7 @@ abstract class Grammar
             return implode(', ', array_map([$this, __FUNCTION__], $value));
         }
 
-        return "'$value'";
+        return "'${value}'";
     }
 
     /**
@@ -207,7 +207,7 @@ abstract class Grammar
     protected function wrapSegments($segments)
     {
         return collect($segments)->map(function ($segment, $key) use ($segments) {
-            return 0 == $key && count($segments) > 1
+            return $key == 0 && count($segments) > 1
                 ? $this->wrapTable($segment)
                 : $this->wrapValue($segment);
         })->implode('.');
@@ -221,7 +221,7 @@ abstract class Grammar
      */
     protected function wrapValue($value)
     {
-        if ('*' !== $value) {
+        if ($value !== '*') {
             return '"' . str_replace('"', '""', $value) . '"';
         }
 

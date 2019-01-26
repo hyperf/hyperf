@@ -56,7 +56,7 @@ class QueryExecuted
      *
      * @param string              $sql
      * @param array               $bindings
-     * @param float|null          $time
+     * @param null|float          $time
      * @param ConnectionInterface $connection
      */
     public function __construct($sql, $bindings, $time, $connection)

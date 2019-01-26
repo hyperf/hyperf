@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -55,8 +56,6 @@ class Container implements ContainerInterface
 
     /**
      * Container constructor.
-     *
-     * @param Definition\DefinitionSourceInterface $definitionSource
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {
@@ -78,13 +77,12 @@ class Container implements ContainerInterface
      * For example if the entry is a class then a new instance will be created each time.
      * This method makes the container behave like a factory.
      *
-     * @param string $name Entry name or a class name.
-     * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
-     *                           to specific values. Parameters not defined in this array will be resolved using
-     *                           the container.
-     * @throws InvalidArgumentException The name parameter must be of type string.
-     * @throws NotFoundException No entry found for the given name.
-     * @return mixed
+     * @param  string                   $name       entry name or a class name
+     * @param  array                    $parameters Optional parameters to use to build the entry. Use this to force specific parameters
+     *                                              to specific values. Parameters not defined in this array will be resolved using
+     *                                              the container.
+     * @throws InvalidArgumentException the name parameter must be of type string
+     * @throws NotFoundException        no entry found for the given name
      */
     public function make(string $name, array $parameters = [])
     {
@@ -96,7 +94,7 @@ class Container implements ContainerInterface
         $definition = $this->getDefinition($name);
 
         if (! $definition) {
-            throw new NotFoundException("No entry or class found for '$name'");
+            throw new NotFoundException("No entry or class found for '${name}'");
         }
 
         return $this->resolveDefinition($definition, $parameters);
@@ -105,10 +103,10 @@ class Container implements ContainerInterface
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $name Identifier of the entry to look for.
-     * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
-     * @throws ContainerExceptionInterface Error while retrieving the entry.
-     * @return mixed Entry.
+     * @param  string                      $name identifier of the entry to look for
+     * @throws NotFoundExceptionInterface  no entry was found for **this** identifier
+     * @throws ContainerExceptionInterface error while retrieving the entry
+     * @return mixed                       entry
      */
     public function get($name)
     {
@@ -122,7 +120,7 @@ class Container implements ContainerInterface
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $name Identifier of the entry to look for.
+     * @param  string $name identifier of the entry to look for
      * @return bool
      */
     public function has($name)
@@ -182,8 +180,6 @@ class Container implements ContainerInterface
 
     /**
      * Resolves a definition.
-     *
-     * @return mixed
      */
     private function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,13 +19,13 @@ interface DefinitionSourceInterface
     /**
      * Returns the DI definition for the entry name.
      *
-     * @throws InvalidDefinitionException An invalid definition was found.
-     * @return array|null
+     * @throws InvalidDefinitionException an invalid definition was found
+     * @return null|array
      */
     public function getDefinition(string $name);
 
     /**
-     * @return array Definitions indexed by their name.
+     * @return array definitions indexed by their name
      */
     public function getDefinitions(): array;
 

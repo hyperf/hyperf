@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -47,7 +48,7 @@ class MethodInjection implements DefinitionInterface
     /**
      * @return mixed[]
      */
-    public function getParameters() : array
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -62,8 +63,6 @@ class MethodInjection implements DefinitionInterface
      * Reset the target should be resolved.
      * If it is the FactoryDefinition, then the target means $factory property,
      * If it is the ObjectDefinition, then the target means $className property.
-     *
-     * @param mixed $value
      */
     public function setTarget($value)
     {

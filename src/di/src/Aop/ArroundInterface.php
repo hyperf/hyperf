@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -15,8 +16,8 @@ interface ArroundInterface
 {
     /**
      * @return mixed
-     * Return the value from process method of ProceedingJoinPoint,
-     * or the value that you handled.
+     *               Return the value from process method of ProceedingJoinPoint,
+     *               or the value that you handled
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint);
 }

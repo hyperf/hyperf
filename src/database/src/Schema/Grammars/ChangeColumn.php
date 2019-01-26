@@ -27,9 +27,8 @@ class ChangeColumn
      * Compile a change column command into a series of SQL statements.
      *
      * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return array
-     *
      * @throws \RuntimeException
+     * @return array
      */
     public static function compile($grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
     {
@@ -46,7 +45,7 @@ class ChangeColumn
             $schema = $connection->getDoctrineSchemaManager()
         );
 
-        if (false !== $tableDiff) {
+        if ($tableDiff !== false) {
             return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
         }
 
@@ -57,7 +56,7 @@ class ChangeColumn
      * Get the Doctrine table difference for the given changes.
      *
      * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return \Doctrine\DBAL\Schema\TableDiff|bool
+     * @return bool|\Doctrine\DBAL\Schema\TableDiff
      */
     protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
     {
@@ -122,7 +121,7 @@ class ChangeColumn
             $options['length'] = static::calculateDoctrineTextLength($fluent['type']);
         }
 
-        if ('json' === $fluent['type']) {
+        if ($fluent['type'] === 'json') {
             $options['customSchemaOptions'] = [
                 'collation' => '',
             ];
@@ -182,7 +181,7 @@ class ChangeColumn
      * Get the matching Doctrine option for a given Fluent attribute name.
      *
      * @param  string      $attribute
-     * @return string|null
+     * @return null|string
      */
     protected static function mapFluentOptionToDoctrine($attribute)
     {
@@ -208,6 +207,6 @@ class ChangeColumn
      */
     protected static function mapFluentValueToDoctrine($option, $value)
     {
-        return 'notnull' === $option ? ! $value : $value;
+        return $option === 'notnull' ? ! $value : $value;
     }
 }

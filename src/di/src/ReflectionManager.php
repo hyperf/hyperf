@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -27,7 +28,7 @@ class ReflectionManager extends MetadataCollector
     {
         if (! isset(static::$container['class'][$className])) {
             if (! class_exists($className) && ! interface_exists($className)) {
-                throw new InvalidArgumentException("Class $className not exist");
+                throw new InvalidArgumentException("Class ${className} not exist");
             }
             static::$container['class'][$className] = new ReflectionClass($className);
         }
@@ -40,7 +41,7 @@ class ReflectionManager extends MetadataCollector
         if (! isset(static::$container['method'][$key])) {
             // TODO check interface_exist
             if (! class_exists($className)) {
-                throw new InvalidArgumentException("Class $className not exist");
+                throw new InvalidArgumentException("Class ${className} not exist");
             }
             static::$container['method'][$key] = static::reflectClass($className)->getMethod($method);
         }
@@ -52,7 +53,7 @@ class ReflectionManager extends MetadataCollector
         $key = $className . '::' . $property;
         if (! isset(static::$container['property'][$key])) {
             if (! class_exists($className)) {
-                throw new InvalidArgumentException("Class $className not exist");
+                throw new InvalidArgumentException("Class ${className} not exist");
             }
             static::$container['property'][$key] = static::reflectClass($className)->getProperty($property);
         }

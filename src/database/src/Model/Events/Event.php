@@ -41,7 +41,7 @@ abstract class Event
         $model = $this->getModel();
         $method = $this->getMethod();
         if ($model && method_exists($model, $method)) {
-            return $model->$method();
+            return $model->{$method}();
         }
 
         return true;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -29,7 +30,7 @@ class Request implements RequestInterface
         if (! method_exists($request, $name)) {
             throw new \RuntimeException('Method not exist.');
         }
-        return $request->$name(...$arguments);
+        return $request->{$name}(...$arguments);
     }
 
     public function input(?string $key = null, $default = null)

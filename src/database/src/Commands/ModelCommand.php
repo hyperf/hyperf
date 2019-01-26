@@ -69,7 +69,8 @@ class ModelCommand extends Command
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want create.')
             ->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which pool you want use.', 'default')
             ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'Which path you want Models create.', 'app/Models')
-            ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'Which prefix you want Model set.', '');
+            ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'Which prefix you want Model set.', '')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -33,7 +34,7 @@ class AtomicManager
     /**
      * Get a initialized Atomic from container by the identifier.
      *
-     * @throws \RuntimeException When the Atomic with the identifier has not initialization.
+     * @throws \RuntimeException when the Atomic with the identifier has not initialization
      */
     public static function get(string $identifier): Atomic
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -14,7 +15,7 @@ namespace Hyperf\Event\Contract;
 interface ListenerInterface
 {
     /**
-     * @return string[] Returns the events that you want to listen.
+     * @return string[] returns the events that you want to listen
      */
     public function listen(): array;
 

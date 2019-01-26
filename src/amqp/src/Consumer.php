@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -34,7 +35,7 @@ class Consumer extends Builder
     protected $signals = [
         SIGQUIT,
         SIGTERM,
-        SIGTSTP
+        SIGTSTP,
     ];
 
     public function signalHandler()
@@ -90,11 +91,11 @@ class Consumer extends Builder
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
-        if (!$message instanceof ConsumerInterface) {
+        if (! $message instanceof ConsumerInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
         }
 
-        if (!$channel) {
+        if (! $channel) {
             $channel = $this->getChannel($message->getPoolName());
         }
 

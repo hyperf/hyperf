@@ -122,7 +122,7 @@ class Blueprint
             $method = 'compile' . ucfirst($command->name);
 
             if (method_exists($grammar, $method)) {
-                if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
+                if (! is_null($sql = $grammar->{$method}($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $sql);
                 }
             }
@@ -220,7 +220,7 @@ class Blueprint
     /**
      * Indicate that the given primary key should be dropped.
      *
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     public function dropPrimary($index = null)
@@ -231,7 +231,7 @@ class Blueprint
     /**
      * Indicate that the given unique key should be dropped.
      *
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     public function dropUnique($index)
@@ -242,7 +242,7 @@ class Blueprint
     /**
      * Indicate that the given index should be dropped.
      *
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     public function dropIndex($index)
@@ -253,7 +253,7 @@ class Blueprint
     /**
      * Indicate that the given spatial index should be dropped.
      *
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     public function dropSpatialIndex($index)
@@ -264,7 +264,7 @@ class Blueprint
     /**
      * Indicate that the given foreign key should be dropped.
      *
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     public function dropForeign($index)
@@ -332,7 +332,7 @@ class Blueprint
      * Indicate that the polymorphic columns should be dropped.
      *
      * @param string      $name
-     * @param string|null $indexName
+     * @param null|string $indexName
      */
     public function dropMorphs($name, $indexName = null)
     {
@@ -355,9 +355,9 @@ class Blueprint
     /**
      * Specify the primary key(s) for the table.
      *
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $name
-     * @param  string|null          $algorithm
+     * @param  null|string          $algorithm
      * @return \Hyperf\Utils\Fluent
      */
     public function primary($columns, $name = null, $algorithm = null)
@@ -368,9 +368,9 @@ class Blueprint
     /**
      * Specify a unique index for the table.
      *
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $name
-     * @param  string|null          $algorithm
+     * @param  null|string          $algorithm
      * @return \Hyperf\Utils\Fluent
      */
     public function unique($columns, $name = null, $algorithm = null)
@@ -381,9 +381,9 @@ class Blueprint
     /**
      * Specify an index for the table.
      *
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $name
-     * @param  string|null          $algorithm
+     * @param  null|string          $algorithm
      * @return \Hyperf\Utils\Fluent
      */
     public function index($columns, $name = null, $algorithm = null)
@@ -394,7 +394,7 @@ class Blueprint
     /**
      * Specify a spatial index for the table.
      *
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $name
      * @return \Hyperf\Utils\Fluent
      */
@@ -406,7 +406,7 @@ class Blueprint
     /**
      * Specify a foreign key for the table.
      *
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $name
      * @return \Hyperf\Utils\Fluent
      */
@@ -684,8 +684,8 @@ class Blueprint
      * Create a new double column on the table.
      *
      * @param  string                                   $column
-     * @param  int|null                                 $total
-     * @param  int|null                                 $places
+     * @param  null|int                                 $total
+     * @param  null|int                                 $places
      * @return \Hyperf\Database\Schema\ColumnDefinition
      */
     public function double($column, $total = null, $places = null)
@@ -978,7 +978,7 @@ class Blueprint
      * Create a new point column on the table.
      *
      * @param  string                                   $column
-     * @param  int|null                                 $srid
+     * @param  null|int                                 $srid
      * @return \Hyperf\Database\Schema\ColumnDefinition
      */
     public function point($column, $srid = null)
@@ -1056,7 +1056,7 @@ class Blueprint
      * Add the proper columns for a polymorphic table.
      *
      * @param string      $name
-     * @param string|null $indexName
+     * @param null|string $indexName
      */
     public function morphs($name, $indexName = null)
     {
@@ -1071,7 +1071,7 @@ class Blueprint
      * Add nullable columns for a polymorphic table.
      *
      * @param string      $name
-     * @param string|null $indexName
+     * @param null|string $indexName
      */
     public function nullableMorphs($name, $indexName = null)
     {
@@ -1240,7 +1240,7 @@ class Blueprint
                 // If the index has been specified on the given column, but is simply equal
                 // to "true" (boolean), no name has been specified for this index so the
                 // index method can be called without a name and it will generate one.
-                if (true === $column->{$index}) {
+                if ($column->{$index} === true) {
                     $this->{$index}($column->name);
 
                     continue 2;
@@ -1249,7 +1249,7 @@ class Blueprint
                 // If the index has been specified on the given column, and it has a string
                 // value, we'll go ahead and call the index method and pass the name for
                 // the index since the developer specified the explicit name for this.
-                elseif (isset($column->{$index})) {
+                if (isset($column->{$index})) {
                     $this->{$index}($column->name, $column->{$index});
 
                     continue 2;
@@ -1266,7 +1266,7 @@ class Blueprint
     protected function creating()
     {
         return collect($this->commands)->contains(function ($command) {
-            return 'create' === $command->name;
+            return $command->name === 'create';
         });
     }
 
@@ -1274,9 +1274,9 @@ class Blueprint
      * Add a new index command to the blueprint.
      *
      * @param  string               $type
-     * @param  string|array         $columns
+     * @param  array|string         $columns
      * @param  string               $index
-     * @param  string|null          $algorithm
+     * @param  null|string          $algorithm
      * @return \Hyperf\Utils\Fluent
      */
     protected function indexCommand($type, $columns, $index, $algorithm = null)
@@ -1299,7 +1299,7 @@ class Blueprint
      *
      * @param  string               $command
      * @param  string               $type
-     * @param  string|array         $index
+     * @param  array|string         $index
      * @return \Hyperf\Utils\Fluent
      */
     protected function dropIndexCommand($command, $type, $index)

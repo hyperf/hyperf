@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Dispatcher;
 
+use function array_unique;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
+use function is_string;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use function array_unique;
-use function is_string;
 
 class HttpRequestHandler implements RequestHandlerInterface
 {
@@ -63,7 +64,7 @@ class HttpRequestHandler implements RequestHandlerInterface
 
     private function next()
     {
-        $this->offset++;
+        ++$this->offset;
         return $this;
     }
 }

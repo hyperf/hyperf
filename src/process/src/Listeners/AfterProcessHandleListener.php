@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -35,7 +36,7 @@ class AfterProcessHandleListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            AfterProcessHandle::class
+            AfterProcessHandle::class,
         ];
     }
 

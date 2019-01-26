@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -29,16 +30,16 @@ class Listener extends AbstractAnnotation
     {
         parent::__construct($value);
         if (isset($value['priority']) && is_numeric($value['priority'])) {
-            $this->priority = (int)$value['priority'];
+            $this->priority = (int) $value['priority'];
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectClass(string $className, ?string $target): void
     {
-        if (null !== $this->value) {
+        if ($this->value !== null) {
             AnnotationCollector::collectClass($className, static::class, [
                 'priority' => $this->priority,
             ]);

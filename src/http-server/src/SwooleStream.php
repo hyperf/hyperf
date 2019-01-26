@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -14,12 +15,12 @@ namespace Hyperf\HttpServer;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
-use Swoole\Http\Request as SwooleHttpRequest;
 use const SEEK_CUR;
 use const SEEK_END;
 use const SEEK_SET;
 use function strlen;
 use function substr;
+use Swoole\Http\Request as SwooleHttpRequest;
 
 final class SwooleStream implements StreamInterface
 {
@@ -97,7 +98,7 @@ final class SwooleStream implements StreamInterface
      */
     public function getSize()
     {
-        if (null === $this->bodySize) {
+        if ($this->bodySize === null) {
             $this->body !== null || $this->initRawContent();
             $this->bodySize = strlen($this->body);
         }

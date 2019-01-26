@@ -35,7 +35,7 @@ class ConsumerProcess extends Process
         parent::__construct($container);
 
         $factory = $this->container->get(DriverFactory::class);
-        /* @var DriverInterface $driver */
+        // @var DriverInterface $driver
         $this->driver = $factory->{$this->queue};
         $this->config = $factory->getConfig($this->queue);
 

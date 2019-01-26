@@ -26,7 +26,7 @@ abstract class Constants
             throw new ConstantsException('The function is not defined!');
         }
 
-        if (! isset($arguments) || 0 === count($arguments)) {
+        if (! isset($arguments) || count($arguments) === 0) {
             throw new ConstantsException('The Code is required');
         }
 

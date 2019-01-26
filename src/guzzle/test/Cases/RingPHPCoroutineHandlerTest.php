@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -8,12 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.org
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
+
 namespace HyerfTest\Guzzle\Cases;
 
 use Hyperf\GuzzleHandler\RingPHP\CoroutineHandler;
-use Swoole\Coroutine;
 use HyperfTest\Guzzle\TestCase;
+use Swoole\Coroutine;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class RingPHPCoroutineHandlerTest extends TestCase
 {
     const URL = 'https://api.tb.swoft.lmx0536.cn';
@@ -32,7 +38,7 @@ class RingPHPCoroutineHandlerTest extends TestCase
                     'curl' => [
                         CURLOPT_USERPWD => 'username:password',
                     ],
-                ]
+                ],
             ]);
 
             $json = json_decode($res['body'], true);
@@ -79,7 +85,7 @@ class RingPHPCoroutineHandlerTest extends TestCase
             $res = $handler([
                 'http_method' => 'GET',
                 'headers' => ['host' => [$url]],
-                'uri' => '/echo?a=1&b=2'
+                'uri' => '/echo?a=1&b=2',
             ]);
 
             $json = json_decode($res['body'], true);

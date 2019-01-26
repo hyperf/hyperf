@@ -119,8 +119,9 @@ class MorphToMany extends BelongsToMany
                         : MorphPivot::fromAttributes($this->parent, $attributes, $this->table, $exists);
 
         $pivot->setPivotKeys($this->foreignPivotKey, $this->relatedPivotKey)
-              ->setMorphType($this->morphType)
-              ->setMorphClass($this->morphClass);
+            ->setMorphType($this->morphType)
+            ->setMorphClass($this->morphClass)
+        ;
 
         return $pivot;
     }

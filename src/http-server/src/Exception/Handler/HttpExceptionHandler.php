@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -28,11 +29,11 @@ class HttpExceptionHandler extends ExceptionHandler
     }
 
     /**
-     * Determine if the current exception handler should handle the exception,
+     * Determine if the current exception handler should handle the exception,.
      *
      * @return bool
-     *         If return true, then this exception handler will handle the exception,
-     *         If return false, then delegate to next handler.
+     *              If return true, then this exception handler will handle the exception,
+     *              If return false, then delegate to next handler
      */
     public function isValid(Throwable $throwable): bool
     {

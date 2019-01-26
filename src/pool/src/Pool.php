@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -57,7 +58,7 @@ abstract class Pool implements PoolInterface
 
         if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
             $connection = $this->createConnection();
-            $this->currentConnections++;
+            ++$this->currentConnections;
             return $connection;
         }
 

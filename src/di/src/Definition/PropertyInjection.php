@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -30,7 +31,7 @@ class PropertyInjection
 
     /**
      * @param string $propertyName Property name
-     * @param mixed $value Value that should be injected in the property
+     * @param mixed  $value        Value that should be injected in the property
      */
     public function __construct(string $propertyName, $value)
     {
@@ -38,7 +39,7 @@ class PropertyInjection
         $this->value = $value;
     }
 
-    public function getPropertyName() : string
+    public function getPropertyName(): string
     {
         return $this->propertyName;
     }

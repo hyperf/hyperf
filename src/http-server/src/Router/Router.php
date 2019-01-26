@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -36,7 +37,7 @@ class Router
     public static function __callStatic($name, $arguments)
     {
         $router = static::$factory->getRouter(static::$serverName);
-        return $router->$name(...$arguments);
+        return $router->{$name}(...$arguments);
     }
 
     public static function addServer(string $serverName, callable $callback)

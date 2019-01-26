@@ -219,10 +219,9 @@ class HasManyThrough extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                               $columns
-     * @return \Hyperf\Database\Model\Model|static
-     *
+     * @param  array                                         $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Model|static
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -237,7 +236,7 @@ class HasManyThrough extends Relation
      * Find a related model by its primary key.
      *
      * @param  array                                                               $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|null
+     * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
     {
@@ -274,9 +273,8 @@ class HasManyThrough extends Relation
      * Find a related model by its primary key or throw an exception.
      *
      * @param  array                                                          $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection
-     *
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -345,7 +343,7 @@ class HasManyThrough extends Relation
      * @param  int                                    $perPage
      * @param  array                                  $columns
      * @param  string                                 $pageName
-     * @param  int|null                               $page
+     * @param  null|int                               $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -386,7 +384,7 @@ class HasManyThrough extends Relation
     {
         return $this->chunk($count, function ($results) use ($callback) {
             foreach ($results as $key => $value) {
-                if (false === $callback($value, $key)) {
+                if ($callback($value, $key) === false) {
                     return false;
                 }
             }

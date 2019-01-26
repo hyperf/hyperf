@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -27,7 +28,6 @@ class CoreMiddleware implements MiddlewareInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
-        $response = $response->withAddedHeader('Server', 'Hyperf');
-        return $response;
+        return $response->withAddedHeader('Server', 'Hyperf');
     }
 }

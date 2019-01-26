@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -64,7 +65,8 @@ abstract class Message implements MessageInterface
     {
         return (new ExchangeDeclareBuilder())
             ->setExchange($this->getExchange())
-            ->setType($this->getType());
+            ->setType($this->getType())
+        ;
     }
 
     public function serialize(): string

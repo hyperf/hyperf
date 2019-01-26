@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -28,6 +29,10 @@ use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class QueryBuilderTest extends TestCase
 {
     public function tearDown()
@@ -577,7 +582,8 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->whereColumn('first_name', 'last_name')
-            ->orWhereColumn('first_name', 'middle_name');
+            ->orWhereColumn('first_name', 'middle_name')
+        ;
         $this->assertEquals('select * from "users" where "first_name" = "last_name" or "first_name" = "middle_name"', $builder->toSql());
         $this->assertEquals([], $builder->getBindings());
 
@@ -811,7 +817,8 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->orHaving('email', '=', 'test@example.com')
-            ->orHaving('email', '=', 'test2@example.com');
+            ->orHaving('email', '=', 'test2@example.com')
+        ;
         $this->assertEquals('select * from "users" having "email" = ? or "email" = ?', $builder->toSql());
 
         $builder = $this->getBuilder();
@@ -827,7 +834,8 @@ class QueryBuilderTest extends TestCase
             ->from('item')
             ->where('department', '=', 'popular')
             ->groupBy('category')
-            ->having('total', '>', new Raw('3'));
+            ->having('total', '>', new Raw('3'))
+        ;
         $this->assertEquals('select "category", count(*) as "total" from "item" where "department" = ? group by "category" having "total" > 3', $builder->toSql());
 
         $builder = $this->getBuilder();
@@ -835,7 +843,8 @@ class QueryBuilderTest extends TestCase
             ->from('item')
             ->where('department', '=', 'popular')
             ->groupBy('category')
-            ->having('total', '>', 3);
+            ->having('total', '>', 3)
+        ;
         $this->assertEquals('select "category", count(*) as "total" from "item" where "department" = ? group by "category" having "total" > ?', $builder->toSql());
 
         $builder = $this->getBuilder();
@@ -858,7 +867,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with($query, ['popular', 3], true)
-            ->andReturn([['category' => 'rock', 'total' => 5]]);
+            ->andReturn([['category' => 'rock', 'total' => 5]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -867,7 +877,8 @@ class QueryBuilderTest extends TestCase
             ->where('department', '=', 'popular')
             ->groupBy('category')
             ->having('total', '>', 3)
-            ->get();
+            ->get()
+        ;
         $this->assertEquals([['category' => 'rock', 'total' => 5]], $result->all());
 
         // Using \Raw value
@@ -877,7 +888,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with($query, ['popular'], true)
-            ->andReturn([['category' => 'rock', 'total' => 5]]);
+            ->andReturn([['category' => 'rock', 'total' => 5]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -886,7 +898,8 @@ class QueryBuilderTest extends TestCase
             ->where('department', '=', 'popular')
             ->groupBy('category')
             ->having('total', '>', new Raw('3'))
-            ->get();
+            ->get()
+        ;
         $this->assertEquals([['category' => 'rock', 'total' => 5]], $result->all());
     }
 
@@ -904,7 +917,8 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->havingBetween('last_login_date', ['2018-11-16', '2018-12-16'])
-            ->orHavingRaw('user_foo < user_bar');
+            ->orHavingRaw('user_foo < user_bar')
+        ;
         $this->assertEquals('select * from "users" having "last_login_date" between ? and ? or user_foo < user_bar', $builder->toSql());
     }
 
@@ -965,7 +979,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -985,7 +1000,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count("body", "teaser", "posts"."created") as aggregate from "posts"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1003,7 +1019,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count(*) as aggregate from (select "id" from "posts" union select "id" from "videos") as "temp_table"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1105,14 +1122,16 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->join('contacts', 'users.id', '=', 'contacts.id')
-            ->leftJoin('photos', 'users.id', '=', 'photos.id');
+            ->leftJoin('photos', 'users.id', '=', 'photos.id')
+        ;
         $this->assertEquals('select * from "users" inner join "contacts" on "users"."id" = "contacts"."id" left join "photos" on "users"."id" = "photos"."id"', $builder->toSql());
 
         $builder = $this->getBuilder();
         $builder->select('*')
             ->from('users')
             ->leftJoinWhere('photos', 'users.id', '=', 'bar')
-            ->joinWhere('photos', 'users.id', '=', 'foo');
+            ->joinWhere('photos', 'users.id', '=', 'foo')
+        ;
         $this->assertEquals('select * from "users" left join "photos" on "users"."id" = ? inner join "photos" on "users"."id" = ?', $builder->toSql());
         $this->assertEquals(['bar', 'foo'], $builder->getBindings());
     }
@@ -1269,7 +1288,8 @@ class QueryBuilderTest extends TestCase
             $j->on('users.id', 'contacts.id')->where(function ($j) {
                 $j->whereRole('admin')
                     ->orWhereNull('contacts.disabled')
-                    ->orWhereRaw('year(contacts.created_at) = 2016');
+                    ->orWhereRaw('year(contacts.created_at) = 2016')
+                ;
             });
         });
         $this->assertEquals('select * from "users" left join "contacts" on "users"."id" = "contacts"."id" and ("role" = ? or "contacts"."disabled" is null or year(contacts.created_at) = 2016)', $builder->toSql());
@@ -1294,7 +1314,8 @@ class QueryBuilderTest extends TestCase
                     ->from('contact_types')
                     ->whereRaw('contact_types.id = contacts.contact_type_id')
                     ->where('category_id', '1')
-                    ->whereNull('deleted_at');
+                    ->whereNull('deleted_at')
+                ;
             });
         });
         $this->assertEquals('select * from "users" left join "contacts" on "users"."id" = "contacts"."id" and exists (select 1 from "contact_types" where contact_types.id = contacts.contact_type_id and "category_id" = ? and "deleted_at" is null)', $builder->toSql());
@@ -1313,7 +1334,8 @@ class QueryBuilderTest extends TestCase
                     ->whereNull('deleted_at')
                     ->whereIn('level_id', function ($q) {
                         $q->select('id')->from('levels')->where('is_active', true);
-                    });
+                    })
+                ;
             });
         });
         $this->assertEquals('select * from "users" left join "contacts" on "users"."id" = "contacts"."id" and exists (select 1 from "contact_types" where contact_types.id = contacts.contact_type_id and "category_id" = ? and "deleted_at" is null and "level_id" in (select "id" from "levels" where "is_active" = ?))', $builder->toSql());
@@ -1327,7 +1349,8 @@ class QueryBuilderTest extends TestCase
             $j
         ) {
             $j->on('users.id', 'contacts.id')
-                ->join('contact_types', 'contacts.contact_type_id', '=', 'contact_types.id');
+                ->join('contact_types', 'contacts.contact_type_id', '=', 'contact_types.id')
+            ;
         });
         $this->assertEquals('select "users"."id", "contacts"."id", "contact_types"."id" from "users" left join ("contacts" inner join "contact_types" on "contacts"."contact_type_id" = "contact_types"."id") on "users"."id" = "contacts"."id"', $builder->toSql());
     }
@@ -1344,10 +1367,13 @@ class QueryBuilderTest extends TestCase
                         $q->on('contacts.country', '=', 'countrys.country')->join('planets', function ($q) {
                             $q->on('countrys.planet_id', '=', 'planet.id')
                                 ->where('planet.is_settled', '=', 1)
-                                ->where('planet.population', '>=', 10000);
+                                ->where('planet.population', '>=', 10000)
+                            ;
                         });
-                    });
-            });
+                    })
+                ;
+            })
+        ;
         $this->assertEquals('select "users"."id", "contacts"."id", "contact_types"."id", "countrys"."id", "planets"."id" from "users" left join ("contacts" inner join "contact_types" on "contacts"."contact_type_id" = "contact_types"."id" left join ("countrys" inner join "planets" on "countrys"."planet_id" = "planet"."id" and "planet"."is_settled" = ? and "planet"."population" >= ?) on "contacts"."country" = "countrys"."country") on "users"."id" = "contacts"."id"', $builder->toSql());
         $this->assertEquals(['1', 10000], $builder->getBindings());
     }
@@ -1367,8 +1393,10 @@ class QueryBuilderTest extends TestCase
                         ->join('planets', function ($q) {
                             $q->on('countrys.planet_id', '=', 'planet.id')->where('planet.is_settled', '=', 1);
                         })
-                        ->where('planet.population', '>=', 10000);
-                });
+                        ->where('planet.population', '>=', 10000)
+                    ;
+                })
+            ;
         });
         $this->assertEquals('select "users"."id", "contacts"."id", "contact_types"."id" from "users" left join ("contacts" inner join "contact_types" on "contacts"."contact_type_id" = "contact_types"."id") on "users"."id" = "contacts"."id" and exists (select * from "countrys" inner join "planets" on "countrys"."planet_id" = "planet"."id" and "planet"."is_settled" = ? where "contacts"."country" = "countrys"."country" and "planet"."population" >= ?)', $builder->toSql());
         $this->assertEquals(['1', 10000], $builder->getBindings());
@@ -1396,7 +1424,8 @@ class QueryBuilderTest extends TestCase
         $sub2 = $this->getBuilder()->from('contacts')->where('name', 'bar');
         $builder->from('users')
             ->joinSub($sub1, 'sub1', 'users.id', '=', 1, 'inner', true)
-            ->joinSub($sub2, 'sub2', 'users.id', '=', 'sub2.user_id');
+            ->joinSub($sub2, 'sub2', 'users.id', '=', 'sub2.user_id')
+        ;
         $expected = 'select * from "users" ';
         $expected .= 'inner join (select * from "contacts" where "name" = ?) as "sub1" on "users"."id" = ? ';
         $expected .= 'inner join (select * from "contacts" where "name" = ?) as "sub2" on "users"."id" = "sub2"."user_id"';
@@ -1432,14 +1461,16 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select * from "users" where "id" = ? limit 1', [1], true)
-            ->andReturn([['foo' => 'bar']]);
+            ->andReturn([['foo' => 'bar']])
+        ;
         $builder->getProcessor()
             ->shouldReceive('processSelect')
             ->once()
             ->with($builder, [['foo' => 'bar']])
             ->andReturnUsing(function ($query, $results) {
                 return $results;
-            });
+            })
+        ;
         $results = $builder->from('users')->find(1);
         $this->assertEquals(['foo' => 'bar'], $results);
     }
@@ -1451,14 +1482,16 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select * from "users" where "id" = ? limit 1', [1], true)
-            ->andReturn([['foo' => 'bar']]);
+            ->andReturn([['foo' => 'bar']])
+        ;
         $builder->getProcessor()
             ->shouldReceive('processSelect')
             ->once()
             ->with($builder, [['foo' => 'bar']])
             ->andReturnUsing(function ($query, $results) {
                 return $results;
-            });
+            })
+        ;
         $results = $builder->from('users')->where('id', '=', 1)->first();
         $this->assertEquals(['foo' => 'bar'], $results);
     }
@@ -1469,7 +1502,7 @@ class QueryBuilderTest extends TestCase
         $builder->getConnection()->shouldReceive('select')->once()->andReturn([['foo' => 'bar'], ['foo' => 'baz']]);
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
-            ['foo' => 'baz']
+            ['foo' => 'baz'],
         ])->andReturnUsing(function ($query, $results) {
             return $results;
         });
@@ -1479,11 +1512,11 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select')->once()->andReturn([
             ['id' => 1, 'foo' => 'bar'],
-            ['id' => 10, 'foo' => 'baz']
+            ['id' => 10, 'foo' => 'baz'],
         ]);
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['id' => 1, 'foo' => 'bar'],
-            ['id' => 10, 'foo' => 'baz']
+            ['id' => 10, 'foo' => 'baz'],
         ])->andReturnUsing(function ($query, $results) {
             return $results;
         });
@@ -1498,7 +1531,7 @@ class QueryBuilderTest extends TestCase
         $builder->getConnection()->shouldReceive('select')->once()->andReturn([['foo' => 'bar'], ['foo' => 'baz']]);
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
-            ['foo' => 'baz']
+            ['foo' => 'baz'],
         ])->andReturnUsing(function ($query, $results) {
             return $results;
         });
@@ -1510,7 +1543,7 @@ class QueryBuilderTest extends TestCase
         $builder->getConnection()->shouldReceive('select')->once()->andReturn([['foo' => 'bar'], ['foo' => 'baz']]);
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
-            ['foo' => 'baz']
+            ['foo' => 'baz'],
         ])->andReturnUsing(function ($query, $results) {
             return $results;
         });
@@ -1525,12 +1558,14 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select "foo" from "users" where "id" = ? limit 1', [1], true)
-            ->andReturn([['foo' => 'bar']]);
+            ->andReturn([['foo' => 'bar']])
+        ;
         $builder->getProcessor()
             ->shouldReceive('processSelect')
             ->once()
             ->with($builder, [['foo' => 'bar']])
-            ->andReturn([['foo' => 'bar']]);
+            ->andReturn([['foo' => 'bar']])
+        ;
         $results = $builder->from('users')->where('id', '=', 1)->value('foo');
         $this->assertEquals('bar', $results);
     }
@@ -1542,7 +1577,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1554,7 +1590,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select exists(select * from "users") as "exists"', [], true)
-            ->andReturn([['exists' => 1]]);
+            ->andReturn([['exists' => 1]])
+        ;
         $results = $builder->from('users')->exists();
         $this->assertTrue($results);
 
@@ -1563,7 +1600,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select exists(select * from "users") as "exists"', [], true)
-            ->andReturn([['exists' => 0]]);
+            ->andReturn([['exists' => 0]])
+        ;
         $results = $builder->from('users')->doesntExist();
         $this->assertTrue($results);
 
@@ -1572,7 +1610,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select max("id") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1584,7 +1623,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select min("id") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1596,7 +1636,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select sum("id") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1611,17 +1652,20 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getConnection()
             ->shouldReceive('select')
             ->once()
             ->with('select sum("id") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 2]]);
+            ->andReturn([['aggregate' => 2]])
+        ;
         $builder->getConnection()
             ->shouldReceive('select')
             ->once()
             ->with('select "column1", "column2" from "users"', [], true)
-            ->andReturn([['column1' => 'foo', 'column2' => 'bar']]);
+            ->andReturn([['column1' => 'foo', 'column2' => 'bar']])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1641,12 +1685,14 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count("column1") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getConnection()
             ->shouldReceive('select')
             ->once()
             ->with('select "column2", "column3" from "users"', [], true)
-            ->andReturn([['column2' => 'foo', 'column3' => 'bar']]);
+            ->andReturn([['column2' => 'foo', 'column3' => 'bar']])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1664,12 +1710,14 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count("column1") as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getConnection()
             ->shouldReceive('select')
             ->once()
             ->with('select "column2", "column3" from "users"', [], true)
-            ->andReturn([['column2' => 'foo', 'column3' => 'bar']]);
+            ->andReturn([['column2' => 'foo', 'column3' => 'bar']])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1687,7 +1735,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('select')
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
-            ->andReturn([['aggregate' => 1]]);
+            ->andReturn([['aggregate' => 1]])
+        ;
         $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
             return $results;
         });
@@ -1714,7 +1763,8 @@ class QueryBuilderTest extends TestCase
                 ->where('email', '=', 'bar')
                 ->orderByRaw('email like ?', '%.com')
                 ->groupBy('id')
-                ->having('id', '=', 4);
+                ->having('id', '=', 4)
+            ;
         })->orWhere('id', '=', 'foo')->groupBy('id')->having('id', '=', 5);
         $this->assertEquals([0 => 'bar', 1 => 4, 2 => '%.com', 3 => 'foo', 4 => 5], $builder->getBindings());
     }
@@ -1726,7 +1776,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('insert')
             ->once()
             ->with('insert into "users" ("email") values (?)', ['foo'])
-            ->andReturn(true);
+            ->andReturn(true)
+        ;
         $result = $builder->from('users')->insert(['email' => 'foo']);
         $this->assertTrue($result);
     }
@@ -1738,7 +1789,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('insert')
             ->once()
             ->with('insert into "table1" ("foo") select "bar" from "table2" where "foreign_id" = ?', [5])
-            ->andReturn(true);
+            ->andReturn(true)
+        ;
 
         $result = $builder->from('table1')->insertUsing(['foo'], function (Builder $query) {
             $query->select(['bar'])->from('table2')->where('foreign_id', '=', 5);
@@ -1754,7 +1806,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('processInsertGetId')
             ->once()
             ->with($builder, 'insert into "users" ("email") values (?)', ['foo'], 'id')
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->insertGetId(['email' => 'foo'], 'id');
         $this->assertEquals(1, $result);
     }
@@ -1766,7 +1819,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('processInsertGetId')
             ->once()
             ->with($builder, 'insert into "users" ("email", "bar") values (?, bar)', ['foo'], 'id')
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->insertGetId(['email' => 'foo', 'bar' => new Raw('bar')], 'id');
         $this->assertEquals(1, $result);
     }
@@ -1778,7 +1832,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('insert')
             ->once()
             ->with('insert into "users" ("email") values (CURRENT TIMESTAMP)', [])
-            ->andReturn(true);
+            ->andReturn(true)
+        ;
         $result = $builder->from('users')->insert(['email' => new Raw('CURRENT TIMESTAMP')]);
         $this->assertTrue($result);
     }
@@ -1790,10 +1845,11 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('insert')
             ->once()
             ->with('insert into "users" ("email") values (UPPER(\'Foo\')), (LOWER(\'Foo\'))', [])
-            ->andReturn(true);
+            ->andReturn(true)
+        ;
         $result = $builder->from('users')->insert([
             ['email' => new Raw("UPPER('Foo')")],
-            ['email' => new Raw("LOWER('Foo')")]
+            ['email' => new Raw("LOWER('Foo')")],
         ]);
         $this->assertTrue($result);
     }
@@ -1805,7 +1861,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('update')
             ->once()
             ->with('update "users" set "email" = ?, "name" = ? where "id" = ?', ['foo', 'bar', 1])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->where('id', '=', 1)->update(['email' => 'foo', 'name' => 'bar']);
         $this->assertEquals(1, $result);
 
@@ -1816,14 +1873,16 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` set `email` = ?, `name` = ? where `id` = ? order by `foo` desc limit 5', [
                 'foo',
                 'bar',
-                1
+                1,
             ])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')
             ->where('id', '=', 1)
             ->orderBy('foo', 'desc')
             ->limit(5)
-            ->update(['email' => 'foo', 'name' => 'bar']);
+            ->update(['email' => 'foo', 'name' => 'bar'])
+        ;
         $this->assertEquals(1, $result);
     }
 
@@ -1836,13 +1895,15 @@ class QueryBuilderTest extends TestCase
             ->with('update "users" inner join "orders" on "users"."id" = "orders"."user_id" set "email" = ?, "name" = ? where "users"."id" = ?', [
                 'foo',
                 'bar',
-                1
+                1,
             ])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')
             ->join('orders', 'users.id', '=', 'orders.user_id')
             ->where('users.id', '=', 1)
-            ->update(['email' => 'foo', 'name' => 'bar']);
+            ->update(['email' => 'foo', 'name' => 'bar'])
+        ;
         $this->assertEquals(1, $result);
 
         $builder = $this->getBuilder();
@@ -1852,9 +1913,10 @@ class QueryBuilderTest extends TestCase
             ->with('update "users" inner join "orders" on "users"."id" = "orders"."user_id" and "users"."id" = ? set "email" = ?, "name" = ?', [
                 1,
                 'foo',
-                'bar'
+                'bar',
             ])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->join('orders', function ($join) {
             $join->on('users.id', '=', 'orders.user_id')->where('users.id', '=', 1);
         })->update(['email' => 'foo', 'name' => 'bar']);
@@ -1870,13 +1932,15 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` inner join `orders` on `users`.`id` = `orders`.`user_id` set `email` = ?, `name` = ? where `users`.`id` = ?', [
                 'foo',
                 'bar',
-                1
+                1,
             ])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')
             ->join('orders', 'users.id', '=', 'orders.user_id')
             ->where('users.id', '=', 1)
-            ->update(['email' => 'foo', 'name' => 'bar']);
+            ->update(['email' => 'foo', 'name' => 'bar'])
+        ;
         $this->assertEquals(1, $result);
 
         $builder = $this->getMySqlBuilder();
@@ -1886,9 +1950,10 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` inner join `orders` on `users`.`id` = `orders`.`user_id` and `users`.`id` = ? set `email` = ?, `name` = ?', [
                 1,
                 'foo',
-                'bar'
+                'bar',
             ])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->join('orders', function ($join) {
             $join->on('users.id', '=', 'orders.user_id')->where('users.id', '=', 1);
         })->update(['email' => 'foo', 'name' => 'bar']);
@@ -1902,7 +1967,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('update')
             ->once()
             ->with('update "users" set "email" = foo, "name" = ? where "id" = ?', ['bar', 1])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->where('id', '=', 1)->update(['email' => new Raw('foo'), 'name' => 'bar']);
         $this->assertEquals(1, $result);
     }
@@ -1911,7 +1977,7 @@ class QueryBuilderTest extends TestCase
     {
         $builder = Mockery::mock(Builder::class . '[where,exists,insert]', [
             Mockery::mock(ConnectionInterface::class),
-            new Grammar,
+            new Grammar(),
             Mockery::mock(Processor::class),
         ]);
 
@@ -1923,7 +1989,7 @@ class QueryBuilderTest extends TestCase
 
         $builder = Mockery::mock(Builder::class . '[where,exists,update]', [
             Mockery::mock(ConnectionInterface::class),
-            new Grammar,
+            new Grammar(),
             Mockery::mock(Processor::class),
         ]);
 
@@ -1942,7 +2008,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete from "users" where "email" = ?', ['foo'])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->where('email', '=', 'foo')->delete();
         $this->assertEquals(1, $result);
 
@@ -1951,7 +2018,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete from "users" where "users"."id" = ?', [1])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->delete(1);
         $this->assertEquals(1, $result);
 
@@ -1960,7 +2028,8 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete from `users` where `email` = ? order by `id` asc limit 1', ['foo'])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')->where('email', '=', 'foo')->orderBy('id')->take(1)->delete();
         $this->assertEquals(1, $result);
     }
@@ -1972,13 +2041,15 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete `users` from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` where `email` = ?', ['foo'])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')
             ->join('contacts', 'users.id', '=', 'contacts.id')
             ->where('email', '=', 'foo')
             ->orderBy('id')
             ->limit(1)
-            ->delete();
+            ->delete()
+        ;
         $this->assertEquals(1, $result);
 
         $builder = $this->getMySqlBuilder();
@@ -1986,13 +2057,15 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete `a` from `users` as `a` inner join `users` as `b` on `a`.`id` = `b`.`user_id` where `email` = ?', ['foo'])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users AS a')
             ->join('users AS b', 'a.id', '=', 'b.user_id')
             ->where('email', '=', 'foo')
             ->orderBy('id')
             ->limit(1)
-            ->delete();
+            ->delete()
+        ;
         $this->assertEquals(1, $result);
 
         $builder = $this->getMySqlBuilder();
@@ -2000,12 +2073,14 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('delete')
             ->once()
             ->with('delete `users` from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` where `users`.`id` = ?', [1])
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
         $result = $builder->from('users')
             ->join('contacts', 'users.id', '=', 'contacts.id')
             ->orderBy('id')
             ->take(1)
-            ->delete(1);
+            ->delete(1)
+        ;
         $this->assertEquals(1, $result);
     }
 
@@ -2026,7 +2101,7 @@ class QueryBuilderTest extends TestCase
 
     public function testMySqlUpdateWrappingJson()
     {
-        $grammar = new MySqlGrammar;
+        $grammar = new MySqlGrammar();
         $processor = Mockery::mock(Processor::class);
 
         $connection = $this->createMock(ConnectionInterface::class);
@@ -2035,20 +2110,21 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` set `name` = json_set(`name`, \'$."first_name"\', ?), `name` = json_set(`name`, \'$."last_name"\', ?) where `active` = ?', [
                 'John',
                 'Doe',
-                1
-            ]);
+                1,
+            ])
+        ;
 
         $builder = new Builder($connection, $grammar, $processor);
 
         $builder->from('users')->where('active', '=', 1)->update([
             'name->first_name' => 'John',
-            'name->last_name' => 'Doe'
+            'name->last_name' => 'Doe',
         ]);
     }
 
     public function testMySqlUpdateWrappingNestedJson()
     {
-        $grammar = new MySqlGrammar;
+        $grammar = new MySqlGrammar();
         $processor = Mockery::mock(Processor::class);
 
         $connection = $this->createMock(ConnectionInterface::class);
@@ -2057,20 +2133,21 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` set `meta` = json_set(`meta`, \'$."name"."first_name"\', ?), `meta` = json_set(`meta`, \'$."name"."last_name"\', ?) where `active` = ?', [
                 'John',
                 'Doe',
-                1
-            ]);
+                1,
+            ])
+        ;
 
         $builder = new Builder($connection, $grammar, $processor);
 
         $builder->from('users')->where('active', '=', 1)->update([
             'meta->name->first_name' => 'John',
-            'meta->name->last_name' => 'Doe'
+            'meta->name->last_name' => 'Doe',
         ]);
     }
 
     public function testMySqlUpdateWithJsonPreparesBindingsCorrectly()
     {
-        $grammar = new MySqlGrammar;
+        $grammar = new MySqlGrammar();
         $processor = Mockery::mock(Processor::class);
 
         $connection = Mockery::mock(ConnectionInterface::class);
@@ -2078,12 +2155,13 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('update `users` set `options` = json_set(`options`, \'$."enable"\', false), `updated_at` = ? where `id` = ?', [
                 '2015-05-26 22:02:06',
-                0
-            ]);
+                0,
+            ])
+        ;
         $builder = new Builder($connection, $grammar, $processor);
         $builder->from('users')->where('id', '=', 0)->update([
             'options->enable' => false,
-            'updated_at' => '2015-05-26 22:02:06'
+            'updated_at' => '2015-05-26 22:02:06',
         ]);
 
         $connection->shouldReceive('update')
@@ -2091,26 +2169,29 @@ class QueryBuilderTest extends TestCase
             ->with('update `users` set `options` = json_set(`options`, \'$."size"\', ?), `updated_at` = ? where `id` = ?', [
                 45,
                 '2015-05-26 22:02:06',
-                0
-            ]);
+                0,
+            ])
+        ;
         $builder = new Builder($connection, $grammar, $processor);
         $builder->from('users')->where('id', '=', 0)->update([
             'options->size' => 45,
-            'updated_at' => '2015-05-26 22:02:06'
+            'updated_at' => '2015-05-26 22:02:06',
         ]);
 
         $builder = $this->getMySqlBuilder();
         $builder->getConnection()
             ->shouldReceive('update')
             ->once()
-            ->with('update `users` set `options` = json_set(`options`, \'$."size"\', ?)', [null]);
+            ->with('update `users` set `options` = json_set(`options`, \'$."size"\', ?)', [null])
+        ;
         $builder->from('users')->update(['options->size' => null]);
 
         $builder = $this->getMySqlBuilder();
         $builder->getConnection()
             ->shouldReceive('update')
             ->once()
-            ->with('update `users` set `options` = json_set(`options`, \'$."size"\', 45)', []);
+            ->with('update `users` set `options` = json_set(`options`, \'$."size"\', 45)', [])
+        ;
         $builder->from('users')->update(['options->size' => new Raw('45')]);
         // Avoid 'This test did not perform any assertions' notice
         $this->assertTrue(true);
@@ -2300,7 +2381,8 @@ class QueryBuilderTest extends TestCase
             ->where('registered', 1)
             ->groupBy('city')
             ->having('population', '>', 3)
-            ->orderByRaw('match ("foo") against(?)', ['bar']);
+            ->orderByRaw('match ("foo") against(?)', ['bar'])
+        ;
         $this->assertEquals($expectedSql, $builder->toSql());
         $this->assertEquals($expectedBindings, $builder->getBindings());
 
@@ -2314,7 +2396,8 @@ class QueryBuilderTest extends TestCase
             ->where('registered', 1)
             ->join('othertable', function ($join) {
                 $join->where('bar', '=', 'foo');
-            });
+            })
+        ;
         $this->assertEquals($expectedSql, $builder->toSql());
         $this->assertEquals($expectedBindings, $builder->getBindings());
     }
@@ -2476,8 +2559,8 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getMockQueryBuilder();
         $builder->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
 
-        $chunk1 = collect([(object)['someIdField' => 1], (object)['someIdField' => 2]]);
-        $chunk2 = collect([(object)['someIdField' => 10], (object)['someIdField' => 11]]);
+        $chunk1 = collect([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = collect([(object) ['someIdField' => 10], (object) ['someIdField' => 11]]);
         $chunk3 = collect([]);
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
@@ -2502,8 +2585,8 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getMockQueryBuilder();
         $builder->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
 
-        $chunk1 = collect([(object)['someIdField' => 1], (object)['someIdField' => 2]]);
-        $chunk2 = collect([(object)['someIdField' => 10]]);
+        $chunk1 = collect([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = collect([(object) ['someIdField' => 10]]);
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
         $builder->shouldReceive('get')->times(2)->andReturn($chunk1, $chunk2);
@@ -2545,7 +2628,7 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getMockQueryBuilder();
         $builder->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
 
-        $chunk1 = collect([(object)['table_id' => 1], (object)['table_id' => 10]]);
+        $chunk1 = collect([(object) ['table_id' => 1], (object) ['table_id' => 10]]);
         $chunk2 = collect([]);
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'table.id')->andReturnSelf();
         $builder->shouldReceive('forPageAfterId')->once()->with(2, 10, 'table.id')->andReturnSelf();
@@ -2691,7 +2774,7 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')->from('orders')->where('company_id', 1)->orWhereRowValues([
             'last_update',
-            'order_number'
+            'order_number',
         ], '<', [1, 2]);
         $this->assertEquals('select * from "orders" where "company_id" = ? or ("last_update", "order_number") < (?, ?)', $builder->toSql());
 
@@ -2757,7 +2840,8 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', new Raw('0'));
+            ->orWhereJsonLength('options->languages', new Raw('0'))
+        ;
         $this->assertEquals('select * from `users` where `id` = ? or json_length(`options`, \'$."languages"\') = 0', $builder->toSql());
         $this->assertEquals([1], $builder->getBindings());
 
@@ -2765,7 +2849,8 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')
             ->from('users')
             ->where('id', '=', 1)
-            ->orWhereJsonLength('options->languages', '>', new Raw('0'));
+            ->orWhereJsonLength('options->languages', '>', new Raw('0'))
+        ;
         $this->assertEquals('select * from `users` where `id` = ? or json_length(`options`, \'$."languages"\') > 0', $builder->toSql());
         $this->assertEquals([1], $builder->getBindings());
     }
@@ -2800,7 +2885,8 @@ class QueryBuilderTest extends TestCase
     {
         $builder = $this->getBuilder();
         $builder->fromRaw(new Raw('(select max(last_seen_at) as last_seen_at from "sessions") as "last_seen_at"'))
-            ->where('last_seen_at', '>', '1520652582');
+            ->where('last_seen_at', '>', '1520652582')
+        ;
         $this->assertEquals('select * from (select max(last_seen_at) as last_seen_at from "sessions") as "last_seen_at" where "last_seen_at" > ?', $builder->toSql());
         $this->assertEquals(['1520652582'], $builder->getBindings());
     }
@@ -2812,20 +2898,20 @@ class QueryBuilderTest extends TestCase
 
     protected function getMySqlBuilderWithProcessor(): Builder
     {
-        $grammar = new MySqlGrammar;
+        $grammar = new MySqlGrammar();
         $processor = new MySqlProcessor();
 
         return new Builder(Mockery::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
     /**
-     * @return \Mockery\MockInterface|Builder
+     * @return Builder|\Mockery\MockInterface
      */
     protected function getMockQueryBuilder()
     {
         return Mockery::mock(Builder::class, [
             Mockery::mock(ConnectionInterface::class),
-            new Grammar,
+            new Grammar(),
             Mockery::mock(Processor::class),
         ])->makePartial();
     }

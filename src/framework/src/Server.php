@@ -80,7 +80,7 @@ class Server
             // Trigger beforeStart event.
             if (isset($callbacks[SwooleEvent::ON_BEFORE_START])) {
                 [$class, $method] = $callbacks[SwooleEvent::ON_BEFORE_START];
-                $this->container->get($class)->$method();
+                $this->container->get($class)->{$method}();
             }
 
             foreach ($processes as $process) {
@@ -100,7 +100,7 @@ class Server
     }
 
     /**
-     * @param SwooleServer|Port $server
+     * @param Port|SwooleServer $server
      */
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
@@ -121,7 +121,7 @@ class Server
 
                 $this->requests[$callback[0]] = $serverName;
                 $class = $this->container->get($callback[0]);
-                if ('request' == $event) {
+                if ($event == 'request') {
                     if (! $class instanceof ServerOnRequestInterface) {
                         throw new InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
                     }

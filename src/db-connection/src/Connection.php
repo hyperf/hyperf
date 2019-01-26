@@ -69,7 +69,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function __call($name, $arguments)
     {
-        return $this->connection->$name(...$arguments);
+        return $this->connection->{$name}(...$arguments);
     }
 
     public function getConnection(): DbConnectionInterface

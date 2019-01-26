@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -17,7 +18,6 @@ abstract class AbstractDispatcher implements DispatcherInterface
 {
     /**
      * @param array ...$params
-     * @return mixed
      */
     public function dispatch(...$params)
     {

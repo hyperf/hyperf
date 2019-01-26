@@ -86,9 +86,9 @@ class FactoryBuilder
     /**
      * The number of models to build.
      *
-     * @var int|null
+     * @var null|int
      */
-    protected $amount = null;
+    protected $amount;
 
     /**
      * Create an new builder instance.
@@ -201,7 +201,7 @@ class FactoryBuilder
      */
     public function make(array $attributes = [])
     {
-        if (null === $this->amount) {
+        if ($this->amount === null) {
             return tap($this->makeInstance($attributes), function ($instance) {
                 $this->callAfterMaking(collect([$instance]));
             });
@@ -225,7 +225,7 @@ class FactoryBuilder
      */
     public function raw(array $attributes = [])
     {
-        if (null === $this->amount) {
+        if ($this->amount === null) {
             return $this->getRawAttributes($attributes);
         }
 
@@ -320,9 +320,8 @@ class FactoryBuilder
     /**
      * Apply the active states to the model definition array.
      *
-     * @return array
-     *
      * @throws \InvalidArgumentException
+     * @return array
      */
     protected function applyStates(array $definition, array $attributes = [])
     {

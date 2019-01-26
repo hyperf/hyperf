@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,24 +32,24 @@ class Response implements ResponseInterface
         $data = $this->toJson($data);
         return $this->getResponse()
             ->withAddedHeader('Content-Type', 'application/json')
-            ->withBody(new SwooleStream($data));
+            ->withBody(new SwooleStream($data))
+        ;
     }
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     *
-     * @param mixed $data
      */
     public function raw($data): PsrResponseInterface
     {
         return $this->getResponse()
             ->withAddedHeader('Content-Type', 'text/plain')
-            ->withBody(new SwooleStream((string)$data));
+            ->withBody(new SwooleStream((string) $data))
+        ;
     }
 
     /**
-     * @param array|Jsonable|Arrayable $data
-     * @throws HttpException When the data encoding error.
+     * @param  array|Arrayable|Jsonable $data
+     * @throws HttpException            when the data encoding error
      */
     private function toJson($data): string
     {
@@ -57,7 +58,7 @@ class Response implements ResponseInterface
         }
 
         if ($data instanceof Jsonable) {
-            return (string)$data;
+            return (string) $data;
         }
 
         if ($data instanceof Arrayable) {

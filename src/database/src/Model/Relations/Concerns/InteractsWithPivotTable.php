@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array $ids
+     * @param  array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,7 +84,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model|array $ids
+     * @param  array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
      * @param  bool                                                        $detaching
      * @return array
      */
@@ -179,7 +179,8 @@ trait InteractsWithPivotTable
     /**
      * Detach models from the relationship.
      *
-     * @param  bool $touch
+     * @param  bool       $touch
+     * @param  null|mixed $ids
      * @return int
      */
     public function detach($ids = null, $touch = true)

@@ -32,7 +32,7 @@ trait SoftDeletes
     /**
      * Force a hard delete on a soft deleted model.
      *
-     * @return bool|null
+     * @return null|bool
      */
     public function forceDelete()
     {
@@ -50,14 +50,14 @@ trait SoftDeletes
     /**
      * Restore a soft-deleted model instance.
      *
-     * @return bool|null
+     * @return null|bool
      */
     public function restore()
     {
         // If the restoring event does not return false, we will proceed with this
         // restore operation. Otherwise, we bail out so the developer will stop
         // the restore totally. We will clear the deleted timestamp and save.
-        if (false === $this->fireModelEvent('restoring')) {
+        if ($this->fireModelEvent('restoring') === false) {
             return false;
         }
 

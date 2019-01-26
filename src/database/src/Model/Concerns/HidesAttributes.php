@@ -53,7 +53,7 @@ trait HidesAttributes
     /**
      * Add hidden attributes for the model.
      *
-     * @param array|string|null $attributes
+     * @param null|array|string $attributes
      */
     public function addHidden($attributes = null)
     {
@@ -88,7 +88,7 @@ trait HidesAttributes
     /**
      * Add visible attributes for the model.
      *
-     * @param array|string|null $attributes
+     * @param null|array|string $attributes
      */
     public function addVisible($attributes = null)
     {

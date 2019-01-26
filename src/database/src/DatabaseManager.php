@@ -70,7 +70,7 @@ class DatabaseManager implements ConnectionResolverInterface
      */
     public function __call($method, $parameters)
     {
-        return $this->connection()->$method(...$parameters);
+        return $this->connection()->{$method}(...$parameters);
     }
 
     /**
@@ -248,10 +248,9 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Get the configuration for a connection.
      *
-     * @param  string $name
-     * @return array
-     *
+     * @param  string                    $name
      * @throws \InvalidArgumentException
+     * @return array
      */
     protected function configuration($name)
     {
@@ -306,9 +305,9 @@ class DatabaseManager implements ConnectionResolverInterface
      */
     protected function setPdoForType(Connection $connection, $type = null)
     {
-        if ('read' === $type) {
+        if ($type === 'read') {
             $connection->setPdo($connection->getReadPdo());
-        } elseif ('write' === $type) {
+        } elseif ($type === 'write') {
             $connection->setReadPdo($connection->getPdo());
         }
 
@@ -327,6 +326,7 @@ class DatabaseManager implements ConnectionResolverInterface
 
         return $this->connections[$name]
             ->setPdo($fresh->getPdo())
-            ->setReadPdo($fresh->getReadPdo());
+            ->setReadPdo($fresh->getReadPdo())
+        ;
     }
 }

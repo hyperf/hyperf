@@ -112,7 +112,7 @@ class Builder
      */
     public function __call($method, $parameters)
     {
-        if ('macro' === $method) {
+        if ($method === 'macro') {
             $this->localMacros[$parameters[0]] = $parameters[1];
 
             return;
@@ -155,7 +155,7 @@ class Builder
      */
     public static function __callStatic($method, $parameters)
     {
-        if ('macro' === $method) {
+        if ($method === 'macro') {
             static::$macros[$parameters[0]] = $parameters[1];
 
             return;
@@ -194,7 +194,7 @@ class Builder
      * Register a new global scope.
      *
      * @param  string                                $identifier
-     * @param  \Hyperf\Database\Model\Scope|\Closure $scope
+     * @param  \Closure|\Hyperf\Database\Model\Scope $scope
      * @return $this
      */
     public function withGlobalScope($identifier, $scope)
@@ -290,8 +290,10 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  string|array|\Closure $column
+     * @param  array|\Closure|string $column
      * @param  string                $boolean
+     * @param  null|mixed            $operator
+     * @param  null|mixed            $value
      * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
@@ -310,7 +312,9 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|array|string                 $column
+     * @param  array|\Closure|string                 $column
+     * @param  null|mixed                            $operator
+     * @param  null|mixed                            $value
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function orWhere($column, $operator = null, $value = null)
@@ -318,7 +322,7 @@ class Builder
         [$value, $operator] = $this->query->prepareValueAndOperator(
             $value,
             $operator,
-            2 === func_num_args()
+            func_num_args() === 2
         );
 
         return $this->where($column, $operator, $value, 'or');
@@ -390,7 +394,7 @@ class Builder
      * Find a model by its primary key.
      *
      * @param  array                                                                               $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|static[]|static|null
+     * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
     public function find($id, $columns = ['*'])
     {
@@ -404,7 +408,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Hyperf\Contracts\Support\Arrayable|array $ids
+     * @param  array|\Hyperf\Contracts\Support\Arrayable $ids
      * @param  array                                     $columns
      * @return \Hyperf\Database\Model\Collection
      */
@@ -421,9 +425,8 @@ class Builder
      * Find a model by its primary key or throw an exception.
      *
      * @param  array                                                                          $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|static|static[]
-     *
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -503,10 +506,9 @@ class Builder
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                               $columns
-     * @return \Hyperf\Database\Model\Model|static
-     *
+     * @param  array                                         $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Model|static
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -520,8 +522,8 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param  \Closure|array                            $columns
-     * @return \Hyperf\Database\Model\Model|static|mixed
+     * @param  array|\Closure                            $columns
+     * @return \Hyperf\Database\Model\Model|mixed|static
      */
     public function firstOr($columns = ['*'], Closure $callback = null)
     {
@@ -594,7 +596,7 @@ class Builder
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
             // loaded on that query, because that is where they get hydrated as models.
-            if (false === strpos($name, '.')) {
+            if (strpos($name, '.') === false) {
                 $models = $this->eagerLoadRelation($models, $name, $constraints);
             }
         }
@@ -615,7 +617,7 @@ class Builder
         // and error prone. We don't want constraints because we add eager ones.
         $relation = Relation::noConstraints(function () use ($name) {
             try {
-                return $this->getModel()->newInstance()->$name();
+                return $this->getModel()->newInstance()->{$name}();
             } catch (BadMethodCallException $e) {
                 throw RelationNotFoundException::make($this->getModel(), $name);
             }
@@ -649,8 +651,8 @@ class Builder
      * Chunk the results of a query by comparing numeric IDs.
      *
      * @param  int         $count
-     * @param  string|null $column
-     * @param  string|null $alias
+     * @param  null|string $column
+     * @param  null|string $alias
      * @return bool
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
@@ -671,14 +673,14 @@ class Builder
 
             $countResults = $results->count();
 
-            if (0 == $countResults) {
+            if ($countResults == 0) {
                 break;
             }
 
             // On each chunk result set, we will pass them to the callback and then let the
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
-            if (false === $callback($results)) {
+            if ($callback($results) === false) {
                 return false;
             }
 
@@ -694,7 +696,7 @@ class Builder
      * Get an array with the values of a given column.
      *
      * @param  string                   $column
-     * @param  string|null              $key
+     * @param  null|string              $key
      * @return \Hyperf\Utils\Collection
      */
     public function pluck($column, $key = null)
@@ -721,10 +723,9 @@ class Builder
      * @param  int                                               $perPage
      * @param  array                                             $columns
      * @param  string                                            $pageName
-     * @param  int|null                                          $page
-     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
-     *
+     * @param  null|int                                          $page
      * @throws \InvalidArgumentException
+     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -748,7 +749,7 @@ class Builder
      * @param  int                                    $perPage
      * @param  array                                  $columns
      * @param  string                                 $pageName
-     * @param  int|null                               $page
+     * @param  null|int                               $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -771,7 +772,7 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @return \Hyperf\Database\Model\Model|$this
+     * @return $this|\Hyperf\Database\Model\Model
      */
     public function create(array $attributes = [])
     {
@@ -783,7 +784,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return \Hyperf\Database\Model\Model|$this
+     * @return $this|\Hyperf\Database\Model\Model
      */
     public function forceCreate(array $attributes)
     {

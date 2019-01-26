@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -35,7 +36,7 @@ class Redis
 
         $connection = $pool->get()->getConnection();
         // TODO: Handle multi ...
-        $res = $connection->$name(...$arguments);
+        $res = $connection->{$name}(...$arguments);
         $connection->release();
 
         return $res;

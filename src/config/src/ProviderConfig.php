@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Config;
 
-use Hyperf\Utils\Composer;
 use function class_exists;
+use Hyperf\Utils\Composer;
 use function is_string;
 use function method_exists;
 
@@ -38,7 +39,7 @@ class ProviderConfig
             $providers = Composer::getMergedExtra('hyperf')['config'];
             foreach ($providers ?? [] as $provider) {
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
-                    $providerConfig = (new $provider)();
+                    $providerConfig = (new $provider())();
                     $config = array_merge_recursive($config, $providerConfig);
                 }
             }

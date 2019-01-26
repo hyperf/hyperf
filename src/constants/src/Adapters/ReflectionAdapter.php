@@ -46,7 +46,7 @@ class ReflectionAdapter implements AdapterInterface
     protected function getCommentByName($doc, $name)
     {
         $name = Str::studly($name);
-        $pattern = "/\@{$name}\(\\\"(.*)\\\"\)/U";
+        $pattern = "/\\@{$name}\\(\\\"(.*)\\\"\\)/U";
         if (preg_match($pattern, $doc, $result)) {
             if (isset($result[1])) {
                 return $result[1];

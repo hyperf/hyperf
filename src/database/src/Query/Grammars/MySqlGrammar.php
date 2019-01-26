@@ -104,7 +104,7 @@ class MySqlGrammar extends Grammar
         // intended records are updated by the SQL statements we generate to run.
         $where = $this->compileWheres($query);
 
-        $sql = rtrim("update {$table}{$joins} set $columns $where");
+        $sql = rtrim("update {$table}{$joins} set ${columns} ${where}");
 
         // If the query has an order by clause we will compile it since MySQL supports
         // order bys on update statements. We'll compile them using the typical way
@@ -293,7 +293,7 @@ class MySqlGrammar extends Grammar
     {
         $joins = ' ' . $this->compileJoins($query, $query->joins);
 
-        $alias = false !== stripos($table, ' as ')
+        $alias = stripos($table, ' as ') !== false
             ? explode(' as ', $table)[1] : $table;
 
         return trim("delete {$alias} from {$table}{$joins} {$where}");
@@ -307,7 +307,7 @@ class MySqlGrammar extends Grammar
      */
     protected function wrapValue($value)
     {
-        return '*' === $value ? $value : '`' . str_replace('`', '``', $value) . '`';
+        return $value === '*' ? $value : '`' . str_replace('`', '``', $value) . '`';
     }
 
     /**

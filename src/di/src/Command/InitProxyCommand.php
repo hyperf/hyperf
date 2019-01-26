@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -76,12 +77,12 @@ class InitProxyCommand extends Command
 
     protected function getScanDir()
     {
-        if (!defined('BASE_PATH')) {
+        if (! defined('BASE_PATH')) {
             throw new LogicException('BASE_PATH is not defined.');
         }
 
         $file = BASE_PATH . '/config/autoload/annotations.php';
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             throw new LogicException(sprintf('Annotations config path[%s] is not exists.', $file));
         }
 

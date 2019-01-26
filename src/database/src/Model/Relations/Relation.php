@@ -334,7 +334,7 @@ abstract class Relation
      * Get the model associated with a custom polymorphic type.
      *
      * @param  string      $alias
-     * @return string|null
+     * @return null|string
      */
     public static function getMorphedModel($alias)
     {
@@ -372,8 +372,8 @@ abstract class Relation
     /**
      * Builds a table-keyed array from model class names.
      *
-     * @param  string[]|null $models
-     * @return array|null
+     * @param  null|string[] $models
+     * @return null|array
      */
     protected static function buildMorphMapFromModels(array $models = null)
     {

@@ -34,7 +34,7 @@ trait QueriesRelationships
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
     {
-        if (false !== strpos($relation, '.')) {
+        if (strpos($relation, '.') !== false) {
             return $this->hasNested($relation, $operator, $count, $boolean, $callback);
         }
 
@@ -183,7 +183,7 @@ trait QueriesRelationships
 
             unset($alias);
 
-            if (3 === count($segments) && 'as' === Str::lower($segments[1])) {
+            if (count($segments) === 3 && Str::lower($segments[1]) === 'as') {
                 [$name, $alias] = [$segments[0], $segments[2]];
             }
 
@@ -245,14 +245,14 @@ trait QueriesRelationships
      * @param  string                                $operator
      * @param  int                                   $count
      * @param  string                                $boolean
-     * @param  \Closure|null                         $callback
+     * @param  null|\Closure                         $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
     protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
         $relations = explode('.', $relations);
 
-        $doesntHave = '<' === $operator && 1 === $count;
+        $doesntHave = $operator === '<' && $count === 1;
 
         if ($doesntHave) {
             $operator = '>=';
@@ -284,7 +284,7 @@ trait QueriesRelationships
         $hasQuery->mergeConstraintsFrom($relation->getQuery());
 
         return $this->canUseExistsForExistenceCheck($operator, $count)
-                ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, '<' === $operator && 1 === $count)
+                ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, $operator === '<' && $count === 1)
                 : $this->addWhereCountQuery($hasQuery->toBase(), $operator, $count, $boolean);
     }
 
@@ -330,6 +330,6 @@ trait QueriesRelationships
      */
     protected function canUseExistsForExistenceCheck($operator, $count)
     {
-        return ('>=' === $operator || '<' === $operator) && 1 === $count;
+        return ($operator === '>=' || $operator === '<') && $count === 1;
     }
 }

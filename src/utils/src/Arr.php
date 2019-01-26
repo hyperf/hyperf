@@ -332,6 +332,7 @@ class Arr
 
     /**
      * Push an item onto the beginning of an array.
+     * @param null|mixed $key
      */
     public static function prepend(array $array, $value, $key = null): array
     {

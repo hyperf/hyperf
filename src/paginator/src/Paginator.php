@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,7 +32,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     /**
      * Create a new paginator instance.
      *
-     * @param  array $options (path, query, fragment, pageName)
+     * @param array $options (path, query, fragment, pageName)
      */
     public function __construct($items, int $perPage, ?int $currentPage = null, array $options = [])
     {
@@ -122,9 +123,9 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      */
     protected function setCurrentPage(int $currentPage): int
     {
-        $currentPage = $currentPage ? : static::resolveCurrentPage();
+        $currentPage = $currentPage ?: static::resolveCurrentPage();
 
-        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
+        return $this->isValidPageNumber($currentPage) ? (int) $currentPage : 1;
     }
 
     /**

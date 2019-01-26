@@ -78,10 +78,10 @@ trait HasRelationships
      *
      * @param  string                                         $related
      * @param  string                                         $through
-     * @param  string|null                                    $firstKey
-     * @param  string|null                                    $secondKey
-     * @param  string|null                                    $localKey
-     * @param  string|null                                    $secondLocalKey
+     * @param  null|string                                    $firstKey
+     * @param  null|string                                    $secondKey
+     * @param  null|string                                    $localKey
+     * @param  null|string                                    $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasOneThrough
      */
     public function hasOneThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
@@ -237,10 +237,10 @@ trait HasRelationships
      *
      * @param  string                                          $related
      * @param  string                                          $through
-     * @param  string|null                                     $firstKey
-     * @param  string|null                                     $secondKey
-     * @param  string|null                                     $localKey
-     * @param  string|null                                     $secondLocalKey
+     * @param  null|string                                     $firstKey
+     * @param  null|string                                     $secondKey
+     * @param  null|string                                     $localKey
+     * @param  null|string                                     $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasManyThrough
      */
     public function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
@@ -447,7 +447,7 @@ trait HasRelationships
      * Get the joining table name for a many-to-many relation.
      *
      * @param  string                            $related
-     * @param  \Hyperf\Database\Model\Model|null $instance
+     * @param  null|\Hyperf\Database\Model\Model $instance
      * @return string
      */
     public function joiningTable($related, $instance = null)
@@ -496,14 +496,14 @@ trait HasRelationships
     public function touchOwners()
     {
         foreach ($this->touches as $relation) {
-            $this->$relation()->touch();
+            $this->{$relation}()->touch();
 
-            if ($this->$relation instanceof self) {
-                $this->$relation->fireModelEvent('saved', false);
+            if ($this->{$relation} instanceof self) {
+                $this->{$relation}->fireModelEvent('saved', false);
 
-                $this->$relation->touchOwners();
-            } elseif ($this->$relation instanceof Collection) {
-                $this->$relation->each(function (Model $relation) {
+                $this->{$relation}->touchOwners();
+            } elseif ($this->{$relation} instanceof Collection) {
+                $this->{$relation}->each(function (Model $relation) {
                     $relation->touchOwners();
                 });
             }
@@ -847,7 +847,7 @@ trait HasRelationships
     /**
      * Get the relationship name of the belongsToMany relationship.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function guessBelongsToManyRelation()
     {

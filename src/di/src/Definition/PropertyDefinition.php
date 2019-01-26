@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,16 +32,12 @@ class PropertyDefinition implements DefinitionInterface
      * Use for injecting in properties of parent classes: the class name
      * must be the name of the parent class because private properties
      * can be attached to the parent classes, not the one we are resolving.
-     * @var string|null
+     * @var null|string
      */
     private $className;
 
     /**
      * PropertyDefinition constructor.
-     *
-     * @param string $propertyName
-     * @param mixed $value
-     * @param string|null $className
      */
     public function __construct(string $propertyName, $value, ?string $className = null)
     {
@@ -73,17 +70,11 @@ class PropertyDefinition implements DefinitionInterface
         $this->propertyName = $name;
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue()
     {
         return $this->value;
     }
 
-    /**
-     * @return string|null
-     */
     public function getClassName(): ?string
     {
         return $this->className;

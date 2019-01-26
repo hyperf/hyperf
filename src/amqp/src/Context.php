@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -45,8 +46,7 @@ class Context
         }
 
         if (isset($connections[$name]) && $connections[$name] instanceof ConnectionInterface) {
-            $connection = $connections[$name];
-            return $connection;
+            return $connections[$name];
         }
 
         return null;

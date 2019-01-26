@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -56,11 +57,11 @@ class CoreMiddleware implements MiddlewareInterface
         /** @var ResponseInterface $response */
         $uri = $request->getUri();
         /**
-         * @var array $routes
-         * Returns array with one of the following formats:
-         *     [self::NOT_FOUND]
-         *     [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
-         *     [self::FOUND, $handler, ['varName' => 'value', ...]]
+         * @var array
+         *            Returns array with one of the following formats:
+         *            [self::NOT_FOUND]
+         *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
+         *            [self::FOUND, $handler, ['varName' => 'value', ...]]
          */
         $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
         switch ($routes[0]) {
@@ -78,7 +79,7 @@ class CoreMiddleware implements MiddlewareInterface
                     break;
                 }
                 $parameters = $this->parseParameters($controller, $action, $routes[2]);
-                $response = $controllerInstance->$action(...$parameters);
+                $response = $controllerInstance->{$action}(...$parameters);
                 if (! $response instanceof ResponseInterface) {
                     $response = $this->transferToResponse($response);
                 }
@@ -88,8 +89,7 @@ class CoreMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param string|array $handler
-     * @return array
+     * @param array|string $handler
      */
     protected function prepareHandler($handler): array
     {
@@ -105,7 +105,7 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param string|array $response
+     * @param array|string $response
      */
     protected function transferToResponse($response): ResponseInterface
     {
@@ -116,10 +116,11 @@ class CoreMiddleware implements MiddlewareInterface
         if (is_array($response)) {
             return $this->response()
                 ->withAddedHeader('Content-Type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
+                ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)))
+            ;
         }
 
-        return $this->response()->withBody(new SwooleStream((string)$response));
+        return $this->response()->withBody(new SwooleStream((string) $response));
     }
 
     /**
@@ -150,16 +151,16 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int)$arguments[$definition['name']] ?? null;
+                        return (int) $arguments[$definition['name']] ?? null;
                         break;
                     case 'float':
-                        return (float)$arguments[$definition['name']] ?? null;
+                        return (float) $arguments[$definition['name']] ?? null;
                         break;
                     case 'bool':
-                        return (bool)$arguments[$definition['name']] ?? null;
+                        return (bool) $arguments[$definition['name']] ?? null;
                         break;
                     case 'string':
-                        return (string)$arguments[$definition['name']] ?? null;
+                        return (string) $arguments[$definition['name']] ?? null;
                         break;
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {

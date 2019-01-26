@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -107,10 +108,6 @@ class Scanner
 
     /**
      * Normalizes given directory names by removing directory not exist.
-     *
-     * @param array $paths
-     *
-     * @return array
      */
     public function normalizeDir(array $paths): array
     {

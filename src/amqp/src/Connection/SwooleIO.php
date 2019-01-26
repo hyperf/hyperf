@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -93,7 +94,8 @@ class SwooleIO extends AbstractIO
     /**
      * SwooleIO constructor.
      *
-     * @throws \InvalidArgumentException When readWriteTimeout argument does not 2x the heartbeat.
+     * @param  null|mixed                $context
+     * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
         string $host,
@@ -118,7 +120,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * Sets up the stream connection
+     * Sets up the stream connection.
      *
      * @throws AMQPRuntimeException
      * @throws \Exception
@@ -126,7 +128,7 @@ class SwooleIO extends AbstractIO
     public function connect()
     {
         $sock = new Client(SWOOLE_SOCK_TCP);
-        if (!$sock->connect($this->host, $this->port, $this->connectionTimeout)) {
+        if (! $sock->connect($this->host, $this->port, $this->connectionTimeout)) {
             throw new AMQPRuntimeException(
                 sprintf(
                     'Error Connecting to server(%s): %s ',
@@ -140,7 +142,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * Reconnects the socket
+     * Reconnects the socket.
      */
     public function reconnect()
     {
@@ -149,7 +151,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * @param int $len
+     * @param  int                  $len
      * @throws AMQPRuntimeException
      * @return mixed|string
      */
@@ -166,7 +168,7 @@ class SwooleIO extends AbstractIO
                 return $data;
             }
 
-            if (!$this->sock->connected) {
+            if (! $this->sock->connected) {
                 throw new AMQPRuntimeException('Broken pipe or closed connection');
             }
 
@@ -185,15 +187,14 @@ class SwooleIO extends AbstractIO
             $this->buffer .= $read_buffer;
         } while (true);
 
-
         return false;
     }
 
     /**
-     * @param string $data
-     * @return mixed|void
+     * @param  string                                     $data
      * @throws AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @return mixed|void
      */
     public function write($data)
     {
@@ -203,7 +204,7 @@ class SwooleIO extends AbstractIO
             throw new AMQPRuntimeException('Error sending data');
         }
 
-        if ($buffer === 0 && !$this->sock->connected) {
+        if ($buffer === 0 && ! $this->sock->connected) {
             throw new AMQPRuntimeException('Broken pipe or closed connection');
         }
 
@@ -211,7 +212,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * Heartbeat logic: check connection health here
+     * Heartbeat logic: check connection health here.
      */
     public function check_heartbeat()
     {
@@ -260,8 +261,8 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * @param int $sec
-     * @param int $usec
+     * @param  int       $sec
+     * @param  int       $usec
      * @return int|mixed
      */
     public function select($sec, $usec)
@@ -292,7 +293,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * Sends a heartbeat message
+     * Sends a heartbeat message.
      */
     protected function write_heartbeat()
     {

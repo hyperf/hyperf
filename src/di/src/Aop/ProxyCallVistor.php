@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -53,7 +54,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
     private $class;
 
     /**
-     * @var Name|null
+     * @var null|Name
      */
     private $extends;
 
@@ -129,8 +130,8 @@ class ProxyCallVistor extends NodeVisitorAbstract
     }
 
     /**
-     * @param array $namespaces The namespaces that the current class imported.
-     * @param string $trait The full namespace of trait or the trait name.
+     * @param array  $namespaces the namespaces that the current class imported
+     * @param string $trait      the full namespace of trait or the trait name
      */
     private function isMatchUseTrait(array $namespaces, string $trait): bool
     {
@@ -149,7 +150,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
     }
 
     /**
-     * Build `use ProxyTrait;`
+     * Build `use ProxyTrait;`.
      */
     private function buildProxyCallTraitUseStatement(): TraitUse
     {
@@ -186,14 +187,14 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 new StaticCall(new Name('self'), 'getParamsMap', [
                     new ClassConstFetch(new Name($class), new Identifier('class')),
                     new MagicConstFunction(),
-                    new FuncCall(new Name('func_get_args'))
+                    new FuncCall(new Name('func_get_args')),
                 ]),
                 // A closure that wrapped original method code.
                 new Closure([
                     'uses' => $this->getParametersWithoutTypehint($node),
                     'stmts' => $node->stmts,
                 ]),
-            ]))
+            ])),
         ];
         return $node;
     }

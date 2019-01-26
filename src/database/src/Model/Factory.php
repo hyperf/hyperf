@@ -64,7 +64,7 @@ class Factory implements ArrayAccess
     /**
      * Create a new factory container.
      *
-     * @param  string|null $pathToFactories
+     * @param  null|string $pathToFactories
      * @return static
      */
     public static function construct(Faker $faker, $pathToFactories = null)
@@ -105,7 +105,7 @@ class Factory implements ArrayAccess
      *
      * @param  string         $class
      * @param  string         $state
-     * @param  callable|array $attributes
+     * @param  array|callable $attributes
      * @return $this
      */
     public function state($class, $state, $attributes)

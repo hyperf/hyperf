@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,7 +32,7 @@ class FactoryDefinition implements DefinitionInterface
     private $parameters = [];
 
     /**
-     * @var array|null
+     * @var null|array
      */
     private $ast;
 
@@ -81,7 +82,7 @@ class FactoryDefinition implements DefinitionInterface
 
     public function getAst(): array
     {
-        if (null === $this->ast) {
+        if ($this->ast === null) {
             $this->ast = AstCollector::get($this->getFactory(), []);
         }
         return $this->ast;

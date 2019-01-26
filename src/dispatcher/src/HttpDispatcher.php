@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -28,18 +29,17 @@ class HttpDispatcher extends AbstractDispatcher
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function dispatch(...$params): ResponseInterface
     {
         /**
-         * @var RequestInterface $request
-         * @var array $middlewares
-         * @var string $coreHandler
+         * @var RequestInterface
+         * @var array            $middlewares
+         * @var string           $coreHandler
          */
         [$request, $middlewares, $coreHandler] = $params;
         $requestHandler = new HttpRequestHandler($middlewares, $coreHandler, $this->container);
-        $response = $requestHandler->handle($request);
-        return $response;
+        return $requestHandler->handle($request);
     }
 }

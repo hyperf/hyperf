@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -15,6 +16,7 @@ interface MetadataCollectorInterface
 {
     /**
      * Retrieve the metadata via key.
+     * @param null|mixed $default
      */
     public static function get(string $key, $default = null);
 

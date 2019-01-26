@@ -56,7 +56,7 @@ trait HasEvents
             $this->fireCustomModelEvent($event, 'dispatch')
         );
 
-        if (false === $result) {
+        if ($result === false) {
             return false;
         }
 
@@ -69,7 +69,7 @@ trait HasEvents
      *
      * @param  string     $event
      * @param  string     $method
-     * @return mixed|null
+     * @return null|mixed
      */
     protected function fireCustomModelEvent($event, $method)
     {
@@ -77,7 +77,7 @@ trait HasEvents
             return;
         }
 
-        $result = $this->getEventDispatcher()->$method(new $this->dispatchesEvents[$event]($this));
+        $result = $this->getEventDispatcher()->{$method}(new $this->dispatchesEvents[$event]($this));
 
         if (! is_null($result)) {
             return $result;

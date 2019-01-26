@@ -29,7 +29,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof Node\Stmt\PropertyProperty:
-                if ('fillable' == $node->name) {
+                if ($node->name == 'fillable') {
                     $node = $this->rewriteFillable($node);
                 }
 

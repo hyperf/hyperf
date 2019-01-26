@@ -140,7 +140,7 @@ class Grammar extends BaseGrammar
             return '(' . $this->parameterize($record) . ')';
         })->implode(', ');
 
-        return "insert into $table ($columns) values $parameters";
+        return "insert into ${table} (${columns}) values ${parameters}";
     }
 
     /**
@@ -162,7 +162,7 @@ class Grammar extends BaseGrammar
      */
     public function compileInsertUsing(Builder $query, array $columns, string $sql)
     {
-        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) $sql";
+        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) ${sql}";
     }
 
     /**
@@ -196,7 +196,7 @@ class Grammar extends BaseGrammar
         // intended records are updated by the SQL statements we generate to run.
         $wheres = $this->compileWheres($query);
 
-        return trim("update {$table}{$joins} set $columns $wheres");
+        return trim("update {$table}{$joins} set ${columns} ${wheres}");
     }
 
     /**
@@ -222,7 +222,7 @@ class Grammar extends BaseGrammar
     {
         $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
 
-        return trim("delete from {$this->wrapTable($query->from)} $wheres");
+        return trim("delete from {$this->wrapTable($query->from)} ${wheres}");
     }
 
     /**
@@ -293,7 +293,7 @@ class Grammar extends BaseGrammar
         // If the value being wrapped has a column alias we will need to separate out
         // the pieces so we can wrap each of the segments of the expression on its
         // own, and then join these both back together using the "as" connector.
-        if (false !== stripos($value, ' as ')) {
+        if (stripos($value, ' as ') !== false) {
             return $this->wrapAliasedValue($value, $prefixAlias);
         }
 
@@ -330,10 +330,10 @@ class Grammar extends BaseGrammar
             // To compile the query, we'll spin through each component of the query and
             // see if that component exists. If it does we'll just call the compiler
             // function for the component which is responsible for making the SQL.
-            if (isset($query->$component) && ! is_null($query->$component)) {
+            if (isset($query->{$component}) && ! is_null($query->{$component})) {
                 $method = 'compile' . ucfirst($component);
 
-                $sql[$component] = $this->$method($query, $query->$component);
+                $sql[$component] = $this->{$method}($query, $query->{$component});
             }
         }
 
@@ -353,7 +353,7 @@ class Grammar extends BaseGrammar
         // If the query has a "distinct" constraint and we're not asking for all columns
         // we need to prepend "distinct" onto the column name so that the query takes
         // it into account when it performs the aggregating operations on the data.
-        if ($query->distinct && '*' !== $column) {
+        if ($query->distinct && $column !== '*') {
             $column = 'distinct ' . $column;
         }
 
@@ -364,7 +364,7 @@ class Grammar extends BaseGrammar
      * Compile the "select *" portion of the query.
      *
      * @param  array       $columns
-     * @return string|null
+     * @return null|string
      */
     protected function compileColumns(Builder $query, $columns)
     {
@@ -716,7 +716,7 @@ class Grammar extends BaseGrammar
     {
         $select = $this->compileSelect($where['query']);
 
-        return $this->wrap($where['column']) . ' ' . $where['operator'] . " ($select)";
+        return $this->wrap($where['column']) . ' ' . $where['operator'] . " (${select})";
     }
 
     /**
@@ -775,11 +775,10 @@ class Grammar extends BaseGrammar
     /**
      * Compile a "JSON contains" statement into SQL.
      *
-     * @param  string $column
-     * @param  string $value
-     * @return string
-     *
+     * @param  string            $column
+     * @param  string            $value
      * @throws \RuntimeException
+     * @return string
      */
     protected function compileJsonContains($column, $value)
     {
@@ -804,12 +803,11 @@ class Grammar extends BaseGrammar
     /**
      * Compile a "JSON length" statement into SQL.
      *
-     * @param  string $column
-     * @param  string $operator
-     * @param  string $value
-     * @return string
-     *
+     * @param  string            $column
+     * @param  string            $operator
+     * @param  string            $value
      * @throws \RuntimeException
+     * @return string
      */
     protected function compileJsonLength($column, $operator, $value)
     {
@@ -850,9 +848,10 @@ class Grammar extends BaseGrammar
         // If the having clause is "raw", we can just return the clause straight away
         // without doing any more processing on it. Otherwise, we will compile the
         // clause into SQL based on the components that make it up from builder.
-        if ('Raw' === $having['type']) {
+        if ($having['type'] === 'Raw') {
             return $having['boolean'] . ' ' . $having['sql'];
-        } elseif ('between' === $having['type']) {
+        }
+        if ($having['type'] === 'between') {
             return $this->compileHavingBetween($having);
         }
 
@@ -1070,7 +1069,7 @@ class Grammar extends BaseGrammar
     protected function concatenate($segments)
     {
         return implode(' ', array_filter($segments, function ($value) {
-            return '' !== (string) $value;
+            return (string) $value !== '';
         }));
     }
 

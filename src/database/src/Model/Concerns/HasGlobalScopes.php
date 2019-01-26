@@ -23,7 +23,7 @@ trait HasGlobalScopes
     /**
      * Register a new global scope on the model.
      *
-     * @param \Hyperf\Database\Model\Scope|\Closure|string $scope
+     * @param \Closure|\Hyperf\Database\Model\Scope|string $scope
      *
      * @throws \InvalidArgumentException
      */
@@ -31,9 +31,11 @@ trait HasGlobalScopes
     {
         if (is_string($scope) && ! is_null($implementation)) {
             return GlobalScope::$container[static::class][$scope] = $implementation;
-        } elseif ($scope instanceof Closure) {
+        }
+        if ($scope instanceof Closure) {
             return GlobalScope::$container[static::class][spl_object_hash($scope)] = $scope;
-        } elseif ($scope instanceof Scope) {
+        }
+        if ($scope instanceof Scope) {
             return GlobalScope::$container[static::class][get_class($scope)] = $scope;
         }
 
@@ -55,7 +57,7 @@ trait HasGlobalScopes
      * Get a global scope registered with the model.
      *
      * @param  \Hyperf\Database\Model\Scope|string        $scope
-     * @return \Hyperf\Database\Model\Scope|\Closure|null
+     * @return null|\Closure|\Hyperf\Database\Model\Scope
      */
     public static function getGlobalScope($scope)
     {

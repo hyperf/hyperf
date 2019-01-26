@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -40,7 +41,7 @@ class MethodDefinitionCollector extends MetadataCollector
                     $definitions[] = [
                         'type' => $type,
                         'name' => $parameter->getName(),
-                        'ref' =>  '',
+                        'ref' => '',
                         'allowsNull' => $parameter->allowsNull(),
                     ];
                     break;

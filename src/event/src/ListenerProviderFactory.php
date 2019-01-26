@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -52,7 +53,7 @@ class ListenerProviderFactory
                 continue;
             }
             $priority = $values['priority'] ?? 1;
-            $this->register($provider, $container, $className, (int)$priority);
+            $this->register($provider, $container, $className, (int) $priority);
         }
     }
 

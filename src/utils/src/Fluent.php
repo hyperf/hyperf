@@ -105,7 +105,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Get an attribute from the fluent instance.
      *
-     * @param string $key
+     * @param string     $key
+     * @param null|mixed $default
      */
     public function get($key, $default = null)
     {

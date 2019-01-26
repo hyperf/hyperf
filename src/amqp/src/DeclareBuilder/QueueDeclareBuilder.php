@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,39 +19,25 @@ class QueueDeclareBuilder extends DeclareBuilder
     protected $exclusive = false;
 
     protected $arguments = [
-        'x-ha-policy' => ['S', 'all']
+        'x-ha-policy' => ['S', 'all'],
     ];
 
-    /**
-     * @return string
-     */
     public function getQueue(): string
     {
         return $this->queue;
     }
 
-    /**
-     * @param string $queue
-     * @return QueueDeclareBuilder
-     */
     public function setQueue(string $queue): QueueDeclareBuilder
     {
         $this->queue = $queue;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isExclusive(): bool
     {
         return $this->exclusive;
     }
 
-    /**
-     * @param bool $exclusive
-     * @return QueueDeclareBuilder
-     */
     public function setExclusive(bool $exclusive): QueueDeclareBuilder
     {
         $this->exclusive = $exclusive;

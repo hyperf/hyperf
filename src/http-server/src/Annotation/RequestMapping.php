@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -44,7 +45,7 @@ class RequestMapping extends AbstractAnnotation
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectMethod(string $className, ?string $target): void
     {

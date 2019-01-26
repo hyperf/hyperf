@@ -269,9 +269,10 @@ class BelongsToMany extends Relation
     /**
      * Set a where clause for a pivot table column.
      *
-     * @param  string $column
-     * @param  string $operator
-     * @param  string $boolean
+     * @param  string     $column
+     * @param  string     $operator
+     * @param  string     $boolean
+     * @param  null|mixed $value
      * @return $this
      */
     public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
@@ -299,8 +300,9 @@ class BelongsToMany extends Relation
     /**
      * Set an "or where" clause for a pivot table column.
      *
-     * @param  string $column
-     * @param  string $operator
+     * @param  string     $column
+     * @param  string     $operator
+     * @param  null|mixed $value
      * @return $this
      */
     public function orWherePivot($column, $operator = null, $value = null)
@@ -313,7 +315,8 @@ class BelongsToMany extends Relation
      *
      * In addition, new pivot records will receive this value.
      *
-     * @param  string|array $column
+     * @param  array|string $column
+     * @param  null|mixed   $value
      * @return $this
      */
     public function withPivotValue($column, $value = null)
@@ -350,7 +353,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  array                                                 $columns
-     * @return \Hyperf\Utils\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -413,7 +416,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key.
      *
      * @param  array                                                               $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection|null
+     * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
     {
@@ -442,9 +445,8 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or throw an exception.
      *
      * @param  array                                                          $columns
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Model\Collection
-     *
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -476,10 +478,9 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                               $columns
-     * @return \Hyperf\Database\Model\Model|static
-     *
+     * @param  array                                         $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return \Hyperf\Database\Model\Model|static
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -535,7 +536,7 @@ class BelongsToMany extends Relation
      * @param  int                                               $perPage
      * @param  array                                             $columns
      * @param  string                                            $pageName
-     * @param  int|null                                          $page
+     * @param  null|int                                          $page
      * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -553,7 +554,7 @@ class BelongsToMany extends Relation
      * @param  int                                    $perPage
      * @param  array                                  $columns
      * @param  string                                 $pageName
-     * @param  int|null                               $page
+     * @param  null|int                               $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -592,7 +593,7 @@ class BelongsToMany extends Relation
     {
         return $this->chunk($count, function ($results) use ($callback) {
             foreach ($results as $key => $value) {
-                if (false === $callback($value, $key)) {
+                if ($callback($value, $key) === false) {
                     return false;
                 }
             }
@@ -662,7 +663,7 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param  \Hyperf\Utils\Collection|array $models
+     * @param  array|\Hyperf\Utils\Collection $models
      * @return array
      */
     public function saveMany($models, array $pivotAttributes = [])
@@ -773,6 +774,8 @@ class BelongsToMany extends Relation
     /**
      * Specify that the pivot table has creation and update timestamps.
      *
+     * @param  null|mixed $createdAt
+     * @param  null|mixed $updatedAt
      * @return $this
      */
     public function withTimestamps($createdAt = null, $updatedAt = null)
@@ -908,7 +911,7 @@ class BelongsToMany extends Relation
     /**
      * Set the join clause for the relation query.
      *
-     * @param  \Hyperf\Database\Model\Builder|null $query
+     * @param  null|\Hyperf\Database\Model\Builder $query
      * @return $this
      */
     protected function performJoin($query = null)
@@ -1020,10 +1023,10 @@ class BelongsToMany extends Relation
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
-            if (0 === strpos($key, 'pivot_')) {
+            if (strpos($key, 'pivot_') === 0) {
                 $values[substr($key, 6)] = $value;
 
-                unset($model->$key);
+                unset($model->{$key});
             }
         }
 

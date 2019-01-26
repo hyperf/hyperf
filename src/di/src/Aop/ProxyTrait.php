@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -72,7 +73,8 @@ trait ProxyTrait
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
-            });
+            })
+        ;
     }
 
     private static function parseAspects(string $className, string $method): array
@@ -82,7 +84,7 @@ trait ProxyTrait
         foreach ($aspects as $aspect => [$rule]) {
             if (strpos($rule, '*') !== false) {
                 $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                $pattern = "/^$preg$/";
+                $pattern = "/^${preg}$/";
                 if (! preg_match($pattern, $className)) {
                     continue;
                 }
@@ -122,7 +124,7 @@ trait ProxyTrait
                 foreach ($annotations as $annotation) {
                     if (strpos($rule, '*') !== false) {
                         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                        $pattern = "/^$preg$/";
+                        $pattern = "/^${preg}$/";
                         if (! preg_match($pattern, $annotation)) {
                             continue;
                         }

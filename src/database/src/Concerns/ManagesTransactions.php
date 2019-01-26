@@ -73,7 +73,7 @@ trait ManagesTransactions
      */
     public function commit(): void
     {
-        if (1 == $this->transactions) {
+        if ($this->transactions == 1) {
             $this->getPdo()->commit();
         }
 
@@ -85,7 +85,7 @@ trait ManagesTransactions
     /**
      * Rollback the active database transaction.
      *
-     * @param int|null $toLevel
+     * @param null|int $toLevel
      *
      * @throws \Exception
      */
@@ -163,7 +163,7 @@ trait ManagesTransactions
      */
     protected function createTransaction()
     {
-        if (0 == $this->transactions) {
+        if ($this->transactions == 0) {
             try {
                 $this->getPdo()->beginTransaction();
             } catch (Exception $e) {
@@ -209,7 +209,7 @@ trait ManagesTransactions
      */
     protected function performRollBack($toLevel)
     {
-        if (0 == $toLevel) {
+        if ($toLevel == 0) {
             $this->getPdo()->rollBack();
         } elseif ($this->queryGrammar->supportsSavepoints()) {
             $this->getPdo()->exec(

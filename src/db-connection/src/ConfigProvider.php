@@ -34,7 +34,7 @@ class ConfigProvider
                 'db.connector.sqlsrv' => SqlServerConnector::class,
             ],
             'commands' => [
-                ModelCommand::class
+                ModelCommand::class,
             ],
             'scan' => [
                 'paths' => [

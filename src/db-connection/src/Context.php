@@ -46,9 +46,7 @@ class Context
         }
 
         if (isset($connections[$name]) && $connections[$name] instanceof ConnectionInterface) {
-            $connection = $connections[$name];
-
-            return $connection;
+            return $connections[$name];
         }
 
         return null;

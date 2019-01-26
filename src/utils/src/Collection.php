@@ -998,6 +998,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Reduce the collection to a single value.
+     * @param null|mixed $initial
      */
     public function reduce(callable $callback, $initial = null)
     {

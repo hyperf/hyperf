@@ -21,14 +21,14 @@ trait SupportsDefaultModels
      *
      * Alternatively, may be a Closure or array.
      *
-     * @var \Closure|array|bool
+     * @var array|bool|\Closure
      */
     protected $withDefault;
 
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param  \Closure|array|bool $callback
+     * @param  array|bool|\Closure $callback
      * @return $this
      */
     public function withDefault($callback = true)
@@ -48,7 +48,7 @@ trait SupportsDefaultModels
     /**
      * Get the default value for this relation.
      *
-     * @return \Hyperf\Database\Model\Model|null
+     * @return null|\Hyperf\Database\Model\Model
      */
     protected function getDefaultFor(Model $parent)
     {

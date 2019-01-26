@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -33,7 +34,7 @@ class Builder
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
-        if (!$channel) {
+        if (! $channel) {
             $channel = $this->getChannel($message->getPoolName());
         }
 

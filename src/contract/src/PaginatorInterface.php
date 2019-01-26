@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -50,8 +51,6 @@ interface PaginatorInterface
 
     /**
      * Get the "index" of the first item being paginated.
-     *
-     * @return int
      */
     public function firstItem(): int;
 

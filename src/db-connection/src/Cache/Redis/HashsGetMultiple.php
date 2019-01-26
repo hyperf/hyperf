@@ -16,7 +16,7 @@ class HashsGetMultiple implements OperatorInterface
 {
     public function getScript(): string
     {
-        $command = <<<LUA
+        return <<<'LUA'
     local values = {}; 
     for i,v in ipairs(KEYS) do 
         if(redis.call('type',v).ok == 'hash') then
@@ -25,8 +25,6 @@ class HashsGetMultiple implements OperatorInterface
     end
     return values;
 LUA;
-
-        return $command;
     }
 
     public function parseResponse($data)

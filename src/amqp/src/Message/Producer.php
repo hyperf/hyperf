@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -21,7 +22,7 @@ abstract class Producer extends Message implements ProducerInterface
 
     protected $properties = [
         'content_type' => 'text/plain',
-        'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT
+        'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT,
     ];
 
     public function getProperties(): array

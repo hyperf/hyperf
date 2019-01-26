@@ -53,19 +53,19 @@ class WorkerStartCallback
             if ($lock->trylock()) {
                 $lockedWorkerId = $workerId;
                 // Only running in one worker.
-                $this->logger->debug("Worker $lockedWorkerId got the lock.");
+                $this->logger->debug("Worker ${lockedWorkerId} got the lock.");
                 // @TODO Do something that you want only one worker do.
                 sleep(1);
                 $lock->unlock();
                 $atomic->wakeup($server->setting['worker_num'] - 1);
             } else {
-                $this->logger->debug("Worker $workerId wating ...");
+                $this->logger->debug("Worker ${workerId} wating ...");
                 $atomic->wait();
             }
             if (! $isScan || $workerId !== $lockedWorkerId) {
                 // @TODO Do something that the workers who does not got the lock should do.
             }
-            $this->logger->info("Worker $workerId started.");
+            $this->logger->info("Worker ${workerId} started.");
         } catch (RuntimeException $e) {
             $this->logger->warning('Worker atomic and lock initialize fail.');
         } finally {

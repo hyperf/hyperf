@@ -24,6 +24,7 @@ class Collection extends BaseCollection
     /**
      * Find a model in the collection by key.
      *
+     * @param  null|mixed                          $default
      * @return \Hyperf\Database\Model\Model|static
      */
     public function find($key, $default = null)
@@ -86,7 +87,8 @@ class Collection extends BaseCollection
             ->whereKey($this->modelKeys())
             ->select($this->first()->getKeyName())
             ->withCount(...func_get_args())
-            ->get();
+            ->get()
+        ;
 
         $attributes = Arr::except(
             array_keys($models->first()->getAttributes()),
@@ -156,8 +158,10 @@ class Collection extends BaseCollection
             })
             ->each(function ($models, $className) use ($relations) {
                 $className::with($relations[$className])
-                    ->eagerLoadRelations($models->all());
-            });
+                    ->eagerLoadRelations($models->all())
+                ;
+            })
+        ;
 
         return $this;
     }
@@ -176,6 +180,8 @@ class Collection extends BaseCollection
 
     /**
      * Determine if a key exists in the collection.
+     * @param null|mixed $operator
+     * @param null|mixed $value
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -209,7 +215,7 @@ class Collection extends BaseCollection
     /**
      * Merge the collection with the given items.
      *
-     * @param  \ArrayAccess|array $items
+     * @param  array|\ArrayAccess $items
      * @return static
      */
     public function merge($items): BaseCollection
@@ -253,7 +259,8 @@ class Collection extends BaseCollection
             ->with(is_string($with) ? func_get_args() : $with)
             ->whereIn($model->getKeyName(), $this->modelKeys())
             ->get()
-            ->getDictionary();
+            ->getDictionary()
+        ;
 
         return $this->map(function ($model) use ($freshModels) {
             return $model->exists && isset($freshModels[$model->getKey()])
@@ -264,7 +271,7 @@ class Collection extends BaseCollection
     /**
      * Diff the collection with the given items.
      *
-     * @param  \ArrayAccess|array $items
+     * @param  array|\ArrayAccess $items
      * @return static
      */
     public function diff($items): BaseCollection
@@ -285,7 +292,7 @@ class Collection extends BaseCollection
     /**
      * Intersect the collection with the given items.
      *
-     * @param  \ArrayAccess|array $items
+     * @param  array|\ArrayAccess $items
      * @return static
      */
     public function intersect($items): BaseCollection
@@ -306,7 +313,7 @@ class Collection extends BaseCollection
     /**
      * Return only unique items from the collection.
      *
-     * @param string|callable|null $key
+     * @param null|callable|string $key
      */
     public function unique($key = null, bool $strict = false): BaseCollection
     {
@@ -370,7 +377,7 @@ class Collection extends BaseCollection
     /**
      * Get a dictionary keyed by primary keys.
      *
-     * @param  \ArrayAccess|array|null $items
+     * @param  null|array|\ArrayAccess $items
      * @return array
      */
     public function getDictionary($items = null)
@@ -453,9 +460,8 @@ class Collection extends BaseCollection
     /**
      * Get the type of the entities being queued.
      *
-     * @return string|null
-     *
      * @throws \LogicException
+     * @return null|string
      */
     public function getQueueableClass()
     {
@@ -503,9 +509,8 @@ class Collection extends BaseCollection
     /**
      * Get the connection of the entities being queued.
      *
-     * @return string|null
-     *
      * @throws \LogicException
+     * @return null|string
      */
     public function getQueueableConnection()
     {

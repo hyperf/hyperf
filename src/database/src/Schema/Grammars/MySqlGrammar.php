@@ -455,7 +455,8 @@ class MySqlGrammar extends Grammar
     {
         if (isset($blueprint->engine)) {
             return $sql . ' engine = ' . $blueprint->engine;
-        } elseif (! is_null($engine = $connection->getConfig('engine'))) {
+        }
+        if (! is_null($engine = $connection->getConfig('engine'))) {
             return $sql . ' engine = ' . $engine;
         }
 
@@ -671,9 +672,9 @@ class MySqlGrammar extends Grammar
      */
     protected function typeDateTime(Fluent $column)
     {
-        $columnType = $column->precision ? "datetime($column->precision)" : 'datetime';
+        $columnType = $column->precision ? "datetime({$column->precision})" : 'datetime';
 
-        return $column->useCurrent ? "$columnType default CURRENT_TIMESTAMP" : $columnType;
+        return $column->useCurrent ? "${columnType} default CURRENT_TIMESTAMP" : $columnType;
     }
 
     /**
@@ -693,7 +694,7 @@ class MySqlGrammar extends Grammar
      */
     protected function typeTime(Fluent $column)
     {
-        return $column->precision ? "time($column->precision)" : 'time';
+        return $column->precision ? "time({$column->precision})" : 'time';
     }
 
     /**
@@ -713,9 +714,9 @@ class MySqlGrammar extends Grammar
      */
     protected function typeTimestamp(Fluent $column)
     {
-        $columnType = $column->precision ? "timestamp($column->precision)" : 'timestamp';
+        $columnType = $column->precision ? "timestamp({$column->precision})" : 'timestamp';
 
-        return $column->useCurrent ? "$columnType default CURRENT_TIMESTAMP" : $columnType;
+        return $column->useCurrent ? "${columnType} default CURRENT_TIMESTAMP" : $columnType;
     }
 
     /**
@@ -781,7 +782,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a generated virtual column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
     {
@@ -793,7 +794,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a generated stored column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column)
     {
@@ -805,7 +806,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an unsigned column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyUnsigned(Blueprint $blueprint, Fluent $column)
     {
@@ -817,7 +818,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a character set column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyCharset(Blueprint $blueprint, Fluent $column)
     {
@@ -829,7 +830,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a collation column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyCollate(Blueprint $blueprint, Fluent $column)
     {
@@ -841,7 +842,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a nullable column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
     {
@@ -853,7 +854,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a default column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
@@ -865,7 +866,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an auto-increment column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
     {
@@ -877,7 +878,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a "first" column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyFirst(Blueprint $blueprint, Fluent $column)
     {
@@ -889,7 +890,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an "after" column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyAfter(Blueprint $blueprint, Fluent $column)
     {
@@ -901,7 +902,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a "comment" column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifyComment(Blueprint $blueprint, Fluent $column)
     {
@@ -913,7 +914,7 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a SRID column modifier.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function modifySrid(Blueprint $blueprint, Fluent $column)
     {
@@ -930,7 +931,7 @@ class MySqlGrammar extends Grammar
      */
     protected function wrapValue($value)
     {
-        if ('*' !== $value) {
+        if ($value !== '*') {
             return '`' . str_replace('`', '``', $value) . '`';
         }
 

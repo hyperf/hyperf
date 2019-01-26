@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -17,8 +18,6 @@ interface SelfResolvingDefinitionInterface
 {
     /**
      * Resolve the definition and return the resulting value.
-     *
-     * @return mixed
      */
     public function resolve(ContainerInterface $container);
 

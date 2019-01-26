@@ -91,7 +91,7 @@ class RedisDriver extends Driver
 
     public function delay(JobInterface $job, int $delay = 0): bool
     {
-        if (0 === $delay) {
+        if ($delay === 0) {
             return $this->push($job);
         }
 

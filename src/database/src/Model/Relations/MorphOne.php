@@ -62,7 +62,8 @@ class MorphOne extends MorphOneOrMany
     public function newRelatedInstanceFor(Model $parent)
     {
         return $this->related->newInstance()
-                    ->setAttribute($this->getForeignKeyName(), $parent->{$this->localKey})
-                    ->setAttribute($this->getMorphType(), $this->morphClass);
+            ->setAttribute($this->getForeignKeyName(), $parent->{$this->localKey})
+            ->setAttribute($this->getMorphType(), $this->morphClass)
+        ;
     }
 }

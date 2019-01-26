@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -26,7 +27,7 @@ go(function () {
         die(1);
     }
 
-    if (!ini_get('date.timezone')) {
+    if (! ini_get('date.timezone')) {
         ini_set('date.timezone', 'UTC');
     }
 
@@ -40,7 +41,7 @@ go(function () {
 
     unset($file);
 
-    if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+    if (! defined('PHPUNIT_COMPOSER_INSTALL')) {
         fwrite(
             STDERR,
             'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL .

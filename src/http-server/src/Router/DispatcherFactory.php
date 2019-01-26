@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -149,7 +150,7 @@ class DispatcherFactory
                     }
                     $router->addRoute($item['methods'], $item['path'], [
                         $className,
-                        $method
+                        $method,
                     ]);
                 }
             }

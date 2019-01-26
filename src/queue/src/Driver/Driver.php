@@ -56,7 +56,7 @@ abstract class Driver implements DriverInterface
         while (true) {
             [$data, $message] = $this->pop($this->timeout);
 
-            if (false === $data) {
+            if ($data === false) {
                 continue;
             }
 

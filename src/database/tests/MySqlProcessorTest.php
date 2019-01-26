@@ -1,13 +1,26 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class MySqlProcessorTest extends TestCase
 {
-
     public function testProcessColumnListing()
     {
         $processor = new MySqlProcessor();
@@ -22,5 +35,4 @@ class MySqlProcessorTest extends TestCase
 
         $this->assertEquals($expected, $processor->processColumnListing($listing));
     }
-
 }

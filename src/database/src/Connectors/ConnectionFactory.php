@@ -60,9 +60,8 @@ class ConnectionFactory
     /**
      * Create a connector instance based on the configuration.
      *
-     * @return ConnectorInterface
-     *
      * @throws \InvalidArgumentException
+     * @return ConnectorInterface
      */
     public function createConnector(array $config)
     {
@@ -254,12 +253,11 @@ class ConnectionFactory
      * Create a new connection instance.
      *
      * @param  string                      $driver
-     * @param  \PDO|\Closure               $connection
+     * @param  \Closure|\PDO               $connection
      * @param  string                      $database
      * @param  string                      $prefix
-     * @return \Hyperf\Database\Connection
-     *
      * @throws \InvalidArgumentException
+     * @return \Hyperf\Database\Connection
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
     {
