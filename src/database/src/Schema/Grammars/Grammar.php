@@ -100,7 +100,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Add a prefix to an array of values.
      *
-     * @param  string $prefix
+     * @param string $prefix
      * @return array
      */
     public function prefixArray($prefix, array $values)
@@ -125,8 +125,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Hyperf\Database\Query\Expression|string $value
-     * @param  bool                                     $prefixAlias
+     * @param \Hyperf\Database\Query\Expression|string $value
+     * @param bool $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -205,7 +205,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Add the column modifiers to the definition.
      *
-     * @param  string $sql
+     * @param string $sql
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -222,7 +222,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the primary key command if it exists on the blueprint.
      *
-     * @param  string                    $name
+     * @param string $name
      * @return null|\Hyperf\Utils\Fluent
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
@@ -237,7 +237,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get all of the commands with a given name.
      *
-     * @param  string $name
+     * @param string $name
      * @return array
      */
     protected function getCommandsByName(Blueprint $blueprint, $name)

@@ -57,9 +57,9 @@ trait HasRelationships
     /**
      * Define a one-to-one relationship.
      *
-     * @param  string                                  $related
-     * @param  string                                  $foreignKey
-     * @param  string                                  $localKey
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\HasOne
      */
     public function hasOne($related, $foreignKey = null, $localKey = null)
@@ -76,12 +76,12 @@ trait HasRelationships
     /**
      * Define a has-one-through relationship.
      *
-     * @param  string                                         $related
-     * @param  string                                         $through
-     * @param  null|string                                    $firstKey
-     * @param  null|string                                    $secondKey
-     * @param  null|string                                    $localKey
-     * @param  null|string                                    $secondLocalKey
+     * @param string $related
+     * @param string $through
+     * @param null|string $firstKey
+     * @param null|string $secondKey
+     * @param null|string $localKey
+     * @param null|string $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasOneThrough
      */
     public function hasOneThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
@@ -106,11 +106,11 @@ trait HasRelationships
     /**
      * Define a polymorphic one-to-one relationship.
      *
-     * @param  string                                    $related
-     * @param  string                                    $name
-     * @param  string                                    $type
-     * @param  string                                    $id
-     * @param  string                                    $localKey
+     * @param string $related
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\MorphOne
      */
     public function morphOne($related, $name, $type = null, $id = null, $localKey = null)
@@ -129,10 +129,10 @@ trait HasRelationships
     /**
      * Define an inverse one-to-one or many relationship.
      *
-     * @param  string                                     $related
-     * @param  string                                     $foreignKey
-     * @param  string                                     $ownerKey
-     * @param  string                                     $relation
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $relation
      * @return \Hyperf\Database\Model\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null)
@@ -170,10 +170,10 @@ trait HasRelationships
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string                                   $name
-     * @param  string                                   $type
-     * @param  string                                   $id
-     * @param  string                                   $ownerKey
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $ownerKey
      * @return \Hyperf\Database\Model\Relations\MorphTo
      */
     public function morphTo($name = null, $type = null, $id = null, $ownerKey = null)
@@ -200,7 +200,7 @@ trait HasRelationships
     /**
      * Retrieve the actual class name for a given morph class.
      *
-     * @param  string $class
+     * @param string $class
      * @return string
      */
     public static function getActualClassNameForMorph($class)
@@ -211,9 +211,9 @@ trait HasRelationships
     /**
      * Define a one-to-many relationship.
      *
-     * @param  string                                   $related
-     * @param  string                                   $foreignKey
-     * @param  string                                   $localKey
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\HasMany
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)
@@ -235,12 +235,12 @@ trait HasRelationships
     /**
      * Define a has-many-through relationship.
      *
-     * @param  string                                          $related
-     * @param  string                                          $through
-     * @param  null|string                                     $firstKey
-     * @param  null|string                                     $secondKey
-     * @param  null|string                                     $localKey
-     * @param  null|string                                     $secondLocalKey
+     * @param string $related
+     * @param string $through
+     * @param null|string $firstKey
+     * @param null|string $secondKey
+     * @param null|string $localKey
+     * @param null|string $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasManyThrough
      */
     public function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
@@ -265,11 +265,11 @@ trait HasRelationships
     /**
      * Define a polymorphic one-to-many relationship.
      *
-     * @param  string                                     $related
-     * @param  string                                     $name
-     * @param  string                                     $type
-     * @param  string                                     $id
-     * @param  string                                     $localKey
+     * @param string $related
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\MorphMany
      */
     public function morphMany($related, $name, $type = null, $id = null, $localKey = null)
@@ -291,13 +291,13 @@ trait HasRelationships
     /**
      * Define a many-to-many relationship.
      *
-     * @param  string                                         $related
-     * @param  string                                         $table
-     * @param  string                                         $foreignPivotKey
-     * @param  string                                         $relatedPivotKey
-     * @param  string                                         $parentKey
-     * @param  string                                         $relatedKey
-     * @param  string                                         $relation
+     * @param string $related
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relation
      * @return \Hyperf\Database\Model\Relations\BelongsToMany
      */
     public function belongsToMany(
@@ -347,14 +347,14 @@ trait HasRelationships
     /**
      * Define a polymorphic many-to-many relationship.
      *
-     * @param  string                                       $related
-     * @param  string                                       $name
-     * @param  string                                       $table
-     * @param  string                                       $foreignPivotKey
-     * @param  string                                       $relatedPivotKey
-     * @param  string                                       $parentKey
-     * @param  string                                       $relatedKey
-     * @param  bool                                         $inverse
+     * @param string $related
+     * @param string $name
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param bool $inverse
      * @return \Hyperf\Database\Model\Relations\MorphToMany
      */
     public function morphToMany(
@@ -406,13 +406,13 @@ trait HasRelationships
     /**
      * Define a polymorphic, inverse many-to-many relationship.
      *
-     * @param  string                                       $related
-     * @param  string                                       $name
-     * @param  string                                       $table
-     * @param  string                                       $foreignPivotKey
-     * @param  string                                       $relatedPivotKey
-     * @param  string                                       $parentKey
-     * @param  string                                       $relatedKey
+     * @param string $related
+     * @param string $name
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
      * @return \Hyperf\Database\Model\Relations\MorphToMany
      */
     public function morphedByMany(
@@ -446,8 +446,8 @@ trait HasRelationships
     /**
      * Get the joining table name for a many-to-many relation.
      *
-     * @param  string                            $related
-     * @param  null|\Hyperf\Database\Model\Model $instance
+     * @param string $related
+     * @param null|\Hyperf\Database\Model\Model $instance
      * @return string
      */
     public function joiningTable($related, $instance = null)
@@ -482,7 +482,7 @@ trait HasRelationships
     /**
      * Determine if the model touches a given relation.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return bool
      */
     public function touches($relation)
@@ -549,7 +549,7 @@ trait HasRelationships
     /**
      * Determine if the given relation is loaded.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function relationLoaded($key)
@@ -560,7 +560,7 @@ trait HasRelationships
     /**
      * Set the given relationship on the model.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return $this
      */
     public function setRelation($relation, $value)
@@ -573,7 +573,7 @@ trait HasRelationships
     /**
      * Unset a loaded relationship.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return $this
      */
     public function unsetRelation($relation)
@@ -620,8 +620,8 @@ trait HasRelationships
     /**
      * Instantiate a new HasOne relationship.
      *
-     * @param  string                                  $foreignKey
-     * @param  string                                  $localKey
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\HasOne
      */
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
@@ -632,10 +632,10 @@ trait HasRelationships
     /**
      * Instantiate a new HasOneThrough relationship.
      *
-     * @param  string                                         $firstKey
-     * @param  string                                         $secondKey
-     * @param  string                                         $localKey
-     * @param  string                                         $secondLocalKey
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasOneThrough
      */
     protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
@@ -646,9 +646,9 @@ trait HasRelationships
     /**
      * Instantiate a new MorphOne relationship.
      *
-     * @param  string                                    $type
-     * @param  string                                    $id
-     * @param  string                                    $localKey
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\MorphOne
      */
     protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
@@ -659,9 +659,9 @@ trait HasRelationships
     /**
      * Instantiate a new BelongsTo relationship.
      *
-     * @param  string                                     $foreignKey
-     * @param  string                                     $ownerKey
-     * @param  string                                     $relation
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $relation
      * @return \Hyperf\Database\Model\Relations\BelongsTo
      */
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
@@ -672,10 +672,10 @@ trait HasRelationships
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string                                   $name
-     * @param  string                                   $type
-     * @param  string                                   $id
-     * @param  string                                   $ownerKey
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $ownerKey
      * @return \Hyperf\Database\Model\Relations\MorphTo
      */
     protected function morphEagerTo($name, $type, $id, $ownerKey)
@@ -693,11 +693,11 @@ trait HasRelationships
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string                                   $target
-     * @param  string                                   $name
-     * @param  string                                   $type
-     * @param  string                                   $id
-     * @param  string                                   $ownerKey
+     * @param string $target
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $ownerKey
      * @return \Hyperf\Database\Model\Relations\MorphTo
      */
     protected function morphInstanceTo($target, $name, $type, $id, $ownerKey)
@@ -719,10 +719,10 @@ trait HasRelationships
     /**
      * Instantiate a new MorphTo relationship.
      *
-     * @param  string                                   $foreignKey
-     * @param  string                                   $ownerKey
-     * @param  string                                   $type
-     * @param  string                                   $relation
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $type
+     * @param string $relation
      * @return \Hyperf\Database\Model\Relations\MorphTo
      */
     protected function newMorphTo(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
@@ -745,8 +745,8 @@ trait HasRelationships
     /**
      * Instantiate a new HasMany relationship.
      *
-     * @param  string                                   $foreignKey
-     * @param  string                                   $localKey
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\HasMany
      */
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
@@ -757,10 +757,10 @@ trait HasRelationships
     /**
      * Instantiate a new HasManyThrough relationship.
      *
-     * @param  string                                          $firstKey
-     * @param  string                                          $secondKey
-     * @param  string                                          $localKey
-     * @param  string                                          $secondLocalKey
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
      * @return \Hyperf\Database\Model\Relations\HasManyThrough
      */
     protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
@@ -771,9 +771,9 @@ trait HasRelationships
     /**
      * Instantiate a new MorphMany relationship.
      *
-     * @param  string                                     $type
-     * @param  string                                     $id
-     * @param  string                                     $localKey
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
      * @return \Hyperf\Database\Model\Relations\MorphMany
      */
     protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
@@ -784,12 +784,12 @@ trait HasRelationships
     /**
      * Instantiate a new BelongsToMany relationship.
      *
-     * @param  string                                         $table
-     * @param  string                                         $foreignPivotKey
-     * @param  string                                         $relatedPivotKey
-     * @param  string                                         $parentKey
-     * @param  string                                         $relatedKey
-     * @param  string                                         $relationName
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
      * @return \Hyperf\Database\Model\Relations\BelongsToMany
      */
     protected function newBelongsToMany(
@@ -808,14 +808,14 @@ trait HasRelationships
     /**
      * Instantiate a new MorphToMany relationship.
      *
-     * @param  string                                       $name
-     * @param  string                                       $table
-     * @param  string                                       $foreignPivotKey
-     * @param  string                                       $relatedPivotKey
-     * @param  string                                       $parentKey
-     * @param  string                                       $relatedKey
-     * @param  string                                       $relationName
-     * @param  bool                                         $inverse
+     * @param string $name
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
+     * @param bool $inverse
      * @return \Hyperf\Database\Model\Relations\MorphToMany
      */
     protected function newMorphToMany(
@@ -864,9 +864,9 @@ trait HasRelationships
     /**
      * Get the polymorphic relationship columns.
      *
-     * @param  string $name
-     * @param  string $type
-     * @param  string $id
+     * @param string $name
+     * @param string $type
+     * @param string $id
      * @return array
      */
     protected function getMorphs($name, $type, $id)

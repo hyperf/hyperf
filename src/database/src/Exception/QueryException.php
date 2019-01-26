@@ -72,9 +72,9 @@ class QueryException extends PDOException
     /**
      * Format the SQL error message.
      *
-     * @param  string     $sql
-     * @param  array      $bindings
-     * @param  \Exception $previous
+     * @param string $sql
+     * @param array $bindings
+     * @param \Exception $previous
      * @return string
      */
     protected function formatMessage($sql, $bindings, $previous)

@@ -94,7 +94,7 @@ class SwooleIO extends AbstractIO
     /**
      * SwooleIO constructor.
      *
-     * @param  null|mixed                $context
+     * @param null|mixed $context
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
@@ -151,7 +151,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * @param  int                  $len
+     * @param int $len
      * @throws AMQPRuntimeException
      * @return mixed|string
      */
@@ -191,7 +191,7 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * @param  string                                     $data
+     * @param string $data
      * @throws AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @return mixed|void
@@ -261,8 +261,8 @@ class SwooleIO extends AbstractIO
     }
 
     /**
-     * @param  int       $sec
-     * @param  int       $usec
+     * @param int $sec
+     * @param int $usec
      * @return int|mixed
      */
     public function select($sec, $usec)

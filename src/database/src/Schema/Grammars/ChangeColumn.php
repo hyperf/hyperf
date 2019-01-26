@@ -26,7 +26,7 @@ class ChangeColumn
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
+     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @throws \RuntimeException
      * @return array
      */
@@ -55,7 +55,7 @@ class ChangeColumn
     /**
      * Get the Doctrine table difference for the given changes.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
+     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return bool|\Doctrine\DBAL\Schema\TableDiff
      */
     protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
@@ -133,7 +133,7 @@ class ChangeColumn
     /**
      * Get the doctrine column type.
      *
-     * @param  string                    $type
+     * @param string $type
      * @return \Doctrine\DBAL\Types\Type
      */
     protected static function getDoctrineColumnType($type)
@@ -162,7 +162,7 @@ class ChangeColumn
     /**
      * Calculate the proper column length to force the Doctrine text type.
      *
-     * @param  string $type
+     * @param string $type
      * @return int
      */
     protected static function calculateDoctrineTextLength($type)
@@ -180,7 +180,7 @@ class ChangeColumn
     /**
      * Get the matching Doctrine option for a given Fluent attribute name.
      *
-     * @param  string      $attribute
+     * @param string $attribute
      * @return null|string
      */
     protected static function mapFluentOptionToDoctrine($attribute)

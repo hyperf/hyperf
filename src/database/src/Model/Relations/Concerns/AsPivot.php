@@ -42,9 +42,9 @@ trait AsPivot
     /**
      * Create a new pivot model instance.
      *
-     * @param  array  $attributes
-     * @param  string $table
-     * @param  bool   $exists
+     * @param array $attributes
+     * @param string $table
+     * @param bool $exists
      * @return static
      */
     public static function fromAttributes(Model $parent, $attributes, $table, $exists = false)
@@ -75,9 +75,9 @@ trait AsPivot
     /**
      * Create a new pivot model from raw values returned from a query.
      *
-     * @param  array  $attributes
-     * @param  string $table
-     * @param  bool   $exists
+     * @param array $attributes
+     * @param string $table
+     * @param bool $exists
      * @return static
      */
     public static function fromRawAttributes(Model $parent, $attributes, $table, $exists = false)
@@ -156,8 +156,8 @@ trait AsPivot
     /**
      * Set the key names for the pivot model instance.
      *
-     * @param  string $foreignKey
-     * @param  string $relatedKey
+     * @param string $foreignKey
+     * @param string $relatedKey
      * @return $this
      */
     public function setPivotKeys($foreignKey, $relatedKey)
@@ -224,7 +224,7 @@ trait AsPivot
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
-     * @param  array<int>                     $ids
+     * @param array<int> $ids
      * @return \Hyperf\Database\Model\Builder
      */
     public function newQueryForRestoration($ids)
@@ -283,7 +283,7 @@ trait AsPivot
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
-     * @param  array|int                      $ids
+     * @param array|int $ids
      * @return \Hyperf\Database\Model\Builder
      */
     protected function newQueryForCollectionRestoration(array $ids)

@@ -51,7 +51,7 @@ class MorphToMany extends BelongsToMany
      * @param string $parentKey
      * @param string $relatedKey
      * @param string $relationName
-     * @param bool   $inverse
+     * @param bool $inverse
      */
     public function __construct(
         Builder $query,
@@ -94,7 +94,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -108,7 +108,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot model instance.
      *
-     * @param  bool                                   $exists
+     * @param bool $exists
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
@@ -173,8 +173,8 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot attachment record.
      *
-     * @param  int   $id
-     * @param  bool  $timed
+     * @param int $id
+     * @param bool $timed
      * @return array
      */
     protected function baseAttachRecord($id, $timed)

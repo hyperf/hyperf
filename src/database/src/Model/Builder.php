@@ -108,7 +108,7 @@ class Builder
      * Dynamically handle calls into the query instance.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      */
     public function __call($method, $parameters)
     {
@@ -149,7 +149,7 @@ class Builder
      * Dynamically handle calls into the query instance.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @throws \BadMethodCallException
      */
@@ -193,8 +193,8 @@ class Builder
     /**
      * Register a new global scope.
      *
-     * @param  string                                $identifier
-     * @param  \Closure|\Hyperf\Database\Model\Scope $scope
+     * @param string $identifier
+     * @param \Closure|\Hyperf\Database\Model\Scope $scope
      * @return $this
      */
     public function withGlobalScope($identifier, $scope)
@@ -211,7 +211,7 @@ class Builder
     /**
      * Remove a registered global scope.
      *
-     * @param  \Hyperf\Database\Model\Scope|string $scope
+     * @param \Hyperf\Database\Model\Scope|string $scope
      * @return $this
      */
     public function withoutGlobalScope($scope)
@@ -290,10 +290,10 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  array|\Closure|string $column
-     * @param  string                $boolean
-     * @param  null|mixed            $operator
-     * @param  null|mixed            $value
+     * @param array|\Closure|string $column
+     * @param string $boolean
+     * @param null|mixed $operator
+     * @param null|mixed $value
      * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
@@ -312,9 +312,9 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  array|\Closure|string                 $column
-     * @param  null|mixed                            $operator
-     * @param  null|mixed                            $value
+     * @param array|\Closure|string $column
+     * @param null|mixed $operator
+     * @param null|mixed $value
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function orWhere($column, $operator = null, $value = null)
@@ -331,7 +331,7 @@ class Builder
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string $column
+     * @param string $column
      * @return $this
      */
     public function latest($column = null)
@@ -348,7 +348,7 @@ class Builder
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string $column
+     * @param string $column
      * @return $this
      */
     public function oldest($column = null)
@@ -379,8 +379,8 @@ class Builder
     /**
      * Create a collection of models from a raw query.
      *
-     * @param  string                            $query
-     * @param  array                             $bindings
+     * @param string $query
+     * @param array $bindings
      * @return \Hyperf\Database\Model\Collection
      */
     public function fromQuery($query, $bindings = [])
@@ -393,7 +393,7 @@ class Builder
     /**
      * Find a model by its primary key.
      *
-     * @param  array                                                                               $columns
+     * @param array $columns
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
     public function find($id, $columns = ['*'])
@@ -408,8 +408,8 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  array|\Hyperf\Contracts\Support\Arrayable $ids
-     * @param  array                                     $columns
+     * @param array|\Hyperf\Contracts\Support\Arrayable $ids
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -424,7 +424,7 @@ class Builder
     /**
      * Find a model by its primary key or throw an exception.
      *
-     * @param  array                                                                          $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
@@ -449,7 +449,7 @@ class Builder
     /**
      * Find a model by its primary key or return fresh model instance.
      *
-     * @param  array                               $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Model|static
      */
     public function findOrNew($id, $columns = ['*'])
@@ -506,7 +506,7 @@ class Builder
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                                         $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
      */
@@ -522,7 +522,7 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param  array|\Closure                            $columns
+     * @param array|\Closure $columns
      * @return \Hyperf\Database\Model\Model|mixed|static
      */
     public function firstOr($columns = ['*'], Closure $callback = null)
@@ -555,7 +555,7 @@ class Builder
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array                                      $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection|static[]
      */
     public function get($columns = ['*'])
@@ -575,7 +575,7 @@ class Builder
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param  array                                   $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Model[]|static[]
      */
     public function getModels($columns = ['*'])
@@ -607,7 +607,7 @@ class Builder
     /**
      * Get the relation instance for the given relation name.
      *
-     * @param  string                                    $name
+     * @param string $name
      * @return \Hyperf\Database\Model\Relations\Relation
      */
     public function getRelation($name)
@@ -650,9 +650,9 @@ class Builder
     /**
      * Chunk the results of a query by comparing numeric IDs.
      *
-     * @param  int         $count
-     * @param  null|string $column
-     * @param  null|string $alias
+     * @param int $count
+     * @param null|string $column
+     * @param null|string $alias
      * @return bool
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
@@ -695,8 +695,8 @@ class Builder
     /**
      * Get an array with the values of a given column.
      *
-     * @param  string                   $column
-     * @param  null|string              $key
+     * @param string $column
+     * @param null|string $key
      * @return \Hyperf\Utils\Collection
      */
     public function pluck($column, $key = null)
@@ -720,10 +720,10 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @param  int                                               $perPage
-     * @param  array                                             $columns
-     * @param  string                                            $pageName
-     * @param  null|int                                          $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null|int $page
      * @throws \InvalidArgumentException
      * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
@@ -746,10 +746,10 @@ class Builder
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int                                    $perPage
-     * @param  array                                  $columns
-     * @param  string                                 $pageName
-     * @param  null|int                               $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null|int $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -806,8 +806,8 @@ class Builder
     /**
      * Increment a column's value by a given amount.
      *
-     * @param  string    $column
-     * @param  float|int $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -822,8 +822,8 @@ class Builder
     /**
      * Decrement a column's value by a given amount.
      *
-     * @param  string    $column
-     * @param  float|int $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -961,7 +961,7 @@ class Builder
     /**
      * Create a new instance of the model being queried.
      *
-     * @param  array                               $attributes
+     * @param array $attributes
      * @return \Hyperf\Database\Model\Model|static
      */
     public function newModelInstance($attributes = [])
@@ -984,7 +984,7 @@ class Builder
     /**
      * Set the underlying query builder instance.
      *
-     * @param  \Hyperf\Database\Query\Builder $query
+     * @param \Hyperf\Database\Query\Builder $query
      * @return $this
      */
     public function setQuery($query)
@@ -1039,7 +1039,7 @@ class Builder
     /**
      * Set a model instance for the model being queried.
      *
-     * @param  \Hyperf\Database\Model\Model $model
+     * @param \Hyperf\Database\Model\Model $model
      * @return $this
      */
     public function setModel(Model $model)
@@ -1054,7 +1054,7 @@ class Builder
     /**
      * Qualify the given column name by the model's table.
      *
-     * @param  string $column
+     * @param string $column
      * @return string
      */
     public function qualifyColumn($column)
@@ -1065,7 +1065,7 @@ class Builder
     /**
      * Get the given macro by name.
      *
-     * @param  string   $name
+     * @param string $name
      * @return \Closure
      */
     public function getMacro($name)
@@ -1076,7 +1076,7 @@ class Builder
     /**
      * Eagerly load the relationship on a set of models.
      *
-     * @param  string $name
+     * @param string $name
      * @return array
      */
     protected function eagerLoadRelation(array $models, $name, Closure $constraints)
@@ -1103,7 +1103,7 @@ class Builder
     /**
      * Get the deeply nested relations for a given top-level relation.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     protected function relationsNestedUnder($relation)
@@ -1125,8 +1125,8 @@ class Builder
     /**
      * Determine if the relationship is nested.
      *
-     * @param  string $relation
-     * @param  string $name
+     * @param string $relation
+     * @param string $name
      * @return bool
      */
     protected function isNestedUnder($relation, $name)
@@ -1246,8 +1246,8 @@ class Builder
     /**
      * Create a where array with nested where conditions.
      *
-     * @param  array  $whereSlice
-     * @param  string $boolean
+     * @param array $whereSlice
+     * @param string $boolean
      * @return array
      */
     protected function createNestedWhere($whereSlice, $boolean = 'and')
@@ -1295,7 +1295,7 @@ class Builder
     /**
      * Create a constraint to select the given columns for the relation.
      *
-     * @param  string $name
+     * @param string $name
      * @return array
      */
     protected function createSelectWithConstraint($name)
@@ -1308,8 +1308,8 @@ class Builder
     /**
      * Parse the nested relationships in a relation.
      *
-     * @param  string $name
-     * @param  array  $results
+     * @param string $name
+     * @param array $results
      * @return array
      */
     protected function addNestedWiths($name, $results)

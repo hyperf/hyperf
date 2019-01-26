@@ -81,7 +81,7 @@ class Arr
     /**
      * Divide an array into two arrays. One with keys and the other with values.
      *
-     * @param  array $array
+     * @param array $array
      * @return array
      */
     public static function divide($array)
@@ -120,7 +120,7 @@ class Arr
      * Determine if the given key exists in the provided array.
      *
      * @param array|\ArrayAccess $array
-     * @param int|string         $key
+     * @param int|string $key
      */
     public static function exists($array, $key): bool
     {
@@ -222,7 +222,7 @@ class Arr
      * Get an item from an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param null|mixed         $default
+     * @param null|mixed $default
      */
     public static function get($array, string $key, $default = null)
     {
@@ -252,7 +252,7 @@ class Arr
      * Check if an item or items exist in an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param array|string       $keys
+     * @param array|string $keys
      */
     public static function has($array, $keys): bool
     {
@@ -305,7 +305,7 @@ class Arr
     /**
      * Pluck an array of values from an array.
      *
-     * @param array|string      $value
+     * @param array|string $value
      * @param null|array|string $key
      */
     public static function pluck(array $array, $value, $key = null): array
@@ -501,7 +501,7 @@ class Arr
     /**
      * Explode the "value" and "key" arguments passed to "pluck".
      *
-     * @param array|string      $value
+     * @param array|string $value
      * @param null|array|string $key
      */
     protected static function explodePluckParameters($value, $key): array

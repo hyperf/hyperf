@@ -34,8 +34,8 @@ class ModelNotFoundException extends RuntimeException
     /**
      * Set the affected Model model and instance ids.
      *
-     * @param  string    $model
-     * @param  array|int $ids
+     * @param string $model
+     * @param array|int $ids
      * @return $this
      */
     public function setModel($model, $ids = [])

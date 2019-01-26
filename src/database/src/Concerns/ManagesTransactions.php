@@ -21,7 +21,6 @@ trait ManagesTransactions
     /**
      * Execute a Closure within a transaction.
      *
-     *
      * @throws \Exception|\Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1)
@@ -128,8 +127,8 @@ trait ManagesTransactions
      * Handle an exception encountered when running a transacted statement.
      *
      * @param \Exception $e
-     * @param int        $currentAttempt
-     * @param int        $maxAttempts
+     * @param int $currentAttempt
+     * @param int $maxAttempts
      *
      * @throws \Exception
      */

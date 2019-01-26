@@ -38,7 +38,7 @@ class Connector
     /**
      * Create a new PDO connection.
      *
-     * @param  string     $dsn
+     * @param string $dsn
      * @throws \Exception
      * @return \PDO
      */
@@ -99,10 +99,10 @@ class Connector
     /**
      * Create a new PDO connection instance.
      *
-     * @param  string $dsn
-     * @param  string $username
-     * @param  string $password
-     * @param  array  $options
+     * @param string $dsn
+     * @param string $username
+     * @param string $password
+     * @param array $options
      * @return \PDO
      */
     protected function createPdoConnection($dsn, $username, $password, $options)
@@ -117,7 +117,7 @@ class Connector
     /**
      * Determine if the connection is persistent.
      *
-     * @param  array $options
+     * @param array $options
      * @return bool
      */
     protected function isPersistentConnection($options)
@@ -129,10 +129,10 @@ class Connector
     /**
      * Handle an exception that occurred during connect execution.
      *
-     * @param  string     $dsn
-     * @param  string     $username
-     * @param  string     $password
-     * @param  array      $options
+     * @param string $dsn
+     * @param string $username
+     * @param string $password
+     * @param array $options
      * @throws \Exception
      * @return \PDO
      */

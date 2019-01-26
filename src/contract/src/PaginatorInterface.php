@@ -22,7 +22,7 @@ interface PaginatorInterface
     /**
      * Add a set of query string values to the paginator.
      *
-     * @param  array|string $key
+     * @param array|string $key
      * @return $this
      */
     public function appends($key, ?string $value = null);

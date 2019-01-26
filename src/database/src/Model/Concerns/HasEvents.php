@@ -67,8 +67,8 @@ trait HasEvents
     /**
      * Fire a custom model event for the given event.
      *
-     * @param  string     $event
-     * @param  string     $method
+     * @param string $event
+     * @param string $method
      * @return null|mixed
      */
     protected function fireCustomModelEvent($event, $method)

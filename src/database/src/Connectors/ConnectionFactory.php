@@ -43,7 +43,7 @@ class ConnectionFactory
     /**
      * Establish a PDO connection based on the configuration.
      *
-     * @param  string              $name
+     * @param string $name
      * @return ConnectionInterface
      */
     public function make(array $config, $name = null)
@@ -90,7 +90,7 @@ class ConnectionFactory
     /**
      * Parse and prepare the database configuration.
      *
-     * @param  string $name
+     * @param string $name
      * @return array
      */
     protected function parseConfig(array $config, $name)
@@ -167,7 +167,7 @@ class ConnectionFactory
     /**
      * Get a read / write level configuration.
      *
-     * @param  string $type
+     * @param string $type
      * @return array
      */
     protected function getReadWriteConfig(array $config, $type)
@@ -252,10 +252,10 @@ class ConnectionFactory
     /**
      * Create a new connection instance.
      *
-     * @param  string                      $driver
-     * @param  \Closure|\PDO               $connection
-     * @param  string                      $database
-     * @param  string                      $prefix
+     * @param string $driver
+     * @param \Closure|\PDO $connection
+     * @param string $database
+     * @param string $prefix
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Connection
      */

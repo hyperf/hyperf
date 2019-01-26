@@ -93,7 +93,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function matchOne(array $models, Collection $results, $relation)
@@ -104,7 +104,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function matchMany(array $models, Collection $results, $relation)
@@ -115,7 +115,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Find a model by its primary key or return new instance of the related model.
      *
-     * @param  array                                                 $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])
@@ -188,7 +188,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param  array|\Traversable $models
+     * @param array|\Traversable $models
      * @return array|\Traversable
      */
     public function saveMany($models)
@@ -247,7 +247,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -262,7 +262,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -351,8 +351,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  string $relation
-     * @param  string $type
+     * @param string $relation
+     * @param string $type
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)

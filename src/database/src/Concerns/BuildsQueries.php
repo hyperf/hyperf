@@ -19,7 +19,7 @@ trait BuildsQueries
     /**
      * Chunk the results of the query.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -58,7 +58,7 @@ trait BuildsQueries
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function each(callable $callback, $count = 1000)
@@ -75,7 +75,7 @@ trait BuildsQueries
     /**
      * Execute the query and get the first result.
      *
-     * @param  array                    $columns
+     * @param array $columns
      * @return null|Model|object|static
      */
     public function first($columns = ['*'])
@@ -86,8 +86,8 @@ trait BuildsQueries
     /**
      * Apply the callback's query changes if the given "value" is true.
      *
-     * @param  callable    $callback
-     * @param  callable    $default
+     * @param callable $callback
+     * @param callable $default
      * @return $this|mixed
      */
     public function when($value, $callback, $default = null)
@@ -105,7 +105,7 @@ trait BuildsQueries
     /**
      * Pass the query to a given callback.
      *
-     * @param  \Closure    $callback
+     * @param \Closure $callback
      * @return $this|mixed
      */
     public function tap($callback)
@@ -116,8 +116,8 @@ trait BuildsQueries
     /**
      * Apply the callback's query changes if the given "value" is false.
      *
-     * @param  callable    $callback
-     * @param  callable    $default
+     * @param callable $callback
+     * @param callable $default
      * @return $this|mixed
      */
     public function unless($value, $callback, $default = null)

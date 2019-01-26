@@ -66,7 +66,7 @@ class MorphTo extends BelongsTo
      * Handle dynamic method calls to the relationship.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      */
     public function __call($method, $parameters)
     {
@@ -123,7 +123,7 @@ class MorphTo extends BelongsTo
     /**
      * Create a new model instance by type.
      *
-     * @param  string                       $type
+     * @param string $type
      * @return \Hyperf\Database\Model\Model
      */
     public function createModelByType($type)
@@ -136,7 +136,7 @@ class MorphTo extends BelongsTo
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -147,7 +147,7 @@ class MorphTo extends BelongsTo
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  \Hyperf\Database\Model\Model $model
+     * @param \Hyperf\Database\Model\Model $model
      * @return \Hyperf\Database\Model\Model
      */
     public function associate($model)
@@ -224,7 +224,7 @@ class MorphTo extends BelongsTo
     /**
      * Get all of the relation results for a type.
      *
-     * @param  string                            $type
+     * @param string $type
      * @return \Hyperf\Database\Model\Collection
      */
     protected function getResultsByType($type)
@@ -247,7 +247,7 @@ class MorphTo extends BelongsTo
     /**
      * Gather all of the foreign keys for a given type.
      *
-     * @param  string $type
+     * @param string $type
      * @return array
      */
     protected function gatherKeysByType($type)

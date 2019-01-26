@@ -48,8 +48,8 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @param  array|Arrayable|Jsonable $data
-     * @throws HttpException            when the data encoding error
+     * @param array|Arrayable|Jsonable $data
+     * @throws HttpException when the data encoding error
      */
     private function toJson($data): string
     {

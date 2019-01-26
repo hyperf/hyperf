@@ -25,7 +25,7 @@ class SoftDeletingScope implements Scope
      * Apply the scope to a given Model query builder.
      *
      * @param \Hyperf\Database\Model\Builder $builder
-     * @param \Hyperf\Database\Model\Model   $model
+     * @param \Hyperf\Database\Model\Model $model
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -55,7 +55,7 @@ class SoftDeletingScope implements Scope
     /**
      * Get the "deleted at" column for the builder.
      *
-     * @param  \Hyperf\Database\Model\Builder $builder
+     * @param \Hyperf\Database\Model\Builder $builder
      * @return string
      */
     protected function getDeletedAtColumn(Builder $builder)

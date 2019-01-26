@@ -39,7 +39,7 @@ abstract class Grammar
     /**
      * Wrap a table in keyword identifiers.
      *
-     * @param  \Hyperf\Database\Query\Expression|string $table
+     * @param \Hyperf\Database\Query\Expression|string $table
      * @return string
      */
     public function wrapTable($table)
@@ -54,8 +54,8 @@ abstract class Grammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Hyperf\Database\Query\Expression|string $value
-     * @param  bool                                     $prefixAlias
+     * @param \Hyperf\Database\Query\Expression|string $value
+     * @param bool $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -107,7 +107,7 @@ abstract class Grammar
     /**
      * Quote the given string literal.
      *
-     * @param  array|string $value
+     * @param array|string $value
      * @return string
      */
     public function quoteString($value)
@@ -132,7 +132,7 @@ abstract class Grammar
     /**
      * Get the value of a raw expression.
      *
-     * @param  \Hyperf\Database\Query\Expression $expression
+     * @param \Hyperf\Database\Query\Expression $expression
      * @return string
      */
     public function getValue($expression)
@@ -163,7 +163,7 @@ abstract class Grammar
     /**
      * Set the grammar's table prefix.
      *
-     * @param  string $prefix
+     * @param string $prefix
      * @return $this
      */
     public function setTablePrefix($prefix)
@@ -176,8 +176,8 @@ abstract class Grammar
     /**
      * Wrap a value that has an alias.
      *
-     * @param  string $value
-     * @param  bool   $prefixAlias
+     * @param string $value
+     * @param bool $prefixAlias
      * @return string
      */
     protected function wrapAliasedValue($value, $prefixAlias = false)
@@ -201,7 +201,7 @@ abstract class Grammar
     /**
      * Wrap the given value segments.
      *
-     * @param  array  $segments
+     * @param array $segments
      * @return string
      */
     protected function wrapSegments($segments)
@@ -216,7 +216,7 @@ abstract class Grammar
     /**
      * Wrap a single string in keyword identifiers.
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     protected function wrapValue($value)

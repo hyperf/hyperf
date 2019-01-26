@@ -130,7 +130,7 @@ trait GuardsAttributes
     /**
      * Determine if the given attribute may be mass assigned.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function isFillable($key)
@@ -160,7 +160,7 @@ trait GuardsAttributes
     /**
      * Determine if the given key is guarded.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function isGuarded($key)

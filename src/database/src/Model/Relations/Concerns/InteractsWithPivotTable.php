@@ -23,7 +23,7 @@ trait InteractsWithPivotTable
      *
      * Each existing model is detached, and non existing ones are attached.
      *
-     * @param  bool  $touch
+     * @param bool $touch
      * @return array
      */
     public function toggle($ids, $touch = true)
@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
+     * @param array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,8 +84,8 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
-     * @param  bool                                                        $detaching
+     * @param array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
+     * @param bool $detaching
      * @return array
      */
     public function sync($ids, $detaching = true)
@@ -136,7 +136,7 @@ trait InteractsWithPivotTable
     /**
      * Update an existing pivot record on the table.
      *
-     * @param  bool $touch
+     * @param bool $touch
      * @return int
      */
     public function updateExistingPivot($id, array $attributes, $touch = true)
@@ -179,8 +179,8 @@ trait InteractsWithPivotTable
     /**
      * Detach models from the relationship.
      *
-     * @param  bool       $touch
-     * @param  null|mixed $ids
+     * @param bool $touch
+     * @param null|mixed $ids
      * @return int
      */
     public function detach($ids = null, $touch = true)
@@ -215,7 +215,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new pivot model instance.
      *
-     * @param  bool                                   $exists
+     * @param bool $exists
      * @return \Hyperf\Database\Model\Relations\Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
@@ -264,7 +264,7 @@ trait InteractsWithPivotTable
     /**
      * Set the columns on the pivot table to retrieve.
      *
-     * @param  array|mixed $columns
+     * @param array|mixed $columns
      * @return $this
      */
     public function withPivot($columns)
@@ -296,7 +296,7 @@ trait InteractsWithPivotTable
     /**
      * Attach all of the records that aren't in the given current records.
      *
-     * @param  bool  $touch
+     * @param bool $touch
      * @return array
      */
     protected function attachNew(array $records, array $current, $touch = true)
@@ -328,7 +328,7 @@ trait InteractsWithPivotTable
     /**
      * Create an array of records to insert into the pivot table.
      *
-     * @param  array $ids
+     * @param array $ids
      * @return array
      */
     protected function formatAttachRecords($ids, array $attributes)
@@ -356,9 +356,9 @@ trait InteractsWithPivotTable
     /**
      * Create a full attachment record payload.
      *
-     * @param  int   $key
-     * @param  array $attributes
-     * @param  bool  $hasTimestamps
+     * @param int $key
+     * @param array $attributes
+     * @param bool $hasTimestamps
      * @return array
      */
     protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps)
@@ -386,8 +386,8 @@ trait InteractsWithPivotTable
     /**
      * Create a new pivot attachment record.
      *
-     * @param  int   $id
-     * @param  bool  $timed
+     * @param int $id
+     * @param bool $timed
      * @return array
      */
     protected function baseAttachRecord($id, $timed)
@@ -413,7 +413,7 @@ trait InteractsWithPivotTable
     /**
      * Set the creation and update timestamps on an attach record.
      *
-     * @param  bool  $exists
+     * @param bool $exists
      * @return array
      */
     protected function addTimestampsToAttachment(array $record, $exists = false)
@@ -440,7 +440,7 @@ trait InteractsWithPivotTable
     /**
      * Determine whether the given column is defined as a pivot column.
      *
-     * @param  string $column
+     * @param string $column
      * @return bool
      */
     protected function hasPivotColumn($column)
@@ -524,7 +524,7 @@ trait InteractsWithPivotTable
     /**
      * Cast the given pivot attributes.
      *
-     * @param  array $attributes
+     * @param array $attributes
      * @return array
      */
     protected function castAttributes($attributes)

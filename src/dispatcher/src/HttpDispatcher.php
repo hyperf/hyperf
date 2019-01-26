@@ -35,8 +35,8 @@ class HttpDispatcher extends AbstractDispatcher
     {
         /**
          * @var RequestInterface
-         * @var array            $middlewares
-         * @var string           $coreHandler
+         * @var array $middlewares
+         * @var string $coreHandler
          */
         [$request, $middlewares, $coreHandler] = $params;
         $requestHandler = new HttpRequestHandler($middlewares, $coreHandler, $this->container);

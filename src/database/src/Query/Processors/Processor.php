@@ -19,7 +19,7 @@ class Processor
     /**
      * Process the results of a "select" query.
      *
-     * @param  array $results
+     * @param array $results
      * @return array
      */
     public function processSelect(Builder $query, $results)
@@ -30,9 +30,9 @@ class Processor
     /**
      * Process an  "insert get ID" query.
      *
-     * @param  string $sql
-     * @param  array  $values
-     * @param  string $sequence
+     * @param string $sql
+     * @param array $values
+     * @param string $sequence
      * @return int
      */
     public function processInsertGetId(Builder $query, $sql, $values, $sequence = null)
@@ -47,7 +47,7 @@ class Processor
     /**
      * Process the results of a column listing query.
      *
-     * @param  array $results
+     * @param array $results
      * @return array
      */
     public function processColumnListing($results)

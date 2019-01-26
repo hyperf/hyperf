@@ -116,7 +116,7 @@ class BelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -131,7 +131,7 @@ class BelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -172,7 +172,7 @@ class BelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  \Hyperf\Database\Model\Model|int|string $model
+     * @param \Hyperf\Database\Model\Model|int|string $model
      * @return \Hyperf\Database\Model\Model
      */
     public function associate($model)
@@ -205,7 +205,7 @@ class BelongsTo extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -224,7 +224,7 @@ class BelongsTo extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])

@@ -41,8 +41,8 @@ class JoinClause extends Builder
      * Create a new join clause instance.
      *
      * @param \Hyperf\Database\Query\Builder $parentQuery
-     * @param string                         $type
-     * @param string                         $table
+     * @param string $type
+     * @param string $table
      */
     public function __construct(Builder $parentQuery, $type, $table)
     {
@@ -69,10 +69,10 @@ class JoinClause extends Builder
      *
      * on `contacts`.`user_id` = `users`.`id` and `contacts`.`info_id` = `info`.`id`
      *
-     * @param  \Closure|string           $first
-     * @param  null|string               $operator
-     * @param  null|string               $second
-     * @param  string                    $boolean
+     * @param \Closure|string $first
+     * @param null|string $operator
+     * @param null|string $second
+     * @param string $boolean
      * @throws \InvalidArgumentException
      * @return $this
      */
@@ -88,9 +88,9 @@ class JoinClause extends Builder
     /**
      * Add an "or on" clause to the join.
      *
-     * @param  \Closure|string                   $first
-     * @param  null|string                       $operator
-     * @param  null|string                       $second
+     * @param \Closure|string $first
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\JoinClause
      */
     public function orOn($first, $operator = null, $second = null)

@@ -24,7 +24,7 @@ class Collection extends BaseCollection
     /**
      * Find a model in the collection by key.
      *
-     * @param  null|mixed                          $default
+     * @param null|mixed $default
      * @return \Hyperf\Database\Model\Model|static
      */
     public function find($key, $default = null)
@@ -53,7 +53,7 @@ class Collection extends BaseCollection
     /**
      * Load a set of relationships onto the collection.
      *
-     * @param  array|string $relations
+     * @param array|string $relations
      * @return $this
      */
     public function load($relations)
@@ -74,7 +74,7 @@ class Collection extends BaseCollection
     /**
      * Load a set of relationship counts onto the collection.
      *
-     * @param  array|string $relations
+     * @param array|string $relations
      * @return $this
      */
     public function loadCount($relations)
@@ -107,7 +107,7 @@ class Collection extends BaseCollection
     /**
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
-     * @param  array|string $relations
+     * @param array|string $relations
      * @return $this
      */
     public function loadMissing($relations)
@@ -142,8 +142,8 @@ class Collection extends BaseCollection
     /**
      * Load a set of relationships onto the mixed relationship collection.
      *
-     * @param  string $relation
-     * @param  array  $relations
+     * @param string $relation
+     * @param array $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -215,7 +215,7 @@ class Collection extends BaseCollection
     /**
      * Merge the collection with the given items.
      *
-     * @param  array|\ArrayAccess $items
+     * @param array|\ArrayAccess $items
      * @return static
      */
     public function merge($items): BaseCollection
@@ -244,7 +244,7 @@ class Collection extends BaseCollection
     /**
      * Reload a fresh model instance from the database for all the entities.
      *
-     * @param  array|string $with
+     * @param array|string $with
      * @return static
      */
     public function fresh($with = [])
@@ -271,7 +271,7 @@ class Collection extends BaseCollection
     /**
      * Diff the collection with the given items.
      *
-     * @param  array|\ArrayAccess $items
+     * @param array|\ArrayAccess $items
      * @return static
      */
     public function diff($items): BaseCollection
@@ -292,7 +292,7 @@ class Collection extends BaseCollection
     /**
      * Intersect the collection with the given items.
      *
-     * @param  array|\ArrayAccess $items
+     * @param array|\ArrayAccess $items
      * @return static
      */
     public function intersect($items): BaseCollection
@@ -355,7 +355,7 @@ class Collection extends BaseCollection
     /**
      * Make the given, typically visible, attributes hidden across the entire collection.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function makeHidden($attributes)
@@ -366,7 +366,7 @@ class Collection extends BaseCollection
     /**
      * Make the given, typically hidden, attributes visible across the entire collection.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function makeVisible($attributes)
@@ -377,7 +377,7 @@ class Collection extends BaseCollection
     /**
      * Get a dictionary keyed by primary keys.
      *
-     * @param  null|array|\ArrayAccess $items
+     * @param null|array|\ArrayAccess $items
      * @return array
      */
     public function getDictionary($items = null)

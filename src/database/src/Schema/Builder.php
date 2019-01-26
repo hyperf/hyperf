@@ -71,7 +71,7 @@ class Builder
     /**
      * Determine if the given table exists.
      *
-     * @param  string $table
+     * @param string $table
      * @return bool
      */
     public function hasTable($table)
@@ -87,8 +87,8 @@ class Builder
     /**
      * Determine if the given table has a given column.
      *
-     * @param  string $table
-     * @param  string $column
+     * @param string $table
+     * @param string $column
      * @return bool
      */
     public function hasColumn($table, $column)
@@ -102,7 +102,7 @@ class Builder
     /**
      * Determine if the given table has given columns.
      *
-     * @param  string $table
+     * @param string $table
      * @return bool
      */
     public function hasColumns($table, array $columns)
@@ -121,8 +121,8 @@ class Builder
     /**
      * Get the data type for the given column name.
      *
-     * @param  string $table
-     * @param  string $column
+     * @param string $table
+     * @param string $column
      * @return string
      */
     public function getColumnType($table, $column)
@@ -135,7 +135,7 @@ class Builder
     /**
      * Get the column listing for a given table.
      *
-     * @param  string $table
+     * @param string $table
      * @return array
      */
     public function getColumnListing($table)
@@ -198,7 +198,6 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     *
      * @throws \LogicException
      */
     public function dropAllTables()
@@ -208,7 +207,6 @@ class Builder
 
     /**
      * Drop all views from the database.
-     *
      *
      * @throws \LogicException
      */
@@ -297,7 +295,7 @@ class Builder
     /**
      * Create a new command set with a Closure.
      *
-     * @param  string                            $table
+     * @param string $table
      * @return \Hyperf\Database\Schema\Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)

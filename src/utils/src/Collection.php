@@ -218,7 +218,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the mode of a given key.
      *
-     * @param  null|mixed $key
+     * @param null|mixed $key
      * @return null|array
      */
     public function mode($key = null)
@@ -387,8 +387,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Determine if all items in the collection pass the given test.
      *
      * @param callable|string $key
-     * @param null|mixed      $operator
-     * @param null|mixed      $value
+     * @param null|mixed $operator
+     * @param null|mixed $value
      */
     public function every($key, $operator = null, $value = null): bool
     {
@@ -902,8 +902,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Partition the collection into two arrays using the given callback or key.
      *
      * @param callable|string $key
-     * @param null|mixed      $operator
-     * @param null|mixed      $value
+     * @param null|mixed $operator
+     * @param null|mixed $value
      */
     public function partition($key, $operator = null, $value = null): self
     {

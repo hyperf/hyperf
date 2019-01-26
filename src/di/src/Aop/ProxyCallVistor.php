@@ -130,8 +130,8 @@ class ProxyCallVistor extends NodeVisitorAbstract
     }
 
     /**
-     * @param array  $namespaces the namespaces that the current class imported
-     * @param string $trait      the full namespace of trait or the trait name
+     * @param array $namespaces the namespaces that the current class imported
+     * @param string $trait the full namespace of trait or the trait name
      */
     private function isMatchUseTrait(array $namespaces, string $trait): bool
     {

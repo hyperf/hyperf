@@ -18,7 +18,7 @@ interface Scope
      * Apply the scope to a given Model query builder.
      *
      * @param \Hyperf\Database\Model\Builder $builder
-     * @param \Hyperf\Database\Model\Model   $model
+     * @param \Hyperf\Database\Model\Model $model
      */
     public function apply(Builder $builder, Model $model);
 }

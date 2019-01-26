@@ -31,7 +31,7 @@ class HasOneThrough extends HasManyThrough
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -46,7 +46,7 @@ class HasOneThrough extends HasManyThrough
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)

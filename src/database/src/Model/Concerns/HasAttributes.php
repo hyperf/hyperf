@@ -257,7 +257,7 @@ trait HasAttributes
     /**
      * Determine if a get mutator exists for an attribute.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function hasGetMutator($key)
@@ -305,7 +305,7 @@ trait HasAttributes
     /**
      * Determine if a set mutator exists for an attribute.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function hasSetMutator($key)
@@ -316,7 +316,7 @@ trait HasAttributes
     /**
      * Set a given JSON attribute on the model.
      *
-     * @param  string $key
+     * @param string $key
      * @return $this
      */
     public function fillJsonAttribute($key, $value)
@@ -336,7 +336,7 @@ trait HasAttributes
      * Decode the given JSON back into an array or object.
      *
      * @param string $value
-     * @param bool   $asObject
+     * @param bool $asObject
      */
     public function fromJson($value, $asObject = false)
     {
@@ -399,7 +399,7 @@ trait HasAttributes
     /**
      * Set the date format used by the model.
      *
-     * @param  string $format
+     * @param string $format
      * @return $this
      */
     public function setDateFormat($format)
@@ -412,8 +412,8 @@ trait HasAttributes
     /**
      * Determine whether an attribute should be cast to a native type.
      *
-     * @param  string            $key
-     * @param  null|array|string $types
+     * @param string $key
+     * @param null|array|string $types
      * @return bool
      */
     public function hasCast($key, $types = null)
@@ -452,7 +452,7 @@ trait HasAttributes
     /**
      * Set the array of model attributes. No checking is done.
      *
-     * @param  bool  $sync
+     * @param bool $sync
      * @return $this
      */
     public function setRawAttributes(array $attributes, $sync = false)
@@ -469,8 +469,8 @@ trait HasAttributes
     /**
      * Get the model's original attribute values.
      *
-     * @param  null|string $key
-     * @param  null|mixed  $default
+     * @param null|string $key
+     * @param null|mixed $default
      * @return array|mixed
      */
     public function getOriginal($key = null, $default = null)
@@ -481,7 +481,7 @@ trait HasAttributes
     /**
      * Get a subset of the model's attributes.
      *
-     * @param  array|mixed $attributes
+     * @param array|mixed $attributes
      * @return array
      */
     public function only($attributes)
@@ -510,7 +510,7 @@ trait HasAttributes
     /**
      * Sync a single original attribute with its current value.
      *
-     * @param  string $attribute
+     * @param string $attribute
      * @return $this
      */
     public function syncOriginalAttribute($attribute)
@@ -521,7 +521,7 @@ trait HasAttributes
     /**
      * Sync multiple original attribute with their current values.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function syncOriginalAttributes($attributes)
@@ -550,7 +550,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have been modified.
      *
-     * @param  null|array|string $attributes
+     * @param null|array|string $attributes
      * @return bool
      */
     public function isDirty($attributes = null)
@@ -564,7 +564,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have remained the same.
      *
-     * @param  null|array|string $attributes
+     * @param null|array|string $attributes
      * @return bool
      */
     public function isClean($attributes = null)
@@ -575,7 +575,7 @@ trait HasAttributes
     /**
      * Determine if the model or given attribute(s) have been modified.
      *
-     * @param  null|array|string $attributes
+     * @param null|array|string $attributes
      * @return bool
      */
     public function wasChanged($attributes = null)
@@ -617,7 +617,7 @@ trait HasAttributes
     /**
      * Determine if the new and old values for a given key are equivalent.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function originalIsEquivalent($key, $current)
@@ -650,7 +650,7 @@ trait HasAttributes
     /**
      * Append attributes to query when building a query.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function append($attributes)
@@ -945,7 +945,7 @@ trait HasAttributes
     /**
      * Get the type of cast for a model attribute.
      *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
     protected function getCastType($key)
@@ -964,7 +964,7 @@ trait HasAttributes
     /**
      * Determine if the cast type is a custom date time cast.
      *
-     * @param  string $cast
+     * @param string $cast
      * @return bool
      */
     protected function isCustomDateTimeCast($cast)
@@ -976,7 +976,7 @@ trait HasAttributes
     /**
      * Determine if the cast type is a decimal cast.
      *
-     * @param  string $cast
+     * @param string $cast
      * @return bool
      */
     protected function isDecimalCast($cast)
@@ -997,7 +997,7 @@ trait HasAttributes
     /**
      * Determine if the given attribute is a date or date castable.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     protected function isDateAttribute($key)
@@ -1009,8 +1009,8 @@ trait HasAttributes
     /**
      * Get an array attribute with the given key and value set.
      *
-     * @param  string $path
-     * @param  string $key
+     * @param string $path
+     * @param string $key
      * @return $this
      */
     protected function getArrayAttributeWithValue($path, $key, $value)
@@ -1023,7 +1023,7 @@ trait HasAttributes
     /**
      * Get an array attribute or return an empty array if it is not set.
      *
-     * @param  string $key
+     * @param string $key
      * @return array
      */
     protected function getArrayAttributeByKey($key)
@@ -1035,7 +1035,7 @@ trait HasAttributes
     /**
      * Cast the given attribute to JSON.
      *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
     protected function castAttributeAsJson($key, $value)
@@ -1066,8 +1066,8 @@ trait HasAttributes
     /**
      * Return a decimal as string.
      *
-     * @param  float  $value
-     * @param  int    $decimals
+     * @param float $value
+     * @param int $decimals
      * @return string
      */
     protected function asDecimal($value, $decimals)
@@ -1135,7 +1135,7 @@ trait HasAttributes
     /**
      * Determine if the given value is a standard date format.
      *
-     * @param  string $value
+     * @param string $value
      * @return bool
      */
     protected function isStandardDateFormat($value)
@@ -1166,7 +1166,7 @@ trait HasAttributes
     /**
      * Determine whether a value is Date / DateTime castable for inbound manipulation.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     protected function isDateCastable($key)
@@ -1177,7 +1177,7 @@ trait HasAttributes
     /**
      * Determine whether a value is JSON castable for inbound manipulation.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     protected function isJsonCastable($key)
@@ -1188,8 +1188,8 @@ trait HasAttributes
     /**
      * Determine if the given attributes were changed.
      *
-     * @param  array             $changes
-     * @param  null|array|string $attributes
+     * @param array $changes
+     * @param null|array|string $attributes
      * @return bool
      */
     protected function hasChanges($changes, $attributes = null)

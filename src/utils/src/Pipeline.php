@@ -142,7 +142,7 @@ class Pipeline
     /**
      * Parse full pipe string to get name and parameters.
      *
-     * @param  string $pipe
+     * @param string $pipe
      * @return array
      */
     protected function parsePipeString($pipe)

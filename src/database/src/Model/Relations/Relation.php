@@ -81,7 +81,7 @@ abstract class Relation
      * Handle dynamic method calls to the relationship.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      */
     public function __call($method, $parameters)
     {
@@ -138,7 +138,7 @@ abstract class Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     abstract public function initRelation(array $models, $relation);
@@ -146,7 +146,7 @@ abstract class Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     abstract public function match(array $models, Collection $results, $relation);
@@ -169,7 +169,7 @@ abstract class Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array                             $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function get($columns = ['*'])
@@ -220,7 +220,7 @@ abstract class Relation
      *
      * Essentially, these queries compare on column names like whereColumn.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -315,7 +315,7 @@ abstract class Relation
     /**
      * Set or get the morph map for polymorphic relations.
      *
-     * @param  bool  $merge
+     * @param bool $merge
      * @return array
      */
     public static function morphMap(array $map = null, $merge = true)
@@ -333,7 +333,7 @@ abstract class Relation
     /**
      * Get the model associated with a custom polymorphic type.
      *
-     * @param  string      $alias
+     * @param string $alias
      * @return null|string
      */
     public static function getMorphedModel($alias)
@@ -344,7 +344,7 @@ abstract class Relation
     /**
      * Get all of the primary keys for an array of models.
      *
-     * @param  string $key
+     * @param string $key
      * @return array
      */
     protected function getKeys(array $models, $key = null)
@@ -357,7 +357,7 @@ abstract class Relation
     /**
      * Get the name of the "where in" method for eager loading.
      *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
     protected function whereInMethod(Model $model, $key)
@@ -372,7 +372,7 @@ abstract class Relation
     /**
      * Builds a table-keyed array from model class names.
      *
-     * @param  null|string[] $models
+     * @param null|string[] $models
      * @return null|array
      */
     protected static function buildMorphMapFromModels(array $models = null)

@@ -33,7 +33,7 @@ class Register
     /**
      * Resolve a connection instance.
      *
-     * @param  null|string         $connection
+     * @param null|string $connection
      * @return ConnectionInterface
      */
     public static function resolveConnection($connection = null)

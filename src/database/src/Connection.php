@@ -166,8 +166,8 @@ class Connection implements ConnectionInterface
      * Create a new database connection instance.
      *
      * @param \Closure|\PDO $pdo
-     * @param string        $database
-     * @param string        $tablePrefix
+     * @param string $database
+     * @param string $tablePrefix
      */
     public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
     {
@@ -469,8 +469,8 @@ class Connection implements ConnectionInterface
     /**
      * Log a query in the connection's query log.
      *
-     * @param string     $query
-     * @param array      $bindings
+     * @param string $query
+     * @param array $bindings
      * @param null|float $time
      */
     public function logQuery($query, $bindings, $time = null)
@@ -484,7 +484,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Reconnect to the database.
-     *
      *
      * @throws \LogicException
      */
@@ -548,8 +547,8 @@ class Connection implements ConnectionInterface
     /**
      * Get a Doctrine Schema Column instance.
      *
-     * @param  string                       $table
-     * @param  string                       $column
+     * @param string $table
+     * @param string $column
      * @return \Doctrine\DBAL\Schema\Column
      */
     public function getDoctrineColumn($table, $column)
@@ -628,7 +627,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection.
      *
-     * @param  null|\Closure|\PDO $pdo
+     * @param null|\Closure|\PDO $pdo
      * @return $this
      */
     public function setPdo($pdo)
@@ -643,7 +642,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection used for reading.
      *
-     * @param  null|\Closure|\PDO $pdo
+     * @param null|\Closure|\PDO $pdo
      * @return $this
      */
     public function setReadPdo($pdo)
@@ -708,7 +707,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param  \Hyperf\Database\Query\Grammars\Grammar $grammar
+     * @param \Hyperf\Database\Query\Grammars\Grammar $grammar
      * @return $this
      */
     public function setQueryGrammar(Query\Grammars\Grammar $grammar)
@@ -731,7 +730,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param  \Hyperf\Database\Schema\Grammars\Grammar $grammar
+     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return $this
      */
     public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
@@ -860,7 +859,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the name of the connected database.
      *
-     * @param  string $database
+     * @param string $database
      * @return $this
      */
     public function setDatabaseName($database)
@@ -883,7 +882,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix in use by the connection.
      *
-     * @param  string $prefix
+     * @param string $prefix
      * @return $this
      */
     public function setTablePrefix($prefix)
@@ -898,7 +897,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix and return the grammar.
      *
-     * @param  \Hyperf\Database\Grammar $grammar
+     * @param \Hyperf\Database\Grammar $grammar
      * @return \Hyperf\Database\Grammar
      */
     public function withTablePrefix(Grammar $grammar)
@@ -977,7 +976,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the PDO connection to use for a select query.
      *
-     * @param  bool $useReadPdo
+     * @param bool $useReadPdo
      * @return \PDO
      */
     protected function getPdoForSelect($useReadPdo = true)
@@ -988,7 +987,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param  \Closure $callback
+     * @param \Closure $callback
      * @return array
      */
     protected function withFreshQueryLog($callback)
@@ -1015,8 +1014,8 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
-     * @param  string         $query
-     * @param  array          $bindings
+     * @param string $query
+     * @param array $bindings
      * @throws QueryException
      */
     protected function run($query, $bindings, Closure $callback)
@@ -1054,8 +1053,8 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
-     * @param  string         $query
-     * @param  array          $bindings
+     * @param string $query
+     * @param array $bindings
      * @throws QueryException
      */
     protected function runQueryCallback($query, $bindings, Closure $callback)
@@ -1084,7 +1083,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param  int   $start
+     * @param int $start
      * @return float
      */
     protected function getElapsedTime($start)
@@ -1096,8 +1095,8 @@ class Connection implements ConnectionInterface
      * Handle a query exception.
      *
      * @param \Exception $e
-     * @param string     $query
-     * @param array      $bindings
+     * @param string $query
+     * @param array $bindings
      *
      * @throws \Exception
      */
@@ -1118,8 +1117,8 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
-     * @param  string         $query
-     * @param  array          $bindings
+     * @param string $query
+     * @param array $bindings
      * @throws QueryException
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
@@ -1146,7 +1145,7 @@ class Connection implements ConnectionInterface
     /**
      * Fire an event for this connection.
      *
-     * @param  string     $event
+     * @param string $event
      * @return null|array
      */
     protected function fireConnectionEvent($event)

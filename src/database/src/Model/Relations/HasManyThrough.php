@@ -139,7 +139,7 @@ class HasManyThrough extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -154,7 +154,7 @@ class HasManyThrough extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -219,7 +219,7 @@ class HasManyThrough extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                                         $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
      */
@@ -235,7 +235,7 @@ class HasManyThrough extends Relation
     /**
      * Find a related model by its primary key.
      *
-     * @param  array                                                               $columns
+     * @param array $columns
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
@@ -254,7 +254,7 @@ class HasManyThrough extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param  array                             $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -272,7 +272,7 @@ class HasManyThrough extends Relation
     /**
      * Find a related model by its primary key or throw an exception.
      *
-     * @param  array                                                          $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
@@ -302,7 +302,7 @@ class HasManyThrough extends Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array                             $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function get($columns = ['*'])
@@ -324,10 +324,10 @@ class HasManyThrough extends Relation
     /**
      * Get a paginator for the "select" statement.
      *
-     * @param  int                                               $perPage
-     * @param  array                                             $columns
-     * @param  string                                            $pageName
-     * @param  int                                               $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param int $page
      * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -340,10 +340,10 @@ class HasManyThrough extends Relation
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int                                    $perPage
-     * @param  array                                  $columns
-     * @param  string                                 $pageName
-     * @param  null|int                               $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null|int $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -356,7 +356,7 @@ class HasManyThrough extends Relation
     /**
      * Chunk the results of the query.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -377,7 +377,7 @@ class HasManyThrough extends Relation
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function each(callable $callback, $count = 1000)
@@ -394,7 +394,7 @@ class HasManyThrough extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -419,7 +419,7 @@ class HasManyThrough extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -444,7 +444,7 @@ class HasManyThrough extends Relation
     /**
      * Add the constraints for a relationship query on the same table as the through parent.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForThroughSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -606,7 +606,7 @@ class HasManyThrough extends Relation
     /**
      * Prepare the query builder for query execution.
      *
-     * @param  array                          $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Builder
      */
     protected function prepareQueryBuilder($columns = ['*'])

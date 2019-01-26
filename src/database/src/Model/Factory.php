@@ -64,7 +64,7 @@ class Factory implements ArrayAccess
     /**
      * Create a new factory container.
      *
-     * @param  null|string $pathToFactories
+     * @param null|string $pathToFactories
      * @return static
      */
     public static function construct(Faker $faker, $pathToFactories = null)
@@ -77,8 +77,8 @@ class Factory implements ArrayAccess
     /**
      * Define a class with a given short-name.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return $this
      */
     public function defineAs($class, $name, callable $attributes)
@@ -89,8 +89,8 @@ class Factory implements ArrayAccess
     /**
      * Define a class with a given set of attributes.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return $this
      */
     public function define($class, callable $attributes, $name = 'default')
@@ -103,9 +103,9 @@ class Factory implements ArrayAccess
     /**
      * Define a state with a given set of attributes.
      *
-     * @param  string         $class
-     * @param  string         $state
-     * @param  array|callable $attributes
+     * @param string $class
+     * @param string $state
+     * @param array|callable $attributes
      * @return $this
      */
     public function state($class, $state, $attributes)
@@ -118,8 +118,8 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after making a model.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return $this
      */
     public function afterMaking($class, callable $callback, $name = 'default')
@@ -132,8 +132,8 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after making a model with given state.
      *
-     * @param  string $class
-     * @param  string $state
+     * @param string $class
+     * @param string $state
      * @return $this
      */
     public function afterMakingState($class, $state, callable $callback)
@@ -144,8 +144,8 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after creating a model.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return $this
      */
     public function afterCreating($class, callable $callback, $name = 'default')
@@ -158,8 +158,8 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after creating a model with given state.
      *
-     * @param  string $class
-     * @param  string $state
+     * @param string $class
+     * @param string $state
      * @return $this
      */
     public function afterCreatingState($class, $state, callable $callback)
@@ -212,8 +212,8 @@ class Factory implements ArrayAccess
     /**
      * Get the raw attribute array for a given named model.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return array
      */
     public function rawOf($class, $name, array $attributes = [])
@@ -224,8 +224,8 @@ class Factory implements ArrayAccess
     /**
      * Get the raw attribute array for a given model.
      *
-     * @param  string $class
-     * @param  string $name
+     * @param string $class
+     * @param string $name
      * @return array
      */
     public function raw($class, array $attributes = [], $name = 'default')
@@ -239,8 +239,8 @@ class Factory implements ArrayAccess
     /**
      * Create a builder for the given model.
      *
-     * @param  string                                $class
-     * @param  string                                $name
+     * @param string $class
+     * @param string $name
      * @return \Hyperf\Database\Model\FactoryBuilder
      */
     public function of($class, $name = 'default')
@@ -259,7 +259,7 @@ class Factory implements ArrayAccess
     /**
      * Load factories from path.
      *
-     * @param  string $path
+     * @param string $path
      * @return $this
      */
     public function load($path)
@@ -278,7 +278,7 @@ class Factory implements ArrayAccess
     /**
      * Determine if the given offset exists.
      *
-     * @param  string $offset
+     * @param string $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -299,7 +299,7 @@ class Factory implements ArrayAccess
     /**
      * Set the given offset to the given value.
      *
-     * @param string   $offset
+     * @param string $offset
      * @param callable $value
      */
     public function offsetSet($offset, $value)

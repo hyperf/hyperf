@@ -66,7 +66,7 @@ class DatabaseManager implements ConnectionResolverInterface
      * Dynamically pass methods to the default connection.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      */
     public function __call($method, $parameters)
     {
@@ -76,7 +76,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param  string                      $name
+     * @param string $name
      * @return \Hyperf\Database\Connection
      */
     public function connection($name = null)
@@ -127,7 +127,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Reconnect to the given database.
      *
-     * @param  string                      $name
+     * @param string $name
      * @return \Hyperf\Database\Connection
      */
     public function reconnect($name = null)
@@ -207,7 +207,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Parse the connection into an array of the name and read / write type.
      *
-     * @param  string $name
+     * @param string $name
      * @return array
      */
     protected function parseConnectionName($name)
@@ -221,7 +221,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Make the database connection instance.
      *
-     * @param  string                      $name
+     * @param string $name
      * @return \Hyperf\Database\Connection
      */
     protected function makeConnection($name)
@@ -248,7 +248,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Get the configuration for a connection.
      *
-     * @param  string                    $name
+     * @param string $name
      * @throws \InvalidArgumentException
      * @return array
      */
@@ -271,8 +271,8 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Prepare the database connection instance.
      *
-     * @param  \Hyperf\Database\Connection $connection
-     * @param  string                      $type
+     * @param \Hyperf\Database\Connection $connection
+     * @param string $type
      * @return \Hyperf\Database\Connection
      */
     protected function configure(Connection $connection, $type)
@@ -299,8 +299,8 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Prepare the read / write mode for database connection instance.
      *
-     * @param  \Hyperf\Database\Connection $connection
-     * @param  string                      $type
+     * @param \Hyperf\Database\Connection $connection
+     * @param string $type
      * @return \Hyperf\Database\Connection
      */
     protected function setPdoForType(Connection $connection, $type = null)
@@ -317,7 +317,7 @@ class DatabaseManager implements ConnectionResolverInterface
     /**
      * Refresh the PDO connections on a given connection.
      *
-     * @param  string                      $name
+     * @param string $name
      * @return \Hyperf\Database\Connection
      */
     protected function refreshPdoConnections($name)

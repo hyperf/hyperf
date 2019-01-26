@@ -67,7 +67,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile the random statement into SQL.
      *
-     * @param  string $seed
+     * @param string $seed
      * @return string
      */
     public function compileRandom($seed)
@@ -78,7 +78,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile an update statement into SQL.
      *
-     * @param  array  $values
+     * @param array $values
      * @return string
      */
     public function compileUpdate(Builder $query, $values)
@@ -172,8 +172,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a "JSON contains" statement into SQL.
      *
-     * @param  string $column
-     * @param  string $value
+     * @param string $column
+     * @param string $value
      * @return string
      */
     protected function compileJsonContains($column, $value)
@@ -186,9 +186,9 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a "JSON length" statement into SQL.
      *
-     * @param  string $column
-     * @param  string $operator
-     * @param  string $value
+     * @param string $column
+     * @param string $operator
+     * @param string $value
      * @return string
      */
     protected function compileJsonLength($column, $operator, $value)
@@ -213,7 +213,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile the lock into SQL.
      *
-     * @param  bool|string $value
+     * @param bool|string $value
      * @return string
      */
     protected function compileLock(Builder $query, $value)
@@ -228,7 +228,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile all of the columns for an update statement.
      *
-     * @param  array  $values
+     * @param array $values
      * @return string
      */
     protected function compileUpdateColumns($values)
@@ -245,7 +245,7 @@ class MySqlGrammar extends Grammar
     /**
      * Prepares a JSON column being updated using the JSON_SET function.
      *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
     protected function compileJsonUpdateColumn($key, JsonExpression $value)
@@ -258,9 +258,9 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that does not use joins.
      *
-     * @param  \Hyperf\Database\Query\Builder $query
-     * @param  string                         $table
-     * @param  array                          $where
+     * @param \Hyperf\Database\Query\Builder $query
+     * @param string $table
+     * @param array $where
      * @return string
      */
     protected function compileDeleteWithoutJoins($query, $table, $where)
@@ -284,9 +284,9 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that uses joins.
      *
-     * @param  \Hyperf\Database\Query\Builder $query
-     * @param  string                         $table
-     * @param  array                          $where
+     * @param \Hyperf\Database\Query\Builder $query
+     * @param string $table
+     * @param array $where
      * @return string
      */
     protected function compileDeleteWithJoins($query, $table, $where)
@@ -302,7 +302,7 @@ class MySqlGrammar extends Grammar
     /**
      * Wrap a single string in keyword identifiers.
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     protected function wrapValue($value)
@@ -313,7 +313,7 @@ class MySqlGrammar extends Grammar
     /**
      * Wrap the given JSON selector.
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     protected function wrapJsonSelector($value)

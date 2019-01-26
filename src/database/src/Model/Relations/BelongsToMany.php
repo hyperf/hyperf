@@ -193,7 +193,7 @@ class BelongsToMany extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function initRelation(array $models, $relation)
@@ -208,7 +208,7 @@ class BelongsToMany extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  string $relation
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -243,7 +243,7 @@ class BelongsToMany extends Relation
     /**
      * Specify the custom pivot model to use for the relationship.
      *
-     * @param  string $class
+     * @param string $class
      * @return $this
      */
     public function using($class)
@@ -256,7 +256,7 @@ class BelongsToMany extends Relation
     /**
      * Specify the custom pivot accessor to use for the relationship.
      *
-     * @param  string $accessor
+     * @param string $accessor
      * @return $this
      */
     public function as($accessor)
@@ -269,10 +269,10 @@ class BelongsToMany extends Relation
     /**
      * Set a where clause for a pivot table column.
      *
-     * @param  string     $column
-     * @param  string     $operator
-     * @param  string     $boolean
-     * @param  null|mixed $value
+     * @param string $column
+     * @param string $operator
+     * @param string $boolean
+     * @param null|mixed $value
      * @return $this
      */
     public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
@@ -285,9 +285,9 @@ class BelongsToMany extends Relation
     /**
      * Set a "where in" clause for a pivot table column.
      *
-     * @param  string $column
-     * @param  string $boolean
-     * @param  bool   $not
+     * @param string $column
+     * @param string $boolean
+     * @param bool $not
      * @return $this
      */
     public function wherePivotIn($column, $values, $boolean = 'and', $not = false)
@@ -300,9 +300,9 @@ class BelongsToMany extends Relation
     /**
      * Set an "or where" clause for a pivot table column.
      *
-     * @param  string     $column
-     * @param  string     $operator
-     * @param  null|mixed $value
+     * @param string $column
+     * @param string $operator
+     * @param null|mixed $value
      * @return $this
      */
     public function orWherePivot($column, $operator = null, $value = null)
@@ -315,8 +315,8 @@ class BelongsToMany extends Relation
      *
      * In addition, new pivot records will receive this value.
      *
-     * @param  array|string $column
-     * @param  null|mixed   $value
+     * @param array|string $column
+     * @param null|mixed $value
      * @return $this
      */
     public function withPivotValue($column, $value = null)
@@ -341,7 +341,7 @@ class BelongsToMany extends Relation
     /**
      * Set an "or where in" clause for a pivot table column.
      *
-     * @param  string $column
+     * @param string $column
      * @return $this
      */
     public function orWherePivotIn($column, $values)
@@ -352,7 +352,7 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key or return new instance of the related model.
      *
-     * @param  array                                                 $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])
@@ -381,7 +381,7 @@ class BelongsToMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  bool                         $touch
+     * @param bool $touch
      * @return \Hyperf\Database\Model\Model
      */
     public function firstOrCreate(array $attributes, array $joining = [], $touch = true)
@@ -396,7 +396,7 @@ class BelongsToMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  bool                         $touch
+     * @param bool $touch
      * @return \Hyperf\Database\Model\Model
      */
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true)
@@ -415,7 +415,7 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key.
      *
-     * @param  array                                                               $columns
+     * @param array $columns
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
@@ -430,7 +430,7 @@ class BelongsToMany extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param  array                             $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -444,7 +444,7 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key or throw an exception.
      *
-     * @param  array                                                          $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
@@ -478,7 +478,7 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array                                         $columns
+     * @param array $columns
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
      */
@@ -502,7 +502,7 @@ class BelongsToMany extends Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array                             $columns
+     * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
     public function get($columns = ['*'])
@@ -533,10 +533,10 @@ class BelongsToMany extends Relation
     /**
      * Get a paginator for the "select" statement.
      *
-     * @param  int                                               $perPage
-     * @param  array                                             $columns
-     * @param  string                                            $pageName
-     * @param  null|int                                          $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null|int $page
      * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -551,10 +551,10 @@ class BelongsToMany extends Relation
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int                                    $perPage
-     * @param  array                                  $columns
-     * @param  string                                 $pageName
-     * @param  null|int                               $page
+     * @param int $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null|int $page
      * @return \Hyperf\Contracts\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
@@ -569,7 +569,7 @@ class BelongsToMany extends Relation
     /**
      * Chunk the results of the query.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -586,7 +586,7 @@ class BelongsToMany extends Relation
     /**
      * Execute a callback over each item while chunking.
      *
-     * @param  int  $count
+     * @param int $count
      * @return bool
      */
     public function each(callable $callback, $count = 1000)
@@ -648,7 +648,7 @@ class BelongsToMany extends Relation
     /**
      * Save a new model and attach it to the parent model.
      *
-     * @param  bool                         $touch
+     * @param bool $touch
      * @return \Hyperf\Database\Model\Model
      */
     public function save(Model $model, array $pivotAttributes = [], $touch = true)
@@ -663,7 +663,7 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param  array|\Hyperf\Utils\Collection $models
+     * @param array|\Hyperf\Utils\Collection $models
      * @return array
      */
     public function saveMany($models, array $pivotAttributes = [])
@@ -680,7 +680,7 @@ class BelongsToMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @param  bool                         $touch
+     * @param bool $touch
      * @return \Hyperf\Database\Model\Model
      */
     public function create(array $attributes = [], array $joining = [], $touch = true)
@@ -718,7 +718,7 @@ class BelongsToMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -735,7 +735,7 @@ class BelongsToMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  array|mixed                    $columns
+     * @param array|mixed $columns
      * @return \Hyperf\Database\Model\Builder
      */
     public function getRelationExistenceQueryForSelfJoin(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -774,8 +774,8 @@ class BelongsToMany extends Relation
     /**
      * Specify that the pivot table has creation and update timestamps.
      *
-     * @param  null|mixed $createdAt
-     * @param  null|mixed $updatedAt
+     * @param null|mixed $createdAt
+     * @param null|mixed $updatedAt
      * @return $this
      */
     public function withTimestamps($createdAt = null, $updatedAt = null)
@@ -911,7 +911,7 @@ class BelongsToMany extends Relation
     /**
      * Set the join clause for the relation query.
      *
-     * @param  null|\Hyperf\Database\Model\Builder $query
+     * @param null|\Hyperf\Database\Model\Builder $query
      * @return $this
      */
     protected function performJoin($query = null)

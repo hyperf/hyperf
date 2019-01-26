@@ -58,11 +58,11 @@ class ObjectResolver implements ResolverInterface
     /**
      * Resolve a definition to a value.
      *
-     * @param  DefinitionInterface        $definition object that defines how the value should be obtained
-     * @param  array                      $parameters optional parameters to use to build the entry
+     * @param DefinitionInterface $definition object that defines how the value should be obtained
+     * @param array $parameters optional parameters to use to build the entry
      * @throws DependencyException
      * @throws InvalidDefinitionException
-     * @return mixed                      value obtained from the definition
+     * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
@@ -73,7 +73,7 @@ class ObjectResolver implements ResolverInterface
      * Check if a definition can be resolved.
      *
      * @param ObjectDefinition $definition object that defines how the value should be obtained
-     * @param array            $parameters optional parameters to use to build the entry
+     * @param array $parameters optional parameters to use to build the entry
      */
     public function isResolvable(DefinitionInterface $definition, array $parameters = []): bool
     {

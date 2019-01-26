@@ -259,7 +259,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile the SQL needed to drop all tables.
      *
-     * @param  array  $tables
+     * @param array $tables
      * @return string
      */
     public function compileDropAllTables($tables)
@@ -270,7 +270,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile the SQL needed to drop all views.
      *
-     * @param  array  $views
+     * @param array $views
      * @return string
      */
     public function compileDropAllViews($views)
@@ -401,9 +401,9 @@ class MySqlGrammar extends Grammar
     /**
      * Create the main create table clause.
      *
-     * @param  \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param  \Hyperf\Utils\Fluent              $command
-     * @param  \Hyperf\Database\Connection       $connection
+     * @param \Hyperf\Database\Schema\Blueprint $blueprint
+     * @param \Hyperf\Utils\Fluent $command
+     * @param \Hyperf\Database\Connection $connection
      * @return string
      */
     protected function compileCreateTable($blueprint, $command, $connection)
@@ -419,7 +419,7 @@ class MySqlGrammar extends Grammar
     /**
      * Append the character set specifications to a command.
      *
-     * @param  string $sql
+     * @param string $sql
      * @return string
      */
     protected function compileCreateEncoding($sql, Connection $connection, Blueprint $blueprint)
@@ -448,7 +448,7 @@ class MySqlGrammar extends Grammar
     /**
      * Append the engine specifications to a command.
      *
-     * @param  string $sql
+     * @param string $sql
      * @return string
      */
     protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
@@ -466,7 +466,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile an index creation command.
      *
-     * @param  string $type
+     * @param string $type
      * @return string
      */
     protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
@@ -926,7 +926,7 @@ class MySqlGrammar extends Grammar
     /**
      * Wrap a single string in keyword identifiers.
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     protected function wrapValue($value)

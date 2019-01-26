@@ -52,7 +52,7 @@ class MorphPivot extends Pivot
     /**
      * Set the morph type for the pivot.
      *
-     * @param  string $morphType
+     * @param string $morphType
      * @return $this
      */
     public function setMorphType($morphType)
@@ -65,7 +65,7 @@ class MorphPivot extends Pivot
     /**
      * Set the morph class for the pivot.
      *
-     * @param  string                                      $morphClass
+     * @param string $morphClass
      * @return \Hyperf\Database\Model\Relations\MorphPivot
      */
     public function setMorphClass($morphClass)
@@ -98,7 +98,7 @@ class MorphPivot extends Pivot
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
-     * @param  array|int                      $ids
+     * @param array|int $ids
      * @return \Hyperf\Database\Model\Builder
      */
     public function newQueryForRestoration($ids)
@@ -135,7 +135,7 @@ class MorphPivot extends Pivot
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
-     * @param  array<int>                     $ids
+     * @param array<int> $ids
      * @return \Hyperf\Database\Model\Builder
      */
     protected function newQueryForCollectionRestoration(array $ids)

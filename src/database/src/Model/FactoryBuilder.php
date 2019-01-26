@@ -117,7 +117,7 @@ class FactoryBuilder
     /**
      * Set the amount of models you wish to create / make.
      *
-     * @param  int   $amount
+     * @param int $amount
      * @return $this
      */
     public function times($amount)
@@ -130,7 +130,7 @@ class FactoryBuilder
     /**
      * Set the state to be applied to the model.
      *
-     * @param  string $state
+     * @param string $state
      * @return $this
      */
     public function state($state)
@@ -141,7 +141,7 @@ class FactoryBuilder
     /**
      * Set the states to be applied to the model.
      *
-     * @param  array|mixed $states
+     * @param array|mixed $states
      * @return $this
      */
     public function states($states)
@@ -154,7 +154,7 @@ class FactoryBuilder
     /**
      * Set the database connection on which the model instance should be persisted.
      *
-     * @param  string $name
+     * @param string $name
      * @return $this
      */
     public function connection($name)
@@ -277,7 +277,6 @@ class FactoryBuilder
     /**
      * Get a raw attributes array for the model.
      *
-     *
      * @throws \InvalidArgumentException
      */
     protected function getRawAttributes(array $attributes = [])
@@ -346,7 +345,7 @@ class FactoryBuilder
     /**
      * Get the state attributes.
      *
-     * @param  string $state
+     * @param string $state
      * @return array
      */
     protected function stateAttributes($state, array $attributes)
@@ -408,7 +407,7 @@ class FactoryBuilder
      * Call after callbacks for each model and state.
      *
      * @param \Hyperf\Database\Model\Model $model
-     * @param string                       $state
+     * @param string $state
      */
     protected function callAfterCallbacks(array $afterCallbacks, $model, $state)
     {
@@ -424,7 +423,7 @@ class FactoryBuilder
     /**
      * Determine if the given state has an "after" callback.
      *
-     * @param  string $state
+     * @param string $state
      * @return bool
      */
     protected function stateHasAfterCallback($state)

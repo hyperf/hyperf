@@ -101,7 +101,7 @@ trait HidesAttributes
     /**
      * Make the given, typically hidden, attributes visible.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function makeVisible($attributes)
@@ -118,7 +118,7 @@ trait HidesAttributes
     /**
      * Make the given, typically visible, attributes hidden.
      *
-     * @param  array|string $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function makeHidden($attributes)
