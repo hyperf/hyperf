@@ -134,7 +134,7 @@ class ModelCommand extends Command
         $code = $this->printer->prettyPrintFile($stms);
 
         file_put_contents($path, $code);
-        $this->output->writeln(sprintf('<info>Model %s is Created!</info>', $class));
+        $this->output->writeln(sprintf('<info>Model %s was Created!</info>', $class));
     }
 
     protected function getOriginCode($table)
