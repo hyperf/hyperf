@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -23,7 +24,7 @@ class Context
     protected static $container = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function set($id, $value)
     {
@@ -32,7 +33,7 @@ class Context
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function get($id)
     {
@@ -40,7 +41,7 @@ class Context
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function has($id)
     {
@@ -48,9 +49,9 @@ class Context
     }
 
     /**
-     * Destroy the coroutine context
+     * Destroy the coroutine context.
      *
-     * @param int|null $coroutineId If provide a coroutine ID, then will destroy the specified context.
+     * @param null|int $coroutineId if provide a coroutine ID, then will destroy the specified context
      */
     public static function destroy(int $coroutineId = null)
     {
@@ -72,14 +73,13 @@ class Context
         static::$container[$toCoroutineId] = static::$container[$fromCoroutineId];
     }
 
-    protected static function getCoroutineId()
-    {
-        return Coroutine::id();
-    }
-
     public static function getContainer()
     {
         return static::$container;
     }
 
+    protected static function getCoroutineId()
+    {
+        return Coroutine::id();
+    }
 }

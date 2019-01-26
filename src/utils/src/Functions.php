@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -15,9 +16,6 @@ use Hyperf\Utils\Collection;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
-     *
-     * @param  mixed $value
-     * @return mixed
      */
     function value($value)
     {
@@ -28,9 +26,7 @@ if (! function_exists('env')) {
     /**
      * Gets the value of an environment variable.
      *
-     * @param  string $key
-     * @param  mixed $default
-     * @return mixed
+     * @param string $key
      */
     function env($key, $default = null)
     {
@@ -62,15 +58,13 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param  int $times
-     * @param  callable $callback
-     * @param  int $sleep
-     * @return mixed
+     * @param  int        $times
+     * @param  int        $sleep
      * @throws \Exception
      */
     function retry($times, callable $callback, $sleep = 0)
     {
-        $times--;
+        --$times;
         beginning:
         try {
             return $callback();
@@ -78,7 +72,7 @@ if (! function_exists('retry')) {
             if (! $times) {
                 throw $e;
             }
-            $times--;
+            --$times;
             if ($sleep) {
                 usleep($sleep * 1000);
             }
@@ -89,10 +83,6 @@ if (! function_exists('retry')) {
 if (! function_exists('with')) {
     /**
      * Return the given value, optionally passed through the given callback.
-     *
-     * @param  mixed $value
-     * @param  callable|null $callback
-     * @return mixed
      */
     function with($value, callable $callback = null)
     {
@@ -100,16 +90,13 @@ if (! function_exists('with')) {
     }
 }
 
-/**
- * Array helpers
- */
+// Array helpers
 if (! function_exists('array_add')) {
     /**
      * Add an element to an array using "dot" notation if it doesn't exist.
      *
-     * @param  array $array
+     * @param  array  $array
      * @param  string $key
-     * @param  mixed $value
      * @return array
      */
     function array_add($array, $key, $value)
@@ -145,7 +132,7 @@ if (! function_exists('array_dot')) {
     /**
      * Flatten a multi-dimensional associative array with dots.
      *
-     * @param  array $array
+     * @param  array  $array
      * @param  string $prepend
      * @return array
      */
@@ -158,7 +145,7 @@ if (! function_exists('array_except')) {
     /**
      * Get all of the given array except for a specified array of keys.
      *
-     * @param  array $array
+     * @param  array        $array
      * @param  array|string $keys
      * @return array
      */
@@ -171,10 +158,7 @@ if (! function_exists('array_first')) {
     /**
      * Return the first element in an array passing a given truth test.
      *
-     * @param  array $array
-     * @param  callable|null $callback
-     * @param  mixed $default
-     * @return mixed
+     * @param array $array
      */
     function array_first($array, callable $callback = null, $default = null)
     {
@@ -186,7 +170,7 @@ if (! function_exists('array_flatten')) {
      * Flatten a multi-dimensional array into a single level.
      *
      * @param  array $array
-     * @param  int $depth
+     * @param  int   $depth
      * @return array
      */
     function array_flatten($array, $depth = INF)
@@ -198,9 +182,8 @@ if (! function_exists('array_forget')) {
     /**
      * Remove one or many array items from a given array using "dot" notation.
      *
-     * @param  array $array
-     * @param  array|string $keys
-     * @return void
+     * @param array        $array
+     * @param array|string $keys
      */
     function array_forget(&$array, $keys)
     {
@@ -211,10 +194,8 @@ if (! function_exists('array_get')) {
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array $array
-     * @param  string $key
-     * @param  mixed $default
-     * @return mixed
+     * @param array|\ArrayAccess $array
+     * @param string             $key
      */
     function array_get($array, $key, $default = null)
     {
@@ -225,8 +206,8 @@ if (! function_exists('array_has')) {
     /**
      * Check if an item or items exist in an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array $array
-     * @param  string|array $keys
+     * @param  array|\ArrayAccess $array
+     * @param  array|string       $keys
      * @return bool
      */
     function array_has($array, $keys)
@@ -238,10 +219,7 @@ if (! function_exists('array_last')) {
     /**
      * Return the last element in an array passing a given truth test.
      *
-     * @param  array $array
-     * @param  callable|null $callback
-     * @param  mixed $default
-     * @return mixed
+     * @param array $array
      */
     function array_last($array, callable $callback = null, $default = null)
     {
@@ -252,7 +230,7 @@ if (! function_exists('array_only')) {
     /**
      * Get a subset of the items from the given array.
      *
-     * @param  array $array
+     * @param  array        $array
      * @param  array|string $keys
      * @return array
      */
@@ -265,9 +243,9 @@ if (! function_exists('array_pluck')) {
     /**
      * Pluck an array of values from an array.
      *
-     * @param  array $array
-     * @param  string|array $value
-     * @param  string|array|null $key
+     * @param  array             $array
+     * @param  array|string      $value
+     * @param  null|array|string $key
      * @return array
      */
     function array_pluck($array, $value, $key = null)
@@ -280,8 +258,6 @@ if (! function_exists('array_prepend')) {
      * Push an item onto the beginning of an array.
      *
      * @param  array $array
-     * @param  mixed $value
-     * @param  mixed $key
      * @return array
      */
     function array_prepend($array, $value, $key = null)
@@ -293,10 +269,8 @@ if (! function_exists('array_pull')) {
     /**
      * Get a value from the array, and remove it.
      *
-     * @param  array $array
-     * @param  string $key
-     * @param  mixed $default
-     * @return mixed
+     * @param array  $array
+     * @param string $key
      */
     function array_pull(&$array, $key, $default = null)
     {
@@ -307,9 +281,8 @@ if (! function_exists('array_random')) {
     /**
      * Get a random value from an array.
      *
-     * @param  array $array
-     * @param  int|null $num
-     * @return mixed
+     * @param array    $array
+     * @param null|int $num
      */
     function array_random($array, $num = null)
     {
@@ -321,9 +294,8 @@ if (! function_exists('array_set')) {
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param  array $array
+     * @param  array  $array
      * @param  string $key
-     * @param  mixed $value
      * @return array
      */
     function array_set(&$array, $key, $value)
@@ -335,8 +307,8 @@ if (! function_exists('array_sort')) {
     /**
      * Sort the array by the given callback or attribute name.
      *
-     * @param  array $array
-     * @param  callable|string|null $callback
+     * @param  array                $array
+     * @param  null|callable|string $callback
      * @return array
      */
     function array_sort($array, $callback = null)
@@ -361,7 +333,6 @@ if (! function_exists('array_where')) {
      * Filter the array using the given callback.
      *
      * @param  array $array
-     * @param  callable $callback
      * @return array
      */
     function array_where($array, callable $callback)
@@ -373,7 +344,6 @@ if (! function_exists('array_wrap')) {
     /**
      * If the given value is not an array, wrap it in one.
      *
-     * @param  mixed $value
      * @return array
      */
     function array_wrap($value)
@@ -385,7 +355,6 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
-     * @param  mixed $value
      * @return Collection
      */
     function collect($value = null)
@@ -397,10 +366,8 @@ if (! function_exists('data_fill')) {
     /**
      * Fill in data where it's missing.
      *
-     * @param  mixed $target
-     * @param  string|array $key
-     * @param  mixed $value
-     * @return mixed
+     * @param mixed        $target
+     * @param array|string $key
      */
     function data_fill(&$target, $key, $value)
     {
@@ -411,10 +378,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param  mixed $target
-     * @param  string|array $key
-     * @param  mixed $default
-     * @return mixed
+     * @param array|string $key
      */
     function data_get($target, $key, $default = null)
     {
@@ -450,11 +414,9 @@ if (! function_exists('data_set')) {
     /**
      * Set an item on an array or object using dot notation.
      *
-     * @param  mixed $target
-     * @param  string|array $key
-     * @param  mixed $value
-     * @param  bool $overwrite
-     * @return mixed
+     * @param mixed        $target
+     * @param array|string $key
+     * @param bool         $overwrite
      */
     function data_set(&$target, $key, $value, $overwrite = true)
     {
@@ -505,8 +467,7 @@ if (! function_exists('head')) {
     /**
      * Get the first element of an array. Useful for method chaining.
      *
-     * @param  array $array
-     * @return mixed
+     * @param array $array
      */
     function head($array)
     {
@@ -517,8 +478,7 @@ if (! function_exists('last')) {
     /**
      * Get the last element from an array.
      *
-     * @param  array $array
-     * @return mixed
+     * @param array $array
      */
     function last($array)
     {
@@ -529,9 +489,7 @@ if (! function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
      *
-     * @param  mixed $value
-     * @param  callable|null $callback
-     * @return mixed
+     * @param null|callable $callback
      */
     function tap($value, $callback = null)
     {
@@ -547,9 +505,7 @@ if (! function_exists('call')) {
     /**
      * Call a callback with the arguments.
      *
-     * @param mixed $callback
-     * @param array $args
-     * @return mixed|null
+     * @return null|mixed
      */
     function call($callback, array $args = [])
     {
@@ -558,7 +514,7 @@ if (! function_exists('call')) {
             $result = $callback(...$args);
         } elseif (is_array($callback)) {
             [$object, $method] = $callback;
-            $result = is_object($object) ? $object->$method(...$args) : $object::$method(...$args);
+            $result = is_object($object) ? $object->{$method}(...$args) : $object::$method(...$args);
         } else {
             $result = call_user_func_array($callback, $args);
         }
@@ -590,7 +546,7 @@ if (! function_exists('class_basename')) {
     /**
      * Get the class "basename" of the given object / class.
      *
-     * @param  string|object  $class
+     * @param  object|string $class
      * @return string
      */
     function class_basename($class)
@@ -605,7 +561,7 @@ if (! function_exists('trait_uses_recursive')) {
     /**
      * Returns all traits used by a trait and its traits.
      *
-     * @param  string  $trait
+     * @param  string $trait
      * @return array
      */
     function trait_uses_recursive($trait)
@@ -624,7 +580,7 @@ if (! function_exists('class_uses_recursive')) {
     /**
      * Returns all traits used by a class, its parent classes and trait of their traits.
      *
-     * @param  object|string  $class
+     * @param  object|string $class
      * @return array
      */
     function class_uses_recursive($class)

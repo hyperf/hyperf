@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -55,8 +56,6 @@ class Pipeline
 
     /**
      * Set the object being sent through the pipeline.
-     *
-     * @param  mixed $passable
      */
     public function send($passable): self
     {
@@ -68,7 +67,7 @@ class Pipeline
     /**
      * Set the array of pipes.
      *
-     * @param  array|mixed $pipes
+     * @param array|mixed $pipes
      */
     public function through($pipes): self
     {
@@ -118,7 +117,8 @@ class Pipeline
                     // otherwise we'll resolve the pipes out of the container and call it with
                     // the appropriate method and arguments, returning the results back out.
                     return $pipe($passable, $stack);
-                } elseif (! is_object($pipe)) {
+                }
+                if (! is_object($pipe)) {
                     [$name, $parameters] = $this->parsePipeString($pipe);
 
                     // If the pipe is a string we will parse the string and resolve the class out

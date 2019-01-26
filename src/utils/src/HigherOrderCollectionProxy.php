@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -43,8 +44,6 @@ class HigherOrderCollectionProxy
 
     /**
      * Proxy accessing an attribute onto the collection items.
-     *
-     * @return mixed
      */
     public function __get(string $key)
     {
@@ -55,8 +54,6 @@ class HigherOrderCollectionProxy
 
     /**
      * Proxy a method call onto the collection items.
-     *
-     * @return mixed
      */
     public function __call(string $method, array $parameters)
     {

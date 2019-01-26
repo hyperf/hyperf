@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\Utils;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Utils;
 
 use Doctrine\Common\Inflector\Inflector;
 
@@ -61,12 +70,12 @@ class Pluralizer
      * Get the plural form of an English word.
      *
      * @param  string $value
-     * @param  int $count
+     * @param  int    $count
      * @return string
      */
     public static function plural($value, $count = 2)
     {
-        if ((int)abs($count) === 1 || static::uncountable($value)) {
+        if ((int) abs($count) === 1 || static::uncountable($value)) {
             return $value;
         }
 

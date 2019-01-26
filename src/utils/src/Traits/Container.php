@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -19,7 +20,7 @@ trait Container
     protected static $container = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function set($id, $value)
     {
@@ -27,7 +28,7 @@ trait Container
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function get($id)
     {
@@ -35,7 +36,7 @@ trait Container
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function has($id)
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -84,7 +85,7 @@ class Composer
         if (! self::$extra) {
             self::getLockContent();
         }
-        if (null === $key) {
+        if ($key === null) {
             return self::$extra;
         }
         $extra = [];

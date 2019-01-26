@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -59,7 +60,7 @@ class Arr
     /**
      * Cross join the given arrays, returning all possible permutations.
      *
-     * @param  array ...$arrays
+     * @param array ...$arrays
      */
     public static function crossJoin(...$arrays): array
     {
@@ -107,7 +108,7 @@ class Arr
     /**
      * Get all of the given array except for a specified array of keys.
      *
-     * @param  array|string $keys
+     * @param array|string $keys
      */
     public static function except(array $array, $keys): array
     {
@@ -118,8 +119,8 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  \ArrayAccess|array $array
-     * @param  string|int $key
+     * @param array|\ArrayAccess $array
+     * @param int|string         $key
      */
     public static function exists($array, $key): bool
     {
@@ -132,7 +133,7 @@ class Arr
     /**
      * Return the first element in an array passing a given truth test.
      *
-     * @return mixed
+     * @param null|mixed $default
      */
     public static function first(array $array, callable $callback = null, $default = null)
     {
@@ -155,7 +156,7 @@ class Arr
     /**
      * Return the last element in an array passing a given truth test.
      *
-     * @return mixed
+     * @param null|mixed $default
      */
     public static function last(array $array, callable $callback = null, $default = null)
     {
@@ -187,12 +188,12 @@ class Arr
     /**
      * Remove one or many array items from a given array using "dot" notation.
      *
-     * @param  array|string $keys
+     * @param array|string $keys
      */
     public static function forget(array &$array, $keys): void
     {
         $original = &$array;
-        $keys = (array)$keys;
+        $keys = (array) $keys;
         if (count($keys) === 0) {
             return;
         }
@@ -220,8 +221,8 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array $array
-     * @return mixed
+     * @param array|\ArrayAccess $array
+     * @param null|mixed         $default
      */
     public static function get($array, string $key, $default = null)
     {
@@ -250,15 +251,15 @@ class Arr
     /**
      * Check if an item or items exist in an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array $array
-     * @param  string|array $keys
+     * @param array|\ArrayAccess $array
+     * @param array|string       $keys
      */
     public static function has($array, $keys): bool
     {
         if (is_null($keys)) {
             return false;
         }
-        $keys = (array)$keys;
+        $keys = (array) $keys;
         if (! $array) {
             return false;
         }
@@ -294,18 +295,18 @@ class Arr
     /**
      * Get a subset of the items from the given array.
      *
-     * @param  array|string $keys
+     * @param array|string $keys
      */
     public static function only(array $array, $keys): array
     {
-        return array_intersect_key($array, array_flip((array)$keys));
+        return array_intersect_key($array, array_flip((array) $keys));
     }
 
     /**
      * Pluck an array of values from an array.
      *
-     * @param  string|array $value
-     * @param  string|array|null $key
+     * @param array|string      $value
+     * @param null|array|string $key
      */
     public static function pluck(array $array, $value, $key = null): array
     {
@@ -321,7 +322,7 @@ class Arr
             } else {
                 $itemKey = data_get($item, $key);
                 if (is_object($itemKey) && method_exists($itemKey, '__toString')) {
-                    $itemKey = (string)$itemKey;
+                    $itemKey = (string) $itemKey;
                 }
                 $results[$itemKey] = $itemValue;
             }
@@ -331,9 +332,6 @@ class Arr
 
     /**
      * Push an item onto the beginning of an array.
-     *
-     * @param  mixed $value
-     * @param  mixed $key
      */
     public static function prepend(array $array, $value, $key = null): array
     {
@@ -348,7 +346,7 @@ class Arr
     /**
      * Get a value from the array, and remove it.
      *
-     * @return mixed
+     * @param null|mixed $default
      */
     public static function pull(array &$array, string $key, $default = null)
     {
@@ -360,7 +358,6 @@ class Arr
     /**
      * Get one or a specified number of random values from an array.
      *
-     * @return mixed
      * @throws \InvalidArgumentException
      */
     public static function random(array $array, int $number = null)
@@ -373,12 +370,12 @@ class Arr
         if (is_null($number)) {
             return $array[array_rand($array)];
         }
-        if ((int)$number === 0) {
+        if ((int) $number === 0) {
             return [];
         }
         $keys = array_rand($array, $number);
         $results = [];
-        foreach ((array)$keys as $key) {
+        foreach ((array) $keys as $key) {
             $results[] = $array[$key];
         }
         return $results;
@@ -427,7 +424,7 @@ class Arr
     /**
      * Sort the array using the given callback or "dot" notation.
      *
-     * @param  callable|string|null $callback
+     * @param null|callable|string $callback
      */
     public static function sort(array $array, $callback = null): array
     {
@@ -470,8 +467,6 @@ class Arr
 
     /**
      * If the given value is not an array and not null, wrap it in one.
-     *
-     * @param  mixed $value
      */
     public static function wrap($value): array
     {
@@ -482,7 +477,7 @@ class Arr
     }
 
     /**
-     * Make array elements unique
+     * Make array elements unique.
      */
     public static function unique(array $array): array
     {
@@ -505,8 +500,8 @@ class Arr
     /**
      * Explode the "value" and "key" arguments passed to "pluck".
      *
-     * @param  string|array $value
-     * @param  string|array|null $key
+     * @param array|string      $value
+     * @param null|array|string $key
      */
     protected static function explodePluckParameters($value, $key): array
     {

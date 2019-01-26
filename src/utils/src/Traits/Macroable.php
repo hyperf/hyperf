@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -32,9 +33,8 @@ trait Macroable
     /**
      * Dynamically handle calls to the class.
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      *
      * @throws \BadMethodCallException
      */
@@ -58,9 +58,8 @@ trait Macroable
     /**
      * Dynamically handle calls to the class.
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @param string $method
+     * @param array  $parameters
      *
      * @throws \BadMethodCallException
      */
@@ -86,10 +85,8 @@ trait Macroable
     /**
      * Register a custom macro.
      *
-     * @param  string $name
-     * @param  object|callable  $macro
-     *
-     * @return void
+     * @param string          $name
+     * @param callable|object $macro
      */
     public static function macro($name, $macro)
     {
@@ -99,8 +96,7 @@ trait Macroable
     /**
      * Mix another object into the class.
      *
-     * @param  object  $mixin
-     * @return void
+     * @param object $mixin
      *
      * @throws \ReflectionException
      */
@@ -120,7 +116,7 @@ trait Macroable
     /**
      * Checks if macro is registered.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return bool
      */
     public static function hasMacro($name)

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -20,8 +21,6 @@ trait ForwardsCalls
     /**
      * Forward a method call to the given object.
      *
-     * @param  mixed $object
-     * @return mixed
      * @throws Error
      */
     protected function forwardCallTo($object, string $method, array $parameters)

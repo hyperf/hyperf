@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Hyperf\Utils\Traits\ForwardsCalls;
 use Swoole\Coroutine as SwooleCoroutine;
 
 /**
@@ -19,6 +19,13 @@ use Swoole\Coroutine as SwooleCoroutine;
  */
 class Coroutine
 {
+    public static function __callStatic($name, $arguments)
+    {
+        if (! method_exists(SwooleCoroutine::class, $name)) {
+            throw new \BadMethodCallException(sprintf('Call to undefined method %s.', $name));
+        }
+        return SwooleCoroutine::$name(...$arguments);
+    }
 
     /**
      * Returns the current coroutine ID.
@@ -30,7 +37,6 @@ class Coroutine
     }
 
     /**
-     * @param callable $callback
      * @return int Returns the coroutine ID of the coroutine just created.
      *             Returns -1 when coroutine create failed.
      */
@@ -44,13 +50,4 @@ class Coroutine
         });
         return is_int($result) ? $result : -1;
     }
-
-    public static function __callStatic($name, $arguments)
-    {
-        if (! method_exists(SwooleCoroutine::class, $name)) {
-            throw new \BadMethodCallException(sprintf('Call to undefined method %s.', $name));
-        }
-        return SwooleCoroutine::$name(...$arguments);
-    }
-
 }

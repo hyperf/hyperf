@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,7 +32,7 @@ class Locker
 
     public static function lock($key): bool
     {
-        if (!self::has($key)) {
+        if (! self::has($key)) {
             self::add($key, 0);
             return true;
         }

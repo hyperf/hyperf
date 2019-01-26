@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -106,13 +107,13 @@ class Str
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param  string $haystack
-     * @param  string|array $needles
+     * @param  string       $haystack
+     * @param  array|string $needles
      * @return bool
      */
     public static function contains($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
+        foreach ((array) $needles as $needle) {
             if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
@@ -124,14 +125,14 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param  string $haystack
-     * @param  string|array $needles
+     * @param  string       $haystack
+     * @param  array|string $needles
      * @return bool
      */
     public static function endsWith($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if (substr($haystack, -strlen($needle)) === (string)$needle) {
+        foreach ((array) $needles as $needle) {
+            if (substr($haystack, -strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
@@ -156,8 +157,8 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param  string|array $pattern
-     * @param  string $value
+     * @param  array|string $pattern
+     * @param  string       $value
      * @return bool
      */
     public static function is($pattern, $value)
@@ -222,7 +223,7 @@ class Str
      * Limit the number of characters in a string.
      *
      * @param  string $value
-     * @param  int $limit
+     * @param  int    $limit
      * @param  string $end
      * @return string
      */
@@ -250,7 +251,7 @@ class Str
      * Limit the number of words in a string.
      *
      * @param  string $value
-     * @param  int $words
+     * @param  int    $words
      * @param  string $end
      * @return string
      */
@@ -268,8 +269,8 @@ class Str
     /**
      * Parse a Class@method style callback into class and method.
      *
-     * @param  string $callback
-     * @param  string|null $default
+     * @param  string      $callback
+     * @param  null|string $default
      * @return array
      */
     public static function parseCallback($callback, $default = null)
@@ -300,7 +301,7 @@ class Str
     /**
      * Generate a more truly "random" alpha-numeric string.
      *
-     * @param  int $length
+     * @param  int    $length
      * @return string
      */
     public static function random($length = 16)
@@ -322,7 +323,6 @@ class Str
      * Replace a given value in the string sequentially with an array.
      *
      * @param  string $search
-     * @param  array $replace
      * @param  string $subject
      * @return string
      */
@@ -427,9 +427,9 @@ class Str
     /**
      * Generate a URL friendly "slug" from a given string.
      *
-     * @param  string $title
-     * @param  string $separator
-     * @param  string|null $language
+     * @param  string      $title
+     * @param  string      $separator
+     * @param  null|string $language
      * @return string
      */
     public static function slug($title, $separator = '-', $language = 'en')
@@ -480,14 +480,14 @@ class Str
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param  string $haystack
-     * @param  string|array $needles
+     * @param  string       $haystack
+     * @param  array|string $needles
      * @return bool
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string)$needle) {
+        foreach ((array) $needles as $needle) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
@@ -517,9 +517,9 @@ class Str
     /**
      * Returns the portion of string specified by the start and length parameters.
      *
-     * @param  string $string
-     * @param  int $start
-     * @param  int|null $length
+     * @param  string   $string
+     * @param  int      $start
+     * @param  null|int $length
      * @return string
      */
     public static function substr($string, $start, $length = null)
@@ -624,7 +624,7 @@ class Str
                 'अ',
                 'ا',
                 'ａ',
-                'ä'
+                'ä',
             ],
             'b' => ['б', 'β', 'ب', 'ဗ', 'ბ', 'ｂ'],
             'c' => ['ç', 'ć', 'č', 'ĉ', 'ċ', 'ｃ'],
@@ -669,7 +669,7 @@ class Str
                 'ए',
                 'إ',
                 'ئ',
-                'ｅ'
+                'ｅ',
             ],
             'f' => ['ф', 'φ', 'ف', 'ƒ', 'ფ', 'ｆ'],
             'g' => ['ĝ', 'ğ', 'ġ', 'ģ', 'г', 'ґ', 'γ', 'ဂ', 'გ', 'گ', 'ｇ'],
@@ -717,7 +717,7 @@ class Str
                 'ი',
                 'इ',
                 'ی',
-                'ｉ'
+                'ｉ',
             ],
             'j' => ['ĵ', 'ј', 'Ј', 'ჯ', 'ج', 'ｊ'],
             'k' => ['ķ', 'ĸ', 'к', 'κ', 'Ķ', 'ق', 'ك', 'က', 'კ', 'ქ', 'ک', 'ｋ'],
@@ -765,7 +765,7 @@ class Str
                 'ო',
                 'ओ',
                 'ｏ',
-                'ö'
+                'ö',
             ],
             'p' => ['п', 'π', 'ပ', 'პ', 'پ', 'ｐ'],
             'q' => ['ყ', 'ｑ'],
@@ -804,7 +804,7 @@ class Str
                 'उ',
                 'ｕ',
                 'ў',
-                'ü'
+                'ü',
             ],
             'v' => ['в', 'ვ', 'ϐ', 'ｖ'],
             'w' => ['ŵ', 'ω', 'ώ', 'ဝ', 'ွ', 'ｗ'],
@@ -888,7 +888,7 @@ class Str
                 'Ǻ',
                 'Ǎ',
                 'Ａ',
-                'Ä'
+                'Ä',
             ],
             'B' => ['Б', 'Β', 'ब', 'Ｂ'],
             'C' => ['Ç', 'Ć', 'Č', 'Ĉ', 'Ċ', 'Ｃ'],
@@ -926,7 +926,7 @@ class Str
                 'Э',
                 'Є',
                 'Ə',
-                'Ｅ'
+                'Ｅ',
             ],
             'F' => ['Ф', 'Φ', 'Ｆ'],
             'G' => ['Ğ', 'Ġ', 'Ģ', 'Г', 'Ґ', 'Γ', 'Ｇ'],
@@ -962,7 +962,7 @@ class Str
                 'Ї',
                 'Ǐ',
                 'ϒ',
-                'Ｉ'
+                'Ｉ',
             ],
             'J' => ['Ｊ'],
             'K' => ['К', 'Κ', 'Ｋ'],
@@ -1007,7 +1007,7 @@ class Str
                 'Ǒ',
                 'Ǿ',
                 'Ｏ',
-                'Ö'
+                'Ö',
             ],
             'P' => ['П', 'Π', 'Ｐ'],
             'Q' => ['Ｑ'],
@@ -1040,7 +1040,7 @@ class Str
                 'Ǜ',
                 'Ｕ',
                 'Ў',
-                'Ü'
+                'Ü',
             ],
             'V' => ['В', 'Ｖ'],
             'W' => ['Ω', 'Ώ', 'Ŵ', 'Ｗ'],
@@ -1084,7 +1084,7 @@ class Str
                 "\xE2\x80\xAF",
                 "\xE2\x81\x9F",
                 "\xE3\x80\x80",
-                "\xEF\xBE\xA0"
+                "\xEF\xBE\xA0",
             ],
         ];
     }
@@ -1094,8 +1094,8 @@ class Str
      * Note: Adapted from Stringy\Stringy.
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
-     * @param  string $language
-     * @return array|null
+     * @param  string     $language
+     * @return null|array
      */
     protected static function languageSpecificCharsArray($language)
     {
