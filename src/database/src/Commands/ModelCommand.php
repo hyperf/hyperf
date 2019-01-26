@@ -113,15 +113,18 @@ class ModelCommand extends Command
         }
     }
 
-    protected function createModel($table, $poolName, $path)
+    protected function createModel($table, $poolName, $dir)
     {
         $builder = $this->getSchemaBuilder($poolName);
 
         $columns = $builder->getColumnListing($table);
 
         $class = Str::studly($table);
-        $path = $path . '/' . $class . '.php';
+        $path = $dir . '/' . $class . '.php';
         if (! file_exists($path)) {
+            if (! is_dir($dir)) {
+                @mkdir($dir, 0755, true);
+            }
             $code = $this->getOriginCode($table);
             file_put_contents($path, $code);
         }
