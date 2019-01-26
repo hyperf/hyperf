@@ -61,8 +61,6 @@ class ProxyFactory
 
         $key = md5($path);
         if (Locker::lock($key)) {
-            // @TODO handle unlink mechanism.
-            @unlink($path);
             if (! file_exists($path)) {
                 $this->createProxyFile($path, $className, $proxyClassName);
             }
