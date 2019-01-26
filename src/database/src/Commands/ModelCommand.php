@@ -19,7 +19,6 @@ use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +27,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ModelCommand extends Command
 {
-
     /**
      * @var ConnectionResolver
      */
@@ -86,16 +84,13 @@ class ModelCommand extends Command
         }
     }
 
-    /**
-     * @return MySqlBuilder
-     */
-    protected function getSchemaBuilder($poolName)
+    protected function getSchemaBuilder(string $poolName): MySqlBuilder
     {
         $connection = $this->resolver->connection($poolName);
         return $connection->getSchemaBuilder();
     }
 
-    protected function createModels($pool, $path, $prefix)
+    protected function createModels(string $pool, string $path, string $prefix)
     {
         $builder = $this->getSchemaBuilder($pool);
         $tables = [];
@@ -111,7 +106,7 @@ class ModelCommand extends Command
         }
     }
 
-    protected function createModel($table, $poolName, $dir)
+    protected function createModel(string $table, string $poolName, string $dir)
     {
         $builder = $this->getSchemaBuilder($poolName);
 
@@ -123,7 +118,7 @@ class ModelCommand extends Command
             if (! is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
-            $code = $this->getOriginCode($table);
+            $code = $this->getTemplate($table);
             file_put_contents($path, $code);
         }
 
@@ -134,10 +129,10 @@ class ModelCommand extends Command
         $code = $this->printer->prettyPrintFile($stms);
 
         file_put_contents($path, $code);
-        $this->output->writeln(sprintf('<info>Model %s was Created!</info>', $class));
+        $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
     }
 
-    protected function getOriginCode($table)
+    protected function getTemplate(string $table)
     {
         $code = file_get_contents(__DIR__ . '/stubs/Model.stub');
         return sprintf($code, Str::studly($table), $table);
