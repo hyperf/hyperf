@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Process;
 
+use ErrorException;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
@@ -49,11 +50,11 @@ abstract class Process implements ProcessInterface
         }
     }
 
-    public function bind(Server $server)
+    public function bind(Server $server): void
     {
         $num = $this->nums;
         for ($i = 0; $i < $num; $i++) {
-            $server->addProcess(new SwooleProcess(function () use ($i) {
+            $server->addProcess(new SwooleProcess(function (SwooleProcess $process) use ($i) {
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
                 $this->handle();
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));

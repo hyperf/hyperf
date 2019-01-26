@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -17,23 +18,16 @@ interface DriverInterface
 {
     /**
      * Push a job to queue.
-     *
-     * @param JobInterface $job
      */
     public function push(JobInterface $job): bool;
 
     /**
      * Push a delay job to queue.
-     *
-     * @param JobInterface $job
-     * @param int $delay
      */
     public function delay(JobInterface $job, int $delay = 0): bool;
 
     /**
      * Pop a job from queue.
-     *
-     * @param int $timeout
      */
     public function pop(int $timeout = 0): array;
 

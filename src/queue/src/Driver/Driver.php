@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -45,7 +46,7 @@ abstract class Driver implements DriverInterface
         $this->packer = $container->get($config['packer'] ?? PhpSerializer::class);
         $this->event = $container->get(EventDispatcherInterface::class);
 
-        if (!$this->packer instanceof PackerInterface) {
+        if (! $this->packer instanceof PackerInterface) {
             throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
         }
     }
@@ -53,9 +54,9 @@ abstract class Driver implements DriverInterface
     public function consume(): void
     {
         while (true) {
-            list($data, $message) = $this->pop($this->timeout);
+            [$data, $message] = $this->pop($this->timeout);
 
-            if ($data === false) {
+            if (false === $data) {
                 continue;
             }
 
@@ -81,8 +82,6 @@ abstract class Driver implements DriverInterface
 
     /**
      * Handle a job again some seconds later.
-     *
-     * @param MessageInterface $message
      */
     abstract protected function retry(MessageInterface $message): bool;
 }

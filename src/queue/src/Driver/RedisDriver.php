@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -85,12 +86,12 @@ class RedisDriver extends Driver
     {
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        return (bool)$this->redis->lPush($this->waiting, $data);
+        return (bool) $this->redis->lPush($this->waiting, $data);
     }
 
     public function delay(JobInterface $job, int $delay = 0): bool
     {
-        if ($delay === 0) {
+        if (0 === $delay) {
             return $this->push($job);
         }
 
@@ -128,7 +129,7 @@ class RedisDriver extends Driver
     public function fail($data): bool
     {
         if ($this->remove($data)) {
-            return (bool)$this->redis->lPush($this->failed, $data);
+            return (bool) $this->redis->lPush($this->failed, $data);
         }
         return false;
     }
@@ -153,7 +154,7 @@ class RedisDriver extends Driver
     protected function move(string $from): void
     {
         $now = time();
-        if ($expired = $this->redis->zrevrangebyscore($from, (string)$now, '-inf')) {
+        if ($expired = $this->redis->zrevrangebyscore($from, (string) $now, '-inf')) {
             foreach ($expired as $job) {
                 if ($this->redis->zRem($from, $job) > 0) {
                     $this->redis->lPush($this->waiting, $job);
