@@ -18,6 +18,11 @@ class Context
     use Container;
 
     /**
+     * @var array
+     */
+    protected static $container = [];
+
+    /**
      * @inheritdoc
      */
     public static function set($id, $value)
@@ -55,8 +60,26 @@ class Context
         unset(static::$container[$coroutineId]);
     }
 
-    private static function getCoroutineId()
+    /**
+     * Copy the context from a coroutine to another coroutine,
+     * Notice that this method is not a deep copy.
+     */
+    public static function copy(int $fromCoroutineId, int $toCoroutineId = null): void
     {
-        return Coroutine::tid();
+        if (! $toCoroutineId) {
+            $toCoroutineId = static::getCoroutineId();
+        }
+        static::$container[$toCoroutineId] = static::$container[$fromCoroutineId];
     }
+
+    protected static function getCoroutineId()
+    {
+        return Coroutine::id();
+    }
+
+    public static function getContainer()
+    {
+        return static::$container;
+    }
+
 }
