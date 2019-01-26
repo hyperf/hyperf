@@ -15,7 +15,8 @@ use Swoole\Server;
 
 interface ProcessInterface
 {
-    public function bind(Server $server);
 
-    public function handle();
+    public function bind(Server $server): void;
+
+    public function handle(): void;
 }
