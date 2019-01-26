@@ -28,10 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ModelCommand extends Command
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
 
     /**
      * @var ConnectionResolver
@@ -53,11 +49,10 @@ class ModelCommand extends Command
      */
     protected $output;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ConnectionResolver $resolver)
     {
         parent::__construct('db:model');
-        $this->container = $container;
-        $this->resolver = $container->get(ConnectionResolver::class);
+        $this->resolver = $resolver;
 
         $parserFactory = new ParserFactory();
         $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
@@ -66,10 +61,10 @@ class ModelCommand extends Command
 
     protected function configure()
     {
-        $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want create.')
-            ->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which pool you want use.', 'default')
-            ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'Which path you want Models create.', 'app/Models')
-            ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'Which prefix you want Model set.', '')
+        $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want to associated with the Model.')
+            ->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which connection pool you want the Model use.', 'default')
+            ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.', 'app/Models')
+            ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.', '')
         ;
     }
 
