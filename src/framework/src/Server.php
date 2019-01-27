@@ -14,9 +14,13 @@ namespace Hyperf\Framework;
 
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Event\BeforeServerStart;
+use Hyperf\Process\ProcessRegister;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server as SwooleServer;
 use Swoole\Server\Port;
 
@@ -43,13 +47,19 @@ class Server
     private $container;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var array
      */
     private $requests = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, EventDispatcherInterface $eventDispatcher)
     {
         $this->container = $container;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -83,8 +93,17 @@ class Server
                 $this->container->get($class)->{$method}();
             }
 
+            // Trigger BeforeEventStart event.
+            $this->eventDispatcher->dispatch(new BeforeServerStart($serverName));
+
+            // Retrieve the processes have been registered.
+            $processes = array_merge($processes, ProcessRegister::all());
             foreach ($processes as $process) {
-                $instance = $this->container->get($process);
+                if (is_string($process)) {
+                    $instance = $this->container->get($process);
+                } else {
+                    $instance = $process;
+                }
                 if ($instance instanceof ProcessInterface) {
                     $instance->bind($this->server);
                 }
