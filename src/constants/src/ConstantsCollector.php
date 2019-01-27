@@ -10,11 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Constants\Adapters;
+namespace Hyperf\Constants;
 
-interface AdapterInterface
+use Hyperf\Utils\Traits\Container;
+
+class ConstantsCollector
 {
-    public function __construct($class);
+    use Container;
 
-    public function getAnnotationsByName($name, array $classConstants);
+    public static function getValue($className, $code, $key)
+    {
+        return static::$container[$className][$code][$key] ?? '';
+    }
 }

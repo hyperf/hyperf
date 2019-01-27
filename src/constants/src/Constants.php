@@ -12,14 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Constants;
 
-use Hyperf\Constants\Adapters\ReflectionAdapter;
 use Hyperf\Constants\Exceptions\ConstantsException;
 use Hyperf\Utils\Str;
 
 abstract class Constants
 {
-    public static $mapping;
-
     public static function __callStatic($name, $arguments)
     {
         if (! Str::startsWith($name, 'get')) {
@@ -34,18 +31,6 @@ abstract class Constants
         $name = strtolower(substr($name, 3));
         $class = get_called_class();
 
-        if (isset(static::$mapping[$class][$name])) {
-            return isset(static::$mapping[$class][$name][$code]) ? static::$mapping[$class][$name][$code] : '';
-        }
-
-        // 获取变量
-        $ref = new \ReflectionClass(static::class);
-        $classConstants = $ref->getReflectionConstants();
-
-        $adapter = new ReflectionAdapter(static::class);
-        $result = $adapter->getAnnotationsByName($name, $classConstants);
-
-        static::$mapping[$class][$name] = $result;
-        return isset(static::$mapping[$class][$name][$code]) ? static::$mapping[$class][$name][$code] : '';
+        return ConstantsCollector::getValue($class, $code, $name);
     }
 }

@@ -11,6 +11,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "hyperf/di": "dev-master",
         "hyperf/utils": "dev-master"
     },
     "require-dev": {
