@@ -326,7 +326,6 @@ class DatabaseManager implements ConnectionResolverInterface
 
         return $this->connections[$name]
             ->setPdo($fresh->getPdo())
-            ->setReadPdo($fresh->getReadPdo())
-        ;
+            ->setReadPdo($fresh->getReadPdo());
     }
 }

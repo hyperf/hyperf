@@ -73,8 +73,7 @@ trait ProxyTrait
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
-            })
-        ;
+            });
     }
 
     private static function parseAspects(string $className, string $method): array

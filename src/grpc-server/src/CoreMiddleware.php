@@ -91,8 +91,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             $response = $this->response()
                 ->withAddedHeader('Content-Type', 'application/grpc')
                 ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-                ->withBody(new SwooleStream($body))
-            ;
+                ->withBody(new SwooleStream($body));
 
             $response->getSwooleResponse()->trailer('grpc-status', '0');
             $response->getSwooleResponse()->tariler('grpc-message', '');
@@ -107,8 +106,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         if (is_array($response)) {
             return $this->response()
                 ->withAddedHeader('Content-Type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response)))
-            ;
+                ->withBody(new SwooleStream(json_encode($response)));
         }
 
         return $this->response()->withBody(new SwooleStream((string) $response));
@@ -171,8 +169,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
             ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
-            ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-        ;
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message');
 
         $response->getSwooleResponse()->trailer('grpc-status', $grpcStatus);
         $response->getSwooleResponse()->trailer('grpc-message', $grpcMessage);

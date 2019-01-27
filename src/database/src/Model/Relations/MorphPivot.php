@@ -116,8 +116,7 @@ class MorphPivot extends Pivot
         return $this->newQueryWithoutScopes()
             ->where($segments[0], $segments[1])
             ->where($segments[2], $segments[3])
-            ->where($segments[4], $segments[5])
-        ;
+            ->where($segments[4], $segments[5]);
     }
 
     /**
@@ -152,8 +151,7 @@ class MorphPivot extends Pivot
             $query->orWhere(function ($query) use ($segments) {
                 return $query->where($segments[0], $segments[1])
                     ->where($segments[2], $segments[3])
-                    ->where($segments[4], $segments[5])
-                ;
+                    ->where($segments[4], $segments[5]);
             });
         }
 

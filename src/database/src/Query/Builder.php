@@ -2076,8 +2076,7 @@ class Builder
         $results = $this->cloneWithout($this->unions ? [] : ['columns'])
             ->cloneWithoutBindings($this->unions ? [] : ['select'])
             ->setAggregate($function, $columns)
-            ->get($columns)
-        ;
+            ->get($columns);
 
         if (! $results->isEmpty()) {
             return array_change_key_case((array) $results[0])['aggregate'];
@@ -2667,8 +2666,7 @@ class Builder
             ->cloneWithoutBindings($this->unions ? ['order'] : ['select', 'order'])
             ->setAggregate('count', $this->withoutSelectAliases($columns))
             ->get()
-            ->all()
-        ;
+            ->all();
     }
 
     /**

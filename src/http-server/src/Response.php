@@ -32,8 +32,7 @@ class Response implements ResponseInterface
         $data = $this->toJson($data);
         return $this->getResponse()
             ->withAddedHeader('Content-Type', 'application/json')
-            ->withBody(new SwooleStream($data))
-        ;
+            ->withBody(new SwooleStream($data));
     }
 
     /**
@@ -43,8 +42,7 @@ class Response implements ResponseInterface
     {
         return $this->getResponse()
             ->withAddedHeader('Content-Type', 'text/plain')
-            ->withBody(new SwooleStream((string) $data))
-        ;
+            ->withBody(new SwooleStream((string) $data));
     }
 
     /**

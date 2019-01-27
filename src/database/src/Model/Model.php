@@ -797,8 +797,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         return static::newQueryWithoutScopes()
             ->with(is_string($with) ? func_get_args() : $with)
             ->where($this->getKeyName(), $this->getKey())
-            ->first()
-        ;
+            ->first();
     }
 
     /**

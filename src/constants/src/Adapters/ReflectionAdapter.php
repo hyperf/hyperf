@@ -39,7 +39,8 @@ class ReflectionAdapter implements AdapterInterface
     }
 
     /**
-     * @desc   根据name解析doc获取对应注释
+     * 根据name解析doc获取对应注释.
+     *
      * @param $doc  注释
      * @param $name 字段名
      */

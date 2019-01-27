@@ -57,8 +57,7 @@ trait AsPivot
         $instance->setConnection($parent->getConnectionName())
             ->setTable($table)
             ->forceFill($attributes)
-            ->syncOriginal()
-        ;
+            ->syncOriginal();
 
         // We store off the parent instance so we will access the timestamp column names
         // for the model, since the pivot model timestamps aren't easily configurable
@@ -241,8 +240,7 @@ trait AsPivot
 
         return $this->newQueryWithoutScopes()
             ->where($segments[0], $segments[1])
-            ->where($segments[2], $segments[3])
-        ;
+            ->where($segments[2], $segments[3]);
     }
 
     /**
@@ -299,8 +297,7 @@ trait AsPivot
 
             $query->orWhere(function ($query) use ($segments) {
                 return $query->where($segments[0], $segments[1])
-                    ->where($segments[2], $segments[3])
-                ;
+                    ->where($segments[2], $segments[3]);
             });
         }
 

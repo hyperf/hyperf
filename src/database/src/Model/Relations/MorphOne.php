@@ -63,7 +63,6 @@ class MorphOne extends MorphOneOrMany
     {
         return $this->related->newInstance()
             ->setAttribute($this->getForeignKeyName(), $parent->{$this->localKey})
-            ->setAttribute($this->getMorphType(), $this->morphClass)
-        ;
+            ->setAttribute($this->getMorphType(), $this->morphClass);
     }
 }

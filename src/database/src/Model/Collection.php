@@ -87,8 +87,7 @@ class Collection extends BaseCollection
             ->whereKey($this->modelKeys())
             ->select($this->first()->getKeyName())
             ->withCount(...func_get_args())
-            ->get()
-        ;
+            ->get();
 
         $attributes = Arr::except(
             array_keys($models->first()->getAttributes()),
@@ -158,10 +157,8 @@ class Collection extends BaseCollection
             })
             ->each(function ($models, $className) use ($relations) {
                 $className::with($relations[$className])
-                    ->eagerLoadRelations($models->all())
-                ;
-            })
-        ;
+                    ->eagerLoadRelations($models->all());
+            });
 
         return $this;
     }
@@ -259,8 +256,7 @@ class Collection extends BaseCollection
             ->with(is_string($with) ? func_get_args() : $with)
             ->whereIn($model->getKeyName(), $this->modelKeys())
             ->get()
-            ->getDictionary()
-        ;
+            ->getDictionary();
 
         return $this->map(function ($model) use ($freshModels) {
             return $model->exists && isset($freshModels[$model->getKey()])

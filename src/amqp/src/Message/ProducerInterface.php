@@ -14,9 +14,6 @@ namespace Hyperf\Amqp\Message;
 
 interface ProducerInterface extends MessageInterface
 {
-    /**
-     * @return mixed
-     */
     public function payload(): string;
 
     public function getProperties(): array;

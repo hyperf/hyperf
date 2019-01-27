@@ -81,8 +81,7 @@ class CoroutineHandlerTest extends TestCase
                     $called = true;
                     $this->assertArrayHasKey('errCode', $e->getHandlerContext());
                     $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
-                })
-            ;
+                });
             $p->wait();
             $this->assertTrue($called);
         }
