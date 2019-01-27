@@ -20,7 +20,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target({"CLASS"})
  */
-class Constant extends AbstractAnnotation
+class Constants extends AbstractAnnotation
 {
     public function collectClass(string $className, ?string $target): void
     {

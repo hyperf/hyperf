@@ -15,7 +15,7 @@ namespace Hyperf\Constants;
 use Hyperf\Constants\Exceptions\ConstantsException;
 use Hyperf\Utils\Str;
 
-abstract class Constants
+abstract class AbstractConstants
 {
     public static function __callStatic($name, $arguments)
     {
