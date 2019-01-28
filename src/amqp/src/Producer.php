@@ -22,10 +22,13 @@ class Producer extends Builder
         $payload = $message->payload();
 
         $msg = new AMQPMessage($payload, $message->getProperties());
-        $this->getChannel($message->getPoolName())->basic_publish(
+        $connection = $this->getConnection($message->getPoolName());
+        $this->getChannel($message->getPoolName(), $connection)->basic_publish(
             $msg,
             $message->getExchange(),
             $message->getRoutingKey()
         );
+
+        $this->release($connection);
     }
 }

@@ -53,10 +53,13 @@ class Builder
         );
     }
 
-    protected function getChannel(string $poolName): AMQPChannel
+    protected function getChannel(string $poolName, ?Connection $conn = null): AMQPChannel
     {
-        /** @var Connection $conn */
-        $conn = $this->getConnection($poolName);
+        if (empty($conn)) {
+            /** @var Connection $conn */
+            $conn = $this->getConnection($poolName);
+        }
+
         $connection = $conn->getConnection();
         try {
             $channel = $connection->channel();
@@ -75,5 +78,10 @@ class Builder
         $factory = $this->container->get(PoolFactory::class);
         $pool = $factory->getAmqpPool($poolName);
         return $pool->get();
+    }
+
+    protected function release(Connection $connection)
+    {
+        $connection->release();
     }
 }
