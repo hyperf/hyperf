@@ -12,15 +12,35 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-use Hyperf\Amqp\DeclareBuilder\QueueDeclareBuilder;
+use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
 
-abstract class Consumer extends Message implements ConsumerInterface
+abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
+
+    /**
+     * @var string
+     */
     protected $queue;
 
+    /**
+     * @var bool
+     */
     protected $requeue = true;
+
+    /**
+     * Number of consumer process
+     *
+     * @var int
+     */
+    protected $nums = 0;
+
+    public function setQueue(string $queue): self
+    {
+        $this->queue = $queue;
+        return $this;
+    }
 
     public function getQueue(): string
     {
@@ -32,16 +52,15 @@ abstract class Consumer extends Message implements ConsumerInterface
         return $this->requeue;
     }
 
-    public function getQueueDeclareBuilder(): QueueDeclareBuilder
+    public function getQueueBuilder(): QueueBuilder
     {
-        return (new QueueDeclareBuilder())
-            ->setQueue($this->getQueue());
+        return (new QueueBuilder())->setQueue($this->getQueue());
     }
 
     public function unserialize(string $data)
     {
-        $application = ApplicationContext::getContainer();
-        $packer = $application->get(Packer::class);
+        $container = ApplicationContext::getContainer();
+        $packer = $container->get(Packer::class);
 
         return $packer->unpack($data);
     }

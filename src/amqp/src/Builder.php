@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
+use Hyperf\Amqp\Pool\AmqpChannelPool;
+use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
@@ -27,53 +29,49 @@ class Builder
      */
     protected $container;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var PoolFactory
+     */
+    private $poolFactory;
+
+    public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
     {
         $this->container = $container;
+        $this->poolFactory = $poolFactory;
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
         if (! $channel) {
-            $channel = $this->getChannel($message->getPoolName());
+            [$channel, $connection] = $this->getChannel($message->getPoolName());
         }
 
-        $builder = $message->getExchangeDeclareBuilder();
+        $builder = $message->getExchangeBuilder();
 
-        $channel->exchange_declare(
-            $builder->getExchange(),
-            $builder->getType(),
-            $builder->isPassive(),
-            $builder->isDurable(),
-            $builder->isAutoDelete(),
-            $builder->isInternal(),
-            $builder->isNowait(),
-            $builder->getArguments(),
-            $builder->getTicket()
-        );
+        $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+
+        isset($connection) && $this->getConnectionPool($message->getPoolName())->release($connection);
     }
 
     protected function getChannel(string $poolName): AMQPChannel
     {
-        /** @var Connection $conn */
-        $conn = $this->getConnection($poolName);
-        $connection = $conn->getConnection();
-        try {
-            $channel = $connection->channel();
-        } catch (AMQPRuntimeException $ex) {
-            // Fetch channel failed, try again.
-            $connection->reconnect();
-            $channel = $connection->channel();
-        }
-
-        return $channel;
+        $pool = $this->getChannelPool($poolName);
+        return $pool->get();
     }
 
     protected function getConnection(string $poolName): Connection
     {
-        /** @var PoolFactory $factory */
-        $factory = $this->container->get(PoolFactory::class);
-        $pool = $factory->getAmqpPool($poolName);
-        return $pool->get();
+        return $this->poolFactory->getConnectionPool($poolName)->get();
     }
+
+    protected function getConnectionPool(string $poolName): AmqpConnectionPool
+    {
+        return $this->poolFactory->getConnectionPool($poolName);
+    }
+
+    protected function getChannelPool(string $poolName): AmqpChannelPool
+    {
+        return $this->poolFactory->getChannelPool($poolName);
+    }
+
 }

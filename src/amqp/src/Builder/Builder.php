@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Amqp\DeclareBuilder;
+namespace Hyperf\Amqp\Builder;
 
-class DeclareBuilder
+class Builder
 {
     protected $passive = false;
 
@@ -104,7 +104,7 @@ class DeclareBuilder
     /**
      * @return ExchangeDeclareBuilder
      */
-    public function setTicket($ticket)
+    public function setTicket($ticket): self
     {
         $this->ticket = $ticket;
         return $this;

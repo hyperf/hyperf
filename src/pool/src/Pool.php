@@ -62,7 +62,11 @@ abstract class Pool implements PoolInterface
             return $connection;
         }
 
-        return $this->channel->pop($this->option->getWaitTimeout());
+        $result = $this->channel->pop($this->option->getWaitTimeout());
+        if (! $result instanceof ConnectionInterface) {
+            throw new \RuntimeException('Cannot pop the connection.');
+        }
+        return $result;
     }
 
     public function release(ConnectionInterface $connection): void

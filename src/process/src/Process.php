@@ -61,4 +61,11 @@ abstract class Process implements ProcessInterface
             }));
         }
     }
+
+    public function setNums(int $nums): self
+    {
+        $this->name = $nums;
+        return $this;
+    }
+
 }

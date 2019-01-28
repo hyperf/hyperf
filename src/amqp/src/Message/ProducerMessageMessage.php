@@ -16,18 +16,29 @@ use Hyperf\Amqp\Constants;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
 
-abstract class Producer extends Message implements ProducerInterface
+abstract class ProducerMessageMessage extends Message implements ProducerMessageInterface
 {
-    protected $payload;
 
-    protected $properties = [
-        'content_type' => 'text/plain',
-        'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT,
-    ];
+    /**
+     * @var string
+     */
+    protected $payload = '';
+
+    protected $properties
+        = [
+            'content_type' => 'text/plain',
+            'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT,
+        ];
 
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    public function setPayload($data): self
+    {
+        $this->payload = $data;
+        return $this;
     }
 
     public function payload(): string

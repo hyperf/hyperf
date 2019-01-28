@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
-use Hyperf\Amqp\Pool\AmqpPool;
+use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
 class Connection extends BaseConnection implements ConnectionInterface
 {
     /**
-     * @var AmqpPool
+     * @var AmqpConnectionPool
      */
     protected $pool;
 
@@ -56,7 +56,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     protected $transaction = false;
 
-    public function __construct(ContainerInterface $container, AmqpPool $pool, array $config)
+    public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {
         parent::__construct($container, $pool);
         $this->config = $config;

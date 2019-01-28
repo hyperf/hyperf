@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-use Hyperf\Amqp\DeclareBuilder\ExchangeDeclareBuilder;
-use Hyperf\Amqp\Exceptions\MessageException;
+use Hyperf\Amqp\Builder\ExchangeBuilder;
+use Hyperf\Amqp\Exception\MessageException;
 use Psr\Container\ContainerInterface;
 
 abstract class Message implements MessageInterface
@@ -28,11 +28,20 @@ abstract class Message implements MessageInterface
      */
     protected $poolName = 'default';
 
-    protected $exchange;
+    /**
+     * @var string
+     */
+    protected $exchange = '';
 
+    /**
+     * @var string
+     */
     protected $type = Type::TOPIC;
 
-    protected $routingKey;
+    /**
+     * @var string
+     */
+    protected $routingKey = '';
 
     // $passive = false,
     // $durable = false,
@@ -41,14 +50,36 @@ abstract class Message implements MessageInterface
     // $nowait = false,
     // $arguments = array(),
     // $ticket = null
+
+    public function setType(string $type): self
+    {
+        if (! in_array($type, Type::all())) {
+            throw new \InvalidArgumentException(sprintf('Invalid type %s, available valus [%s]', $type, implode(',', Type::all())));
+        }
+        $this->type = $type;
+        return $this;
+    }
+
     public function getType(): string
     {
         return $this->type;
     }
 
+    public function setExchange(string $exchange): self
+    {
+        $this->exchange = $exchange;
+        return $this;
+    }
+
     public function getExchange(): string
     {
         return $this->exchange;
+    }
+
+    public function setRoutingKey(string $routingKey): self
+    {
+        $this->routingKey = $routingKey;
+        return $this;
     }
 
     public function getRoutingKey(): string
@@ -61,20 +92,18 @@ abstract class Message implements MessageInterface
         return $this->poolName;
     }
 
-    public function getExchangeDeclareBuilder(): ExchangeDeclareBuilder
+    public function getExchangeBuilder(): ExchangeBuilder
     {
-        return (new ExchangeDeclareBuilder())
-            ->setExchange($this->getExchange())
-            ->setType($this->getType());
+        return (new ExchangeBuilder())->setExchange($this->getExchange())->setType($this->getType());
     }
 
     public function serialize(): string
     {
-        throw new MessageException('You must rewrite this method.');
+        throw new MessageException('You have to overwrite serialize() method.');
     }
 
     public function unserialize(string $data)
     {
-        throw new MessageException('You must rewrite this method.');
+        throw new MessageException('You have to overwrite unserialize() method.');
     }
 }

@@ -20,7 +20,7 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
-class AmqpPool extends Pool
+class AmqpConnectionPool extends Pool
 {
     protected $name;
 
@@ -63,6 +63,14 @@ class AmqpPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
+        var_dump('Create a connection.');
         return new Connection($this->container, $this, $this->config);
     }
+
+    public function release(ConnectionInterface $connection): void
+    {
+        var_dump('Release a connection.');
+        parent::release($connection);
+    }
+
 }

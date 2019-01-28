@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-use Hyperf\Amqp\DeclareBuilder\ExchangeDeclareBuilder;
+
+use Hyperf\Amqp\Builder\ExchangeBuilder;
 
 interface MessageInterface
 {
@@ -21,13 +22,19 @@ interface MessageInterface
      */
     public function getPoolName(): string;
 
+    public function setType(string $type);
+
     public function getType(): string;
+
+    public function setExchange(string $exchange);
 
     public function getExchange(): string;
 
+    public function setRoutingKey(string $routingKey);
+
     public function getRoutingKey(): string;
 
-    public function getExchangeDeclareBuilder(): ExchangeDeclareBuilder;
+    public function getExchangeBuilder(): ExchangeBuilder;
 
     // $passive = false,
     // $durable = false,

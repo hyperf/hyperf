@@ -10,10 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Amqp\Exceptions;
+namespace Hyperf\Amqp\Message;
 
-use Exception;
-
-class MessageException extends Exception
+interface ProducerMessageInterface extends MessageInterface
 {
+
+    public function setPayload($data);
+
+    public function payload(): string;
+
+    public function getProperties(): array;
+
 }

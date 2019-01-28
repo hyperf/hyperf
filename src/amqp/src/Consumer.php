@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Exceptions\MessageException;
-use Hyperf\Amqp\Message\ConsumerInterface;
+use Hyperf\Amqp\Exception\MessageException;
+use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -32,18 +32,19 @@ class Consumer extends Builder
 
     protected $status = true;
 
-    protected $signals = [
-        SIGQUIT,
-        SIGTERM,
-        SIGTSTP,
-    ];
+    protected $signals
+        = [
+            SIGQUIT,
+            SIGTERM,
+            SIGTSTP,
+        ];
 
     public function signalHandler()
     {
         $this->status = false;
     }
 
-    public function consume(ConsumerInterface $message): void
+    public function consume(ConsumerMessageInterface $message): void
     {
         pcntl_async_signals(true);
 
@@ -52,19 +53,15 @@ class Consumer extends Builder
         }
 
         $this->message = $message;
-        $this->channel = $this->getChannel($message->getPoolName());
+        [$channel, ] = $this->getChannel($message->getPoolName());
+        $this->channel = $channel;
 
         $this->declare($message, $this->channel);
 
-        $this->channel->basic_consume(
-            $this->message->getQueue(),
-            $this->message->getRoutingKey(),
-            false,
-            false,
-            false,
-            false,
-            [$this, 'callback']
-        );
+        $this->channel->basic_consume($this->message->getQueue(), $this->message->getRoutingKey(), false, false, false, false, [
+                $this,
+                'callback'
+            ]);
 
         while ($this->status && count($this->channel->callbacks) > 0) {
             $this->channel->wait();
@@ -73,20 +70,22 @@ class Consumer extends Builder
         $this->channel->close();
     }
 
-    public function callback(AMQPMessage $msg)
+    public function callback(AMQPMessage $message)
     {
-        $body = $msg->getBody();
-        $data = $this->message->unserialize($body);
+        $body = $message->getBody();
+        $consumerMessage = $this->message->unserialize($body);
 
         try {
-            if ($this->message->consume($data)) {
-                $this->channel->basic_ack($msg->delivery_info['delivery_tag']);
-            } else {
-                $this->channel->basic_reject($msg->delivery_info['delivery_tag'], $this->message->isRequeue());
+            $result = $this->message->consume($consumerMessage);
+            if ($result === Result::ACK) {
+                $this->channel->basic_ack($message->delivery_info['delivery_tag']);
+            } elseif ($this->message->isRequeue() && $result === Result::REQUEUE) {
+                $this->channel->basic_reject($message->delivery_info['delivery_tag'], true);
             }
-        } catch (\Throwable $ex) {
-            $this->channel->basic_reject($msg->delivery_info['delivery_tag'], $this->message->isRequeue());
+        } catch (\Throwable $exception) {
+
         }
+        $this->channel->basic_reject($message->delivery_info['delivery_tag'], false);
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
@@ -96,28 +95,15 @@ class Consumer extends Builder
         }
 
         if (! $channel) {
-            $channel = $this->getChannel($message->getPoolName());
+            [$channel,] = $this->getChannel($message->getPoolName());
         }
 
         parent::declare($message, $channel);
 
-        $builder = $message->getQueueDeclareBuilder();
+        $builder = $message->getQueueBuilder();
 
-        $channel->queue_declare(
-            $builder->getQueue(),
-            $builder->isPassive(),
-            $builder->isDurable(),
-            $builder->isExclusive(),
-            $builder->isAutoDelete(),
-            $builder->isNowait(),
-            $builder->getArguments(),
-            $builder->getTicket()
-        );
+        $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $channel->queue_bind(
-            $message->getQueue(),
-            $message->getExchange(),
-            $message->getRoutingKey()
-        );
+        $channel->queue_bind($message->getQueue(), $message->getExchange(), $message->getRoutingKey());
     }
 }

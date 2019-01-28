@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Amqp\DeclareBuilder;
+namespace Hyperf\Amqp\Builder;
 
-class ExchangeDeclareBuilder extends DeclareBuilder
+class ExchangeBuilder extends Builder
 {
     protected $exchange;
 
@@ -25,7 +25,7 @@ class ExchangeDeclareBuilder extends DeclareBuilder
         return $this->exchange;
     }
 
-    public function setExchange(string $exchange): ExchangeDeclareBuilder
+    public function setExchange(string $exchange): self
     {
         $this->exchange = $exchange;
         return $this;
@@ -36,7 +36,7 @@ class ExchangeDeclareBuilder extends DeclareBuilder
         return $this->type;
     }
 
-    public function setType(string $type): ExchangeDeclareBuilder
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;
@@ -47,7 +47,7 @@ class ExchangeDeclareBuilder extends DeclareBuilder
         return $this->internal;
     }
 
-    public function setInternal(bool $internal): ExchangeDeclareBuilder
+    public function setInternal(bool $internal): self
     {
         $this->internal = $internal;
         return $this;
