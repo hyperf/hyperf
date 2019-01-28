@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Pool;
 
 use Hyperf\Amqp\Channel;
-use Hyperf\Amqp\Connection;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
@@ -65,8 +64,8 @@ class AmqpChannelPool extends Pool
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
             $option = new PoolOption();
-            $option->setMinConnections(1)
-                ->setMaxConnections(2)
+            $option->setMinConnections($poolOptions['min_channels'] ?? 1)
+                ->setMaxConnections($poolOptions['max_channels'] ?? 10)
                 ->setConnectTimeout(10.0)
                 ->setWaitTimeout(3.0)
                 ->setHeartbeat(-1);
@@ -82,9 +81,16 @@ class AmqpChannelPool extends Pool
         $connection = $this->connectionPool->get();
         /** @var AbstractConnection $amqpConnection */
         $amqpConnection = $connection->getConnection();
-        var_dump('Create a channel.');
+        // var_dump('Create a channel.');
         $channel = new Channel($this->container, $this, $amqpConnection->channel());
         $this->connectionPool->release($connection);
+        return $channel;
+    }
+
+    public function get(): ConnectionInterface
+    {
+        $channel = parent::get();
+        var_dump('Get a channel.');
         return $channel;
     }
 

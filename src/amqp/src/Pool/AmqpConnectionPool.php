@@ -63,7 +63,7 @@ class AmqpConnectionPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
-        var_dump('Create a connection.');
+        // var_dump('Create a connection.');
         return new Connection($this->container, $this, $this->config);
     }
 
