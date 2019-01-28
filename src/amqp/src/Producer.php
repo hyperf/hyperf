@@ -26,7 +26,6 @@ class Producer extends Builder
         $channelPool = $this->getChannelPool($producerMessage->getPoolName());
         /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
         $channel = $channelPool->get();
-        var_dump(spl_object_id($channel));
         $channel->confirm_select(true);
         $channel->set_ack_handler(function () use (&$result) {
             $result = true;
