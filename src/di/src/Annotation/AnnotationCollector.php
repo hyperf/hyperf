@@ -35,4 +35,17 @@ class AnnotationCollector extends MetadataCollector
     {
         static::$container[$class]['_m'][$method][$annotation] = $value;
     }
+
+    public static function getClassByAnnotation(string $annotation): array
+    {
+        $result = [];
+        foreach (static::$container as $class => $metadata) {
+            if (! isset($metadata['_c'][$annotation])) {
+                continue;
+            }
+            $result[$class] = $metadata['_c'][$annotation];
+        }
+        return $result;
+    }
+
 }

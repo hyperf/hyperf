@@ -63,7 +63,7 @@ class Context
 
     /**
      * Copy the context from a coroutine to another coroutine,
-     * Notice that this method is not a deep copy.
+     * Notice that this method is not a deep copy and I/O connection cannot copy to a another coroutine.
      */
     public static function copy(int $fromCoroutineId, int $toCoroutineId = null): void
     {
