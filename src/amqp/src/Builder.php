@@ -53,7 +53,7 @@ class Builder
         isset($connection) && $this->getConnectionPool($message->getPoolName())->release($connection);
     }
 
-    protected function getChannel(string $poolName): AMQPChannel
+    protected function getChannel(string $poolName, ?Connection $conn = null): AMQPChannel
     {
         $pool = $this->getChannelPool($poolName);
         return $pool->get();
