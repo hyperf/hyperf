@@ -29,6 +29,7 @@ use Hyperf\Utils\Arr;
 use LogicException;
 use PDO;
 use PDOStatement;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Connection implements ConnectionInterface
 {
@@ -777,7 +778,7 @@ class Connection implements ConnectionInterface
      *
      * @return $this
      */
-    public function setEventDispatcher(Dispatcher $events)
+    public function setEventDispatcher(EventDispatcherInterface $events)
     {
         $this->events = $events;
 
