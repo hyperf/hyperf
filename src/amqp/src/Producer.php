@@ -34,7 +34,7 @@ class Producer extends Builder
         $channel->wait_for_pending_acks_returns();
         $channelPool->release($channel);
 
-        return $result;=
+        return $result;
     }
 
 }
