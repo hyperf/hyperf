@@ -31,7 +31,7 @@ class Producer extends Builder
             $result = true;
         });
         $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
-        $channel->wait_for_pending_acks_returns();
+        $channel->wait_for_pending_acks_returns($timeout);
         $channelPool->release($channel);
 
         return $result;
