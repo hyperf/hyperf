@@ -52,7 +52,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $instance->setRoutingKey($messageProperty['routingKey']);
                 try {
                     $producer->declare($instance);
-                    $stdoutLogger->debug(sprintf('AMQP Exchange[%s] and RoutingKey[%s] create successful.', $instance->getExchange(), $instance->getRoutingKey()));
+                    $stdoutLogger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $instance->getRoutingKey()));
                 } catch (AMQPProtocolChannelException $e) {
                     $stdoutLogger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
                     // Do nothing.
