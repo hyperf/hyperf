@@ -144,9 +144,9 @@ class StdoutLogger implements StdoutLoggerInterface
                 $tag = 'info';
                 break;
             default:
-                return $message;
+                return sprintf('[%s] %s', strtoupper($level), $message);
         }
 
-        return sprintf('<%s>%s</>', $tag, $message);
+        return sprintf('<%s>[%s] %s</>', $tag, strtoupper($level), $message);
     }
 }
