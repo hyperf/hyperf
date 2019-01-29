@@ -36,7 +36,7 @@ class Builder
     /**
      * The schema grammar instance.
      *
-     * @var \Hyperf\Database\Schema\Grammars\Grammar
+     * @var \Hyperf\Database\Schema\Grammars\MySqlGrammar
      */
     protected $grammar;
 
