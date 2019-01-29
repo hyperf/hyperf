@@ -46,7 +46,7 @@ class PoolFactory
         return $this->pools[$name] = new AmqpConnectionPool($this->container, $name);
     }
 
-    public function getChannelPool(string $name)
+    public function getChannelPool(string $name): AmqpChannelPool
     {
         if (isset($this->cpools[$name])) {
             return $this->cpools[$name];

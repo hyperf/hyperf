@@ -18,6 +18,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class AmqpConnectionPool extends Pool
@@ -32,7 +33,7 @@ class AmqpConnectionPool extends Pool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('amqp.%s', $this->name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
         $this->config = $config->get($key);
@@ -63,13 +64,11 @@ class AmqpConnectionPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
-        // var_dump('Create a connection.');
         return new Connection($this->container, $this, $this->config);
     }
 
     public function release(ConnectionInterface $connection): void
     {
-        var_dump('Release a connection.');
         parent::release($connection);
     }
 
