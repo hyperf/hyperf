@@ -18,6 +18,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
+use PhpAmqpLib\Channel\AbstractChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\Container\ContainerInterface;
@@ -78,7 +79,21 @@ class Connection extends BaseConnection implements ConnectionInterface
 
         $this->reconnect();
 
-        return $this;
+        return $this->connection;
+    }
+
+    public function getChannel($confirm = false): AbstractChannel
+    {
+        $connection = $this->getConnection();
+        $needConfirmSelect = true;
+        $channelId = 1;
+        ! $confirm && $channelId = 2;
+        if ($confirm && isset($connection->channels[$channelId])) {
+            $needConfirmSelect = false;
+        }
+        $channel = $connection->channel($channelId);
+        $needConfirmSelect && $channel->confirm_select(false);
+        return $channel;
     }
 
     public function reconnect(): bool
@@ -89,10 +104,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function check(): bool
     {
-        return isset($this->connection)
-            && $this->connection instanceof AbstractConnection
-            && $this->connection->isConnected()
-            && ! $this->isHeartbeatTimeout();
+        return isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
     }
 
     public function close(): bool
@@ -113,22 +125,7 @@ class Connection extends BaseConnection implements ConnectionInterface
             $class = AMQPSwooleConnection::class;
         }
 
-        return new $class(
-            $this->config['host'] ?? 'localhost',
-            $this->config['port'] ?? 5672,
-            $this->config['user'] ?? 'guest',
-            $this->config['password'] ?? 'guest',
-            $this->config['vhost'] ?? '/',
-            $this->params->isInsist(),
-            $this->params->getLoginMethod(),
-            $this->params->getLoginResponse(),
-            $this->params->getLocale(),
-            $this->params->getConnectionTimeout(),
-            $this->params->getReadWriteTimeout(),
-            $this->params->getContext(),
-            $this->params->isKeepalive(),
-            $this->params->getHeartbeat()
-        );
+        return new $class($this->config['host'] ?? 'localhost', $this->config['port'] ?? 5672, $this->config['user'] ?? 'guest', $this->config['password'] ?? 'guest', $this->config['vhost'] ?? '/', $this->params->isInsist(), $this->params->getLoginMethod(), $this->params->getLoginResponse(), $this->params->getLocale(), $this->params->getConnectionTimeout(), $this->params->getReadWriteTimeout(), $this->params->getContext(), $this->params->isKeepalive(), $this->params->getHeartbeat());
     }
 
     protected function isHeartbeatTimeout(): bool
@@ -149,4 +146,5 @@ class Connection extends BaseConnection implements ConnectionInterface
 
         return false;
     }
+
 }

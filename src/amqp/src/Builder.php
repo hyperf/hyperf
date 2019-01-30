@@ -46,10 +46,9 @@ class Builder
     {
         if (! $channel) {
             $pool = $this->getConnectionPool($message->getPoolName());
-            /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+            /** @var \Hyperf\Amqp\Connection $connection */
             $connection = $pool->get();
-            /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
-            $channel = $connection->channel(1);
+            $channel = $connection->getChannel();
         }
 
         $builder = $message->getExchangeBuilder();

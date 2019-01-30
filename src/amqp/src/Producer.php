@@ -19,7 +19,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class Producer extends Builder
 {
 
-    public function produce(ProducerMessageInterface $producerMessage, int $timeout = 5): bool
+    public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;
 
@@ -27,15 +27,9 @@ class Producer extends Builder
         
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
         $pool = $this->getConnectionPool($producerMessage->getPoolName());
-        /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+        /** @var \Hyperf\Amqp\Connection $connection */
         $connection = $pool->get();
-        /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
-        $needConfirmSelect = false;
-        if (isset($connection->channels[1])) {
-            $needConfirmSelect = true;
-        }
-        $channel = $connection->channel(1);
-        $needConfirmSelect && $channel->confirm_select(false);
+        $channel = $connection->getChannel($confirm);
         $channel->set_ack_handler(function () use (&$result) {
             $result = true;
         });
@@ -43,7 +37,7 @@ class Producer extends Builder
         $channel->wait_for_pending_acks_returns($timeout);
         $pool->release($connection);
 
-        return $result;
+        return $confirm ? $result : true;
     }
 
     private function injectMessageProperty(ProducerMessageInterface $producerMessage)
