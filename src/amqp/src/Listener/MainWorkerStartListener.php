@@ -12,12 +12,30 @@ use Hyperf\Framework\ApplicationContext;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @Listener()
  */
 class MainWorkerStartListener implements ListenerInterface
 {
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
+    {
+        $this->container = $container;
+        $this->logger = $logger;
+    }
 
     /**
      * @return string[] returns the events that you want to listen
@@ -35,14 +53,12 @@ class MainWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $container = ApplicationContext::getContainer();
-        $stdoutLogger = $container->get(StdoutLoggerInterface::class);
 
         // Declare exchange and routingKey
         $producerMessages = AnnotationCollector::getClassByAnnotation(Producer::class);
         if ($producerMessages) {
-            $producer = $container->get(\Hyperf\Amqp\Producer::class);
-            $instantiator = $container->get(Instantiator::class);
+            $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
+            $instantiator = $this->container->get(Instantiator::class);
             foreach ($producerMessages as $producerMessageClass => $messageProperty) {
                 $instance = $instantiator->instantiate($producerMessageClass);
                 if (! $instance instanceof ProducerMessageInterface) {
@@ -52,9 +68,9 @@ class MainWorkerStartListener implements ListenerInterface
                 $instance->setRoutingKey($messageProperty['routingKey']);
                 try {
                     $producer->declare($instance);
-                    $stdoutLogger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $instance->getRoutingKey()));
+                    $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $instance->getRoutingKey()));
                 } catch (AMQPProtocolChannelException $e) {
-                    $stdoutLogger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
+                    $this->logger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
                     // Do nothing.
                 }
             }
