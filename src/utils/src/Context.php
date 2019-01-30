@@ -26,7 +26,7 @@ class Context
     /**
      * {@inheritdoc}
      */
-    public static function set($id, $value)
+    public static function set(string $id, $value)
     {
         static::$container[static::getCoroutineId()][$id] = $value;
         return $value;
@@ -35,15 +35,15 @@ class Context
     /**
      * {@inheritdoc}
      */
-    public static function get($id)
+    public static function get(string $id, $default = null)
     {
-        return static::$container[static::getCoroutineId()][$id];
+        return static::$container[static::getCoroutineId()][$id] ?? $default;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function has($id)
+    public static function has(string $id)
     {
         return isset(static::$container[static::getCoroutineId()][$id]);
     }
