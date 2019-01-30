@@ -2,16 +2,27 @@
 
 namespace Hyperf\Amqp\Listener;
 
+use Hyperf\Amqp\ConsumerManager;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\ApplicationContext;
-use Hyperf\Framework\Event\BeforeServerStart;
+use Hyperf\Framework\Event\BeforeMainServerStart;
+use Psr\Container\ContainerInterface;
 
 /**
  * @Listener()
  */
-class BeforeServerStartListener implements ListenerInterface
+class BeforeMainServerStartListener implements ListenerInterface
 {
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @return string[] returns the events that you want to listen
@@ -19,7 +30,7 @@ class BeforeServerStartListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeServerStart::class,
+            BeforeMainServerStart::class,
         ];
     }
 
@@ -29,11 +40,9 @@ class BeforeServerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $container = ApplicationContext::getContainer();
-
         // Init the consumer process.
-        // $consumerManager = $container->get(ConsumerManager::class);
-        // $consumerManager->run();
+        $consumerManager = $this->container->get(ConsumerManager::class);
+        $consumerManager->run();
 
     }
 

@@ -16,7 +16,7 @@ use Hyperf\Amqp\Constants;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
 
-abstract class ProducerMessageMessage extends Message implements ProducerMessageInterface
+abstract class ProducerMessage extends Message implements ProducerMessageInterface
 {
 
     /**
@@ -24,6 +24,9 @@ abstract class ProducerMessageMessage extends Message implements ProducerMessage
      */
     protected $payload = '';
 
+    /**
+     * @var array
+     */
     protected $properties
         = [
             'content_type' => 'text/plain',
@@ -48,9 +51,7 @@ abstract class ProducerMessageMessage extends Message implements ProducerMessage
 
     public function serialize(): string
     {
-        $application = ApplicationContext::getContainer();
-        $packer = $application->get(Packer::class);
-
+        $packer = ApplicationContext::getContainer()->get(Packer::class);
         return $packer->pack($this->payload);
     }
 }

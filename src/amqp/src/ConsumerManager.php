@@ -3,6 +3,7 @@
 namespace Hyperf\Amqp;
 
 
+use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Message\ConsumerInterface;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -26,24 +27,27 @@ class ConsumerManager
 
     public function run()
     {
-        $consumers = $processes = [];
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
+        $instantiator = $this->container->get(Instantiator::class);
         foreach ($classes as $class => $property) {
-            $instance = new $class();
+            $instance = $instantiator->instantiate($class);
             if (! $instance instanceof ConsumerMessageInterface) {
                 continue;
             }
             $property['exchange'] && $instance->setExchange($property['exchange']);
             $property['routingKey'] && $instance->setRoutingKey($property['routingKey']);
             $property['queue'] && $instance->setQueue($property['queue']);
-            $property['nums'] && ProcessRegister::register($this->createProcess($instance), $property['nums']);
+            $nums = $property['nums'] ?? 1;
+            $process = $this->createProcess($instance);
+            $process->nums = (int)$nums;
+            $process->name = 'Consumer-' . $property['queue'];
+            ProcessRegister::register($process);
         }
-
     }
 
-    private function createProcess(ConsumerMessageInterface $consumer, int $nums): Process
+    private function createProcess(ConsumerMessageInterface $consumerMessage): Process
     {
-        $instance = new class extends Process
+        return new class($this->container, $consumerMessage) extends Process
         {
 
             /**
@@ -68,7 +72,6 @@ class ConsumerManager
                 $this->consumer->consume($this->consumerMessage);
             }
         };
-        return (new $instance($this->container, $consumer))->setNums($nums);
     }
 
 }

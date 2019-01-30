@@ -53,8 +53,7 @@ class Consumer extends Builder
         }
 
         $this->message = $message;
-        [$channel, ] = $this->getChannel($message->getPoolName());
-        $this->channel = $channel;
+        $this->channel = $this->getChannel($message->getPoolName());
 
         $this->declare($message, $this->channel);
 
@@ -90,7 +89,7 @@ class Consumer extends Builder
 
     public function declare(MessageInterface $message, ?Channel $channel = null): void
     {
-        if (! $message instanceof ConsumerInterface) {
+        if (! $message instanceof ConsumerMessageInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
         }
 
