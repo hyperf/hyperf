@@ -22,7 +22,7 @@ trait Container
     /**
      * {@inheritdoc}
      */
-    public static function set($id, $value)
+    public static function set(string $id, $value)
     {
         static::$container[$id] = $value;
     }
@@ -30,15 +30,15 @@ trait Container
     /**
      * {@inheritdoc}
      */
-    public static function get($id)
+    public static function get(string $id, $default = null)
     {
-        return static::$container[$id];
+        return static::$container[$id] ?? $default;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function has($id)
+    public static function has(string $id)
     {
         return isset(static::$container[$id]);
     }
