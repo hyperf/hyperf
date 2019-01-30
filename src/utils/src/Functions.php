@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf.
  *
@@ -12,6 +13,7 @@ declare(strict_types=1);
 
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
+use Hyperf\Utils\Str;
 
 if (! function_exists('value')) {
     /**
@@ -604,5 +606,27 @@ if (! function_exists('class_uses_recursive')) {
         }
 
         return array_unique($results);
+    }
+}
+
+if (! function_exists('setter')) {
+
+    /**
+     * Create a setter string.
+     */
+    function setter(string $property): string
+    {
+        return 'set' . Str::studly($property);
+    }
+}
+
+if (! function_exists('getter')) {
+
+    /**
+     * Create a getter string.
+     */
+    function getter(string $property): string
+    {
+        return 'get' . Str::studly($property);
     }
 }
