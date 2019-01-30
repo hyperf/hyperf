@@ -17,6 +17,7 @@ use Hyperf\Amqp\Pool\AmqpChannelPool;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use Psr\Container\ContainerInterface;
 
@@ -40,10 +41,13 @@ class Builder
         $this->poolFactory = $poolFactory;
     }
 
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    /**
+     * @throws AMQPProtocolChannelException When the channel operation is failed.
+     */
+    public function declare(MessageInterface $message, ?Channel $channel = null): void
     {
         if (! $channel) {
-            [$channel, $connection] = $this->getChannel($message->getPoolName());
+            $channel = $this->getChannel($message->getPoolName());
         }
 
         $builder = $message->getExchangeBuilder();
@@ -53,7 +57,7 @@ class Builder
         isset($connection) && $this->getConnectionPool($message->getPoolName())->release($connection);
     }
 
-    protected function getChannel(string $poolName, ?Connection $conn = null): AMQPChannel
+    protected function getChannel(string $poolName, ?Connection $conn = null): Channel
     {
         $pool = $this->getChannelPool($poolName);
         return $pool->get();

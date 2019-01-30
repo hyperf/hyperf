@@ -2,10 +2,6 @@
 
 namespace Hyperf\Amqp\Listener;
 
-use Hyperf\Amqp\Annotation\Producer;
-use Hyperf\Amqp\ConsumerManager;
-use Hyperf\Amqp\Message\ProducerMessageInterface;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\ApplicationContext;
@@ -35,24 +31,10 @@ class BeforeServerStartListener implements ListenerInterface
     {
         $container = ApplicationContext::getContainer();
 
-        // Declare exchange and routingKey
-//        $producerMessages = AnnotationCollector::getClassByAnnotation(Producer::class);
-//        $producerMessageClasses = array_keys($producerMessages);
-//        if ($producerMessageClasses) {
-//            $producer = $container->get(\Hyperf\Amqp\Producer::class);
-//            foreach ($producerMessageClasses as $producerMessageClass) {
-//                $instance = new $producerMessageClass();
-//                if (! $instance instanceof ProducerMessageInterface) {
-//                    continue;
-//                }
-//                $producer->declare($instance);
-//            }
-//        }
-
         // Init the consumer process.
         // $consumerManager = $container->get(ConsumerManager::class);
         // $consumerManager->run();
-        
+
     }
 
 }

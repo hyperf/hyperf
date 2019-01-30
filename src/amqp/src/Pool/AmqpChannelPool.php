@@ -18,6 +18,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use PhpAmqpLib\Connection\AbstractConnection;
 use Psr\Container\ContainerInterface;
 
@@ -45,7 +46,7 @@ class AmqpChannelPool extends Pool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('amqp.%s', $this->name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
         $this->config = $config->get($key);
@@ -81,24 +82,11 @@ class AmqpChannelPool extends Pool
         $connection = $this->connectionPool->get();
         /** @var AbstractConnection $amqpConnection */
         $amqpConnection = $connection->getConnection();
-        // var_dump('Create a channel.');
-        $channel = new Channel($this->container, $this, $amqpConnection->channel());
+        $amqpChannel = $amqpConnection->channel();
+        $amqpChannel->confirm_select(false);
+        $channel = new Channel($this->container, $this, $amqpChannel);
         $this->connectionPool->release($connection);
         return $channel;
-    }
-
-    public function get(): ConnectionInterface
-    {
-        $channel = parent::get();
-        var_dump('Get a channel.');
-        return $channel;
-    }
-
-    public function release(ConnectionInterface $connection): void
-    {
-        var_dump('Release a channel.');
-        /** @var \PhpAmqpLib\Channel\AMQPChannel $connection */
-        parent::release($connection);
     }
 
 }

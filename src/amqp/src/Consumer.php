@@ -88,14 +88,14 @@ class Consumer extends Builder
         $this->channel->basic_reject($message->delivery_info['delivery_tag'], false);
     }
 
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?Channel $channel = null): void
     {
         if (! $message instanceof ConsumerInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
         }
 
         if (! $channel) {
-            [$channel,] = $this->getChannel($message->getPoolName());
+            $channel = $this->getChannel($message->getPoolName());
         }
 
         parent::declare($message, $channel);
