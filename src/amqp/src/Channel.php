@@ -60,6 +60,16 @@ class Channel extends BaseConnection implements ConnectionInterface
         return $this->channel->{$name}(...$arguments);
     }
 
+    public function __get($name)
+    {
+        return $this->channel->$name;
+    }
+
+    public function __set($name, $value)
+    {
+        $this->channel->$name = $value;
+    }
+
     /**
      * Get the real connection from pool.
      */
