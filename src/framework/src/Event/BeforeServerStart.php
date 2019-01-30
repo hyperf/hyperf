@@ -9,7 +9,7 @@ class BeforeServerStart
     /**
      * @var string
      */
-    private $serverName;
+    public $serverName;
 
     public function __construct(string $serverName)
     {

@@ -16,6 +16,7 @@ use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Process\ProcessRegister;
 use InvalidArgumentException;
@@ -72,21 +73,26 @@ class Server
             $constructor = $serverConfig['constructor'];
             $callbacks = $serverConfig['callbacks'];
             $settings = $serverConfig['settings'] ?? [];
-            $processes = $serverConfig['processes'] ?? [];
+
             if (! class_exists($server)) {
                 throw new InvalidArgumentException('Server not exist.');
             }
+
             if (! $this->server) {
                 $serverName = $serverConfig['name'] ?? 'http';
                 $this->server = new $server(...$constructor);
                 $callbacks = array_replace($this->defaultCallbacks(), $callbacks);
                 $this->registerSwooleEvents($this->server, $callbacks, $serverName);
                 $this->server->set($settings);
+
+                // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
+                $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $serverConfig));
             } else {
                 $serverName = $serverConfig['name'] ?? 'http' . $i;
                 $slaveServer = $this->server->addlistener(...$constructor);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $serverName);
             }
+
             // Trigger beforeStart event.
             if (isset($callbacks[SwooleEvent::ON_BEFORE_START])) {
                 [$class, $method] = $callbacks[SwooleEvent::ON_BEFORE_START];
@@ -95,19 +101,6 @@ class Server
 
             // Trigger BeforeEventStart event.
             $this->eventDispatcher->dispatch(new BeforeServerStart($serverName));
-
-            // Retrieve the processes have been registered.
-            $processes = array_merge($processes, ProcessRegister::all());
-            foreach ($processes as $process) {
-                if (is_string($process)) {
-                    $instance = $this->container->get($process);
-                } else {
-                    $instance = $process;
-                }
-                if ($instance instanceof ProcessInterface) {
-                    $instance->bind($this->server);
-                }
-            }
         }
 
         return $this;
@@ -131,11 +124,7 @@ class Server
                 if (array_key_exists($callback[0], $this->requests)) {
                     $logger = $this->container->get(StdoutLoggerInterface::class);
 
-                    $logger->warning(sprintf(
-                        'WARN: %s will be replaced by %s, please check your server.callbacks.request! ',
-                        $this->requests[$callback[0]],
-                        $serverName
-                    ));
+                    $logger->warning(sprintf('WARN: %s will be replaced by %s, please check your server.callbacks.request! ', $this->requests[$callback[0]], $serverName));
                 }
 
                 $this->requests[$callback[0]] = $serverName;
