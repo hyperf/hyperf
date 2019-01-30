@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\ProducerMessageInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class Producer extends Builder
@@ -22,6 +23,8 @@ class Producer extends Builder
     {
         $result = false;
 
+        $this->injectMessageProperty($producerMessage);
+        
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
         $pool = $this->getChannelPool($producerMessage->getPoolName());
         /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
@@ -34,6 +37,17 @@ class Producer extends Builder
         $pool->release($channel);
 
         return $result;
+    }
+
+    private function injectMessageProperty(ProducerMessageInterface $producerMessage)
+    {
+        $item = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
+        foreach ($item as $key => $value) {
+            $setter = setter($key);
+            if (method_exists($producerMessage, $setter)) {
+                $producerMessage->$setter($value);
+            }
+        }
     }
 
 }
