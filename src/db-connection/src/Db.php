@@ -20,7 +20,7 @@ use Psr\Container\ContainerInterface;
  * DB Helper.
  * @method static beginTransaction
  * @method static rollback
- * @method statuc commit
+ * @method static commit
  */
 class Db
 {
