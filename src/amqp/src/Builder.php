@@ -13,12 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
-use Hyperf\Amqp\Pool\AmqpChannelPool;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
 use Psr\Container\ContainerInterface;
 
 class Builder
@@ -44,17 +42,21 @@ class Builder
     /**
      * @throws AMQPProtocolChannelException When the channel operation is failed.
      */
-    public function declare(MessageInterface $message, ?Channel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
         if (! $channel) {
-            $channel = $this->getChannel($message->getPoolName());
+            $pool = $this->getConnectionPool($message->getPoolName());
+            /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+            $connection = $pool->get();
+            /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
+            $channel = $connection->channel(1);
         }
 
         $builder = $message->getExchangeBuilder();
 
         $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        isset($connection) && $this->getConnectionPool($message->getPoolName())->release($connection);
+        isset($connection) && $pool->release($connection);
     }
 
     protected function getChannel(string $poolName, ?Connection $conn = null): Channel
@@ -71,11 +73,6 @@ class Builder
     protected function getConnectionPool(string $poolName): AmqpConnectionPool
     {
         return $this->poolFactory->getConnectionPool($poolName);
-    }
-
-    protected function getChannelPool(string $poolName): AmqpChannelPool
-    {
-        return $this->poolFactory->getChannelPool($poolName);
     }
 
 }

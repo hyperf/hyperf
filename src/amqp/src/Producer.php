@@ -26,15 +26,22 @@ class Producer extends Builder
         $this->injectMessageProperty($producerMessage);
         
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
-        $pool = $this->getChannelPool($producerMessage->getPoolName());
+        $pool = $this->getConnectionPool($producerMessage->getPoolName());
+        /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+        $connection = $pool->get();
         /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
-        $channel = $pool->get();
+        $needConfirmSelect = false;
+        if (isset($connection->channels[1])) {
+            $needConfirmSelect = true;
+        }
+        $channel = $connection->channel(1);
+        $needConfirmSelect && $channel->confirm_select(false);
         $channel->set_ack_handler(function () use (&$result) {
             $result = true;
         });
         $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
         $channel->wait_for_pending_acks_returns($timeout);
-        $pool->release($channel);
+        $pool->release($connection);
 
         return $result;
     }

@@ -53,7 +53,10 @@ class Consumer extends Builder
         }
 
         $this->message = $message;
-        $this->channel = $this->getChannel($message->getPoolName());
+        $pool = $this->getConnectionPool($message->getPoolName());
+        /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+        $connection = $pool->get();
+        $this->channel = $connection->channel(1);
 
         $this->declare($message, $this->channel);
 
@@ -67,6 +70,7 @@ class Consumer extends Builder
         }
 
         $this->channel->close();
+        $pool->release($connection);
     }
 
     public function callback(AMQPMessage $message)
@@ -87,14 +91,18 @@ class Consumer extends Builder
         $this->channel->basic_reject($message->delivery_info['delivery_tag'], false);
     }
 
-    public function declare(MessageInterface $message, ?Channel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
         if (! $message instanceof ConsumerMessageInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
         }
 
         if (! $channel) {
-            $channel = $this->getChannel($message->getPoolName());
+            $pool = $this->getConnectionPool($message->getPoolName());
+            /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+            $connection = $pool->get();
+            /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
+            $channel = $connection->channel(1);
         }
 
         parent::declare($message, $channel);

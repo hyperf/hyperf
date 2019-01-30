@@ -23,14 +23,9 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var AmqpConnectionPool[]
      */
     protected $pools = [];
-
-    /**
-     * @var Channel[]
-     */
-    protected $cpools = [];
 
     public function __construct(ContainerInterface $container)
     {
@@ -44,15 +39,6 @@ class PoolFactory
         }
 
         return $this->pools[$name] = new AmqpConnectionPool($this->container, $name);
-    }
-
-    public function getChannelPool(string $name): AmqpChannelPool
-    {
-        if (isset($this->cpools[$name])) {
-            return $this->cpools[$name];
-        }
-
-        return $this->cpools[$name] = new AmqpChannelPool($this->container, $name);
     }
 
 }
