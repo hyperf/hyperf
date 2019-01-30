@@ -48,4 +48,9 @@ class AnnotationCollector extends MetadataCollector
         return $result;
     }
 
+    public static function getClassAnnotation(string $class, string $annotation)
+    {
+        return static::get($class . '._c.' . $annotation);
+    }
+
 }
