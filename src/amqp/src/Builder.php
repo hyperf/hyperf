@@ -48,25 +48,16 @@ class Builder
             $pool = $this->getConnectionPool($message->getPoolName());
             /** @var \Hyperf\Amqp\Connection $connection */
             $connection = $pool->get();
-            $channel = $connection->getChannel();
+            $channel = $connection->getChannel(false);
+            defer(function () use ($connection, $channel) {
+                $channel->close();
+                $connection->release();
+            });
         }
 
         $builder = $message->getExchangeBuilder();
 
         $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
-
-        isset($connection) && $pool->release($connection);
-    }
-
-    protected function getChannel(string $poolName, ?Connection $conn = null): Channel
-    {
-        $pool = $this->getChannelPool($poolName);
-        return $pool->get();
-    }
-
-    protected function getConnection(string $poolName): Connection
-    {
-        return $this->poolFactory->getConnectionPool($poolName)->get();
     }
 
     protected function getConnectionPool(string $poolName): AmqpConnectionPool

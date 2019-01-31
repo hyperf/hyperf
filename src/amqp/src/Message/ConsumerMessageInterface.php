@@ -18,7 +18,7 @@ use Hyperf\Amqp\Builder\QueueBuilder;
 interface ConsumerMessageInterface extends MessageInterface
 {
 
-    public function consume($data): bool;
+    public function consume($data): string;
 
     public function setQueue(string $queue);
 

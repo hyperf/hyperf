@@ -29,13 +29,17 @@ class Producer extends Builder
         $pool = $this->getConnectionPool($producerMessage->getPoolName());
         /** @var \Hyperf\Amqp\Connection $connection */
         $connection = $pool->get();
-        $channel = $connection->getChannel($confirm);
+        if ($confirm) {
+            $channel = $connection->getConfirmChannel();
+        } else {
+            $channel = $connection->getChannel();
+        }
         $channel->set_ack_handler(function () use (&$result) {
             $result = true;
         });
         $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
         $channel->wait_for_pending_acks_returns($timeout);
-        $pool->release($connection);
+        $connection->release();
 
         return $confirm ? $result : true;
     }
