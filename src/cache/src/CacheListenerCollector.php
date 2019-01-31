@@ -10,12 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Cache\Driver;
+namespace Hyperf\Cache;
 
-use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\CacheInterface;
+use Hyperf\Utils\Traits\Container;
 
-interface DriverInterface extends CacheInterface
+class CacheListenerCollector
 {
-    public function __construct(ContainerInterface $container, array $config);
+    use Container;
 }
