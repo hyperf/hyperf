@@ -37,6 +37,7 @@ class ConsumerManager
             $property['exchange'] && $instance->setExchange($property['exchange']);
             $property['routingKey'] && $instance->setRoutingKey($property['routingKey']);
             $property['queue'] && $instance->setQueue($property['queue']);
+            property_exists($instance, 'container') && $instance->container = $this->container;
             $nums = $property['nums'] ?? 1;
             $process = $this->createProcess($instance);
             $process->nums = (int)$nums;

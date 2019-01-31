@@ -14,14 +14,9 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\ExchangeBuilder;
 use Hyperf\Amqp\Exception\MessageException;
-use Psr\Container\ContainerInterface;
 
 abstract class Message implements MessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
 
     /**
      * @var string
