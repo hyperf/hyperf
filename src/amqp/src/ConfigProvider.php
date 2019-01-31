@@ -23,6 +23,7 @@ class ConfigProvider
             'dependencies' => [
                 Producer::class => Producer::class,
                 Packer::class => JsonPacker::class,
+                Consumer::class => ConsumerFactory::class,
             ],
             'commands' => [
             ],

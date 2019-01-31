@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Pool;
 
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {

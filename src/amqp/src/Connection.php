@@ -13,15 +13,18 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
+use Hyperf\Amqp\Pool\AmqpChannelPool;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AbstractChannel;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\Container\ContainerInterface;
+use Swoole\Coroutine\Channel as SwooleChannel;
 
 class Connection extends BaseConnection implements ConnectionInterface
 {
@@ -55,7 +58,15 @@ class Connection extends BaseConnection implements ConnectionInterface
      */
     protected $lastHeartbeatTime = 0.0;
 
-    protected $transaction = false;
+    /**
+     * @var \PhpAmqpLib\Channel\AMQPChannel
+     */
+    private $channel;
+
+    /**
+     * @var \PhpAmqpLib\Channel\AMQPChannel
+     */
+    private $confirmChannel;
 
     public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {
@@ -82,18 +93,21 @@ class Connection extends BaseConnection implements ConnectionInterface
         return $this->connection;
     }
 
-    public function getChannel($confirm = false): AbstractChannel
+    public function getChannel(): AMQPChannel
     {
-        $connection = $this->getConnection();
-        $needConfirmSelect = true;
-        $channelId = 1;
-        ! $confirm && $channelId = 2;
-        if ($confirm && isset($connection->channels[$channelId])) {
-            $needConfirmSelect = false;
+        if (! $this->channel) {
+            $this->channel = $this->getConnection()->channel();
         }
-        $channel = $connection->channel($channelId);
-        $needConfirmSelect && $channel->confirm_select(false);
-        return $channel;
+        return $this->channel;
+    }
+
+    public function getConfirmChannel(): AMQPChannel
+    {
+        if (! $this->confirmChannel) {
+            $this->confirmChannel = $this->getConnection()->channel();
+            $this->confirmChannel->confirm_select();
+        }
+        return $this->confirmChannel;
     }
 
     public function reconnect(): bool

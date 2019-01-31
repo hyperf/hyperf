@@ -15,23 +15,24 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
+use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Consumer extends Builder
 {
-    /**
-     * @var ConsumerInterface
-     */
-    protected $message;
 
     /**
-     * @var AMQPChannel
+     * @var bool
      */
-    protected $channel;
-
     protected $status = true;
 
+    /**
+     * @var array
+     */
     protected $signals
         = [
             SIGQUIT,
@@ -39,56 +40,77 @@ class Consumer extends Builder
             SIGTSTP,
         ];
 
-    public function signalHandler()
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        ContainerInterface $container,
+        PoolFactory $poolFactory,
+        LoggerInterface $logger
+    ) {
+        parent::__construct($container, $poolFactory);
+        $this->logger = $logger;
+    }
+
+
+    public function signalHandler(): void
     {
         $this->status = false;
     }
 
-    public function consume(ConsumerMessageInterface $message): void
+    public function consume(ConsumerMessageInterface $consumerMessage): void
     {
+        // @TODO Support coroutine.
         pcntl_async_signals(true);
 
         foreach ($this->signals as $signal) {
             pcntl_signal($signal, [$this, 'signalHandler']);
         }
 
-        $this->message = $message;
-        $pool = $this->getConnectionPool($message->getPoolName());
-        /** @var \PhpAmqpLib\Connection\AbstractConnection $connection */
+        $pool = $this->getConnectionPool($consumerMessage->getPoolName());
+        /** @var \Hyperf\Amqp\Connection $connection */
         $connection = $pool->get();
-        $this->channel = $connection->channel(1);
+        $channel = $connection->getConfirmChannel();
 
-        $this->declare($message, $this->channel);
+        $this->declare($consumerMessage, $channel);
 
-        $this->channel->basic_consume($this->message->getQueue(), $this->message->getRoutingKey(), false, false, false, false, [
-                $this,
-                'callback'
-            ]);
-
-        while ($this->status && count($this->channel->callbacks) > 0) {
-            $this->channel->wait();
-        }
-
-        $this->channel->close();
-        $pool->release($connection);
-    }
-
-    public function callback(AMQPMessage $message)
-    {
-        $body = $message->getBody();
-        $consumerMessage = $this->message->unserialize($body);
-
-        try {
-            $result = $this->message->consume($consumerMessage);
-            if ($result === Result::ACK) {
-                $this->channel->basic_ack($message->delivery_info['delivery_tag']);
-            } elseif ($this->message->isRequeue() && $result === Result::REQUEUE) {
-                $this->channel->basic_reject($message->delivery_info['delivery_tag'], true);
+        $channel->basic_consume(
+            $consumerMessage->getQueue(),
+            $consumerMessage->getRoutingKey(),
+            false,
+            false,
+            false,
+            false,
+            function (AMQPMessage $message) use ($consumerMessage) {
+                $data = $consumerMessage->unserialize($message->getBody());
+                /** @var AMQPChannel $channel */
+                $channel = $message->delivery_info['channel'];
+                $deliveryTag = $message->delivery_info['delivery_tag'];
+                try {
+                    $result = $consumerMessage->consume($data);
+                    if ($result === Result::ACK) {
+                        $this->logger->debug($deliveryTag . ' acked.');
+                        return $channel->basic_ack($deliveryTag);
+                    } elseif ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
+                        $this->logger->debug($deliveryTag . ' requeued.');
+                        return $channel->basic_reject($deliveryTag, true);
+                    }
+                } catch (Throwable $exception) {
+                    $this->logger->debug($exception->getMessage());
+                }
+                $this->logger->debug($deliveryTag . ' rejected.');
+                $channel->basic_reject($deliveryTag, false);
             }
-        } catch (\Throwable $exception) {
+        );
 
+        while ($this->status && count($channel->callbacks) > 0) {
+            $channel->wait();
         }
-        $this->channel->basic_reject($message->delivery_info['delivery_tag'], false);
+
+        $channel->close();
+        $pool->release($connection);
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void

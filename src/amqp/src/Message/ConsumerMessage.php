@@ -29,13 +29,6 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $requeue = true;
 
-    /**
-     * Number of consumer process
-     *
-     * @var int
-     */
-    protected $nums = 0;
-
     public function setQueue(string $queue): self
     {
         $this->queue = $queue;
