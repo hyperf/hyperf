@@ -78,7 +78,7 @@ class CacheManager
         if ($hasObject) {
             $key .= ':' . md5(serialize($arguments));
         } else {
-            $key .= implode(':', $arguments);
+            $key .= ':' . implode(':', $arguments);
         }
 
         if (strlen($key) > 64) {
