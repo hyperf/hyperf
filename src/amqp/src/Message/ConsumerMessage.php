@@ -15,6 +15,7 @@ namespace Hyperf\Amqp\Message;
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Framework\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
@@ -28,6 +29,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      * @var bool
      */
     protected $requeue = true;
+
+    /**
+     * @var ContainerInterface
+     */
+    public $container;
 
     public function setQueue(string $queue): self
     {
