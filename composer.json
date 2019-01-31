@@ -43,6 +43,7 @@
     },
     "replace": {
         "hyperf/amqp": "self.version",
+        "hyperf/cache": "self.version",
         "hyperf/config": "self.version",
         "hyperf/constants": "self.version",
         "hyperf/contract": "self.version",
@@ -72,6 +73,7 @@
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
+            "Hyperf\\Cache\\": "src/cache/src/",
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\Constants\\": "src/constants/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
@@ -109,6 +111,7 @@
         "hyperf": {
             "config": [
                 "Hyperf\\Amqp\\ConfigProvider",
+                "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
                 "Hyperf\\Devtool\\ConfigProvider",
                 "Hyperf\\DbConnection\\ConfigProvider",
