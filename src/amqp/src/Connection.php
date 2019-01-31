@@ -113,6 +113,8 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function reconnect(): bool
     {
         $this->connection->reconnect();
+        $this->channel = null;
+        $this->confirmChannel = null;
         return true;
     }
 
@@ -124,6 +126,8 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         $this->connection->close();
+        $this->channel = null;
+        $this->confirmChannel = null;
         return true;
     }
 
