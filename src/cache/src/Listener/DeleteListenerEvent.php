@@ -17,7 +17,7 @@ use Hyperf\Cache\Exception\CacheException;
 
 class DeleteListenerEvent extends DeleteEvent
 {
-    public function __construct(string $listener, array $arguments, $group = 'default')
+    public function __construct(string $listener, array $arguments)
     {
         $config = CacheListenerCollector::get($listener, null);
         if (! $config) {
@@ -27,6 +27,6 @@ class DeleteListenerEvent extends DeleteEvent
         $className = $config['className'];
         $method = $config['method'];
 
-        parent::__construct($className, $method, $arguments, $group);
+        parent::__construct($className, $method, $arguments);
     }
 }
