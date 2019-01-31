@@ -109,7 +109,6 @@ class Consumer extends Builder
             $channel->wait();
         }
 
-        $channel->close();
         $pool->release($connection);
     }
 
