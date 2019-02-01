@@ -20,6 +20,7 @@ use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
@@ -88,6 +89,15 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function reconnect(): bool
     {
         $this->connection = $this->factory->make($this->config);
+
+        // Reset event dispatcher after db reconnect.
+        if ($this->container->has(EventDispatcherInterface::class)) {
+            if ($this->connection instanceof \Hyperf\Database\Connection) {
+                $dispatcher = $this->container->get(EventDispatcherInterface::class);
+                $this->connection->setEventDispatcher($dispatcher);
+            }
+        }
+
         $this->lastUseTime = microtime(true);
         return true;
     }

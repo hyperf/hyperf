@@ -19,7 +19,6 @@ use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DbPool extends Pool
 {
@@ -64,12 +63,6 @@ class DbPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
-        $conn = new Connection($this->container, $this, $this->config);
-        if ($this->container->has(EventDispatcherInterface::class)) {
-            $dispatcher = $this->container->get(EventDispatcherInterface::class);
-            $conn->setEventDispatcher($dispatcher);
-        }
-
-        return $conn;
+        return new Connection($this->container, $this, $this->config);
     }
 }
