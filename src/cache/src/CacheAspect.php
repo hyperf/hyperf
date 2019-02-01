@@ -50,9 +50,10 @@ class CacheAspect implements ArroundInterface
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
         $manager = $this->container->get(CacheManager::class);
+        [$key, $ttl, $group] = $manager->getAnnotationValue($className, $method, $arguments);
+
         /** @var DriverInterface $driver */
-        $driver = $manager->getDriver('default');
-        [$key, $ttl] = $driver->getAnnotationValue($className, $method, $arguments);
+        $driver = $manager->getDriver($group);
 
         if ($driver->has($key)) {
             return $driver->get($key);

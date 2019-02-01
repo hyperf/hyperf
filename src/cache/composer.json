@@ -13,6 +13,7 @@
         "php": ">=7.2",
         "psr/simple-cache": "^1.0",
         "hyperf/di": "dev-master",
+        "hyperf/event": "dev-master",
         "hyperf/utils": "dev-master"
     },
     "require-dev": {
