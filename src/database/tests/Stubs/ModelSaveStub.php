@@ -17,6 +17,7 @@ use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Utils\Context;
 use Mockery;
 
 class ModelSaveStub extends Model
@@ -27,7 +28,7 @@ class ModelSaveStub extends Model
 
     public function save(array $options = [])
     {
-        $_SERVER['__eloquent.saved'] = true;
+        Context::set('__model.saved', true);
     }
 
     public function setIncrementing($value)

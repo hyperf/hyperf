@@ -29,11 +29,13 @@ use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Utils\Context;
 use Hyperf\Utils\InteractsWithTime;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\ModelCamelStub;
 use HyperfTest\Database\Stubs\ModelCastingStub;
 use HyperfTest\Database\Stubs\ModelDestroyStub;
+use HyperfTest\Database\Stubs\ModelDynamicHiddenStub;
 use HyperfTest\Database\Stubs\ModelDynamicVisibleStub;
 use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
 use HyperfTest\Database\Stubs\ModelSaveStub;
@@ -205,41 +207,48 @@ class ModelTest extends TestCase
 
     public function testCreateMethodSavesNewModel()
     {
-        $_SERVER['__model.saved'] = false;
+        Context::set('__model.saved', false);
         $model = ModelSaveStub::create(['name' => 'taylor']);
-        $this->assertTrue($_SERVER['__model.saved']);
+        $this->assertTrue(Context::get('__model.saved'));
         $this->assertEquals('taylor', $model->name);
     }
 
     public function testMakeMethodDoesNotSaveNewModel()
     {
-        $_SERVER['__model.saved'] = false;
+        Context::set('__model.saved', false);
         $model = ModelSaveStub::make(['name' => 'taylor']);
-        $this->assertFalse($_SERVER['__model.saved']);
+        $this->assertFalse(Context::get('__model.saved'));
         $this->assertEquals('taylor', $model->name);
     }
 
     public function testForceCreateMethodSavesNewModelWithGuardedAttributes()
     {
-        $_SERVER['__model.saved'] = false;
+        Context::set('__model.saved', false);
         $model = ModelSaveStub::forceCreate(['id' => 21]);
-        $this->assertTrue($_SERVER['__model.saved']);
+        $this->assertTrue(Context::get('__model.saved'));
         $this->assertEquals(21, $model->id);
     }
 
     public function testFindMethodUseWritePdo()
     {
         ModelFindWithWritePdoStub::onWriteConnection()->find(1);
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
+
     }
 
     public function testDestroyMethodCallsQueryBuilderCorrectly()
     {
         ModelDestroyStub::destroy(1, 2, 3);
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testDestroyMethodCallsQueryBuilderCorrectlyWithCollection()
     {
         ModelDestroyStub::destroy(new Collection([1, 2, 3]));
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
     }
 
     public function testWithMethodCallsQueryBuilderCorrectly()
