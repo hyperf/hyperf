@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Events;
 
 use Hyperf\Database\Model\Model;
+use function lcfirst;
+use function class_basename;
+use function method_exists;
 
 abstract class Event
 {
@@ -20,10 +23,10 @@ abstract class Event
 
     protected $method;
 
-    public function __construct(Model $model, string $method)
+    public function __construct(Model $model, ?string $method = null)
     {
         $this->model = $model;
-        $this->method = $method;
+        $this->method = $method ?? lcfirst(class_basename(static::class));
     }
 
     public function getModel(): Model
