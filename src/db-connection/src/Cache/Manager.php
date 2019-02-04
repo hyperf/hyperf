@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Cache;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Model\Collection;
 use Hyperf\DbConnection\Cache\Handler\HandlerInterface;
 use Hyperf\DbConnection\Cache\Handler\RedisHandler;
 use Hyperf\DbConnection\Model\Model;
@@ -52,7 +53,7 @@ class Manager
         }
     }
 
-    public function findFromCache($id, string $class)
+    public function findFromCache($id, string $class): ?Model
     {
         /** @var Model $instance */
         $instance = new $class();
@@ -86,7 +87,7 @@ class Manager
         return $instance->newQuery()->where($primaryKey, '=', $id)->first();
     }
 
-    public function findManyFromCache(array $ids, string $class)
+    public function findManyFromCache(array $ids, string $class): Collection
     {
         /** @var Model $instance */
         $instance = new $class();
@@ -144,7 +145,7 @@ class Manager
     /**
      * Destroy the models for the given IDs from cache.
      */
-    public function destroy($ids, string $class)
+    public function destroy($ids, string $class): bool
     {
         /** @var Model $instance */
         $instance = new $class();
@@ -159,10 +160,13 @@ class Manager
             return $handler->deleteMultiple($keys);
         }
 
-        return 0;
+        return false;
     }
 
-    protected function getCacheKey($id, Model $model, Config $config)
+    /**
+     * @param $id
+     */
+    protected function getCacheKey($id, Model $model, Config $config): string
     {
         // mc:$prefix:m:$model:$pk:$id
         return sprintf(

@@ -135,7 +135,7 @@ class RedisHandler implements HandlerInterface
 
     public function deleteMultiple($keys)
     {
-        return $this->redis->delete(...$keys);
+        return $this->redis->delete(...$keys) > 0;
     }
 
     public function has($key)
