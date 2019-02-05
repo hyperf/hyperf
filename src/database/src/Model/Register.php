@@ -70,19 +70,9 @@ class Register
     /**
      * Get the event dispatcher instance.
      */
-    public static function getEventDispatcher(): EventDispatcherInterface
+    public static function getEventDispatcher(): ?EventDispatcherInterface
     {
         return static::$dispatcher;
-    }
-
-    /**
-     * Determire
-     */
-    public static function hasEventDispatcher():bool
-    {
-        $result = static::$dispatcher instanceof EventDispatcherInterface;
-        ! $result && static::unsetEventDispatcher();
-        return $result;
     }
 
     /**
