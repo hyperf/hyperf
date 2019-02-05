@@ -69,10 +69,8 @@ class Register
 
     /**
      * Get the event dispatcher instance.
-     *
-     * @return EventDispatcherInterface
      */
-    public static function getEventDispatcher()
+    public static function getEventDispatcher(): EventDispatcherInterface
     {
         return static::$dispatcher;
     }
