@@ -21,7 +21,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
  * @internal
- * @coversNothing
+ * @covers \Hyperf\Event\ConfigProvider
  */
 class ConfigProviderTest extends TestCase
 {

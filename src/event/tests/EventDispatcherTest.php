@@ -24,7 +24,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
  * @internal
- * @coversNothing
+ * @covers \Hyperf\Event\EventDispatcher
  */
 class EventDispatcherTest extends TestCase
 {

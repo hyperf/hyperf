@@ -31,7 +31,10 @@ use SplPriorityQueue;
 
 /**
  * @internal
- * @coversNothing
+ * @covers \Hyperf\Event\Annotation\Listener
+ * @covers \Hyperf\Event\EventDispatcher
+ * @covers \Hyperf\Event\ListenerProvider
+ * @covers \Hyperf\Event\ListenerProviderFactory
  */
 class ListenerTest extends TestCase
 {
