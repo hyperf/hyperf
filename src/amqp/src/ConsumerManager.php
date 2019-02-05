@@ -1,20 +1,27 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Amqp;
 
-
 use Doctrine\Instantiator\Instantiator;
-use Hyperf\Amqp\Message\ConsumerInterface;
+use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
-use Hyperf\Process\ProcessRegister;
 use Hyperf\Process\Process;
+use Hyperf\Process\ProcessRegister;
 use Psr\Container\ContainerInterface;
 
 class ConsumerManager
 {
-
     /**
      * @var ContainerInterface
      */
@@ -40,7 +47,7 @@ class ConsumerManager
             property_exists($instance, 'container') && $instance->container = $this->container;
             $nums = $property['nums'] ?? 1;
             $process = $this->createProcess($instance);
-            $process->nums = (int)$nums;
+            $process->nums = (int) $nums;
             $process->name = 'Consumer-' . $property['queue'];
             ProcessRegister::register($process);
         }
@@ -48,9 +55,7 @@ class ConsumerManager
 
     private function createProcess(ConsumerMessageInterface $consumerMessage): Process
     {
-        return new class($this->container, $consumerMessage) extends Process
-        {
-
+        return new class($this->container, $consumerMessage) extends Process {
             /**
              * @var \Hyperf\Amqp\Consumer
              */
@@ -74,5 +79,4 @@ class ConsumerManager
             }
         };
     }
-
 }

@@ -19,6 +19,10 @@ use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    public $container;
 
     /**
      * @var string
@@ -29,11 +33,6 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      * @var bool
      */
     protected $requeue = true;
-
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
 
     public function setQueue(string $queue): self
     {

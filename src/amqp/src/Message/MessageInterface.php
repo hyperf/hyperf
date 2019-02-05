@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Message;
 
-
 use Hyperf\Amqp\Builder\ExchangeBuilder;
 
 interface MessageInterface

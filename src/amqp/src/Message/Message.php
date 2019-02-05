@@ -17,7 +17,6 @@ use Hyperf\Amqp\Exception\MessageException;
 
 abstract class Message implements MessageInterface
 {
-
     /**
      * @var string
      */

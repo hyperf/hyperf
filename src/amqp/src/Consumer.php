@@ -24,7 +24,6 @@ use Throwable;
 
 class Consumer extends Builder
 {
-
     /**
      * @var bool
      */
@@ -53,7 +52,6 @@ class Consumer extends Builder
         parent::__construct($container, $poolFactory);
         $this->logger = $logger;
     }
-
 
     public function signalHandler(): void
     {
@@ -93,7 +91,8 @@ class Consumer extends Builder
                     if ($result === Result::ACK) {
                         $this->logger->debug($deliveryTag . ' acked.');
                         return $channel->basic_ack($deliveryTag);
-                    } elseif ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
+                    }
+                    if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
                         $this->logger->debug($deliveryTag . ' requeued.');
                         return $channel->basic_reject($deliveryTag, true);
                     }

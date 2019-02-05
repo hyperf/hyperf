@@ -28,5 +28,4 @@ class Type
             self::TOPIC,
         ];
     }
-
 }

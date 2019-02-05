@@ -46,6 +46,11 @@ class AmqpConnectionPool extends Pool
         return $this->name;
     }
 
+    public function release(ConnectionInterface $connection): void
+    {
+        parent::release($connection);
+    }
+
     protected function initOption()
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
@@ -66,10 +71,4 @@ class AmqpConnectionPool extends Pool
     {
         return new Connection($this->container, $this, $this->config);
     }
-
-    public function release(ConnectionInterface $connection): void
-    {
-        parent::release($connection);
-    }
-
 }

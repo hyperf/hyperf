@@ -18,7 +18,6 @@ use Hyperf\Framework\ApplicationContext;
 
 abstract class ProducerMessage extends Message implements ProducerMessageInterface
 {
-
     /**
      * @var string
      */

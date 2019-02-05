@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Amqp\Listener;
 
 use Hyperf\Amqp\ConsumerManager;
@@ -9,11 +19,10 @@ use Hyperf\Framework\Event\BeforeMainServerStart;
 use Psr\Container\ContainerInterface;
 
 /**
- * @Listener()
+ * @Listener
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
-
     /**
      * @var ContainerInterface
      */
@@ -43,7 +52,5 @@ class BeforeMainServerStartListener implements ListenerInterface
         // Init the consumer process.
         $consumerManager = $this->container->get(ConsumerManager::class);
         $consumerManager->run();
-
     }
-
 }

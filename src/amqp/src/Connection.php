@@ -13,18 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
-use Hyperf\Amqp\Pool\AmqpChannelPool;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
-use PhpAmqpLib\Channel\AbstractChannel;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel as SwooleChannel;
 
 class Connection extends BaseConnection implements ConnectionInterface
 {
@@ -164,5 +161,4 @@ class Connection extends BaseConnection implements ConnectionInterface
 
         return false;
     }
-
 }

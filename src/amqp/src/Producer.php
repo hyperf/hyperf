@@ -18,13 +18,12 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class Producer extends Builder
 {
-
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;
 
         $this->injectMessageProperty($producerMessage);
-        
+
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
         $pool = $this->getConnectionPool($producerMessage->getPoolName());
         /** @var \Hyperf\Amqp\Connection $connection */
@@ -50,9 +49,8 @@ class Producer extends Builder
         foreach ($item as $key => $value) {
             $setter = setter($key);
             if (method_exists($producerMessage, $setter)) {
-                $producerMessage->$setter($value);
+                $producerMessage->{$setter}($value);
             }
         }
     }
-
 }

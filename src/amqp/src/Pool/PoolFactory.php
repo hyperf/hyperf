@@ -39,5 +39,4 @@ class PoolFactory
 
         return $this->pools[$name] = new AmqpConnectionPool($this->container, $name);
     }
-
 }
