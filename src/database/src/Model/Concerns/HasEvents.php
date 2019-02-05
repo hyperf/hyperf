@@ -52,16 +52,14 @@ trait HasEvents
             return true;
         }
 
-        $result = $this->filterModelEventResults(
-            $this->fireCustomModelEvent($event, 'dispatch')
-        );
-
-        if ($result === false) {
-            return false;
+        $result = $this->fireCustomModelEvent($event);
+        // If custom event does not exist, the fireCustomModelEvent() method will return null.
+        if (! is_null($result)) {
+            return $result;
         }
 
         $eventName = 'Hyperf\\Database\\Model\\Events\\' . Str::studly($event);
-        return ! empty($result) ? $result : $dispatcher->dispatch(new $eventName($this, $event));
+        return $dispatcher->dispatch(new $eventName($this, $event));
     }
 
     /**
@@ -71,17 +69,13 @@ trait HasEvents
      * @param string $method
      * @return null|mixed
      */
-    protected function fireCustomModelEvent($event, $method)
+    protected function fireCustomModelEvent($event)
     {
         if (! isset($this->dispatchesEvents[$event])) {
             return;
         }
 
-        $result = $this->getEventDispatcher()->{$method}(new $this->dispatchesEvents[$event]($this));
-
-        if (! is_null($result)) {
-            return $result;
-        }
+        return $this->getEventDispatcher()->dispatch(new $this->dispatchesEvents[$event]($this));
     }
 
     /**
