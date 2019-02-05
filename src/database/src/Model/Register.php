@@ -76,6 +76,16 @@ class Register
     }
 
     /**
+     * Determire
+     */
+    public static function hasEventDispatcher():bool
+    {
+        $result = static::$dispatcher instanceof EventDispatcherInterface;
+        ! $result && static::unsetEventDispatcher();
+        return $result;
+    }
+
+    /**
      * Set the event dispatcher instance.
      */
     public static function setEventDispatcher(EventDispatcherInterface $dispatcher)

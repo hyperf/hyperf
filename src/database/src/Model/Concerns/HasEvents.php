@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
  * @method retrieved(Model $model)
@@ -44,12 +45,13 @@ trait HasEvents
 
     /**
      * Fire the given event for the model.
+     * @return object|StoppableEventInterface|null
      */
-    protected function fireModelEvent(string $event)
+    protected function fireModelEvent(string $event): ?object
     {
         $dispatcher = $this->getEventDispatcher();
         if (! $dispatcher instanceof EventDispatcherInterface) {
-            return true;
+            return null;
         }
 
         $result = $this->fireCustomModelEvent($event);

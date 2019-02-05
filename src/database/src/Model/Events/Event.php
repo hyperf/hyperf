@@ -19,8 +19,15 @@ use function method_exists;
 
 abstract class Event
 {
+
+    /**
+     * @var Model
+     */
     protected $model;
 
+    /**
+     * @var string|null
+     */
     protected $method;
 
     public function __construct(Model $model, ?string $method = null)
@@ -47,6 +54,6 @@ abstract class Event
             return $model->{$method}();
         }
 
-        return true;
+        return $this;
     }
 }
