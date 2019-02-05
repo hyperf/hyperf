@@ -22,11 +22,6 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  */
 class Cacheable extends AbstractAnnotation
 {
-    /**
-     * @var array
-     */
-    public $value;
-
     public $key;
 
     public $ttl;

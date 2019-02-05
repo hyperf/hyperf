@@ -17,6 +17,7 @@ use Hyperf\Framework\ApplicationContext;
 trait Cacheable
 {
     /**
+     * Fetch a model from cache.
      * @return null|self
      */
     public static function findFromCache($id)
@@ -28,6 +29,7 @@ trait Cacheable
     }
 
     /**
+     * Fetch models from cache.
      * @return \Hyperf\Database\Model\Collection
      */
     public static function findManyFromCache($ids)
@@ -38,6 +40,10 @@ trait Cacheable
         return $manager->findManyFromCache($ids, static::class);
     }
 
+    /**
+     * Delete model from cache.
+     * @return bool
+     */
     public function deleteCache()
     {
         $container = ApplicationContext::getContainer();
