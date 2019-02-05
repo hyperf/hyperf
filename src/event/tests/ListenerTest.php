@@ -1,7 +1,16 @@
 <?php
 
-namespace HyperfTest\Event;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace HyperfTest\Event;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -20,9 +29,12 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use SplPriorityQueue;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ListenerTest extends TestCase
 {
-
     use MockeryPHPUnitIntegration;
 
     public function testInvokeListenerProvider()
@@ -74,7 +86,7 @@ class ListenerTest extends TestCase
             'listeners' => [
                 AlphaListener::class,
                 BetaListener::class,
-            ]
+            ],
         ]));
         $container->shouldReceive('get')
             ->with(AlphaListener::class)
@@ -141,19 +153,18 @@ class ListenerTest extends TestCase
         $this->assertSame(1, $listenerAnnotation->priority);
         // Define the priority.
         $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 2
+            'priority' => 2,
         ]);
         $this->assertSame(2, $listenerAnnotation->priority);
         // String number
         $listenerAnnotation = new ListenerAnnotation([
-            'priority' => "2"
+            'priority' => '2',
         ]);
         $this->assertSame(2, $listenerAnnotation->priority);
         // Non-number
         $listenerAnnotation = new ListenerAnnotation([
-            'priority' => "string"
+            'priority' => 'string',
         ]);
         $this->assertSame(1, $listenerAnnotation->priority);
     }
-
 }

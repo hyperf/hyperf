@@ -1,20 +1,31 @@
 <?php
 
-namespace HyperfTest\Event;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace HyperfTest\Event;
 
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use HyperfTest\Event\Event\Alpha;
-use HyperfTest\Event\Event\Beta;
 use HyperfTest\Event\Listener\AlphaListener;
 use HyperfTest\Event\Listener\BetaListener;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class EventDispatcherTest extends TestCase
 {
     public function testInvokeDispatcher()
@@ -33,6 +44,4 @@ class EventDispatcherTest extends TestCase
         $this->assertSame(2, $alphaListener->value);
         $this->assertSame(1, $betaListener->value);
     }
-
-
 }

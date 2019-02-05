@@ -1,7 +1,16 @@
 <?php
 
-namespace HyperfTest\Event;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace HyperfTest\Event;
 
 use Hyperf\Event\ConfigProvider;
 use Hyperf\Event\EventDispatcher;
@@ -10,6 +19,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ConfigProviderTest extends TestCase
 {
     public function testInvoke()
@@ -26,6 +39,4 @@ class ConfigProviderTest extends TestCase
             ],
         ], (new ConfigProvider())());
     }
-
-
 }
