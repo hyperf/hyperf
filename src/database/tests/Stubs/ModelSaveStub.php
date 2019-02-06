@@ -26,7 +26,7 @@ class ModelSaveStub extends Model
 
     protected $guarded = ['id'];
 
-    public function save(array $options = [])
+    public function save(array $options = []): bool
     {
         Context::set('__model.saved', true);
     }

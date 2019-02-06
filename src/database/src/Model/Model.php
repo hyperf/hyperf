@@ -25,6 +25,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
@@ -114,6 +115,18 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected $perPage = 15;
 
+    /**
+     * Is the model booted ?
+     *
+     * @var bool
+     */
+    protected $booted = false;
+
+    /**
+     * The array of trait initializers that will be called on each new instance.
+     *
+     * @var array
+     */
     protected $traitInitializers = [];
 
     /**
@@ -122,6 +135,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function __construct(array $attributes = [])
     {
         $this->bootIfNotBooted();
+
+        $this->initializeTraits();
 
         $this->syncOriginal();
 
@@ -227,7 +242,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         IgnoreOnTouch::$container = array_values(array_merge(IgnoreOnTouch::$container, $models));
 
         try {
-            call_user_func($callback);
+            call($callback);
         } finally {
             IgnoreOnTouch::$container = array_values(array_diff(IgnoreOnTouch::$container, $models));
         }
@@ -489,15 +504,17 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @return bool
      */
-    public function save(array $options = [])
+    public function save(array $options = []): bool
     {
         $query = $this->newModelQuery();
 
         // If the "saving" event returns false we'll bail out of the save and return
         // false, indicating that the save failed. This provides a chance for any
         // listeners to cancel save operations if validations fail or whatever.
-        if ($this->fireModelEvent('saving') === false) {
-            return false;
+        if ($saving = $this->fireModelEvent('saving')) {
+            if ($saving instanceof StoppableEventInterface && $saving->isPropagationStopped()) {
+                return false;
+            }
         }
 
         // If the model already exists in the database we can just update our record
@@ -505,12 +522,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         // clause to only update this model. Otherwise, we'll just insert them.
         if ($this->exists) {
             $saved = $this->isDirty() ? $this->performUpdate($query) : true;
-        }
-
-        // If the model is brand new, we'll insert it into our database and set the
-        // ID attribute on the model to the value of the newly inserted row's ID
-        // which is typically an auto-increment value managed by the database.
-        else {
+        } else {
+            // If the model is brand new, we'll insert it into our database and set the
+            // ID attribute on the model to the value of the newly inserted row's ID
+            // which is typically an auto-increment value managed by the database.
             $saved = $this->performInsert($query);
 
             if (! $this->getConnectionName() && $connection = $query->getConnection()) {
@@ -836,8 +851,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $attributes = Arr::except($this->attributes, $except ? array_unique(array_merge($except, $defaults)) : $defaults);
 
         return tap(new static(), function ($instance) use ($attributes) {
+            // @var \Hyperf\Database\Model\Model $instance
             $instance->setRawAttributes($attributes);
-
             $instance->setRelations($this->relations);
         });
     }
@@ -850,10 +865,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function is($model)
     {
-        return ! is_null($model) &&
-            $this->getKey() === $model->getKey() &&
-            $this->getTable() === $model->getTable() &&
-            $this->getConnectionName() === $model->getConnectionName();
+        return ! is_null($model) && $this->getKey() === $model->getKey() && $this->getTable() === $model->getTable() && $this->getConnectionName() === $model->getConnectionName();
     }
 
     /**
@@ -879,10 +891,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get the event dispatcher for the model.
      * You can write it by yourself.
-     *
-     * @return EventDispatcherInterface
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): ?EventDispatcherInterface
     {
         return Register::getEventDispatcher();
     }
@@ -1166,11 +1176,15 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function bootIfNotBooted(): void
     {
-        $this->fireModelEvent('booting', false);
+        if (! $this->booted) {
+            $this->booted = true;
 
-        $this->boot();
+            $this->fireModelEvent('booting');
 
-        $this->fireModelEvent('booted', false);
+            $this->boot();
+
+            $this->fireModelEvent('booted');
+        }
     }
 
     /**
@@ -1285,7 +1299,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function finishSave(array $options)
     {
-        $this->fireModelEvent('saved', false);
+        $this->fireModelEvent('saved');
 
         if ($this->isDirty() && ($options['touch'] ?? true)) {
             $this->touchOwners();
@@ -1326,7 +1340,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
             $this->syncChanges();
 
-            $this->fireModelEvent('updated', false);
+            $this->fireModelEvent('updated');
         }
 
         return true;
@@ -1399,7 +1413,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $this->wasRecentlyCreated = true;
 
-        $this->fireModelEvent('created', false);
+        $this->fireModelEvent('created');
 
         return true;
     }
@@ -1437,5 +1451,15 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $connection = $this->getConnection();
 
         return new QueryBuilder($connection, $connection->getQueryGrammar(), $connection->getPostProcessor());
+    }
+
+    /**
+     * Initialize any initializable traits on the model.
+     */
+    protected function initializeTraits(): void
+    {
+        foreach ($this->traitInitializers[static::class] as $method) {
+            $this->{$method}();
+        }
     }
 }
