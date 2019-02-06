@@ -37,7 +37,7 @@ class Model extends BaseModel
         return $resolver->connection($connectionName);
     }
 
-    public function getEventDispatcher(): EventDispatcherInterface
+    public function getEventDispatcher(): ?EventDispatcherInterface
     {
         return $this->getContainer()->get(EventDispatcherInterface::class);
     }
