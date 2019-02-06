@@ -12,16 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Events;
 
+use function class_basename;
 use Hyperf\Database\Model\Model;
 use Hyperf\Event\Stoppable;
-use Psr\EventDispatcher\StoppableEventInterface;
-use function class_basename;
 use function lcfirst;
 use function method_exists;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 abstract class Event implements StoppableEventInterface
 {
-
     use Stoppable;
 
     /**
@@ -30,7 +29,7 @@ abstract class Event implements StoppableEventInterface
     protected $model;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     protected $method;
 
@@ -40,22 +39,10 @@ abstract class Event implements StoppableEventInterface
         $this->method = $method ?? lcfirst(class_basename(static::class));
     }
 
-    public function getModel(): Model
-    {
-        return $this->model;
-    }
-
-    public function getMethod(): string
-    {
-        return $this->method;
-    }
-
     public function handle()
     {
-        $model = $this->getModel();
-        $method = $this->getMethod();
-        if ($model && method_exists($model, $method)) {
-            return $model->{$method}();
+        if ($this->model && method_exists($this->model, $this->method)) {
+            return $this->model->{$this->method}();
         }
 
         return $this;
