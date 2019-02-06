@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
-class ModelStubWithTrait
+class ModelStubWithTrait extends ModelStub
 {
     use FooBarTrait;
 }

@@ -14,15 +14,6 @@ namespace HyperfTest\Database\Stubs;
 
 use Hyperf\Database\Model\Model;
 
-class ModelBootingTestStub extends Model
+class ModelNamespacedStub extends Model
 {
-    public function unboot()
-    {
-        $this->booted = false;
-    }
-
-    public function isBooted()
-    {
-        return $this->booted;
-    }
 }

@@ -17,32 +17,47 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use Foo\Bar\ModelNamespacedStub;
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Events\Saving;
+use Hyperf\Database\Model\Events\Updating;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\ListenerProvider;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\InteractsWithTime;
 use HyperfTest\Database\Stubs\DateModelStub;
+use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
+use HyperfTest\Database\Stubs\KeyTypeModelStub;
+use HyperfTest\Database\Stubs\ModelAppendsStub;
+use HyperfTest\Database\Stubs\ModelBootingTestStub;
 use HyperfTest\Database\Stubs\ModelCamelStub;
 use HyperfTest\Database\Stubs\ModelCastingStub;
 use HyperfTest\Database\Stubs\ModelDestroyStub;
 use HyperfTest\Database\Stubs\ModelDynamicHiddenStub;
 use HyperfTest\Database\Stubs\ModelDynamicVisibleStub;
+use HyperfTest\Database\Stubs\ModelEventObjectStub;
 use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
+use HyperfTest\Database\Stubs\ModelGetMutatorsStub;
+use HyperfTest\Database\Stubs\ModelNonIncrementingStub;
 use HyperfTest\Database\Stubs\ModelSaveStub;
 use HyperfTest\Database\Stubs\ModelStub;
+use HyperfTest\Database\Stubs\ModelStubWithTrait;
 use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
+use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\TestAnotherObserverStub;
+use HyperfTest\Database\Stubs\TestObserverStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
@@ -234,7 +249,6 @@ class ModelTest extends TestCase
         ModelFindWithWritePdoStub::onWriteConnection()->find(1);
         // Avoid 'This test did not perform any assertions' notice
         $this->assertTrue(true);
-
     }
 
     public function testDestroyMethodCallsQueryBuilderCorrectly()
@@ -330,8 +344,8 @@ class ModelTest extends TestCase
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(false);
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->once()->with($saving = new Saving($model))->andReturn($saving);
         $model->exists = true;
 
         $this->assertFalse($model->save());
@@ -342,9 +356,13 @@ class ModelTest extends TestCase
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.updating: ' . get_class($model), $model)->andReturn(false);
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $saving = new Saving($model, 'saving');
+        $events->shouldReceive('dispatch')->once()->with($saving)->andReturn($saving);
+        $updating = new Updating($model, 'updating');
+        $events->shouldReceive('dispatch')->once()->with($updating)->andReturn($updating);
+        //$events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
+        //$events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(false);
         $model->exists = true;
         $model->foo = 'bar';
 
@@ -372,7 +390,9 @@ class ModelTest extends TestCase
         $query->shouldReceive('update')->once()->with(['name' => 'taylor'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->never())->method('updateTimestamps');
-        $model->expects($this->any())->method('fireModelEvent')->will($this->returnValue(true));
+        $model->expects($this->any())->method('fireModelEvent')->willReturnCallback(function ($result) {
+            // Do nothing.
+        });
 
         $model->id = 1;
         $model->syncOriginal();
@@ -389,7 +409,7 @@ class ModelTest extends TestCase
         $query->shouldReceive('update')->once()->with(['id' => 2, 'foo' => 'bar'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('until')->once()->with('model.updating: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('dispatch')->once()->with('model.updated: ' . get_class($model), $model)->andReturn(true);
@@ -437,8 +457,8 @@ class ModelTest extends TestCase
             'updated_at' => Carbon::now(),
         ];
         $model = new DateModelStub();
-        Model::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
-        $resolver->shouldReceive('connection')->andReturn($mockConnection = Mockery::mock(stdClass::class));
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        $resolver->shouldReceive('connection')->andReturn($mockConnection = Mockery::mock(ConnectionInterface::class));
         $mockConnection->shouldReceive('getQueryGrammar')->andReturn($mockConnection);
         $mockConnection->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
         $instance = $model->newInstance($timestamps);
@@ -453,8 +473,8 @@ class ModelTest extends TestCase
             'updated_at' => Carbon::now(),
         ];
         $model = new DateModelStub();
-        Model::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
-        $resolver->shouldReceive('connection')->andReturn($mockConnection = Mockery::mock(stdClass::class));
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        $resolver->shouldReceive('connection')->andReturn($mockConnection = Mockery::mock(ConnectionInterface::class));
         $mockConnection->shouldReceive('getQueryGrammar')->andReturn($mockConnection);
         $mockConnection->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
         $instance = $model->newInstance($timestamps);
@@ -484,6 +504,10 @@ class ModelTest extends TestCase
 
     public function testFromDateTime()
     {
+        Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        $resolver->shouldReceive('connection')->andReturn($mockConnection = Mockery::mock(ConnectionInterface::class));
+        $mockConnection->shouldReceive('getQueryGrammar')->andReturn(new Grammar());
+
         $model = new ModelStub();
 
         $value = Carbon::parse('2015-04-17 22:59:01');
@@ -523,7 +547,7 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('until')->once()->with('model.creating: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
@@ -543,7 +567,7 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('updateTimestamps');
         $model->setIncrementing(false);
 
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('until')->once()->with('model.creating: ' . get_class($model), $model)->andReturn(true);
         $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
@@ -561,10 +585,10 @@ class ModelTest extends TestCase
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('getConnection')->once();
+        // $query->shouldReceive('insertGetId')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        $model->setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.creating: ' . get_class($model), $model)->andReturn(false);
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(new Saving($model))->andReturn(new Saving($model));
 
         $this->assertFalse($model->save());
         $this->assertFalse($model->exists);
@@ -740,6 +764,7 @@ class ModelTest extends TestCase
     public function testConnectionManagement()
     {
         Register::setConnectionResolver($resolver = Mockery::mock(ConnectionResolverInterface::class));
+        /** @var ModelStub $model */
         $model = Mockery::mock(ModelStub::class . '[getConnectionName,connection]');
 
         $retval = $model->setConnection('foo');
@@ -747,9 +772,9 @@ class ModelTest extends TestCase
         $this->assertEquals('foo', $model->connection);
 
         $model->shouldReceive('getConnectionName')->once()->andReturn('somethingElse');
-        $resolver->shouldReceive('connection')->once()->with('somethingElse')->andReturn('bar');
+        $resolver->shouldReceive('connection')->once()->with('somethingElse')->andReturn($return = Mockery::mock(ConnectionInterface::class));
 
-        $this->assertEquals('bar', $model->getConnection());
+        $this->assertEquals($return, $model->getConnection());
     }
 
     public function testToArray()
@@ -1257,7 +1282,7 @@ class ModelTest extends TestCase
         $model = new ModelWithoutTableStub();
         $this->assertEquals('model_without_table_stubs', $model->getTable());
 
-        $namespacedModel = new ModelNamespacedStub();
+        $namespacedModel = new Stubs\ModelNamespacedStub();
         $this->assertEquals('model_namespaced_stubs', $namespacedModel->getTable());
     }
 
@@ -1311,7 +1336,7 @@ class ModelTest extends TestCase
 
     public function testModelObserversCanBeAttachedToModels()
     {
-        ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
         $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
@@ -1321,7 +1346,7 @@ class ModelTest extends TestCase
 
     public function testModelObserversCanBeAttachedToModelsWithString()
     {
-        ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
         $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
@@ -1331,7 +1356,7 @@ class ModelTest extends TestCase
 
     public function testModelObserversCanBeAttachedToModelsThroughAnArray()
     {
-        ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
         $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
@@ -1341,14 +1366,15 @@ class ModelTest extends TestCase
 
     public function testModelObserversCanBeAttachedToModelsThroughCallingObserveMethodOnlyOnce()
     {
-        ModelStub::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
-        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
+        $listenerProvider = Mockery::mock(ListenerProvider::class);
+        Register::setEventDispatcher($events = new EventDispatcher($listenerProvider));
+        $listenerProvider->shouldReceive('on')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
+        $listenerProvider->shouldReceive('on')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
 
-        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@creating');
-        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@saved');
+        $listenerProvider->shouldReceive('on')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@creating');
+        $listenerProvider->shouldReceive('on')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@saved');
 
-        $events->shouldReceive('forget');
+        $listenerProvider->shouldReceive('forget');
 
         ModelStub::observe([
             TestObserverStub::class,
@@ -1361,45 +1387,45 @@ class ModelTest extends TestCase
     public function testSetObservableEvents()
     {
         $class = new ModelStub();
-        $class->setObservableEvents(['foo']);
+        $class->setEvents(['foo']);
 
-        $this->assertContains('foo', $class->getObservableEvents());
+        $this->assertContains('foo', $class->getAvailableEvents());
     }
 
     public function testAddObservableEvent()
     {
         $class = new ModelStub();
-        $class->addObservableEvents('foo');
+        $class->addEvents('foo');
 
-        $this->assertContains('foo', $class->getObservableEvents());
+        $this->assertContains('foo', $class->getAvailableEvents());
     }
 
     public function testAddMultipleObserveableEvents()
     {
         $class = new ModelStub();
-        $class->addObservableEvents('foo', 'bar');
+        $class->addEvents('foo', 'bar');
 
-        $this->assertContains('foo', $class->getObservableEvents());
-        $this->assertContains('bar', $class->getObservableEvents());
+        $this->assertContains('foo', $class->getAvailableEvents());
+        $this->assertContains('bar', $class->getAvailableEvents());
     }
 
     public function testRemoveObservableEvent()
     {
         $class = new ModelStub();
-        $class->setObservableEvents(['foo', 'bar']);
-        $class->removeObservableEvents('bar');
+        $class->setEvents(['foo', 'bar']);
+        $class->removeEvents('bar');
 
-        $this->assertNotContains('bar', $class->getObservableEvents());
+        $this->assertNotContains('bar', $class->getAvailableEvents());
     }
 
     public function testRemoveMultipleObservableEvents()
     {
         $class = new ModelStub();
-        $class->setObservableEvents(['foo', 'bar']);
-        $class->removeObservableEvents('foo', 'bar');
+        $class->setEvents(['foo', 'bar']);
+        $class->removeEvents('foo', 'bar');
 
-        $this->assertNotContains('foo', $class->getObservableEvents());
-        $this->assertNotContains('bar', $class->getObservableEvents());
+        $this->assertNotContains('foo', $class->getAvailableEvents());
+        $this->assertNotContains('bar', $class->getAvailableEvents());
     }
 
     /**
@@ -1415,14 +1441,13 @@ class ModelTest extends TestCase
     public function testModelIsBootedOnUnserialize()
     {
         $model = new ModelBootingTestStub();
-        $this->assertTrue(ModelBootingTestStub::isBooted());
+        $this->assertTrue($model->isBooted());
         $model->foo = 'bar';
         $string = serialize($model);
-        $model = null;
-        ModelBootingTestStub::unboot();
-        $this->assertFalse(ModelBootingTestStub::isBooted());
-        unserialize($string);
-        $this->assertTrue(ModelBootingTestStub::isBooted());
+        $model->unboot();
+        $this->assertFalse($model->isBooted());
+        $model = unserialize($string);
+        $this->assertTrue($model->isBooted());
     }
 
     public function testModelsTraitIsInitialized()
@@ -1657,8 +1682,8 @@ class ModelTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\\JsonEncodingException
-     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [Illuminate\Tests\Database\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
+     * @expectedException \Hyperf\Database\Model\JsonEncodingException
+     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
      */
     public function testModelAttributeCastingFailsOnUnencodableData()
     {

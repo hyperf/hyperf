@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Model\Model;
+
 class ModelGetMutatorsStub extends Model
 {
     public static function resetMutatorCache()
