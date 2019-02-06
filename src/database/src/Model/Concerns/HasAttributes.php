@@ -1088,7 +1088,7 @@ trait HasAttributes
     /**
      * Return a timestamp as DateTime object.
      *
-     * @return \Hyperf\Utils\Carbon
+     * @return CarbonInterface
      */
     protected function asDateTime($value)
     {
