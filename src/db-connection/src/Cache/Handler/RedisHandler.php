@@ -148,6 +148,12 @@ class RedisHandler implements HandlerInterface
         return $this->config;
     }
 
+    public function incr($key, $column, $amount): bool
+    {
+        $ret = $this->redis->hIncrByFloat($key, $column, (float) $amount);
+        return is_float($ret);
+    }
+
     protected function getLuaSha()
     {
         if (! empty($this->luaSha)) {

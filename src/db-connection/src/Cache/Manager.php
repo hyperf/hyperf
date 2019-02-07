@@ -53,6 +53,9 @@ class Manager
         }
     }
 
+    /**
+     * Fetch a model from cache.
+     */
     public function findFromCache($id, string $class): ?Model
     {
         /** @var Model $instance */
@@ -88,6 +91,9 @@ class Manager
         return $instance->newQuery()->where($primaryKey, '=', $id)->first();
     }
 
+    /**
+     * Fetch many models from cache.
+     */
     public function findManyFromCache(array $ids, string $class): Collection
     {
         /** @var Model $instance */
@@ -162,6 +168,29 @@ class Manager
             return $handler->deleteMultiple($keys);
         }
 
+        return false;
+    }
+
+    /**
+     * Increment a column's value by a given amount.
+     */
+    public function increment($id, $column, $amount, string $class): bool
+    {
+        /** @var Model $instance */
+        $instance = new $class();
+
+        $name = $instance->getConnectionName();
+        if ($handler = $this->handlers[$name] ?? null) {
+            $key = $this->getCacheKey($id, $instance, $handler->getConfig());
+            if ($handler->has($key)) {
+                return $handler->incr($key, $column, $amount);
+            }
+
+            return false;
+        }
+
+        var_dump($handler, $name);
+        $this->logger->alert('Cache handler not exist, increment failed.');
         return false;
     }
 

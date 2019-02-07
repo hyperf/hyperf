@@ -18,4 +18,6 @@ use Psr\SimpleCache\CacheInterface;
 interface HandlerInterface extends CacheInterface
 {
     public function getConfig(): Config;
+
+    public function incr($key, $column, $amount): bool;
 }
