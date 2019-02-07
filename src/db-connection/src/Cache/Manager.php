@@ -71,10 +71,11 @@ class Manager
             // Fetch it from database, because it not exist in cache handler.
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
+                $ttl = $handler->getConfig()->getTtl();
                 if ($model) {
-                    $handler->set($key, $model->toArray());
+                    $handler->set($key, $model->toArray(), $ttl);
                 } else {
-                    $handler->set($key, []);
+                    $handler->set($key, [], $ttl);
                 }
                 return $model;
             }
@@ -114,11 +115,12 @@ class Manager
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
+                $ttl = $handler->getConfig()->getTtl();
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
                     $key = $this->getCacheKey($id, $instance, $handler->getConfig());
-                    $handler->set($key, $model->toArray());
+                    $handler->set($key, $model->toArray(), $ttl);
                 }
 
                 $items = array_merge($items, $models->toArray());
