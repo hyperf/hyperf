@@ -47,4 +47,12 @@ abstract class Event implements StoppableEventInterface
 
         return $this;
     }
+
+    /**
+     * @return Model
+     */
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
 }
