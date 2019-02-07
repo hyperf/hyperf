@@ -10,14 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Cache;
+namespace Hyperf\ModelCache;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Model\Collection;
-use Hyperf\DbConnection\Cache\Handler\HandlerInterface;
-use Hyperf\DbConnection\Cache\Handler\RedisHandler;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\ModelCache\Handler\HandlerInterface;
+use Hyperf\ModelCache\Handler\RedisHandler;
 use Psr\Container\ContainerInterface;
 
 class Manager

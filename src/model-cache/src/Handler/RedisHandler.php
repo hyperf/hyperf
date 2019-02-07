@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Cache\Handler;
+namespace Hyperf\ModelCache\Handler;
 
-use Hyperf\DbConnection\Cache\Config;
-use Hyperf\DbConnection\Cache\Exception\CacheException;
-use Hyperf\DbConnection\Cache\Redis\HashsGetMultiple;
+use Hyperf\ModelCache\Config;
+use Hyperf\ModelCache\Exception\CacheException;
+use Hyperf\ModelCache\Redis\HashsGetMultiple;
 use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
 use Redis;

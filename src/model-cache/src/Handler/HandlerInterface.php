@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Cache\Handler;
+namespace Hyperf\ModelCache\Handler;
 
-use Hyperf\DbConnection\Cache\Config;
+use Hyperf\ModelCache\Config;
 use Psr\SimpleCache\CacheInterface;
 
 interface HandlerInterface extends CacheInterface
