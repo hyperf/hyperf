@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
+use Hyperf\Database\Model\Events\Booted;
+use Hyperf\Database\Model\Events\Booting;
 use Hyperf\Database\Model\Events\Created;
 use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Database\Model\Events\Deleted;
@@ -94,7 +96,14 @@ trait HasEvents
      */
     public function getAvailableEvents(): array
     {
-        return array_replace([
+        return array_replace($this->getDefaultEvents(), $this->events);
+    }
+
+    protected function getDefaultEvents(): array
+    {
+        return [
+            'booting' => Booting::class,
+            'booted' => Booted::class,
             'retrieved' => Retrieved::class,
             'creating' => Creating::class,
             'created' => Created::class,
@@ -107,7 +116,7 @@ trait HasEvents
             'deleting' => Deleting::class,
             'deleted' => Deleted::class,
             'forceDeleted' => ForceDeleted::class,
-        ], $this->events);
+        ];
     }
 
     /**
@@ -129,7 +138,7 @@ trait HasEvents
         }
 
         // If the model is not running in Hyperf, then the listener method of model will not bind to the EventDispatcher.
-        $eventName = 'Hyperf\\Database\\Model\\Events\\' . Str::studly($event);
+        $eventName = $this->getDefaultEvents()[$event];
         return $dispatcher->dispatch(new $eventName($this, $event));
     }
 
