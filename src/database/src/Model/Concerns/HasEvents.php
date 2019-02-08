@@ -44,8 +44,66 @@ trait HasEvents
     protected $dispatchesEvents = [];
 
     /**
+     * User exposed events.
+     *
+     * @var array
+     */
+    protected $events = [];
+
+    /**
+     * Set the user-defined event names.
+     */
+    public function setEvents(array $events): self
+    {
+        $this->events = $events;
+
+        return $this;
+    }
+
+    /**
+     * Add an observable event name.
+     *
+     * @param array|mixed $events
+     */
+    public function addEvents($events): void
+    {
+        $this->events = array_unique(array_merge(
+            $this->events,
+            is_array($events) ? $events : func_get_args()
+        ));
+    }
+
+    /**
+     * Remove an observable event name.
+     *
+     * @param array|mixed $events
+     */
+    public function removeEvents($events): void
+    {
+        $this->events = array_diff(
+            $this->events,
+            is_array($events) ? $events : func_get_args()
+        );
+    }
+
+    /**
+     * Get the available event names.
+     */
+    public function getAvailableEvents(): array
+    {
+        return array_merge(
+            [
+                'retrieved', 'creating', 'created', 'updating', 'updated',
+                'saving', 'saved', 'restoring', 'restored',
+                'deleting', 'deleted', 'forceDeleted',
+            ],
+            $this->events
+        );
+    }
+
+    /**
      * Fire the given event for the model.
-     * @return object|StoppableEventInterface|null
+     * @return null|object|StoppableEventInterface
      */
     protected function fireModelEvent(string $event): ?object
     {
@@ -60,6 +118,7 @@ trait HasEvents
             return $result;
         }
 
+        // If the model is not running in Hyperf, then the listener method of model will not bind to the EventDispatcher.
         $eventName = 'Hyperf\\Database\\Model\\Events\\' . Str::studly($event);
         return $dispatcher->dispatch(new $eventName($this, $event));
     }
@@ -68,7 +127,6 @@ trait HasEvents
      * Fire a custom model event for the given event.
      *
      * @param string $event
-     * @param string $method
      * @return null|mixed
      */
     protected function fireCustomModelEvent($event)
