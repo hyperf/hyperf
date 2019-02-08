@@ -137,7 +137,7 @@ trait HasEvents
             return $result;
         }
 
-        // If the model is not running in Hyperf, then the listener method of model will not bind to the EventDispatcher.
+        // If the model is not running in Hyperf, then the listener method of model will not bind to the EventDispatcher automatically.
         $eventName = $this->getDefaultEvents()[$event];
         return $dispatcher->dispatch(new $eventName($this, $event));
     }
