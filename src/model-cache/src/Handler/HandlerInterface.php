@@ -10,8 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Cache\Exception;
+namespace Hyperf\ModelCache\Handler;
 
-class CacheException extends \RuntimeException
+use Hyperf\ModelCache\Config;
+use Psr\SimpleCache\CacheInterface;
+
+interface HandlerInterface extends CacheInterface
 {
+    public function getConfig(): Config;
+
+    public function incr($key, $column, $amount): bool;
 }

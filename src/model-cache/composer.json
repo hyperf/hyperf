@@ -1,21 +1,18 @@
 {
-    "name": "hyperf/db-connection",
-    "description": "A hyperf db connection handler for hyperf/database.",
+    "name": "hyperf/model-cache",
+    "description": "A model cache component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "hyperf",
-        "database",
-        "connection"
+        "model-cache"
     ],
     "support": {
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/database": "dev-master",
-        "hyperf/di": "dev-master",
-        "hyperf/event": "dev-master",
-        "hyperf/pool": "dev-master"
+        "psr/simple-cache": "^1.0",
+        "hyperf/db-connection": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -29,7 +26,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\DbConnection\\": "src"
+            "Hyperf\\ModelCache\\": "src"
         }
     },
     "autoload-dev": {
@@ -43,7 +40,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\DbConnection\\ConfigProvider"
+            "config": "Hyperf\\ModelCache\\ConfigProvider"
         }
     },
     "bin": [
