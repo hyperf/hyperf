@@ -12,37 +12,38 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Database\Model\Events\Event;
-use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Events\Created;
+use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Deleted;
+use Hyperf\Database\Model\Events\Deleting;
+use Hyperf\Database\Model\Events\ForceDeleted;
+use Hyperf\Database\Model\Events\Restored;
+use Hyperf\Database\Model\Events\Restoring;
+use Hyperf\Database\Model\Events\Retrieved;
+use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Events\Saving;
+use Hyperf\Database\Model\Events\Updated;
+use Hyperf\Database\Model\Events\Updating;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * @method retrieved(Model $model)
- * @method creating(Model $model)
- * @method created(Model $model)
- * @method updating(Model $model)
- * @method updated(Model $model)
- * @method saving(Model $model)
- * @method saved(Model $model)
- * @method restoring(Model $model)
- * @method restored(Model $model)
- * @method deleting(Model $model)
- * @method deleted(Model $model)
- * @method forceDeleted(Model $model)
+ * @method retrieved(Retrieved $event)
+ * @method creating(Creating $event)
+ * @method created(Created $event)
+ * @method updating(Updating $event)
+ * @method updated(Updated $event)
+ * @method saving(Saving $event)
+ * @method saved(Saved $event)
+ * @method restoring(Restoring $event)
+ * @method restored(Restored $event)
+ * @method deleting(Deleting $event)
+ * @method deleted(Deleted $event)
+ * @method forceDeleted(ForceDeleted $event)
  */
 trait HasEvents
 {
-    /**
-     * The event map for the model.
-     *
-     * Allows for object-based events for native Model events.
-     *
-     * @var array
-     */
-    protected $dispatchesEvents = [];
-
     /**
      * User exposed events.
      *
@@ -61,48 +62,57 @@ trait HasEvents
     }
 
     /**
-     * Add an observable event name.
+     * Add some observable event.
      *
-     * @param array|mixed $events
+     * @param array $events
      */
     public function addEvents($events): void
     {
-        $this->events = array_unique(array_merge(
-            $this->events,
-            is_array($events) ? $events : func_get_args()
-        ));
+        $this->events = array_unique(array_merge($this->events, is_array($events) ? $events : func_get_args()));
     }
 
     /**
-     * Remove an observable event name.
-     *
-     * @param array|mixed $events
+     * Remove some registed event.
      */
-    public function removeEvents($events): void
+    public function removeEvents(array $events): void
     {
-        $this->events = array_diff(
-            $this->events,
-            is_array($events) ? $events : func_get_args()
-        );
+        foreach ($events as $value) {
+            if (isset($this->events[$value])) {
+                // When passing the key of event.
+                unset($this->events[$value]);
+            } elseif (class_exists($value) && $key = array_search($value, $this->events)) {
+                // When passing the class of event.
+                unset($this->events[$key]);
+            }
+        }
     }
 
     /**
-     * Get the available event names.
+     * Get the available event names, the custom event will override the default event.
+     *
+     * @return array [EventMethodName => EventClass]
      */
     public function getAvailableEvents(): array
     {
-        return array_merge(
-            [
-                'retrieved', 'creating', 'created', 'updating', 'updated',
-                'saving', 'saved', 'restoring', 'restored',
-                'deleting', 'deleted', 'forceDeleted',
-            ],
-            $this->events
-        );
+        return array_replace([
+            'retrieved' => Retrieved::class,
+            'creating' => Creating::class,
+            'created' => Created::class,
+            'updating' => Updating::class,
+            'updated' => Updated::class,
+            'saving' => Saving::class,
+            'saved' => Saved::class,
+            'restoring' => Restoring::class,
+            'restored' => Restored::class,
+            'deleting' => Deleting::class,
+            'deleted' => Deleted::class,
+            'forceDeleted' => ForceDeleted::class,
+        ], $this->events);
     }
 
     /**
      * Fire the given event for the model.
+     *
      * @return null|object|StoppableEventInterface
      */
     protected function fireModelEvent(string $event): ?object
@@ -126,29 +136,14 @@ trait HasEvents
     /**
      * Fire a custom model event for the given event.
      *
-     * @param string $event
      * @return null|mixed
      */
-    protected function fireCustomModelEvent($event)
+    protected function fireCustomModelEvent(string $event)
     {
-        if (! isset($this->dispatchesEvents[$event])) {
+        if (! isset($this->events[$event])) {
             return;
         }
 
-        return $this->getEventDispatcher()->dispatch(new $this->dispatchesEvents[$event]($this));
-    }
-
-    /**
-     * Filter the model event results.
-     */
-    protected function filterModelEventResults($result)
-    {
-        if (is_array($result)) {
-            $result = array_filter($result, function ($response) {
-                return ! is_null($response);
-            });
-        }
-
-        return $result;
+        return $this->getEventDispatcher()->dispatch(new $this->events[$event]($this));
     }
 }
