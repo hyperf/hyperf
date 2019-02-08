@@ -41,16 +41,18 @@ abstract class Event implements StoppableEventInterface
 
     public function handle()
     {
-        if ($this->model && method_exists($this->model, $this->method)) {
-            return $this->model->{$this->method}();
+        if (method_exists($this->getModel(), $this->getMethod())) {
+            return $this->getModel()->{$this->getMethod()}();
         }
 
         return $this;
     }
 
-    /**
-     * @return Model
-     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
     public function getModel(): Model
     {
         return $this->model;
