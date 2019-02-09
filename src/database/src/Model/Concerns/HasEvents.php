@@ -26,7 +26,6 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Updating;
-use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
@@ -99,6 +98,9 @@ trait HasEvents
         return array_replace($this->getDefaultEvents(), $this->events);
     }
 
+    /**
+     * Get the default events of Hyperf Database Model.
+     */
     protected function getDefaultEvents(): array
     {
         return [
@@ -145,7 +147,7 @@ trait HasEvents
     /**
      * Fire a custom model event for the given event.
      *
-     * @return null|mixed
+     * @return null|object|StoppableEventInterface
      */
     protected function fireCustomModelEvent(string $event)
     {
