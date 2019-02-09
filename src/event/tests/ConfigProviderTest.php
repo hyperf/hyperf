@@ -14,6 +14,7 @@ namespace HyperfTest\Event;
 
 use Hyperf\Event\ConfigProvider;
 use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\EventDispatcherFactory;
 use Hyperf\Event\ListenerProviderFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -30,7 +31,7 @@ class ConfigProviderTest extends TestCase
         $this->assertSame([
             'dependencies' => [
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
-                EventDispatcherInterface::class => EventDispatcher::class,
+                EventDispatcherInterface::class => EventDispatcherFactory::class,
             ],
             'scan' => [
                 'paths' => [
