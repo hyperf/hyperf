@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Framework;
 
 use Hyperf\Contract\ApplicationInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Logger\StdoutLogger;
 
 class ConfigProvider

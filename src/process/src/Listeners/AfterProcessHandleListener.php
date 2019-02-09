@@ -14,7 +14,7 @@ namespace Hyperf\Process\Listeners;
 
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Psr\Container\ContainerInterface;
 

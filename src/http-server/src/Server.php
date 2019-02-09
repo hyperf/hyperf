@@ -16,7 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Event\EventDispatcher;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpServer\Event\AfterResponse;
 use Hyperf\HttpServer\Exception\HttpException;

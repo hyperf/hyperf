@@ -15,7 +15,7 @@ namespace Hyperf\Framework;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Process\ProcessRegister;

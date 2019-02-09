@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Process;
 
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\Process;
 use Hyperf\Queue\Driver\DriverFactory;
 use Hyperf\Queue\Driver\DriverInterface;

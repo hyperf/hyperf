@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 use function sprintf;
 use function str_replace;

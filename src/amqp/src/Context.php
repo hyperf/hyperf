@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Context as RequestContext;
 use Psr\Container\ContainerInterface;
 

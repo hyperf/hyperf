@@ -18,7 +18,7 @@ use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;

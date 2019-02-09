@@ -15,7 +15,7 @@ namespace Hyperf\ModelCache;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\DbConnection\Model\Model;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Psr\Container\ContainerInterface;

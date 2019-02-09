@@ -17,7 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\EventDispatcherFactory;
 use Hyperf\Event\ListenerProvider;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Logger\StdoutLogger;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Listener\AlphaListener;

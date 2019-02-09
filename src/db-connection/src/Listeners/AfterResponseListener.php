@@ -17,7 +17,7 @@ use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Context;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpServer\Event\AfterResponse;
 use Psr\Container\ContainerInterface;
 
