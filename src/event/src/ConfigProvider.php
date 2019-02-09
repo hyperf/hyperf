@@ -22,7 +22,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
-                EventDispatcherInterface::class => EventDispatcher::class,
+                EventDispatcherInterface::class => EventDispatcherFactory::class,
             ],
             'scan' => [
                 'paths' => [
