@@ -25,4 +25,9 @@ class Event
     {
         $this->message = $message;
     }
+
+    public function getMessage(): MessageInterface
+    {
+        return $this->message;
+    }
 }
