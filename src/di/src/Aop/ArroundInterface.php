@@ -15,9 +15,7 @@ namespace Hyperf\Di\Aop;
 interface ArroundInterface
 {
     /**
-     * @return mixed
-     *               Return the value from process method of ProceedingJoinPoint,
-     *               or the value that you handled
+     * @return mixed return the value from process method of ProceedingJoinPoint, or the value that you handled
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint);
 }
