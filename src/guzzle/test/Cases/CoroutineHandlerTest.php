@@ -16,7 +16,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Request;
 use Hyperf\Guzzle\CoroutineHandler;
-use HyperfTest\Guzzle\TestCase;
+use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 
 /**

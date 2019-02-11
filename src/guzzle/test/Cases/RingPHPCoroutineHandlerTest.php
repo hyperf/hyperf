@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyerfTest\Guzzle\Cases;
 
-use Hyperf\GuzzleHandler\RingPHP\CoroutineHandler;
-use HyperfTest\Guzzle\TestCase;
+use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 
 /**
@@ -73,6 +73,8 @@ class RingPHPCoroutineHandlerTest extends TestCase
                 0,
                 strpos('Connection timed out errCode=', $response['error']->getMessage())
             );
+        } else {
+            $this->assertTrue(true);
         }
     }
 
