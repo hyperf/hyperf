@@ -70,10 +70,10 @@ abstract class Driver implements DriverInterface
                 $this->ack($data);
             } catch (\Throwable $ex) {
                 if ($message->attempts() && $this->remove($data)) {
-                    $this->event && $this->event->dispatch(new RetryHandle($message));
+                    $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
                     $this->retry($message);
                 } else {
-                    $this->event && $this->event->dispatch(new FailedHandle($message));
+                    $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
                     $this->fail($data);
                 }
             }
