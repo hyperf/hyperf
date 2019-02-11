@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Middleware;
 
+use Hyperf\Tracer\Tracing;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use const Zipkin\Kind\SERVER;
-use Zipkin\Propagation\Map;
-use Zipkin\Tracing;
 
 class TraceMiddeware implements MiddlewareInterface
 {
@@ -59,18 +58,10 @@ class TraceMiddeware implements MiddlewareInterface
     protected function buildSpan(ServerRequestInterface $request)
     {
         $uri = $request->getUri();
-        $carrier = array_map(function ($header) {
-            return $header[0];
-        }, $request->getHeaders());
-        // Extracts the context from the HTTP headers.
-        $extractor = $this->tracing->getPropagation()->getExtractor(new Map());
-        $extractedContext = $extractor($carrier);
-        $span = $this->tracing->getTracer()->nextSpan($extractedContext);
-        $span->setKind(SERVER);
-        $span->setName('Request');
+        $span = $this->tracing->span('request', SERVER);
         $span->tag('coroutine.id', Coroutine::id());
-        $span->tag('request.path',$path = (string) $uri);
-        $span->tag('request.method',$path = $request->getMethod());
+        $span->tag('request.path', (string)$uri);
+        $span->tag('request.method', $request->getMethod());
         foreach ($request->getHeaders() as $key => $value) {
             $span->tag('request.header.' . $key, implode(', ', $value));
         }

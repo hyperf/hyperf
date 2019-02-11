@@ -14,6 +14,10 @@ namespace Hyperf\Tracer;
 
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Traits\CoroutineProxy;
+use Psr\Http\Message\ServerRequestInterface;
+use const Zipkin\Kind\SERVER;
+use Zipkin\Propagation\Map;
+use Zipkin\Span;
 use Zipkin\TracingBuilder;
 
 class Tracing implements \Zipkin\Tracing
@@ -32,10 +36,38 @@ class Tracing implements \Zipkin\Tracing
         $this->tracingBuilder = $tracingBuilder;
     }
 
+    public function span(string $name, string $kind = SERVER)
+    {
+        $root = Context::get('tracer.root');
+        if (! $root instanceof Span) {
+            /** @var ServerRequestInterface $request */
+            $request = Context::get(ServerRequestInterface::class);
+            if (! $request instanceof ServerRequestInterface) {
+                throw new \RuntimeException('ServerRequest object missing.');
+            }
+            $carrier = array_map(function ($header) {
+                return $header[0];
+            }, $request->getHeaders());
+            // Extracts the context from the HTTP headers.
+            $extractor = $this->getPropagation()->getExtractor(new Map());
+            $extractedContext = $extractor($carrier);
+            $root = $this->getTracer()->nextSpan($extractedContext);
+            $root->setName($name);
+            $root->setKind($kind);
+            Context::set('tracer.root', $root);
+            return $root;
+        } else {
+            $child = $this->getTracer()->newChild($root->getContext());
+            $child->setName($name);
+            $child->setKind($kind);
+            return $child;
+        }
+    }
+
     /**
      * All tracing commands start with a {@link Span}. Use a tracer to create spans.
      *
-     * @return Tracer
+     * @return \Zipkin\Tracer
      */
     public function getTracer()
     {
@@ -46,7 +78,7 @@ class Tracing implements \Zipkin\Tracing
      * When a trace leaves the process, it needs to be propagated, usually via headers. This utility
      * is used to inject or extract a trace context from remote requests.
      *
-     * @return Propagation
+     * @return \Zipkin\Propagation\Propagation
      */
     public function getPropagation()
     {
