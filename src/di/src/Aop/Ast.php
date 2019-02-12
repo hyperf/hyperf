@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Utils\Composer;
-use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;

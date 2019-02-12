@@ -78,7 +78,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function setClassName(string $className = null)
+    public function setClassName(string $className = null): void
     {
         $this->className = $className;
 
