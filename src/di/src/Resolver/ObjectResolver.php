@@ -19,12 +19,16 @@ use Hyperf\Di\Definition\PropertyInjection;
 use Hyperf\Di\Definition\Reference;
 use Hyperf\Di\Exception\DependencyException;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\ProxyFactory;
 use Hyperf\Di\ReflectionManager;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {
+    /**
+     * @var ProxyFactory
+     */
     private $proxyFactory;
 
     /**
@@ -80,7 +84,7 @@ class ObjectResolver implements ResolverInterface
         return $definition->isInstantiable();
     }
 
-    protected function injectMethodsAndProperties($object, ObjectDefinition $objectDefinition)
+    protected function injectProperties($object, ObjectDefinition $objectDefinition)
     {
         // Property injections
         foreach ($objectDefinition->getPropertyInjections() as $propertyInjection) {
@@ -112,7 +116,7 @@ class ObjectResolver implements ResolverInterface
 
             $args = $this->parameterResolver->resolveParameters($constructorInjection, $classReflection->getConstructor(), $parameters);
             $object = new $className(...$args);
-            $this->injectMethodsAndProperties($object, $definition);
+            $this->injectProperties($object, $definition);
         } catch (NotFoundExceptionInterface $e) {
             throw new DependencyException(sprintf('Error while injecting dependencies into %s: %s', $classReflection ? $classReflection->getName() : '', $e->getMessage()), 0, $e);
         } catch (InvalidDefinitionException $e) {
