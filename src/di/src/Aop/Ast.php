@@ -75,7 +75,7 @@ class Ast
         return ($namespace && $className) ? $namespace . '\\' . $className : '';
     }
 
-    private function getCodeByClassName(string $className)
+    private function getCodeByClassName(string $className): string
     {
         $file = Composer::getLoader()->findFile($className);
         if (! $file) {

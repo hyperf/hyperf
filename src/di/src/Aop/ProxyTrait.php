@@ -82,14 +82,9 @@ trait ProxyTrait
         $matchAspect = [];
         foreach ($aspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                if (strpos($rule, '*') !== false) {
-                    $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                    $pattern = "/^${preg}$/";
-                    if (! preg_match($pattern, $className)) {
-                        continue;
-                    }
-                } elseif ($rule !== $className) {
-                    continue;
+                if ($rule === $className) {
+                    $matchAspect[] = $aspect;
+                    break;
                 }
                 if (strpos($rule, '::') !== false) {
                     [$expectedClass, $expectedMethod] = explode('::', $rule);
@@ -97,8 +92,11 @@ trait ProxyTrait
                         $matchAspect[] = $aspect;
                         break;
                     }
-                } else {
-                    if ($rule === $className) {
+                }
+                if (strpos($rule, '*') !== false) {
+                    $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+                    $pattern = "/^${preg}$/";
+                    if (preg_match($pattern, $className)) {
                         $matchAspect[] = $aspect;
                         break;
                     }

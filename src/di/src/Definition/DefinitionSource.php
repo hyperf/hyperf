@@ -12,6 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\ReflectionManager;
+use ReflectionClass;
+use ReflectionFunctionAbstract;
+use Symfony\Component\Finder\Finder;
 use function class_exists;
 use function count;
 use function explode;
@@ -22,11 +30,6 @@ use function file_exists;
 use function file_put_contents;
 use function filemtime;
 use function fopen;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\ReflectionManager;
 use function implode;
 use function interface_exists;
 use function is_array;
@@ -38,10 +41,7 @@ use function md5;
 use function method_exists;
 use function preg_match;
 use function print_r;
-use ReflectionClass;
-use ReflectionFunctionAbstract;
 use function str_replace;
-use Symfony\Component\Finder\Finder;
 use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
@@ -153,7 +153,7 @@ class DefinitionSource implements DefinitionSourceInterface
             return $definition;
         }
 
-        $definition = $definition ?: new ObjectDefinition($name);
+        $definition = $definition ? : new ObjectDefinition($name);
 
         // Constructor
         $class = ReflectionManager::reflectClass($className);
@@ -240,7 +240,7 @@ class DefinitionSource implements DefinitionSourceInterface
         print_r($message . PHP_EOL);
     }
 
-    private function isNeedProxy(ReflectionClass $reflectionClass)
+    private function isNeedProxy(ReflectionClass $reflectionClass): bool
     {
         $className = $reflectionClass->getName();
         $classesAspects = AspectCollector::get('classes', []);
@@ -285,6 +285,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function isMatch(string $rule, string $target): bool
     {
+        if (strpos($rule, '::') !== false) {
+            [$rule,] = explode('::', $rule);
+        }
         if (strpos($rule, '*') === false && $rule === $target) {
             return true;
         }

@@ -84,7 +84,7 @@ class ObjectResolver implements ResolverInterface
         return $definition->isInstantiable();
     }
 
-    protected function injectProperties($object, ObjectDefinition $objectDefinition)
+    protected function injectProperties($object, ObjectDefinition $objectDefinition): void
     {
         // Property injections
         foreach ($objectDefinition->getPropertyInjections() as $propertyInjection) {
@@ -125,7 +125,7 @@ class ObjectResolver implements ResolverInterface
         return $object;
     }
 
-    private function injectProperty($object, PropertyInjection $propertyInjection)
+    private function injectProperty($object, PropertyInjection $propertyInjection): void
     {
         $property = ReflectionManager::reflectProperty(get_class($object), $propertyInjection->getPropertyName());
         if ($property->isStatic()) {
