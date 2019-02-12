@@ -60,7 +60,7 @@ class ReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
-    public static function clear()
+    public static function clear(): void
     {
         static::$container = [];
     }

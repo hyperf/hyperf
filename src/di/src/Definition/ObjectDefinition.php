@@ -161,7 +161,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this->needProxy;
     }
 
-    public function setNeedProxy($needProxy): self
+    public function setNeedProxy(bool $needProxy): self
     {
         $this->needProxy = $needProxy;
         return $this;

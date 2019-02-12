@@ -64,7 +64,7 @@ class MethodInjection implements DefinitionInterface
      * If it is the FactoryDefinition, then the target means $factory property,
      * If it is the ObjectDefinition, then the target means $className property.
      */
-    public function setTarget($value)
+    public function setTarget(string $value)
     {
         $this->methodName = $value;
     }

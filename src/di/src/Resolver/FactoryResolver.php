@@ -30,11 +30,6 @@ class FactoryResolver implements ResolverInterface
      */
     private $resolver;
 
-    /**
-     * @var \Invoker\InvokerInterface
-     */
-    private $invoker;
-
     public function __construct(ContainerInterface $container, ResolverInterface $resolver)
     {
         $this->container = $container;

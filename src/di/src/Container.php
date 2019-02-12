@@ -123,7 +123,7 @@ class Container implements ContainerInterface
      * @param string $name identifier of the entry to look for
      * @return bool
      */
-    public function has($name)
+    public function has($name): bool
     {
         if (! is_string($name)) {
             throw new InvalidArgumentException(sprintf('The name parameter must be of type string, %s given', is_object($name) ? get_class($name) : gettype($name)));
@@ -157,7 +157,7 @@ class Container implements ContainerInterface
         }
     }
 
-    protected function setDefinition(string $name, DefinitionInterface $definition)
+    protected function setDefinition(string $name, DefinitionInterface $definition): void
     {
         // Clear existing entry if it exists
         if (array_key_exists($name, $this->resolvedEntries)) {
@@ -168,7 +168,7 @@ class Container implements ContainerInterface
         $this->definitionSource->addDefinition($name, $definition);
     }
 
-    private function getDefinition(string $name)
+    private function getDefinition(string $name): DefinitionInterface
     {
         // Local cache that avoids fetching the same definition twice
         if (! array_key_exists($name, $this->fetchedDefinitions)) {

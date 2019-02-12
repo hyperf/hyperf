@@ -34,7 +34,7 @@ class ParameterResolver
         MethodInjection $definition = null,
         ReflectionMethod $method = null,
         array $parameters = []
-    ) {
+    ): array {
         $args = [];
         if (! $method) {
             return $args;

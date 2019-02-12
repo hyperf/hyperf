@@ -51,7 +51,7 @@ class ProxyFactory
         return static::$map[$identifier];
     }
 
-    private function loadProxy(string $className, string $proxyClassName)
+    private function loadProxy(string $className, string $proxyClassName): void
     {
         $dir = BASE_PATH . '/runtime/container/proxy/';
         if (! file_exists($dir)) {
@@ -70,7 +70,7 @@ class ProxyFactory
         }
     }
 
-    private function createProxyFile(string $path, string $className, string $proxyClassName)
+    private function createProxyFile(string $path, string $className, string $proxyClassName): void
     {
         $code = $this->ast->proxy($className, $proxyClassName);
         file_put_contents($path, $code);

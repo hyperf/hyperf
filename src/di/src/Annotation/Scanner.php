@@ -40,7 +40,7 @@ class Scanner
         AnnotationRegistry::registerLoader('class_exists');
     }
 
-    public function scan(array $paths)
+    public function scan(array $paths): array
     {
         if (! $paths) {
             return [];
