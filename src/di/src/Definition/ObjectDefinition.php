@@ -82,7 +82,7 @@ class ObjectDefinition implements DefinitionInterface
     {
         $this->className = $className;
 
-        $this->updateCache();
+        $this->updateStatusCache();
     }
 
     public function getClassName(): string
@@ -112,12 +112,13 @@ class ObjectDefinition implements DefinitionInterface
         return $this->constructorInjection;
     }
 
-    public function setConstructorInjection(MethodInjection $injection)
+    public function setConstructorInjection(MethodInjection $injection): self
     {
         $this->constructorInjection = $injection;
+        return $this;
     }
 
-    public function completeConstructorInjection(MethodInjection $injection)
+    public function completeConstructorInjection(MethodInjection $injection): void
     {
         if ($this->constructorInjection !== null) {
             // Merge
@@ -136,7 +137,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this->propertyInjections;
     }
 
-    public function addPropertyInjection(PropertyInjection $propertyInjection)
+    public function addPropertyInjection(PropertyInjection $propertyInjection): void
     {
         $this->propertyInjections[$propertyInjection->getPropertyName()] = $propertyInjection;
     }
@@ -146,7 +147,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this->proxyClassName;
     }
 
-    public function setProxyClassName($proxyClassName): self
+    public function setProxyClassName(string $proxyClassName): self
     {
         $this->proxyClassName = $proxyClassName;
         return $this;
@@ -166,7 +167,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    private function updateCache()
+    private function updateStatusCache(): void
     {
         $className = $this->getClassName();
 
