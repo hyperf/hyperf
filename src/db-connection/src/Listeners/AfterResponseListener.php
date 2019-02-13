@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Listeners;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Context;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpServer\Event\AfterResponse;
 use Psr\Container\ContainerInterface;
 

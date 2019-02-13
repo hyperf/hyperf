@@ -62,6 +62,6 @@ class Builder
 
     protected function getConnectionPool(string $poolName): AmqpConnectionPool
     {
-        return $this->poolFactory->getConnectionPool($poolName);
+        return $this->poolFactory->getPool($poolName);
     }
 }

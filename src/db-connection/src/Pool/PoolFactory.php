@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Pool;
 
+use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container;
 
@@ -32,12 +33,12 @@ class PoolFactory
         $this->container = $container;
     }
 
-    public function getDbPool(string $name): DbPool
+    public function getPool(string $name): DbPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
         }
 
-        return $this->pools[$name] = new DbPool($this->container, $name);
+        return $this->pools[$name] = $this->container->make(DbPool::class, ['name' => $name]);
     }
 }

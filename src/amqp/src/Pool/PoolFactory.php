@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Pool;
 
+use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container;
 
@@ -31,12 +32,12 @@ class PoolFactory
         $this->container = $container;
     }
 
-    public function getConnectionPool(string $name): AmqpConnectionPool
+    public function getPool(string $name): AmqpConnectionPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
         }
 
-        return $this->pools[$name] = new AmqpConnectionPool($this->container, $name);
+        return $this->pools[$name] = $this->container->make(AmqpConnectionPool::class, ['name' => $name]);
     }
 }

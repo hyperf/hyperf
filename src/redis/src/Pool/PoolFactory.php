@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Pool;
 
+use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container;
 
@@ -32,12 +33,12 @@ class PoolFactory
         $this->container = $container;
     }
 
-    public function getRedisPool(string $name): RedisPool
+    public function getPool(string $name): RedisPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
         }
 
-        return $this->pools[$name] = new RedisPool($this->container, $name);
+        return $this->pools[$name] = $this->container->make(RedisPool::class, ['name' => $name]);
     }
 }
