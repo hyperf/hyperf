@@ -32,7 +32,7 @@ class Redis
     public function __call($name, $arguments)
     {
         $factory = $this->container->get(PoolFactory::class);
-        $pool = $factory->getRedisPool($this->name);
+        $pool = $factory->getPool($this->name);
 
         $connection = $pool->get()->getConnection();
         // TODO: Handle multi ...
