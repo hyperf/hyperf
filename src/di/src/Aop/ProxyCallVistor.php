@@ -219,5 +219,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
         });
         return $parametersWithoutTypehint;
     }
-    private function shouldRewrite(ClassMethod $node)
+    private function shouldRewrite(ClassMethod $node){
+
+    }
 }
