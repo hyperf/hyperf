@@ -60,7 +60,7 @@ class ConnectionResolver implements ConnectionResolverInterface
             return $connection->getConnection();
         }
 
-        $pool = $this->factory->getDbPool($name);
+        $pool = $this->factory->getPool($name);
 
         $connection = $pool->get();
 
