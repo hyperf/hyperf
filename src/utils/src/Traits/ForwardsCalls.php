@@ -21,6 +21,7 @@ trait ForwardsCalls
     /**
      * Forward a method call to the given object.
      *
+     * @param mixed $object
      * @throws Error
      */
     protected function forwardCallTo($object, string $method, array $parameters)
