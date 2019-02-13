@@ -19,6 +19,9 @@ use Hyperf\Utils\Coroutine\Locker;
 
 class ProxyFactory
 {
+    /**
+     * @var array
+     */
     private static $map = [];
 
     /**
