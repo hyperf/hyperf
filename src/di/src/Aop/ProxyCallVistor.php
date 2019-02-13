@@ -105,7 +105,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof ClassMethod:
-                if ($node->name && $node->name->toString() === '__construct') {
+                if (! $this->shouldRewrite($node)) {
                     return $node;
                 }
                 // Rewrite the method to proxy call method.
@@ -219,5 +219,12 @@ class ProxyCallVistor extends NodeVisitorAbstract
         });
         return $parametersWithoutTypehint;
     }
+
     private function shouldRewrite(ClassMethod $node)
+    {
+        if ($node->name && $node->name->toString() === '__construct') {
+            return false;
+        }
+        return true;
+    }
 }
