@@ -18,7 +18,7 @@ use Psr\Container\ContainerInterface;
 class PoolFactory
 {
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -38,6 +38,12 @@ class PoolFactory
             return $this->pools[$name];
         }
 
-        return $this->pools[$name] = $this->container->make(AmqpConnectionPool::class, ['name' => $name]);
+        if ($this->container instanceof Container) {
+            $pool = $this->container->make(AmqpConnectionPool::class, ['name' => $name]);
+        } else {
+            $pool = new AmqpConnectionPool($this->container, $name);
+        }
+
+        return $this->pools[$name] = $pool;
     }
 }
