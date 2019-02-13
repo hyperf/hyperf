@@ -56,6 +56,7 @@ class Pipeline
 
     /**
      * Set the object being sent through the pipeline.
+     * @param mixed $passable
      */
     public function send($passable): self
     {

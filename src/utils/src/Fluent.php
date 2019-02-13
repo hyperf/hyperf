@@ -70,6 +70,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Dynamically set the value of an attribute.
      *
      * @param string $key
+     * @param mixed $value
      */
     public function __set($key, $value)
     {
@@ -181,6 +182,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Set the value at the given offset.
      *
      * @param string $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {

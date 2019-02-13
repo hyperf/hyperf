@@ -46,6 +46,10 @@ use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
+
+    /**
+     * @var bool
+     */
     private $enableCache = false;
 
     /**

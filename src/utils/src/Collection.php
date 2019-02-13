@@ -88,6 +88,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Create a new collection.
+     * @param mixed $items
      */
     public function __construct($items = [])
     {
@@ -117,6 +118,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Create a new collection instance if the value isn't one already.
+     * @param mixed $items
      */
     public static function make($items = []): self
     {
@@ -125,6 +127,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Wrap the given value in a collection if applicable.
+     * @param mixed $value
      */
     public static function wrap($value): self
     {
@@ -250,6 +253,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Determine if an item exists in the collection.
      * @param null|mixed $operator
      * @param null|mixed $value
+     * @param mixed $key
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -266,6 +270,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if an item exists in the collection using strict comparison.
      * @param null|mixed $value
+     * @param mixed $key
      */
     public function containsStrict($key, $value = null): bool
     {
@@ -313,6 +318,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection that are not present in the given items.
+     * @param mixed $items
      */
     public function diff($items): self
     {
@@ -321,6 +327,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection that are not present in the given items.
+     * @param mixed $items
      */
     public function diffUsing($items, callable $callback): self
     {
@@ -329,6 +336,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection whose keys and values are not present in the given items.
+     * @param mixed $items
      */
     public function diffAssoc($items): self
     {
@@ -337,6 +345,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection whose keys and values are not present in the given items.
+     * @param mixed $items
      */
     public function diffAssocUsing($items, callable $callback): self
     {
@@ -345,6 +354,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection whose keys are not present in the given items.
+     * @param mixed $items
      */
     public function diffKeys($items): self
     {
@@ -353,6 +363,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items in the collection whose keys are not present in the given items.
+     * @param mixed $items
      */
     public function diffKeysUsing($items, callable $callback): self
     {
@@ -464,6 +475,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Filter items by the given key value pair using strict comparison.
+     * @param mixed $value
      */
     public function whereStrict(string $key, $value): self
     {
@@ -472,6 +484,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Filter items by the given key value pair.
+     * @param mixed $values
      */
     public function whereIn(string $key, $values, bool $strict = false): self
     {
@@ -483,6 +496,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Filter items by the given key value pair using strict comparison.
+     * @param mixed $values
      */
     public function whereInStrict(string $key, $values): self
     {
@@ -491,6 +505,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Filter items by the given key value pair.
+     * @param mixed $values
      */
     public function whereNotIn(string $key, $values, bool $strict = false): self
     {
@@ -502,6 +517,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Filter items by the given key value pair using strict comparison.
+     * @param mixed $values
      */
     public function whereNotInStrict(string $key, $values): self
     {
@@ -532,6 +548,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the first item by the given key value pair.
      *
      * @param null|mixed $value
+     * @param mixed $operator
      */
     public function firstWhere(string $key, $operator, $value = null)
     {
@@ -570,6 +587,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get an item from the collection by key.
      * @param null|mixed $default
+     * @param mixed $key
      */
     public function get($key, $default = null)
     {
@@ -633,6 +651,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Determine if an item exists in the collection by key.
+     * @param mixed $key
      */
     public function has($key): bool
     {
@@ -659,6 +678,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Intersect the collection with the given items.
+     * @param mixed $items
      */
     public function intersect($items): self
     {
@@ -667,6 +687,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Intersect the collection with the given items by key.
+     * @param mixed $items
      */
     public function intersectByKeys($items): self
     {
@@ -819,6 +840,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Merge the collection with the given items.
+     * @param mixed $items
      */
     public function merge($items): self
     {
@@ -827,6 +849,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Create a collection by using this collection for keys and another for its values.
+     * @param mixed $values
      */
     public function combine($values): self
     {
@@ -835,6 +858,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Union the collection with the given items.
+     * @param mixed $items
      */
     public function union($items): self
     {
@@ -876,6 +900,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get the items with the specified keys.
+     * @param mixed $keys
      */
     public function only($keys): self
     {
@@ -934,6 +959,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Push an item onto the beginning of the collection.
      * @param null|mixed $key
+     * @param mixed $value
      */
     public function prepend($value, $key = null): self
     {
@@ -943,6 +969,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Push an item onto the end of the collection.
+     * @param mixed $value
      */
     public function push($value): self
     {
@@ -968,6 +995,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get and remove an item from the collection.
      *
      * @param null|mixed $default
+     * @param mixed $key
      */
     public function pull($key, $default = null)
     {
@@ -976,6 +1004,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Put an item in the collection by key.
+     * @param mixed $key
+     * @param mixed $value
      */
     public function put($key, $value): self
     {
@@ -1032,6 +1062,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Search the collection for a given value and return the corresponding key if successful.
+     * @param mixed $value
      */
     public function search($value, bool $strict = false)
     {
@@ -1175,6 +1206,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Splice a portion of the underlying collection array.
+     * @param mixed $replacement
      */
     public function splice(int $offset, int $length = null, $replacement = []): self
     {
@@ -1287,6 +1319,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Pad collection to the specified length with a value.
+     * @param mixed $value
      */
     public function pad(int $size, $value): self
     {
@@ -1365,6 +1398,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if an item exists at an offset.
      *
+     * @param mixed $key
      * @return bool
      */
     public function offsetExists($key)
@@ -1374,6 +1408,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an item at a given offset.
+     * @param mixed $key
      */
     public function offsetGet($key)
     {
@@ -1382,6 +1417,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Set the item at a given offset.
+     * @param mixed $key
+     * @param mixed $value
      */
     public function offsetSet($key, $value)
     {
@@ -1458,6 +1495,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Determine if the given value is callable, but not a string.
+     * @param mixed $value
      */
     protected function useAsCallable($value): bool
     {
@@ -1466,6 +1504,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get a value retrieving callback.
+     * @param mixed $value
      */
     protected function valueRetriever($value): callable
     {
@@ -1479,6 +1518,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Results array of items from Collection or Arrayable.
+     * @param mixed $items
      */
     protected function getArrayableItems($items): array
     {

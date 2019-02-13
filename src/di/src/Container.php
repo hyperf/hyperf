@@ -121,7 +121,6 @@ class Container implements ContainerInterface
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
      * @param string $name identifier of the entry to look for
-     * @return bool
      */
     public function has($name): bool
     {

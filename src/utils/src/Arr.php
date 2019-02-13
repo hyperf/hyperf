@@ -23,6 +23,7 @@ class Arr
 {
     /**
      * Determine whether the given value is array accessible.
+     * @param mixed $value
      */
     public static function accessible($value): bool
     {
@@ -31,6 +32,7 @@ class Arr
 
     /**
      * Add an element to an array using "dot" notation if it doesn't exist.
+     * @param mixed $value
      */
     public static function add(array $array, string $key, $value): array
     {
@@ -168,6 +170,7 @@ class Arr
 
     /**
      * Flatten a multi-dimensional array into a single level.
+     * @param mixed $depth
      */
     public static function flatten(array $array, $depth = INF): array
     {
@@ -333,6 +336,7 @@ class Arr
     /**
      * Push an item onto the beginning of an array.
      * @param null|mixed $key
+     * @param mixed $value
      */
     public static function prepend(array $array, $value, $key = null): array
     {
@@ -385,6 +389,7 @@ class Arr
     /**
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
+     * @param mixed $value
      */
     public static function set(array &$array, string $key, $value): array
     {
@@ -468,6 +473,7 @@ class Arr
 
     /**
      * If the given value is not an array and not null, wrap it in one.
+     * @param mixed $value
      */
     public static function wrap($value): array
     {
