@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Utils\Composer;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter\Standard;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\PrettyPrinterAbstract;
+use PhpParser\PrettyPrinter\Standard;
 
 class Ast
 {

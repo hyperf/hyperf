@@ -38,6 +38,7 @@ class PropertyDefinition implements DefinitionInterface
 
     /**
      * PropertyDefinition constructor.
+     * @param mixed $value
      */
     public function __construct(string $propertyName, $value, ?string $className = null)
     {

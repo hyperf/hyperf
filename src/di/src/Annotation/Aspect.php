@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\Aop\ArroundInterface;
+use Doctrine\Instantiator\Instantiator;
 
 /**
  * @Annotation

@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Closure;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Framework\ApplicationContext;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 trait ProxyTrait
 {

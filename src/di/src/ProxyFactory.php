@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\Definition\FactoryDefinition;
-use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Utils\Coroutine\Locker;
+use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Di\Definition\FactoryDefinition;
 
 class ProxyFactory
 {

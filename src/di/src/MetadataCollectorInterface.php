@@ -22,6 +22,7 @@ interface MetadataCollectorInterface
 
     /**
      * Set the metadata to holder.
+     * @param mixed $value
      */
     public static function set(string $key, $value): void;
 

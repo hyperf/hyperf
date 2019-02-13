@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
 use Symfony\Component\Finder\Finder;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Scanner
 {
