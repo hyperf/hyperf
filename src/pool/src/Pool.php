@@ -16,6 +16,8 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
+use Throwable;
 
 abstract class Pool implements PoolInterface
 {
@@ -56,15 +58,20 @@ abstract class Pool implements PoolInterface
     {
         $num = $this->getConnectionsInChannel();
 
-        if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
-            ++$this->currentConnections;
-            $connection = $this->createConnection();
-            return $connection;
+        try {
+            if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
+                ++$this->currentConnections;
+                $connection = $this->createConnection();
+                return $connection;
+            }
+        } catch (Throwable $throwable) {
+            --$this->currentConnections;
+            throw $throwable;
         }
 
         $result = $this->channel->pop($this->option->getWaitTimeout());
         if (! $result instanceof ConnectionInterface) {
-            throw new \RuntimeException('Cannot pop the connection.');
+            throw new RuntimeException('Cannot pop the connection, pop timeout.');
         }
         return $result;
     }
@@ -95,7 +102,7 @@ abstract class Pool implements PoolInterface
         return $this->channel->length();
     }
 
-    protected function initOption()
+    protected function initOption(): void
     {
         $this->option = $this->container->get($this->optionName);
     }
