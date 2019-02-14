@@ -16,6 +16,7 @@ use GuzzleHttp\Client;
 use Hyperf\Tracer\Tracing;
 use Zipkin\Propagation\Map;
 use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Tracer\SwitchManager;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
@@ -35,9 +36,15 @@ class HttpClientAspect implements ArroundInterface
      */
     private $tracing;
 
-    public function __construct(Tracing $tracing)
+    /**
+     * @var SwitchManager
+     */
+    private $switchManager;
+
+    public function __construct(Tracing $tracing, SwitchManager $switchManager)
     {
         $this->tracing = $tracing;
+        $this->switchManager = $switchManager;
     }
 
     /**
@@ -45,6 +52,9 @@ class HttpClientAspect implements ArroundInterface
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        if ($this->switchManager->isEnable('guzzle') === false) {
+            return $proceedingJoinPoint->process();
+        }
         $options = $proceedingJoinPoint->arguments['keys']['options'];
         if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
             return $proceedingJoinPoint->process();

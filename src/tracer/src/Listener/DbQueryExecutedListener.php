@@ -14,6 +14,7 @@ namespace Hyperf\Tracer\Listener;
 
 use Hyperf\Utils\Arr;
 use Hyperf\Tracer\Tracing;
+use Hyperf\Tracer\SwitchManager;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -28,9 +29,15 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     private $tracing;
 
-    public function __construct(Tracing $tracing)
+    /**
+     * @var SwitchManager
+     */
+    private $switchManager;
+
+    public function __construct(Tracing $tracing, SwitchManager $switchManager)
     {
         $this->tracing = $tracing;
+        $this->switchManager = $switchManager;
     }
 
     public function listen(): array
@@ -45,21 +52,22 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof QueryExecuted) {
-            $sql = $event->sql;
-            if (! Arr::isAssoc($event->bindings)) {
-                foreach ($event->bindings as $key => $value) {
-                    $sql = str_replace('?', '"%s"', $sql);
-                }
-
-                $sql = sprintf($sql, ...$event->bindings);
-            }
-            $endTime = microtime(true);
-            $span = $this->tracing->span('db.query');
-            $span->start((int) (($endTime - $event->time / 1000) * 1000 * 1000));
-            $span->tag('db.sql', $sql);
-            $span->tag('db.query_time', $event->time . ' ms');
-            $span->finish((int) ($endTime * 1000 * 1000));
+        if ($this->switchManager->isEnable('db') === false) {
+            return;
         }
+        $sql = $event->sql;
+        if (! Arr::isAssoc($event->bindings)) {
+            foreach ($event->bindings as $key => $value) {
+                $sql = str_replace('?', '"%s"', $sql);
+            }
+
+            $sql = sprintf($sql, ...$event->bindings);
+        }
+        $endTime = microtime(true);
+        $span = $this->tracing->span('db.query');
+        $span->start((int) (($endTime - $event->time / 1000) * 1000 * 1000));
+        $span->tag('db.sql', $sql);
+        $span->tag('db.query_time', $event->time . ' ms');
+        $span->finish((int) ($endTime * 1000 * 1000));
     }
 }

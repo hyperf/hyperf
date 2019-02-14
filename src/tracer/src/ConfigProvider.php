@@ -23,6 +23,7 @@ class ConfigProvider
             'dependencies' => [
                 Tracing::class => \Hyperf\Tracer\Tracing::class,
                 TracingBuilder::class => TracingBuilderFactory::class,
+                SwitchManager::class => SwitchManagerFactory::class,
             ],
             'commands' => [
             ],
