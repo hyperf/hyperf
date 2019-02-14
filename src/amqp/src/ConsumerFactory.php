@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Pool\PoolFactory;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 
 class ConsumerFactory
 {

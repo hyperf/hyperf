@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Packer\JsonPacker;
 use Hyperf\Amqp\Packer\Packer;
+use Hyperf\Amqp\Packer\JsonPacker;
 
 class ConfigProvider
 {

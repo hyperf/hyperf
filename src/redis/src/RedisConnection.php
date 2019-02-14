@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis;
 
+use Hyperf\Pool\Pool;
+use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Pool\Pool;
-use Psr\Container\ContainerInterface;
 
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {

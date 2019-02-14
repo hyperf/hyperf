@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Listeners;
 
-use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
+use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**

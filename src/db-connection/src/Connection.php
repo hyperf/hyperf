@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
-use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\DbConnection\Pool\DbPool;
+use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Psr\Container\ContainerInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {

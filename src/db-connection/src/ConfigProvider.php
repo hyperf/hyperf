@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Hyperf\Database\Commands\ModelCommand;
-use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Connectors\PostgresConnector;
-use Hyperf\Database\Connectors\SQLiteConnector;
-use Hyperf\Database\Connectors\SqlServerConnector;
 use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\Database\Commands\ModelCommand;
+use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Connectors\SQLiteConnector;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\Connectors\PostgresConnector;
+use Hyperf\Database\Connectors\SqlServerConnector;
 
 class ConfigProvider
 {

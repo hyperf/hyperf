@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Pool;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Utils\Arr;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\RedisConnection;
-use Hyperf\Utils\Arr;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConnectionInterface;
 
 class RedisPool extends Pool
 {

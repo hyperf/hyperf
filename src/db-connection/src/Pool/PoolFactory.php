@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Di\Container;
-use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Channel;
+use Psr\Container\ContainerInterface;
 
 class PoolFactory
 {

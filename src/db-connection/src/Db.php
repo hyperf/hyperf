@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Psr\Container\ContainerInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Framework\ApplicationContext;
-use Psr\Container\ContainerInterface;
 
 /**
  * DB Helper.

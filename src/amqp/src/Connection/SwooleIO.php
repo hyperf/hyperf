@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Connection;
 
-use InvalidArgumentException;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
-use PhpAmqpLib\Wire\AMQPWriter;
-use PhpAmqpLib\Wire\IO\AbstractIO;
 use Swoole;
 use Swoole\Coroutine\Client;
+use InvalidArgumentException;
+use PhpAmqpLib\Wire\AMQPWriter;
+use PhpAmqpLib\Wire\IO\AbstractIO;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 
 class SwooleIO extends AbstractIO
 {
