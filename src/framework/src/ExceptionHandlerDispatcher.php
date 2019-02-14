@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
-use Hyperf\Dispatcher\AbstractDispatcher;
+use Throwable;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
+use Hyperf\Dispatcher\AbstractDispatcher;
 
 class ExceptionHandlerDispatcher extends AbstractDispatcher
 {

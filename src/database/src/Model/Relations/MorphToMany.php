@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Arr;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
 
 class MorphToMany extends BelongsToMany
 {
@@ -59,7 +59,7 @@ class MorphToMany extends BelongsToMany
         $name,
         $table,
         $foreignPivotKey,
-                                $relatedPivotKey,
+        $relatedPivotKey,
         $parentKey,
         $relatedKey,
         $relationName = null,

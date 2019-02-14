@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Contract\PoolInterface;
-use Hyperf\Contract\PoolOptionInterface;
-use Hyperf\Utils\Coroutine;
-use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Throwable;
+use RuntimeException;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Contract\PoolInterface;
+use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\PoolOptionInterface;
 
 abstract class Pool implements PoolInterface
 {

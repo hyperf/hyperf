@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
-use Hyperf\Database\Model\Builder;
 use Hyperf\Utils\Str;
+use Hyperf\Database\Model\Builder;
 
 class MorphPivot extends Pivot
 {

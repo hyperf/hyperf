@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Event;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\EventDispatcher\StoppableEventInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -57,6 +57,7 @@ class EventDispatcher implements EventDispatcherInterface
 
     /**
      * Dump the debug message if $logger property is provided.
+     * @param mixed $listener
      */
     private function dump($listener, object $event)
     {

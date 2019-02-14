@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations\Concerns;
 
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Str;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
 
 trait AsPivot
 {

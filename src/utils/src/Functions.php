@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\HigherOrderTapProxy;
-use Hyperf\Utils\Str;
 
 if (! function_exists('value')) {
     /**

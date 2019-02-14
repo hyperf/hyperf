@@ -17,12 +17,10 @@ use GuzzleHttp\HandlerStack;
 
 class ClientFactory
 {
-
     public static function createClient(array $options = []): Client
     {
         $stack = HandlerStack::create(new CoroutineHandler());
         $config = array_replace(['handler' => $stack], $options);
         return make(Client::class, compact('config'));
     }
-
 }

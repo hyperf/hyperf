@@ -55,5 +55,4 @@ class Coroutine
     {
         return Coroutine::id() > 0;
     }
-
 }

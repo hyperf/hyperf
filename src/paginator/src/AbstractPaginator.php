@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Paginator;
 
-use ArrayIterator;
 use Closure;
-use Hyperf\Contract\PaginatorInterface;
+use ArrayIterator;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Collection;
 use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Contract\PaginatorInterface;
 
 abstract class AbstractPaginator implements PaginatorInterface
 {
@@ -391,6 +391,7 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * Determine if the given item exists.
+     * @param mixed $key
      */
     public function offsetExists($key): bool
     {
@@ -399,6 +400,7 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * Get the item at the given offset.
+     * @param mixed $key
      */
     public function offsetGet($key)
     {
@@ -407,6 +409,8 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * Set the item at the given offset.
+     * @param mixed $key
+     * @param mixed $value
      */
     public function offsetSet($key, $value): void
     {
@@ -415,6 +419,7 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * Unset the item at the given key.
+     * @param mixed $key
      */
     public function offsetUnset($key): void
     {

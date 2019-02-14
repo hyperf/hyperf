@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
-use Hyperf\Database\Connection;
-use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
 use RuntimeException;
+use Hyperf\Utils\Fluent;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Schema\Table;
+use Hyperf\Database\Connection;
+use Doctrine\DBAL\Schema\Comparator;
+use Hyperf\Database\Schema\Blueprint;
+use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 
 class ChangeColumn
 {
@@ -204,6 +204,7 @@ class ChangeColumn
      * Get the matching Doctrine value for a given Fluent attribute.
      *
      * @param string $option
+     * @param mixed $value
      */
     protected static function mapFluentValueToDoctrine($option, $value)
     {

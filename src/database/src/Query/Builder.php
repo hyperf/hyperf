@@ -13,23 +13,23 @@ declare(strict_types=1);
 namespace Hyperf\Database\Query;
 
 use Closure;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use RuntimeException;
 use DateTimeInterface;
+use Hyperf\Utils\Collection;
+use InvalidArgumentException;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Framework\ApplicationContext;
+use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Framework\ApplicationContext;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
-use Hyperf\Utils\Traits\Macroable;
-use InvalidArgumentException;
-use RuntimeException;
+use Hyperf\Database\Model\Builder as ModelBuilder;
 
 class Builder
 {
@@ -330,6 +330,7 @@ class Builder
      * Add a raw from clause to the query.
      *
      * @param string $expression
+     * @param mixed $bindings
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function fromRaw($expression, $bindings = [])
@@ -740,6 +741,7 @@ class Builder
      *
      * @param string $sql
      * @param string $boolean
+     * @param mixed $bindings
      * @return $this
      */
     public function whereRaw($sql, $bindings = [], $boolean = 'and')
@@ -755,6 +757,7 @@ class Builder
      * Add a raw or where clause to the query.
      *
      * @param string $sql
+     * @param mixed $bindings
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereRaw($sql, $bindings = [])
@@ -768,6 +771,7 @@ class Builder
      * @param string $column
      * @param string $boolean
      * @param bool $not
+     * @param mixed $values
      * @return $this
      */
     public function whereIn($column, $values, $boolean = 'and', $not = false)
@@ -806,6 +810,7 @@ class Builder
      * Add an "or where in" clause to the query.
      *
      * @param string $column
+     * @param mixed $values
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereIn($column, $values)
@@ -818,6 +823,7 @@ class Builder
      *
      * @param string $column
      * @param string $boolean
+     * @param mixed $values
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function whereNotIn($column, $values, $boolean = 'and')
@@ -829,6 +835,7 @@ class Builder
      * Add an "or where not in" clause to the query.
      *
      * @param string $column
+     * @param mixed $values
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereNotIn($column, $values)
@@ -1310,6 +1317,7 @@ class Builder
      * @param string $column
      * @param string $boolean
      * @param bool $not
+     * @param mixed $value
      * @return $this
      */
     public function whereJsonContains($column, $value, $boolean = 'and', $not = false)
@@ -1329,6 +1337,7 @@ class Builder
      * Add a "or where JSON contains" clause to the query.
      *
      * @param string $column
+     * @param mixed $value
      * @return $this
      */
     public function orWhereJsonContains($column, $value)
@@ -1341,6 +1350,7 @@ class Builder
      *
      * @param string $column
      * @param string $boolean
+     * @param mixed $value
      * @return $this
      */
     public function whereJsonDoesntContain($column, $value, $boolean = 'and')
@@ -1352,6 +1362,7 @@ class Builder
      * Add a "or where JSON not contains" clause to the query.
      *
      * @param string $column
+     * @param mixed $value
      * @return $this
      */
     public function orWhereJsonDoesntContain($column, $value)
@@ -1365,6 +1376,7 @@ class Builder
      * @param string $column
      * @param string $boolean
      * @param null|mixed $value
+     * @param mixed $operator
      * @return $this
      */
     public function whereJsonLength($column, $operator, $value = null, $boolean = 'and')
@@ -1387,6 +1399,7 @@ class Builder
      *
      * @param string $column
      * @param null|mixed $value
+     * @param mixed $operator
      * @return $this
      */
     public function orWhereJsonLength($column, $operator, $value = null)
@@ -2281,6 +2294,7 @@ class Builder
     /**
      * Create a raw database expression.
      *
+     * @param mixed $value
      * @return \Hyperf\Database\Query\Expression
      */
     public function raw($value)
@@ -2330,6 +2344,7 @@ class Builder
      * Add a binding to the query.
      *
      * @param string $type
+     * @param mixed $value
      * @throws \InvalidArgumentException
      * @return $this
      */
@@ -2466,6 +2481,7 @@ class Builder
     /**
      * Parse the subquery into SQL and bindings.
      *
+     * @param mixed $query
      * @return array
      */
     protected function parseSub($query)
@@ -2505,6 +2521,7 @@ class Builder
      * Prevents using Null values with invalid operators.
      *
      * @param string $operator
+     * @param mixed $value
      * @return bool
      */
     protected function invalidOperatorAndValue($operator, $value)
@@ -2574,6 +2591,7 @@ class Builder
      * @param string $column
      * @param string $operator
      * @param string $boolean
+     * @param mixed $value
      * @return $this
      */
     protected function addDateBasedWhere($type, $column, $operator, $value, $boolean = 'and')

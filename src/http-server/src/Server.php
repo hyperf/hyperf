@@ -12,24 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ServerOnRequestInterface;
-use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Event\EventDispatcher;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Framework\ExceptionHandlerDispatcher;
-use Hyperf\HttpServer\Event\AfterResponse;
-use Hyperf\HttpServer\Exception\HttpException;
+use Throwable;
 use Hyperf\Utils\Context;
+use Hyperf\Event\EventDispatcher;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Dispatcher\HttpDispatcher;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Swoole\Http\Request as SwooleRequest;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\HttpServer\Event\AfterResponse;
+use Swoole\Http\Response as SwooleResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\Contract\ServerOnRequestInterface;
+use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Swoft\Http\Message\Server\Request as Psr7Request;
 use Swoft\Http\Message\Server\Response as Psr7Response;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
-use Throwable;
 
 class Server implements ServerOnRequestInterface
 {

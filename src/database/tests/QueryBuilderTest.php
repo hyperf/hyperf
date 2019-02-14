@@ -12,22 +12,22 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\Model\Builder as ModelBuilder;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Expression as Raw;
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Query\Grammars\MySqlGrammar;
-use Hyperf\Database\Query\Processors\MySqlProcessor;
-use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Di\Container;
-use Hyperf\Framework\ApplicationContext;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Context;
-use InvalidArgumentException;
 use Mockery;
+use Hyperf\Di\Container;
+use Hyperf\Utils\Context;
+use Hyperf\Utils\Collection;
+use InvalidArgumentException;
+use Hyperf\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Framework\ApplicationContext;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Expression as Raw;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Query\Grammars\MySqlGrammar;
+use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
 
 /**
  * @internal

@@ -12,24 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Router;
 
-use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
-use FastRoute\Dispatcher;
-use FastRoute\Dispatcher\GroupCountBased;
-use FastRoute\RouteCollector;
-use FastRoute\RouteParser\Std;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Exception\ConflictAnnotationException;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\HttpServer\Annotation\AutoController;
-use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\DeleteMapping;
-use Hyperf\HttpServer\Annotation\GetMapping;
-use Hyperf\HttpServer\Annotation\PatchMapping;
-use Hyperf\HttpServer\Annotation\PostMapping;
-use Hyperf\HttpServer\Annotation\PutMapping;
-use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
+use FastRoute\Dispatcher;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
+use Hyperf\Di\ReflectionManager;
+use FastRoute\Dispatcher\GroupCountBased;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\GetMapping;
+use Hyperf\HttpServer\Annotation\PutMapping;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Annotation\PatchMapping;
+use Hyperf\HttpServer\Annotation\DeleteMapping;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\Di\Exception\ConflictAnnotationException;
+use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 
 class DispatcherFactory
 {

@@ -20,6 +20,7 @@ class JsonEncodingException extends RuntimeException
      * Create a new JSON encoding exception for the model.
      *
      * @param string $message
+     * @param mixed $model
      * @return static
      */
     public static function forModel($model, $message)
@@ -31,6 +32,8 @@ class JsonEncodingException extends RuntimeException
      * Create a new JSON encoding exception for an attribute.
      *
      * @param string $message
+     * @param mixed $model
+     * @param mixed $key
      * @return static
      */
     public static function forAttribute($model, $key, $message)

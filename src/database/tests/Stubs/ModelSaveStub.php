@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\ConnectionInterface as Connection;
+use Mockery;
+use Hyperf\Utils\Context;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Context;
-use Mockery;
+use Hyperf\Database\ConnectionInterface as Connection;
 
 class ModelSaveStub extends Model
 {

@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
+use Mockery;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
-use Hyperf\Database\Model\Model;
-use Mockery;
 
 class ModelHydrateRawStub extends Model
 {

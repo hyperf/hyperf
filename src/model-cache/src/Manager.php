@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\ModelCache;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Database\Model\Collection;
 use Hyperf\DbConnection\Model\Model;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\ModelCache\Handler\HandlerInterface;
-use Hyperf\ModelCache\Handler\RedisHandler;
+use Hyperf\Database\Model\Collection;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ModelCache\Handler\RedisHandler;
+use Hyperf\ModelCache\Handler\HandlerInterface;
 
 class Manager
 {
@@ -55,6 +55,7 @@ class Manager
 
     /**
      * Fetch a model from cache.
+     * @param mixed $id
      */
     public function findFromCache($id, string $class): ?Model
     {
@@ -152,6 +153,7 @@ class Manager
 
     /**
      * Destroy the models for the given IDs from cache.
+     * @param mixed $ids
      */
     public function destroy($ids, string $class): bool
     {
@@ -173,6 +175,9 @@ class Manager
 
     /**
      * Increment a column's value by a given amount.
+     * @param mixed $id
+     * @param mixed $column
+     * @param mixed $amount
      */
     public function increment($id, $column, $amount, string $class): bool
     {

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Hyperf\Contract\ConnectionInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConnectionInterface;
 
 abstract class Connection implements ConnectionInterface
 {

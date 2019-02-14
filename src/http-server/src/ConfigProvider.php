@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use Hyperf\HttpServer\Command\StartServer;
-use Hyperf\HttpServer\Command\StartServerFactory;
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\HttpServer\Router\DispatcherFactory;
 use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Command\StartServerFactory;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class ConfigProvider
 {

@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
-use Hyperf\Cache\Annotation\Cacheable;
-use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
-use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
+use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Cache\Driver\DriverInterface;
 
 /**
  * @Aspect

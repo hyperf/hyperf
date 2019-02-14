@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Connectors;
 
-use Doctrine\DBAL\Driver\PDOConnection;
-use Exception;
-use Hyperf\Database\DetectsLostConnections;
 use PDO;
+use Exception;
 use Throwable;
+use Doctrine\DBAL\Driver\PDOConnection;
+use Hyperf\Database\DetectsLostConnections;
 
 class Connector
 {

@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Model\ModelNotFoundException;
 
 class HasManyThrough extends Relation
 {
@@ -236,6 +236,7 @@ class HasManyThrough extends Relation
      * Find a related model by its primary key.
      *
      * @param array $columns
+     * @param mixed $id
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
@@ -255,6 +256,7 @@ class HasManyThrough extends Relation
      * Find multiple related models by their primary keys.
      *
      * @param array $columns
+     * @param mixed $ids
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -273,6 +275,7 @@ class HasManyThrough extends Relation
      * Find a related model by its primary key or throw an exception.
      *
      * @param array $columns
+     * @param mixed $id
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */

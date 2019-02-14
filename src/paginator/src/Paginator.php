@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Paginator;
 
-use ArrayAccess;
 use Countable;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
-use IteratorAggregate;
+use ArrayAccess;
 use JsonSerializable;
+use IteratorAggregate;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Arrayable;
 
 class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable
 {
@@ -33,6 +33,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      * Create a new paginator instance.
      *
      * @param array $options (path, query, fragment, pageName)
+     * @param mixed $items
      */
     public function __construct($items, int $perPage, ?int $currentPage = null, array $options = [])
     {
@@ -130,6 +131,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
 
     /**
      * Set the items for the paginator.
+     * @param mixed $items
      */
     protected function setItems($items): void
     {

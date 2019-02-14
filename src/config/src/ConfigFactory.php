@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Config;
 
 use Dotenv\Dotenv;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
+use Psr\Container\ContainerInterface;
 
 class ConfigFactory
 {

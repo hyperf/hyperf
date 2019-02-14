@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema;
 
-use BadMethodCallException;
 use Closure;
-use Hyperf\Database\Connection;
-use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Database\SQLiteConnection;
 use Hyperf\Utils\Fluent;
+use BadMethodCallException;
+use Hyperf\Database\Connection;
 use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Database\SQLiteConnection;
+use Hyperf\Database\Schema\Grammars\Grammar;
 
 class Blueprint
 {

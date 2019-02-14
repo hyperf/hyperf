@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations\Concerns;
 
-use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Utils\Collection as BaseCollection;
 
 trait InteractsWithPivotTable
@@ -24,6 +24,7 @@ trait InteractsWithPivotTable
      * Each existing model is detached, and non existing ones are attached.
      *
      * @param bool $touch
+     * @param mixed $ids
      * @return array
      */
     public function toggle($ids, $touch = true)
@@ -137,6 +138,7 @@ trait InteractsWithPivotTable
      * Update an existing pivot record on the table.
      *
      * @param bool $touch
+     * @param mixed $id
      * @return int
      */
     public function updateExistingPivot($id, array $attributes, $touch = true)
@@ -160,6 +162,7 @@ trait InteractsWithPivotTable
      * Attach a model to the parent.
      *
      * @param bool $touch
+     * @param mixed $id
      */
     public function attach($id, array $attributes = [], $touch = true)
     {
@@ -254,6 +257,7 @@ trait InteractsWithPivotTable
     /**
      * Get a new pivot statement for a given "other" ID.
      *
+     * @param mixed $id
      * @return \Hyperf\Database\Query\Builder
      */
     public function newPivotStatementForId($id)
@@ -359,6 +363,7 @@ trait InteractsWithPivotTable
      * @param int $key
      * @param array $attributes
      * @param bool $hasTimestamps
+     * @param mixed $value
      * @return array
      */
     protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps)
@@ -374,6 +379,8 @@ trait InteractsWithPivotTable
     /**
      * Get the attach record ID and extra attributes.
      *
+     * @param mixed $key
+     * @param mixed $value
      * @return array
      */
     protected function extractAttachIdAndAttributes($key, $value, array $attributes)
@@ -471,6 +478,7 @@ trait InteractsWithPivotTable
     /**
      * Get all of the IDs from the given mixed value.
      *
+     * @param mixed $value
      * @return array
      */
     protected function parseIds($value)
@@ -492,6 +500,7 @@ trait InteractsWithPivotTable
 
     /**
      * Get the ID from the given mixed value.
+     * @param mixed $value
      */
     protected function parseId($value)
     {
@@ -512,6 +521,7 @@ trait InteractsWithPivotTable
 
     /**
      * Cast the given key to convert to primary key type.
+     * @param mixed $key
      */
     protected function castKey($key)
     {
@@ -538,6 +548,7 @@ trait InteractsWithPivotTable
      * Converts a given value to a given type value.
      *
      * @param string $type
+     * @param mixed $value
      */
     protected function getTypeSwapValue($type, $value)
     {

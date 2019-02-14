@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Driver;
 
-use Hyperf\Contract\PackerInterface;
+use Hyperf\Queue\MessageInterface;
 use Hyperf\Queue\Event\AfterHandle;
+use Hyperf\Queue\Event\RetryHandle;
+use Hyperf\Contract\PackerInterface;
 use Hyperf\Queue\Event\BeforeHandle;
 use Hyperf\Queue\Event\FailedHandle;
-use Hyperf\Queue\Event\RetryHandle;
-use Hyperf\Queue\Exception\InvalidPackerException;
-use Hyperf\Queue\MessageInterface;
-use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
+use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Queue\Exception\InvalidPackerException;
 
 abstract class Driver implements DriverInterface
 {

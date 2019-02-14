@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Driver;
 
-use Hyperf\Queue\JobInterface;
+use Redis;
 use Hyperf\Queue\Message;
+use Hyperf\Queue\JobInterface;
 use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
-use Redis;
 
 class RedisDriver extends Driver
 {
@@ -142,6 +142,7 @@ class RedisDriver extends Driver
 
     /**
      * Remove data from reserved queue.
+     * @param mixed $data
      */
     protected function remove($data): bool
     {

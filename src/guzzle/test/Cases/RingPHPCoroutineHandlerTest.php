@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace HyerfTest\Guzzle\Cases;
 
-use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Guzzle\RingPHP\CoroutineHandler;
 
 /**
  * @internal

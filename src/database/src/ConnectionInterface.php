@@ -26,6 +26,7 @@ interface ConnectionInterface
 
     /**
      * Get a new raw query expression.
+     * @param mixed $value
      */
     public function raw($value): Expression;
 

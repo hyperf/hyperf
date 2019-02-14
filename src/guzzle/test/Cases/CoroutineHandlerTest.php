@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Guzzle\Cases;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Psr7\Request;
-use Hyperf\Guzzle\CoroutineHandler;
-use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Guzzle\CoroutineHandler;
+use GuzzleHttp\Exception\ConnectException;
 
 /**
  * @internal

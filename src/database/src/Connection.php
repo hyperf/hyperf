@@ -12,24 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
+use PDO;
 use Closure;
-use DateTimeInterface;
-use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
+use PDOStatement;
+use LogicException;
+use Hyperf\Utils\Arr;
+use DateTimeInterface;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\QueryException;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Builder as QueryBuilder;
-use Hyperf\Database\Query\Expression;
-use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Database\Schema\Builder as SchemaBuilder;
-use Hyperf\Utils\Arr;
-use LogicException;
-use PDO;
-use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Doctrine\DBAL\Connection as DoctrineConnection;
+use Hyperf\Database\Schema\Builder as SchemaBuilder;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 
 class Connection implements ConnectionInterface
 {
@@ -517,6 +517,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Get a new raw query expression.
+     * @param mixed $value
      */
     public function raw($value): Expression
     {
@@ -1167,6 +1168,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Fire the given event if possible.
+     * @param mixed $event
      */
     protected function event($event)
     {

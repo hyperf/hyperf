@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Event;
 
-use Hyperf\Queue\MessageInterface;
 use Throwable;
+use Hyperf\Queue\MessageInterface;
 
 class FailedHandle extends Event
 {

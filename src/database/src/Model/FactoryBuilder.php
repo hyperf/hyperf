@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model;
 
 use Faker\Generator as Faker;
-use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
+use Hyperf\Utils\Traits\Macroable;
 
 class FactoryBuilder
 {
@@ -101,7 +101,7 @@ class FactoryBuilder
         $name,
         array $definitions,
         array $states,
-                                array $afterMaking,
+        array $afterMaking,
         array $afterCreating,
         Faker $faker
     ) {

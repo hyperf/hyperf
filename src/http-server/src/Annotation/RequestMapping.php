@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Annotation;
 
+use Hyperf\Utils\Str;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Utils\Str;
 
 /**
  * @Annotation

@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Hyperf\Database\Model\Relations\Pivot;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Str;
 use LogicException;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Utils\Collection as BaseCollection;
 
 class Collection extends BaseCollection
 {
@@ -25,6 +25,7 @@ class Collection extends BaseCollection
      * Find a model in the collection by key.
      *
      * @param null|mixed $default
+     * @param mixed $key
      * @return \Hyperf\Database\Model\Model|static
      */
     public function find($key, $default = null)
@@ -166,6 +167,7 @@ class Collection extends BaseCollection
     /**
      * Add an item to the collection.
      *
+     * @param mixed $item
      * @return $this
      */
     public function add($item)
@@ -179,6 +181,7 @@ class Collection extends BaseCollection
      * Determine if a key exists in the collection.
      * @param null|mixed $operator
      * @param null|mixed $value
+     * @param mixed $key
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -323,6 +326,7 @@ class Collection extends BaseCollection
     /**
      * Returns only the models from the collection with the specified keys.
      *
+     * @param mixed $keys
      * @return static
      */
     public function only($keys): BaseCollection
@@ -339,6 +343,7 @@ class Collection extends BaseCollection
     /**
      * Returns all models in the collection except the models with specified keys.
      *
+     * @param mixed $keys
      * @return static
      */
     public function except($keys): BaseCollection
@@ -391,6 +396,7 @@ class Collection extends BaseCollection
 
     /**
      * The following methods are intercepted to always return base collections.
+     * @param mixed $value
      */
 
     /**
@@ -447,6 +453,7 @@ class Collection extends BaseCollection
 
     /**
      * Pad collection to the specified length with a value.
+     * @param mixed $value
      */
     public function pad(int $size, $value): BaseCollection
     {

@@ -12,26 +12,26 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Carbon\Carbon;
-use Closure;
-use Hyperf\Database\Connection;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\ConnectionResolver;
-use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Register;
-use Hyperf\Database\Model\SoftDeletes;
-use Hyperf\Database\Query\Builder as BaseBuilder;
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Collection as BaseCollection;
-use HyperfTest\Database\Stubs\ModelStub;
-use Mockery;
 use PDO;
-use PHPUnit\Framework\TestCase;
+use Closure;
+use Mockery;
 use stdClass;
+use Carbon\Carbon;
+use Hyperf\Database\Connection;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Register;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\ConnectionResolver;
+use Hyperf\Database\ConnectionInterface;
+use HyperfTest\Database\Stubs\ModelStub;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 
 /**
  * @internal

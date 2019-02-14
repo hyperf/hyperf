@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
+use Swoole\Http\Request as SwooleHttpRequest;
+use function strlen;
+use function substr;
 use const SEEK_CUR;
 use const SEEK_END;
 use const SEEK_SET;
-use function strlen;
-use function substr;
-use Swoole\Http\Request as SwooleHttpRequest;
 
 final class SwooleStream implements StreamInterface
 {

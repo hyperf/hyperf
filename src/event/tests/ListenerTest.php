@@ -12,22 +12,22 @@ declare(strict_types=1);
 
 namespace HyperfTest\Event;
 
-use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Annotation\Listener as ListenerAnnotation;
-use Hyperf\Event\EventDispatcher;
-use Hyperf\Event\ListenerProvider;
-use Hyperf\Event\ListenerProviderFactory;
-use HyperfTest\Event\Event\Alpha;
-use HyperfTest\Event\Event\Beta;
-use HyperfTest\Event\Listener\AlphaListener;
-use HyperfTest\Event\Listener\BetaListener;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use SplPriorityQueue;
+use Hyperf\Config\Config;
+use PHPUnit\Framework\TestCase;
+use HyperfTest\Event\Event\Beta;
+use Hyperf\Event\EventDispatcher;
+use HyperfTest\Event\Event\Alpha;
+use Hyperf\Event\ListenerProvider;
+use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
+use Hyperf\Event\ListenerProviderFactory;
+use HyperfTest\Event\Listener\BetaListener;
+use HyperfTest\Event\Listener\AlphaListener;
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Hyperf\Event\Annotation\Listener as ListenerAnnotation;
 
 /**
  * @internal

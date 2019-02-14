@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use BadMethodCallException;
 use Closure;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use BadMethodCallException;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -258,6 +258,7 @@ class Builder
     /**
      * Add a where clause on the primary key to the query.
      *
+     * @param mixed $id
      * @return $this
      */
     public function whereKey($id)
@@ -274,6 +275,7 @@ class Builder
     /**
      * Add a where clause on the primary key to the query.
      *
+     * @param mixed $id
      * @return $this
      */
     public function whereKeyNot($id)
@@ -394,6 +396,7 @@ class Builder
      * Find a model by its primary key.
      *
      * @param array $columns
+     * @param mixed $id
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
     public function find($id, $columns = ['*'])
@@ -425,6 +428,7 @@ class Builder
      * Find a model by its primary key or throw an exception.
      *
      * @param array $columns
+     * @param mixed $id
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
@@ -450,6 +454,7 @@ class Builder
      * Find a model by its primary key or return fresh model instance.
      *
      * @param array $columns
+     * @param mixed $id
      * @return \Hyperf\Database\Model\Model|static
      */
     public function findOrNew($id, $columns = ['*'])
@@ -933,6 +938,7 @@ class Builder
     /**
      * Set the relationships that should be eager loaded.
      *
+     * @param mixed $relations
      * @return $this
      */
     public function with($relations)
@@ -947,6 +953,7 @@ class Builder
     /**
      * Prevent the specified relations from being eager loaded.
      *
+     * @param mixed $relations
      * @return $this
      */
     public function without($relations)

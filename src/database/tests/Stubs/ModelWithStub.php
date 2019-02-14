@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Model;
 use Mockery;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
 
 class ModelWithStub extends Model
 {

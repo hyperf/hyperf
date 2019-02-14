@@ -12,11 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Event;
 
+use PHPUnit\Framework\TestCase;
 use Hyperf\Event\ConfigProvider;
-use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\EventDispatcherFactory;
 use Hyperf\Event\ListenerProviderFactory;
-use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 

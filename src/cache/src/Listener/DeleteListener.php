@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Listener;
 
 use Hyperf\Cache\CacheManager;
-use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Cache\Driver\DriverInterface;
+use Hyperf\Event\Contract\ListenerInterface;
 
 /**
  * @Listener

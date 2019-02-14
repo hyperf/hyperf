@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
-use Hyperf\Database\Query\Expression;
 use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Database\Query\Expression;
 
 abstract class Grammar
 {
@@ -97,6 +97,7 @@ abstract class Grammar
     /**
      * Get the appropriate query parameter place-holder for a value.
      *
+     * @param mixed $value
      * @return string
      */
     public function parameter($value)
@@ -122,6 +123,7 @@ abstract class Grammar
     /**
      * Determine if the given value is a raw expression.
      *
+     * @param mixed $value
      * @return bool
      */
     public function isExpression($value)
@@ -192,9 +194,9 @@ abstract class Grammar
         }
 
         return $this->wrap(
-                $segments[0]
+            $segments[0]
         ) . ' as ' . $this->wrapValue(
-                    $segments[1]
+            $segments[1]
             );
     }
 

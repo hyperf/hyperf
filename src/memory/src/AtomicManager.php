@@ -25,6 +25,7 @@ class AtomicManager
 
     /**
      * You should initialize a Atomic with the identifier before use it.
+     * @param mixed $value
      */
     public static function initialize(string $identifier, $value = 0): void
     {

@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
-use Hyperf\Cache\Annotation\Cacheable;
-use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Psr\Container\ContainerInterface;
+use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Cache\Driver\DriverInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 class CacheManager
 {

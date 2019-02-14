@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\ModelNotFoundException;
 
 class BelongsToMany extends Relation
 {
@@ -150,7 +150,7 @@ class BelongsToMany extends Relation
         Model $parent,
         $table,
         $foreignPivotKey,
-                                $relatedPivotKey,
+        $relatedPivotKey,
         $parentKey,
         $relatedKey,
         $relationName = null
@@ -288,6 +288,7 @@ class BelongsToMany extends Relation
      * @param string $column
      * @param string $boolean
      * @param bool $not
+     * @param mixed $values
      * @return $this
      */
     public function wherePivotIn($column, $values, $boolean = 'and', $not = false)
@@ -342,6 +343,7 @@ class BelongsToMany extends Relation
      * Set an "or where in" clause for a pivot table column.
      *
      * @param string $column
+     * @param mixed $values
      * @return $this
      */
     public function orWherePivotIn($column, $values)
@@ -353,6 +355,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param array $columns
+     * @param mixed $id
      * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])
@@ -416,6 +419,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key.
      *
      * @param array $columns
+     * @param mixed $id
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
     public function find($id, $columns = ['*'])
@@ -431,6 +435,7 @@ class BelongsToMany extends Relation
      * Find multiple related models by their primary keys.
      *
      * @param array $columns
+     * @param mixed $ids
      * @return \Hyperf\Database\Model\Collection
      */
     public function findMany($ids, $columns = ['*'])
@@ -445,6 +450,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or throw an exception.
      *
      * @param array $columns
+     * @param mixed $id
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */

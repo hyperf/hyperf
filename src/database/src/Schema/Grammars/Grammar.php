@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
-use Doctrine\DBAL\Schema\TableDiff;
+use Hyperf\Utils\Fluent;
 use Hyperf\Database\Connection;
-use Hyperf\Database\Grammar as BaseGrammar;
+use Doctrine\DBAL\Schema\TableDiff;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Database\Grammar as BaseGrammar;
+use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 
 abstract class Grammar extends BaseGrammar
 {
@@ -113,6 +113,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a table in keyword identifiers.
      *
+     * @param mixed $table
      * @return string
      */
     public function wrapTable($table)
@@ -250,6 +251,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Format a value so that it can be used in "default" clauses.
      *
+     * @param mixed $value
      * @return string
      */
     protected function getDefaultValue($value)

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Traits;
 
-use BadMethodCallException;
 use Error;
+use BadMethodCallException;
 use function get_class;
 
 trait ForwardsCalls

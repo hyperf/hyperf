@@ -12,23 +12,23 @@ declare(strict_types=1);
 
 namespace HyperfTest\Event;
 
-use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\EventDispatcher;
-use Hyperf\Event\EventDispatcherFactory;
-use Hyperf\Event\ListenerProvider;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Framework\Logger\StdoutLogger;
-use HyperfTest\Event\Event\Alpha;
-use HyperfTest\Event\Listener\AlphaListener;
-use HyperfTest\Event\Listener\BetaListener;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use ReflectionClass;
+use Hyperf\Config\Config;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Event\EventDispatcher;
+use HyperfTest\Event\Event\Alpha;
+use Hyperf\Event\ListenerProvider;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Event\EventDispatcherFactory;
+use Hyperf\Framework\Logger\StdoutLogger;
+use Hyperf\Contract\StdoutLoggerInterface;
+use HyperfTest\Event\Listener\BetaListener;
+use HyperfTest\Event\Listener\AlphaListener;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use ReflectionClass;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 /**
  * @internal

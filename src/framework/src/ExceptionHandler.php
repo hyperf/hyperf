@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
-use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class ExceptionHandler
 {

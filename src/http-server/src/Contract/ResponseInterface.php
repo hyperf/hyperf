@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Contract;
 
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 interface ResponseInterface
@@ -27,6 +27,7 @@ interface ResponseInterface
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
+     * @param mixed $data
      */
     public function raw($data): PsrResponseInterface;
 }

@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Guzzle\RingPHP;
 
+use Swoole\Coroutine;
 use GuzzleHttp\Ring\Core;
+use Swoole\Coroutine\Http\Client;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.

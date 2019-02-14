@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands;
 
-use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
-use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\DbConnection\ConnectionResolver;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ModelCommand extends Command

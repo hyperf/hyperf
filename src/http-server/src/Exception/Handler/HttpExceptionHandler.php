@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Exception\Handler;
 
+use Throwable;
 use Hyperf\Framework\ExceptionHandler;
-use Hyperf\HttpServer\Exception\HttpException;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
-use Throwable;
+use Hyperf\HttpServer\Exception\HttpException;
 
 class HttpExceptionHandler extends ExceptionHandler
 {

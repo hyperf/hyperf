@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Process\Listeners;
 
 use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Process\Event\BeforeProcessHandle;
 
 /**
  * @Listener

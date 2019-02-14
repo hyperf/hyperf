@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Config;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Arr;
+use Hyperf\Contract\ConfigInterface;
 
 class Config implements ConfigInterface
 {

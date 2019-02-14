@@ -18,6 +18,7 @@ trait Cacheable
 {
     /**
      * Fetch a model from cache.
+     * @param mixed $id
      * @return null|self
      */
     public static function findFromCache($id)
@@ -30,6 +31,7 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
+     * @param mixed $ids
      * @return \Hyperf\Database\Model\Collection
      */
     public static function findManyFromCache($ids)
@@ -53,6 +55,8 @@ trait Cacheable
 
     /**
      * Increment a column's value by a given amount.
+     * @param mixed $column
+     * @param mixed $amount
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -74,6 +78,8 @@ trait Cacheable
 
     /**
      * Decrement a column's value by a given amount.
+     * @param mixed $column
+     * @param mixed $amount
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])

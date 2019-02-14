@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Traits;
 
-use BadMethodCallException;
 use Closure;
 use ReflectionClass;
 use ReflectionMethod;
+use BadMethodCallException;
 
 /**
  * This file come from illuminate/support,

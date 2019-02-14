@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache\Handler;
 
+use Redis;
 use Hyperf\ModelCache\Config;
-use Hyperf\ModelCache\Exception\CacheException;
-use Hyperf\ModelCache\Redis\HashsGetMultiple;
 use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
-use Redis;
+use Hyperf\ModelCache\Redis\HashsGetMultiple;
+use Hyperf\ModelCache\Exception\CacheException;
 
 class RedisHandler implements HandlerInterface
 {

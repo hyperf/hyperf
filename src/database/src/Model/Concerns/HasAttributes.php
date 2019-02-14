@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
-use DateTimeInterface;
-use Hyperf\Database\Model\JsonEncodingException;
-use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Str;
 use LogicException;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use DateTimeInterface;
+use Carbon\CarbonInterface;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Database\Model\JsonEncodingException;
 
 trait HasAttributes
 {
@@ -269,6 +269,7 @@ trait HasAttributes
      * Set a given attribute on the model.
      *
      * @param string $key
+     * @param mixed $value
      */
     public function setAttribute($key, $value)
     {
@@ -317,6 +318,7 @@ trait HasAttributes
      * Set a given JSON attribute on the model.
      *
      * @param string $key
+     * @param mixed $value
      * @return $this
      */
     public function fillJsonAttribute($key, $value)
@@ -345,6 +347,7 @@ trait HasAttributes
 
     /**
      * Decode the given float.
+     * @param mixed $value
      */
     public function fromFloat($value)
     {
@@ -363,6 +366,7 @@ trait HasAttributes
     /**
      * Convert a DateTime to a storable string.
      *
+     * @param mixed $value
      * @return null|string
      */
     public function fromDateTime($value)
@@ -618,6 +622,7 @@ trait HasAttributes
      * Determine if the new and old values for a given key are equivalent.
      *
      * @param string $key
+     * @param mixed $current
      * @return bool
      */
     public function originalIsEquivalent($key, $current)
@@ -879,6 +884,7 @@ trait HasAttributes
      * Get the value of an attribute using its mutator.
      *
      * @param string $key
+     * @param mixed $value
      */
     protected function mutateAttribute($key, $value)
     {
@@ -889,6 +895,7 @@ trait HasAttributes
      * Get the value of an attribute using its mutator for array conversion.
      *
      * @param string $key
+     * @param mixed $value
      */
     protected function mutateAttributeForArray($key, $value)
     {
@@ -901,6 +908,7 @@ trait HasAttributes
      * Cast an attribute to a native PHP type.
      *
      * @param string $key
+     * @param mixed $value
      */
     protected function castAttribute($key, $value)
     {
@@ -988,6 +996,7 @@ trait HasAttributes
      * Set the value of an attribute using its mutator.
      *
      * @param string $key
+     * @param mixed $value
      */
     protected function setMutatedAttributeValue($key, $value)
     {
@@ -1011,6 +1020,7 @@ trait HasAttributes
      *
      * @param string $path
      * @param string $key
+     * @param mixed $value
      * @return $this
      */
     protected function getArrayAttributeWithValue($path, $key, $value)
@@ -1036,6 +1046,7 @@ trait HasAttributes
      * Cast the given attribute to JSON.
      *
      * @param string $key
+     * @param mixed $value
      * @return string
      */
     protected function castAttributeAsJson($key, $value)
@@ -1056,6 +1067,7 @@ trait HasAttributes
     /**
      * Encode the given value as JSON.
      *
+     * @param mixed $value
      * @return string
      */
     protected function asJson($value)
@@ -1078,6 +1090,7 @@ trait HasAttributes
     /**
      * Return a timestamp as DateTime object with time set to 00:00:00.
      *
+     * @param mixed $value
      * @return \Hyperf\Utils\Carbon
      */
     protected function asDate($value)
@@ -1088,6 +1101,7 @@ trait HasAttributes
     /**
      * Return a timestamp as DateTime object.
      *
+     * @param mixed $value
      * @return CarbonInterface
      */
     protected function asDateTime($value)
@@ -1146,6 +1160,7 @@ trait HasAttributes
     /**
      * Return a timestamp as unix timestamp.
      *
+     * @param mixed $value
      * @return int
      */
     protected function asTimestamp($value)
@@ -1216,6 +1231,7 @@ trait HasAttributes
     /**
      * Get all of the attribute mutator methods.
      *
+     * @param mixed $class
      * @return array
      */
     protected static function getMutatorMethods($class)

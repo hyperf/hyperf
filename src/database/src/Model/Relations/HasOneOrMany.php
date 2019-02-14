@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
 
 abstract class HasOneOrMany extends Relation
 {
@@ -116,6 +116,7 @@ abstract class HasOneOrMany extends Relation
      * Find a model by its primary key or return new instance of the related model.
      *
      * @param array $columns
+     * @param mixed $id
      * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
      */
     public function findOrNew($id, $columns = ['*'])

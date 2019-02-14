@@ -88,6 +88,7 @@ trait BuildsQueries
      *
      * @param callable $callback
      * @param callable $default
+     * @param mixed $value
      * @return $this|mixed
      */
     public function when($value, $callback, $default = null)
@@ -118,6 +119,7 @@ trait BuildsQueries
      *
      * @param callable $callback
      * @param callable $default
+     * @param mixed $value
      * @return $this|mixed
      */
     public function unless($value, $callback, $default = null)

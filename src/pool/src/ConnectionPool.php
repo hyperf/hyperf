@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Hyperf\Pool\Exception\InvalidArgumentException;
 use Swoole\Coroutine\Channel;
+use Hyperf\Pool\Exception\InvalidArgumentException;
 
 abstract class ConnectionPool
 {

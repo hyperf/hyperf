@@ -14,8 +14,8 @@ namespace HyperfTest\Dispatcher\Middlewares;
 
 use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class CoreMiddleware implements MiddlewareInterface

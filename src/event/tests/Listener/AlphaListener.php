@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Event\Listener;
 
-use Hyperf\Event\Contract\ListenerInterface;
 use HyperfTest\Event\Event\Alpha;
+use Hyperf\Event\Contract\ListenerInterface;
 
 class AlphaListener implements ListenerInterface
 {

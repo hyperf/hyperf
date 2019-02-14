@@ -12,20 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use ArrayAccess;
 use Exception;
-use Hyperf\Contracts\Queue\QueueableCollection;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\Model\Relations\Pivot;
-use Hyperf\Database\Query\Builder as QueryBuilder;
+use ArrayAccess;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Contracts\Queue\QueueableCollection;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Database\Query\Builder as QueryBuilder;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
@@ -157,6 +157,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Dynamically set attributes on the model.
      *
      * @param string $key
+     * @param mixed $value
      */
     public function __set($key, $value)
     {
@@ -1097,6 +1098,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Retrieve the model for a bound value.
      *
+     * @param mixed $value
      * @return null|\Hyperf\Database\Model\Model
      */
     public function resolveRouteBinding($value)
@@ -1140,6 +1142,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if the given attribute exists.
      *
+     * @param mixed $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -1149,6 +1152,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the value for a given offset.
+     * @param mixed $offset
      */
     public function offsetGet($offset)
     {
@@ -1157,6 +1161,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Set the value for a given offset.
+     * @param mixed $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {
@@ -1165,6 +1171,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Unset the value for a given offset.
+     * @param mixed $offset
      */
     public function offsetUnset($offset)
     {

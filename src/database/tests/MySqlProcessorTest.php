@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Hyperf\Database\Query\Processors\MySqlProcessor;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
 
 /**
  * @internal

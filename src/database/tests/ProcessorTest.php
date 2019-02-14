@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Processors\Processor;
-use Mockery;
 use PDO;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Processors\Processor;
 
 /**
  * @internal

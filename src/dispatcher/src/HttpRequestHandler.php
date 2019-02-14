@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Dispatcher;
 
-use function array_unique;
-use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use function is_string;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
+use function is_string;
+use function array_unique;
 
 class HttpRequestHandler implements RequestHandlerInterface
 {

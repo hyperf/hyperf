@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
+use Hyperf\Utils\Context;
 use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 
 class Request implements RequestInterface
 {

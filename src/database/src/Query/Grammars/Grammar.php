@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Query\Grammars;
 
-use Hyperf\Database\Grammar as BaseGrammar;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\JoinClause;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use RuntimeException;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\JoinClause;
+use Hyperf\Database\Grammar as BaseGrammar;
 
 class Grammar extends BaseGrammar
 {
@@ -73,7 +73,7 @@ class Grammar extends BaseGrammar
         // function for the component which is responsible for making the SQL.
         $sql = trim(
             $this->concatenate(
-            $this->compileComponents($query)
+                $this->compileComponents($query)
         )
         );
 
@@ -85,6 +85,7 @@ class Grammar extends BaseGrammar
     /**
      * Prepare the binding for a "JSON contains" statement.
      *
+     * @param mixed $binding
      * @return string
      */
     public function prepareBindingForJsonContains($binding)
@@ -767,7 +768,7 @@ class Grammar extends BaseGrammar
         $not = $where['not'] ? 'not ' : '';
 
         return $not . $this->compileJsonContains(
-                $where['column'],
+            $where['column'],
             $this->parameter($where['value'])
             );
     }

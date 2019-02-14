@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache\Listener;
 
-use Hyperf\Database\Model\Events\Created;
-use Hyperf\Database\Model\Events\Deleted;
+use Hyperf\Event\Annotation\Listener;
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Events\Created;
+use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Updated;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**
