@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 
 class Aspect
@@ -26,8 +27,42 @@ class Aspect
         foreach ($container as $type => $collection) {
             if ($type === 'classes') {
                 static::parseClasses($collection, $class, $matched);
+            } elseif ($type === 'annotations') {
+                static::parseAnnotations($collection, $class, $matched);
             }
-            // @TODO Parse annotations aspects.
+        }
+        return $matched;
+    }
+
+    private static function parseAnnotations(array $collection, string $class, array &$matched)
+    {
+        // Get the annotations of class and method.
+        $annotations = AnnotationCollector::get($class);
+        $classMapping = $annotations['_c'] ?? [];
+        $methodMapping = value(function () use ($annotations) {
+            $mapping = [];
+            $methodAnnotations = $annotations['_m'] ?? [];
+            foreach ($methodAnnotations as $method => $targetAnnotations) {
+                $keys = array_keys($targetAnnotations);
+                foreach ($keys as $key) {
+                    $mapping[$key][] = $method;
+                }
+            }
+            return $mapping;
+        });
+        $aspects = array_keys($collection);
+        foreach ($aspects ?? [] as $aspect) {
+            $rules = AspectCollector::getRule($aspect);
+            foreach ($rules['annotations'] ?? [] as $rule) {
+                // If exist class level annotation, then all methods should rewrite, so return an empty array directly.
+                if (isset($classMapping[$rule])) {
+                    $matched = [];
+                    return $matched;
+                }
+                if (isset($methodMapping[$rule])) {
+                    $matched[$aspect] = $methodMapping[$rule];
+                }
+            }
         }
         return $matched;
     }
@@ -38,7 +73,7 @@ class Aspect
         foreach ($aspects ?? [] as $aspect) {
             $rules = AspectCollector::getRule($aspect);
             foreach ($rules['classes'] ?? [] as $rule) {
-                [$isMatch, $classes] = static::isMatch($class, $rule);
+                [$isMatch, $classes] = static::isMatchClassRule($class, $rule);
                 if ($isMatch) {
                     $matched[$aspect] = $classes;
                     break;
@@ -50,7 +85,7 @@ class Aspect
     /**
      * @return array [isMatch, $matchedMethods]
      */
-    private static function isMatch(string $class, string $rule): array
+    private static function isMatchClassRule(string $class, string $rule): array
     {
         if (strpos($rule, '::') !== false) {
             // @TODO Allow * for method rule.
