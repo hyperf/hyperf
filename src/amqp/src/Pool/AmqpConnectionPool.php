@@ -51,7 +51,7 @@ class AmqpConnectionPool extends Pool
         parent::release($connection);
     }
 
-    protected function initOption()
+    protected function initOption(): void
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
             $option = new PoolOption();

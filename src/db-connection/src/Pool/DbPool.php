@@ -45,7 +45,7 @@ class DbPool extends Pool
         return $this->name;
     }
 
-    protected function initOption()
+    protected function initOption(): void
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
             $option = new PoolOption();

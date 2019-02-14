@@ -39,7 +39,7 @@ class RedisPool extends Pool
         parent::__construct($container);
     }
 
-    protected function initOption()
+    protected function initOption(): void
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
             $option = new PoolOption();
