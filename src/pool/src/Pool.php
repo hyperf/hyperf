@@ -15,6 +15,7 @@ namespace Hyperf\Pool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Throwable;
@@ -62,6 +63,12 @@ abstract class Pool implements PoolInterface
             if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
                 ++$this->currentConnections;
                 $connection = $this->createConnection();
+                if (Coroutine::inCoroutine()) {
+                    // Release the connecion before the current coroutine end.
+                    defer(function () use ($connection) {
+                        $connection->release();
+                    });
+                }
                 return $connection;
             }
         } catch (Throwable $throwable) {

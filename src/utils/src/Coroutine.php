@@ -50,4 +50,10 @@ class Coroutine
         });
         return is_int($result) ? $result : -1;
     }
+
+    public static function inCoroutine(): bool
+    {
+        return Coroutine::id() > 0;
+    }
+
 }
