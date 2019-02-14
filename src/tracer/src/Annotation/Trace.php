@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * @Annotation
- * @Target({"ALL"})
+ * @Target({"CLASS", "METHOD"})
  */
 class Trace extends AbstractAnnotation
 {
