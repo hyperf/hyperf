@@ -201,33 +201,12 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 ]),
                 // A closure that wrapped original method code.
                 new Closure([
-                    'uses' => $this->getParametersWithoutTypehint($node),
+                    'params' => $node->getParams(),
                     'stmts' => $node->stmts,
                 ]),
             ])),
         ];
         return $node;
-    }
-
-    /**
-     * Get the parameters of method, without parameter typehint.
-     */
-    private function getParametersWithoutTypehint(ClassMethod $node): array
-    {
-        $parametersWithoutTypehint = value(function () use ($node) {
-            // Remove the parameter typehint, otherwise will cause syntax error.
-            $params = [];
-            foreach ($node->getParams() as $param) {
-                /** @var \PhpParser\Node\Param $param */
-                // Should create a new param node, modify the original node will change the original status.
-                $newParam = clone $param;
-                $newParam->type = null;
-                $newParam->default = null;
-                $params[] = $newParam;
-            }
-            return $params;
-        });
-        return $parametersWithoutTypehint;
     }
 
     private function shouldRewrite(ClassMethod $node)
