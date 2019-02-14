@@ -55,8 +55,8 @@ trait ProxyTrait
 
     private static function handleArround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
-        $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->method);
+        $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
+        $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $aspects = array_replace($aspects, $annotationAspects);
         if (empty($aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();

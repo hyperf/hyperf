@@ -46,7 +46,7 @@ class CacheAspect implements ArroundInterface
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $className = $proceedingJoinPoint->className;
-        $method = $proceedingJoinPoint->method;
+        $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
         $manager = $this->container->get(CacheManager::class);

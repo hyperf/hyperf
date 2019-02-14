@@ -24,7 +24,7 @@ class ProceedingJoinPoint
     /**
      * @var string
      */
-    public $method;
+    public $methodName;
 
     /**
      * @var mixed[]
@@ -46,11 +46,11 @@ class ProceedingJoinPoint
      */
     public $pipe;
 
-    public function __construct(Closure $originalMethod, string $className, string $method, array $arguments)
+    public function __construct(Closure $originalMethod, string $className, string $methodName, array $arguments)
     {
         $this->originalMethod = $originalMethod;
         $this->className = $className;
-        $this->method = $method;
+        $this->methodName = $methodName;
         $this->arguments = $arguments;
     }
 
