@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer;
 
-use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Zipkin\Endpoint;
 use Zipkin\Reporters\Http;
-use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
+use Zipkin\Samplers\BinarySampler;
+use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 class TracingBuilderFactory
 {

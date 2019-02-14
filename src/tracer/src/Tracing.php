@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer;
 
+use Zipkin\Span;
 use Hyperf\Utils\Context;
+use Zipkin\TracingBuilder;
+use Zipkin\Propagation\Map;
 use Hyperf\Utils\Traits\CoroutineProxy;
 use Psr\Http\Message\ServerRequestInterface;
 use const Zipkin\Kind\SERVER;
-use Zipkin\Propagation\Map;
-use Zipkin\Span;
-use Zipkin\TracingBuilder;
 
 class Tracing implements \Zipkin\Tracing
 {
@@ -56,12 +56,11 @@ class Tracing implements \Zipkin\Tracing
             $root->setKind($kind);
             Context::set('tracer.root', $root);
             return $root;
-        } else {
-            $child = $this->getTracer()->newChild($root->getContext());
-            $child->setName($name);
-            $child->setKind($kind);
-            return $child;
         }
+        $child = $this->getTracer()->newChild($root->getContext());
+        $child->setName($name);
+        $child->setKind($kind);
+        return $child;
     }
 
     /**

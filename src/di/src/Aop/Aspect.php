@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 class Aspect
 {
@@ -87,6 +87,13 @@ class Aspect
      */
     private static function isMatchClassRule(string $class, string $rule): array
     {
+        /*
+         * e.g. Foo/Bar
+         * e.g. Foo/B*
+         * e.g. F*o/Bar
+         * e.g. Foo/Bar::method1
+         * e.g. Foo/Bar::met* [WIP]
+         */
         if (strpos($rule, '::') !== false) {
             // @TODO Allow * for method rule.
             [$rule, $method] = explode('::', $rule);

@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer;
 
-use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use RuntimeException;
 use Zipkin\Reporters\Http\ClientFactory;
+use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 
 class HttpClientFactory implements ClientFactory
 {

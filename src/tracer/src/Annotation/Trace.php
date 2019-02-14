@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Tracer\Annotation;
 
-
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * @Annotation
@@ -12,7 +21,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Trace extends AbstractAnnotation
 {
-
     /**
      * @var string
      */
@@ -25,5 +33,4 @@ class Trace extends AbstractAnnotation
             $this->name = $value['name'];
         }
     }
-
 }

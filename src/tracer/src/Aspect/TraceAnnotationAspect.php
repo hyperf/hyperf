@@ -1,20 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Tracer\Aspect;
 
-
+use Hyperf\Tracer\Tracing;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
-use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
-use Hyperf\Tracer\Tracing;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 /**
- * @Aspect()
+ * @Aspect
  */
 class TraceAnnotationAspect implements ArroundInterface
 {
-
     public $classes = [];
 
     public $annotations = [

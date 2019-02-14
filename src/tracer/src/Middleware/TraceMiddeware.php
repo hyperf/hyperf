@@ -15,8 +15,8 @@ namespace Hyperf\Tracer\Middleware;
 use Hyperf\Tracer\Tracing;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use const Zipkin\Kind\SERVER;
 
@@ -60,7 +60,7 @@ class TraceMiddeware implements MiddlewareInterface
         $uri = $request->getUri();
         $span = $this->tracing->span('request', SERVER);
         $span->tag('coroutine.id', Coroutine::id());
-        $span->tag('request.path', (string)$uri);
+        $span->tag('request.path', (string) $uri);
         $span->tag('request.method', $request->getMethod());
         foreach ($request->getHeaders() as $key => $value) {
             $span->tag('request.header.' . $key, implode(', ', $value));

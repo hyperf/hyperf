@@ -1,23 +1,31 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Tracer\Aspect;
 
-
 use GuzzleHttp\Client;
+use Hyperf\Tracer\Tracing;
+use Zipkin\Propagation\Map;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Tracer\Tracing;
-use Zipkin\Propagation\Map;
 
 /**
- * @Aspect()
+ * @Aspect
  */
 class HttpClientAspect implements ArroundInterface
 {
-
     public $classes = [
-        Client::class . '::requestAsync'
+        Client::class . '::requestAsync',
     ];
 
     public $annotations = [];
@@ -44,7 +52,7 @@ class HttpClientAspect implements ArroundInterface
         $span = $this->tracing->span('guzzlehttp.request', \Zipkin\Kind\CLIENT);
         $span->tag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         $appendHeaders = [];
-        /* Injects the context into the wire */
+        // Injects the context into the wire
         $injector = $this->tracing->getPropagation()->getInjector(new Map());
         $injector($span->getContext(), $appendHeaders);
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
