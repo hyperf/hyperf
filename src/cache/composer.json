@@ -42,6 +42,7 @@
         "branch-alias": {
         },
         "hyperf": {
+            "config": "Hyperf\\Cache\\ConfigProvider"
         }
     },
     "bin": [
