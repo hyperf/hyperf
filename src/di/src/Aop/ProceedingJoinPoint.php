@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Closure;
+use Hyperf\Di\Annotation\AnnotationCollector;
 
 class ProceedingJoinPoint
 {
@@ -54,12 +55,18 @@ class ProceedingJoinPoint
         $this->arguments = $arguments;
     }
 
+    /**
+     * Delegate to the next aspect.
+     */
     public function process()
     {
         $closure = $this->pipe;
         return $closure($this);
     }
 
+    /**
+     * Process the original method, this method should trigger by pipeline.
+     */
     public function processOriginalMethod()
     {
         $this->pipe = null;
@@ -76,5 +83,11 @@ class ProceedingJoinPoint
             $arguments = array_values($this->arguments['keys']);
         }
         return $closure(...$arguments);
+    }
+
+    public function getAnnotationMetadata(): AnnotationMetadata
+    {
+        $metadata = AnnotationCollector::get($this->className);
+        return new AnnotationMetadata($metadata['_c'] ?? [], $metadata['_m'][$this->methodName] ?? []);
     }
 }
