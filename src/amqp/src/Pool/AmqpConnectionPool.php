@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Pool;
 
-use Hyperf\Amqp\Connection;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\Arr;
+use Hyperf\Amqp\Connection;
+use Hyperf\Pool\PoolOption;
 use InvalidArgumentException;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConnectionInterface;
 
 class AmqpConnectionPool extends Pool
 {
@@ -51,7 +51,7 @@ class AmqpConnectionPool extends Pool
         parent::release($connection);
     }
 
-    protected function initOption()
+    protected function initOption(): void
     {
         if ($poolOptions = Arr::get($this->config, 'pool')) {
             $option = new PoolOption();

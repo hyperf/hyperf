@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Listener;
 
-use Doctrine\Instantiator\Instantiator;
-use Hyperf\Amqp\Annotation\Producer;
-use Hyperf\Amqp\Message\ProducerMessageInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\MainWorkerStart;
-use PhpAmqpLib\Exception\AMQPProtocolChannelException;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Event\Annotation\Listener;
+use Psr\Container\ContainerInterface;
+use Doctrine\Instantiator\Instantiator;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Amqp\Message\ProducerMessageInterface;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 
 /**
  * @Listener

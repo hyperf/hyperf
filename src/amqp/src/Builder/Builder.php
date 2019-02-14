@@ -102,6 +102,7 @@ class Builder
     }
 
     /**
+     * @param mixed $ticket
      * @return ExchangeDeclareBuilder
      */
     public function setTicket($ticket): self

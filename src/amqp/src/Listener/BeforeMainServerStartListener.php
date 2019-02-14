@@ -14,9 +14,9 @@ namespace Hyperf\Amqp\Listener;
 
 use Hyperf\Amqp\ConsumerManager;
 use Hyperf\Event\Annotation\Listener;
+use Psr\Container\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
-use Psr\Container\ContainerInterface;
 
 /**
  * @Listener

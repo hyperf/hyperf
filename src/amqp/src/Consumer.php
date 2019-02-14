@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Exception\MessageException;
-use Hyperf\Amqp\Message\ConsumerMessageInterface;
-use Hyperf\Amqp\Message\MessageInterface;
+use Throwable;
+use Psr\Log\LoggerInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
-use Throwable;
+use Hyperf\Amqp\Message\MessageInterface;
+use Hyperf\Amqp\Exception\MessageException;
+use Hyperf\Amqp\Message\ConsumerMessageInterface;
 
 class Consumer extends Builder
 {

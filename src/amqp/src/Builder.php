@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Message\MessageInterface;
-use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
+use Hyperf\Amqp\Pool\AmqpConnectionPool;
+use Hyperf\Amqp\Message\MessageInterface;
+use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 
 class Builder
 {
