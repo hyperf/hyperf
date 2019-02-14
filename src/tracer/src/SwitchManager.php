@@ -25,7 +25,7 @@ class SwitchManager
         ];
 
     /**
-     * Apply the configuration to SwitchManager,.
+     * Apply the configuration to SwitchManager.
      */
     public function apply(array $config): void
     {
