@@ -57,8 +57,8 @@ abstract class Pool implements PoolInterface
         $num = $this->getConnectionsInChannel();
 
         if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
-            $connection = $this->createConnection();
             ++$this->currentConnections;
+            $connection = $this->createConnection();
             return $connection;
         }
 
