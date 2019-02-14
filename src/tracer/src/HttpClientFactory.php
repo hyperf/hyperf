@@ -36,6 +36,8 @@ class HttpClientFactory implements ClientFactory
             $response = $client->post($url, [
                 'body' => $payload,
                 'headers' => $headers,
+                // If 'no_aspect' option is true, then the HttpClientAspect will not modify the client options.
+                'no_aspect' => true,
             ]);
             $statusCode = $response->getStatusCode();
             if ($statusCode !== 202) {

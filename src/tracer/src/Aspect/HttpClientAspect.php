@@ -4,19 +4,20 @@ namespace Hyperf\Tracer\Aspect;
 
 
 use GuzzleHttp\Client;
+use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Tracing;
 use Zipkin\Propagation\Map;
 
 /**
- * @\Hyperf\Di\Annotation\Aspect()
+ * @Aspect()
  */
 class HttpClientAspect implements ArroundInterface
 {
 
     public $classes = [
-        Client::class . '::prepareDefaults'
+        Client::class . '::requestAsync'
     ];
 
     public $annotations = [];
@@ -37,13 +38,20 @@ class HttpClientAspect implements ArroundInterface
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $options = $proceedingJoinPoint->arguments['keys']['options'];
-        $span = $this->tracing->span('guzzlehttp.request');
+        if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
+            return $proceedingJoinPoint->process();
+        }
+        $span = $this->tracing->span('guzzlehttp.request', \Zipkin\Kind\CLIENT);
+        $span->tag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         $appendHeaders = [];
         /* Injects the context into the wire */
         $injector = $this->tracing->getPropagation()->getInjector(new Map());
         $injector($span->getContext(), $appendHeaders);
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
-        return $proceedingJoinPoint->process();
+        $span->start();
+        $result = $proceedingJoinPoint->process();
+        $span->finish();
+        return $result;
     }
 }
