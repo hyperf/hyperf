@@ -79,7 +79,7 @@ class Connection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name}(...$arguments);
     }
 
-    public function getConnection(): AbstractConnection
+    public function getActiveConnection(): AbstractConnection
     {
         if ($this->check()) {
             return $this->connection;

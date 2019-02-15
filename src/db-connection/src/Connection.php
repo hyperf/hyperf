@@ -74,7 +74,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return $this->connection->{$name}(...$arguments);
     }
 
-    public function getConnection(): DbConnectionInterface
+    public function getActiveConnection(): DbConnectionInterface
     {
         if ($this->check()) {
             return $this;

@@ -48,7 +48,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name}(...$arguments);
     }
 
-    public function getConnection()
+    public function getActiveConnection()
     {
         if ($this->check()) {
             return $this;
