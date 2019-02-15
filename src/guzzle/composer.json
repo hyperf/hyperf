@@ -20,12 +20,12 @@
         }
     },
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
         "swoft/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "^5.7",
-        "guzzlehttp/guzzle": "^6.3",
         "guzzlehttp/ringphp": "~1.0"
     },
     "scripts": {
