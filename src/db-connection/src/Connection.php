@@ -15,6 +15,7 @@ namespace Hyperf\DbConnection;
 use Hyperf\DbConnection\Pool\DbPool;
 use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
@@ -121,6 +122,11 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function release(): void
     {
+        if ($this->isTransaction()) {
+            $this->rollBack();
+            $logger = $this->container->get(StdoutLoggerInterface::class);
+            $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+        }
         parent::release();
     }
 

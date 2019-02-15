@@ -57,15 +57,15 @@ class AfterResponseListener implements ListenerInterface
 
     public function process(object $event)
     {
-        $connections = $this->context->connections();
-        foreach ($connections as $conn) {
-            if ($conn instanceof ConnectionInterface) {
-                if ($conn instanceof Connection && $conn->isTransaction()) {
-                    $conn->rollBack();
-                    $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
-                }
-                $conn->release();
-            }
-        }
+        // $connections = $this->context->connections();
+        // foreach ($connections as $conn) {
+        //     if ($conn instanceof ConnectionInterface) {
+        //         if ($conn instanceof Connection && $conn->isTransaction()) {
+        //             $conn->rollBack();
+        //             $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+        //         }
+        //         $conn->release();
+        //     }
+        // }
     }
 }

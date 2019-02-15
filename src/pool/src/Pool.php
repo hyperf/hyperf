@@ -57,30 +57,16 @@ abstract class Pool implements PoolInterface
 
     public function get(): ConnectionInterface
     {
-        $num = $this->getConnectionsInChannel();
+        $connection = $this->getConnection();
 
-        try {
-            if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
-                ++$this->currentConnections;
-                $connection = $this->createConnection();
-                if (Coroutine::inCoroutine()) {
-                    // Release the connecion before the current coroutine end.
-                    defer(function () use ($connection) {
-                        $connection->release();
-                    });
-                }
-                return $connection;
-            }
-        } catch (Throwable $throwable) {
-            --$this->currentConnections;
-            throw $throwable;
+        if (Coroutine::inCoroutine()) {
+            // Release the connecion before the current coroutine end.
+            defer(function () use ($connection) {
+                $connection->release();
+            });
         }
 
-        $result = $this->channel->pop($this->option->getWaitTimeout());
-        if (! $result instanceof ConnectionInterface) {
-            throw new RuntimeException('Cannot pop the connection, pop timeout.');
-        }
-        return $result;
+        return $connection;
     }
 
     public function release(ConnectionInterface $connection): void
@@ -115,4 +101,25 @@ abstract class Pool implements PoolInterface
     }
 
     abstract protected function createConnection(): ConnectionInterface;
+
+    private function getConnection()
+    {
+        $num = $this->getConnectionsInChannel();
+
+        try {
+            if ($num === 0 && $this->currentConnections < $this->option->getMaxConnections()) {
+                ++$this->currentConnections;
+                return $this->createConnection();
+            }
+        } catch (Throwable $throwable) {
+            --$this->currentConnections;
+            throw $throwable;
+        }
+
+        $connection = $this->channel->pop($this->option->getWaitTimeout());
+        if (! $connection instanceof ConnectionInterface) {
+            throw new RuntimeException('Cannot pop the connection, pop timeout.');
+        }
+        return $connection;
+    }
 }
