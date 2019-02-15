@@ -117,7 +117,7 @@ abstract class Pool implements PoolInterface
         }
 
         $connection = $this->channel->pop($this->option->getWaitTimeout());
-        if (!$connection instanceof ConnectionInterface) {
+        if (! $connection instanceof ConnectionInterface) {
             throw new RuntimeException('Cannot pop the connection, pop timeout.');
         }
         return $connection;

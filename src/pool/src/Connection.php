@@ -40,7 +40,7 @@ abstract class Connection implements ConnectionInterface
 
     public function release(): void
     {
-        if (!$this->release) {
+        if (! $this->release) {
             $this->pool->release($this);
             $this->release = true;
         }
