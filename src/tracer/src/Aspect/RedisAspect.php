@@ -61,6 +61,7 @@ class RedisAspect implements ArroundInterface
         if ($this->switchManager->isEnable('redis') === false) {
             return $proceedingJoinPoint->process();
         }
+
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $span = $this->tracing->span('Redis' . '::' . $arguments['name']);
         $span->start();

@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer;
 
+use Hyperf\Utils\Context;
+use Psr\Http\Message\ServerRequestInterface;
+
 class SwitchManager
 {
     /**
@@ -40,6 +43,7 @@ class SwitchManager
         if (! isset($this->config[$identifier])) {
             return false;
         }
-        return $this->config[$identifier];
+
+        return $this->config[$identifier] && Context::get(ServerRequestInterface::class) instanceof ServerRequestInterface;
     }
 }
