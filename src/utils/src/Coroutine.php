@@ -57,7 +57,7 @@ class Coroutine
                 $container = ApplicationContext::getContainer();
                 if ($container instanceof ContainerInterface && $logger = $container->has(StdoutLoggerInterface::class)) {
                     /** @var LoggerInterface $logger */
-                    $logger->warning('Uncaptured exception detected.');
+                    $logger->warning(printf('Uncaptured exception[%s] detected.', get_class($throwable)));
                 }
             }
         });
