@@ -30,6 +30,7 @@
     },
     "autoload": {
         "files": [
+            "src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Di\\": "src"
