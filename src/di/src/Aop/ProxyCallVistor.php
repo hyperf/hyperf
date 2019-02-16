@@ -220,8 +220,11 @@ class ProxyCallVistor extends NodeVisitorAbstract
         $aspects = Aspect::parse($this->classname);
         $rewriteOnly = [];
         foreach ($aspects as $aspect => $methods) {
-            $rewriteOnly[] = $methods;
+            if ($methods) {
+                $rewriteOnly[] = $methods;
+            }
         }
+
         /**
          * If $rewriteOnly is an empty array, that means all methods should rewrite,
          * If $rewriteOnly is not empty, then rewrite the methods in $rewriteOnly only, keep other methods as original.
