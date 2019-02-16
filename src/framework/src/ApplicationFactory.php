@@ -34,7 +34,7 @@ class ApplicationFactory
         // Append commands that defined by annotation.
         $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
         $annotationCommands = array_keys($annotationCommands);
-        $commands = array_replace($this->defaultCommands, $commands, $annotationCommands);
+        $commands = array_unique(array_merge($this->defaultCommands, $commands, $annotationCommands));
         $application = new Application();
         foreach ($commands as $command) {
             $application->add($container->get($command));
