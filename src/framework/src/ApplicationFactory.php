@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Framework;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Framework\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 
@@ -29,7 +31,10 @@ class ApplicationFactory
     {
         $config = $container->get(ConfigInterface::class);
         $commands = $config->get('commands', []);
-        $commands = array_replace($this->defaultCommands, $commands);
+        // Append commands that defined by annotation.
+        $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
+        $annotationCommands = array_keys($annotationCommands);
+        $commands = array_replace($this->defaultCommands, $commands, $annotationCommands);
         $application = new Application();
         foreach ($commands as $command) {
             $application->add($container->get($command));
