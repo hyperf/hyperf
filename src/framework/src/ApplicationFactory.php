@@ -20,12 +20,6 @@ use Symfony\Component\Console\Application;
 
 class ApplicationFactory
 {
-    /**
-     * Define the default commands here.
-     *
-     * @var array
-     */
-    private $defaultCommands = [];
 
     public function __invoke(ContainerInterface $container)
     {
@@ -34,7 +28,7 @@ class ApplicationFactory
         // Append commands that defined by annotation.
         $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
         $annotationCommands = array_keys($annotationCommands);
-        $commands = array_unique(array_merge($this->defaultCommands, $commands, $annotationCommands));
+        $commands = array_unique(array_merge($commands, $annotationCommands));
         $application = new Application();
         foreach ($commands as $command) {
             $application->add($container->get($command));
