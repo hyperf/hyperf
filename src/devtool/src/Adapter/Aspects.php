@@ -18,7 +18,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Aspects extends AbstractAdapter
 {
+
     public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $result = $this->prepareResult($input);
+        $this->dump($result, $output);
+    }
+
+    /**
+     * Prepare the result, maybe this result not just use in here.
+     */
+    public function prepareResult(): array
     {
         $result = [];
         $aspects = AspectCollector::getContainer();
@@ -27,6 +37,14 @@ class Aspects extends AbstractAdapter
                 $result[$aspect][$type] = $target;
             }
         }
+        return $result;
+    }
+
+    /**
+     * Dump to the console according to the prepared result.
+     */
+    private function dump(array $result, OutputInterface $output): void
+    {
         foreach ($result as $aspect => $targets) {
             $output->writeln("<info>{$aspect}</info>");
             if (isset($targets['annotations'])) {
