@@ -69,7 +69,7 @@ class Manager
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
             if ($data) {
-                return $instance->newInstance($data, true);
+                return $instance->newInstance($data, true)->syncOriginal();
             }
 
             // Fetch it from database, because it not exist in cache handler.
