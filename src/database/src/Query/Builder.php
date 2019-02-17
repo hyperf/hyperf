@@ -25,7 +25,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;

@@ -14,7 +14,7 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Constants;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 
 abstract class ProducerMessage extends Message implements ProducerMessageInterface
 {

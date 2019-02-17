@@ -21,7 +21,7 @@ use Hyperf\Paginator\Paginator;
 use PHPUnit\Framework\TestCase;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Expression as Raw;
 use Hyperf\Database\Query\Processors\Processor;

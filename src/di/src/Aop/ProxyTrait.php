@@ -14,7 +14,7 @@ namespace Hyperf\Di\Aop;
 
 use Closure;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\AnnotationCollector;
 

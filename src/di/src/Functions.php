@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 
 if (! function_exists('make')) {
     function make(string $name, array $parameters = [])

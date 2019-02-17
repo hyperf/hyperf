@@ -15,7 +15,7 @@ namespace Hyperf\DbConnection\Model;
 use RuntimeException;
 use Psr\Container\ContainerInterface;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Database\Model\Model as BaseModel;
 use Psr\EventDispatcher\EventDispatcherInterface;

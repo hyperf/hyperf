@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {

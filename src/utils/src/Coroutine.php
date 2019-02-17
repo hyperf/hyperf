@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Framework\ApplicationContext;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
-use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
+use Psr\Log\LoggerInterface;
+use Psr\Container\ContainerInterface;
+use Swoole\Coroutine as SwooleCoroutine;
+use Hyperf\Contract\StdoutLoggerInterface;
 
 /**
  * @method static void defer(callable $callback)
@@ -56,8 +55,8 @@ class Coroutine
             } catch (Throwable $throwable) {
                 $container = ApplicationContext::getContainer();
                 if ($container instanceof ContainerInterface && $logger = $container->has(StdoutLoggerInterface::class)) {
-                    /** @var LoggerInterface $logger */
-                    $logger->warning(printf('Uncaptured exception[%s] detected.', get_class($throwable)));
+                    /* @var LoggerInterface $logger */
+                    $logger->warning(printf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
                 }
             }
         });

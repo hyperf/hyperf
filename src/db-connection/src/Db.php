@@ -14,7 +14,7 @@ namespace Hyperf\DbConnection;
 
 use Psr\Container\ContainerInterface;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Framework\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 
 /**
  * DB Helper.
