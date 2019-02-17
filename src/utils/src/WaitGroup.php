@@ -17,14 +17,14 @@ use Swoole\Coroutine\Channel as SwooleChannel;
 class WaitGroup
 {
     /**
-     * @var SwooleChannel
-     */
-    private $channel;
-
-    /**
      * @var int
      */
     public $counter = 0;
+
+    /**
+     * @var SwooleChannel
+     */
+    private $channel;
 
     public function __construct()
     {
