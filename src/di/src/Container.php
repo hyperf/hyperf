@@ -167,7 +167,7 @@ class Container implements ContainerInterface
         $this->definitionSource->addDefinition($name, $definition);
     }
 
-    private function getDefinition(string $name): DefinitionInterface
+    private function getDefinition(string $name): ?DefinitionInterface
     {
         // Local cache that avoids fetching the same definition twice
         if (! array_key_exists($name, $this->fetchedDefinitions)) {
