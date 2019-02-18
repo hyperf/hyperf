@@ -12,25 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Annotation;
 
-use Hyperf\Utils\Str;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
-class RequestMapping extends Mapping
+abstract class Mapping extends AbstractAnnotation
 {
-    /**
-     * @var array
-     */
-    public $methods = [];
+    public $methods;
+
+    public $path;
 
     public function __construct($value = null)
     {
         parent::__construct($value);
-        if (isset($value['methods'])) {
-            // Explode a string to a array
-            $this->methods = explode(',', Str::upper(str_replace(' ', '', $value['methods'])));
+        if (isset($value['path'])) {
+            $this->path = $value['path'];
         }
     }
 }

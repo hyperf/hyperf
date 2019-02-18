@@ -39,8 +39,6 @@ class Listener extends AbstractAnnotation
      */
     public function collectClass(string $className, ?string $target): void
     {
-        AnnotationCollector::collectClass($className, static::class, [
-            'priority' => $this->priority,
-        ]);
+        AnnotationCollector::collectClass($className, static::class, $this);
     }
 }

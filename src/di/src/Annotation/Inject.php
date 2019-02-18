@@ -39,7 +39,7 @@ class Inject extends AbstractAnnotation
     {
         if ($this->value !== null) {
             $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
-            AnnotationCollector::collectProperty($className, $target, static::class, $this->value);
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
         }
     }
 }

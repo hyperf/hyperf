@@ -30,21 +30,21 @@ abstract class AbstractAnnotation implements AnnotationInterface
     public function collectClass(string $className, ?string $target): void
     {
         if ($this->value !== null) {
-            AnnotationCollector::collectClass($className, static::class, $this->value);
+            AnnotationCollector::collectClass($className, static::class, $this);
         }
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
         if ($this->value !== null) {
-            AnnotationCollector::collectMethod($className, $target, static::class, $this->value);
+            AnnotationCollector::collectMethod($className, $target, static::class, $this);
         }
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
         if ($this->value !== null) {
-            AnnotationCollector::collectProperty($className, $target, static::class, $this->value);
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
         }
     }
 }
