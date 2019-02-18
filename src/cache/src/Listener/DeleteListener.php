@@ -37,7 +37,6 @@ class DeleteListener implements ListenerInterface
     {
         return [
             DeleteEvent::class,
-            DeleteListenerEvent::class,
         ];
     }
 
