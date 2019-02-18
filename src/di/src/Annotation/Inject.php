@@ -22,6 +22,11 @@ use Hyperf\Di\ReflectionManager;
 class Inject extends AbstractAnnotation
 {
     /**
+     * @var string
+     */
+    public $value;
+
+    /**
      * @var PhpDocReader
      */
     private $docReader;
