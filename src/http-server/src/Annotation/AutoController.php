@@ -23,7 +23,7 @@ class AutoController extends AbstractAnnotation
     /**
      * @var null|string
      */
-    public $prefix;
+    public $prefix = '';
 
     /**
      * @var string

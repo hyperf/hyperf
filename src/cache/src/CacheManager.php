@@ -17,6 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\Driver\DriverInterface;
+use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Di\Annotation\AnnotationCollector;
 
 class CacheManager
@@ -56,11 +57,15 @@ class CacheManager
     public function getAnnotationValue(string $className, string $method, array $arguments)
     {
         $collector = AnnotationCollector::get($className);
-        $config = $collector['_m'][$method][Cacheable::class] ?? [];
-        $key = $config['key'];
+        $annotation = $collector['_m'][$method][Cacheable::class] ?? null;
+        if (! $annotation instanceof Cacheable) {
+            throw new CacheException(sprintf('Annotation %s in %s:%s not exist.', Cacheable::class, $className, $method));
+        }
+
+        $key = $annotation->key;
         $key = $this->formatKey($key, $arguments);
-        $group = $config['group'] ?? 'default';
-        $ttl = $config['ttl'] ?? $this->config[$group]['ttl'] ?? 3600;
+        $group = $annotation->group ?? 'default';
+        $ttl = $annotation->ttl ?? $this->config[$group]['ttl'] ?? 3600;
 
         return [$key, $ttl, $group];
     }

@@ -61,12 +61,7 @@ class Consumer extends AbstractAnnotation
     public function collectClass(string $className, ?string $target): void
     {
         if ($this->value !== null) {
-            AnnotationCollector::collectClass($className, static::class, [
-                'exchange' => $this->exchange,
-                'routingKey' => $this->routingKey,
-                'queue' => $this->queue,
-                'nums' => $this->nums,
-            ]);
+            AnnotationCollector::collectClass($className, static::class, $this);
         }
     }
 }
