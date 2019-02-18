@@ -12,38 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Annotation;
 
-use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\Annotation\AnnotationCollector;
-
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
-class PatchMapping extends AbstractAnnotation
+class PatchMapping extends Mapping
 {
-    /**
-     * @var string
-     */
-    public $path;
-
-    public function __construct($value = null)
-    {
-        parent::__construct($value);
-        if (isset($value['path'])) {
-            $this->path = $value['path'];
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function collectMethod(string $className, ?string $target): void
-    {
-        if ($this->path) {
-            AnnotationCollector::collectMethod($className, $target, static::class, [
-                'methods' => ['PATCH'],
-                'path' => $this->path,
-            ]);
-        }
-    }
+    public $methods = ['PATCH'];
 }

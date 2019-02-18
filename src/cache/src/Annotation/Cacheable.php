@@ -66,11 +66,6 @@ class Cacheable extends AbstractAnnotation
             ]);
         }
 
-        AnnotationCollector::collectMethod($className, $target, static::class, [
-            'key' => $this->key,
-            'ttl' => $this->ttl,
-            'listener' => $this->listener,
-            'group' => $this->group,
-        ]);
+        AnnotationCollector::collectMethod($className, $target, static::class, $this);
     }
 }

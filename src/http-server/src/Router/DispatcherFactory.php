@@ -19,6 +19,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use Hyperf\Di\ReflectionManager;
 use FastRoute\Dispatcher\GroupCountBased;
+use Hyperf\HttpServer\Annotation\Mapping;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
@@ -99,12 +100,12 @@ class DispatcherFactory
     /**
      * Register route according to AutoController annotation.
      */
-    private function handleAutoController(string $className, array $values): void
+    private function handleAutoController(string $className, AutoController $annotation): void
     {
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
-        $prefix = $this->getPrefix($className, $values['prefix'] ?? '');
-        $router = $this->getRouter($values['server'] ?? 'http');
+        $prefix = $this->getPrefix($className, $annotation->prefix);
+        $router = $this->getRouter($annotation->server);
 
         $autoMethods = ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
@@ -122,13 +123,13 @@ class DispatcherFactory
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
      */
-    private function handleController(string $className, array $controllerMetadata, array $methodMetadata): void
+    private function handleController(string $className, Controller $annotation, array $methodMetadata): void
     {
         if (! $methodMetadata) {
             return;
         }
-        $prefix = $this->getPrefix($className, $controllerMetadata['prefix'] ?? '');
-        $router = $this->getRouter($controllerMetadata['prefix'] ?? 'http');
+        $prefix = $this->getPrefix($className, $annotation->prefix);
+        $router = $this->getRouter($annotation->server);
         $mappingAnnotations = [
             RequestMapping::class,
             GetMapping::class,
@@ -140,15 +141,17 @@ class DispatcherFactory
 
         foreach ($methodMetadata as $method => $values) {
             foreach ($mappingAnnotations as $mappingAnnotation) {
-                if (isset($values[$mappingAnnotation])) {
-                    $item = $values[$mappingAnnotation];
-                    if (! isset($item['path']) || ! isset($item['methods'])) {
+                /** @var Mapping $mapping */
+                if ($mapping = $values[$mappingAnnotation] ?? null) {
+                    if (! isset($mapping->path) || ! isset($mapping->methods)) {
                         continue;
                     }
-                    if ($item['path'][0] !== '/') {
-                        $item['path'] = $prefix . '/' . $item['path'];
+                    $path = $mapping->path;
+
+                    if ($path[0] !== '/') {
+                        $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($item['methods'], $item['path'], [
+                    $router->addRoute($mapping->methods, $path, [
                         $className,
                         $method,
                     ]);
