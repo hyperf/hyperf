@@ -36,19 +36,23 @@ class ConsumerManager
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
         $instantiator = $this->container->get(Instantiator::class);
-        foreach ($classes as $class => $property) {
+        /**
+         * @var string
+         * @var ConsumerAnnotation $annotation
+         */
+        foreach ($classes as $class => $annotation) {
             $instance = $instantiator->instantiate($class);
             if (! $instance instanceof ConsumerMessageInterface) {
                 continue;
             }
-            $property['exchange'] && $instance->setExchange($property['exchange']);
-            $property['routingKey'] && $instance->setRoutingKey($property['routingKey']);
-            $property['queue'] && $instance->setQueue($property['queue']);
+            $annotation->exchange && $instance->setExchange($annotation->exchange);
+            $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
+            $annotation->queue && $instance->setQueue($annotation->queue);
             property_exists($instance, 'container') && $instance->container = $this->container;
-            $nums = $property['nums'] ?? 1;
+            $nums = $annotation->nums ?? 1;
             $process = $this->createProcess($instance);
             $process->nums = (int) $nums;
-            $process->name = 'Consumer-' . $property['queue'];
+            $process->name = 'Consumer-' . $annotation->queue;
             ProcessRegister::register($process);
         }
     }

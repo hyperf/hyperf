@@ -66,13 +66,17 @@ class MainWorkerStartListener implements ListenerInterface
         if ($producerMessages) {
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
             $instantiator = $this->container->get(Instantiator::class);
-            foreach ($producerMessages as $producerMessageClass => $messageProperty) {
+            /**
+             * @var string
+             * @var Producer $annotation
+             */
+            foreach ($producerMessages as $producerMessageClass => $annotation) {
                 $instance = $instantiator->instantiate($producerMessageClass);
                 if (! $instance instanceof ProducerMessageInterface) {
                     continue;
                 }
-                $instance->setExchange($messageProperty['exchange']);
-                $instance->setRoutingKey($messageProperty['routingKey']);
+                $instance->setExchange($annotation->exchange);
+                $instance->setRoutingKey($annotation->routingKey);
                 try {
                     $producer->declare($instance);
                     $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $instance->getRoutingKey()));

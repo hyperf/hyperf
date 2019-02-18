@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Packer\Packer;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Psr\Container\ContainerInterface;
-use Hyperf\Utils\ApplicationContext;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
