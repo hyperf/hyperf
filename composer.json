@@ -25,7 +25,6 @@
         "doctrine/inflector": "^1.3",
         "php-di/phpdoc-reader": "^2.0.1",
         "google/protobuf": "^3.6.1",
-        "grpc/grpc": "^1.15",
         "symfony/finder": "^4.1",
         "symfony/console": "^4.2",
         "swoft/http-message": "^1.0",
@@ -33,7 +32,8 @@
         "nesbot/carbon": "^2.0",
         "vlucas/phpdotenv": "^3.1",
         "php-amqplib/php-amqplib": "^2.7",
-        "openzipkin/zipkin": "^1.3.2"
+        "openzipkin/zipkin": "^1.3.2",
+        "grpc/grpc": "^1.15"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -54,6 +54,7 @@
         "hyperf/di": "self.version",
         "hyperf/dispatcher": "self.version",
         "hyperf/event": "self.version",
+        "hyperf/grpc-client": "self.version",
         "hyperf/grpc-server": "self.version",
         "hyperf/guzzle": "self.version",
         "hyperf/http-server": "self.version",
@@ -87,6 +88,7 @@
             "Hyperf\\Di\\": "src/di/src/",
             "Hyperf\\Dispatcher\\": "src/dispatcher/src/",
             "Hyperf\\Event\\": "src/event/src/",
+            "Hyperf\\GrpcClient\\": "src/grpc-client/src/",
             "Hyperf\\GrpcServer\\": "src/grpc-server/src/",
             "Hyperf\\Guzzle\\": "src/guzzle/src/",
             "Hyperf\\HttpServer\\": "src/http-server/src/",
@@ -126,6 +128,7 @@
                 "Hyperf\\Dispatcher\\ConfigProvider",
                 "Hyperf\\Event\\ConfigProvider",
                 "Hyperf\\Framework\\ConfigProvider",
+                "Hyperf\\GrpcClient\\ConfigProvider",
                 "Hyperf\\GrpcServer\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
