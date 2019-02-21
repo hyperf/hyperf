@@ -1,26 +1,40 @@
 <?php
 
-namespace Hyperf\GrpcClient;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\GrpcClient;
 
 class VirtualClient
 {
-
     /**
-     * @var Client|null
+     * @var null|Client
      */
     private $client;
 
     public function __construct(string $hostname, array $opts = [])
     {
-        if (!empty($opts['use'])) {
-            if (!($opts['use'] instanceof Client)) {
+        if (! empty($opts['use'])) {
+            if (! ($opts['use'] instanceof Client)) {
                 throw new \InvalidArgumentException('parameter use must be instanceof Grpc/Client');
             }
             $this->use($opts['use']);
         } else {
             $this->client = new Client($hostname, $opts);
         }
+    }
+
+    public function __get($name)
+    {
+        // __get non-static method body hook
+        return $this->client->__get($name);
     }
 
     public function getGrpcClient()
@@ -48,12 +62,6 @@ class VirtualClient
     {
         // debug static method body hook
         \Grpc\Client::debug($enable);
-    }
-
-    public function __get($name)
-    {
-        // __get non-static method body hook
-        return $this->client->__get($name);
     }
 
     public function stats($key = null)
@@ -133,5 +141,4 @@ class VirtualClient
         // closeAfter non-static method body hook
         return $this->client->closeAfter($time);
     }
-
 }

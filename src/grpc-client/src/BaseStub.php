@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\GrpcClient;
 
-
-use Google\Protobuf\Internal\Message;
 use Hyperf\GrpcServer\Utils\Parser;
+use Google\Protobuf\Internal\Message;
 
 class BaseStub extends VirtualClient
 {
@@ -16,7 +25,7 @@ class BaseStub extends VirtualClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @param array $metadata A metadata map to send to the server
-     *                              (optional)
+     *                        (optional)
      * @param array $options An array of options (optional)
      *
      * @return []
@@ -28,7 +37,7 @@ class BaseStub extends VirtualClient
         array $metadata = [],
         array $options = []
     ) {
-        $request = new \swoole_http2_request;
+        $request = new \swoole_http2_request();
         $request->method = 'POST';
         $request->path = $method;
         $request->data = Parser::serializeMessage($argument);
@@ -48,7 +57,7 @@ class BaseStub extends VirtualClient
      * @param string $method The name of the method to call
      * @param callable $deserialize A function that deserializes the response
      * @param array $metadata A metadata map to send to the server
-     *                              (optional)
+     *                        (optional)
      * @param array $options An array of options (optional)
      *
      * @return ClientStreamingCall The active call object
@@ -75,7 +84,7 @@ class BaseStub extends VirtualClient
      * @param mixed $argument The argument to the method
      * @param callable $deserialize A function that deserializes the responses
      * @param array $metadata A metadata map to send to the server
-     *                              (optional)
+     *                        (optional)
      * @param array $options An array of options (optional)
      *
      * @return ServerStreamingCall The active call object
@@ -101,9 +110,9 @@ class BaseStub extends VirtualClient
      * @param string $method The name of the method to call
      * @param callable $deserialize A function that deserializes the responses
      * @param array $metadata A metadata map to send to the server
-     *                              (optional)
+     *                        (optional)
      * @param array $options An array of options (optional)
-     * @return bool|BidiStreamingCall
+     * @return BidiStreamingCall|bool
      */
     protected function _bidiRequest(
         $method,
@@ -111,7 +120,6 @@ class BaseStub extends VirtualClient
         array $metadata = [],
         array $options = []
     ) {
-
         $call = new BidiStreamingCall();
         $call->setClient($this);
         $call->setMethod($method);
