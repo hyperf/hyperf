@@ -61,7 +61,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 [$controller, $action] = $this->prepareHandler($routes[1]);
                 $controllerInstance = $this->container->get($controller);
                 if (! method_exists($controller, $action)) {
-                    $grpcMessage = sprintf('%s:%s is not implemented.', $controller, $action);
+                    $grpcMessage = 'Action not exist.';
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
                 }
                 $parameters = $this->parseParameters($controller, $action, $routes[2]);
