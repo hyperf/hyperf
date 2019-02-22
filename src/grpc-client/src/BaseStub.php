@@ -17,6 +17,13 @@ use Google\Protobuf\Internal\Message;
 
 class BaseStub extends VirtualClient
 {
+
+    public function __construct(string $hostname, array $opts = [])
+    {
+        parent::__construct($hostname, $opts);
+        $this->start();
+    }
+
     /**
      * Call a remote method that takes a single argument and has a
      * single output.
@@ -37,7 +44,7 @@ class BaseStub extends VirtualClient
         array $metadata = [],
         array $options = []
     ) {
-        $request = new \swoole_http2_request();
+        $request = new \Swoole\Http2\Request();
         $request->method = 'POST';
         $request->path = $method;
         $request->data = Parser::serializeMessage($argument);
