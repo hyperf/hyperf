@@ -26,6 +26,11 @@ class ApplicationContext
         return self::$container;
     }
 
+    public static function hasContainter(): bool
+    {
+        return isset(self::$container);
+    }
+
     public static function setContainer(ContainerInterface $container): ContainerInterface
     {
         self::$container = $container;
