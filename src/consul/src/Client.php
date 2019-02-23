@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Consul;
 
 use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 use GuzzleHttp\ClientInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use GuzzleHttp\Exception\TransferException;
@@ -35,16 +36,21 @@ class Client
      */
     private $logger;
 
-    public function __construct(\Closure $clientFactory, StdoutLoggerInterface $logger = null)
+    public function __construct(\Closure $clientFactory, LoggerInterface $logger = null)
     {
         $this->clientFactory = $clientFactory;
         $this->logger = $logger ?: new NullLogger();
     }
 
+    protected function resolveOptions(array $options, array $availableOptions): array
+    {
+        return array_intersect_key($options, array_flip($availableOptions));
+    }
+
     /**
      * Send a GET request.
      */
-    public function get(string $url = null, array $options = [])
+    protected function get(string $url = null, array $options = [])
     {
         return $this->request('GET', $url, $options);
     }
@@ -52,7 +58,7 @@ class Client
     /**
      * Send a HEAD request.
      */
-    public function head(string $url = null, array $options = [])
+    protected function head(string $url = null, array $options = [])
     {
         return $this->request('HEAD', $url, $options);
     }
@@ -60,7 +66,7 @@ class Client
     /**
      * Send a POST request.
      */
-    public function post(string $url = null, array $options = [])
+    protected function post(string $url = null, array $options = [])
     {
         return $this->request('POST', $url, $options);
     }
@@ -68,7 +74,7 @@ class Client
     /**
      * Send a PUT request.
      */
-    public function put(string $url = null, array $options = [])
+    protected function put(string $url = null, array $options = [])
     {
         return $this->request('PUT', $url, $options);
     }
@@ -76,7 +82,7 @@ class Client
     /**
      * Send a PATCH request.
      */
-    public function patch(string $url = null, array $options = [])
+    protected function patch(string $url = null, array $options = [])
     {
         return $this->request('PATCH', $url, $options);
     }
@@ -84,7 +90,7 @@ class Client
     /**
      * Send a DELETE request.
      */
-    public function delete(string $url = null, array $options = [])
+    protected function delete(string $url = null, array $options = [])
     {
         return $this->request('DELETE', $url, $options);
     }
@@ -92,7 +98,7 @@ class Client
     /**
      * Send a OPTIONS request.
      */
-    public function options(string $url = null, array $options = [])
+    protected function options(string $url = null, array $options = [])
     {
         return $this->request('OPTIONS', $url, $options);
     }
@@ -100,7 +106,7 @@ class Client
     /**
      * Send a HTTP request.
      */
-    private function request(string $method, string $url, array $options)
+    protected function request(string $method, string $url, array $options)
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
@@ -109,7 +115,8 @@ class Client
                 $options['base_uri'] = self::DEFAULT_URI;
             }
             // Create a HTTP Client by $clientFactory closure.
-            $client = $this->clientFactory($options);
+            $clientFactory = $this->clientFactory;
+            $client = $clientFactory($options);
             if (! $client instanceof ClientInterface) {
                 throw new ClientException(sprintf('The client factory should create a %s instance.', ClientInterface::class));
             }
