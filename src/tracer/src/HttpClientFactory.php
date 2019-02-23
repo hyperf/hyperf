@@ -18,6 +18,17 @@ use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 
 class HttpClientFactory implements ClientFactory
 {
+
+    /**
+     * @var GuzzleClientFactory
+     */
+    private $guzzleClientFactory;
+
+    public function __construct(GuzzleClientFactory $guzzleClientFactory)
+    {
+        $this->guzzleClientFactory = $guzzleClientFactory;
+    }
+
     /**
      * @return callable
      */
@@ -26,7 +37,7 @@ class HttpClientFactory implements ClientFactory
         return function ($payload) use ($options) {
             $url = $options['endpoint_url'];
             unset($options['endpoint_url']);
-            $client = GuzzleClientFactory::createClient($options);
+            $client = $this->guzzleClientFactory->create($options);
             $additionalHeaders = (isset($options['headers']) ? $options['headers'] : []);
             $requiredHeaders = [
                 'Content-Type' => 'application/json',
