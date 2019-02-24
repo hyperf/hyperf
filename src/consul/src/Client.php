@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Consul;
 
+use Hyperf\Consul\Exception\ClientException;
+use Hyperf\Consul\Exception\ServerException;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
 use GuzzleHttp\ClientInterface;
