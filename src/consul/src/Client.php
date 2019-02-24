@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Consul;
 
-use Hyperf\Consul\Exception\ClientException;
-use Hyperf\Consul\Exception\ServerException;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
 use GuzzleHttp\ClientInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use GuzzleHttp\Exception\TransferException;
+use Hyperf\Consul\Exception\ClientException;
+use Hyperf\Consul\Exception\ServerException;
 
 class Client
 {
@@ -50,65 +50,9 @@ class Client
     }
 
     /**
-     * Send a GET request.
-     */
-    protected function get(string $url = null, array $options = [])
-    {
-        return $this->request('GET', $url, $options);
-    }
-
-    /**
-     * Send a HEAD request.
-     */
-    protected function head(string $url = null, array $options = [])
-    {
-        return $this->request('HEAD', $url, $options);
-    }
-
-    /**
-     * Send a POST request.
-     */
-    protected function post(string $url = null, array $options = [])
-    {
-        return $this->request('POST', $url, $options);
-    }
-
-    /**
-     * Send a PUT request.
-     */
-    protected function put(string $url = null, array $options = [])
-    {
-        return $this->request('PUT', $url, $options);
-    }
-
-    /**
-     * Send a PATCH request.
-     */
-    protected function patch(string $url = null, array $options = [])
-    {
-        return $this->request('PATCH', $url, $options);
-    }
-
-    /**
-     * Send a DELETE request.
-     */
-    protected function delete(string $url = null, array $options = [])
-    {
-        return $this->request('DELETE', $url, $options);
-    }
-
-    /**
-     * Send a OPTIONS request.
-     */
-    protected function options(string $url = null, array $options = [])
-    {
-        return $this->request('OPTIONS', $url, $options);
-    }
-
-    /**
      * Send a HTTP request.
      */
-    protected function request(string $method, string $url, array $options)
+    protected function request(string $method, string $url, array $options = []): ConsulResponse
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
@@ -139,6 +83,6 @@ class Client
             throw new ClientException($message, $response->getStatusCode());
         }
 
-        return $response;
+        return new ConsulResponse($response);
     }
 }

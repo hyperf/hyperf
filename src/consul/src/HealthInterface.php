@@ -14,11 +14,11 @@ namespace Hyperf\Consul;
 
 interface HealthInterface
 {
-    public function node($node, array $options = []);
+    public function node($node, array $options = []): ConsulResponse;
 
-    public function checks($service, array $options = []);
+    public function checks($service, array $options = []): ConsulResponse;
 
-    public function service($service, array $options = []);
+    public function service($service, array $options = []): ConsulResponse;
 
-    public function state($state, array $options = []);
+    public function state($state, array $options = []): ConsulResponse;
 }

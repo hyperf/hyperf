@@ -14,29 +14,29 @@ namespace Hyperf\Consul;
 
 interface AgentInterface
 {
-    public function checks();
+    public function checks(): ConsulResponse;
 
-    public function services();
+    public function services(): ConsulResponse;
 
-    public function members(array $options = []);
+    public function members(array $options = []): ConsulResponse;
 
-    public function self();
+    public function self(): ConsulResponse;
 
-    public function join($address, array $options = []);
+    public function join($address, array $options = []): ConsulResponse;
 
-    public function forceLeave($node);
+    public function forceLeave($node): ConsulResponse;
 
-    public function registerCheck($check);
+    public function registerCheck($check): ConsulResponse;
 
-    public function deregisterCheck($checkId);
+    public function deregisterCheck($checkId): ConsulResponse;
 
-    public function passCheck($checkId, array $options = []);
+    public function passCheck($checkId, array $options = []): ConsulResponse;
 
-    public function warnCheck($checkId, array $options = []);
+    public function warnCheck($checkId, array $options = []): ConsulResponse;
 
-    public function failCheck($checkId, array $options = []);
+    public function failCheck($checkId, array $options = []): ConsulResponse;
 
-    public function registerService($service);
+    public function registerService($service): ConsulResponse;
 
-    public function deregisterService($serviceId);
+    public function deregisterService($serviceId): ConsulResponse;
 }

@@ -14,15 +14,15 @@ namespace Hyperf\Consul;
 
 interface SessionInterface
 {
-    public function create($body = null, array $options = []);
+    public function create($body = null, array $options = []): ConsulResponse;
 
-    public function destroy($sessionId, array $options = []);
+    public function destroy($sessionId, array $options = []): ConsulResponse;
 
-    public function info($sessionId, array $options = []);
+    public function info($sessionId, array $options = []): ConsulResponse;
 
-    public function node($node, array $options = []);
+    public function node($node, array $options = []): ConsulResponse;
 
-    public function all(array $options = []);
+    public function all(array $options = []): ConsulResponse;
 
-    public function renew($sessionId, array $options = []);
+    public function renew($sessionId, array $options = []): ConsulResponse;
 }

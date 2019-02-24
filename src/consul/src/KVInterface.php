@@ -14,9 +14,9 @@ namespace Hyperf\Consul;
 
 interface KVInterface
 {
-    public function get($key, array $options = []);
+    public function get($key, array $options = []): ConsulResponse;
 
-    public function put($key, $value, array $options = []);
+    public function put($key, $value, array $options = []): ConsulResponse;
 
-    public function delete($key, array $options = []);
+    public function delete($key, array $options = []): ConsulResponse;
 }

@@ -14,17 +14,17 @@ namespace Hyperf\Consul;
 
 interface CatalogInterface
 {
-    public function register($node);
+    public function register($node): ConsulResponse;
 
-    public function deregister($node);
+    public function deregister($node): ConsulResponse;
 
-    public function datacenters();
+    public function datacenters(): ConsulResponse;
 
-    public function nodes(array $options = []);
+    public function nodes(array $options = []): ConsulResponse;
 
-    public function node($node, array $options = []);
+    public function node($node, array $options = []): ConsulResponse;
 
-    public function services(array $options = []);
+    public function services(array $options = []): ConsulResponse;
 
-    public function service($service, array $options = []);
+    public function service($service, array $options = []): ConsulResponse;
 }
