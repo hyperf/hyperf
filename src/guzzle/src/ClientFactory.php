@@ -12,15 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Guzzle;
 
-use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use function GuzzleHttp\choose_handler;
+use Psr\Container\ContainerInterface;
 
 class ClientFactory
 {
-
     /**
      * @var ContainerInterface
      */
@@ -33,19 +31,17 @@ class ClientFactory
 
     public function create(array $options = []): Client
     {
+        $stack = null;
         if (Coroutine::getCid() > 0) {
             $stack = HandlerStack::create(new CoroutineHandler());
-        } else {
-            $stack = HandlerStack::create(choose_handler());
         }
 
         $config = array_replace(['handler' => $stack], $options);
 
         if (method_exists($this->container, 'make')) {
             // Create by DI for AOP.
-            return $this->container->make(Client::class, $config);
-        } else {
-            return new Client($config);
+            return $this->container->make(Client::class, ['config' => $config]);
         }
+        return new Client($config);
     }
 }
