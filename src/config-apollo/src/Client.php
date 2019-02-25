@@ -58,7 +58,7 @@ class Client
             if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
                 call($this->callbacks[$namespace], [$value]);
                 if (isset($value['releaseKey']) && $value['releaseKey']) {
-                    ReleaseKey::set($namespace, $value['releaseKey']);
+                    ReleaseKey::set($this->option->buildCacheKey($namespace), $value['releaseKey']);
                 }
             }
         }
@@ -75,7 +75,7 @@ class Client
                 if (! $client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
                 }
-                $releaseKey = ReleaseKey::get($namespace, null);
+                $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
                 $response = $client->get($option->buildBaseUrl() . $namespace, [
                     'query' => [
                         'ip' => $option->getClientIp(),
@@ -109,7 +109,7 @@ class Client
             if (! $client instanceof \GuzzleHttp\Client) {
                 throw new \RuntimeException('Invalid http client.');
             }
-            $releaseKey = ReleaseKey::get($namespace, null);
+            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
             $response = $client->get($url . $namespace, [
                 'query' => [
                     'ip' => $this->option->getClientIp(),
@@ -131,4 +131,5 @@ class Client
         }
         return $result;
     }
+
 }
