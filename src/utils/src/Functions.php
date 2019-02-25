@@ -261,7 +261,9 @@ if (! function_exists('call')) {
     function call($callback, array $args = [])
     {
         $result = null;
-        if (is_object($callback) || (is_string($callback) && function_exists($callback))) {
+        if ($callback instanceof \Closure) {
+            $callback(...$args);
+        } elseif (is_object($callback) || (is_string($callback) && function_exists($callback))) {
             $result = $callback(...$args);
         } elseif (is_array($callback)) {
             [$object, $method] = $callback;
