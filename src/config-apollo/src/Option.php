@@ -57,7 +57,7 @@ class Option
             $this->getServer(),
             'configs',
             $this->getAppid(),
-            $this->getCluster()
+            $this->getCluster(),
         ]) . '/';
     }
 
