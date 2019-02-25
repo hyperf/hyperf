@@ -46,7 +46,9 @@
         "hyperf/amqp": "self.version",
         "hyperf/cache": "self.version",
         "hyperf/config": "self.version",
+        "hyperf/config-apollo": "self.version",
         "hyperf/constants": "self.version",
+        "hyperf/consul": "self.version",
         "hyperf/contract": "self.version",
         "hyperf/database": "self.version",
         "hyperf/db-connection": "self.version",
@@ -80,7 +82,9 @@
             "Hyperf\\Amqp\\": "src/amqp/src/",
             "Hyperf\\Cache\\": "src/cache/src/",
             "Hyperf\\Config\\": "src/config/src/",
+            "Hyperf\\ConfigApollo\\": "src/config-apollo/src/",
             "Hyperf\\Constants\\": "src/constants/src/",
+            "Hyperf\\Consul\\": "src/consul/src/",
             "Hyperf\\Contract\\": "src/contract/src/",
             "Hyperf\\Database\\": "src/database/src/",
             "Hyperf\\DbConnection\\": "src/db-connection/src/",
@@ -106,9 +110,12 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests",
+            "HyperfTest\\Consul\\": "./src/consul/tests",
             "HyperfTest\\Dispatcher\\": "./src/dispatcher/test",
             "HyperfTest\\Database\\": "./src/database/tests",
-            "HyperfTest\\Event\\": "./src/event/tests"
+            "HyperfTest\\Event\\": "./src/event/tests",
+            "HyperfTest\\Utils\\": "./src/utils/tests"
         }
     },
     "config": {
@@ -122,6 +129,7 @@
                 "Hyperf\\Amqp\\ConfigProvider",
                 "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
+                "Hyperf\\ConfigApollo\\ConfigProvider",
                 "Hyperf\\Devtool\\ConfigProvider",
                 "Hyperf\\DbConnection\\ConfigProvider",
                 "Hyperf\\Di\\ConfigProvider",
