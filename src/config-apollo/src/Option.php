@@ -63,7 +63,7 @@ class Option
 
     public function buildCacheKey(string $namespace): string
     {
-        return implode('+', $this->option->getAppid() . $this->option->getCluster(), $namespace);
+        return implode('+', [$this->getAppid() . $this->getCluster(), $namespace]);
     }
 
     public function getServer(): string

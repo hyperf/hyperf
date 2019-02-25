@@ -39,6 +39,10 @@ class ClientTest extends TestCase
             'application' => function ($configs) {
                 $container = ApplicationContext::getContainer();
                 $config = $container->get(ConfigInterface::class);
+                // Mock the configurations.
+                $configs['configurations'] = [
+                    'test-key' => 'test-value',
+                ];
                 foreach ($configs['configurations'] ?? [] as $key => $value) {
                     $config->set($key, $value);
                 }
