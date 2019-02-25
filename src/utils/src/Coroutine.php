@@ -53,11 +53,13 @@ class Coroutine
             try {
                 call($callback);
             } catch (Throwable $throwable) {
-                $container = ApplicationContext::getContainer();
-                if ($container instanceof ContainerInterface && $container->has(StdoutLoggerInterface::class)) {
-                    /* @var LoggerInterface $logger */
-                    $logger = $container->get(StdoutLoggerInterface::class);
-                    $logger->warning(printf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                if (ApplicationContext::hasContainter()) {
+                    $container = ApplicationContext::getContainer();
+                    if ($container->has(StdoutLoggerInterface::class)) {
+                        /* @var LoggerInterface $logger */
+                        $logger = $container->get(StdoutLoggerInterface::class);
+                        $logger->warning(printf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                    }
                 }
             }
         });
