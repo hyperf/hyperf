@@ -85,7 +85,7 @@ class Client
         $parallel = new Parallel();
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
-            $parallel->add(function () use ($option, $withCache, $httpClientFactory, $option, $namespace) {
+            $parallel->add(function () use ($option, $withCache, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
