@@ -30,6 +30,7 @@ use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Swoft\Http\Message\Server\Request as Psr7Request;
 use Swoft\Http\Message\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 
 class Server implements ServerOnRequestInterface
 {

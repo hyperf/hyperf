@@ -1,19 +1,18 @@
 {
-    "name": "hyperf/utils",
-    "description": "A tools package that could help developer solved the problem quickly.",
+    "name": "hyperf/consul",
+    "description": "A Consul Client for Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "utils"
+        "consul",
+        "consul-client"
     ],
     "support": {
     },
     "require": {
-        "php": ">=7.2",
-        "doctrine/inflector": "^1.3",
-        "hyperf/contract": "dev-master"
+        "php": ">=7.2"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -22,19 +21,17 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "symfony/var-dumper": "Required to use the dd function (^4.1)."
     },
     "autoload": {
         "files": [
-            "src/Functions.php"
         ],
         "psr-4": {
-            "Hyperf\\Utils\\": "src"
+            "Hyperf\\Consul\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Utils\\": "tests"
+            "HyperfTest\\Consul\\": "tests/"
         }
     },
     "config": {
@@ -42,6 +39,9 @@
     },
     "extra": {
         "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\Consul\\ConfigProvider"
         }
     },
     "bin": [

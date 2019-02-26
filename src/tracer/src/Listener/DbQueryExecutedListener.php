@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Listener;
 
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
 use Hyperf\Tracer\Tracing;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Event\Annotation\Listener;
@@ -58,11 +59,10 @@ class DbQueryExecutedListener implements ListenerInterface
         $sql = $event->sql;
         if (! Arr::isAssoc($event->bindings)) {
             foreach ($event->bindings as $key => $value) {
-                $sql = str_replace('?', '"%s"', $sql);
+                $sql = Str::replaceFirst('?', "'{$value}'", $sql);
             }
-
-            $sql = sprintf($sql, ...$event->bindings);
         }
+
         $endTime = microtime(true);
         $span = $this->tracing->span('db.query');
         $span->start((int) (($endTime - $event->time / 1000) * 1000 * 1000));

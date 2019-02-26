@@ -39,7 +39,7 @@ class Consumer extends AbstractAnnotation
     /**
      * @var int
      */
-    public $nums = 0;
+    public $nums = 1;
 
     public function __construct($value = null)
     {

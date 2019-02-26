@@ -97,6 +97,10 @@ class Manager
      */
     public function findManyFromCache(array $ids, string $class): Collection
     {
+        if (count($ids) === 0) {
+            return new Collection([]);
+        }
+
         /** @var Model $instance */
         $instance = new $class();
 

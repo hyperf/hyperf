@@ -48,11 +48,7 @@ class Builder
             $pool = $this->getConnectionPool($message->getPoolName());
             /** @var \Hyperf\Amqp\Connection $connection */
             $connection = $pool->get();
-            $channel = $connection->getChannel(false);
-            defer(function () use ($connection, $channel) {
-                $channel->close();
-                $connection->release();
-            });
+            $channel = $connection->getChannel();
         }
 
         $builder = $message->getExchangeBuilder();

@@ -75,8 +75,8 @@ class MainWorkerStartListener implements ListenerInterface
                 if (! $instance instanceof ProducerMessageInterface) {
                     continue;
                 }
-                $instance->setExchange($annotation->exchange);
-                $instance->setRoutingKey($annotation->routingKey);
+                $annotation->exchange && $instance->setExchange($annotation->exchange);
+                $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
                     $producer->declare($instance);
                     $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $instance->getRoutingKey()));

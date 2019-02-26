@@ -49,10 +49,10 @@ class ConsumerManager
             $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
             $annotation->queue && $instance->setQueue($annotation->queue);
             property_exists($instance, 'container') && $instance->container = $this->container;
-            $nums = $annotation->nums ?? 1;
+            $nums = $annotation->nums;
             $process = $this->createProcess($instance);
             $process->nums = (int) $nums;
-            $process->name = 'Consumer-' . $annotation->queue;
+            $process->name = 'Consumer-' . $instance->getQueue();
             ProcessRegister::register($process);
         }
     }

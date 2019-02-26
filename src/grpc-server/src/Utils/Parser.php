@@ -36,11 +36,11 @@ class Parser
             $data = $data->encode();
         } elseif (method_exists($data, 'serializeToString')) {
             $data = $data->serializeToString();
-        } else {
+        } elseif (method_exists($data, 'serialize')) {
             /** @noinspection PhpUndefinedMethodInspection */
             $data = $data->serialize();
         }
-        return self::pack($data);
+        return self::pack((string) $data);
     }
 
     public static function deserializeMessage($deserialize, string $value)
