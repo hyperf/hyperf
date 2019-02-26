@@ -33,7 +33,9 @@ class ClientTest extends TestCase
         $option = new Option();
         $option->setServer('http://127.0.0.1:8080')->setAppid('test')->setCluster('default')->setClientIp('127.0.0.1');
         $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $configInstance = new Config([]);
+        $configInstance->set('config-center.test-key', 'pre-value');
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($configInstance);
         ApplicationContext::setContainer($container);
         $callbacks = [
             'application' => function ($configs) {
@@ -41,7 +43,7 @@ class ClientTest extends TestCase
                 $config = $container->get(ConfigInterface::class);
                 // Mock the configurations.
                 $configs['configurations'] = [
-                    'test-key' => 'test-value',
+                    'config-center.test-key' => 'after-value',
                 ];
                 foreach ($configs['configurations'] ?? [] as $key => $value) {
                     $config->set($key, $value);
@@ -55,6 +57,9 @@ class ClientTest extends TestCase
             'application',
         ]);
         $config = $container->get(ConfigInterface::class);
-        $this->assertSame('test-value', $config->get('test-key'));
+        $this->assertSame('after-value', $config->get('config-center.test-key'));
+        $this->assertSame([
+            'test-key' => 'after-value',
+        ], $config->get('config-center'));
     }
 }
