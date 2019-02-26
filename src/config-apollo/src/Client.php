@@ -51,17 +51,18 @@ class Client
         $this->config = $config;
     }
 
-    public function pull(array $namespaces, bool $withCache = true)
+    public function pull(array $namespaces)
     {
         if (! $namespaces) {
             return [];
         }
         if (Coroutine::inCoroutine()) {
             // @todo needs test.
-            $result = $this->coroutinePull($namespaces, $withCache);
+            $result = $this->coroutinePull($namespaces);
         } else {
-            $result = $this->blockingPull($namespaces, $withCache);
+            $result = $this->blockingPull($namespaces);
         }
+        echo '<pre>';var_dump($result);echo '</pre>';exit();
         foreach ($result as $namespace => $value) {
             if (isset($value['releaseKey'], $value['configurations']) && $value['releaseKey'] && $value['configurationss']) {
                 if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
@@ -79,20 +80,19 @@ class Client
         }
     }
 
-    protected function coroutinePull(array $namespaces, bool $withCache = true)
+    protected function coroutinePull(array $namespaces)
     {
         $option = $this->option;
         $parallel = new Parallel();
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
-            $parallel->add(function () use ($option, $withCache, $httpClientFactory, $namespace) {
+            $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
                 }
-                $releaseKey = null;
-                ! $withCache && $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
-                $response = $client->get($option->buildBaseUrl($withCache) . $namespace, [
+                $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
+                $response = $client->get($option->buildBaseUrl() . $namespace, [
                     'query' => [
                         'ip' => $option->getClientIp(),
                         'releaseKey' => $releaseKey,
@@ -110,23 +110,23 @@ class Client
                         'releaseKey' => '',
                     ];
                 }
+                return $result;
             });
         }
         return $parallel->wait();
     }
 
-    protected function blockingPull(array $namespaces, bool $withCache = true)
+    protected function blockingPull(array $namespaces)
     {
         $result = [];
-        $url = $this->option->buildBaseUrl($withCache);
+        $url = $this->option->buildBaseUrl();
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
             $client = $httpClientFactory();
             if (! $client instanceof \GuzzleHttp\Client) {
                 throw new \RuntimeException('Invalid http client.');
             }
-            $releaseKey = null;
-            ! $withCache && $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
+            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
             $response = $client->get($url . $namespace, [
                 'query' => [
                     'ip' => $this->option->getClientIp(),

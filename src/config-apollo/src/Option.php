@@ -51,12 +51,11 @@ class Option
      */
     private $intervalTimeout = 60;
 
-    public function buildBaseUrl(bool $withCache = true): string
+    public function buildBaseUrl(): string
     {
-        $type = $withCache ? 'configfiles/json' : 'configs';
         return implode('/', [
             $this->getServer(),
-            $type,
+            'configs',
             $this->getAppid(),
             $this->getCluster(),
         ]) . '/';
