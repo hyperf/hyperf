@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Model;
 
 use RuntimeException;
+use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Database\Model\Model as BaseModel;
 use Psr\EventDispatcher\EventDispatcherInterface;
