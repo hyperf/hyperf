@@ -51,16 +51,16 @@ class Client
         $this->config = $config;
     }
 
-    public function pull(array $namespaces)
+    public function pull(array $namespaces, bool $withCache = true)
     {
         if (! $namespaces) {
             return [];
         }
         if (Coroutine::inCoroutine()) {
             // @todo needs test.
-            $result = $this->coroutinePull($namespaces);
+            $result = $this->coroutinePull($namespaces, $withCache);
         } else {
-            $result = $this->blockingPull($namespaces);
+            $result = $this->blockingPull($namespaces, $withCache);
         }
         foreach ($result as $namespace => $value) {
             if (isset($value['releaseKey'], $value['configurations']) && $value['releaseKey'] && $value['configurationss']) {
@@ -79,19 +79,20 @@ class Client
         }
     }
 
-    protected function coroutinePull(array $namespaces)
+    protected function coroutinePull(array $namespaces, bool $withCache = true)
     {
         $option = $this->option;
         $parallel = new Parallel();
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
-            $parallel->add(function () use ($httpClientFactory, $option, $namespace) {
+            $parallel->add(function () use ($option, $withCache, $httpClientFactory, $option, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
                 }
-                $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
-                $response = $client->get($option->buildBaseUrl() . $namespace, [
+                $releaseKey = null;
+                ! $withCache && $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
+                $response = $client->get($option->buildBaseUrl($withCache) . $namespace, [
                     'query' => [
                         'ip' => $option->getClientIp(),
                         'releaseKey' => $releaseKey,
@@ -114,17 +115,18 @@ class Client
         return $parallel->wait();
     }
 
-    protected function blockingPull(array $namespaces)
+    protected function blockingPull(array $namespaces, bool $withCache = true)
     {
         $result = [];
-        $url = $this->option->buildBaseUrl();
+        $url = $this->option->buildBaseUrl($withCache);
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
             $client = $httpClientFactory();
             if (! $client instanceof \GuzzleHttp\Client) {
                 throw new \RuntimeException('Invalid http client.');
             }
-            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
+            $releaseKey = null;
+            ! $withCache && $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
             $response = $client->get($url . $namespace, [
                 'query' => [
                     'ip' => $this->option->getClientIp(),
