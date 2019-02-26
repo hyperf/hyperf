@@ -15,6 +15,7 @@ namespace Hyperf\ConfigApollo;
 use Closure;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Contract\ConfigInterface;
 
 class Client
 {
@@ -33,14 +34,21 @@ class Client
      */
     private $httpClientFactory;
 
+    /**
+     * @var null|ConfigInterface
+     */
+    private $config;
+
     public function __construct(
         Option $option,
         array $callbacks = [],
-        Closure $httpClientFactory
+        Closure $httpClientFactory,
+        ?ConfigInterface $config = null
     ) {
         $this->option = $option;
         $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
+        $this->config = $config;
     }
 
     public function pull(array $namespaces)
@@ -55,11 +63,18 @@ class Client
             $result = $this->blockingPull($namespaces);
         }
         foreach ($result as $namespace => $value) {
-            if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
-                call($this->callbacks[$namespace], [$value]);
-                if (isset($value['releaseKey']) && $value['releaseKey']) {
-                    ReleaseKey::set($this->option->buildCacheKey($namespace), $value['releaseKey']);
+            if (isset($value['releaseKey'], $value['configurations']) && $value['releaseKey'] && $value['configurationss']) {
+                if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
+                    call($this->callbacks[$namespace], [$value]);
+                } else {
+                    // Call default callback.
+                    if ($this->config instanceof ConfigInterface) {
+                        foreach ($configs['configurations'] ?? [] as $key => $value) {
+                            $this->config->set($key, $value);
+                        }
+                    }
                 }
+                ReleaseKey::set($this->option->buildCacheKey($namespace), $value['releaseKey']);
             }
         }
     }
@@ -131,5 +146,4 @@ class Client
         }
         return $result;
     }
-
 }
