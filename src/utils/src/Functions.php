@@ -262,7 +262,7 @@ if (! function_exists('call')) {
     {
         $result = null;
         if ($callback instanceof \Closure) {
-            $callback(...$args);
+            $result = $callback(...$args);
         } elseif (is_object($callback) || (is_string($callback) && function_exists($callback))) {
             $result = $callback(...$args);
         } elseif (is_array($callback)) {
