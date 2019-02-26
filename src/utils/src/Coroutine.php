@@ -14,7 +14,6 @@ namespace Hyperf\Utils;
 
 use Throwable;
 use Psr\Log\LoggerInterface;
-use Psr\Container\ContainerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
 use Hyperf\Contract\StdoutLoggerInterface;
 
