@@ -57,16 +57,14 @@ class Client
             return [];
         }
         if (Coroutine::inCoroutine()) {
-            // @todo needs test.
             $result = $this->coroutinePull($namespaces);
         } else {
             $result = $this->blockingPull($namespaces);
         }
-        echo '<pre>';var_dump($result);echo '</pre>';exit();
-        foreach ($result as $namespace => $value) {
-            if (isset($value['releaseKey'], $value['configurations']) && $value['releaseKey'] && $value['configurationss']) {
+        foreach ($result as $namespace => $configs) {
+            if (isset($configs['releaseKey'], $configs['configurations'])) {
                 if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
-                    call($this->callbacks[$namespace], [$value]);
+                    call($this->callbacks[$namespace], [$configs]);
                 } else {
                     // Call default callback.
                     if ($this->config instanceof ConfigInterface) {
@@ -75,7 +73,7 @@ class Client
                         }
                     }
                 }
-                ReleaseKey::set($this->option->buildCacheKey($namespace), $value['releaseKey']);
+                ReleaseKey::set($this->option->buildCacheKey($namespace), $configs['releaseKey']);
             }
         }
     }
@@ -99,19 +97,19 @@ class Client
                     ],
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string) $response->getBody(), true);
-                    $result[$namespace] = [
+                    $body = json_decode((string)$response->getBody(), true);
+                    $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
                     ];
                 } else {
-                    $result[$namespace] = [
+                    $result = [
                         'configurations' => [],
                         'releaseKey' => '',
                     ];
                 }
                 return $result;
-            });
+            }, $namespace);
         }
         return $parallel->wait();
     }
@@ -134,7 +132,7 @@ class Client
                 ],
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string) $response->getBody(), true);
+                $body = json_decode((string)$response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
