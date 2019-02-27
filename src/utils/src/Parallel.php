@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Swoole\Coroutine\Channel;
-
 class Parallel
 {
     /**
@@ -21,27 +19,27 @@ class Parallel
      */
     private $callbacks = [];
 
-    public function add(callable $callable)
+    public function add(callable $callable, ?string $key = null)
     {
-        $this->callbacks[] = $callable;
+        if ($key) {
+            $this->callbacks[$key] = $callable;
+        } else {
+            $this->callbacks[] = $callable;
+        }
     }
 
     public function wait(): array
     {
-        $map = [];
-        $channel = new Channel(count($this->callbacks));
+        $waitGroup = new WaitGroup();
+        $result = [];
         foreach ($this->callbacks as $key => $callback) {
-            Coroutine::create(function () use ($callback, $key, $channel) {
-                $channel->push([
-                    'key' => $key,
-                    'value' => $callback(),
-                ]);
+            $waitGroup->add();
+            Coroutine::create(function () use ($callback, $key, $waitGroup, &$result) {
+                $result[$key] = $callback();
+                $waitGroup->done();
             });
         }
-        while (! $channel->isEmpty()) {
-            $result = $channel->pop();
-            $map[$result['key']] = $result['value'];
-        }
-        return $map;
+        $waitGroup->wait();
+        return $result;
     }
 }

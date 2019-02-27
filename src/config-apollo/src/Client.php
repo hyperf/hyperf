@@ -15,6 +15,7 @@ namespace Hyperf\ConfigApollo;
 use Closure;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Contract\ConfigInterface;
 
 class Client
 {
@@ -33,14 +34,21 @@ class Client
      */
     private $httpClientFactory;
 
+    /**
+     * @var null|ConfigInterface
+     */
+    private $config;
+
     public function __construct(
         Option $option,
         array $callbacks = [],
-        Closure $httpClientFactory
+        Closure $httpClientFactory,
+        ?ConfigInterface $config = null
     ) {
         $this->option = $option;
         $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
+        $this->config = $config;
     }
 
     public function pull(array $namespaces)
@@ -49,17 +57,23 @@ class Client
             return [];
         }
         if (Coroutine::inCoroutine()) {
-            // @todo needs test.
             $result = $this->coroutinePull($namespaces);
         } else {
             $result = $this->blockingPull($namespaces);
         }
-        foreach ($result as $namespace => $value) {
-            if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
-                call($this->callbacks[$namespace], [$value]);
-                if (isset($value['releaseKey']) && $value['releaseKey']) {
-                    ReleaseKey::set($this->option->buildCacheKey($namespace), $value['releaseKey']);
+        foreach ($result as $namespace => $configs) {
+            if (isset($configs['releaseKey'], $configs['configurations'])) {
+                if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
+                    call($this->callbacks[$namespace], [$configs]);
+                } else {
+                    // Call default callback.
+                    if ($this->config instanceof ConfigInterface) {
+                        foreach ($configs['configurations'] ?? [] as $key => $value) {
+                            $this->config->set($key, $value);
+                        }
+                    }
                 }
+                ReleaseKey::set($this->option->buildCacheKey($namespace), $configs['releaseKey']);
             }
         }
     }
@@ -70,7 +84,7 @@ class Client
         $parallel = new Parallel();
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
-            $parallel->add(function () use ($httpClientFactory, $option, $namespace) {
+            $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
@@ -83,18 +97,19 @@ class Client
                     ],
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string) $response->getBody(), true);
-                    $result[$namespace] = [
+                    $body = json_decode((string)$response->getBody(), true);
+                    $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
                     ];
                 } else {
-                    $result[$namespace] = [
+                    $result = [
                         'configurations' => [],
                         'releaseKey' => '',
                     ];
                 }
-            });
+                return $result;
+            }, $namespace);
         }
         return $parallel->wait();
     }
@@ -117,7 +132,7 @@ class Client
                 ],
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string) $response->getBody(), true);
+                $body = json_decode((string)$response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
@@ -131,5 +146,4 @@ class Client
         }
         return $result;
     }
-
 }
