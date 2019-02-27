@@ -33,7 +33,8 @@
         "vlucas/phpdotenv": "^3.1",
         "php-amqplib/php-amqplib": "^2.7",
         "openzipkin/zipkin": "^1.3.2",
-        "grpc/grpc": "^1.15"
+        "grpc/grpc": "^1.15",
+        "elasticsearch/elasticsearch": "^6.1"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -55,6 +56,7 @@
         "hyperf/devtool": "self.version",
         "hyperf/di": "self.version",
         "hyperf/dispatcher": "self.version",
+        "hyperf/elasticsearch": "self.version",
         "hyperf/event": "self.version",
         "hyperf/grpc-client": "self.version",
         "hyperf/grpc-server": "self.version",
@@ -91,6 +93,7 @@
             "Hyperf\\Devtool\\": "src/devtool/src/",
             "Hyperf\\Di\\": "src/di/src/",
             "Hyperf\\Dispatcher\\": "src/dispatcher/src/",
+            "Hyperf\\Elasticsearch\\": "src/elasticsearch/src/",
             "Hyperf\\Event\\": "src/event/src/",
             "Hyperf\\GrpcClient\\": "src/grpc-client/src/",
             "Hyperf\\GrpcServer\\": "src/grpc-server/src/",
