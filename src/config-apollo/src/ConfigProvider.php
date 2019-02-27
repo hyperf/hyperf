@@ -18,7 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Client::class => ClientFactory::class,
+                ClientInterface::class => ClientFactory::class,
             ],
             'scan' => [
                 'paths' => [

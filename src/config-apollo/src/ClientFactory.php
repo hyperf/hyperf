@@ -21,7 +21,7 @@ class ClientFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $option = new Option();
+        $option = make(Option::class);
         $option->setServer($config->get('config-center.apollo.server', 'http://127.0.0.1:8080'))
             ->setAppid($config->get('config-center.apollo.appid', ''))
             ->setCluster($config->get('config-center.apollo.cluster', ''));
@@ -36,6 +36,6 @@ class ClientFactory
         $httpClientFactory = function (array $options = []) use ($container) {
             return $container->get(GuzzleClientFactory::class)->create($options);
         };
-        return new Client($option, $callbacks, $httpClientFactory, $config);
+        return make(Client::class, compact('option', 'callbacks', 'httpClientFactory', 'config'));
     }
 }

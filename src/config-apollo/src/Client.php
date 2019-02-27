@@ -17,7 +17,7 @@ use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Contract\ConfigInterface;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * @var Option
@@ -51,10 +51,10 @@ class Client
         $this->config = $config;
     }
 
-    public function pull(array $namespaces)
+    public function pull(array $namespaces): void
     {
         if (! $namespaces) {
-            return [];
+            return;
         }
         if (Coroutine::inCoroutine()) {
             $result = $this->coroutinePull($namespaces);
@@ -97,7 +97,7 @@ class Client
                     ],
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string)$response->getBody(), true);
+                    $body = json_decode((string) $response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -132,7 +132,7 @@ class Client
                 ],
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string)$response->getBody(), true);
+                $body = json_decode((string) $response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
