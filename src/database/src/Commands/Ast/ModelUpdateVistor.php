@@ -20,9 +20,12 @@ class ModelUpdateVistor extends NodeVisitorAbstract
 {
     protected $columns = [];
 
-    public function __construct($columns = [])
+    protected $forceCasts = false;
+
+    public function __construct($columns = [], bool $forceCasts)
     {
         $this->columns = $columns;
+        $this->forceCasts = $forceCasts;
     }
 
     public function leaveNode(Node $node)
@@ -31,6 +34,8 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\PropertyProperty:
                 if ($node->name == 'fillable') {
                     $node = $this->rewriteFillable($node);
+                } elseif ($node->name == 'casts') {
+                    $node = $this->rewriteCasts($node);
                 }
 
                 return $node;
@@ -55,5 +60,58 @@ class ModelUpdateVistor extends NodeVisitorAbstract
 
         $node->default = new Node\Expr\Array_($items);
         return $node;
+    }
+
+    protected function rewriteCasts(Node\Stmt\PropertyProperty $node)
+    {
+        $items = [];
+        $exists = [];
+
+        /** @var Node\Expr\ArrayItem $item */
+        foreach ($node->default->items as $item) {
+            $exists[] = $item->key->value;
+            $items[] = $item;
+        }
+
+        if ($this->forceCasts) {
+            $items = [];
+        }
+
+        foreach ($this->columns as $column) {
+            $name = $column['column_name'];
+            $type = $this->formatDatabaseType($column['data_type']);
+
+            if ($type && (! in_array($name, $exists) || $this->forceCasts)) {
+                $items[] = new Node\Expr\ArrayItem(
+                    new Node\Scalar\String_($type),
+                    new Node\Scalar\String_($name)
+                );
+            }
+        }
+
+        $node->default = new Node\Expr\Array_($items);
+        return $node;
+    }
+
+    protected function formatDatabaseType(string $type): ?string
+    {
+        switch ($type) {
+            case 'tinyint':
+            case 'smallint':
+            case 'mediumint':
+            case 'int':
+            case 'bigint':
+                return 'integer';
+            case 'decimal':
+            case 'float':
+            case 'double':
+            case 'real':
+                return 'float';
+            case 'bool':
+            case 'boolean':
+                return 'boolean';
+            default:
+                return null;
+        }
     }
 }

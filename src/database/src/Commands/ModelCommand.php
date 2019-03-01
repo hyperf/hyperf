@@ -62,6 +62,7 @@ class ModelCommand extends Command
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want to associated with the Model.')
             ->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which connection pool you want the Model use.', 'default')
             ->addOption('path', 'path', InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.', 'app/Models')
+            ->addOption('force-casts', 'fc', InputOption::VALUE_OPTIONAL, 'Whether force generate the casts for model.', false)
             ->addOption('prefix', 'prefix', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.', '');
     }
 
@@ -73,13 +74,14 @@ class ModelCommand extends Command
         $pool = $input->getOption('pool');
         $path = $input->getOption('path');
         $prefix = $input->getOption('prefix');
+        $forceCasts = (bool) $input->getOption('force-casts');
 
         $path = BASE_PATH . '/' . $path;
         if ($table) {
             $table = Str::replaceFirst($prefix, '', $table);
-            $this->createModel($table, $pool, $path);
+            $this->createModel($table, $pool, $path, $forceCasts);
         } else {
-            $this->createModels($pool, $path, $prefix);
+            $this->createModels($pool, $path, $prefix, $forceCasts);
         }
     }
 
@@ -89,7 +91,7 @@ class ModelCommand extends Command
         return $connection->getSchemaBuilder();
     }
 
-    protected function createModels(string $pool, string $path, string $prefix)
+    protected function createModels(string $pool, string $path, string $prefix, bool $forceCasts)
     {
         $builder = $this->getSchemaBuilder($pool);
         $tables = [];
@@ -101,11 +103,11 @@ class ModelCommand extends Command
 
         foreach ($tables as $table) {
             $table = Str::replaceFirst($prefix, '', $table);
-            $this->createModel($table, $pool, $path);
+            $this->createModel($table, $pool, $path, $forceCasts);
         }
     }
 
-    protected function createModel(string $table, string $poolName, string $dir)
+    protected function createModel(string $table, string $poolName, string $dir, bool $forceCasts)
     {
         $builder = $this->getSchemaBuilder($poolName);
 
@@ -123,7 +125,7 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new ModelUpdateVistor($columns));
+        $traverser->addVisitor(new ModelUpdateVistor($columns, $forceCasts));
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
