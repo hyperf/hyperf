@@ -74,7 +74,7 @@ class ModelCommand extends Command
         $pool = $input->getOption('pool');
         $path = $input->getOption('path');
         $prefix = $input->getOption('prefix');
-        $forceCasts = (bool) $input->getOption('force-casts');
+        $forceCasts = $input->getOption('force-casts') !== false;
 
         $path = BASE_PATH . '/' . $path;
         if ($table) {
