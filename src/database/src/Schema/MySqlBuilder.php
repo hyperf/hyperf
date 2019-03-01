@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema;
 
+use Hyperf\Database\Query\Processors\MySqlProcessor;
+
 class MySqlBuilder extends Builder
 {
     /**
@@ -46,6 +48,26 @@ class MySqlBuilder extends Builder
         );
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
+    }
+
+    /**
+     * Get the column type listing for a given table.
+     *
+     * @param string $table
+     * @return array
+     */
+    public function getColumnTypeListing($table)
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        $results = $this->connection->select(
+            $this->grammar->compileColumnListing(),
+            [$this->connection->getDatabaseName(), $table]
+        );
+
+        /** @var MySqlProcessor $processor */
+        $processor = $this->connection->getPostProcessor();
+        return $processor->processListing($results);
     }
 
     /**

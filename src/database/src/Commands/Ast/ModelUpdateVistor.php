@@ -37,7 +37,8 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
-                    $doc .= ' * @property $' . $column . PHP_EOL;
+                    $name = $column['column_name'];
+                    $doc .= ' * @property $' . $name . PHP_EOL;
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
@@ -49,7 +50,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column));
+            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name']));
         }
 
         $node->default = new Node\Expr\Array_($items);

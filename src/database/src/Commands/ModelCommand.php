@@ -109,7 +109,7 @@ class ModelCommand extends Command
     {
         $builder = $this->getSchemaBuilder($poolName);
 
-        $columns = $builder->getColumnListing($table);
+        $columns = $builder->getColumnTypeListing($table);
 
         $class = Str::studly($table);
         $path = $dir . '/' . $class . '.php';
