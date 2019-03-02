@@ -27,7 +27,7 @@ class Server
     /**
      * @var SwooleServer
      */
-    protected $server;
+    public $server;
 
     /**
      * @var array
