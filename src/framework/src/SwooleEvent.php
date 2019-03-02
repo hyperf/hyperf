@@ -25,6 +25,21 @@ class SwooleEvent
     const ON_WORKER_START = 'workerStart';
 
     /**
+     * Swoole onWorkerStop event.
+     */
+    const ON_WORKER_STOP = 'workerStop';
+
+    /**
+     * Swoole onWorkerExit event.
+     */
+    const ON_WORKER_EXIT = 'workerExit';
+
+    /**
+     * Swoole onPipeMessage event.
+     */
+    const ON_PIPE_MESSAGE = 'pipeMessage';
+
+    /**
      * Swoole onRequest event.
      */
     const ON_REQUEST = 'request';
