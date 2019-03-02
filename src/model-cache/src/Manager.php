@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Di\Container;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Database\Model\Collection;
@@ -47,9 +48,16 @@ class Manager
         }
 
         foreach ($config->get('databases') as $key => $item) {
-            $handler = $item['handler'] ?? RedisHandler::class;
+            $handlerClass = $item['handler'] ?? RedisHandler::class;
             $config = new Config($item['cache'] ?? [], $key);
-            $this->handlers[$key] = new $handler($this->container, $config);
+
+            if ($container instanceof Container) {
+                $handler = $container->make($handlerClass, ['config' => $config]);
+            } else {
+                $handler = new $handlerClass($this->container, $config);
+            }
+
+            $this->handlers[$key] = $handler;
         }
     }
 
