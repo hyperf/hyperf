@@ -1,17 +1,25 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\ConfigApollo\Process;
 
-
-use Hyperf\ConfigApollo\ClientInterface;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Process\Process;
-use Psr\Container\ContainerInterface;
 use Swoole\Server;
+use Hyperf\Process\Process;
+use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
+use Hyperf\ConfigApollo\ClientInterface;
 
 class ConfigFetcherProcess extends Process
 {
-
     public $name = 'config-fetcher';
 
     /**
@@ -45,10 +53,11 @@ class ConfigFetcherProcess extends Process
     public function handle(): void
     {
         $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-        $ipcCallback = function ($configs) use ($workerCount) {
+        $ipcCallback = function ($configs, $namespace) use ($workerCount) {
             if (isset($configs['configurations'], $configs['releaseKey'])) {
-                for ($i = 0; $i <= $workerCount; $i++) {
-                    $this->server->sendMessage($configs, $i);
+                $configs['namespace'] = $namespace;
+                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
+                    $this->server->sendMessage($configs, $workerId);
                 }
             }
         };
@@ -62,5 +71,4 @@ class ConfigFetcherProcess extends Process
             sleep($this->config->get('config-center.apollo.interval', 5));
         }
     }
-
 }

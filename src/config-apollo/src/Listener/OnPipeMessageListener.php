@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo\Listener;
 
+use Hyperf\ConfigApollo\Option;
+use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\ConfigApollo\ClientInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Event\Contract\ListenerInterface;
 
 /**
  * @Listener
@@ -38,10 +41,16 @@ class OnPipeMessageListener implements ListenerInterface
      */
     private static $releaseKey;
 
-    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
+    /**
+     * @var \Hyperf\ConfigApollo\ClientInterface
+     */
+    private $client;
+
+    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger, ClientInterface $client)
     {
         $this->config = $config;
         $this->logger = $logger;
+        $this->client = $client;
     }
 
     /**
@@ -61,16 +70,26 @@ class OnPipeMessageListener implements ListenerInterface
     public function process(object $event)
     {
         /** @var OnPipeMessage $event */
-        if (! isset($event->data['configurations'], $event->data['releaseKey'])) {
+        if (! isset($event->data['configurations'], $event->data['releaseKey'], $event->data['namespace'])) {
             return;
         }
-        if (! $event->data['releaseKey'] || $event->data['releaseKey'] === self::$releaseKey) {
+        if (! $event->data['configurations'] || ! $event->data['releaseKey'] || ! $event->data['namespace']) {
+            return;
+        }
+        /** @var \Hyperf\ConfigApollo\Option $option */
+        $option = $this->client->option;
+        if (! $option instanceof Option) {
+            return;
+        }
+        $cacheKey = $option->buildCacheKey($event->data['namespace']);
+        $cachedKey = ReleaseKey::get($cacheKey);
+        if ($cachedKey && $cachedKey === $event->data['releaseKey']) {
             return;
         }
         foreach ($event->data['configurations'] ?? [] as $key => $value) {
             $this->config->set($key, $value);
             $this->logger->debug(sprintf('Config [%s] is updated', $key));
         }
-        self::$releaseKey = $event->data['releaseKey'];
+        ReleaseKey::set($cacheKey, $event->data['releaseKey']);
     }
 }
