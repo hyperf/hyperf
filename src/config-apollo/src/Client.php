@@ -64,11 +64,13 @@ class Client implements ClientInterface
         foreach ($result as $namespace => $configs) {
             if (isset($configs['releaseKey'], $configs['configurations'])) {
                 if (isset($callbacks[$namespace])) {
-                    call($callbacks[$namespace], [$configs]);
+                    // Call the method level callbacks.
+                    call($callbacks[$namespace], [$configs, $namespace]);
                 } elseif (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
-                    call($this->callbacks[$namespace], [$configs]);
+                    // Call the config level callbacks.
+                    call($this->callbacks[$namespace], [$configs, $namespace]);
                 } else {
-                    // Call default callback.
+                    // Call the default callback.
                     if ($this->config instanceof ConfigInterface) {
                         foreach ($configs['configurations'] ?? [] as $key => $value) {
                             $this->config->set($key, $value);
@@ -80,7 +82,12 @@ class Client implements ClientInterface
         }
     }
 
-    public function coroutinePull(array $namespaces)
+    public function getOption(): Option
+    {
+        return $this->option;
+    }
+
+    private function coroutinePull(array $namespaces): array
     {
         $option = $this->option;
         $parallel = new Parallel();
@@ -99,7 +106,7 @@ class Client implements ClientInterface
                     ],
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string)$response->getBody(), true);
+                    $body = json_decode((string) $response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -116,7 +123,7 @@ class Client implements ClientInterface
         return $parallel->wait();
     }
 
-    public function blockingPull(array $namespaces)
+    private function blockingPull(array $namespaces): array
     {
         $result = [];
         $url = $this->option->buildBaseUrl();
@@ -134,7 +141,7 @@ class Client implements ClientInterface
                 ],
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string)$response->getBody(), true);
+                $body = json_decode((string) $response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
