@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
+namespace App\Aspects;
+
+use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\Aop\AbstractAspect;
+use Psr\Container\ContainerInterface;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+/**
+ * @Aspect
+ */
+class DemoAspect extends AbstractAspect
+{
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        return $proceedingJoinPoint->process();
+    }
+}
