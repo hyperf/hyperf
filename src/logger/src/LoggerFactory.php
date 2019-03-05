@@ -42,17 +42,15 @@ class LoggerFactory
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function make($name = 'default', $subname = null): LoggerInterface
+    public function make($name = 'hyperf', $group = 'default'): LoggerInterface
     {
         $config = $this->config->get('logger');
-        if (! isset($config[$name])) {
+        if (! isset($config[$group])) {
             throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $name));
         }
 
-        $config = $config[$name];
+        $config = $config[$group];
         $handler = $this->handler($config);
-
-        $subname && $name = $name . '.' . $subname;
 
         return make(Logger::class, [
             'name' => $name,
@@ -60,13 +58,13 @@ class LoggerFactory
         ]);
     }
 
-    public function get($name = 'default'): LoggerInterface
+    public function get($name = 'hyperf', $group = 'default'): LoggerInterface
     {
         if (isset($this->loggers[$name]) && $this->loggers[$name] instanceof Logger) {
             return $this->loggers[$name];
         }
 
-        return $this->loggers[$name] = $this->make($name);
+        return $this->loggers[$name] = $this->make($name, $group);
     }
 
     protected function handler(array $config): HandlerInterface
