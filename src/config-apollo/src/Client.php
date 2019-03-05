@@ -82,7 +82,12 @@ class Client implements ClientInterface
         }
     }
 
-    public function coroutinePull(array $namespaces)
+    public function getOption(): Option
+    {
+        return $this->option;
+    }
+
+    private function coroutinePull(array $namespaces): array
     {
         $option = $this->option;
         $parallel = new Parallel();
@@ -118,7 +123,7 @@ class Client implements ClientInterface
         return $parallel->wait();
     }
 
-    public function blockingPull(array $namespaces)
+    private function blockingPull(array $namespaces): array
     {
         $result = [];
         $url = $this->option->buildBaseUrl();
@@ -149,10 +154,5 @@ class Client implements ClientInterface
             }
         }
         return $result;
-    }
-
-    public function getOption(): Option
-    {
-        return $this->option;
     }
 }
