@@ -76,8 +76,7 @@ class OnPipeMessageListener implements ListenerInterface
         if (! $event->data['configurations'] || ! $event->data['releaseKey'] || ! $event->data['namespace']) {
             return;
         }
-        /** @var \Hyperf\ConfigApollo\Option $option */
-        $option = $this->client->option;
+        $option = $this->client->getOption();
         if (! $option instanceof Option) {
             return;
         }
