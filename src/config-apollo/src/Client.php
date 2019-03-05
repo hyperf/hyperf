@@ -51,7 +51,7 @@ class Client implements ClientInterface
         $this->config = $config;
     }
 
-    public function pull(array $namespaces): void
+    public function pull(array $namespaces, array $callbacks = []): void
     {
         if (! $namespaces) {
             return;
@@ -63,7 +63,9 @@ class Client implements ClientInterface
         }
         foreach ($result as $namespace => $configs) {
             if (isset($configs['releaseKey'], $configs['configurations'])) {
-                if (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
+                if (isset($callbacks[$namespace])) {
+                    call($callbacks[$namespace], [$configs]);
+                } elseif (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
                     call($this->callbacks[$namespace], [$configs]);
                 } else {
                     // Call default callback.
@@ -78,7 +80,7 @@ class Client implements ClientInterface
         }
     }
 
-    protected function coroutinePull(array $namespaces)
+    public function coroutinePull(array $namespaces)
     {
         $option = $this->option;
         $parallel = new Parallel();
@@ -97,7 +99,7 @@ class Client implements ClientInterface
                     ],
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string) $response->getBody(), true);
+                    $body = json_decode((string)$response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -114,7 +116,7 @@ class Client implements ClientInterface
         return $parallel->wait();
     }
 
-    protected function blockingPull(array $namespaces)
+    public function blockingPull(array $namespaces)
     {
         $result = [];
         $url = $this->option->buildBaseUrl();
@@ -132,7 +134,7 @@ class Client implements ClientInterface
                 ],
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string) $response->getBody(), true);
+                $body = json_decode((string)$response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
