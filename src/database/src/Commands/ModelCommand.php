@@ -17,8 +17,8 @@ use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\DbConnection\ConnectionResolver;
 use Symfony\Component\Console\Command\Command;
+use Hyperf\Database\ConnectionResolverInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ModelCommand extends Command
 {
     /**
-     * @var ConnectionResolver
+     * @var ConnectionResolverInterface
      */
     protected $resolver;
 
@@ -47,7 +47,7 @@ class ModelCommand extends Command
      */
     protected $output;
 
-    public function __construct(ConnectionResolver $resolver)
+    public function __construct(ConnectionResolverInterface $resolver)
     {
         parent::__construct('db:model');
         $this->resolver = $resolver;
