@@ -140,7 +140,6 @@ abstract class GeneratorCommand extends Command
      * Build the class with the given name.
      *
      * @param string $name
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @return string
      */
     protected function buildClass($name)
@@ -215,6 +214,11 @@ abstract class GeneratorCommand extends Command
         ];
     }
 
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
     protected function getOptions()
     {
         return [

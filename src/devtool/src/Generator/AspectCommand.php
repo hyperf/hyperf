@@ -21,7 +21,8 @@ class AspectCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('make:aspect');
+        parent::__construct('gen:aspect');
+        $this->setDescription('Create a new aspect class');
     }
 
     protected function getStub(): string

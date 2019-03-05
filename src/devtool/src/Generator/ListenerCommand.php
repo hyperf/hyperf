@@ -21,7 +21,8 @@ class ListenerCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('make:listener');
+        parent::__construct('gen:listener');
+        $this->setDescription('Create a new listener class');
     }
 
     protected function getStub(): string

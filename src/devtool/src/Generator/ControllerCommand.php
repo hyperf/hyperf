@@ -21,7 +21,8 @@ class ControllerCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('make:controller');
+        parent::__construct('gen:controller');
+        $this->setDescription('Create a new controller class');
     }
 
     protected function getStub(): string

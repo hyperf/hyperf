@@ -21,7 +21,8 @@ class MiddlewareCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('make:middleware');
+        parent::__construct('gen:middleware');
+        $this->setDescription('Create a new middleware class');
     }
 
     protected function getStub(): string

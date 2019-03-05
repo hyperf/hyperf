@@ -21,7 +21,8 @@ class JobCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('make:job');
+        parent::__construct('gen:job');
+        $this->setDescription('Create a new job class');
     }
 
     protected function getStub(): string
