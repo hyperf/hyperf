@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
+namespace %NAMESPACE%;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+
+/**
+ * %CLASS%.
+ */
+class %CLASS%
+{
+    public function index(RequestInterface $request, ResponseInterface $response)
+    {
+        return $response->raw('Hello Hyperf!');
+    }
+}
