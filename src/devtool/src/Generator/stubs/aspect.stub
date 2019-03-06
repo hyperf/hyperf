@@ -10,9 +10,10 @@ use Psr\Container\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 /**
+ * %CLASS%
  * @Aspect
  */
-class DemoAspect extends AbstractAspect
+class %CLASS% extends AbstractAspect
 {
     protected $container;
 
