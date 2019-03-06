@@ -85,18 +85,12 @@ abstract class GeneratorCommand extends Command
 
         $name = str_replace('/', '\\', $name);
 
-        return $this->getDefaultNamespace() . '\\' . $name;
-    }
+        $namespace = $this->input->getOption('namespace');
+        if (empty($namespace)) {
+            $namespace = $this->getDefaultNamespace();
+        }
 
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param string $rootNamespace
-     * @return string
-     */
-    protected function getDefaultNamespace()
-    {
-        return 'App';
+        return $namespace . '\\' . $name;
     }
 
     /**
@@ -223,6 +217,7 @@ abstract class GeneratorCommand extends Command
     {
         return [
             ['force', 'f', InputOption::VALUE_OPTIONAL, 'Whether force to rewrite.', false],
+            ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
         ];
     }
 
@@ -231,4 +226,12 @@ abstract class GeneratorCommand extends Command
      * @return string
      */
     abstract protected function getStub(): string;
+
+    /**
+     * Get the default namespace for the class.
+     *
+     * @param string $rootNamespace
+     * @return string
+     */
+    abstract protected function getDefaultNamespace(): string;
 }

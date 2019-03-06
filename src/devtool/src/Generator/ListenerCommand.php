@@ -30,7 +30,7 @@ class ListenerCommand extends GeneratorCommand
         return __DIR__ . '/stubs/listener.stub';
     }
 
-    protected function getDefaultNamespace()
+    protected function getDefaultNamespace(): string
     {
         return 'App\\Listeners';
     }

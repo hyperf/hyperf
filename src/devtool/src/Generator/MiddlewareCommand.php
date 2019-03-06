@@ -30,7 +30,7 @@ class MiddlewareCommand extends GeneratorCommand
         return __DIR__ . '/stubs/middleware.stub';
     }
 
-    protected function getDefaultNamespace()
+    protected function getDefaultNamespace(): string
     {
         return 'App\\Middlewares';
     }

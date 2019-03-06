@@ -30,7 +30,7 @@ class AspectCommand extends GeneratorCommand
         return __DIR__ . '/stubs/aspect.stub';
     }
 
-    protected function getDefaultNamespace()
+    protected function getDefaultNamespace(): string
     {
         return 'App\\Aspects';
     }

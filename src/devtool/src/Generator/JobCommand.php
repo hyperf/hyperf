@@ -30,7 +30,7 @@ class JobCommand extends GeneratorCommand
         return __DIR__ . '/stubs/job.stub';
     }
 
-    protected function getDefaultNamespace()
+    protected function getDefaultNamespace(): string
     {
         return 'App\\Jobs';
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Aspects;
+namespace %NAMESPACE%;
 
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
