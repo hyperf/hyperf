@@ -33,6 +33,21 @@ abstract class Process implements ProcessInterface
     public $nums = 1;
 
     /**
+     * @var bool
+     */
+    public $redirectStdinStdout = false;
+
+    /**
+     * @var int
+     */
+    public $pipeType = 2;
+
+    /**
+     * @var bool
+     */
+    public $enableCoroutine = true;
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -58,7 +73,7 @@ abstract class Process implements ProcessInterface
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
                 $this->handle();
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
-            });
+            }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
         }
     }

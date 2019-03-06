@@ -10,7 +10,6 @@ use Psr\Container\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 /**
- * %CLASS%
  * @Aspect
  */
 class %CLASS% extends AbstractAspect

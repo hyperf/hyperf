@@ -8,7 +8,6 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 
 /**
- * %CLASS%
  * @Producer(exchange="hyperf", routingKey="hyperf")
  */
 class %CLASS% extends ProducerMessage

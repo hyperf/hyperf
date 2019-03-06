@@ -7,9 +7,6 @@ namespace %NAMESPACE%;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 
-/**
- * %CLASS%.
- */
 class %CLASS%
 {
     public function index(RequestInterface $request, ResponseInterface $response)
