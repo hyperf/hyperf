@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Process;
 
-use Hyperf\Process\Process;
+use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 use Hyperf\Queue\Driver\DriverFactory;
 use Hyperf\Queue\Driver\DriverInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-class ConsumerProcess extends Process
+class ConsumerAbstractProcess extends AbstractProcess
 {
     /**
      * @var string
@@ -47,7 +47,7 @@ class ConsumerProcess extends Process
     {
         if (! $this->driver instanceof DriverInterface) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
+            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerAbstractProcess::class, 'config/autoload/queue.php'));
             return;
         }
 

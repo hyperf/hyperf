@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
-use Hyperf\Di\Aop\AstCollector;
-
 class FactoryDefinition implements DefinitionInterface
 {
     /**
@@ -30,11 +28,6 @@ class FactoryDefinition implements DefinitionInterface
      * @var mixed[]
      */
     private $parameters = [];
-
-    /**
-     * @var null|array
-     */
-    private $ast;
 
     /**
      * @var bool
@@ -78,14 +71,6 @@ class FactoryDefinition implements DefinitionInterface
     public function getParameters(): array
     {
         return $this->parameters;
-    }
-
-    public function getAst(): array
-    {
-        if ($this->ast === null) {
-            $this->ast = AstCollector::get($this->getFactory(), []);
-        }
-        return $this->ast;
     }
 
     /**

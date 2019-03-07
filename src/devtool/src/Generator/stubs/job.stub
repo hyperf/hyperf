@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Queue\Job;
+
+class %CLASS% extends Job
+{
+    public function handle()
+    {
+    }
+}

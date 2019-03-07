@@ -1,0 +1,34 @@
+{
+    "name": "hyperf/elasticsearch",
+    "type": "library",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "elasticsearch"
+    ],
+    "description": "Elasticsearch client for hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Elasticsearch\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "require": {
+        "php": ">=7.0",
+        "hyperf/guzzle": "dev-master",
+        "elasticsearch/elasticsearch": "^6.1"
+    },
+    "require-dev": {
+        "swoft/swoole-ide-helper": "dev-master",
+        "phpunit/phpunit": "^5.7",
+        "guzzlehttp/ringphp": "~1.0"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml",
+        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
+    }
+}

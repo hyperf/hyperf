@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf.
  *
@@ -11,6 +12,7 @@ declare(strict_types=1);
  */
 
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\HigherOrderTapProxy;
@@ -18,6 +20,7 @@ use Hyperf\Utils\HigherOrderTapProxy;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
+     *
      * @param mixed $value
      */
     function value($value)
@@ -87,6 +90,7 @@ if (! function_exists('retry')) {
 if (! function_exists('with')) {
     /**
      * Return the given value, optionally passed through the given callback.
+     *
      * @param mixed $value
      */
     function with($value, callable $callback = null)
@@ -369,5 +373,19 @@ if (! function_exists('getter')) {
     function getter(string $property): string
     {
         return 'get' . Str::studly($property);
+    }
+}
+
+if (! function_exists('parallel')) {
+    /**
+     * @param callable[] $callables
+     */
+    function parallel($callables)
+    {
+        $parallel = new Parallel();
+        foreach ($callables as $key => $callable) {
+            $parallel->add($callable, $key);
+        }
+        return $parallel->wait();
     }
 }

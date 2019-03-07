@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+
+class %CLASS%
+{
+    public function index(RequestInterface $request, ResponseInterface $response)
+    {
+        return $response->raw('Hello Hyperf!');
+    }
+}

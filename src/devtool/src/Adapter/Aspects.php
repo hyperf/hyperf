@@ -18,7 +18,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Aspects extends AbstractAdapter
 {
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $result = $this->prepareResult($input);

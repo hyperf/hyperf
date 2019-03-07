@@ -12,15 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool;
 
-use Symfony\Component\Console\Command\Command;
+use Hyperf\Framework\Annotation\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 /**
- * @\Hyperf\Framework\Annotation\Command
+ * @Command
  */
-class InfoCommand extends Command
+class InfoCommand extends SymfonyCommand
 {
     /**
      * @var Info

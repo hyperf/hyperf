@@ -20,7 +20,7 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-abstract class Process implements ProcessInterface
+abstract class AbstractProcess implements ProcessInterface
 {
     /**
      * @var string
@@ -31,6 +31,21 @@ abstract class Process implements ProcessInterface
      * @var int
      */
     public $nums = 1;
+
+    /**
+     * @var bool
+     */
+    public $redirectStdinStdout = false;
+
+    /**
+     * @var int
+     */
+    public $pipeType = 2;
+
+    /**
+     * @var bool
+     */
+    public $enableCoroutine = true;
 
     /**
      * @var ContainerInterface
@@ -58,7 +73,7 @@ abstract class Process implements ProcessInterface
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
                 $this->handle();
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
-            });
+            }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
         }
     }

@@ -1,0 +1,55 @@
+{
+    "name": "hyperf/logger",
+    "description": "A logger component for hyperf.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "hyperf",
+        "logger"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/log": "^1.0",
+        "psr/container": "^1.0",
+        "hyperf/contract": "dev-master",
+        "hyperf/utils": "dev-master",
+        "monolog/monolog": "^1.24"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+        ],
+        "psr-4": {
+            "Hyperf\\Logger\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\Logger\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}

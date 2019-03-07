@@ -26,4 +26,17 @@ class MySqlProcessor extends Processor
             return ((object) $result)->column_name;
         }, $results);
     }
+
+    /**
+     * Process the results of a column type listing query.
+     *
+     * @param array $results
+     * @return array
+     */
+    public function processListing($results)
+    {
+        return array_map(function ($result) {
+            return (array) $result;
+        }, $results);
+    }
 }
