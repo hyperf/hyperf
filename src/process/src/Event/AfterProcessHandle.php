@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Event;
 
-use Hyperf\Process\Process;
+use Hyperf\Process\AbstractProcess;
 
 class AfterProcessHandle
 {
     /**
-     * @var Process
+     * @var AbstractProcess
      */
     public $process;
 
@@ -26,7 +26,7 @@ class AfterProcessHandle
      */
     public $index;
 
-    public function __construct(Process $process, int $index)
+    public function __construct(AbstractProcess $process, int $index)
     {
         $this->process = $process;
         $this->index = $index;

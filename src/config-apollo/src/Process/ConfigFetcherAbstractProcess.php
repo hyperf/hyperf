@@ -12,14 +12,21 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo\Process;
 
+use Hyperf\Process\Annotation\Process;
 use Swoole\Server;
-use Hyperf\Process\Process;
+use Hyperf\Process\AbstractProcess;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Hyperf\ConfigApollo\ClientInterface;
 
-class ConfigFetcherProcess extends Process
+/**
+ * @Process(name="config-fetcher")
+ */
+class ConfigFetcherAbstractProcess extends AbstractProcess
 {
+    /**
+     * @var string
+     */
     public $name = 'config-fetcher';
 
     /**

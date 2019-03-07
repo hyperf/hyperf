@@ -20,7 +20,7 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-abstract class Process implements ProcessInterface
+abstract class AbstractProcess implements ProcessInterface
 {
     /**
      * @var string

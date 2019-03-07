@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Process\Process;
+use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessRegister;
 use Psr\Container\ContainerInterface;
 use Doctrine\Instantiator\Instantiator;
@@ -57,9 +57,9 @@ class ConsumerManager
         }
     }
 
-    private function createProcess(ConsumerMessageInterface $consumerMessage): Process
+    private function createProcess(ConsumerMessageInterface $consumerMessage): AbstractProcess
     {
-        return new class($this->container, $consumerMessage) extends Process {
+        return new class($this->container, $consumerMessage) extends AbstractProcess {
             /**
              * @var \Hyperf\Amqp\Consumer
              */
