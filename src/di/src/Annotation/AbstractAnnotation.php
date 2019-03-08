@@ -14,44 +14,27 @@ namespace Hyperf\Di\Annotation;
 
 abstract class AbstractAnnotation implements AnnotationInterface
 {
-    /**
-     * @var array
-     */
-    public $value;
-
     public function __construct($value = null)
     {
-        $this->value = $value;
-        if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                if (property_exists($this, $key)) {
-                    $this->$key = $val;
-                }
+        foreach ($value ?? [] as $key => $val) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $val;
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function collectClass(string $className, ?string $target): void
     {
-        if ($this->value !== null) {
-            AnnotationCollector::collectClass($className, static::class, $this);
-        }
+        AnnotationCollector::collectClass($className, static::class, $this);
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
-        if ($this->value !== null) {
-            AnnotationCollector::collectMethod($className, $target, static::class, $this);
-        }
+        AnnotationCollector::collectMethod($className, $target, static::class, $this);
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
-        if ($this->value !== null) {
-            AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        }
+        AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 }

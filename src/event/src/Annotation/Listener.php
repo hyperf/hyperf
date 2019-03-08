@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Event\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\Annotation\AnnotationCollector;
 
 /**
  * @Annotation
@@ -25,20 +24,4 @@ class Listener extends AbstractAnnotation
      * @var int
      */
     public $priority = 1;
-
-    public function __construct($value = null)
-    {
-        parent::__construct($value);
-        if (isset($value['priority']) && is_numeric($value['priority'])) {
-            $this->priority = (int) $value['priority'];
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function collectClass(string $className, ?string $target): void
-    {
-        AnnotationCollector::collectClass($className, static::class, $this);
-    }
 }

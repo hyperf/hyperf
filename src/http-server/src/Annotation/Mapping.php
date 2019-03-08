@@ -22,7 +22,6 @@ abstract class Mapping extends AbstractAnnotation
 
     public function __construct($value = null)
     {
-        parent::__construct($value);
         if (isset($value['path'])) {
             $this->path = $value['path'];
         }
