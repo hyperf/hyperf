@@ -29,15 +29,4 @@ class Controller extends AbstractAnnotation
      * @var string
      */
     public $server = 'http';
-
-    public function __construct($value = null)
-    {
-        $this->value = $value;
-        if (isset($value['prefix'])) {
-            $this->prefix = $value['prefix'];
-        }
-        if (isset($value['server'])) {
-            $this->server = $value['server'];
-        }
-    }
 }
