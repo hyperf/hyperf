@@ -29,26 +29,32 @@ class Context
      */
     protected $logger;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var string
+     */
+    protected $name;
+
+    public function __construct(ContainerInterface $container, string $name)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->name = $name;
     }
 
     /**
      * Get a connection from request context.
      */
-    public function connection(string $name): ?ConnectionInterface
+    public function connection(): ?ConnectionInterface
     {
-        if (RequestContext::has($name)) {
-            return RequestContext::get($name);
+        if (RequestContext::has($this->name)) {
+            return RequestContext::get($this->name);
         }
 
         return null;
     }
 
-    public function set($name, ConnectionInterface $connection): void
+    public function set(ConnectionInterface $connection): void
     {
-        RequestContext::set($name, $connection);
+        RequestContext::set($this->name, $connection);
     }
 }

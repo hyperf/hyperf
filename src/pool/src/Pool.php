@@ -38,6 +38,11 @@ abstract class Pool implements PoolInterface
     protected $option;
 
     /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
      * @var int
      */
     protected $currentConnections = 0;
@@ -52,7 +57,18 @@ abstract class Pool implements PoolInterface
 
     public function get(): ConnectionInterface
     {
+        if ($this->context instanceof Context) {
+            $connection = $this->context->connection();
+            if ($connection) {
+                return $connection;
+            }
+        }
+
         $connection = $this->getConnection();
+
+        if ($this->context instanceof Context) {
+            $this->context->set($connection);
+        }
 
         if (Coroutine::inCoroutine()) {
             // Release the connecion before the current coroutine end.
@@ -102,12 +118,6 @@ abstract class Pool implements PoolInterface
     }
 
     abstract protected function createConnection(): ConnectionInterface;
-
-    /**
-     * Get id of connection for context.
-     * @return string
-     */
-    abstract protected function getConnectionId(): string;
 
     private function getConnection(): ConnectionInterface
     {

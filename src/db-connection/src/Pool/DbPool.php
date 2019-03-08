@@ -14,6 +14,7 @@ namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
+use Hyperf\Pool\Context;
 use Hyperf\DbConnection\Connection;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
@@ -38,6 +39,8 @@ class DbPool extends Pool
         $options = Arr::get($this->config, 'pool', []);
 
         parent::__construct($container, $options);
+
+        $this->context = make(Context::class, ['name' => $this->name]);
     }
 
     public function getName(): string

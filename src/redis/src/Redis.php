@@ -31,16 +31,11 @@ class Redis
 
     public function __call($name, $arguments)
     {
-        $context = $this->container->get(Context::class);
-        $connection = $context->connection($this->name);
-        if (! $connection) {
-            $factory = $this->container->get(PoolFactory::class);
-            $pool = $factory->getPool($this->name);
+        $factory = $this->container->get(PoolFactory::class);
+        $pool = $factory->getPool($this->name);
 
-            $connection = $pool->get();
-            $context->set($this->name, $connection);
-        }
+        $connection = $pool->get()->getConnection();
 
-        return $connection->getConnection()->{$name}(...$arguments);
+        return $connection->{$name}(...$arguments);
     }
 }
