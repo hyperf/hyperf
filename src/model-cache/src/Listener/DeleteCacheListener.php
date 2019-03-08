@@ -18,6 +18,7 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Created;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Updated;
+use Hyperf\ModelCache\CacheableInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**
@@ -39,7 +40,7 @@ class DeleteCacheListener implements ListenerInterface
     {
         if ($event instanceof Event) {
             $model = $event->getModel();
-            if (method_exists($model, 'deleteCache')) {
+            if ($model instanceof CacheableInterface) {
                 $model->deleteCache();
             }
         }

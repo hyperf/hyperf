@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Database\Model\Model;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Database\Model\Collection;
 
 trait Cacheable
 {
@@ -21,7 +23,7 @@ trait Cacheable
      * @param mixed $id
      * @return null|self
      */
-    public static function findFromCache($id)
+    public static function findFromCache($id): ?Model
     {
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
@@ -34,7 +36,7 @@ trait Cacheable
      * @param mixed $ids
      * @return \Hyperf\Database\Model\Collection
      */
-    public static function findManyFromCache($ids)
+    public static function findManyFromCache($ids): Collection
     {
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
@@ -46,7 +48,7 @@ trait Cacheable
      * Delete model from cache.
      * @return bool
      */
-    public function deleteCache()
+    public function deleteCache(): bool
     {
         $manager = $this->getContainer()->get(Manager::class);
 
