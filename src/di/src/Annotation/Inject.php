@@ -37,9 +37,6 @@ class Inject extends AbstractAnnotation
         $this->docReader = new PhpDocReader();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function collectProperty(string $className, ?string $target): void
     {
         $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
