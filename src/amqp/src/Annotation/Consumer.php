@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\Annotation\AnnotationCollector;
 
 /**
  * @Annotation

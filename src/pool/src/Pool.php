@@ -33,11 +33,6 @@ abstract class Pool implements PoolInterface
     protected $container;
 
     /**
-     * @var string
-     */
-    protected $optionName = PoolOption::class;
-
-    /**
      * @var PoolOptionInterface
      */
     protected $option;
@@ -47,12 +42,12 @@ abstract class Pool implements PoolInterface
      */
     protected $currentConnections = 0;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, array $config = [])
     {
         $this->container = $container;
-        $this->initOption();
+        $this->initOption($config);
 
-        $this->channel = new Channel($this->option->getMaxConnections());
+        $this->channel = make(Channel::class, ['size' => $this->option->getMaxConnections()]);
     }
 
     public function get(): ConnectionInterface
@@ -95,12 +90,24 @@ abstract class Pool implements PoolInterface
         return $this->channel->length();
     }
 
-    protected function initOption(): void
+    protected function initOption(array $options = []): void
     {
-        $this->option = $this->container->get($this->optionName);
+        $this->option = make(PoolOption::class, [
+            'minConnections' => $options['min_connections'] ?? 1,
+            'maxConnections' => $options['max_connections'] ?? 10,
+            'connectTimeout' => $options['connect_timeout'] ?? 10.0,
+            'waitTimeout' => $options['wait_timeout'] ?? 3.0,
+            'heartbeat' => $options['heartbeat'] ?? -1,
+        ]);
     }
 
     abstract protected function createConnection(): ConnectionInterface;
+
+    /**
+     * Get id of connection for context.
+     * @return string
+     */
+    abstract protected function getConnectionId(): string;
 
     private function getConnection(): ConnectionInterface
     {

@@ -58,6 +58,15 @@ class PoolOption implements PoolOptionInterface
      */
     private $heartbeat = -1;
 
+    public function __construct(int $minConnections, int $maxConnections, float $connectTimeout, float $waitTimeout, float $heartbeat)
+    {
+        $this->minConnections = $minConnections;
+        $this->maxConnections = $maxConnections;
+        $this->connectTimeout = $connectTimeout;
+        $this->waitTimeout = $waitTimeout;
+        $this->heartbeat = $heartbeat;
+    }
+
     public function getMaxConnections(): int
     {
         return $this->maxConnections;

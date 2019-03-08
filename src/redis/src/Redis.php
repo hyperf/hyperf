@@ -33,7 +33,7 @@ class Redis
     {
         $context = $this->container->get(Context::class);
         $connection = $context->connection($this->name);
-        if (!$connection) {
+        if (! $connection) {
             $factory = $this->container->get(PoolFactory::class);
             $pool = $factory->getPool($this->name);
 
