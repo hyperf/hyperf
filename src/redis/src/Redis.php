@@ -22,17 +22,22 @@ class Redis
      */
     protected $container;
 
+    /**
+     * @var PoolFactory
+     */
+    protected $factory;
+
     protected $name = 'default';
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->factory = $container->get(PoolFactory::class);
     }
 
     public function __call($name, $arguments)
     {
-        $factory = $this->container->get(PoolFactory::class);
-        $pool = $factory->getPool($this->name);
+        $pool = $this->factory->getPool($this->name);
 
         $connection = $pool->get()->getConnection();
 
