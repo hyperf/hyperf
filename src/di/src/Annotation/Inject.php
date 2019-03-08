@@ -34,7 +34,7 @@ class Inject extends AbstractAnnotation
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->docReader = new PhpDocReader();
+        $this->docReader = make(PhpDocReader::class);
     }
 
     public function collectProperty(string $className, ?string $target): void
