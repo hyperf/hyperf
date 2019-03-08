@@ -22,6 +22,13 @@ abstract class AbstractAnnotation implements AnnotationInterface
     public function __construct($value = null)
     {
         $this->value = $value;
+        if (is_array($value)) {
+            foreach ($value as $key => $val) {
+                if (property_exists($this, $key)) {
+                    $this->$key = $val;
+                }
+            }
+        }
     }
 
     /**

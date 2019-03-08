@@ -22,12 +22,12 @@ use Hyperf\ConfigApollo\ClientInterface;
 /**
  * @Process(name="config-fetcher")
  */
-class ConfigFetcherAbstractProcess extends AbstractProcess
+class ConfigFetcherProcess extends AbstractProcess
 {
     /**
      * @var string
      */
-    public $name = 'config-fetcher';
+    public $name = 'config';
 
     /**
      * @var Server

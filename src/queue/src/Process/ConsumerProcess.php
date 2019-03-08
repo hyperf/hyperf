@@ -18,7 +18,7 @@ use Hyperf\Queue\Driver\DriverFactory;
 use Hyperf\Queue\Driver\DriverInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-class ConsumerAbstractProcess extends AbstractProcess
+class ConsumerProcess extends AbstractProcess
 {
     /**
      * @var string
@@ -47,7 +47,7 @@ class ConsumerAbstractProcess extends AbstractProcess
     {
         if (! $this->driver instanceof DriverInterface) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerAbstractProcess::class, 'config/autoload/queue.php'));
+            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
             return;
         }
 

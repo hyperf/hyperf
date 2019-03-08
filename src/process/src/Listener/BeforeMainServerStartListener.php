@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Listener;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessRegister;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Event\Annotation\Listener;
@@ -54,12 +56,20 @@ class BeforeMainServerStartListener implements ListenerInterface
         $server = $event->server;
         $config = $event->serverConfig;
         $processes = $config['processes'] ?? [];
+        $annotationProcesses = $this->getAnnotationProcesses();
 
         // Retrieve the processes have been registered.
-        $processes = array_merge($processes, ProcessRegister::all());
+        $processes = array_merge($processes, ProcessRegister::all(), array_keys($annotationProcesses));
         foreach ($processes as $process) {
             if (is_string($process)) {
                 $instance = $this->container->get($process);
+                if (isset($annotationProcesses[$process])) {
+                    foreach ($annotationProcesses[$process] as $property => $value) {
+                        if (property_exists($instance, $property)) {
+                            $instance->$property = $value;
+                        }
+                    }
+                }
             } else {
                 $instance = $process;
             }
@@ -67,5 +77,10 @@ class BeforeMainServerStartListener implements ListenerInterface
                 $instance->bind($server);
             }
         }
+    }
+
+    private function getAnnotationProcesses()
+    {
+        return AnnotationCollector::getClassByAnnotation(Process::class);
     }
 }
