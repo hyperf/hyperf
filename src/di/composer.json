@@ -38,6 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Di\\": "tests"
         }
     },
     "config": {

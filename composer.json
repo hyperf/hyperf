@@ -118,6 +118,7 @@
         "psr-4": {
             "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests",
             "HyperfTest\\Consul\\": "./src/consul/tests",
+            "HyperfTest\\Di\\": "./src/di/tests",
             "HyperfTest\\Dispatcher\\": "./src/dispatcher/test",
             "HyperfTest\\Database\\": "./src/database/tests",
             "HyperfTest\\Event\\": "./src/event/tests",
