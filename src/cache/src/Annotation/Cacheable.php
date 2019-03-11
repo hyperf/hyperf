@@ -30,29 +30,6 @@ class Cacheable extends AbstractAnnotation
 
     public $group = 'default';
 
-    public function __construct($value = null)
-    {
-        if (isset($value['value'])) {
-            $this->key = $value['value'];
-        }
-
-        if (isset($value['key'])) {
-            $this->key = $value['key'];
-        }
-
-        if (isset($value['ttl'])) {
-            $this->ttl = $value['ttl'];
-        }
-
-        if (isset($value['listener'])) {
-            $this->listener = $value['listener'];
-        }
-
-        if (isset($value['group'])) {
-            $this->group = $value['group'];
-        }
-    }
-
     public function collectMethod(string $className, ?string $target): void
     {
         if (! isset($this->key)) {
