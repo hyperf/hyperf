@@ -48,11 +48,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     protected $config;
 
     /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
      * @var float
      */
     protected $lastUseTime = 0.0;
@@ -64,7 +59,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
         $this->config = $config;
-        $this->context = $container->get(Context::class);
 
         $this->reconnect();
     }

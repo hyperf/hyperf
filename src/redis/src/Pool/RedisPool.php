@@ -14,7 +14,7 @@ namespace Hyperf\Redis\Pool;
 
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
-use Hyperf\Pool\PoolOption;
+use Hyperf\Pool\Context;
 use Hyperf\Redis\RedisConnection;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
@@ -36,27 +36,28 @@ class RedisPool extends Pool
         }
 
         $this->config = $config->get($key);
-        parent::__construct($container);
+        $options = Arr::get($this->config, 'pool', []);
+
+        parent::__construct($container, $options);
+
+        $this->context = make(Context::class, ['name' => $this->getConnectionId()]);
     }
 
-    protected function initOption(): void
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
-        if ($poolOptions = Arr::get($this->config, 'pool')) {
-            $option = new PoolOption();
-            $option->setMinConnections($poolOptions['min_connections'] ?? 1);
-            $option->setMaxConnections($poolOptions['max_connections'] ?? 10);
-            $option->setConnectTimeout($poolOptions['connect_timeout'] ?? 10.0);
-            $option->setWaitTimeout($poolOptions['wait_timeout'] ?? 3.0);
-            $option->setHeartbeat($poolOptions['heartbeat'] ?? -1);
-
-            $this->option = $option;
-        } else {
-            parent::initOption();
-        }
+        return $this->name;
     }
 
     protected function createConnection(): ConnectionInterface
     {
         return new RedisConnection($this->container, $this, $this->config);
+    }
+
+    protected function getConnectionId(): string
+    {
+        return static::class . '.' . $this->getName();
     }
 }

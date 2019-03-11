@@ -33,31 +33,42 @@ abstract class Pool implements PoolInterface
     protected $container;
 
     /**
-     * @var string
-     */
-    protected $optionName = PoolOption::class;
-
-    /**
      * @var PoolOptionInterface
      */
     protected $option;
+
+    /**
+     * @var Context
+     */
+    protected $context;
 
     /**
      * @var int
      */
     protected $currentConnections = 0;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, array $config = [])
     {
         $this->container = $container;
-        $this->initOption();
+        $this->initOption($config);
 
-        $this->channel = new Channel($this->option->getMaxConnections());
+        $this->channel = make(Channel::class, ['size' => $this->option->getMaxConnections()]);
     }
 
     public function get(): ConnectionInterface
     {
+        if ($this->context instanceof Context) {
+            $connection = $this->context->connection();
+            if ($connection) {
+                return $connection;
+            }
+        }
+
         $connection = $this->getConnection();
+
+        if ($this->context instanceof Context) {
+            $this->context->set($connection);
+        }
 
         if (Coroutine::inCoroutine()) {
             // Release the connecion before the current coroutine end.
@@ -95,9 +106,15 @@ abstract class Pool implements PoolInterface
         return $this->channel->length();
     }
 
-    protected function initOption(): void
+    protected function initOption(array $options = []): void
     {
-        $this->option = $this->container->get($this->optionName);
+        $this->option = make(PoolOption::class, [
+            'minConnections' => $options['min_connections'] ?? 1,
+            'maxConnections' => $options['max_connections'] ?? 10,
+            'connectTimeout' => $options['connect_timeout'] ?? 10.0,
+            'waitTimeout' => $options['wait_timeout'] ?? 3.0,
+            'heartbeat' => $options['heartbeat'] ?? -1,
+        ]);
     }
 
     abstract protected function createConnection(): ConnectionInterface;
