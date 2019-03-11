@@ -116,10 +116,10 @@ class StdoutLogger implements StdoutLoggerInterface
         if (! in_array($level, $config['log_level'])) {
             return;
         }
-        foreach ($context as $key => $value) {
-            $search = sprintf('{%s}', $key);
-            $message = str_replace($search, $value, $message);
-        }
+        $search = array_map(function ($key) {
+            return sprintf('{%s}', $key);
+        }, array_keys($context));
+        $message = str_replace($search, $context, $message);
 
         $this->output->writeln($this->getMessage($message, $level));
     }
