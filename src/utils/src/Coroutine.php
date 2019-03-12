@@ -46,9 +46,6 @@ class Coroutine
     public static function create(callable $callback): int
     {
         $result = SwooleCoroutine::create(function () use ($callback) {
-            self::defer(function () {
-                Context::destroy();
-            });
             try {
                 call($callback);
             } catch (Throwable $throwable) {

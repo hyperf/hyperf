@@ -12,53 +12,29 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Hyperf\Utils\Traits\Container;
+use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
-    use Container;
-
     /**
      * @var array
      */
     protected static $container = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public static function set(string $id, $value)
     {
-        static::$container[static::getCoroutineId()][$id] = $value;
+        SwCoroutine::getContext()[static::getCoroutineId()][$id] = $value;
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function get(string $id, $default = null)
     {
-        return static::$container[static::getCoroutineId()][$id] ?? $default;
+        return SwCoroutine::getContext()[static::getCoroutineId()][$id] ?? $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function has(string $id)
     {
-        return isset(static::$container[static::getCoroutineId()][$id]);
-    }
-
-    /**
-     * Destroy the coroutine context.
-     *
-     * @param null|int $coroutineId if provide a coroutine ID, then will destroy the specified context
-     */
-    public static function destroy(int $coroutineId = null)
-    {
-        if (! $coroutineId) {
-            $coroutineId = static::getCoroutineId();
-        }
-        unset(static::$container[$coroutineId]);
+        return isset(SwCoroutine::getContext()[static::getCoroutineId()][$id]);
     }
 
     /**
@@ -70,12 +46,12 @@ class Context
         if (! $toCoroutineId) {
             $toCoroutineId = static::getCoroutineId();
         }
-        static::$container[$toCoroutineId] = static::$container[$fromCoroutineId];
+        SwCoroutine::getContext()[$toCoroutineId] = SwCoroutine::getContext()[$fromCoroutineId];
     }
 
     public static function getContainer()
     {
-        return static::$container;
+        return SwCoroutine::getContext();
     }
 
     protected static function getCoroutineId()

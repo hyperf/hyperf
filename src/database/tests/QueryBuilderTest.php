@@ -2601,7 +2601,6 @@ class QueryBuilderTest extends TestCase
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);
-        Context::destroy();
     }
 
     public function testPaginateWithDefaultArguments()
