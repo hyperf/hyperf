@@ -17,7 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Monolog\Handler\HandlerInterface;
 use Psr\Container\ContainerInterface;
 use Monolog\Formatter\FormatterInterface;
-use Hyperf\Logger\Exceptions\InvalidConfigException;
+use Hyperf\Logger\Exception\InvalidConfigException;
 
 class LoggerFactory
 {
