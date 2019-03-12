@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Pool;
 
-use Hyperf\Pool\Pool;
-use Hyperf\Utils\Arr;
-use Hyperf\Pool\Context;
-use Hyperf\Redis\RedisConnection;
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Pool\Pool;
+use Hyperf\Redis\RedisConnection;
+use Hyperf\Utils\Arr;
+use Psr\Container\ContainerInterface;
 
 class RedisPool extends Pool
 {
@@ -45,8 +44,6 @@ class RedisPool extends Pool
         $options = Arr::get($this->config, 'pool', []);
 
         parent::__construct($container, $options);
-
-        $this->context = make(Context::class, ['name' => $this->getConnectionId()]);
     }
 
     /**

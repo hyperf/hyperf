@@ -39,8 +39,6 @@ class DbPool extends Pool
         $options = Arr::get($this->config, 'pool', []);
 
         parent::__construct($container, $options);
-
-        $this->context = make(Context::class, ['name' => $this->name]);
     }
 
     public function getName(): string

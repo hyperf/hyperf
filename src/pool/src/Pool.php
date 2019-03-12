@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Throwable;
-use RuntimeException;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Contract\PoolInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
+use Psr\Container\ContainerInterface;
+use RuntimeException;
+use Throwable;
 
 abstract class Pool implements PoolInterface
 {
@@ -38,11 +37,6 @@ abstract class Pool implements PoolInterface
     protected $option;
 
     /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
      * @var int
      */
     protected $currentConnections = 0;
@@ -57,20 +51,7 @@ abstract class Pool implements PoolInterface
 
     public function get(): ConnectionInterface
     {
-        if ($this->context instanceof Context) {
-            $connection = $this->context->connection();
-            if ($connection) {
-                return $connection;
-            }
-        }
-
-        $connection = $this->getConnection();
-
-        if ($this->context instanceof Context) {
-            $this->context->set($connection);
-        }
-
-        return $connection;
+        return $this->getConnection();
     }
 
     public function release(ConnectionInterface $connection): void

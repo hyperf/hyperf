@@ -13,34 +13,64 @@ declare(strict_types=1);
 namespace Hyperf\Redis;
 
 use Hyperf\Redis\Pool\PoolFactory;
-use Psr\Container\ContainerInterface;
+use Hyperf\Utils\Context;
 
 class Redis
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var PoolFactory
      */
     protected $factory;
 
-    protected $name = 'default';
+    /**
+     * @var string
+     */
+    protected $poolName = 'default';
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(PoolFactory $factory)
     {
-        $this->container = $container;
-        $this->factory = $container->get(PoolFactory::class);
+        $this->factory = $factory;
     }
 
     public function __call($name, $arguments)
     {
-        $pool = $this->factory->getPool($this->name);
+        $connection = null;
+        $hasContextConnection = Context::has($this->getContextKey());
+        if ($hasContextConnection) {
+            $connection = Context::get($this->getContextKey());
+        }
+        if (! $connection instanceof RedisConnection) {
+            $pool = $this->factory->getPool($this->poolName);
+            $connection = $pool->get()->getConnection();
+        }
 
-        $connection = $pool->get()->getConnection();
+        /** @var \Hyperf\Redis\RedisConnection $connection */
+        $result = $connection->{$name}(...$arguments);
 
-        return $connection->{$name}(...$arguments);
+        if (! $hasContextConnection) {
+            if ($this->shouldUseSameConnection($name)) {
+                Context::set($this->getContextKey(), $connection);
+                defer(function () use ($connection) {
+                    $connection->release();
+                });
+            } else {
+                $connection->release();
+            }
+        }
+
+        return $result;
+    }
+
+    private function shouldUseSameConnection(string $methodName): bool
+    {
+        return in_array($methodName, [
+            'multi',
+            'pipeline',
+        ]);
+    }
+
+    private function getContextKey(): string
+    {
+        return 'redis.connection';
     }
 }
