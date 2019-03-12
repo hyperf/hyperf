@@ -10,8 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Storage;
+namespace Hyperf\Breaker\CircuitBreaker;
 
-class MemoryStorage extends AbstractStorage
+use Hyperf\Breaker\State;
+
+interface CircuitBreakerInterface
 {
+    public function state(): State;
+
+    public function attempt(): bool;
 }

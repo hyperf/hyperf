@@ -12,32 +12,32 @@ declare(strict_types=1);
 
 namespace Hyperf\Breaker;
 
-use Hyperf\Breaker\Storage\StorageInterface;
+use Hyperf\Breaker\CircuitBreaker\CircuitBreakerInterface;
 use Psr\Container\ContainerInterface;
 
-class StorageFactory
+class CircuitBreakerFactory
 {
     protected $container;
 
-    protected $storages = [];
+    protected $breakers = [];
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    public function get(string $name): ?StorageInterface
+    public function get(string $name): ?CircuitBreakerInterface
     {
-        return $this->storages[$name] ?? null;
+        return $this->breakers[$name] ?? null;
     }
 
     public function has(string $name): bool
     {
-        return isset($this->storages[$name]);
+        return isset($this->breakers[$name]);
     }
 
-    public function set(string $name, StorageInterface $storage): ?StorageInterface
+    public function set(string $name, CircuitBreakerInterface $storage): CircuitBreakerInterface
     {
-        return $this->storages[$name] = $storage;
+        return $this->breakers[$name] = $storage;
     }
 }

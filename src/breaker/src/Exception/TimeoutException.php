@@ -10,11 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Storage;
+namespace Hyperf\Breaker\Exception;
 
-use Hyperf\Breaker\State;
-
-interface StorageInterface
+class TimeoutException extends \RuntimeException
 {
-    public function getState(): State;
 }

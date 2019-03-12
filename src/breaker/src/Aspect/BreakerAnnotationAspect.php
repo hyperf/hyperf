@@ -46,9 +46,8 @@ class BreakerAnnotationAspect extends AbstractAspect
         }
 
         $handlerClass = $annotation->handler;
-        $storageClass = $annotation->storage;
 
-        if (! $this->container->has($handlerClass) || ! $this->container->has($storageClass)) {
+        if (! $this->container->has($handlerClass)) {
             return $proceedingJoinPoint->process();
         }
 

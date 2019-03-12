@@ -13,37 +13,52 @@ declare(strict_types=1);
 namespace Hyperf\Breaker\Handler;
 
 use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\State;
+use Hyperf\Breaker\CircuitBreaker\CircuitBreaker;
+use Hyperf\Breaker\Exception\TimeoutException;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class TimeoutHandler extends AbstractHandler
 {
-    protected function call(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
+    const DEFAULT_TIMEOUT = 5;
+
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
     {
-        $timeout = $annotation->timeout;
+        $timeout = $annotation->value['timeout'] ?? self::DEFAULT_TIMEOUT;
         $time = microtime(true);
-        $result = $proceedingJoinPoint->process();
-        if (microtime(true) - $time > $timeout) {
-            $state->open();
+
+        try {
+            $result = parent::call($proceedingJoinPoint, $breaker, $annotation);
+
+            $use = microtime(true) - $time;
+            if ($use > $timeout) {
+                throw new TimeoutException('execute timeout, use ' . $use . ' s');
+            }
+
+            $breaker->incSuccessCounter();
+            $this->switch($breaker, $annotation, true);
+        } catch (\Throwable $exception) {
             $err = sprintf(
-                'Call %s@%s timeout, then call it in fallback.',
+                'Call %s@%s %s, then call it in fallback.',
                 $proceedingJoinPoint->className,
-                $proceedingJoinPoint->methodName
+                $proceedingJoinPoint->methodName,
+                $exception->getMessage()
             );
+
             $this->logger->error($err);
+
+            $breaker->incFailCounter();
+            $this->switch($breaker, $annotation, false);
+
+            if (! $exception instanceof TimeoutException) {
+                throw $exception;
+            }
         }
 
         return $result;
     }
 
-    protected function halfCall(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
+    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
     {
-        return $this->call($proceedingJoinPoint, $state);
-    }
-
-    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
-    {
-        $state->addFallbackCount();
         return null;
     }
 }
