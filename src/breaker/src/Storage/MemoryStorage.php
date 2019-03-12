@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Logger\Exceptions;
+namespace Hyperf\Breaker\Storage;
 
-class InvalidConfigException extends \RuntimeException
+class MemoryStorage extends AbstractStorage
 {
 }

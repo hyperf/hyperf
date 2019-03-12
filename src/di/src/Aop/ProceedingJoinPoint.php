@@ -72,13 +72,7 @@ class ProceedingJoinPoint
         $this->pipe = null;
         $closure = $this->originalMethod;
         if (count($this->arguments['keys']) > 1) {
-            $arguments = value(function () {
-                $result = [];
-                foreach ($this->arguments['order'] as $order) {
-                    $result[] = $this->arguments['keys'][$order];
-                }
-                return $result;
-            });
+            $arguments = $this->getArguments();
         } else {
             $arguments = array_values($this->arguments['keys']);
         }
@@ -89,5 +83,16 @@ class ProceedingJoinPoint
     {
         $metadata = AnnotationCollector::get($this->className);
         return new AnnotationMetadata($metadata['_c'] ?? [], $metadata['_m'][$this->methodName] ?? []);
+    }
+
+    public function getArguments()
+    {
+        return value(function () {
+            $result = [];
+            foreach ($this->arguments['order'] ?? [] as $order) {
+                $result[] = $this->arguments['keys'][$order];
+            }
+            return $result;
+        });
     }
 }

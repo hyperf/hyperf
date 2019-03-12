@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Logger;
 
-use Psr\Log\LoggerInterface;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Logger\Exception\InvalidConfigException;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Psr\Container\ContainerInterface;
-use Monolog\Formatter\FormatterInterface;
-use Hyperf\Logger\Exceptions\InvalidConfigException;
+use Psr\Log\LoggerInterface;
 
 class LoggerFactory
 {

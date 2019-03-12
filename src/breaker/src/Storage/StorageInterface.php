@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Logger;
+namespace Hyperf\Breaker\Storage;
 
-use Hyperf\Contract\StdoutLoggerInterface;
-use Monolog\Logger as MonoLogger;
+use Hyperf\Breaker\State;
 
-class Logger extends MonoLogger implements StdoutLoggerInterface
+interface StorageInterface
 {
+    public function getState(): State;
 }
