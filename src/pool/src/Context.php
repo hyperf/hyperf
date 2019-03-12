@@ -15,7 +15,7 @@ namespace Hyperf\Pool;
 use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as RequestContext;
+use Hyperf\Utils\Context as CoroutineContext;
 
 class Context
 {
@@ -46,8 +46,8 @@ class Context
      */
     public function connection(): ?ConnectionInterface
     {
-        if (RequestContext::has($this->name)) {
-            return RequestContext::get($this->name);
+        if (CoroutineContext::has($this->name)) {
+            return CoroutineContext::get($this->name);
         }
 
         return null;
@@ -55,6 +55,6 @@ class Context
 
     public function set(ConnectionInterface $connection): void
     {
-        RequestContext::set($this->name, $connection);
+        CoroutineContext::set($this->name, $connection);
     }
 }
