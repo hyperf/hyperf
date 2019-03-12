@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Storage;
+namespace Hyperf\Breaker\CircuitBreaker;
 
 use Hyperf\Breaker\State;
 
-abstract class AbstractStorage implements StorageInterface
+class CircuitBreaker implements CircuitBreakerInterface
 {
     /**
      * @var string
@@ -32,7 +32,7 @@ abstract class AbstractStorage implements StorageInterface
         $this->state = make(State::class);
     }
 
-    public function getState(): State
+    public function state(): State
     {
         return $this->state;
     }

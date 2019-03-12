@@ -28,6 +28,8 @@ class State
 
     protected $callCount;
 
+    protected $latestResult;
+
     public function __construct()
     {
         $this->state = self::CLOSE;
@@ -93,5 +95,21 @@ class State
 
     public function should()
     {
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLatestResult()
+    {
+        return $this->latestResult;
+    }
+
+    /**
+     * @param mixed $latestResult
+     */
+    public function setLatestResult($latestResult): void
+    {
+        $this->latestResult = $latestResult;
     }
 }

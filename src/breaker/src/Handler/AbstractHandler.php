@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Breaker\Handler;
 
 use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\State;
-use Hyperf\Breaker\Storage\StorageInterface;
-use Hyperf\Breaker\StorageFactory;
+use Hyperf\Breaker\CircuitBreaker\CircuitBreaker;
+use Hyperf\Breaker\CircuitBreaker\CircuitBreakerInterface;
+use Hyperf\Breaker\CircuitBreakerFactory;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
@@ -23,9 +23,9 @@ use Psr\Container\ContainerInterface;
 abstract class AbstractHandler implements HandlerInterface
 {
     /**
-     * @var StorageFactory
+     * @var CircuitBreakerFactory
      */
-    protected $storageFactory;
+    protected $factory;
 
     /**
      * @var ContainerInterface
@@ -40,30 +40,29 @@ abstract class AbstractHandler implements HandlerInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->storageFactory = $container->get(StorageFactory::class);
+        $this->factory = $container->get(CircuitBreakerFactory::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation)
     {
         $name = $this->getName($proceedingJoinPoint);
-        /** @var StorageInterface $storage */
-        $storage = $this->storageFactory->get($name);
-        if (! $storage instanceof StorageInterface) {
-            $class = $annotation->storage;
-            $storage = make($class, ['name' => $name]);
-            $this->storageFactory->set($name, $storage);
+        /** @var CircuitBreakerInterface $breaker */
+        $breaker = $this->factory->get($name);
+        if (! $breaker instanceof CircuitBreakerInterface) {
+            $breaker = make(CircuitBreaker::class, ['name' => $name]);
+            $this->factory->set($name, $breaker);
         }
 
-        $state = $storage->getState();
+        $state = $breaker->state();
         if ($state->isOpen()) {
-            return $this->fallback($proceedingJoinPoint, $state, $annotation);
+            return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
         }
         if ($state->isHalfOpen()) {
-            return $this->halfCall($proceedingJoinPoint, $state, $annotation);
+            return $this->attemptCall($proceedingJoinPoint, $breaker, $annotation);
         }
 
-        return $this->call($proceedingJoinPoint, $state, $annotation);
+        return $this->call($proceedingJoinPoint, $breaker, $annotation);
     }
 
     protected function getName(ProceedingJoinPoint $proceedingJoinPoint): string
@@ -77,9 +76,12 @@ abstract class AbstractHandler implements HandlerInterface
         return $name;
     }
 
-    abstract protected function call(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation);
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
+    {
+        return $proceedingJoinPoint->process();
+    }
 
-    abstract protected function halfCall(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation);
+    abstract protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation);
 
-    abstract protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation);
+    abstract protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation);
 }

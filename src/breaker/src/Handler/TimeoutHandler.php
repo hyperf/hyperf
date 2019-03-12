@@ -13,18 +13,18 @@ declare(strict_types=1);
 namespace Hyperf\Breaker\Handler;
 
 use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\State;
+use Hyperf\Breaker\CircuitBreaker\CircuitBreaker;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class TimeoutHandler extends AbstractHandler
 {
-    protected function call(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
     {
         $timeout = $annotation->timeout;
         $time = microtime(true);
-        $result = $proceedingJoinPoint->process();
+        $result = parent::call($proceedingJoinPoint, $breaker, $annotation);
         if (microtime(true) - $time > $timeout) {
-            $state->open();
+            $breaker->state()->open();
             $err = sprintf(
                 'Call %s@%s timeout, then call it in fallback.',
                 $proceedingJoinPoint->className,
@@ -36,14 +36,13 @@ class TimeoutHandler extends AbstractHandler
         return $result;
     }
 
-    protected function halfCall(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
+    protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
     {
-        return $this->call($proceedingJoinPoint, $state);
+        return $this->call($proceedingJoinPoint, $breaker, $annotation);
     }
 
-    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, State $state, Breaker $annotation)
+    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
     {
-        $state->addFallbackCount();
         return null;
     }
 }
