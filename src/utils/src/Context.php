@@ -16,10 +16,6 @@ use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
 
     public static function set(string $id, $value)
     {
