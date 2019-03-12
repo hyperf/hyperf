@@ -16,37 +16,35 @@ use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
 
     public static function set(string $id, $value)
     {
-        SwCoroutine::getContext()[static::getCoroutineId()][$id] = $value;
+        SwCoroutine::getContext()[$id] = $value;
         return $value;
     }
 
     public static function get(string $id, $default = null)
     {
-        return SwCoroutine::getContext()[static::getCoroutineId()][$id] ?? $default;
+        return SwCoroutine::getContext()[$id] ?? $default;
     }
 
     public static function has(string $id)
     {
-        return isset(SwCoroutine::getContext()[static::getCoroutineId()][$id]);
+        return isset(SwCoroutine::getContext()[$id]);
     }
 
     /**
-     * Copy the context from a coroutine to another coroutine,
-     * Notice that this method is not a deep copy and I/O connection cannot copy to a another coroutine.
+     * Copy the context from a coroutine to current coroutine.
      */
-    public static function copy(int $fromCoroutineId, int $toCoroutineId = null): void
+    public static function copy(int $fromCoroutineId): void
     {
-        if (! $toCoroutineId) {
-            $toCoroutineId = static::getCoroutineId();
-        }
-        SwCoroutine::getContext()[$toCoroutineId] = SwCoroutine::getContext()[$fromCoroutineId];
+        /**
+         * @var \ArrayObject $from
+         * @var \ArrayObject $current
+         */
+        $from = SwCoroutine::getContext($fromCoroutineId);
+        $current = SwCoroutine::getContext();
+        $current->unserialize($from->serialize());
     }
 
     public static function getContainer()
@@ -54,8 +52,4 @@ class Context
         return SwCoroutine::getContext();
     }
 
-    protected static function getCoroutineId()
-    {
-        return Coroutine::id();
-    }
 }

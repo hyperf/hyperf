@@ -27,11 +27,6 @@ abstract class Connection implements ConnectionInterface
      */
     protected $pool;
 
-    /**
-     * @var bool
-     */
-    protected $release = false;
-
     public function __construct(ContainerInterface $container, Pool $pool)
     {
         $this->container = $container;
@@ -40,15 +35,11 @@ abstract class Connection implements ConnectionInterface
 
     public function release(): void
     {
-        if (! $this->release) {
-            $this->release = true;
-            $this->pool->release($this);
-        }
+        $this->pool->release($this);
     }
 
     public function getConnection()
     {
-        $this->release = false;
         return $this->getActiveConnection();
     }
 
