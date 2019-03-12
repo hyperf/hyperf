@@ -31,9 +31,6 @@ class ConfigProvider
                 ConnectionFactory::class => ConnectionFactory::class,
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
-                'db.connector.pgsql' => PostgresConnector::class,
-                'db.connector.sqlite' => SQLiteConnector::class,
-                'db.connector.sqlsrv' => SqlServerConnector::class,
             ],
             'commands' => [
                 ModelCommand::class,
