@@ -10,13 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\CircuitBreaker;
+namespace Hyperf\Breaker;
 
-use Hyperf\Breaker\State;
-
-interface CircuitBreakerInterface
+class Attempt
 {
-    public function state(): State;
-
-    public function attempt(): bool;
+    public function attempt(): bool
+    {
+        return rand(0, 100) >= 50;
+    }
 }

@@ -10,13 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\CircuitBreaker;
+namespace Hyperf\Breaker\Exception;
 
-use Hyperf\Breaker\State;
-
-interface CircuitBreakerInterface
+class TimeoutException extends \RuntimeException
 {
-    public function state(): State;
-
-    public function attempt(): bool;
 }

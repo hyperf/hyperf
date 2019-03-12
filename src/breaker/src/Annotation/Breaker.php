@@ -14,7 +14,6 @@ namespace Hyperf\Breaker\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Breaker\Handler\TimeoutHandler;
-use Hyperf\Breaker\Storage\MemoryStorage;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
@@ -31,17 +30,25 @@ class Breaker extends AbstractAnnotation
     /**
      * @var string
      */
-    public $storage = MemoryStorage::class;
-
-    /**
-     * @var string
-     */
     public $fallback;
 
     /**
+     * The duration required to reset to a half open or close state.
      * @var float
      */
-    public $timeout;
+    public $duration = 10;
+
+    /**
+     * The counter required to reset to a close state.
+     * @var int
+     */
+    public $successCounter = 10;
+
+    /**
+     * The counter required to reset to a open state.
+     * @var int
+     */
+    public $failCounter = 10;
 
     /**
      * @var array
