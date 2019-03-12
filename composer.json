@@ -47,6 +47,7 @@
     },
     "replace": {
         "hyperf/amqp": "self.version",
+        "hyperf/breaker": "self.version",
         "hyperf/cache": "self.version",
         "hyperf/config": "self.version",
         "hyperf/config-apollo": "self.version",
@@ -86,6 +87,7 @@
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
+            "Hyperf\\Breaker\\": "src/breaker/src/",
             "Hyperf\\Cache\\": "src/cache/src/",
             "Hyperf\\Config\\": "src/config/src/",
             "Hyperf\\ConfigApollo\\": "src/config-apollo/src/",
@@ -137,6 +139,7 @@
         "hyperf": {
             "config": [
                 "Hyperf\\Amqp\\ConfigProvider",
+                "Hyperf\\Breaker\\ConfigProvider",
                 "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
                 "Hyperf\\ConfigApollo\\ConfigProvider",
