@@ -50,11 +50,6 @@ class HttpDispatcherTest extends TestCase
         Context::set(ResponseInterface::class, $this->response);
     }
 
-    protected function tearDown()
-    {
-        Context::destroy();
-    }
-
     public function testA()
     {
         $middlewares = [

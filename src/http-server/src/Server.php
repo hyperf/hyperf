@@ -117,8 +117,6 @@ class Server implements ServerOnRequestInterface
             $psr7Response->send();
 
             $this->event->dispatch(new AfterResponse());
-
-            Context::destroy();
         }
     }
 }

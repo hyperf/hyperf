@@ -128,11 +128,6 @@ class Connection extends BaseConnection implements ConnectionInterface
         return true;
     }
 
-    public function release(): void
-    {
-        parent::release();
-    }
-
     protected function initConnection(): AbstractConnection
     {
         $class = AMQPStreamConnection::class;

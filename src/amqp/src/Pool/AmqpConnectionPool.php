@@ -46,11 +46,6 @@ class AmqpConnectionPool extends Pool
         return $this->name;
     }
 
-    public function release(ConnectionInterface $connection): void
-    {
-        parent::release($connection);
-    }
-
     protected function createConnection(): ConnectionInterface
     {
         return new Connection($this->container, $this, $this->config);
