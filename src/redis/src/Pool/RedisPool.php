@@ -22,8 +22,14 @@ use Hyperf\Contract\ConnectionInterface;
 
 class RedisPool extends Pool
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var array
+     */
     protected $config;
 
     public function __construct(ContainerInterface $container, string $name)

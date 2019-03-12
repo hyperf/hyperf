@@ -70,13 +70,6 @@ abstract class Pool implements PoolInterface
             $this->context->set($connection);
         }
 
-        if (Coroutine::inCoroutine()) {
-            // Release the connecion before the current coroutine end.
-            defer(function () use ($connection) {
-                $connection->release();
-            });
-        }
-
         return $connection;
     }
 
