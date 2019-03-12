@@ -34,26 +34,23 @@ class Redis
 
     public function __call($name, $arguments)
     {
-        $connection = null;
+        // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
-        if ($hasContextConnection) {
-            $connection = Context::get($this->getContextKey());
-        }
-        if (! $connection instanceof RedisConnection) {
-            $pool = $this->factory->getPool($this->poolName);
-            $connection = $pool->get()->getConnection();
-        }
+        $connection = $this->getConnection($hasContextConnection);
 
-        /** @var \Hyperf\Redis\RedisConnection $connection */
+        // Execute the command with the arguments.
         $result = $connection->{$name}(...$arguments);
 
+        // Release connection.
         if (! $hasContextConnection) {
             if ($this->shouldUseSameConnection($name)) {
+                // Should storage the connection to coroutine context, then use defer() to release the connection.
                 Context::set($this->getContextKey(), $connection);
                 defer(function () use ($connection) {
                     $connection->release();
                 });
             } else {
+                // Release the connection after command executed.
                 $connection->release();
             }
         }
@@ -61,6 +58,10 @@ class Redis
         return $result;
     }
 
+    /**
+     * Define the commands that needs same connection to execute.
+     * When these commands executed, the connection will storage to coroutine context.
+     */
     private function shouldUseSameConnection(string $methodName): bool
     {
         return in_array($methodName, [
@@ -69,6 +70,26 @@ class Redis
         ]);
     }
 
+    /**
+     * Get a connection from coroutine context, or from redis connectio pool.
+     * @param mixed $hasContextConnection
+     */
+    private function getConnection($hasContextConnection): RedisConnection
+    {
+        $connection = null;
+        if ($hasContextConnection) {
+            $connection = Context::get($this->getContextKey());
+        }
+        if (! $connection) {
+            $pool = $this->factory->getPool($this->poolName);
+            $connection = $pool->get()->getConnection();
+        }
+        return $connection;
+    }
+
+    /**
+     * The key to identify the connection object in coroutine context.
+     */
     private function getContextKey(): string
     {
         return 'redis.connection';
