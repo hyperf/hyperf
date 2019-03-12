@@ -10,11 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Logger;
+namespace Hyperf\Breaker\Handler;
 
-use Hyperf\Contract\StdoutLoggerInterface;
-use Monolog\Logger as MonoLogger;
+use Hyperf\Breaker\Annotation\Breaker;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-class Logger extends MonoLogger implements StdoutLoggerInterface
+interface HandlerInterface
 {
+    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation);
 }
