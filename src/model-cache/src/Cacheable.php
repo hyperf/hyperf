@@ -41,6 +41,7 @@ trait Cacheable
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
 
+        $ids = array_unique($ids);
         return $manager->findManyFromCache($ids, static::class);
     }
 
