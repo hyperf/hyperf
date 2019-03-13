@@ -14,6 +14,8 @@ namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\SwooleEvent;
 use Hyperf\Memory\AtomicManager;
@@ -52,6 +54,7 @@ class WorkerStartCallback
      */
     public function onWorkerStart(SwooleServer $server, int $workerId)
     {
+        $this->eventDispatcher->dispatch(new BeforeWorkerStart($server, $workerId));
         try {
             // Atomic and Lock have to initializes before worker start.
             $atomic = AtomicManager::get(SwooleEvent::ON_WORKER_START);
@@ -79,5 +82,6 @@ class WorkerStartCallback
             LockManager::clear(SwooleEvent::ON_WORKER_START);
             AtomicManager::clear(SwooleEvent::ON_WORKER_START);
         }
+        $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
     }
 }

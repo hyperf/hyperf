@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Event;
 
-class MainWorkerStart
+class AfterWorkerStart
 {
     /**
      * @var \Swoole\Server
