@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\Config\Annotation;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Config\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -12,7 +21,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Value extends AbstractAnnotation
 {
-
     /**
      * @var string
      */
@@ -22,5 +30,4 @@ class Value extends AbstractAnnotation
     {
         parent::__construct($value);
     }
-
 }

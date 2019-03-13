@@ -14,7 +14,6 @@ namespace Hyperf\Config\Listener;
 
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Definition\PropertyInjection;
