@@ -10,8 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Exception;
+namespace Hyperf\CircuitBreaker\Handler;
 
-class InvalidConfigException extends \RuntimeException
+use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+interface HandlerInterface
 {
+    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation);
 }

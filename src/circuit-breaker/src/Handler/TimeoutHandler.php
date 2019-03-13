@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Handler;
+namespace Hyperf\CircuitBreaker\Handler;
 
-use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\CircuitBreaker\CircuitBreaker;
-use Hyperf\Breaker\Exception\TimeoutException;
+use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\CircuitBreaker;
+use Hyperf\CircuitBreaker\Exception\TimeoutException;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class TimeoutHandler extends AbstractHandler

@@ -1,11 +1,11 @@
 {
-    "name": "hyperf/breaker",
+    "name": "hyperf/circuit-breaker",
     "description": "A circuit breaker component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "hyperf",
-        "breaker"
+        "circuit breaker"
     ],
     "support": {
     },
@@ -29,7 +29,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\Breaker\\": "src"
+            "Hyperf\\CircuitBreaker\\": "src"
         }
     },
     "autoload-dev": {
@@ -43,7 +43,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\Breaker\\ConfigProvider"
+            "config": "Hyperf\\CircuitBreaker\\ConfigProvider"
         }
     },
     "bin": [

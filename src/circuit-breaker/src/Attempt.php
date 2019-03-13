@@ -10,8 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Exception;
+namespace Hyperf\CircuitBreaker;
 
-class TimeoutException extends \RuntimeException
+class Attempt
 {
+    public function attempt(): bool
+    {
+        return rand(0, 100) >= 50;
+    }
 }

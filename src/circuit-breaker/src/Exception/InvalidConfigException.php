@@ -10,13 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\CircuitBreaker;
+namespace Hyperf\CircuitBreaker\Exception;
 
-use Hyperf\Breaker\State;
-
-interface CircuitBreakerInterface
+class InvalidConfigException extends \RuntimeException
 {
-    public function state(): State;
-
-    public function attempt(): bool;
 }

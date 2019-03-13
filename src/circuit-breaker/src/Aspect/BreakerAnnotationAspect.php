@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Aspect;
+namespace Hyperf\CircuitBreaker\Aspect;
 
-use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\Handler\HandlerInterface;
+use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\Handler\HandlerInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;

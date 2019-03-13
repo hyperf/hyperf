@@ -10,12 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Handler;
+namespace Hyperf\CircuitBreaker;
 
-use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Di\Aop\ProceedingJoinPoint;
-
-interface HandlerInterface
+interface CircuitBreakerInterface
 {
-    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation);
+    public function state(): State;
+
+    public function attempt(): bool;
 }

@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Handler;
+namespace Hyperf\CircuitBreaker\Handler;
 
-use Hyperf\Breaker\Annotation\Breaker;
-use Hyperf\Breaker\CircuitBreaker\CircuitBreaker;
-use Hyperf\Breaker\CircuitBreaker\CircuitBreakerInterface;
-use Hyperf\Breaker\CircuitBreakerFactory;
+use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\CircuitBreaker;
+use Hyperf\CircuitBreaker\CircuitBreakerFactory;
+use Hyperf\CircuitBreaker\CircuitBreakerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;

@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Breaker\Annotation;
+namespace Hyperf\CircuitBreaker\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
-use Hyperf\Breaker\Handler\TimeoutHandler;
+use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
