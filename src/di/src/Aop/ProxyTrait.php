@@ -79,17 +79,17 @@ trait ProxyTrait
     private static function parseAspects(string $className, string $method): array
     {
         $aspects = AspectCollector::get('classes', []);
-        $matchAspect = [];
+        $matchedAspect = [];
         foreach ($aspects as $aspect => $rules) {
             foreach ($rules as $rule) {
                 if ($rule === $className) {
-                    $matchAspect[] = $aspect;
+                    $matchedAspect[] = $aspect;
                     break;
                 }
                 if (strpos($rule, '::') !== false) {
                     [$expectedClass, $expectedMethod] = explode('::', $rule);
                     if ($expectedClass === $className && $expectedMethod === $method) {
-                        $matchAspect[] = $aspect;
+                        $matchedAspect[] = $aspect;
                         break;
                     }
                 }
@@ -97,24 +97,25 @@ trait ProxyTrait
                     $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
                     $pattern = "/^${preg}$/";
                     if (preg_match($pattern, $className)) {
-                        $matchAspect[] = $aspect;
+                        $matchedAspect[] = $aspect;
                         break;
                     }
                 }
             }
         }
-        return array_unique($matchAspect);
+        // The matched aspects maybe have duplicate aspect, should unique it when use it.
+        return $matchedAspect;
     }
 
     private static function getAnnotationAspects(string $className, string $method): array
     {
-        $matchAspect = $annotations = $rules = [];
+        $matchedAspect = $annotations = $rules = [];
 
         $classAnnotations = AnnotationCollector::get($className . '._c', []);
         $methodAnnotations = AnnotationCollector::get($className . '._m.' . $method, []);
         $annotations = array_unique(array_merge(array_keys($classAnnotations), array_keys($methodAnnotations)));
         if (! $annotations) {
-            return $matchAspect;
+            return $matchedAspect;
         }
 
         $aspects = AspectCollector::get('annotations', []);
@@ -130,10 +131,11 @@ trait ProxyTrait
                     } elseif ($rule !== $annotation) {
                         continue;
                     }
-                    $matchAspect[] = $aspect;
+                    $matchedAspect[] = $aspect;
                 }
             }
         }
-        return array_unique($matchAspect);
+        // The matched aspects maybe have duplicate aspect, should unique it when use it.
+        return $matchedAspect;
     }
 }
