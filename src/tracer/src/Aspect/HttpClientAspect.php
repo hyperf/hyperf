@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
-use Hyperf\Tracer\Tracing;
-use Zipkin\Propagation\Map;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Tracer\SwitchManager;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Tracer\SwitchManager;
+use Hyperf\Tracer\Tracing;
+use Zipkin\Propagation\Map;
 
 /**
  * @Aspect

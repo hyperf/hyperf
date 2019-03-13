@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Guzzle;
 
-use Swoole\Coroutine;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Psr\Container\ContainerInterface;
+use Swoole\Coroutine;
 
 class ClientFactory
 {

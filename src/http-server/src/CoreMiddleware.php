@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
+use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\Di\MethodDefinitionCollector;
-use Psr\Http\Server\MiddlewareInterface;
-use Swoft\Http\Message\Stream\SwooleStream;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\HttpServer\Router\DispatcherFactory;
+use Swoft\Http\Message\Stream\SwooleStream;
 
 /**
  * Core middleware of Hyperf, main responsibility is use to handle route info

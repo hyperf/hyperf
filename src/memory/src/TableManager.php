@@ -1,13 +1,21 @@
 <?php
 
-namespace Hyperf\Memory;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Memory;
 
 use Swoole\Table;
 
 class TableManager
 {
-
     /**
      * A container that use to store atomic.
      *
@@ -54,5 +62,4 @@ class TableManager
     {
         unset(static::$container[$identifier]);
     }
-
 }

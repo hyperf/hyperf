@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine;
-use PhpAmqpLib\Channel\AMQPChannel;
-use Psr\Container\ContainerInterface;
+use Hyperf\Amqp\Connection\AMQPSwooleConnection;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Coroutine;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use Hyperf\Amqp\Connection\AMQPSwooleConnection;
+use Psr\Container\ContainerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface
 {

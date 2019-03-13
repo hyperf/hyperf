@@ -12,29 +12,29 @@ declare(strict_types=1);
 
 namespace Hyperf\Elasticsearch\Connections;
 
-use GuzzleHttp\Ring\Core;
-use Elasticsearch\Transport;
-use Psr\Log\LoggerInterface;
-use GuzzleHttp\Ring\Exception\RingException;
-use GuzzleHttp\Ring\Exception\ConnectException;
-use Elasticsearch\Serializers\SerializerInterface;
-use Elasticsearch\Common\Exceptions\TransportException;
+use Elasticsearch\Common\Exceptions\AlreadyExpiredException;
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use Elasticsearch\Common\Exceptions\Conflict409Exception;
+use Elasticsearch\Common\Exceptions\Curl\CouldNotConnectToHost;
+use Elasticsearch\Common\Exceptions\Curl\CouldNotResolveHostException;
+use Elasticsearch\Common\Exceptions\Curl\OperationTimeoutException;
+use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Elasticsearch\Common\Exceptions\MaxRetriesException;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use Elasticsearch\Common\Exceptions\Conflict409Exception;
-use Elasticsearch\Common\Exceptions\Forbidden403Exception;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
-use Elasticsearch\Common\Exceptions\AlreadyExpiredException;
-use Elasticsearch\Common\Exceptions\RoutingMissingException;
 use Elasticsearch\Common\Exceptions\NoDocumentsToGetException;
 use Elasticsearch\Common\Exceptions\NoShardAvailableException;
-use Elasticsearch\Connections\Connection as ElasticConnection;
-use Elasticsearch\Common\Exceptions\Curl\CouldNotConnectToHost;
 use Elasticsearch\Common\Exceptions\RequestTimeout408Exception;
-use Elasticsearch\Common\Exceptions\ServerErrorResponseException;
-use Elasticsearch\Common\Exceptions\Curl\OperationTimeoutException;
+use Elasticsearch\Common\Exceptions\RoutingMissingException;
 use Elasticsearch\Common\Exceptions\ScriptLangNotSupportedException;
-use Elasticsearch\Common\Exceptions\Curl\CouldNotResolveHostException;
+use Elasticsearch\Common\Exceptions\ServerErrorResponseException;
+use Elasticsearch\Common\Exceptions\TransportException;
+use Elasticsearch\Connections\Connection as ElasticConnection;
+use Elasticsearch\Serializers\SerializerInterface;
+use Elasticsearch\Transport;
+use GuzzleHttp\Ring\Core;
+use GuzzleHttp\Ring\Exception\ConnectException;
+use GuzzleHttp\Ring\Exception\RingException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class AbstractConnection.

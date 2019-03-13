@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use RuntimeException;
-use Hyperf\Di\Container;
-use Hyperf\Memory\LockManager;
-use Hyperf\Memory\AtomicManager;
-use Hyperf\Framework\SwooleEvent;
-use Swoole\Server as SwooleServer;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Framework\SwooleEvent;
+use Hyperf\Memory\AtomicManager;
+use Hyperf\Memory\LockManager;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
+use Swoole\Server as SwooleServer;
 
 class WorkerStartCallback
 {

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Config;
 
 use Hyperf\Utils\Composer;
-use function is_string;
 use function class_exists;
+use function is_string;
 use function method_exists;
 
 /**

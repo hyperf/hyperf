@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
-use Swoole\Server\Port;
-use InvalidArgumentException;
-use Swoole\Server as SwooleServer;
-use Psr\Container\ContainerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
-use Hyperf\Framework\Event\BeforeServerStart;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Framework\Event\BeforeServerStart;
+use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Server as SwooleServer;
+use Swoole\Server\Port;
 
 class Server
 {

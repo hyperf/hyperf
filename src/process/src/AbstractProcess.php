@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Process;
 
-use Swoole\Server;
-use Swoole\Process as SwooleProcess;
 use Hyperf\Contract\ProcessInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Process as SwooleProcess;
+use Swoole\Server;
 
 abstract class AbstractProcess implements ProcessInterface
 {

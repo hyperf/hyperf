@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Paginator;
 
-use Closure;
 use ArrayIterator;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Closure;
 use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\ForwardsCalls;
 
 abstract class AbstractPaginator implements PaginatorInterface
 {

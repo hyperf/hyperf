@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Queue\Driver;
 
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Queue\Exception\InvalidDriverException;
+use Psr\Container\ContainerInterface;
 
 class DriverFactory
 {

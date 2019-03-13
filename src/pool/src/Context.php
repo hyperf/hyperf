@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Context as CoroutineContext;
+use Psr\Container\ContainerInterface;
 
 class Context
 {

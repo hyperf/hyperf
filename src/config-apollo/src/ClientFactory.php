@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Psr\Container\ContainerInterface;
 
 class ClientFactory
 {

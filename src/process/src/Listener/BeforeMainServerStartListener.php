@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Listener;
 
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Process\Annotation\Process;
-use Hyperf\Process\ProcessRegister;
 use Hyperf\Contract\ProcessInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
-use Psr\Container\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\ProcessRegister;
+use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
@@ -66,7 +66,7 @@ class BeforeMainServerStartListener implements ListenerInterface
                 if (isset($annotationProcesses[$process])) {
                     foreach ($annotationProcesses[$process] as $property => $value) {
                         if (property_exists($instance, $property)) {
-                            $instance->$property = $value;
+                            $instance->{$property} = $value;
                         }
                     }
                 }

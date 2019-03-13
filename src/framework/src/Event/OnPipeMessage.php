@@ -1,11 +1,19 @@
 <?php
 
-namespace Hyperf\Framework\Event;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Framework\Event;
 
 class OnPipeMessage
 {
-
     /**
      * @var \Swoole\Server
      */
@@ -17,7 +25,7 @@ class OnPipeMessage
     public $fromWorkerId;
 
     /**
-     * @var string|array|mixed
+     * @var array|mixed|string
      */
     public $data;
 
@@ -27,6 +35,4 @@ class OnPipeMessage
         $this->fromWorkerId = $fromWorkerId;
         $this->data = $data;
     }
-
-
 }

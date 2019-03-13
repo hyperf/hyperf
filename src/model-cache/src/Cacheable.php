@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Database\Model\Collection;
 
 trait Cacheable
 {

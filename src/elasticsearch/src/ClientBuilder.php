@@ -12,25 +12,25 @@ declare(strict_types=1);
 
 namespace Hyperf\Elasticsearch;
 
-use Monolog\Logger;
-use Swoole\Coroutine;
-use Psr\Log\NullLogger;
 use Elasticsearch\Client;
-use Elasticsearch\Transport;
-use Psr\Log\LoggerInterface;
-use Monolog\Handler\StreamHandler;
-use GuzzleHttp\Ring\Client\Middleware;
-use GuzzleHttp\Ring\Client\CurlHandler;
-use Elasticsearch\ConnectionPool\Selectors;
-use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use GuzzleHttp\Ring\Client\CurlMultiHandler;
-use Elasticsearch\Serializers\SmartSerializer;
-use Elasticsearch\Common\Exceptions\RuntimeException;
-use Elasticsearch\Namespaces\NamespaceBuilderInterface;
-use Hyperf\Elasticsearch\Connections\ConnectionFactory;
-use Elasticsearch\Connections\ConnectionFactoryInterface;
-use Elasticsearch\ConnectionPool\StaticNoPingConnectionPool;
 use Elasticsearch\Common\Exceptions\InvalidArgumentException;
+use Elasticsearch\Common\Exceptions\RuntimeException;
+use Elasticsearch\ConnectionPool\Selectors;
+use Elasticsearch\ConnectionPool\StaticNoPingConnectionPool;
+use Elasticsearch\Connections\ConnectionFactoryInterface;
+use Elasticsearch\Namespaces\NamespaceBuilderInterface;
+use Elasticsearch\Serializers\SmartSerializer;
+use Elasticsearch\Transport;
+use GuzzleHttp\Ring\Client\CurlHandler;
+use GuzzleHttp\Ring\Client\CurlMultiHandler;
+use GuzzleHttp\Ring\Client\Middleware;
+use Hyperf\Elasticsearch\Connections\ConnectionFactory;
+use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Swoole\Coroutine;
 
 /**
  * Class ClientBuilder.

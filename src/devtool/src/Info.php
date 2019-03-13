@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool;
 
-use Psr\Container\ContainerInterface;
 use Hyperf\Devtool\Adapter\AbstractAdapter;
+use Psr\Container\ContainerInterface;
 
 class Info
 {

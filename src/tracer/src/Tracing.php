@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer;
 
-use Zipkin\Span;
 use Hyperf\Utils\Context;
-use Zipkin\TracingBuilder;
-use Zipkin\Propagation\Map;
 use Hyperf\Utils\Traits\CoroutineProxy;
 use Psr\Http\Message\ServerRequestInterface;
+use Zipkin\Propagation\Map;
+use Zipkin\Span;
+use Zipkin\TracingBuilder;
 use const Zipkin\Kind\SERVER;
 
 class Tracing implements \Zipkin\Tracing

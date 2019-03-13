@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
-use Psr\Container\ContainerInterface;
 use Hyperf\Cache\Exception\CacheException;
+use Psr\Container\ContainerInterface;
 
 class RedisDriver extends Driver
 {

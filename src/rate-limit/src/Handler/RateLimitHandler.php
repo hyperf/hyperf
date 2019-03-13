@@ -16,7 +16,6 @@ use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\RateLimit\Storage\CoRedisStorage;
 use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\CacheInterface;
 
 class RateLimitHandler
 {

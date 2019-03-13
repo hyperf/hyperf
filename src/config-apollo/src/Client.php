@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Closure;
-use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Coroutine;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Parallel;
 
 class Client implements ClientInterface
 {

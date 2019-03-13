@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo\Process;
 
-use Hyperf\Process\Annotation\Process;
-use Swoole\Server;
-use Hyperf\Process\AbstractProcess;
-use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\ConfigApollo\ClientInterface;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+use Psr\Container\ContainerInterface;
+use Swoole\Server;
 
 /**
  * @Process(name="config-fetcher")

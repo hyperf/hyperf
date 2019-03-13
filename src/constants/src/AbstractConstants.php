@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Constants;
 
-use Hyperf\Utils\Str;
 use Hyperf\Constants\Exceptions\ConstantsException;
+use Hyperf\Utils\Str;
 
 abstract class AbstractConstants
 {

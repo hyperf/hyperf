@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Process;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
-use Psr\Container\ContainerInterface;
 use Hyperf\Queue\Driver\DriverFactory;
 use Hyperf\Queue\Driver\DriverInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess
 {

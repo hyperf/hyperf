@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Event;
 
-use Throwable;
 use Hyperf\Queue\MessageInterface;
+use Throwable;
 
 class RetryHandle extends Event
 {

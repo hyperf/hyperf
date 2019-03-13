@@ -52,7 +52,7 @@ class Context
     public static function copy(int $fromCoroutineId): void
     {
         /**
-         * @var \ArrayObject $form
+         * @var \ArrayObject
          * @var \ArrayObject $current
          */
         $from = SwCoroutine::getContext($fromCoroutineId);

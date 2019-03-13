@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Event;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\EventDispatcher\StoppableEventInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
