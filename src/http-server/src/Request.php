@@ -12,38 +12,65 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Context;
-use Psr\Http\Message\UriInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Context;
+use Hyperf\Utils\Str;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 class Request implements RequestInterface
 {
+    /**
+     * The key to identify the parsed data in coroutine context.
+     */
     const CONTEXT_KEY = 'httpRequestParsedData';
 
-    public function __call($name, $arguments)
+    /**
+     * Retrieve the data from query parameters, if $key is null, will return all query parameters.
+     * @param mixed $default
+     */
+    public function query(?string $key = null, $default = null)
     {
-        $request = $this->getRequest();
-        if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
+        if ($key === null) {
+            return $this->getQueryParams();
         }
-        return $request->{$name}(...$arguments);
+        return Arr::get($this->getQueryParams(), $key, $default);
     }
 
+    /**
+     * Retrieve the data from parsed body, if $key is null, will return all parsed body.
+     * @param mixed $default
+     */
+    public function post(?string $key = null, $default = null)
+    {
+        if ($key === null) {
+            return $this->getParsedBody();
+        }
+        return Arr::get($this->getParsedBody(), $key, $default);
+    }
+
+    /**
+     * Retrieve the data from request, include query parameters, parsed body and json body,
+     * if $key is null, will return all the parameters.
+     * @param mixed $default
+     */
     public function input(?string $key = null, $default = null)
     {
         $data = $this->getInputData();
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $data;
         }
 
         return Arr::get($data, $key, $default);
     }
 
+    /**
+     * Retrieve the data from request via multi keys, include query parameters, parsed body and json body.
+     * @param mixed $default
+     */
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
@@ -57,6 +84,7 @@ class Request implements RequestInterface
     }
 
     /**
+     * Determine if the $keys is exist in parameters.
      * @return []array [found, not-found]
      */
     public function hasInput(array $keys = []): array
@@ -76,159 +104,166 @@ class Request implements RequestInterface
         ];
     }
 
+    /**
+     * Retrieve the data from request headers.
+     * @param mixed $default
+     */
     public function header(string $key = null, $default = null)
     {
-        return $this->getRequest()->getHeaderLine($key);
+        if ($key === null) {
+            return $this->getRequest()->getHeaders();
+        }
+        return $this->getRequest()->getHeaderLine($key) ?? $default;
     }
 
     public function getProtocolVersion()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withProtocolVersion($version)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function hasHeader($name)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getHeader($name)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getHeaderLine($name)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withHeader($name, $value)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withAddedHeader($name, $value)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withoutHeader($name)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getBody()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withBody(StreamInterface $body)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getRequestTarget()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withRequestTarget($requestTarget)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withMethod($method)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getUri()
+    public function getUri(): UriInterface
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getServerParams()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getCookieParams()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withCookieParams(array $cookies)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getQueryParams()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withQueryParams(array $query)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getUploadedFiles()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withUploadedFiles(array $uploadedFiles)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getParsedBody()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withParsedBody($data)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getAttributes()
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function getAttribute($name, $default = null)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withAttribute($name, $value)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     public function withoutAttribute($name)
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     private function getInputData(): array
@@ -249,16 +284,25 @@ class Request implements RequestInterface
         });
     }
 
-    private function getRequest(): ServerRequestInterface
-    {
-        return Context::get(ServerRequestInterface::class);
-    }
-
     private function storeParsedData(callable $callback)
     {
         if (! Context::has(self::CONTEXT_KEY)) {
             return Context::set(self::CONTEXT_KEY, call($callback));
         }
         return Context::get(self::CONTEXT_KEY);
+    }
+
+    private function call($name, $arguments)
+    {
+        $request = $this->getRequest();
+        if (! method_exists($request, $name)) {
+            throw new \RuntimeException('Method not exist.');
+        }
+        return $request->{$name}(...$arguments);
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return Context::get(ServerRequestInterface::class);
     }
 }
