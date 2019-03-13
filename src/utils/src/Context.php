@@ -16,21 +16,34 @@ use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
+    protected static $nonCoContext = [];
 
     public static function set(string $id, $value)
     {
-        SwCoroutine::getContext()[$id] = $value;
+        if (Coroutine::inCoroutine()) {
+            SwCoroutine::getContext()[$id] = $value;
+        } else {
+            static::$nonCoContext[$id] = $value;
+        }
         return $value;
     }
 
     public static function get(string $id, $default = null)
     {
-        return SwCoroutine::getContext()[$id] ?? $default;
+        if (Coroutine::inCoroutine()) {
+            return SwCoroutine::getContext()[$id] ?? $default;
+        }
+
+        return static::$nonCoContext[$id] ?? $default;
     }
 
     public static function has(string $id)
     {
-        return isset(SwCoroutine::getContext()[$id]);
+        if (Coroutine::inCoroutine()) {
+            return isset(SwCoroutine::getContext()[$id]);
+        }
+
+        return isset(static::$nonCoContext[$id]);
     }
 
     /**
@@ -39,7 +52,7 @@ class Context
     public static function copy(int $fromCoroutineId): void
     {
         /**
-         * @var \ArrayObject $from
+         * @var \ArrayObject $form
          * @var \ArrayObject $current
          */
         $from = SwCoroutine::getContext($fromCoroutineId);
@@ -49,7 +62,10 @@ class Context
 
     public static function getContainer()
     {
-        return SwCoroutine::getContext();
-    }
+        if (Coroutine::inCoroutine()) {
+            return SwCoroutine::getContext();
+        }
 
+        return static::$nonCoContext;
+    }
 }
