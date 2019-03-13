@@ -80,7 +80,7 @@ class Redis
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if (! $connection) {
+        if (! $connection instanceof RedisConnection) {
             $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get()->getConnection();
         }
