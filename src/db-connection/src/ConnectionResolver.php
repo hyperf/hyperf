@@ -16,6 +16,7 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class ConnectionResolver implements ConnectionResolverInterface
@@ -65,9 +66,11 @@ class ConnectionResolver implements ConnectionResolverInterface
             $pool = $this->factory->getPool($name);
             $connection = $pool->get()->getConnection();
             Context::set($id, $connection);
-            defer(function () use ($connection) {
-                $connection->release();
-            });
+            if (Coroutine::inCoroutine()) {
+                defer(function () use ($connection) {
+                    $connection->release();
+                });
+            }
         }
 
         return $connection;
