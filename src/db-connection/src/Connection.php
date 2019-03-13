@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Hyperf\DbConnection\Pool\DbPool;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\DbConnection\Pool\DbPool;
 use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Database\Connectors\ConnectionFactory;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {

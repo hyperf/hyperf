@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Model;
 
-use RuntimeException;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Model as BaseModel;
+use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\DbConnection\ConnectionResolver;
-use Hyperf\Database\Model\Model as BaseModel;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 
 class Model extends BaseModel
 {

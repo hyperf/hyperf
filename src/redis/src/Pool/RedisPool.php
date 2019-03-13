@@ -58,9 +58,4 @@ class RedisPool extends Pool
     {
         return new RedisConnection($this->container, $this, $this->config);
     }
-
-    protected function getConnectionId(): string
-    {
-        return static::class . '.' . $this->getName();
-    }
 }

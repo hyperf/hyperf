@@ -50,9 +50,4 @@ class AmqpConnectionPool extends Pool
     {
         return new Connection($this->container, $this, $this->config);
     }
-
-    protected function getConnectionId(): string
-    {
-        return static::class . '.' . $this->getName();
-    }
 }
