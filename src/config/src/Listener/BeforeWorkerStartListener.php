@@ -45,9 +45,11 @@ class BeforeWorkerStartListener implements ListenerInterface
     {
         PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
             if ($annotation instanceof Value && ApplicationContext::hasContainter()) {
-                $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
-                $value = $config->get($annotation->key, null);
-                $propertyInjection = new PropertyInjection($propertyName, $value);
+                $key = $annotation->key;
+                $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
+                    $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
+                    return $config->get($key, null);
+                });
                 $definition->addPropertyInjection($propertyInjection);
             }
         });
