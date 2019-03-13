@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Closure;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\AnnotationCollector;
 
 trait ProxyTrait
 {
@@ -57,7 +57,7 @@ trait ProxyTrait
     {
         $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $aspects = array_replace($aspects, $annotationAspects);
+        $aspects = array_unique(array_replace($aspects, $annotationAspects));
         if (empty($aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
@@ -134,6 +134,6 @@ trait ProxyTrait
                 }
             }
         }
-        return $matchAspect;
+        return array_unique($matchAspect);
     }
 }
