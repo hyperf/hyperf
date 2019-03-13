@@ -134,11 +134,13 @@ class ObjectResolver implements ResolverInterface
         if (! $property->isPublic()) {
             $property->setAccessible(true);
         }
-        if (! $propertyInjection->getValue() instanceof Reference) {
-            return;
+        $value = $propertyInjection->getValue();
+        if ($value instanceof Reference) {
+            $property->setValue($object, $this->container->get($value->getTargetEntryName()));
+        } elseif (is_callable($value)) {
+            $property->setValue($object, call($value));
+        } else {
+            $property->setValue($object, value($value));
         }
-        /** @var Reference $reference */
-        $reference = $propertyInjection->getValue();
-        $property->setValue($object, $this->container->get($reference->getTargetEntryName()));
     }
 }

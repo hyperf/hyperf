@@ -168,12 +168,20 @@ class DefinitionSource implements DefinitionSourceInterface
 
         // Properties
         $propertiesMetadata = AnnotationCollector::get($className);
+        $propertyHandlers = PropertyHandlerManager::all();
         if (isset($propertiesMetadata['_p'])) {
             foreach ($propertiesMetadata['_p'] as $propertyName => $value) {
-                /** @var Inject $annotation */
-                if ($annotation = $value[Inject::class] ?? null) {
-                    $propertyInjection = new PropertyInjection($propertyName, new Reference($annotation->value));
+                /** @var Inject $injectAnnotation */
+                if ($injectAnnotation = $value[Inject::class] ?? null) {
+                    $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
                     $definition->addPropertyInjection($propertyInjection);
+                }
+                foreach ($value as $annotationClassName => $annotationObject) {
+                    if (isset($propertyHandlers[$annotationClassName])) {
+                        foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
+                            call($callback, [$definition, $propertyName, $annotationObject]);
+                        }
+                    }
                 }
             }
         }
