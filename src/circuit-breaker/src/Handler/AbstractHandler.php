@@ -56,7 +56,7 @@ abstract class AbstractHandler implements HandlerInterface
 
         $state = $breaker->state();
         if ($state->isOpen()) {
-            $this->switch($breaker, $annotation);
+            $this->switch($breaker, $annotation, false);
             return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
         }
         if ($state->isHalfOpen()) {

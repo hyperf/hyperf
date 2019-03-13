@@ -32,10 +32,9 @@ class CircuitBreaker implements CircuitBreakerInterface
     protected $state;
 
     /**
-     * Current state duration.
      * @var float
      */
-    protected $duration;
+    protected $timestamp;
 
     /**
      * Failure count.
@@ -92,7 +91,7 @@ class CircuitBreaker implements CircuitBreakerInterface
      */
     public function getDuration(): float
     {
-        return $this->duration;
+        return microtime(true) - $this->timestamp;
     }
 
     /**
@@ -111,6 +110,14 @@ class CircuitBreaker implements CircuitBreakerInterface
         return $this->successCounter;
     }
 
+    /**
+     * @return float
+     */
+    public function getTimestamp(): float
+    {
+        return $this->timestamp;
+    }
+
     public function incFailCounter(): int
     {
         return ++$this->failCounter;
@@ -123,7 +130,7 @@ class CircuitBreaker implements CircuitBreakerInterface
 
     protected function init()
     {
-        $this->duration = microtime(true);
+        $this->timestamp = microtime(true);
         $this->failCounter = 0;
         $this->successCounter = 0;
     }
