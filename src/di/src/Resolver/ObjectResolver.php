@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Hyperf\Di\Resolver;
 
 use Hyperf\Di\Container;
-use Hyperf\Di\ProxyFactory;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\Di\Definition\Reference;
-use Psr\Container\ContainerInterface;
+use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyInjection;
+use Hyperf\Di\Definition\Reference;
 use Hyperf\Di\Exception\DependencyException;
-use Hyperf\Di\Definition\DefinitionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\ProxyFactory;
+use Hyperf\Di\ReflectionManager;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {

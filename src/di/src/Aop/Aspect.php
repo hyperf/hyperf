@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
 
 class Aspect
 {

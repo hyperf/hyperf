@@ -14,13 +14,13 @@ namespace Hyperf\Di\Command;
 
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Symfony\Component\Finder\Finder;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {

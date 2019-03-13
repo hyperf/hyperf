@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use PhpDocReader\PhpDocReader;
 use Hyperf\Di\ReflectionManager;
+use PhpDocReader\PhpDocReader;
 
 /**
  * @Annotation

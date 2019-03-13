@@ -13,21 +13,21 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use PhpParser\Node;
-use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Expr\Closure;
-use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\NodeVisitorAbstract;
 
 class ProxyCallVistor extends NodeVisitorAbstract
 {

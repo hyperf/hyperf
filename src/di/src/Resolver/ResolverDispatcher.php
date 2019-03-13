@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Resolver;
 
-use RuntimeException;
-use Psr\Container\ContainerInterface;
-use Hyperf\Di\Definition\ObjectDefinition;
-use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\FactoryDefinition;
+use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\SelfResolvingDefinitionInterface;
+use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 class ResolverDispatcher implements ResolverInterface
 {
