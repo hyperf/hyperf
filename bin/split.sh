@@ -18,8 +18,6 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-remote config git@github.com:hyperf-cloud/config.git
-
 remote amqp git@github.com:hyperf-cloud/amqp.git
 remote cache git@github.com:hyperf-cloud/cache.git
 remote circuit-breaker git@github.com:hyperf-cloud/circuit-breaker.git
