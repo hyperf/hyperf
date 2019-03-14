@@ -176,6 +176,7 @@ class DefinitionSource implements DefinitionSourceInterface
                     $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
                     $definition->addPropertyInjection($propertyInjection);
                 }
+                // Handle PropertyHandler mechanism
                 foreach ($value as $annotationClassName => $annotationObject) {
                     if (isset($propertyHandlers[$annotationClassName])) {
                         foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
