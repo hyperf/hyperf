@@ -23,7 +23,7 @@ abstract class AbstractAnnotation implements AnnotationInterface
         }
     }
 
-    public function collectClass(string $className, ?string $target): void
+    public function collectClass(string $className): void
     {
         AnnotationCollector::collectClass($className, static::class, $this);
     }

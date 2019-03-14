@@ -74,8 +74,8 @@ class Scanner
             $classAnnotations = $reader->getClassAnnotations($reflectionClass);
             if (! empty($classAnnotations)) {
                 foreach ($classAnnotations as $classAnnotation) {
-                    if ($classAnnotation instanceof AbstractAnnotation) {
-                        $classAnnotation->collectClass($className, null);
+                    if ($classAnnotation instanceof AnnotationInterface) {
+                        $classAnnotation->collectClass($className);
                     }
                 }
             }

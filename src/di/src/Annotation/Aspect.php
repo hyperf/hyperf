@@ -24,7 +24,7 @@ class Aspect extends AbstractAnnotation
     /**
      * {@inheritdoc}
      */
-    public function collectClass(string $className, ?string $target): void
+    public function collectClass(string $className): void
     {
         // @TODO Add order property.
         if (class_exists($className)) {
