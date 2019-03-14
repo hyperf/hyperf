@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Queue\Driver;
 
-use Redis;
-use Hyperf\Queue\Message;
 use Hyperf\Queue\JobInterface;
+use Hyperf\Queue\Message;
 use Hyperf\Queue\MessageInterface;
 use Psr\Container\ContainerInterface;
+use Redis;
 
 class RedisDriver extends Driver
 {

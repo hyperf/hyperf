@@ -20,7 +20,6 @@ use Symfony\Component\Console\Application;
 
 class ApplicationFactory
 {
-
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);

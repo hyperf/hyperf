@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Hyperf\Di\Resolver;
 
 use Hyperf\Di\Container;
-use Hyperf\Di\ProxyFactory;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\Di\Definition\Reference;
-use Psr\Container\ContainerInterface;
+use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyInjection;
+use Hyperf\Di\Definition\Reference;
 use Hyperf\Di\Exception\DependencyException;
-use Hyperf\Di\Definition\DefinitionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\ProxyFactory;
+use Hyperf\Di\ReflectionManager;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {
@@ -134,11 +134,13 @@ class ObjectResolver implements ResolverInterface
         if (! $property->isPublic()) {
             $property->setAccessible(true);
         }
-        if (! $propertyInjection->getValue() instanceof Reference) {
-            return;
+        $value = $propertyInjection->getValue();
+        if ($value instanceof Reference) {
+            $property->setValue($object, $this->container->get($value->getTargetEntryName()));
+        } elseif (is_callable($value)) {
+            $property->setValue($object, call($value));
+        } else {
+            $property->setValue($object, value($value));
         }
-        /** @var Reference $reference */
-        $reference = $propertyInjection->getValue();
-        $property->setValue($object, $this->container->get($reference->getTargetEntryName()));
     }
 }

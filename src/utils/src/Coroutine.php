@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Throwable;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
-use Hyperf\Contract\StdoutLoggerInterface;
+use Throwable;
 
 /**
  * @method static void defer(callable $callback)
@@ -46,9 +46,6 @@ class Coroutine
     public static function create(callable $callback): int
     {
         $result = SwooleCoroutine::create(function () use ($callback) {
-            self::defer(function () {
-                Context::destroy();
-            });
             try {
                 call($callback);
             } catch (Throwable $throwable) {

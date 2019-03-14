@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Command;
 
-use Hyperf\Framework\Server;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Framework\Server;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

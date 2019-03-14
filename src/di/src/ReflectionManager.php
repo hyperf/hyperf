@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use InvalidArgumentException;
 
 class ReflectionManager extends MetadataCollector
 {

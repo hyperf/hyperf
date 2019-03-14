@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Pool;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\DbConnection\Connection;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
-use Hyperf\Pool\Context;
-use Hyperf\DbConnection\Connection;
-use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
-use Hyperf\Contract\ConnectionInterface;
 
 class DbPool extends Pool
 {
@@ -39,8 +38,6 @@ class DbPool extends Pool
         $options = Arr::get($this->config, 'pool', []);
 
         parent::__construct($container, $options);
-
-        $this->context = make(Context::class, ['name' => $this->name]);
     }
 
     public function getName(): string
@@ -51,10 +48,5 @@ class DbPool extends Pool
     protected function createConnection(): ConnectionInterface
     {
         return new Connection($this->container, $this, $this->config);
-    }
-
-    protected function getConnectionId(): string
-    {
-        return static::class . '.' . $this->getName();
     }
 }

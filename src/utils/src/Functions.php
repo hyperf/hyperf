@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * This file is part of Hyperf.
  *
@@ -12,10 +11,10 @@ declare(strict_types=1);
  */
 
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Str;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Str;
 
 if (! function_exists('value')) {
     /**

@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use DI\FactoryInterface;
-use Invoker\InvokerInterface;
-use Psr\Container\ContainerInterface;
+use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
-use Hyperf\Di\Definition\DefinitionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
+use Invoker\InvokerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class Container implements ContainerInterface
 {

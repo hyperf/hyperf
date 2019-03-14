@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
 
 class Aspect
 {
@@ -60,7 +60,11 @@ class Aspect
                     return $matched;
                 }
                 if (isset($methodMapping[$rule])) {
-                    $matched[$aspect] = $methodMapping[$rule];
+                    if (isset($matched[$aspect])) {
+                        $matched[$aspect] = array_unique(array_merge($matched[$aspect], $methodMapping[$rule]));
+                    } else {
+                        $matched[$aspect] = $methodMapping[$rule];
+                    }
                 }
             }
         }

@@ -23,7 +23,7 @@ abstract class AbstractAnnotation implements AnnotationInterface
         }
     }
 
-    public function collectClass(string $className, ?string $target): void
+    public function collectClass(string $className): void
     {
         AnnotationCollector::collectClass($className, static::class, $this);
     }
@@ -36,5 +36,12 @@ abstract class AbstractAnnotation implements AnnotationInterface
     public function collectProperty(string $className, ?string $target): void
     {
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
+    }
+
+    protected function bindMainProperty(string $key, array $value)
+    {
+        if (isset($value['value'])) {
+            $this->$key = $value['value'];
+        }
     }
 }

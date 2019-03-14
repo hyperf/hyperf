@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Doctrine\Instantiator\Instantiator;
+use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
+use Hyperf\Amqp\Message\ConsumerMessageInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessRegister;
 use Psr\Container\ContainerInterface;
-use Doctrine\Instantiator\Instantiator;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Amqp\Message\ConsumerMessageInterface;
-use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
 
 class ConsumerManager
 {

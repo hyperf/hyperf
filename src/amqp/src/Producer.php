@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use PhpAmqpLib\Message\AMQPMessage;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Producer extends Builder
 {

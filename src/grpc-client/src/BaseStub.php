@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcClient;
 
-use Hyperf\GrpcServer\Utils\Parser;
 use Google\Protobuf\Internal\Message;
+use Hyperf\GrpcServer\Utils\Parser;
 
 class BaseStub extends VirtualClient
 {
-
     public function __construct(string $hostname, array $opts = [])
     {
         parent::__construct($hostname, $opts);

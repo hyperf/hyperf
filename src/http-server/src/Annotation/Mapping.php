@@ -25,5 +25,6 @@ abstract class Mapping extends AbstractAnnotation
         if (isset($value['path'])) {
             $this->path = $value['path'];
         }
+        $this->bindMainProperty('path', $value);
     }
 }

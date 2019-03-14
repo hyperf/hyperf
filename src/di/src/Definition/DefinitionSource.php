@@ -12,37 +12,37 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\Di\Annotation\Scanner;
 use Symfony\Component\Finder\Finder;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use function md5;
-use function feof;
-use function trim;
-use function count;
-use function fgets;
-use function fopen;
-use function fclose;
-use function is_dir;
-use function explode;
-use function implode;
-use function print_r;
-use function is_array;
-use function filemtime;
-use function is_string;
-use function preg_match;
-use function file_exists;
-use function is_callable;
-use function is_readable;
-use function str_replace;
 use function class_exists;
-use function method_exists;
-use function interface_exists;
+use function count;
+use function explode;
+use function fclose;
+use function feof;
+use function fgets;
+use function file_exists;
 use function file_put_contents;
+use function filemtime;
+use function fopen;
+use function implode;
+use function interface_exists;
+use function is_array;
+use function is_callable;
+use function is_dir;
+use function is_readable;
+use function is_string;
+use function md5;
+use function method_exists;
+use function preg_match;
+use function print_r;
+use function str_replace;
+use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
@@ -114,7 +114,7 @@ class DefinitionSource implements DefinitionSourceInterface
         $parameters = [];
 
         foreach ($constructor->getParameters() as $index => $parameter) {
-            // Skip optional parameters
+            // Skip optional parameters.
             if ($parameter->isOptional()) {
                 continue;
             }
@@ -158,7 +158,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
         $definition = $definition ?: new ObjectDefinition($name);
 
-        // Constructor
+        /**
+         * Constructor.
+         */
         $class = ReflectionManager::reflectClass($className);
         $constructor = $class->getConstructor();
         if ($constructor && $constructor->isPublic()) {
@@ -166,14 +168,26 @@ class DefinitionSource implements DefinitionSourceInterface
             $definition->completeConstructorInjection($constructorInjection);
         }
 
-        // Properties
+        /**
+         * Properties.
+         */
         $propertiesMetadata = AnnotationCollector::get($className);
+        $propertyHandlers = PropertyHandlerManager::all();
         if (isset($propertiesMetadata['_p'])) {
             foreach ($propertiesMetadata['_p'] as $propertyName => $value) {
-                /** @var Inject $annotation */
-                if ($annotation = $value[Inject::class] ?? null) {
-                    $propertyInjection = new PropertyInjection($propertyName, new Reference($annotation->value));
+                // Because `@Inject` is a internal logical of DI component, so leave the code here.
+                /** @var Inject $injectAnnotation */
+                if ($injectAnnotation = $value[Inject::class] ?? null) {
+                    $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
                     $definition->addPropertyInjection($propertyInjection);
+                }
+                // Handle PropertyHandler mechanism.
+                foreach ($value as $annotationClassName => $annotationObject) {
+                    if (isset($propertyHandlers[$annotationClassName])) {
+                        foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
+                            call($callback, [$definition, $propertyName, $annotationObject]);
+                        }
+                    }
                 }
             }
         }
@@ -189,7 +203,7 @@ class DefinitionSource implements DefinitionSourceInterface
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
             [, $annotationMetadata, $aspectMetadata] = explode(PHP_EOL, file_get_contents($this->cachePath));
-            // Deserialize metadata when the cache is valid
+            // Deserialize metadata when the cache is valid.
             AnnotationCollector::deserialize($annotationMetadata);
             AspectCollector::deserialize($aspectMetadata);
             return false;

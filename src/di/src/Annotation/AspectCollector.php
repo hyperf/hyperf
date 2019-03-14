@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\MetadataCollector;
 use Doctrine\Instantiator\Instantiator;
+use Hyperf\Di\MetadataCollector;
 
 class AspectCollector extends MetadataCollector
 {

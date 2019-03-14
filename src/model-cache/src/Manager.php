@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
-use Hyperf\Di\Container;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\DbConnection\Model\Model;
-use Hyperf\Database\Model\Collection;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\ModelCache\Handler\RedisHandler;
+use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Model\Model;
+use Hyperf\Di\Container;
 use Hyperf\ModelCache\Handler\HandlerInterface;
+use Hyperf\ModelCache\Handler\RedisHandler;
+use Psr\Container\ContainerInterface;
 
 class Manager
 {

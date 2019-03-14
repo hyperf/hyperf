@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Consul;
 
+use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\Consul\Exception\ServerException;
 
 /**
  * @method int getStatusCode()

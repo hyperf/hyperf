@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Event;
 
-use Swoole\Server as SwooleServer;
 use Swoole\Http\Server as SwooleHttpServer;
+use Swoole\Server as SwooleServer;
 
 class BeforeMainServerStart
 {

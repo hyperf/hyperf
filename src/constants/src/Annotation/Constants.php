@@ -22,7 +22,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Constants extends AbstractAnnotation
 {
-    public function collectClass(string $className, ?string $target): void
+    public function collectClass(string $className): void
     {
         $reader = new AnnotationReader();
 

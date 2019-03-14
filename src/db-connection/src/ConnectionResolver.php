@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Psr\Container\ContainerInterface;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
+use Psr\Container\ContainerInterface;
 
 class ConnectionResolver implements ConnectionResolverInterface
 {
@@ -54,9 +56,24 @@ class ConnectionResolver implements ConnectionResolverInterface
             $name = $this->getDefaultConnection();
         }
 
-        $pool = $this->factory->getPool($name);
+        $connection = null;
+        $id = $this->getContextKey($name);
+        if (Context::has($id)) {
+            $connection = Context::get($id);
+        }
 
-        return $pool->get()->getConnection();
+        if (! $connection instanceof ConnectionInterface) {
+            $pool = $this->factory->getPool($name);
+            $connection = $pool->get()->getConnection();
+            Context::set($id, $connection);
+            if (Coroutine::inCoroutine()) {
+                defer(function () use ($connection) {
+                    $connection->release();
+                });
+            }
+        }
+
+        return $connection;
     }
 
     /**
@@ -77,5 +94,14 @@ class ConnectionResolver implements ConnectionResolverInterface
     public function setDefaultConnection($name)
     {
         $this->default = $name;
+    }
+
+    /**
+     * The key to identify the connection object in coroutine context.
+     * @param mixed $name
+     */
+    private function getContextKey($name): string
+    {
+        return sprintf('database.connection.%s', $name);
     }
 }

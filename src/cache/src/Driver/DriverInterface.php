@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
-use Psr\SimpleCache\CacheInterface;
 use Psr\Container\ContainerInterface;
+use Psr\SimpleCache\CacheInterface;
 
 interface DriverInterface extends CacheInterface
 {

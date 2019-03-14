@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Logger;
 
-use Psr\Log\LogLevel;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;

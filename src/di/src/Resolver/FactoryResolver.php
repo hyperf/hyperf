@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Resolver;
 
-use Psr\Container\ContainerInterface;
-use Hyperf\Di\Definition\FactoryDefinition;
-use Invoker\Exception\NotCallableException;
 use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use Invoker\Exception\NotCallableException;
+use Psr\Container\ContainerInterface;
 
 class FactoryResolver implements ResolverInterface
 {

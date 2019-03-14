@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Tracer\Tracing;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
-use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Tracer\Annotation\Trace;
+use Hyperf\Tracer\Tracing;
 
 /**
  * @Aspect

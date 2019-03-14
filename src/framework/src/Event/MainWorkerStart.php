@@ -15,18 +15,18 @@ namespace Hyperf\Framework\Event;
 class MainWorkerStart
 {
     /**
-     * @var string
+     * @var \Swoole\Server
      */
-    private $serverName;
+    private $server;
 
     /**
      * @var int
      */
     private $workerId;
 
-    public function __construct($serverName, int $workerId)
+    public function __construct($server, int $workerId)
     {
-        $this->serverName = $serverName;
+        $this->server = $server;
         $this->workerId = $workerId;
     }
 }

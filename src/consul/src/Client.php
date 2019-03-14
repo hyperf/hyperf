@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Consul;
 
-use Psr\Log\NullLogger;
-use Psr\Log\LoggerInterface;
 use GuzzleHttp\ClientInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
 use Hyperf\Consul\Exception\ServerException;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class Client
 {

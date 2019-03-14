@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Event;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
 use Psr\Container\ContainerInterface;
-use Hyperf\Di\Annotation\AnnotationCollector;
 
 class ListenerProviderFactory
 {

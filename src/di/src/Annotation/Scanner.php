@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
 use Symfony\Component\Finder\Finder;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Scanner
 {
@@ -74,8 +74,8 @@ class Scanner
             $classAnnotations = $reader->getClassAnnotations($reflectionClass);
             if (! empty($classAnnotations)) {
                 foreach ($classAnnotations as $classAnnotation) {
-                    if ($classAnnotation instanceof AbstractAnnotation) {
-                        $classAnnotation->collectClass($className, null);
+                    if ($classAnnotation instanceof AnnotationInterface) {
+                        $classAnnotation->collectClass($className);
                     }
                 }
             }
@@ -86,7 +86,9 @@ class Scanner
                 $propertyAnnotations = $reader->getPropertyAnnotations($property);
                 if (! empty($propertyAnnotations)) {
                     foreach ($propertyAnnotations as $propertyAnnotation) {
-                        $propertyAnnotation instanceof AnnotationInterface && $propertyAnnotation->collectProperty($className, $property->getName());
+                        if ($propertyAnnotation instanceof AnnotationInterface) {
+                            $propertyAnnotation->collectProperty($className, $property->getName());
+                        }
                     }
                 }
             }
@@ -97,7 +99,9 @@ class Scanner
                 $methodAnnotations = $reader->getMethodAnnotations($method);
                 if (! empty($methodAnnotations)) {
                     foreach ($methodAnnotations as $methodAnnotation) {
-                        $methodAnnotation instanceof AnnotationInterface && $methodAnnotation->collectMethod($className, $method->getName());
+                        if ($methodAnnotation instanceof AnnotationInterface) {
+                            $methodAnnotation->collectMethod($className, $method->getName());
+                        }
                     }
                 }
             }

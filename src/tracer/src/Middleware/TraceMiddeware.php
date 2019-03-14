@@ -15,8 +15,8 @@ namespace Hyperf\Tracer\Middleware;
 use Hyperf\Tracer\Tracing;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use const Zipkin\Kind\SERVER;
 

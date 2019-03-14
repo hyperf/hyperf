@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo\Listener;
 
+use Hyperf\ConfigApollo\ClientInterface;
 use Hyperf\ConfigApollo\Option;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\ConfigApollo\ClientInterface;
-use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\OnPipeMessage;
 
 /**
  * @Listener

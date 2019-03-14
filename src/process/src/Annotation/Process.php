@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\Process\Annotation;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Process\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -12,7 +21,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Process extends AbstractAnnotation
 {
-
     /**
      * @var int
      */
@@ -37,5 +45,4 @@ class Process extends AbstractAnnotation
      * @var bool
      */
     public $enableCoroutine = true;
-
 }

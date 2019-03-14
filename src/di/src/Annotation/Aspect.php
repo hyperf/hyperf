@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\Aop\ArroundInterface;
 use Doctrine\Instantiator\Instantiator;
+use Hyperf\Di\Aop\ArroundInterface;
 
 /**
  * @Annotation
@@ -24,7 +24,7 @@ class Aspect extends AbstractAnnotation
     /**
      * {@inheritdoc}
      */
-    public function collectClass(string $className, ?string $target): void
+    public function collectClass(string $className): void
     {
         // @TODO Add order property.
         if (class_exists($className)) {

@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Paginator;
 
-use Countable;
 use ArrayAccess;
-use JsonSerializable;
-use IteratorAggregate;
+use Countable;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
+use IteratorAggregate;
+use JsonSerializable;
 
 class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable
 {
@@ -63,8 +63,10 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      */
     public function render(?string $view = null, array $data = []): string
     {
-        // @TODO Allow user implement render() method.
-        return '';
+        if ($view) {
+            throw new \RuntimeException('WIP.');
+        }
+        return json_encode($data, 0);
     }
 
     /**

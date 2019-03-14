@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Database\Model\Collection;
 
 trait Cacheable
 {
@@ -41,6 +41,7 @@ trait Cacheable
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
 
+        $ids = array_unique($ids);
         return $manager->findManyFromCache($ids, static::class);
     }
 

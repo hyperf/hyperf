@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Elasticsearch\Connections;
 
-use Psr\Log\LoggerInterface;
-use Elasticsearch\Serializers\SerializerInterface;
 use Elasticsearch\Connections\ConnectionFactoryInterface;
+use Elasticsearch\Serializers\SerializerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class AbstractConnection.

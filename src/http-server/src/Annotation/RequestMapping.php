@@ -23,7 +23,7 @@ class RequestMapping extends Mapping
     /**
      * @var array
      */
-    public $methods = [];
+    public $methods = ['GET', 'POST'];
 
     public function __construct($value = null)
     {

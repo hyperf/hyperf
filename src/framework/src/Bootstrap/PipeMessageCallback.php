@@ -18,7 +18,6 @@ use Swoole\Server as SwooleServer;
 
 class PipeMessageCallback
 {
-
     /**
      * @var EventDispatcherInterface
      */
@@ -31,6 +30,7 @@ class PipeMessageCallback
 
     /**
      * Handle Swoole onWorkerStop event.
+     * @param mixed $data
      */
     public function onPipeMessage(SwooleServer $server, int $fromWorkerId, $data)
     {

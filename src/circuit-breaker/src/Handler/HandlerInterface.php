@@ -10,10 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Constants\Exceptions;
+namespace Hyperf\CircuitBreaker\Handler;
 
-use Exception;
+use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-class ConstantsException extends Exception
+interface HandlerInterface
 {
+    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation);
 }

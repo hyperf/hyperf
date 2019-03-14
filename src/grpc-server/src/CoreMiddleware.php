@@ -13,19 +13,19 @@ declare(strict_types=1);
 namespace Hyperf\GrpcServer;
 
 use FastRoute\Dispatcher;
-use Hyperf\Utils\Context;
+use Google\Protobuf\Internal\Message;
+use Google\Protobuf\Internal\Message as ProtobufMessage;
+use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\GrpcServer\Utils\Parser;
-use Google\Protobuf\Internal\Message;
+use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\Di\MethodDefinitionCollector;
-use Swoft\Http\Message\Stream\SwooleStream;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Google\Protobuf\Internal\Message as ProtobufMessage;
-use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Swoft\Http\Message\Stream\SwooleStream;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {

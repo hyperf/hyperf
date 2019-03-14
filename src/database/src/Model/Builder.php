@@ -12,16 +12,18 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Closure;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
 use BadMethodCallException;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Closure;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\ForwardsCalls;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -725,14 +727,9 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @param int $perPage
-     * @param array $columns
-     * @param string $pageName
-     * @param null|int $page
      * @throws \InvalidArgumentException
-     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 

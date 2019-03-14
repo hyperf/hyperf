@@ -13,34 +13,85 @@ declare(strict_types=1);
 namespace Hyperf\Redis;
 
 use Hyperf\Redis\Pool\PoolFactory;
-use Psr\Container\ContainerInterface;
+use Hyperf\Utils\Context;
 
 class Redis
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var PoolFactory
      */
     protected $factory;
 
-    protected $name = 'default';
+    /**
+     * @var string
+     */
+    protected $poolName = 'default';
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(PoolFactory $factory)
     {
-        $this->container = $container;
-        $this->factory = $container->get(PoolFactory::class);
+        $this->factory = $factory;
     }
 
     public function __call($name, $arguments)
     {
-        $pool = $this->factory->getPool($this->name);
+        // Get a connection from coroutine context or connection pool.
+        $hasContextConnection = Context::has($this->getContextKey());
+        $connection = $this->getConnection($hasContextConnection);
 
-        $connection = $pool->get()->getConnection();
+        // Execute the command with the arguments.
+        $result = $connection->{$name}(...$arguments);
 
-        return $connection->{$name}(...$arguments);
+        // Release connection.
+        if (! $hasContextConnection) {
+            if ($this->shouldUseSameConnection($name)) {
+                // Should storage the connection to coroutine context, then use defer() to release the connection.
+                Context::set($this->getContextKey(), $connection);
+                defer(function () use ($connection) {
+                    $connection->release();
+                });
+            } else {
+                // Release the connection after command executed.
+                $connection->release();
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Define the commands that needs same connection to execute.
+     * When these commands executed, the connection will storage to coroutine context.
+     */
+    private function shouldUseSameConnection(string $methodName): bool
+    {
+        return in_array($methodName, [
+            'multi',
+            'pipeline',
+        ]);
+    }
+
+    /**
+     * Get a connection from coroutine context, or from redis connectio pool.
+     * @param mixed $hasContextConnection
+     */
+    private function getConnection($hasContextConnection): RedisConnection
+    {
+        $connection = null;
+        if ($hasContextConnection) {
+            $connection = Context::get($this->getContextKey());
+        }
+        if (! $connection instanceof RedisConnection) {
+            $pool = $this->factory->getPool($this->poolName);
+            $connection = $pool->get()->getConnection();
+        }
+        return $connection;
+    }
+
+    /**
+     * The key to identify the connection object in coroutine context.
+     */
+    private function getContextKey(): string
+    {
+        return sprintf('redis.connection.%s', $this->poolName);
     }
 }

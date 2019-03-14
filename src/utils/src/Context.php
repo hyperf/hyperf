@@ -12,74 +12,60 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Hyperf\Utils\Traits\Container;
+use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
-    use Container;
+    protected static $nonCoContext = [];
 
-    /**
-     * @var array
-     */
-    protected static $container = [];
-
-    /**
-     * {@inheritdoc}
-     */
     public static function set(string $id, $value)
     {
-        static::$container[static::getCoroutineId()][$id] = $value;
+        if (Coroutine::inCoroutine()) {
+            SwCoroutine::getContext()[$id] = $value;
+        } else {
+            static::$nonCoContext[$id] = $value;
+        }
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function get(string $id, $default = null)
     {
-        return static::$container[static::getCoroutineId()][$id] ?? $default;
+        if (Coroutine::inCoroutine()) {
+            return SwCoroutine::getContext()[$id] ?? $default;
+        }
+
+        return static::$nonCoContext[$id] ?? $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function has(string $id)
     {
-        return isset(static::$container[static::getCoroutineId()][$id]);
+        if (Coroutine::inCoroutine()) {
+            return isset(SwCoroutine::getContext()[$id]);
+        }
+
+        return isset(static::$nonCoContext[$id]);
     }
 
     /**
-     * Destroy the coroutine context.
-     *
-     * @param null|int $coroutineId if provide a coroutine ID, then will destroy the specified context
+     * Copy the context from a coroutine to current coroutine.
      */
-    public static function destroy(int $coroutineId = null)
+    public static function copy(int $fromCoroutineId): void
     {
-        if (! $coroutineId) {
-            $coroutineId = static::getCoroutineId();
-        }
-        unset(static::$container[$coroutineId]);
-    }
-
-    /**
-     * Copy the context from a coroutine to another coroutine,
-     * Notice that this method is not a deep copy and I/O connection cannot copy to a another coroutine.
-     */
-    public static function copy(int $fromCoroutineId, int $toCoroutineId = null): void
-    {
-        if (! $toCoroutineId) {
-            $toCoroutineId = static::getCoroutineId();
-        }
-        static::$container[$toCoroutineId] = static::$container[$fromCoroutineId];
+        /**
+         * @var \ArrayObject
+         * @var \ArrayObject $current
+         */
+        $from = SwCoroutine::getContext($fromCoroutineId);
+        $current = SwCoroutine::getContext();
+        $current->unserialize($from->serialize());
     }
 
     public static function getContainer()
     {
-        return static::$container;
-    }
+        if (Coroutine::inCoroutine()) {
+            return SwCoroutine::getContext();
+        }
 
-    protected static function getCoroutineId()
-    {
-        return Coroutine::id();
+        return static::$nonCoContext;
     }
 }

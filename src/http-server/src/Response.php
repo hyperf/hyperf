@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\Arrayable;
-use Swoft\Http\Message\Stream\SwooleStream;
-use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Swoft\Http\Message\Stream\SwooleStream;
 
 class Response implements ResponseInterface
 {

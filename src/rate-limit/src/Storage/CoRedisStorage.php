@@ -47,7 +47,7 @@ class CoRedisStorage implements Storage, GlobalScope
         $this->redis = $redis;
         $this->mutex = make(PHPRedisMutex::class, [
             'redisAPIs' => [$redis],
-            'name' => $key
+            'name' => $key,
         ]);
     }
 

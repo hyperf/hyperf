@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Redis\Redis;
-use Hyperf\Tracer\Tracing;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Tracer\SwitchManager;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Redis\Redis;
+use Hyperf\Tracer\SwitchManager;
+use Hyperf\Tracer\Tracing;
 
 /**
  * @Aspect

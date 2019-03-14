@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
-use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 use Swoole\Http\Request as SwooleHttpRequest;
 use function strlen;
 use function substr;

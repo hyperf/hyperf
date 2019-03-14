@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Listener;
 
+use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Tracer\SwitchManager;
+use Hyperf\Tracer\Tracing;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Hyperf\Tracer\Tracing;
-use Hyperf\Tracer\SwitchManager;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Database\Events\QueryExecuted;
-use Hyperf\Event\Contract\ListenerInterface;
 
 /**
  * @Listener

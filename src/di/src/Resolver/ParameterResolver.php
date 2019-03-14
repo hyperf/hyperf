@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Resolver;
 
+use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\MethodInjection;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 use ReflectionMethod;
 use ReflectionParameter;
-use Hyperf\Di\Definition\MethodInjection;
-use Hyperf\Di\Definition\DefinitionInterface;
-use Hyperf\Di\Exception\InvalidDefinitionException;
 
 class ParameterResolver
 {

@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
+use Hyperf\Cache\Packer\PhpSerializer;
 use Hyperf\Contract\PackerInterface;
 use Psr\Container\ContainerInterface;
-use Hyperf\Cache\Packer\PhpSerializer;
 
 abstract class Driver implements DriverInterface
 {

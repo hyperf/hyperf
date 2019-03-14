@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Annotation;
 
-use Hyperf\Di\Annotation\AbstractAnnotation;
 use Doctrine\Common\Annotations\Annotation\Target;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation

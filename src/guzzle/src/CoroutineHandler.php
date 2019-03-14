@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Guzzle;
 
-use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\FulfilledPromise;
+use Psr\Http\Message\RequestInterface;
+use Swoole\Coroutine;
+use Swoole\Coroutine\Http\Client;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.

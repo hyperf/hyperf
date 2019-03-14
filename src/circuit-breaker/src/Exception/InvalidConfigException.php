@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Logger\Exceptions;
+namespace Hyperf\CircuitBreaker\Exception;
 
 class InvalidConfigException extends \RuntimeException
 {
