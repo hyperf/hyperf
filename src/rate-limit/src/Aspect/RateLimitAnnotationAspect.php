@@ -77,12 +77,10 @@ class RateLimitAnnotationAspect implements ArroundInterface
             $bucketsKey = trim(str_replace('/', ':', $this->request->getUri()->getPath()), ':');
         }
 
-        $bucket = $this->rateLimitHandler->getBucket($bucketsKey);
-        if (! $bucket) {
-            $bucket = $this->rateLimitHandler->build($bucketsKey, $annotation->limit, $annotation->capacity);
-        }
+        $bucket = $this->rateLimitHandler->build($bucketsKey, $annotation->limit, $annotation->capacity);
 
-        if ($bucket->consume($annotation->demand, $seconds)) {
+        // TODO
+        if ($bucket->consume($annotation->demand ?? 1, $seconds)) {
             return $proceedingJoinPoint->process();
         }
 
