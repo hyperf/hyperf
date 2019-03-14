@@ -14,8 +14,6 @@ namespace Hyperf\Di\Annotation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Doctrine\Common\Annotations\DocParser;
-use Hyperf\Config\Annotation\Value;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
