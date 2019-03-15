@@ -19,6 +19,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 /**
  * @Annotation
  * @Target({"METHOD"})
+ * @property $timeout
  */
 class CircuitBreaker extends AbstractAnnotation
 {

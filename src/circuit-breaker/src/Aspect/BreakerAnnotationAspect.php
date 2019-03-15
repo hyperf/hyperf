@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker\Aspect;
 
-use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 use Hyperf\CircuitBreaker\Handler\HandlerInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
 class BreakerAnnotationAspect extends AbstractAspect
 {
     public $annotations = [
-        Breaker::class,
+        CircuitBreaker::class,
     ];
 
     protected $container;
@@ -38,8 +38,8 @@ class BreakerAnnotationAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var Breaker $annotation */
-        $annotation = $metadata->method[Breaker::class] ?? null;
+        /** @var CircuitBreaker $annotation */
+        $annotation = $metadata->method[CircuitBreaker::class] ?? null;
 
         if (! $annotation) {
             return $proceedingJoinPoint->process();

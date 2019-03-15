@@ -12,6 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker\Exception;
 
-class TimeoutException extends CircuitBreakerException
+class CircuitBreakerException extends \RuntimeException
 {
 }

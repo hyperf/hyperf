@@ -14,6 +14,7 @@ namespace Hyperf\CircuitBreaker\Handler;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
+use Hyperf\CircuitBreaker\Exception\CircuitBreakerException;
 use Hyperf\CircuitBreaker\Exception\TimeoutException;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
@@ -37,6 +38,10 @@ class TimeoutHandler extends AbstractHandler
             $breaker->incSuccessCounter();
             $this->switch($breaker, $annotation, true);
         } catch (\Throwable $exception) {
+            if (! $exception instanceof CircuitBreakerException) {
+                throw $exception;
+            }
+
             $err = sprintf(
                 'Call %s@%s %s, then call it in fallback.',
                 $proceedingJoinPoint->className,
@@ -48,10 +53,6 @@ class TimeoutHandler extends AbstractHandler
 
             $breaker->incFailCounter();
             $this->switch($breaker, $annotation, false);
-
-            if (! $exception instanceof TimeoutException) {
-                throw $exception;
-            }
         }
 
         return $result;
