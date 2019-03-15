@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker\Handler;
 
-use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 interface HandlerInterface
 {
-    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation);
+    public function handle(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $annotation);
 }

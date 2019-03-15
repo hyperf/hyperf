@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker\Handler;
 
-use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\Exception\TimeoutException;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -21,7 +21,7 @@ class TimeoutHandler extends AbstractHandler
 {
     const DEFAULT_TIMEOUT = 5;
 
-    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {
         $timeout = $annotation->value['timeout'] ?? self::DEFAULT_TIMEOUT;
         $time = microtime(true);
@@ -57,7 +57,7 @@ class TimeoutHandler extends AbstractHandler
         return $result;
     }
 
-    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
+    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {
         return null;
     }

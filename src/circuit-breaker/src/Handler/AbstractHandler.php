@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker\Handler;
 
-use Hyperf\CircuitBreaker\Annotation\Breaker;
+use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\CircuitBreakerInterface;
@@ -44,7 +44,7 @@ abstract class AbstractHandler implements HandlerInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Breaker $annotation)
+    public function handle(ProceedingJoinPoint $proceedingJoinPoint, Annotation $annotation)
     {
         $name = $this->getName($proceedingJoinPoint);
         /** @var CircuitBreakerInterface $breaker */
@@ -77,7 +77,7 @@ abstract class AbstractHandler implements HandlerInterface
         return $name;
     }
 
-    protected function switch(CircuitBreaker $breaker, Breaker $annotation, bool $status)
+    protected function switch(CircuitBreaker $breaker, Annotation $annotation, bool $status)
     {
         $state = $breaker->state();
         if ($state->isClose()) {
@@ -113,12 +113,12 @@ abstract class AbstractHandler implements HandlerInterface
         }
     }
 
-    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {
         return $proceedingJoinPoint->process();
     }
 
-    protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation)
+    protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {
         if ($breaker->attempt()) {
             return $this->call($proceedingJoinPoint, $breaker, $annotation);
@@ -127,5 +127,5 @@ abstract class AbstractHandler implements HandlerInterface
         return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
     }
 
-    abstract protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Breaker $annotation);
+    abstract protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation);
 }

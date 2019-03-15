@@ -20,7 +20,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target({"METHOD"})
  */
-class Breaker extends AbstractAnnotation
+class CircuitBreaker extends AbstractAnnotation
 {
     /**
      * @var string
