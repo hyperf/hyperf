@@ -55,8 +55,9 @@ class CacheAspect implements ArroundInterface
         /** @var DriverInterface $driver */
         $driver = $manager->getDriver($group);
 
-        if ($driver->has($key)) {
-            return $driver->get($key);
+        [$has, $result] = $driver->fetch($key);
+        if ($has) {
+            return $result;
         }
 
         $result = $proceedingJoinPoint->process();

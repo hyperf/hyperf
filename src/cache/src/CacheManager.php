@@ -19,6 +19,7 @@ use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Psr\Container\ContainerInterface;
+use function call;
 
 class CacheManager
 {
@@ -38,7 +39,7 @@ class CacheManager
         $this->config = $container->get(ConfigInterface::class)->get('cache', []);
     }
 
-    public function getDriver($name)
+    public function getDriver($name): DriverInterface
     {
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {
             return $this->drivers[$name];
@@ -52,6 +53,21 @@ class CacheManager
         $driver = new $driverClass($this->container, $this->config[$name]);
 
         return $this->drivers[$name] = $driver;
+    }
+
+    public function call($callback, string $key, int $ttl = 3600, $config = 'default')
+    {
+        $driver = $this->getDriver($config);
+
+        [$has, $result] = $driver->fetch($key);
+        if ($has) {
+            return $result;
+        }
+
+        $result = call($callback);
+        $driver->set($key, $result, $ttl);
+
+        return $result;
     }
 
     public function getAnnotationValue(string $className, string $method, array $arguments)

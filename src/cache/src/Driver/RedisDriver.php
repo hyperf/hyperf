@@ -32,15 +32,31 @@ class RedisDriver extends Driver
     public function get($key, $default = null)
     {
         $res = $this->redis->get($key);
+        if ($res === false) {
+            return $default;
+        }
 
         return $this->packer->unpack($res);
+    }
+
+    public function fetch(string $key, $default = null): array
+    {
+        $res = $this->redis->get($key);
+        if ($res === false) {
+            return [false, $default];
+        }
+
+        return [true, $this->packer->unpack($res)];
     }
 
     public function set($key, $value, $ttl = null)
     {
         $res = $this->packer->pack($value);
+        if ($ttl > 0) {
+            return $this->redis->set($key, $res, $ttl);
+        }
 
-        return $this->redis->set($key, $res, $ttl);
+        return $this->redis->set($key, $res);
     }
 
     public function delete($key)
