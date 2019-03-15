@@ -57,9 +57,4 @@ class TimeoutHandler extends AbstractHandler
 
         return $result;
     }
-
-    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
-    {
-        return null;
-    }
 }

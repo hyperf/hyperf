@@ -16,6 +16,7 @@ use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\CircuitBreakerInterface;
+use Hyperf\CircuitBreaker\FallbackInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
@@ -160,5 +161,27 @@ abstract class AbstractHandler implements HandlerInterface
         return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
     }
 
-    abstract protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation);
+    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    {
+        [$className, $methodName] = $this->prepareHandler($annotation->fallback);
+
+        $class = $this->container->get($className);
+        if ($class instanceof FallbackInterface) {
+            return $class->fallback($proceedingJoinPoint);
+        }
+
+        $argument = $proceedingJoinPoint->getArguments();
+
+        return $class->{$methodName}(...$argument);
+    }
+
+    protected function prepareHandler(string $fallback): array
+    {
+        $result = explode('@', $fallback);
+
+        return [
+            $result[0],
+            $result[1] ?? 'fallback',
+        ];
+    }
 }
