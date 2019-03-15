@@ -70,11 +70,6 @@ abstract class AbstractHandler implements HandlerInterface
     protected function getName(ProceedingJoinPoint $proceedingJoinPoint): string
     {
         $name = sprintf('%s@%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $arguments = $proceedingJoinPoint->getArguments();
-        if (count($arguments) > 0) {
-            $name .= implode(':', $arguments);
-        }
-
         return $name;
     }
 
