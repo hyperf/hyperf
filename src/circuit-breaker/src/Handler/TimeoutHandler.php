@@ -32,8 +32,11 @@ class TimeoutHandler extends AbstractHandler
 
             $use = microtime(true) - $time;
             if ($use > $timeout) {
-                throw new TimeoutException('execute timeout, use ' . $use . ' s');
+                throw new TimeoutException('timeout, use ' . $use . 's');
             }
+
+            $msg = sprintf('%s@%s success, use %ss.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $use);
+            $this->logger->debug($msg);
 
             $breaker->incSuccessCounter();
             $this->switch($breaker, $annotation, true);
@@ -42,14 +45,8 @@ class TimeoutHandler extends AbstractHandler
                 throw $exception;
             }
 
-            $err = sprintf(
-                'Call %s@%s %s, then call it in fallback.',
-                $proceedingJoinPoint->className,
-                $proceedingJoinPoint->methodName,
-                $exception->getMessage()
-            );
-
-            $this->logger->error($err);
+            $msg = sprintf('%s@%s %s.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $exception->getMessage());
+            $this->logger->debug($msg);
 
             $breaker->incFailCounter();
             $this->switch($breaker, $annotation, false);
