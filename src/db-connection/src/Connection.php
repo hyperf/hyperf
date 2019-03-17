@@ -99,7 +99,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function check(): bool
     {
-        $maxIdleTime = $this->config['max_idle_time'] ?? 60;
+        $maxIdleTime = $this->pool->getOption()->getMaxIdleTime();
         $now = microtime(true);
         if ($now > $maxIdleTime + $this->lastUseTime) {
             return false;

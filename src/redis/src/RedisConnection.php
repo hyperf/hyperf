@@ -88,7 +88,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function check(): bool
     {
-        $maxIdleTime = $this->config['max_idle_time'] ?? 60;
+        $maxIdleTime = $this->pool->getOption()->getMaxIdleTime();
         $now = microtime(true);
         if ($now > $maxIdleTime + $this->lastUseTime) {
             return false;

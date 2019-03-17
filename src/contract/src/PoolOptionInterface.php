@@ -23,4 +23,6 @@ interface PoolOptionInterface
     public function getWaitTimeout(): float;
 
     public function getHeartbeat(): float;
+
+    public function getMaxIdleTime(): float;
 }

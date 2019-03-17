@@ -75,6 +75,11 @@ abstract class Pool implements PoolInterface
         return $this->currentConnections;
     }
 
+    public function getOption(): PoolOptionInterface
+    {
+        return $this->option;
+    }
+
     protected function getConnectionsInChannel(): int
     {
         return $this->channel->length();
@@ -88,6 +93,7 @@ abstract class Pool implements PoolInterface
             'connectTimeout' => $options['connect_timeout'] ?? 10.0,
             'waitTimeout' => $options['wait_timeout'] ?? 3.0,
             'heartbeat' => $options['heartbeat'] ?? -1,
+            'maxIdleTime' => $options['max_idle_time'] ?? 60.0,
         ]);
     }
 

@@ -58,13 +58,20 @@ class PoolOption implements PoolOptionInterface
      */
     private $heartbeat = -1;
 
-    public function __construct(int $minConnections, int $maxConnections, float $connectTimeout, float $waitTimeout, float $heartbeat)
+    /**
+     * The max idle time for connection.
+     * @var float
+     */
+    private $maxIdleTime = 60.0;
+
+    public function __construct(int $minConnections, int $maxConnections, float $connectTimeout, float $waitTimeout, float $heartbeat, float $maxIdleTime)
     {
         $this->minConnections = $minConnections;
         $this->maxConnections = $maxConnections;
         $this->connectTimeout = $connectTimeout;
         $this->waitTimeout = $waitTimeout;
         $this->heartbeat = $heartbeat;
+        $this->maxIdleTime = $maxIdleTime;
     }
 
     public function getMaxConnections(): int
@@ -119,6 +126,23 @@ class PoolOption implements PoolOptionInterface
     public function setWaitTimeout(float $waitTimeout): self
     {
         $this->waitTimeout = $waitTimeout;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxIdleTime(): float
+    {
+        return $this->maxIdleTime;
+    }
+
+    /**
+     * @param float $maxIdleTime
+     */
+    public function setMaxIdleTime(float $maxIdleTime): self
+    {
+        $this->maxIdleTime = $maxIdleTime;
         return $this;
     }
 }
