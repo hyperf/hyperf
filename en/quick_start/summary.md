@@ -1,2 +1,2 @@
-- [overview](zh/quick_start/overview.md)
-- [install](zh/quick_start/install.md)
+- [overview](en/quick_start/overview.md)
+- [install](en/quick_start/install.md)

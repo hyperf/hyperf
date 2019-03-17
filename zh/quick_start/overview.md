@@ -38,7 +38,7 @@ class IndexController
 
 ## 自动注入
 
-当您在使用make和get的时候，框架会自动帮你注入container的单例对象。比如，我们实现一个UserService。
+当您在使用`make`和`get`的时候，框架会自动帮你注入container的单例对象。比如，我们实现一个UserService。
 框架提供构造函数注入和注解注入两种方式。
 
 ~~~php

@@ -38,7 +38,7 @@ class IndexController
 
 ## Auto Inject
 
-When you use make and get, the framework automatically injects container's singleton objects. For example, we implement a UserService.
+When you use `make` and `get`, the framework automatically injects container's singleton objects. For example, we implement a UserService.
 The framework provides constructor injection and annotation injection.
 
 ~~~php
@@ -126,7 +126,7 @@ class IndexController
 ~~~
 
 
-## 创建对象
+## Create objects
 
 Hyperf implements AOP aspect programming based on PHPParser. To support annotations, origin classes are rewritten, so create objects in the following way instead of simply new. 
 Of course, this is only a suggestion, not a requirement.
