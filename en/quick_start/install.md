@@ -1,6 +1,6 @@
-# 安装
+# Install
 
-## 使用composer安装项目
+## composer
 ~~~
 composer create hyperf/hyperf-skeleton 
 ~~~
