@@ -47,11 +47,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
      */
     protected $config;
 
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
-
     protected $transaction = false;
 
     public function __construct(ContainerInterface $container, DbPool $pool, array $config)
@@ -94,18 +89,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         }
 
         $this->lastUseTime = microtime(true);
-        return true;
-    }
-
-    public function check(): bool
-    {
-        $maxIdleTime = $this->pool->getOption()->getMaxIdleTime();
-        $now = microtime(true);
-        if ($now > $maxIdleTime + $this->lastUseTime) {
-            return false;
-        }
-
-        $this->lastUseTime = $now;
         return true;
     }
 
