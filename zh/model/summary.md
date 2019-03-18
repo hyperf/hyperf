@@ -1,3 +1,5 @@
 - 快速开始
     - [介绍](zh/model/intro.md)
     - [配置](zh/model/config.md)
+- 查询构造器
+    - [查询](zh/model/select.md)
