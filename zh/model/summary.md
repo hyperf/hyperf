@@ -3,3 +3,7 @@
     - [配置](zh/model/config.md)
 - 查询构造器
     - [查询](zh/model/select.md)
+- 模型
+    - [模型](zh/model/model.md)
+    - [事件](zh/model/event.md)
+    - [关系](zh/model/relation.md)

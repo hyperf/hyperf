@@ -3,7 +3,7 @@
 这里只提供一部分常用的教程，具体教程可以到Laravel官网查看。
 [Laravel Query Builder](https://laravel.com/docs/5.8/queries)
 
-## 使用DB助手类
+## 查询
 
 ~~~php
 use Hyperf\DbConnection\Db;
@@ -22,6 +22,8 @@ foreach ($users as $user) {
     echo $user->name;
 }
 ~~~
+
+## 聚合查询
 
 框架还提供了聚合类方法，例如`count`, `max`, `min`, `avg`, `sum`。
 

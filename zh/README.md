@@ -14,8 +14,7 @@ Hyperf 是基于Swoole4.2+的高性能、高灵活性的PHP框架。内置协程
 
 - 快速开始: [介绍](zh/model/intro.md) | [配置](zh/model/config.md)
 - 查询构造器: [查询](zh/model/select.md)
-- 模型事件:
-- 模型关系:
+- 模型: [模型](zh/model/model.md) | [事件](zh/model/event.md) | [关系](zh/model/relation.md)
 
 
 ## 微服务
