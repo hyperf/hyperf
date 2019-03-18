@@ -57,6 +57,11 @@ class ConfigFetcherProcess extends AbstractProcess
         parent::bind($server);
     }
 
+    public function isEnable(): bool
+    {
+        return $this->config->get('config-center.enable', false);
+    }
+
     public function handle(): void
     {
         $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
