@@ -65,9 +65,6 @@ abstract class AbstractProcess implements ProcessInterface
         }
     }
 
-    /**
-     * Determine if the process should start ?
-     */
     public function isEnable(): bool
     {
         return true;
