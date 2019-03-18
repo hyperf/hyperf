@@ -12,22 +12,31 @@ Hyperf 是基于 `Swoole 4.3+` 的高性能、高灵活性的 PHP 框架，内�
 - 入门教程: 
 - 进阶教程: 
 
-## 模型
+## 数据库模型
 
 - 快速开始: [介绍](zh/model/intro.md) | [配置](zh/model/config.md)
 - 查询构造器: [查询](zh/model/select.md)
-- 模型: [模型](zh/model/model.md) | [事件](zh/model/event.md) | [关系](zh/model/relation.md)
-
-
-## 微服务
-
-- GRPC
+- 模型: [模型](zh/model/model.md) | [模型事件](zh/model/event.md) | [实体关系](zh/model/relation.md)
 
 ## 框架核心
 
-- 依赖注入
+- 注解: [概念](zh/annotation/intro.md) | [定义及使用](zh/annotation/usage.md)
+- 依赖注入: [概念](zh/annotation/intro.md) | [使用](zh/annotation/usage.md) | [配置](zh/annotation/config.md)
+- AOP 面向切面编程: [概念](zh/annotation/intro.md) | [快速开始](zh/annotation/usage.md)
+
+## 微服务
+
+- GRPC 服务
+- 服务治理: [服务提供](zh/annotation/service-provider.md) | [定义及使用](zh/annotation/usage.md)
 
 ## 其他组件
 
-- [AMQP](amqp.md)
-- [缓存](cache.md)
+- [缓存](zh/cache.md)
+- [AMQP / RabbitMQ](zh/amqp.md)
+- [Elasticsearch](zh/elasticsearch.md)
+- [Consul](zh/consul.md)
+
+## 组件开发指南
+
+- 定义 Composer 组件
+- Hyperf 框架流程介入
