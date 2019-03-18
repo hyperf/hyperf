@@ -30,11 +30,6 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
      */
     protected $config;
 
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
-
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
@@ -83,18 +78,6 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
-        return true;
-    }
-
-    public function check(): bool
-    {
-        $maxIdleTime = $this->config['max_idle_time'] ?? 60;
-        $now = microtime(true);
-        if ($now > $maxIdleTime + $this->lastUseTime) {
-            return false;
-        }
-
-        $this->lastUseTime = $now;
         return true;
     }
 

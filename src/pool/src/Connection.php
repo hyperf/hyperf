@@ -27,6 +27,11 @@ abstract class Connection implements ConnectionInterface
      */
     protected $pool;
 
+    /**
+     * @var float
+     */
+    protected $lastUseTime = 0.0;
+
     public function __construct(ContainerInterface $container, Pool $pool)
     {
         $this->container = $container;
@@ -41,6 +46,18 @@ abstract class Connection implements ConnectionInterface
     public function getConnection()
     {
         return $this->getActiveConnection();
+    }
+
+    public function check(): bool
+    {
+        $maxIdleTime = $this->pool->getOption()->getMaxIdleTime();
+        $now = microtime(true);
+        if ($now > $maxIdleTime + $this->lastUseTime) {
+            return false;
+        }
+
+        $this->lastUseTime = $now;
+        return true;
     }
 
     abstract public function getActiveConnection();
