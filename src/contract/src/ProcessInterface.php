@@ -18,5 +18,7 @@ interface ProcessInterface
 {
     public function bind(Server $server): void;
 
+    public function isEnable(): bool;
+
     public function handle(): void;
 }

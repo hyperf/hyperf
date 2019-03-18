@@ -74,7 +74,7 @@ class BeforeMainServerStartListener implements ListenerInterface
                 $instance = $process;
             }
             if ($instance instanceof ProcessInterface) {
-                $instance->bind($server);
+                $instance->isEnable() && $instance->bind($server);
             }
         }
     }
