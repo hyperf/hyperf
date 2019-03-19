@@ -3,7 +3,7 @@
 [https://github.com/hyperf-cloud/amqp](https://github.com/hyperf-cloud/amqp)
 
 ## Default Config
-~~~php
+```php
 <?php
 
 return [
@@ -33,19 +33,19 @@ return [
         ],
     ],
 ];
-~~~
+```
 
 ## Deliver Message
 
 Use generator command to create a producer.
-~~~
+```
 php bin/hyperf.php gen:amqp-producer DemoProducer
-~~~
+```
 
 We can modify the Producer annotation to replace exchange and routingKey.
 Payloload is the data that is finally delivered to the message queue, so we can rewrite the _construct method easyly,just make sure payload is assigned.
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -72,11 +72,11 @@ class DemoProducer extends ProducerMessage
     }
 }
 
-~~~
+```
 
 Get the Producer instance through container, and you can deliver the message. It is not reasonable for the following examples to use Application Context directly to get the Producer. For the specific use of container, see the di module.
 
-~~~php
+```php
 <?php
 use Hyperf\Amqp\Producer;
 use App\Amqp\Producers\DemoProducer;
@@ -86,19 +86,19 @@ $message = new DemoProducer(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);
 $result = $producer->produce($message);
 
-~~~
+```
 
 ## Consume Message
 
 Use generator command to create a consumer.
-~~~
+```
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
-~~~
+```
 
 we can modify the Consumer annotation to replace exchange, routingKey and queue.
 And $data is parsed metadata.
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -120,6 +120,6 @@ class DemoConsumer extends ConsumerMessage
         return Result::ACK;
     }
 }
-~~~
+```
 
 The framework automatically creates the process according to Consumer annotations, and the process will be pulled up again after unexpected exit.

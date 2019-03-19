@@ -7,7 +7,7 @@
 接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
 首先我们定义好`DbQueryExecutedListener`，实现`Hyperf\Event\Contract\ListenerInterface`接口并加上`Hyperf\Event\Annotation\Listener`注解，这样框架就会自动把监听器注册到事件调度器中，无需任何手动配置，监听事件，具体代码如下。
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -63,6 +63,6 @@ class DbQueryExecutedListener implements ListenerInterface
     }
 }
 
-~~~
+```
 
 ## 模型事件

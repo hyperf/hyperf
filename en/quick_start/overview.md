@@ -6,17 +6,17 @@ To give you a full understanding of how Hyperf works, this document gives you te
 
 Hyperf uses `nikic/fast-route` to provide routing capabilities, and you can easily write your route in `config/routes.php`. In addition, the framework also provides routing annotation [routing]().
 
-~~~php
+```php
 // config/routes.php
 
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/', 'App\Controllers\IndexController@index');
-~~~
+```
 
 ## Handle Request
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -34,14 +34,14 @@ class IndexController
         return (string)$id;
     }
 }
-~~~
+```
 
 ## Auto Inject
 
 When you use `make` and `get`, the framework automatically injects container's singleton objects. For example, we implement a UserService.
 The framework provides constructor injection and annotation injection.
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -87,11 +87,11 @@ class UserService
         return $this->book->first($id);
     }
 }
-~~~
+```
 
 Let's rewrite the IndexController above to execute the UserService method.
 
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -123,7 +123,7 @@ class IndexController
         return $service->get($id)->toArray();
     }
 }
-~~~
+```
 
 
 ## Create objects
@@ -131,7 +131,7 @@ class IndexController
 Hyperf implements AOP aspect programming based on PHPParser. To support annotations, origin classes are rewritten, so create objects in the following way instead of simply new. 
 Of course, this is only a suggestion, not a requirement.
 
-~~~php
+```php
 <?php
 
 $class = $this->container->get(UserService::class);
@@ -142,5 +142,5 @@ var_dump($user->toArray);
 
 $form = make(UserForm::class,['data' => $data]);
 $form->save();
-~~~
+```
 

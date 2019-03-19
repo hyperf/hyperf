@@ -19,7 +19,7 @@
 |    pool.heartbeat    |       -1        |        心跳        |
 |  pool.max_idle_time  |      60.0       |    最大闲置时间    |
 
-~~~php
+```php
 <?php
 
 return [
@@ -42,4 +42,4 @@ return [
         ]
     ],
 ];
-~~~
+```
