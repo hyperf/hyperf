@@ -12,17 +12,18 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Model\Booted;
 use Hyperf\Database\Model\Model;
 
 class ModelBootingTestStub extends Model
 {
     public function unboot()
     {
-        $this->booted = false;
+        Booted::$container[static::class] = false;
     }
 
     public function isBooted()
     {
-        return $this->booted;
+        return Booted::$container[static::class] ?? false;
     }
 }
