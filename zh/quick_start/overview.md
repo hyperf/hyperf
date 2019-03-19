@@ -1,6 +1,6 @@
 # 快速入门
 
-为了让您更快的了解 Hyperf 的使用，本章节将以 创建一个 HTTP Server 为例，通过对路由、控制器的定义实现一个简单的 Web 服务，但 Hyperf 不止于此，完善的服务治理、GRPC 服务、注解、AOP 等功能将由具体的章节阐述。
+为了让您更快的了解 Hyperf 的使用，本章节将以 `创建一个 HTTP Server` 为例，通过对路由、控制器的定义实现一个简单的 Web 服务，但 Hyperf 不止于此，完善的服务治理、GRPC 服务、注解、AOP 等功能将由具体的章节阐述。
 
 ## 定义访问路由
 
@@ -29,7 +29,7 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### 通过注解来定义路由
 
-Hyperf 提供了极其强大和方便灵活的 [注解]() 功能，在路由的定义上也毫无疑问地提供了注解定义的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 两种注解来定义一个 Controller，此处仅做简单的说明，更多细节请查阅 [路由]() 章节。
+Hyperf 提供了极其强大和方便灵活的 [注解](../annotation/intro.md) 功能，在路由的定义上也毫无疑问地提供了注解定义的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 两种注解来定义一个 Controller，此处仅做简单的说明，更多细节请查阅 [路由](../route/intro.md) 章节。
 
 ### 通过 `@AutoController` 注解定义路由
 `@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 Hyperf 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
@@ -212,5 +212,9 @@ class IndexController
 ```
    
 通过上面的示例我们不难发现 `$userService` 在没有实例化的情况下， 属性对应的类对象被自动注入了，这里的案例并未真正体现出依赖自动注入的好处。   
-我们假设一下 `UserService` 也存在很多依赖，而这些依赖又存在很多的依赖时，`new` 实例化的方式就需要手动实例化很多的对象并调整好对应的参数位，而在 Hyperf 里我们就无须手动管理这些依赖，只需要声明一下最终使用的类即可，而当 `UserService` 需要发生替换等剧烈的内部变化时，比如从一个本地服务替换成了一个RPC远程服务，也只需要通过配置调整依赖中 `UserService` 这个键值对应的类为新的RPC服务类即可。
+我们假设一下 `UserService` 也存在很多依赖，而这些依赖又存在很多的依赖时，`new` 实例化的方式就需要手动实例化很多的对象并调整好对应的参数位，而在 Hyperf 里我们就无须手动管理这些依赖，只需要声明一下最终使用的类即可，而当 `UserService` 需要发生替换等剧烈的内部变化时，比如从一个本地服务替换成了一个 RPC 远程服务，也只需要通过配置调整依赖中 `UserService` 这个键值对应的类为新的RPC服务类即可。
 
+## 启动 Hyperf 服务
+
+由于 Hyperf 内置了协程服务器，也就意味着 Hyperf 将以 CLI 的形式去运行，所以在定义好路由及实际的逻辑代码之后，我们需要在项目根目录并通过命令行运行 `php bin/hyperf.php start` 来启动服务。   
+当 Console 界面显示服务启动后便可通过 cURL 或 浏览器对服务正常发起访问了。
