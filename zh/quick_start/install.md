@@ -11,15 +11,17 @@ Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下�
  - Swoole PHP 扩展 >= 4.3.1
  - OpenSSL PHP 扩展
  - JSON PHP 扩展
- - PDO PHP 扩展 （如需要使用到 MySQL）
- - Redis PHP 扩展 （如需要使用到 Redis）
+ - PDO PHP 扩展 （如需要使用到 MySQL 客户端）
+ - Redis PHP 扩展 （如需要使用到 Redis 客户端）
+ - Protobuf PHP 扩展 （如需要使用到 GRPC 服务端或客户端）
 
 
 ## 安装 Hyperf
 
-Hyperf 使用 Composer 来管理项目的依赖，在使用 Hyperf 之前，请确保你的运行环境已经安装好了 Composer。
+Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在使用 Hyperf 之前，请确保你的运行环境已经安装好了 Composer。
 
 ### 通过 `composer create` 命令创建 [Skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目
+[Hyperf Skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目是我们已经为您准备好的一个骨架项目，内置了一些常用的组件及相关配置的文件及结构，是一个可以快速用于业务开发的 Web 项目基础。
 ~~~
 composer create hyperf/hyperf-skeleton 
 ~~~

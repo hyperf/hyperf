@@ -1,8 +1,8 @@
 # 介绍
 
-> `hyperf/database` 借鉴于 `laravel/database`，其中功能大多相同，但某些细节进行调整。在这里感谢laravel开发组，实现了这么好用的ORM组件。
+> `hyperf/database` 衍生于 `laravel/database`，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 ORM 组件。
 
-database组件原设计是在fpm模式下运行，所以hyperf不能直接使用。这里就需要提一下`hyperf/db-connection`组件，他基于`hyperf/pool`实现了数据库连接池，以它作为桥梁，hyperf才能把数据库组件接入进来。
+`hyperf/database` 组件是基于 `laravel/database` 衍生出来的组件，我们对它进行了一些改造，从设计上是允许用于其它 PHP-FPM 框架或基于 Swoole 的框架中的，而在 Hyperf 里就需要提一下 `hyperf/db-connection` 组件，它基于 `hyperf/pool` 实现了数据库连接池并对模型进行了新的抽象，以它作为桥梁，Hyperf 才能把数据库组件及事件组件接入进来。
 
 ~~~php
 <?php
