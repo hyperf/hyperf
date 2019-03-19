@@ -6,12 +6,12 @@
 
 Hyperf 提供了创建模型的脚本，您可以很方便的根据数据表创建对应模型。脚本使用PHPParser重写模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
-~~~
+```
 $ php bin/hyperf.php db:model table_name
-~~~
+```
 
 创建的模型如下
-~~~php
+```php
 <?php
 
 declare(strict_types=1);
@@ -58,7 +58,7 @@ class User extends Model
      */
     protected $casts = ['id' => 'integer', 'sex' => 'integer'];
 }
-~~~
+```
 
 ## 模型参数
 
@@ -72,7 +72,7 @@ class User extends Model
 
 ## 模型查询
 
-~~~php
+```php
 use App\Models\User;
 
 /** @var User $user */
@@ -80,5 +80,5 @@ $user = User::query()->where('id', 1)->first();
 $user->name = 'Hyperf';
 $user->save();
 
-~~~
+```
 
