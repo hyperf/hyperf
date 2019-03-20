@@ -21,6 +21,7 @@
   * [快速开始](zh/db/quick-start.md)
   * [查询构造器](zh/db/querybuilder.md)
   * [模型](zh/db/model.md)
+  * [模型缓存](zh/db/model-cache.md)
   
 * 微服务
 
@@ -36,10 +37,24 @@
 
   * [连接池](zh/pool.md)
   * [缓存](zh/cache.md)
+  * [日志](zh/logger.md)
+  * [分页器](zh/paginator.md)
+  * [Redis 协程客户端](zh/redis.md)
+  * [Guzzle HTTP 协程客户端](zh/guzzle.md)
+  * [Elasticsearch 协程客户端](zh/elasticsearch.md)
+  * [Consul 协程客户端](zh/consul.md)
+  * [ETCD 协程客户端](zh/etcd.md)
   * [AMQP](zh/amqp.md)
-  * [Elasticsearch 客户端](zh/elasticsearch.md)
-  * [Consul 客户端](zh/consul.md)
-  * [ETCD 客户端](zh/etcd.md)
+  * [Redis 消息队列](zh/redis-queue.md)
+  * [内存操作](zh/memory.md)
+  * [自定义进程](zh/process.md)
+  * [开发者工具](zh/devtool.md)
+  * [辅助类](zh/utils.md)
+  * [自动化测试](zh/testing.md)
+  
+* Awesome Hyperf
+
+  * [协程组件库](zh/awesome-components.md)
   
 * 组件开发指南
 
