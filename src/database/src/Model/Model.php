@@ -116,13 +116,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected $perPage = 15;
 
     /**
-     * Is the model booted ?
-     *
-     * @var bool
-     */
-    protected $booted = false;
-
-    /**
      * The array of trait initializers that will be called on each new instance.
      *
      * @var array
@@ -1183,8 +1176,9 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function bootIfNotBooted(): void
     {
-        if (! $this->booted) {
-            $this->booted = true;
+        $booted = Booted::$container[static::class] ?? false;
+        if (! $booted) {
+            Booted::$container[static::class] = true;
 
             $this->fireModelEvent('booting');
 
@@ -1210,7 +1204,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $class = static::class;
 
         $booted = [];
-        $this->traitInitializers[$class] = [];
+        TraitInitializers::$container[$class] = [];
 
         foreach (class_uses_recursive($class) as $trait) {
             $method = 'boot' . class_basename($trait);
@@ -1221,8 +1215,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             }
 
             if (method_exists($class, $method = 'initialize' . class_basename($trait))) {
-                $this->traitInitializers[$class][] = $method;
-                $this->traitInitializers[$class] = array_unique($this->traitInitializers[$class]);
+                TraitInitializers::$container[$class][] = $method;
+                TraitInitializers::$container[$class] = array_unique(TraitInitializers::$container[$class]);
             }
         }
     }
@@ -1465,7 +1459,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function initializeTraits(): void
     {
-        foreach ($this->traitInitializers[static::class] as $method) {
+        foreach (TraitInitializers::$container[static::class] ?? [] as $method) {
             $this->{$method}();
         }
     }

@@ -102,7 +102,7 @@ class CoroutineHandler
 
     protected function initSettings(RequestInterface $request, $options)
     {
-        if (isset($options['delay'])) {
+        if (isset($options['delay']) && $options['delay'] > 0) {
             Coroutine::sleep((float) $options['delay'] / 1000);
         }
 
