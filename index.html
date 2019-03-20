@@ -13,7 +13,7 @@
 <body>
   <nav>
     <a href="#/zh/">中文</a>
-    <a href="#/en/">EN</a>
+    <a href="#/en/">English</a>
   </nav>
   <div id="app"></div>
   <script>
@@ -23,20 +23,21 @@
       loadSidebar: 'summary.md',
       autoHeader: true,
       loadNavbar: true,
-      // basePath: '/zh/',
-      // fallbackLanguages: ['zh', 'en'],
+      basePath: '/zh/',
+      fallbackLanguages: ['zh', 'en'],
       mergeNavbar: true,
       themeColor: '#3F51B5',
       auto2top: true,
-      subMaxLevel: 2,
+      subMaxLevel: 3,
       alias: {
-        // '/.*/summary.md': '/summary.md'
+        //'/.*/summary.md': '/summary.md'
       }
     }
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-php.min.js"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//unpkg.com/docsify-copy-code"></script>
 </body>
 
 </html>

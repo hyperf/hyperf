@@ -155,6 +155,6 @@ return [
 ## 配置中心
 
 Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper-cloud/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
-关于配置中心的使用细节我们由 [配置中心](../config-center/intro.md) 章节来阐述。
+关于配置中心的使用细节我们由 [配置中心](config-center/intro.md) 章节来阐述。
 
 

@@ -1,3 +1,0 @@
-- 入门指南
-  - [安装](zh/quick_start/install.md)
-  - [快速入门](zh/quick_start/overview.md)
