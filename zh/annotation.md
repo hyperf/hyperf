@@ -1,5 +1,7 @@
 # 注解
 
+注解是 Hyperf 非常强大的一项功能，可以通过注解的形式减少很多的配置，以及实现很多非常方便的功能。
+
 ## 概念
 
 ### 什么是注解什么是注释？
@@ -14,7 +16,7 @@ Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations)
 注释块示例：
 ```php
 /**
- * 
+ * @AnnotationClass()
  */
 ```
 在标准注释块内通过书写 `@AnnotationClass()` 这样的语法即表明对当前注释块所在位置的对象(类、类方法、类属性)进行了注解的定义， `AnnotationClass` 对应的是一个 `注解类` 的类名，可写全类的命名空间，亦可只写类名，但需要在当前类 `use` 该注解类以确保能够根据命名空间找到正确的注解类。

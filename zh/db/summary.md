@@ -1,9 +1,0 @@
-- 快速开始
-    - [介绍](zh/db/intro.md)
-    - [配置](zh/db/config.md)
-- 查询构造器
-    - [查询](zh/db/select.md)
-- 模型
-    - [模型](zh/db/model.md)
-    - [事件](zh/db/event.md)
-    - [关系](zh/db/relation.md)
