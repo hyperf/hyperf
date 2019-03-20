@@ -17,6 +17,7 @@ use Hyperf\Di\Container;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Framework\Event\OtherWorkerStart;
 use Hyperf\Framework\SwooleEvent;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;
@@ -42,11 +43,11 @@ class WorkerStartCallback
      */
     private $eventDispatcher;
 
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
+    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, EventDispatcherInterface $eventDispatcher)
     {
         $this->container = $container;
         $this->logger = $logger;
-        $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -59,7 +60,6 @@ class WorkerStartCallback
             // Atomic and Lock have to initializes before worker start.
             $atomic = AtomicManager::get(SwooleEvent::ON_WORKER_START);
             $lock = LockManager::get(SwooleEvent::ON_WORKER_START);
-            $isScan = false;
             $lockedWorkerId = null;
             if ($lock->trylock()) {
                 $lockedWorkerId = $workerId;
@@ -72,8 +72,8 @@ class WorkerStartCallback
                 $this->logger->debug("Worker#${workerId} wating ...");
                 $atomic->wait();
             }
-            if (! $isScan || $workerId !== $lockedWorkerId) {
-                // @TODO Do something that the workers who does not got the lock should do.
+            if ($workerId !== $lockedWorkerId) {
+                $this->eventDispatcher->dispatch(new OtherWorkerStart($server, $workerId));
             }
             $this->logger->info("Worker#${workerId} started.");
         } catch (RuntimeException $e) {

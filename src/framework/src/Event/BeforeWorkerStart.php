@@ -17,12 +17,12 @@ class BeforeWorkerStart
     /**
      * @var \Swoole\Server
      */
-    private $server;
+    public $server;
 
     /**
      * @var int
      */
-    private $workerId;
+    public $workerId;
 
     public function __construct($server, int $workerId)
     {
