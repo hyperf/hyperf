@@ -9,12 +9,24 @@
   
 * 框架核心
 
+  * [生命周期](zh/lifecycle.md)
   * [协程](zh/coroutine.md)
   * [配置](zh/config.md)
   * [注解](zh/annotation.md)
   * [依赖注入](zh/di.md)
   * [事件机制](zh/event.md)
   * [AOP 面向切面编程](zh/aop.md)
+  
+* 基础功能
+
+  * [路由](zh/router.md)
+  * [中间件](zh/middleware.md)
+  * [控制器](zh/controller.md)
+  * [请求](zh/request.md)
+  * [响应](zh/response.md)
+  * [异常处理](zh/exception-handler.md)
+  * [缓存](zh/cache.md)
+  * [日志](zh/logger.md)
   
 * 数据库模型
 
@@ -36,8 +48,6 @@
 * 其它组件
 
   * [连接池](zh/pool.md)
-  * [缓存](zh/cache.md)
-  * [日志](zh/logger.md)
   * [分页器](zh/paginator.md)
   * [Redis 协程客户端](zh/redis.md)
   * [Guzzle HTTP 协程客户端](zh/guzzle.md)
