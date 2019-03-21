@@ -76,9 +76,7 @@ class Foo
 
 ## 自定义注解
 
-### 定义一个自定义注解
-
-#### 创建一个注解类
+### 创建一个注解类
 
 在任意地方创建注解类，如下代码示例：    
 
@@ -116,7 +114,7 @@ class Foo extends AbstractAnnotation
 
 我们注意一下在上面的示例代码中，注解类都继承了 `Hyperf\Di\Annotation\AbstractAnnotation` 抽象类，对于注解类来说，这个不是必须的，但对于 Hyperf 的注解类来说，继承 `Hyperf\Di\Annotation\AnnotationInterface` 接口类是必须的，那么抽象类在这里的作用是提供极简的定义方式，该抽象类已经为您实现了`注解参数自动分配到类属性`、`根据注解使用位置自动按照规则收集到 AnnotationCollector` 这样非常便捷的功能。
 
-#### 自定义注解收集器
+### 自定义注解收集器
 
 注解的收集时具体的执行流程也是在注解类内实现的，相关的方法由 `Hyperf\Di\Annotation\AnnotationInterface` 约束着，该接口类要求了下面 3 个方法的实现，您可以根据自己的需求实现对应的逻辑：
 
@@ -124,6 +122,6 @@ class Foo extends AbstractAnnotation
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
 - `public function collectProperty(string $className, ?string $target): void` 当注解定义在类属性时被扫描时会触发该方法
 
-#### 利用注解数据
+### 利用注解数据
 
 在没有自定义注解收集方法时，默认会将注解的元数据统一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 类内，通过该类的静态方法可以方便的获取对应的元数据用于逻辑判断或实现。

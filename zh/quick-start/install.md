@@ -27,3 +27,14 @@ Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在
 ```
 composer create hyperf/hyperf-skeleton 
 ```
+
+## 存在兼容性的扩展
+
+由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，顾在与不少扩展都存在兼容性的问题。   
+以下扩展都会造成一定的兼容性问题，不能与之共用或共存：
+
+- xhprof
+- xdebug
+- blackfire
+- trace
+- uopz

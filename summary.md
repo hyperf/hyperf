@@ -7,7 +7,7 @@
   * [安装](zh/quick-start/install.md)
   * [快速开始](zh/quick-start/overview.md)
   
-* 框架核心
+* 核心架构
 
   * [生命周期](zh/lifecycle.md)
   * [协程](zh/coroutine.md)
