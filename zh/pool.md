@@ -9,3 +9,22 @@
 对于 Hyperf 官方提供的组件，都是已经对接好连接池的，在使用上无任何的感知，底层自动完成连接的取用和归还。
 
 ## 自定义连接池
+
+定义一个连接池首先需要实现一个继承了 `Hyperf\Pool\Pool` 的子类并实现抽象方法 `createConnection`，并返回一个实现了 `Hyperf\Contract\ConnectionInterface` 接口的对象，这样您创建的连接池对象就已经完成了，如下示例：
+```php
+<?php
+
+namespace App\Pool;
+
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Pool\Pool;
+
+class MyConnectionPool extends Pool
+{
+    public function createConnection(): ConnectionInteface
+    {
+        return new MyConnection();
+    }
+}
+``` 
+这样便可以通过对实例化后的 `MyConnectionPool` 对象调用 `get(): ConnectionInterface` 和 `release(ConnectionInterface $connection): void` 方法执行连接的取用和归还了。   
