@@ -23,8 +23,8 @@ return [
 
 ## 使用
 
-组件提供Cacheable注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
-例如，UserService提供一个user方法，可以查询对应id的用户信息。当加上Cacheable注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为9000秒。首次查询时，会从DB中查，后面查询时，会从Cache中查。
+组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
+例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 9000 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
 
 ```php
 <?php
@@ -54,7 +54,7 @@ class UserService
 
 ## 清理缓存
 
-当然，如果我们DB中的数据改变了，如果删除缓存呢？这里就需要用到后面的监听器。下面新建一个Service提供一方法，来帮我们处理缓存。
+当然，如果我们数据库中的数据改变了，如果删除缓存呢？这里就需要用到后面的监听器。下面新建一个 Service 提供一方法，来帮我们处理缓存。
 
 ```php
 <?php

@@ -37,13 +37,13 @@ return [
 
 ## 投递消息
 
-使用generator工具新建一个producer
+使用 `generator` 工具新建一个 `producer`
 ```
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在DemoProducer文件中，我们可以修改Producer注解对应的字段来替换对应的exchange和routingKey。
-其中payload就是最终投递到消息队列中的数据，所以我们可以随意改写__construct方法，只要最后赋值payload即可。
+在DemoProducer文件中，我们可以修改Producer注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
+其中 `payload` 就是最终投递到消息队列中的数据，所以我们可以随意改写 `__construct` 方法，只要最后赋值 `payload` 即可。
 示例如下。
 
 ```php
@@ -91,13 +91,13 @@ $result = $producer->produce($message);
 
 ## 消费消息
 
-使用generator工具新建一个consumer
+使用 `generator` 工具新建一个 `consumer`。
 ```
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在DemoConsumer文件中，我们可以修改Consumer注解对应的字段来替换对应的exchange、routingKey和queue。
-其中$data就是解析后的元数据。
+在DemoConsumer文件中，我们可以修改Consumer注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
+其中 `$data` 就是解析后的元数据。
 示例如下。
 
 ```php
