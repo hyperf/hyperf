@@ -66,3 +66,64 @@ class DbQueryExecutedListener implements ListenerInterface
 ```
 
 ## 模型事件
+
+|    事件名    |     触发实际     | 是否阻断 |               备注               |
+|:------------:|:----------------:|:--------:|:--------------------------------:|
+|   booting    |  模型首次加载前  |    否    |    进程生命周期中只会触发一次    |
+|    booted    |  模型首次加载后  |    否    |    进程生命周期中只会触发一次    |
+|  retrieved   |    填充数据后    |    否    | 每当模型从DB或缓存查询出来后触发 |
+|   creating   |    数据创建时    |    是    |                                  |
+|   created    |    数据创建后    |    否    |                                  |
+|   updating   |    数据更新时    |    是    |                                  |
+|   updated    |    数据更新后    |    否    |                                  |
+|    saving    | 数据创建或更新时 |    是    |                                  |
+|    saved     | 数据创建或更新后 |    否    |                                  |
+|  restoring   | 软删除数据回复时 |    是    |                                  |
+|   restored   | 软删除数据回复后 |    否    |                                  |
+|   deleting   |    数据删除时    |    是    |                                  |
+|   deleted    |    数据删除后    |    否    |                                  |
+| forceDeleted |  数据强制删除后  |    否    |                                  |
+
+模型事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发`saving`事件，主动覆写create_at字段。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Hyperf\Database\Model\Events\Saving;
+
+/**
+ * @property $id
+ * @property $name
+ * @property $sex
+ * @property $created_at
+ * @property $updated_at
+ */
+class User extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'name', 'sex', 'created_at', 'updated_at'];
+
+    protected $casts = ['id' => 'integer', 'sex' => 'integer'];
+
+    public function saving(Saving $event)
+    {
+        $this->setCreatedAt('2019-01-01');
+    }
+}
+
+```
