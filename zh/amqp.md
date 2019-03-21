@@ -1,6 +1,6 @@
 # AMQP组件
 
-[https://github.com/hyperf-cloud/amqp](https://github.com/hyperf-cloud/amqp)
+[hyperf-cloud/amqp](https://github.com/hyperf-cloud/amqp)
 
 ## 默认配置
 ```php

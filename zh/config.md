@@ -54,7 +54,7 @@ return [
 
 ## 使用 Hyperf Config 组件
 
-该组件是官方提供的默认的配置组件，是面向 `Hyperf\Contract\ConfigInterface` 接口实现的，由 [hyperf-cloud/config](https://github.com/hyperf-cloud/config) 组件内的 `ConfigProvider` 将 `Hyperf\Config\Config` 对象绑定到接口上。   
+该组件是官方提供的默认的配置组件，是面向 `Hyperf\Contract\ConfigInterface` 接口实现的，由 [hyperf/config](https://github.com/hyperf-cloud/config) 组件内的 `ConfigProvider` 将 `Hyperf\Config\Config` 对象绑定到接口上。   
 
 ### 设置配置
 只需在 `config/config.php` 与 `config/server.php` 与 `autoload` 文件夹内的配置，都能在服务启动时被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，这个流程是由 `Hyperf\Config\ConfigFactory` 在 Config 对象实例化时完成的。
@@ -154,7 +154,7 @@ return [
 
 ## 配置中心
 
-Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper-cloud/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
+Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
 关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。
 
 

@@ -1,7 +1,7 @@
 # Cache
 
-本模块是基于Aspect的缓存模块，与SimpleCacheInterface不太一样。
-[https://github.com/hyperf-cloud/cache](https://github.com/hyperf-cloud/cache)
+本模块是基于`Aspect` 的缓存模块，与 `SimpleCacheInterface` 不太一样。
+[hyperf/cache](https://github.com/hyperf-cloud/cache)
 
 ## 安装
 ```

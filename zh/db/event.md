@@ -2,7 +2,7 @@
 模型事件实现于 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口。
 
 ## 自定义监听器
-得益于 [hyperf-cloud/event](https://github.com/hyperf-cloud/event) 组件用户可以很方便的对以下事件进行监听。
+得益于 [hyperf/event](https://github.com/hyperf-cloud/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
 例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
 接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
 首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：

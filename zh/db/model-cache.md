@@ -1,6 +1,6 @@
 # 模型缓存
 
-模型缓存暂支持Redis存储，其他存储引擎会慢慢补充。
+模型缓存暂支持 `Redis`存储，其他存储引擎会慢慢补充。
 
 ## 安装
 
@@ -99,7 +99,7 @@ $models = User::findManyFromCache($ids);
 
 ```
 
-对应Redis数据如下，其中 `HF-DATA:DEFAULT` 作为占位符存在于 HASH 中，*所以用户不要使用HF-DATA作为数据库字段*。
+对应Redis数据如下，其中 `HF-DATA:DEFAULT` 作为占位符存在于 `HASH` 中，*所以用户不要使用 `HF-DATA` 作为数据库字段*。
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
