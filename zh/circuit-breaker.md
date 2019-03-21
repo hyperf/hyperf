@@ -51,3 +51,33 @@ class UserService
 ```
 
 默认熔断策略为超时策略，如果您想要自己实现熔断策略，只需要自己实现 Hanlder 继承于 `Hyperf\CircuitBreaker\Handler\AbstractHandler` 即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Hyperf\CircuitBreaker\Handler;
+
+use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
+use Hyperf\CircuitBreaker\CircuitBreaker;
+use Hyperf\CircuitBreaker\Exception\TimeoutException;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+class DemoHandler extends AbstractHandler
+{
+    const DEFAULT_TIMEOUT = 5;
+
+    protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    {
+        $result = $proceedingJoinPoint->process();
+
+        if (is_break()) {
+            throw new TimeoutException('timeout, use ' . $use . 's', $result);
+        }
+
+        return $result;
+    }
+}
+
+```
