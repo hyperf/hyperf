@@ -65,7 +65,7 @@ Hyperf Config 组件提供了两种方式获取配置，通过 Config 对象获�
 
 #### 通过 Config 对象获取配置
 
-这种方式要求你已经拿到了 Config 对象的实例，注入实例的细节可查阅 [依赖注入](../di/intro.md) 章节；
+这种方式要求你已经拿到了 Config 对象的实例，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节；
 
 ```php
 /**
@@ -77,7 +77,7 @@ $config->get($key，$default);
 
 #### 通过 `@Value` 注解获取配置
 
-这种方式要求当前的对象必须是通过 Hyperf DI 组件创建的，注入实例的细节可查阅 [依赖注入](../di/intro.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 Controller 类，Controller 类一定是由 DI 创建出来的；   
+这种方式要求当前的对象必须是通过 Hyperf DI 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 Controller 类，Controller 类一定是由 DI 创建出来的；   
 `@Value()` 内的字符串则对应到 `$config->get($key)` 内的 `$key` 参数，在创建该对象实例时，对应的配置会自动注入到定义的类属性中。
 
 ```php
@@ -155,6 +155,6 @@ return [
 ## 配置中心
 
 Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper-cloud/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
-关于配置中心的使用细节我们由 [配置中心](config-center/intro.md) 章节来阐述。
+关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。
 
 
