@@ -10,9 +10,9 @@ Hyperf 是基于 `Swoole 4.3+` 实现的高性能、高灵活性的 PHP 持久�
 
 # 设计理念
 
-`Hyperspeed + Flexibility = Hyperf`，从名字上我们就将 超高速 和 灵活性 作为 Hyperf 的基因。
+`Hyperspeed + Flexibility = Hyperf`，从名字上我们就将 `超高速` 和 `灵活性` 作为 Hyperf 的基因。
    
 - 对于超高速，我们基于 Swoole 协程并在框架设计上进行大量的优化以确保超高性能的输出。   
-- 对于灵活性，我们基于 Hyperf 强大的依赖注入组件，组件均基于 PSR标准 的契约和由 Hyperf 定义的契约实现，达到框架内的绝大部分的组件或类都是可替换的。   
+- 对于灵活性，我们基于 Hyperf 强大的依赖注入组件，组件均基于 [PSR 标准](https://www.php-fig.org/psr) 的契约和由 Hyperf 定义的契约实现，达到框架内的绝大部分的组件或类都是可替换的。   
 
 基于以上的特点，Hyperf 将存在丰富的可能性，如实现 Web 服务，网关服务，分布式中间件，微服务架构，游戏服务器，物联网（IOT）等。
