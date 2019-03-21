@@ -7,6 +7,49 @@
 composer require hyperf/model-cache
 ```
 
+## 配置
+模型缓存的配置在`databases`中。示例如下
+
+|    配置     |  类型  |                         默认值                         |                备注                 |
+|:-----------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
+|   handler   | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
+|  cache_key  | string |                   'mc:%s:m:%s:%s:%s'                   |  mc:缓存前缀:m:表名:主键KEY:主键值  |
+|   prefix    | string |                   db connection name                   |              缓存前缀               |
+|     ttl     |  int   |                          3600                          |              超时时间               |
+| load_script |  bool  |                          true                          | Redis引擎下 是否使用evalSha代替eval |
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
+        ],
+        'cache' => [
+            'handler' => \Hyperf\DbConnection\Cache\Handler\RedisHandler::class,
+            'cache_key' => 'mc:%s:m:%s:%s:%s',
+            'prefix' => 'default',
+            'ttl' => 3600 * 24,
+            'load_script' => true,
+        ]
+    ],
+];
+```
+
 ## 使用
 
 模型缓存的使用十分简单，只需要在对应Model中实现`Hyperf\ModelCache\CacheableInterface`接口，当然，框架已经提供了对应实现，只需要引入Trait`Hyperf\ModelCache\Cacheable`即可。

@@ -72,7 +72,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   booting    |  模型首次加载前  |    否    |    进程生命周期中只会触发一次    |
 |    booted    |  模型首次加载后  |    否    |    进程生命周期中只会触发一次    |
 |  retrieved   |    填充数据后    |    否    | 每当模型从DB或缓存查询出来后触发 |
-|   creating   |    数据创建时    |    是    |                                  |
+|   creating   |    数据创建时    |    是    |                                |
 |   created    |    数据创建后    |    否    |                                  |
 |   updating   |    数据更新时    |    是    |                                  |
 |   updated    |    数据更新后    |    否    |                                  |

@@ -3,6 +3,11 @@
 本模块是基于Aspect的缓存模块，与SimpleCacheInterface不太一样。
 [https://github.com/hyperf-cloud/cache](https://github.com/hyperf-cloud/cache)
 
+## 安装
+```
+composer require hyperf/cache
+```
+
 ## 默认配置
 
 ```php
