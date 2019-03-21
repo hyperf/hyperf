@@ -2,10 +2,10 @@
 模型事件实现于`psr/event-dispatcher`接口。
 
 ## 自定义监听器
-得益于`hyperf/event`组件用户可以很方便的对以下事件进行监听。
-例如`QueryExecuted`,`StatementPrepared`,`TransactionBeginning`,`TransactionCommitted`,`TransactionRolledBack`。
+得益于 [hyperf-cloud/event](https://github.com/hyperf-cloud/event) 组件用户可以很方便的对以下事件进行监听。
+例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
 接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
-首先我们定义好`DbQueryExecutedListener`，实现`Hyperf\Event\Contract\ListenerInterface`接口并加上`Hyperf\Event\Annotation\Listener`注解，这样框架就会自动把监听器注册到事件调度器中，无需任何手动配置，监听事件，具体代码如下。
+首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：
 
 ```php
 <?php
@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Psr\Log\LoggerInterface;
-use Hyperf\Logger\LoggerFactory;
-use Hyperf\Event\Annotation\Listener;
 use Psr\Container\ContainerInterface;
-use Hyperf\Database\Events\QueryExecuted;
-use Hyperf\Event\Contract\ListenerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @Listener
@@ -33,9 +33,9 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     private $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(LoggerFactory $loggerFactory)
     {
-        $this->logger = $container->get(LoggerFactory::class)->get('sql');
+        $this->logger = $loggerFactory->get('sql');
     }
 
     public function listen(): array
@@ -84,7 +84,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   deleted    |    数据删除后    |    否    |                                  |
 | forceDeleted |  数据强制删除后  |    否    |                                  |
 
-模型事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发`saving`事件，主动覆写create_at字段。
+模型事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
 
 ```php
 <?php
@@ -98,7 +98,7 @@ use Hyperf\Database\Model\Events\Saving;
 /**
  * @property $id
  * @property $name
- * @property $sex
+ * @property $gender
  * @property $created_at
  * @property $updated_at
  */
@@ -116,9 +116,9 @@ class User extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'sex', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
-    protected $casts = ['id' => 'integer', 'sex' => 'integer'];
+    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 
     public function saving(Saving $event)
     {
