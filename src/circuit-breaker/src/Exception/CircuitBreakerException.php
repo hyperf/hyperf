@@ -14,4 +14,22 @@ namespace Hyperf\CircuitBreaker\Exception;
 
 class CircuitBreakerException extends \RuntimeException
 {
+    public $result;
+
+    /**
+     * @param mixed $result
+     */
+    public function setResult($result): self
+    {
+        $this->result = $result;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
 }

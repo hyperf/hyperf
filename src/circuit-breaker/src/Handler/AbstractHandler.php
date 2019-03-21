@@ -16,6 +16,7 @@ use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\CircuitBreakerInterface;
+use Hyperf\CircuitBreaker\Exception\CircuitBreakerException;
 use Hyperf\CircuitBreaker\FallbackInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -69,8 +70,7 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function getName(ProceedingJoinPoint $proceedingJoinPoint): string
     {
-        $name = sprintf('%s@%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        return $name;
+        return sprintf('%s@%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
     }
 
     protected function switch(CircuitBreaker $breaker, Annotation $annotation, bool $status)
@@ -144,7 +144,25 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {
-        return $proceedingJoinPoint->process();
+        try {
+            $result = $this->process($proceedingJoinPoint, $breaker, $annotation);
+
+            $breaker->incSuccessCounter();
+            $this->switch($breaker, $annotation, true);
+        } catch (\Throwable $exception) {
+            if (! $exception instanceof CircuitBreakerException) {
+                throw $exception;
+            }
+
+            $result = $exception->getResult();
+            $msg = sprintf('%s@%s %s.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $exception->getMessage());
+            $this->logger->debug($msg);
+
+            $breaker->incFailCounter();
+            $this->switch($breaker, $annotation, false);
+        }
+
+        return $result;
     }
 
     protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
@@ -169,6 +187,8 @@ abstract class AbstractHandler implements HandlerInterface
 
         return $class->{$methodName}(...$argument);
     }
+
+    abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation);
 
     protected function prepareHandler(string $fallback): array
     {
