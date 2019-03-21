@@ -1,5 +1,5 @@
 # 事件
-模型事件实现于`psr/event-dispatcher`接口。
+模型事件实现于 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口。
 
 ## 自定义监听器
 得益于 [hyperf-cloud/event](https://github.com/hyperf-cloud/event) 组件用户可以很方便的对以下事件进行监听。
