@@ -123,3 +123,7 @@ class Foo extends AbstractAnnotation
 - `public function collectClass(string $className): void;` 当注解定义在类时被扫描时会触发该方法
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
 - `public function collectProperty(string $className, ?string $target): void` 当注解定义在类属性时被扫描时会触发该方法
+
+#### 利用注解数据
+
+在没有自定义注解收集方法时，默认会将注解的元数据统一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 类内，通过该类的静态方法可以方便的获取对应的元数据用于逻辑判断或实现。
