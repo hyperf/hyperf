@@ -25,6 +25,22 @@ Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations)
 
 我们有说到注解只是元数据的定义，需配合应用程序才能发挥作用，在 Hyperf 里，注解内的数据会被收集到 `Hyperf\Di\Annotation\AnnotationCollector` 类供应用程序使用，当然根据您的实际情况，也可以收集到您自定义的类去，随后在这些注解本身希望发挥作用的地方对已收集的注解元数据进行读取和利用，以达到期望的功能实现。
 
+### 忽略某些注解
+
+在一些情况下我们可能希望忽略某些 注解，比如我们在接入一些自动生成文档的工具时，有不少工具都是通过注解的形式去定义文档的相关结构内容的，而这些注解可能并不符合 Hyperf 的使用方式，我们可以通过在 `config/autoload/annotations.php` 内将相关注解设置为忽略。
+
+```php
+return [
+    'scan' => [
+        // ignore_annotations 数组内的注解都会被注解扫描器忽略
+        'ignore_annotations' => [
+            'mixin',
+        ],
+    ],
+];
+```
+
+
 ## 使用注解
 
 注解一共有3种应用对象，分别是 `类`、`类方法` 和 `类属性`。
@@ -81,7 +97,7 @@ class Foo
 在任意地方创建注解类，如下代码示例：    
 
 ```php
-namespace App\Annotations;
+namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
