@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是运行于 `Swoole 4.3.1+` 的协程之上的，这也是 Hyperf 能提供高性能的其中一个很大的因素。
+Hyperf 是运行于 `Swoole 4` 的协程之上的，这也是 Hyperf 能提供高性能的其中一个很大的因素。
 
 ### PHP-FPM 的运作模式
 
@@ -75,3 +75,87 @@ Swoole 协程也是对异步回调的一种解决方案，在 PHP 语言下，Sw
 对于 `global` 变量和 `static` 变量，在 PHP-FPM 模式下，本质都是存活于一个请求声明周期内的，而在 Hyperf 内因为是 CLI 应用，会存在 `全局周期` 和 `请求周期(协程周期)` 两种长生命周期。   
 - 全局周期，我们只需要创建一个静态变量供全局调用即可，静态变量意味着在服务启动后，任意协程和代码逻辑均共享此静态变量内的数据，也就意味着存放的数据不能是特别服务于某一个请求或某一个协程；
 - 协程周期，由于 Hyperf 会为每个请求自动创建一个协程来处理，那么一个协程周期在此也可以理解为一个请求周期，在协程内，所有的状态数据均应存放于 `Hyperf\Utils\Context` 类中，通过该类的 `get`、`set` 来读取和存储任意结构的数据，这个 Context(协程上下文) 类在执行任意协程时读取或存储的数据都是仅限对应的协程的，同时在协程结束时也会自动销毁相关的上下文数据。
+
+
+
+## 使用协程
+
+### 创建一个协程
+
+只需通过 `go(callable $callback)` 函数或 `Hyperf\Coroutine::create(callable $callable)` 即可创建一个协程，协程内可以使用协程相关的方法和客户端。
+
+### Defer
+
+当我们希望在协程结束时运行一些代码时，可以通过 `defer(callable $callable)` 函数或 `Hyperf\Coroutine::defer(callable $callable)` 将一段函数以 `栈(stack)` 的形式储存起来，`栈(stack)` 内的函数会在当前协程结束时以 `先进后出` 的流程逐个执行。
+
+### 判断当前是否处于协程环境内
+
+在一些情况下我们希望判断一些当前是否运行于协程环境内，对于一些兼容协程环境与非协程环境的代码来说会作为一个判断的依据，我们可以通过 `Hyperf\Coroutine::inCoroutine(): bool` 方法来得到结果。
+
+### 获得当前协程的 ID
+
+在一些情况下，我们需要根据 `协程 ID` 去做一些逻辑，比如 `协程上下文` 之类的逻辑，可以通过 `Hyperf\Coroutine::id(): int` 获得当前的 `协程 ID`，如不处于协程环境下，会返回 `-1`。
+
+### WaitGroup 特性
+
+如果接触过 Go 语言，我们都会知道 WaitGroup 这一特性，WaitGroup 的用途是使得主协程一直阻塞等待直到所有相关的子协程都已经完成了任务后再继续运行，这里说到的阻塞等待是仅对于主协程（即当前协程）来说的，并不会阻塞当前进程。   
+我们通过一段代码来演示该特性：   
+
+```php
+<?php
+$wg = new \Hyperf\Utils\WaitGroup();
+// 计数器加一
+$wg->add();
+// 创建协程 A
+go(function () use ($wg) {
+    // some code
+    // 计数器减一
+    $wg->done();
+});
+// 计数器加一
+$wg->add();
+// 创建协程 B
+go(function () use ($wg) {
+    // some code
+    // 计数器减一
+    $wg->done();
+});
+// 等待协程 A 和协程 B 运行完成
+$wg->wait();
+```
+
+### Parallel 特性
+
+Parallel 特性是 Hyperf 基于 WaitGroup 特性抽象出来的一个更便捷的使用方法，我们通过一段代码来演示一下。
+
+```php
+<?php
+$parallel = new \Hyperf\Utils\Parallel();
+$parallel->add(function () {
+    \Hyperf\Utils\Coroutine::sleep(1);
+    return \Hyperf\Utils\Coroutine::id();
+});
+$parallel->add(function () {
+    \Hyperf\Utils\Coroutine::sleep(1);
+    return \Hyperf\Utils\Coroutine::id();
+});
+// $result 结果为 [1, 2]
+$result = $parallel->wait();
+```
+
+通过上面的代码我们可以看到仅花了 1 秒就得到了两个不同的协程的 ID，在调用 `add(callable $callable)` 的时候 `Parallel` 类会为之自动创建一个协程，并加入到 WaitGroup 的调度去。    
+不仅如此，我们还可以通过 `parallel(array $callables)` 函数进行更进一步的简化上面的代码，达到同样的目的，下面为简化后的代码。
+
+```php
+<?php
+$result = parallel([
+    function () {
+        \Hyperf\Utils\Coroutine::sleep(1);
+        return \Hyperf\Utils\Coroutine::id();
+    },
+    function () {
+        \Hyperf\Utils\Coroutine::sleep(1);
+        return \Hyperf\Utils\Coroutine::id();
+    }
+]);
+```
