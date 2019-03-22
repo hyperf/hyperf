@@ -28,14 +28,6 @@ class Cache implements CacheInterface
         return $this->driver->{$name}(...$arguments);
     }
 
-    /**
-     * @return Driver\DriverInterface
-     */
-    public function getDriver(): Driver\DriverInterface
-    {
-        return $this->driver;
-    }
-
     public function get($key, $default = null)
     {
         return $this->__call(__FUNCTION__, func_get_args());
