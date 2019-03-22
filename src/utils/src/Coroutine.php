@@ -18,7 +18,7 @@ use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
 
 /**
- * @method static void defer(callable $callback)
+ * @method static void defer(callable $callable)
  */
 class Coroutine
 {
@@ -43,11 +43,11 @@ class Coroutine
      * @return int Returns the coroutine ID of the coroutine just created.
      *             Returns -1 when coroutine create failed.
      */
-    public static function create(callable $callback): int
+    public static function create(callable $callable): int
     {
-        $result = SwooleCoroutine::create(function () use ($callback) {
+        $result = SwooleCoroutine::create(function () use ($callable) {
             try {
-                call($callback);
+                call($callable);
             } catch (Throwable $throwable) {
                 if (ApplicationContext::hasContainter()) {
                     $container = ApplicationContext::getContainer();

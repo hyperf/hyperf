@@ -279,22 +279,16 @@ if (! function_exists('call')) {
 }
 
 if (! function_exists('go')) {
-    /**
-     * @param callable $callback
-     */
-    function go($callback)
+    function go(callable $callable)
     {
-        \Hyperf\Utils\Coroutine::create($callback);
+        \Hyperf\Utils\Coroutine::create($callable);
     }
 }
 
 if (! function_exists('defer')) {
-    /**
-     * @param callable $callback
-     */
-    function defer($callback): void
+    function defer(callable $callable): void
     {
-        \Hyperf\Utils\Coroutine::defer($callback);
+        \Hyperf\Utils\Coroutine::defer($callable);
     }
 }
 
@@ -379,7 +373,7 @@ if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
      */
-    function parallel($callables)
+    function parallel(array $callables)
     {
         $parallel = new Parallel();
         foreach ($callables as $key => $callable) {
