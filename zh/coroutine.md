@@ -84,10 +84,6 @@ Swoole 协程也是对异步回调的一种解决方案，在 PHP 语言下，Sw
 
 只需通过 `go(callable $callback)` 函数或 `Hyperf\Coroutine::create(callable $callable)` 即可创建一个协程，协程内可以使用协程相关的方法和客户端。
 
-### Defer
-
-当我们希望在协程结束时运行一些代码时，可以通过 `defer(callable $callable)` 函数或 `Hyperf\Coroutine::defer(callable $callable)` 将一段函数以 `栈(stack)` 的形式储存起来，`栈(stack)` 内的函数会在当前协程结束时以 `先进后出` 的流程逐个执行。
-
 ### 判断当前是否处于协程环境内
 
 在一些情况下我们希望判断一些当前是否运行于协程环境内，对于一些兼容协程环境与非协程环境的代码来说会作为一个判断的依据，我们可以通过 `Hyperf\Coroutine::inCoroutine(): bool` 方法来得到结果。
@@ -95,6 +91,10 @@ Swoole 协程也是对异步回调的一种解决方案，在 PHP 语言下，Sw
 ### 获得当前协程的 ID
 
 在一些情况下，我们需要根据 `协程 ID` 去做一些逻辑，比如 `协程上下文` 之类的逻辑，可以通过 `Hyperf\Coroutine::id(): int` 获得当前的 `协程 ID`，如不处于协程环境下，会返回 `-1`。
+
+### Defer 特性
+
+当我们希望在协程结束时运行一些代码时，可以通过 `defer(callable $callable)` 函数或 `Hyperf\Coroutine::defer(callable $callable)` 将一段函数以 `栈(stack)` 的形式储存起来，`栈(stack)` 内的函数会在当前协程结束时以 `先进后出` 的流程逐个执行。
 
 ### WaitGroup 特性
 
