@@ -16,6 +16,16 @@ use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Utils\ApplicationContext;
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * @method static get($key, $default = null)
+ * @method static set($key, $value, $ttl = null)
+ * @method static delete($key)
+ * @method static clear()
+ * @method static getMultiple($keys, $default = null)
+ * @method static setMultiple($values, $ttl = null)
+ * @method static deleteMultiple($keys)
+ * @method static has($key)
+ */
 class Cache
 {
     protected $driver;
