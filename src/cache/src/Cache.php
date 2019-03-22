@@ -12,21 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
-use Hyperf\Cache\Exception\CacheException;
-use Hyperf\Utils\ApplicationContext;
 use Psr\SimpleCache\CacheInterface;
 
-/**
- * @method static get($key, $default = null)
- * @method static set($key, $value, $ttl = null)
- * @method static delete($key)
- * @method static clear()
- * @method static getMultiple($keys, $default = null)
- * @method static setMultiple($values, $ttl = null)
- * @method static deleteMultiple($keys)
- * @method static has($key)
- */
-class Cache
+class Cache implements CacheInterface
 {
     protected $driver;
 
@@ -40,23 +28,51 @@ class Cache
         return $this->driver->{$name}(...$arguments);
     }
 
-    public static function __callStatic($name, $arguments)
-    {
-        $container = ApplicationContext::getContainer();
-        if (! $container->has(CacheInterface::class)) {
-            throw new CacheException(sprintf("No entry or class found for '%s'", CacheInterface::class));
-        }
-
-        $cache = $container->get(CacheInterface::class);
-
-        return $cache->{$name}(...$arguments);
-    }
-
     /**
      * @return Driver\DriverInterface
      */
     public function getDriver(): Driver\DriverInterface
     {
         return $this->driver;
+    }
+
+    public function get($key, $default = null)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function set($key, $value, $ttl = null)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function delete($key)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function clear()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getMultiple($keys, $default = null)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function setMultiple($values, $ttl = null)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function deleteMultiple($keys)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function has($key)
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
     }
 }
