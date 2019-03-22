@@ -39,7 +39,7 @@ class CacheManager
         $this->config = $container->get(ConfigInterface::class)->get('cache', []);
     }
 
-    public function getDriver($name): DriverInterface
+    public function getDriver($name = 'default'): DriverInterface
     {
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {
             return $this->drivers[$name];

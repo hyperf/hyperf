@@ -33,7 +33,7 @@ class Cacheable extends AbstractAnnotation
     public function collectMethod(string $className, ?string $target): void
     {
         if (! isset($this->key)) {
-            $this->key = 'cache:' . $className . ':' . $target;
+            $this->key = $className . ':' . $target;
         }
 
         if (isset($this->listener)) {

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Cache;
 
 use Hyperf\Cache\Annotation\Cacheable;
-use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -49,10 +48,10 @@ class CacheAspect implements ArroundInterface
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
+        /** @var CacheManager $manager */
         $manager = $this->container->get(CacheManager::class);
         [$key, $ttl, $group] = $manager->getAnnotationValue($className, $method, $arguments);
 
-        /** @var DriverInterface $driver */
         $driver = $manager->getDriver($group);
 
         [$has, $result] = $driver->fetch($key);

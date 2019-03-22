@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
-use Hyperf\Cache\Exception\CacheException;
 use Psr\Container\ContainerInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class RedisDriver extends Driver
 {
@@ -31,7 +31,7 @@ class RedisDriver extends Driver
 
     public function get($key, $default = null)
     {
-        $res = $this->redis->get($key);
+        $res = $this->redis->get($this->getCacheKey($key));
         if ($res === false) {
             return $default;
         }
@@ -41,7 +41,7 @@ class RedisDriver extends Driver
 
     public function fetch(string $key, $default = null): array
     {
-        $res = $this->redis->get($key);
+        $res = $this->redis->get($this->getCacheKey($key));
         if ($res === false) {
             return [false, $default];
         }
@@ -53,39 +53,76 @@ class RedisDriver extends Driver
     {
         $res = $this->packer->pack($value);
         if ($ttl > 0) {
-            return $this->redis->set($key, $res, $ttl);
+            return $this->redis->set($this->getCacheKey($key), $res, $ttl);
         }
 
-        return $this->redis->set($key, $res);
+        return $this->redis->set($this->getCacheKey($key), $res);
     }
 
     public function delete($key)
     {
-        return $this->redis->delete($key);
+        return $this->redis->delete($this->getCacheKey($key));
     }
 
     public function clear()
     {
-        throw new CacheException('The method is not invalid!');
+        $iterator = null;
+        while ($keys = $this->redis->scan($iterator, $this->getCacheKey('*'), 100)) {
+            $this->redis->delete(...$keys);
+        }
+
+        return true;
     }
 
     public function getMultiple($keys, $default = null)
     {
-        throw new CacheException('The method is not invalid!');
+        $cacheKeys = array_map(function ($key) {
+            return $this->getCacheKey($key);
+        }, $keys);
+
+        $values = $this->redis->mget($cacheKeys);
+        $result = [];
+        foreach ($keys as $i => $key) {
+            $result[$key] = $values[$i] === false ? $default : $this->packer->unpack($values[$i]);
+        }
+
+        return $result;
     }
 
     public function setMultiple($values, $ttl = null)
     {
-        throw new CacheException('The method is not invalid!');
+        if (is_array($values)) {
+            throw new InvalidArgumentException('The values is invalid!');
+        }
+
+        $cacheKeys = [];
+        foreach ($values as $key => $value) {
+            $cacheKeys[$this->getCacheKey($key)] = $this->packer->pack($value);
+        }
+
+        $ttl = (int) $ttl;
+        if ($ttl > 0) {
+            foreach ($cacheKeys as $key => $value) {
+                $this->redis->set($key, $value, $ttl);
+            }
+
+            return true;
+        }
+
+        return $this->redis->mset($cacheKeys);
     }
 
     public function deleteMultiple($keys)
     {
-        throw new CacheException('The method is not invalid!');
+        $cacheKeys = array_map(function ($key) {
+            return $this->getCacheKey($key);
+        }, $keys);
+
+        return $this->redis->delete(...$cacheKeys);
     }
 
     public function has($key)
     {
-        return (bool) $this->redis->exists($key);
+        return (bool) $this->redis->exists($this->getCacheKey($key));
     }
 }

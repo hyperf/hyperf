@@ -33,12 +33,23 @@ abstract class Driver implements DriverInterface
      */
     protected $packer;
 
+    /**
+     * @var string
+     */
+    protected $prefix;
+
     public function __construct(ContainerInterface $container, array $config)
     {
         $this->container = $container;
         $this->config = $config;
+        $this->prefix = $config['prefix'] ?? 'cache:';
 
         $packerClass = $config['packer'] ?? PhpSerializer::class;
         $this->packer = $container->get($packerClass);
+    }
+
+    protected function getCacheKey(string $key)
+    {
+        return $this->prefix . $key;
     }
 }
