@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
+use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class RedisDriver extends Driver
 {
@@ -61,7 +61,7 @@ class RedisDriver extends Driver
 
     public function delete($key)
     {
-        return $this->redis->delete($this->getCacheKey($key));
+        return (bool) $this->redis->delete($this->getCacheKey($key));
     }
 
     public function clear()
@@ -91,7 +91,7 @@ class RedisDriver extends Driver
 
     public function setMultiple($values, $ttl = null)
     {
-        if (is_array($values)) {
+        if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
         }
 

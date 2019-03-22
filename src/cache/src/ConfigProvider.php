@@ -12,12 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
+use Psr\SimpleCache\CacheInterface;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dependencies' => [
+                CacheInterface::class => Cache::class,
             ],
             'commands' => [
             ],

@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Exception;
 
-use RuntimeException;
-
-class CacheException extends RuntimeException implements \Psr\SimpleCache\CacheException
+class InvalidArgumentException extends CacheException implements \Psr\SimpleCache\InvalidArgumentException
 {
 }
