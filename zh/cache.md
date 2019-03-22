@@ -10,6 +10,12 @@ composer require hyperf/cache
 
 ## 默认配置
 
+|  配置  |                  默认值                  |         备注          |
+|:------:|:----------------------------------------:|:---------------------:|
+| driver |  Hyperf\Cache\Driver\RedisDriver::class  | 缓存驱动，默认为Redis |
+| packer | Hyperf\Cache\Packer\PhpSerializer::class |        打包器         |
+| prefix |                   'c:'                   |       缓存前缀        |
+
 ```php
 <?php
 
@@ -17,11 +23,14 @@ return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Cache\Packer\PhpSerializer::class,
+        'prefix' => 'c:',
     ],
 ];
 ```
 
 ## 使用
+
+### 注解方式
 
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
 例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 9000 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
@@ -52,7 +61,7 @@ class UserService
 }
 ```
 
-## 清理缓存
+### 清理注解缓存
 
 当然，如果我们数据库中的数据改变了，如果删除缓存呢？这里就需要用到后面的监听器。下面新建一个 Service 提供一方法，来帮我们处理缓存。
 
@@ -82,4 +91,14 @@ class SystemService
         return true;
     }
 }
+```
+
+### SimpleCache方式
+
+如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
+
+```php
+
+$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
+
 ```

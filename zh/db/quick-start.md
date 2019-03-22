@@ -9,7 +9,7 @@
 ```php
 <?php
 
-$user = User::query()->where('id',1)->first();
+$user = User::query()->where('id', 1)->first();
 
 var_dump($user->toArray());
 ```
