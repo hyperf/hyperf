@@ -23,24 +23,6 @@ use Swoole\Coroutine\Http\Client;
  */
 class CoroutineHandler
 {
-    /**
-     * Swoole 协程 Http 客户端.
-     *
-     * @var \Swoole\Coroutine\Http\Client
-     */
-    private $client;
-
-    /**
-     * 配置选项.
-     *
-     * @var array
-     */
-    private $settings = [];
-
-    private $btime;
-
-    private $effectiveUrl = '';
-
     private $options;
 
     public function __construct($options = [])
@@ -55,8 +37,8 @@ class CoroutineHandler
         $ssl = $scheme === 'https';
         $uri = $request['uri'] ?? '/';
         $body = $request['body'] ?? '';
-        $this->effectiveUrl = Core::url($request);
-        $params = parse_url($this->effectiveUrl);
+        $effectiveUrl = Core::url($request);
+        $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
             $params['port'] = $ssl ? 443 : 80;
@@ -67,23 +49,23 @@ class CoroutineHandler
             $path .= '?' . $params['query'];
         }
 
-        $this->client = new Client($host, $port, $ssl);
-        $this->client->setMethod($method);
-        $this->client->setData($body);
+        $client = new Client($host, $port, $ssl);
+        $client->setMethod($method);
+        $client->setData($body);
 
         // 初始化Headers
-        $this->initHeaders($request);
-        $this->initSettings($this->options);
+        $this->initHeaders($client, $request);
+        $settings = $this->getSettings($this->options);
 
         // 设置客户端参数
-        if (! empty($this->settings)) {
-            $this->client->set($this->settings);
+        if (! empty($settings)) {
+            $client->set($settings);
         }
 
-        $this->btime = microtime(true);
-        $this->client->execute($path);
+        $btime = microtime(true);
+        $client->execute($path);
 
-        $ex = $this->checkStatusCode($request);
+        $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
             return [
                 'status' => null,
@@ -93,22 +75,25 @@ class CoroutineHandler
             ];
         }
 
-        return $this->getResponse();
+        return $this->getResponse($client, $btime, $effectiveUrl);
     }
 
-    protected function initSettings($options)
+    protected function getSettings($options): array
     {
+        $settings = [];
         if (isset($options['delay'])) {
             Coroutine::sleep((float) $options['delay'] / 1000);
         }
 
         // 超时
         if (isset($options['timeout']) && $options['timeout'] > 0) {
-            $this->settings['timeout'] = $options['timeout'];
+            $settings['timeout'] = $options['timeout'];
         }
+
+        return $settings;
     }
 
-    protected function initHeaders($request)
+    protected function initHeaders(Client $client, $request)
     {
         $headers = [];
         foreach ($request['headers'] ?? [] as $name => $value) {
@@ -123,26 +108,26 @@ class CoroutineHandler
 
         // TODO: 不知道为啥，这个扔进来就400
         unset($headers['Content-Length']);
-        $this->client->setHeaders($headers);
+        $client->setHeaders($headers);
     }
 
-    protected function getResponse()
+    protected function getResponse(Client $client, $btime, $effectiveUrl)
     {
         return new CompletedFutureArray([
             'transfer_stats' => [
-                'total_time' => microtime(true) - $this->btime,
+                'total_time' => microtime(true) - $btime,
             ],
-            'effective_url' => $this->effectiveUrl,
-            'headers' => isset($this->client->headers) ? $this->client->headers : [],
-            'status' => $this->client->statusCode,
-            'body' => $this->client->body,
+            'effective_url' => $effectiveUrl,
+            'headers' => isset($client->headers) ? $client->headers : [],
+            'status' => $client->statusCode,
+            'body' => $client->body,
         ]);
     }
 
-    protected function checkStatusCode($request)
+    protected function checkStatusCode($client, $request)
     {
-        $statusCode = $this->client->statusCode;
-        $errCode = $this->client->errCode;
+        $statusCode = $client->statusCode;
+        $errCode = $client->errCode;
 
         if ($statusCode === -1) {
             return new RingException(sprintf('Connection timed out errCode=%s', $errCode));

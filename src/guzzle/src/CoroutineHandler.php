@@ -25,20 +25,6 @@ use Swoole\Coroutine\Http\Client;
 class CoroutineHandler
 {
     /**
-     * Swoole 协程 Http 客户端.
-     *
-     * @var \Swoole\Coroutine\Http\Client
-     */
-    private $client;
-
-    /**
-     * 配置选项.
-     *
-     * @var array
-     */
-    private $settings = [];
-
-    /**
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function __invoke(RequestInterface $request, array $options)
@@ -60,30 +46,30 @@ class CoroutineHandler
             $path .= '?' . $query;
         }
 
-        $this->client = new Client($host, $port, $ssl);
-        $this->client->setMethod($request->getMethod());
-        $this->client->setData((string) $request->getBody());
+        $client = new Client($host, $port, $ssl);
+        $client->setMethod($request->getMethod());
+        $client->setData((string) $request->getBody());
 
         // 初始化Headers
-        $this->initHeaders($request, $options);
+        $this->initHeaders($client, $request, $options);
         // 初始化配置
-        $this->initSettings($request, $options);
+        $settings = $this->getSettings($request, $options);
         // 设置客户端参数
-        if (! empty($this->settings)) {
-            $this->client->set($this->settings);
+        if (! empty($settings)) {
+            $client->set($settings);
         }
-        $this->client->execute($path);
-        $ex = $this->checkStatusCode($request);
+        $client->execute($path);
+        $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
             return \GuzzleHttp\Promise\rejection_for($ex);
         }
 
-        $response = $this->getResponse();
+        $response = $this->getResponse($client);
 
         return new FulfilledPromise($response);
     }
 
-    protected function initHeaders(RequestInterface $request, $options)
+    protected function initHeaders(Client $client, RequestInterface $request, $options)
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $value) {
@@ -97,11 +83,12 @@ class CoroutineHandler
 
         // TODO: 不知道为啥，这个扔进来就400
         unset($headers['Content-Length']);
-        $this->client->setHeaders($headers);
+        $client->setHeaders($headers);
     }
 
-    protected function initSettings(RequestInterface $request, $options)
+    protected function getSettings(RequestInterface $request, $options): array
     {
+        $settings = [];
         if (isset($options['delay']) && $options['delay'] > 0) {
             Coroutine::sleep((float) $options['delay'] / 1000);
         }
@@ -109,11 +96,11 @@ class CoroutineHandler
         // 验证服务端证书
         if (isset($options['verify'])) {
             if ($options['verify'] === false) {
-                $this->settings['ssl_verify_peer'] = false;
+                $settings['ssl_verify_peer'] = false;
             } else {
-                $this->settings['ssl_verify_peer'] = false;
-                $this->settings['ssl_allow_self_signed'] = true;
-                $this->settings['ssl_host_name'] = $request->getUri()->getHost();
+                $settings['ssl_verify_peer'] = false;
+                $settings['ssl_allow_self_signed'] = true;
+                $settings['ssl_host_name'] = $request->getUri()->getHost();
                 if (is_string($options['verify'])) {
                     // Throw an error if the file/folder/link path is not valid or doesn't exist.
                     if (! file_exists($options['verify'])) {
@@ -123,9 +110,9 @@ class CoroutineHandler
                     // If not, it's probably a file, or a link to a file, so use CURLOPT_CAINFO.
                     if (is_dir($options['verify']) ||
                         (is_link($options['verify']) && is_dir(readlink($options['verify'])))) {
-                        $this->settings['ssl_capath'] = $options['verify'];
+                        $settings['ssl_capath'] = $options['verify'];
                     } else {
-                        $this->settings['ssl_cafile'] = $options['verify'];
+                        $settings['ssl_cafile'] = $options['verify'];
                     }
                 }
             }
@@ -133,26 +120,28 @@ class CoroutineHandler
 
         // 超时
         if (isset($options['timeout']) && $options['timeout'] > 0) {
-            $this->settings['timeout'] = $options['timeout'];
+            $settings['timeout'] = $options['timeout'];
         }
+
+        return $settings;
     }
 
-    protected function getResponse()
+    protected function getResponse(Client $client)
     {
-        if ($this->client->set_cookie_headers) {
-            $this->client->headers['set-cookie'] = $this->client->set_cookie_headers;
+        if ($client->set_cookie_headers) {
+            $client->headers['set-cookie'] = $client->set_cookie_headers;
         }
         return new \GuzzleHttp\Psr7\Response(
-            $this->client->statusCode,
-            isset($this->client->headers) ? $this->client->headers : [],
-            $this->client->body
+            $client->statusCode,
+            isset($client->headers) ? $client->headers : [],
+            $client->body
         );
     }
 
-    protected function checkStatusCode($request)
+    protected function checkStatusCode(Client $client, $request)
     {
-        $statusCode = $this->client->statusCode;
-        $errCode = $this->client->errCode;
+        $statusCode = $client->statusCode;
+        $errCode = $client->errCode;
         $ctx = [
             'statusCode' => $statusCode,
             'errCode' => $errCode,
