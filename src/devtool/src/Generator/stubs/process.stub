@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process(name="custom_process")
+ */
+class %CLASS% extends AbstractProcess
+{
+    public function handle(): void
+    {
+    }
+}
