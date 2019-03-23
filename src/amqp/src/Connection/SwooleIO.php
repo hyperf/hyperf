@@ -304,4 +304,9 @@ class SwooleIO extends AbstractIO
         $pkt->write_octet(0xCE);
         $this->write($pkt->getvalue());
     }
+
+    protected function do_select($sec, $usec)
+    {
+        return 1;
+    }
 }
