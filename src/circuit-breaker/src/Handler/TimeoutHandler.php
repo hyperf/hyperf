@@ -33,7 +33,7 @@ class TimeoutHandler extends AbstractHandler
             throw new TimeoutException('timeout, use ' . $use . 's', $result);
         }
 
-        $msg = sprintf('%s@%s success, use %ss.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $use);
+        $msg = sprintf('%s::%s success, use %ss.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $use);
         $this->logger->debug($msg);
 
         return $result;

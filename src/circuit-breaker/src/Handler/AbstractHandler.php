@@ -70,7 +70,7 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function getName(ProceedingJoinPoint $proceedingJoinPoint): string
     {
-        return sprintf('%s@%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
+        return sprintf('%s::%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
     }
 
     protected function switch(CircuitBreaker $breaker, Annotation $annotation, bool $status)
@@ -155,7 +155,7 @@ abstract class AbstractHandler implements HandlerInterface
             }
 
             $result = $exception->getResult();
-            $msg = sprintf('%s@%s %s.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $exception->getMessage());
+            $msg = sprintf('%s::%s %s.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $exception->getMessage());
             $this->logger->debug($msg);
 
             $breaker->incFailCounter();
@@ -192,7 +192,7 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function prepareHandler(string $fallback): array
     {
-        $result = explode('@', $fallback);
+        $result = explode('::', $fallback);
 
         return [
             $result[0],
