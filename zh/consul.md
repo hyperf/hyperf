@@ -1,6 +1,6 @@
 # Consul 协程客户端
 
-Hyperf 提供了一个 Consul 的协程客户端，由于 Consul 本身的 API 比较简单，也支持 HTTP 的请求方法，顾该组件仅对 API 进行了一些封装上的简化，基于 [hyperf/guzzle](https://github.com/hyperf-cloud/guzzle) 提供的协程 HTTP 客户端支持。
+Hyperf 提供了一个 [Consul](https://www.consul.io/api/index.html) 的协程客户端，由于 Consul 本身的 API 比较简单，也支持 HTTP 的请求方法，顾该组件仅对 API 进行了一些封装上的简化，基于 [hyperf/guzzle](https://github.com/hyperf-cloud/guzzle) 提供的协程 HTTP 客户端支持。
 
 > `ConsulResponse` 类指的是 `Hyperf\Consul\ConsulResponse` 类
 
