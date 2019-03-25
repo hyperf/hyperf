@@ -15,7 +15,7 @@ AOP 为 `Aspect Oriented Programming` 的缩写，意为：`面向切面编程`�
 - `切面(Aspect)` 为对流程织入的定义类，包括要介入的目标，以及实现对原方法的修改加强处理
 - `代理类(ProxyClass)` ，每个被介入的目标类最终都会生成一个代理类，来达到执行 `切面(Aspect)` 方法的目的，而非通过原类
 
-## 定义 `切面(Aspect)`
+## 定义切面(Aspect)
 
 每个 `切面(Aspect)` 必须实现 `Hyperf\Di\Aop\ArroundInterface` 接口，并提供 `public` 的 `$classes` 和 `$annotations` 属性，为了方便使用，我们可以通过继承 `Hyperf\Di\Aop\AbstractAspect` 来简化定义过程，我们通过代码来描述一下。
 
