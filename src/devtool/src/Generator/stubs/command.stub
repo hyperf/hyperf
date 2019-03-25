@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Framework\Annotation\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+
+/**
+ * @Command
+ */
+class %CLASS% extends SymfonyCommand
+{
+    public function __construct()
+    {
+        parent::__construct('hyperf');
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+    }
+}
