@@ -38,20 +38,22 @@ class Redis
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
 
-        // Execute the command with the arguments.
-        $result = $connection->{$name}(...$arguments);
-
-        // Release connection.
-        if (! $hasContextConnection) {
-            if ($this->shouldUseSameConnection($name)) {
-                // Should storage the connection to coroutine context, then use defer() to release the connection.
-                Context::set($this->getContextKey(), $connection);
-                defer(function () use ($connection) {
+        try {
+            // Execute the command with the arguments.
+            $result = $connection->{$name}(...$arguments);
+        } finally {
+            // Release connection.
+            if (! $hasContextConnection) {
+                if ($this->shouldUseSameConnection($name)) {
+                    // Should storage the connection to coroutine context, then use defer() to release the connection.
+                    Context::set($this->getContextKey(), $connection);
+                    defer(function () use ($connection) {
+                        $connection->release();
+                    });
+                } else {
+                    // Release the connection after command executed.
                     $connection->release();
-                });
-            } else {
-                // Release the connection after command executed.
-                $connection->release();
+                }
             }
         }
 
