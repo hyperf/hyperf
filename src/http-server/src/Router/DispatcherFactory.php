@@ -24,10 +24,13 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\DeleteMapping;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Mapping;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
 
@@ -88,10 +91,12 @@ class DispatcherFactory
                     $message = sprintf('AutoController annotation can\'t use with Controller annotation at the same time in %s.', $className);
                     throw new ConflictAnnotationException($message);
                 }
-                $this->handleAutoController($className, $metadata['_c'][AutoController::class]);
+                $middlewares = $this->handleMiddleware($metadata['_c']);
+                $this->handleAutoController($className, $metadata['_c'][AutoController::class], $middlewares);
             }
             if (isset($metadata['_c'][Controller::class])) {
-                $this->handleController($className, $metadata['_c'][Controller::class], $metadata['_m'] ?? []);
+                $middlewares = $this->handleMiddleware($metadata['_c']);
+                $this->handleController($className, $metadata['_c'][Controller::class], $metadata['_m'] ?? [], $middlewares);
             }
         }
     }
@@ -99,7 +104,7 @@ class DispatcherFactory
     /**
      * Register route according to AutoController annotation.
      */
-    private function handleAutoController(string $className, AutoController $annotation): void
+    private function handleAutoController(string $className, AutoController $annotation, array $middlewares): void
     {
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -111,9 +116,15 @@ class DispatcherFactory
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
             $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
+            foreach ($autoMethods as $autoMethod) {
+                MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
+            }
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
                 $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
+                foreach ($autoMethods as $autoMethod) {
+                    MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
+                }
             }
         }
     }
@@ -122,7 +133,7 @@ class DispatcherFactory
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
      */
-    private function handleController(string $className, Controller $annotation, array $methodMetadata): void
+    private function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
     {
         if (! $methodMetadata) {
             return;
@@ -154,6 +165,9 @@ class DispatcherFactory
                         $className,
                         $method,
                     ]);
+                    foreach ($mapping->methods as $mappingMethod) {
+                        MiddlewareManager::addMiddlewares($path, $mappingMethod, $middlewares);
+                    }
                 }
             }
         }
@@ -180,5 +194,31 @@ class DispatcherFactory
     private function hasControllerAnnotation(array $item): bool
     {
         return isset($item[Controller::class]);
+    }
+
+    private function handleMiddleware(array $classAnnotation): array
+    {
+        $hasMiddlewares = isset($classAnnotation[Middlewares::class]);
+        $hasMiddleware = isset($classAnnotation[Middleware::class]);
+        if (! $hasMiddlewares && ! $hasMiddleware) {
+            return [];
+        }
+        if ($hasMiddlewares && $hasMiddleware) {
+            throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
+        }
+        if ($hasMiddlewares) {
+            // @Middlewares
+            /** @var Middlewares $middlewares */
+            $middlewares = $classAnnotation[Middlewares::class];
+            $result = [];
+            foreach ($middlewares->middlewares as $middleware) {
+                $result[] = $middleware->middleware;
+            }
+            return $result;
+        }
+        // @Middleware
+        /** @var Middleware $middleware */
+        $middleware = $classAnnotation[Middleware::class];
+        return [$middleware->middleware];
     }
 }
