@@ -26,14 +26,11 @@ class ConfigProvider
         return [
             'dependencies' => [
                 Server::class => ServerFactory::class,
-                StartServer::class => StartServerFactory::class,
-                DispatcherFactory::class => DispatcherFactory::class,
                 RequestInterface::class => Request::class,
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
             ],
             'commands' => [
-                StartServer::class,
             ],
             'scan' => [
                 'paths' => [
