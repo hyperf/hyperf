@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Router;
 
 /**
- * @method static addRoute($httpMethod, $route, $handler)
+ * @method static addRoute($httpMethod, string $route, $handler, array $options = [])
  * @method static addGroup($prefix, callable $callback)
- * @method static get($route, $handler)
- * @method static post($route, $handler)
- * @method static put($route, $handler)
- * @method static delete($route, $handler)
- * @method static patch($route, $handler)
- * @method static head($route, $handler)
+ * @method static get($route, $handler, array $options = [])
+ * @method static post($route, $handler, array $options = [])
+ * @method static put($route, $handler, array $options = [])
+ * @method static delete($route, $handler, array $options = [])
+ * @method static patch($route, $handler, array $options = [])
+ * @method static head($route, $handler, array $options = [])
  */
 class Router
 {

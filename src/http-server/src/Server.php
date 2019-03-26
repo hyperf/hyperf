@@ -16,9 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Event\EventDispatcher;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
-use Hyperf\HttpServer\Event\AfterResponse;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\Context;
@@ -60,9 +58,9 @@ class Server implements ServerOnRequestInterface
     private $container;
 
     /**
-     * @var EventDispatcher
+     * @var HttpDispatcher
      */
-    private $event;
+    private $dispatcher;
 
     /**
      * @var string
@@ -75,8 +73,7 @@ class Server implements ServerOnRequestInterface
     ) {
         $this->coreHandler = $coreHandler;
         $this->container = $container;
-
-        $this->event = $container->get(EventDispatcher::class);
+        $this->dispatcher = $container->get(HttpDispatcher::class);
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -96,13 +93,12 @@ class Server implements ServerOnRequestInterface
     {
         try {
             // Initialize PSR-7 Request and Response objects.
-            $psr7Request = Psr7Request::loadFromSwooleRequest($request);
-            $psr7Response = new Psr7Response($response);
-            Context::set(ServerRequestInterface::class, $psr7Request);
-            Context::set(ResponseInterface::class, $psr7Response);
-            $dispatcher = $this->container->get(HttpDispatcher::class);
+            Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+            Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
 
-            $psr7Response = $dispatcher->dispatch($psr7Request, $this->middlewares, $this->coreMiddleware);
+            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
@@ -113,10 +109,8 @@ class Server implements ServerOnRequestInterface
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
-            // Response and Recycle resources.
+            // Send the Response to client.
             $psr7Response->send();
-
-            $this->event->dispatch(new AfterResponse());
         }
     }
 }
