@@ -31,9 +31,9 @@ class WaitGroup
         $this->channel = new SwooleChannel();
     }
 
-    public function add(): void
+    public function add(int $incr = 1): void
     {
-        ++$this->counter;
+        $this->counter += $incr;
     }
 
     public function done(): void
@@ -43,7 +43,7 @@ class WaitGroup
 
     public function wait(): void
     {
-        for ($i = 0; $i < $this->counter; ++$i) {
+        while ($this->counter--) {
             $this->channel->pop();
         }
     }
