@@ -19,7 +19,7 @@ class WaitGroup
     /**
      * @var int
      */
-    public $counter = 0;
+    private $counter = 0;
 
     /**
      * @var SwooleChannel

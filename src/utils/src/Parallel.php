@@ -30,16 +30,16 @@ class Parallel
 
     public function wait(): array
     {
-        $waitGroup = new WaitGroup();
         $result = [];
+        $wg = new WaitGroup();
+        $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
-            $waitGroup->add();
-            Coroutine::create(function () use ($callback, $key, $waitGroup, &$result) {
-                $result[$key] = $callback();
-                $waitGroup->done();
+            Coroutine::create(function () use ($callback, $key, $wg, &$result) {
+                $result[$key] = call($callback);
+                $wg->done();
             });
         }
-        $waitGroup->wait();
+        $wg->wait();
         return $result;
     }
 }
