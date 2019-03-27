@@ -16,26 +16,24 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适�
 
 如果您没有对配置组件进行替换使用默认的 [hyperf/config](https://github.com/hyperf-cloud/config) 组件的话，接入 Apollo 配置中心则是轻而易举，只需两步。
 - 通过 Composer 将 [hyperf/config-apollo](https://github.com/hyperf-cloud/config-apollo) ，即执行命令 `composer require hyperf/config-apollo`
-- 在 `config/autoload` 文件夹内增加一个 `config-center.php` 的配置文件，配置内容如下
+- 在 `config/autoload` 文件夹内增加一个 `apollo.php` 的配置文件，配置内容如下
 ```php
 <?php
 return [
     // 是否开启配置中心的接入流程，为 true 时会自动启动一个 ConfigFetcherProcess 进程用于更新配置
     'enable' => true,
-    'apollo' => [
-        // Apollo Server
-        'server' => 'http://127.0.0.1:8080',
-        // 您的 AppId
-        'appid' => 'test',
-        // 当前应用所在的集群
-        'cluster' => 'default',
-        // 当前应用需要接入的 Namespace，可配置多个
-        'namespaces' => [
-            'application',
-        ],
-        // 配置更新间隔（秒）
-        'interval' => 5,
+    // Apollo Server
+    'server' => 'http://127.0.0.1:8080',
+    // 您的 AppId
+    'appid' => 'test',
+    // 当前应用所在的集群
+    'cluster' => 'default',
+    // 当前应用需要接入的 Namespace，可配置多个
+    'namespaces' => [
+        'application',
     ],
+    // 配置更新间隔（秒）
+    'interval' => 5,
 ];
 ```
 
