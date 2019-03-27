@@ -22,10 +22,10 @@ class ClientFactory
     {
         $config = $container->get(ConfigInterface::class);
         $option = make(Option::class);
-        $option->setServer($config->get('config-center.apollo.server', 'http://127.0.0.1:8080'))
-            ->setAppid($config->get('config-center.apollo.appid', ''))
-            ->setCluster($config->get('config-center.apollo.cluster', ''));
-        $namespaces = $config->get('config-center.apollo.namespaces', []);
+        $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
+            ->setAppid($config->get('apollo.appid', ''))
+            ->setCluster($config->get('apollo.cluster', ''));
+        $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
             // If does not exist a user-defined callback, then delegate to the dafault callback.

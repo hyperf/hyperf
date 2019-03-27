@@ -59,7 +59,7 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('config-center.enable', false);
+        return $this->config->get('apollo.enable', false);
     }
 
     public function handle(): void
@@ -75,12 +75,12 @@ class ConfigFetcherProcess extends AbstractProcess
         };
         while (true) {
             $callbacks = [];
-            $namespaces = $this->config->get('config-center.apollo.namespaces', []);
+            $namespaces = $this->config->get('apollo.namespaces', []);
             foreach ($namespaces as $namespace) {
                 $callbacks[$namespace] = $ipcCallback;
             }
             $this->client->pull($namespaces, $callbacks);
-            sleep($this->config->get('config-center.apollo.interval', 5));
+            sleep($this->config->get('apollo.interval', 5));
         }
     }
 }

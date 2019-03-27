@@ -34,7 +34,7 @@ class ClientTest extends TestCase
         $option->setServer('http://127.0.0.1:8080')->setAppid('test')->setCluster('default')->setClientIp('127.0.0.1');
         $container = Mockery::mock(ContainerInterface::class);
         $configInstance = new Config([]);
-        $configInstance->set('config-center.test-key', 'pre-value');
+        $configInstance->set('apollo.test-key', 'pre-value');
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($configInstance);
         ApplicationContext::setContainer($container);
         $callbacks = [
@@ -43,7 +43,7 @@ class ClientTest extends TestCase
                 $config = $container->get(ConfigInterface::class);
                 // Mock the configurations.
                 $configs['configurations'] = [
-                    'config-center.test-key' => 'after-value',
+                    'apollo.test-key' => 'after-value',
                 ];
                 foreach ($configs['configurations'] ?? [] as $key => $value) {
                     $config->set($key, $value);
@@ -57,9 +57,9 @@ class ClientTest extends TestCase
             'application',
         ]);
         $config = $container->get(ConfigInterface::class);
-        $this->assertSame('after-value', $config->get('config-center.test-key'));
+        $this->assertSame('after-value', $config->get('apollo.test-key'));
         $this->assertSame([
             'test-key' => 'after-value',
-        ], $config->get('config-center'));
+        ], $config->get('apollo'));
     }
 }
