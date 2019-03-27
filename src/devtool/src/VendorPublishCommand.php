@@ -44,6 +44,7 @@ class VendorPublishCommand extends SymfonyCommand
     {
         $this->setDescription('Publish any publishable configs from vendor packages.')
             ->addArgument('package', InputArgument::OPTIONAL, 'The package config you want to publish.')
+            ->addOption('show', 's', InputOption::VALUE_OPTIONAL, 'Show all packages can be publish.', false)
             ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Overwrite any existing files', false);
     }
 
@@ -52,8 +53,16 @@ class VendorPublishCommand extends SymfonyCommand
         $this->output = $output;
         $this->force = $input->getOption('force') !== false;
         $package = $input->getArgument('package');
+        $show = $input->getOption('show') !== false;
 
         $configs = ProviderConfig::load()['configs'];
+
+        if ($show) {
+            foreach ($configs as $group => $config) {
+                $output->writeln(sprintf('<fg=green>Package[%s] can be publish.</>', $group));
+            }
+            return;
+        }
 
         if ($package) {
             if (! isset($configs[$package])) {
@@ -80,6 +89,6 @@ class VendorPublishCommand extends SymfonyCommand
             $this->output->writeln(sprintf('<fg=green>Copy config[%s] success.</>', pathinfo($target)['basename']));
         }
 
-        return $this->output->writeln(sprintf('<fg=green>Packagep[%s] publish success.</>', $package));
+        return $this->output->writeln(sprintf('<fg=green>Packagep[%s] publish success.</>' . PHP_EOL, $package));
     }
 }
