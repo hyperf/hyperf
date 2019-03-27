@@ -26,6 +26,11 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'configs' => [
+                'hyperf/model-cache' => [
+                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+                ],
+            ],
         ];
     }
 }

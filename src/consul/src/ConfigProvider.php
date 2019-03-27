@@ -23,6 +23,11 @@ class ConfigProvider
                 'paths' => [
                 ],
             ],
+            'configs' => [
+                'hyperf/consul' => [
+                    __DIR__ . '/../config/consul.php' => BASE_PATH . '/config/autoload/consul.php',
+                ],
+            ],
         ];
     }
 }

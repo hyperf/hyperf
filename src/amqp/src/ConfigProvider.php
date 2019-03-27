@@ -32,6 +32,11 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'configs' => [
+                'hyperf/amqp' => [
+                    __DIR__ . '/../config/amqp.php' => BASE_PATH . '/config/autoload/amqp.php',
+                ],
+            ],
         ];
     }
 }

@@ -26,6 +26,11 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'configs' => [
+                'hyperf/logger' => [
+                    __DIR__ . '/../config/logger.php' => BASE_PATH . '/config/autoload/logger.php',
+                ],
+            ],
         ];
     }
 }

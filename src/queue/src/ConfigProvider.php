@@ -26,6 +26,11 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'configs' => [
+                'hyperf/queue' => [
+                    __DIR__ . '/../config/queue.php' => BASE_PATH . '/config/autoload/queue.php',
+                ],
+            ],
         ];
     }
 }

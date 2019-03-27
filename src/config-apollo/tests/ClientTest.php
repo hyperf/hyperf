@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace HyperfTest\ConfigApollo;
 
-use Mockery;
 use Hyperf\Config\Config;
 use Hyperf\ConfigApollo\Client;
 use Hyperf\ConfigApollo\Option;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Utils\ApplicationContext;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**

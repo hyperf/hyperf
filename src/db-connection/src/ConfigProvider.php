@@ -37,6 +37,14 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'configs' => [
+                'hyperf/db-connection' => [
+                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+                ],
+                'hyperf/database' => [
+                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+                ],
+            ],
         ];
     }
 }
