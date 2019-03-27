@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
@@ -31,9 +32,15 @@ class BeforeMainServerStartListener implements ListenerInterface
      */
     private $container;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
         $this->container = $container;
+        $this->config = $config;
     }
 
     /**
@@ -54,8 +61,7 @@ class BeforeMainServerStartListener implements ListenerInterface
     {
         /** @var BeforeMainServerStart $event */
         $server = $event->server;
-        $config = $event->serverConfig;
-        $processes = $config['processes'] ?? [];
+        $processes = $this->config->get('processes', []);
         $annotationProcesses = $this->getAnnotationProcesses();
 
         // Retrieve the processes have been registered.
