@@ -27,6 +27,7 @@
   * [异常处理](zh/exception-handler.md)
   * [缓存](zh/cache.md)
   * [日志](zh/logger.md)
+  * [分页器](zh/paginator.md)
   
 * 数据库模型
 
@@ -49,7 +50,6 @@
 * 其它组件
 
   * [连接池](zh/pool.md)
-  * [分页器](zh/paginator.md)
   * [Redis 协程客户端](zh/redis.md)
   * [Guzzle HTTP 协程客户端](zh/guzzle.md)
   * [Elasticsearch 协程客户端](zh/elasticsearch.md)

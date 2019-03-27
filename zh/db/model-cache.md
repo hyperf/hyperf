@@ -12,7 +12,7 @@ composer require hyperf/model-cache
 
 模型缓存的配置在 `databases` 中。示例如下
 
-|    配置     |  类型  |                         默认值                         |                备注                 |
+|    配置      |  类型  |                         默认值                          |                备注                 |
 |:-----------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
 |   handler   | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
 |  cache_key  | string |                   'mc:%s:m:%s:%s:%s'                   |  mc:缓存前缀:m:表名:主键KEY:主键值  |
@@ -54,7 +54,7 @@ return [
 
 ## 使用
 
-模型缓存的使用十分简单，只需要在对应Model中实现 `Hyperf\ModelCache\CacheableInterface` 接口，当然，框架已经提供了对应实现，只需要引入Trait `Hyperf\ModelCache\Cacheable` 即可。
+模型缓存的使用十分简单，只需要在对应Model中实现 `Hyperf\ModelCache\CacheableInterface` 接口，当然，框架已经提供了对应实现，只需要引入 `Hyperf\ModelCache\Cacheable` Trait 即可。
 
 ```php
 <?php
@@ -63,6 +63,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
 
