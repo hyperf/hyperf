@@ -12,7 +12,7 @@ use Hyperf\DbConnection\Db;
 
 $users  = Db::select('SELECT * FROM user;');
 $users = Db::table('user')->get();
-$users = Db::table('user')->select('name', 'sex as user_sex')->get();
+$users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
 `Db::select()` 方法会返回一个array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
@@ -42,6 +42,6 @@ $count = Db::table('user')->count();
 ```php
 use Hyperf\DbConnection\Db;
 
-$res = Db::table('user')->select('sex', Db::raw('COUNT(0) AS `count`'))->groupBy('sex')->get();
+$res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->groupBy('gender')->get();
 ```
 

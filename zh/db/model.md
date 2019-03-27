@@ -23,7 +23,7 @@ use Hyperf\DbConnection\Model\Model;
 /**
  * @property $id
  * @property $name
- * @property $sex
+ * @property $gender
  * @property $created_at
  * @property $updated_at
  */
@@ -41,14 +41,14 @@ class User extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'sex', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'sex' => 'integer'];
+    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 

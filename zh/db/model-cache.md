@@ -69,7 +69,7 @@ use Hyperf\ModelCache\CacheableInterface;
 /**
  * @property $id
  * @property $name
- * @property $sex
+ * @property $gender
  * @property $created_at
  * @property $updated_at
  */
@@ -89,9 +89,9 @@ class User extends Model implements CacheableInterface
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'sex', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
-    protected $casts = ['id' => 'integer', 'sex' => 'integer'];
+    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
 $model = User::findFromCache($id);
@@ -106,7 +106,7 @@ $models = User::findManyFromCache($ids);
  2) "1"
  3) "name"
  4) "Hyperf"
- 5) "sex"
+ 5) "gender"
  6) "1"
  7) "created_at"
  8) "2018-01-01 00:00:00"
