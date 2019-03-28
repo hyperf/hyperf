@@ -45,7 +45,7 @@ class CacheManager
             return $this->drivers[$name];
         }
 
-        if (! $this->config[$name]) {
+        if (! isset($this->config[$name]) || ! $this->config[$name]) {
             return false;
         }
 
