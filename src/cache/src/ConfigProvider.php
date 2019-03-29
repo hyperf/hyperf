@@ -29,9 +29,12 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/cache' => [
-                    __DIR__ . '/../config/cache.php' => BASE_PATH . '/config/autoload/cache.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for cache.',
+                    'source' => __DIR__ . '/../publish/cache.php',
+                    'destination' => BASE_PATH . '/config/autoload/cache.php',
                 ],
             ],
         ];

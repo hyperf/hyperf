@@ -23,9 +23,12 @@ class ConfigProvider
                 'paths' => [
                 ],
             ],
-            'configs' => [
-                'hyperf/consul' => [
-                    __DIR__ . '/../config/consul.php' => BASE_PATH . '/config/autoload/consul.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for consul.',
+                    'source' => __DIR__ . '/../publish/consul.php',
+                    'destination' => BASE_PATH . '/config/autoload/consul.php',
                 ],
             ],
         ];

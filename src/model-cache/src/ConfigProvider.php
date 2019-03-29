@@ -26,9 +26,12 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/model-cache' => [
-                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for database with model-cache.',
+                    'source' => __DIR__ . '/../publish/databases.php',
+                    'destination' => BASE_PATH . '/config/autoload/databases.php',
                 ],
             ],
         ];

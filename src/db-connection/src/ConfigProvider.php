@@ -37,12 +37,18 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/db-connection' => [
-                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for database.',
+                    'source' => __DIR__ . '/../publish/databases.php',
+                    'destination' => BASE_PATH . '/config/autoload/databases.php',
                 ],
-                'hyperf/database' => [
-                    __DIR__ . '/../config/databases.php' => BASE_PATH . '/config/autoload/databases.php',
+                [
+                    'id' => 'query-listener',
+                    'description' => 'The listener of database to record log.',
+                    'source' => __DIR__ . '/../publish/DbQueryExecutedListener.php',
+                    'destination' => BASE_PATH . '/app/Listener/DbQueryExecutedListener.php',
                 ],
             ],
         ];

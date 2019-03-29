@@ -25,9 +25,12 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/config-apollo' => [
-                    __DIR__ . '/../config/apollo.php' => BASE_PATH . '/config/autoload/apollo.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for apollo.',
+                    'source' => __DIR__ . '/../publish/apollo.php',
+                    'destination' => BASE_PATH . '/config/autoload/apollo.php',
                 ],
             ],
         ];

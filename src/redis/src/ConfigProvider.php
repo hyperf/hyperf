@@ -30,9 +30,12 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/redis' => [
-                    __DIR__ . '/../config/redis.php' => BASE_PATH . '/config/autoload/redis.php',
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for redis.',
+                    'source' => __DIR__ . '/../publish/redis.php',
+                    'destination' => BASE_PATH . '/config/autoload/redis.php',
                 ],
             ],
         ];

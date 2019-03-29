@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool;
 
-use Hyperf\Config\ProviderConfig;
 use Hyperf\Framework\Annotation\Command;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Composer;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,7 +44,8 @@ class VendorPublishCommand extends SymfonyCommand
     protected function configure()
     {
         $this->setDescription('Publish any publishable configs from vendor packages.')
-            ->addArgument('package', InputArgument::OPTIONAL, 'The package config you want to publish.')
+            ->addArgument('package', InputArgument::REQUIRED, 'The package file you want to publish.')
+            ->addOption('id', 'i', InputOption::VALUE_OPTIONAL, 'The id of the package you want to publish.', null)
             ->addOption('show', 's', InputOption::VALUE_OPTIONAL, 'Show all packages can be publish.', false)
             ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Overwrite any existing files', false);
     }
@@ -54,41 +56,67 @@ class VendorPublishCommand extends SymfonyCommand
         $this->force = $input->getOption('force') !== false;
         $package = $input->getArgument('package');
         $show = $input->getOption('show') !== false;
+        $id = $input->getOption('id');
 
-        $configs = ProviderConfig::load()['configs'];
+        $extra = Composer::getMergedExtra()[$package] ?? null;
+        if (empty($extra)) {
+            return $output->writeln(sprintf('<fg=red>Extra of package[%s] is not exist.</>', $package));
+        }
+
+        $provider = Arr::get($extra, 'hyperf.config');
+        $config = (new $provider())();
+
+        $publish = Arr::get($config, 'publish');
+        if (empty($publish)) {
+            return $output->writeln(sprintf('<fg=red>No file can be publish of package[%s].</>', $package));
+        }
 
         if ($show) {
-            foreach ($configs as $group => $config) {
-                $output->writeln(sprintf('<fg=green>Package[%s] can be publish.</>', $group));
+            foreach ($publish as $item) {
+                $out = '';
+                foreach ($item as $key => $value) {
+                    $out .= sprintf('%s: %s', $key, $value) . PHP_EOL;
+                }
+                $output->writeln(sprintf('<fg=green>%s</>', $out));
             }
             return;
         }
 
-        if ($package) {
-            if (! isset($configs[$package])) {
-                return $output->writeln(sprintf('<fg=red>Config of package[%s] is not exist.</>', $package));
+        if ($id) {
+            $item = (Arr::where($publish, function ($item) use ($id) {
+                return $item['id'] == $id;
+            }));
+
+            if (empty($item)) {
+                return $output->writeln(sprintf('<fg=red>No file can be publish of [%s].</>', $id));
             }
 
-            return $this->copy($configs[$package], $package);
+            return $this->copy($package, $item);
         }
 
-        foreach ($configs as $group => $config) {
-            $this->copy($config, $group);
-        }
+        return $this->copy($package, $publish);
     }
 
-    protected function copy($configs, $package)
+    protected function copy($package, $items)
     {
-        foreach ($configs as $origin => $target) {
-            if (! $this->force && file_exists($target)) {
-                return $this->output->writeln(sprintf('<fg=red>Config[%s] is exist.</>', $target));
+        foreach ($items as $item) {
+            if (! isset($item['id'], $item['source'], $item['destination'])) {
+                continue;
             }
 
-            @copy($origin, $target);
+            $id = $item['id'];
+            $source = $item['source'];
+            $destination = $item['destination'];
 
-            $this->output->writeln(sprintf('<fg=green>Copy config[%s] success.</>', pathinfo($target)['basename']));
+            if (! $this->force && file_exists($destination)) {
+                $this->output->writeln(sprintf('<fg=red>[%s] is exist.</>', $destination));
+                continue;
+            }
+
+            mkdir(dirname($destination), 0755, true);
+            copy($source, $destination);
+
+            $this->output->writeln(sprintf('<fg=green>[%s] publish [%s] success.</>', $package, $id));
         }
-
-        return $this->output->writeln(sprintf('<fg=green>Packagep[%s] publish success.</>' . PHP_EOL, $package));
     }
 }
