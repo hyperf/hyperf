@@ -86,11 +86,6 @@ class Container implements ContainerInterface
      */
     public function make(string $name, array $parameters = [])
     {
-        // If the entry is already resolved we return it
-        if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
-            return $this->resolvedEntries[$name];
-        }
-
         $definition = $this->getDefinition($name);
 
         if (! $definition) {
@@ -110,6 +105,10 @@ class Container implements ContainerInterface
      */
     public function get($name)
     {
+        // If the entry is already resolved we return it
+        if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
+            return $this->resolvedEntries[$name];
+        }
         $this->resolvedEntries[$name] = $value = $this->make($name);
         return $value;
     }
