@@ -14,7 +14,7 @@ Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下�
  - JSON PHP 扩展
  - PDO PHP 扩展 （如需要使用到 MySQL 客户端）
  - Redis PHP 扩展 （如需要使用到 Redis 客户端）
- - Protobuf PHP 扩展 （如需要使用到 GRPC 服务端或客户端）
+ - Protobuf PHP 扩展 （如需要使用到 gRPC 服务端或客户端）
 
 
 ## 安装 Hyperf
