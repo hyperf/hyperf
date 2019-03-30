@@ -10,7 +10,7 @@
 ```php
 use Hyperf\DbConnection\Db;
 
-$users  = Db::select('SELECT * FROM user;');
+$users = Db::select('SELECT * FROM user;');
 $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
