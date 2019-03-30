@@ -51,7 +51,6 @@ class Response implements ResponseInterface
     public function redirect(
         string $toUrl,
         int $status = 302,
-        array $headers = [],
         string $schema = 'http'
     ): PsrResponseInterface {
         $toUrl = value(function () use ($toUrl, $schema) {
@@ -65,11 +64,7 @@ class Response implements ResponseInterface
             // Build the url by $schema and host.
             return $schema . '://' . $host . '/' . $toUrl;
         });
-        $response = $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
-        foreach ($headers as $key => $value) {
-            $response = $response->withAddedHeader($key, $value);
-        }
-        return $response;
+        return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
     }
 
     /**

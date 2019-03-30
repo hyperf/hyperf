@@ -34,5 +34,5 @@ interface ResponseInterface
     /**
      * Redirect to a URL.
      */
-    public function redirect(string $toUrl, int $status = 302, array $headers = [], string $schema = 'http'): PsrResponseInterface;
+    public function redirect(string $toUrl, int $status = 302, string $schema = 'http'): PsrResponseInterface;
 }
