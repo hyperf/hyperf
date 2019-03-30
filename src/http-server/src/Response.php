@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -54,11 +55,13 @@ class Response implements ResponseInterface
         string $schema = 'http'
     ): PsrResponseInterface {
         $toUrl = value(function () use ($toUrl, $schema) {
-            if (Str::startsWith($toUrl, 'http://', 'https://')) {
+            if (! ApplicationContext::hasContainter() || Str::startsWith($toUrl, 'http://', 'https://')) {
                 return $toUrl;
             }
-            // TODO: Get the HOST from somewhere.
-            $host = '';
+            /** @var Contract\RequestInterface $request */
+            $request = ApplicationContext::getContainer()->get(Contract\RequestInterface::class);
+            $uri = $request->getUri();
+            $host = $uri->getAuthority();
             // Build the url by $schema and host.
             return $schema . '://' . $host . '/' . $toUrl;
         });
