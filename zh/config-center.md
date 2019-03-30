@@ -2,6 +2,12 @@
 
 Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
 
+## 安装
+
+```bash
+composer require hyperf/config-apollo
+```
+
 ## 为什么要使用配置中心？
 
 随着业务的发展，微服务架构的升级，服务的数量、应用的配置日益增多（各种微服务、各种服务器地址、各种参数），传统的配置文件方式和数据库的方式已经可能无法满足开发人员对配置管理的要求，同时对于配置的管理可能还会牵涉到 ACL 权限管理、配置版本管理和回滚、格式验证、配置灰度发布、集群配置隔离等问题，以及：

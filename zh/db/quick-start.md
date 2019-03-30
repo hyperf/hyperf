@@ -6,6 +6,20 @@
 
 [hyperf/database](https://github.com/hyperf-cloud/database) 组件是基于 [illuminate/database](https://github.com/illuminate/database) 衍生出来的组件，我们对它进行了一些改造，从设计上是允许用于其它 PHP-FPM 框架或基于 Swoole 的框架中的，而在 Hyperf 里就需要提一下 [hyperf/db-connection](https://github.com/hyperf-cloud/db-connection) 组件，它基于 [hyperf/pool](https://github.com/hyperf-cloud/pool) 实现了数据库连接池并对模型进行了新的抽象，以它作为桥梁，Hyperf 才能把数据库组件及事件组件接入进来。
 
+## 安装
+
+### Hyperf 框架
+
+```bash
+composer require hyperf/db-connection
+```
+
+### 其它框架
+
+```bash
+composer require hyperf/database
+```
+
 ## 配置
 
 默认配置如下，数据库支持多库配置，默认为 `default`。

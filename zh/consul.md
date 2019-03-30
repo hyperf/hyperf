@@ -4,6 +4,12 @@ Hyperf 提供了一个 [Consul](https://www.consul.io/api/index.html) 的协程�
 
 > `ConsulResponse` 类指的是 `Hyperf\Consul\ConsulResponse` 类
 
+## 安装
+
+```bash
+composer require hyperf/consul
+```
+
 ## KV
 
 由 `Hyperf\Consul\KV` 实现 `Hyperf\Consul\KVInterface` 提供支持。

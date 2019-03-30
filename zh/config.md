@@ -1,8 +1,16 @@
-# 介绍
+# 配置
+
+## 介绍
 
 当您使用的是 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目创建的项目时，或基于 [hyperf-cloud/installer](https://github.com/hyperf-cloud/installer) 创建的项目，Hyperf 的所有配置文件均处于根目录下的 `config` 文件夹内，每个选项都有说明，您可以随时查看并熟悉有哪些选项可以使用。
 
-# 配置文件结构
+## 安装
+
+```bash
+composer require hyperf/config
+```
+
+## 配置文件结构
 以下结构仅为 Hyperf-Skeleton 所提供的默认配置的情况下的结构，实际情况由于依赖或使用的组件的差异，文件会有差异。
 ```
 config
@@ -29,7 +37,7 @@ config
 └── server.php // 用于管理 Server 服务
 ```
 
-## `config.php` 与 `autoload` 文件夹内的配置文件的关系
+### `config.php` 与 `autoload` 文件夹内的配置文件的关系
 `config.php` 与 `autoload` 文件夹内的配置文件在服务启动时都会被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，配置的结构为一个键值对的大数组，两种配置形式不同的在于 `autoload`  内配置文件的文件名会作为第一层 键(Key) 存在，而 `config.php` 内的则以您定义的为第一层，我们通过下面的例子来演示一下。   
 我们假设存在一个 `config/autoload/client.php` 文件，文件内容如下：
 ```php
@@ -52,18 +60,18 @@ return [
 ];
 ```
 
-## 使用 Hyperf Config 组件
+### 使用 Hyperf Config 组件
 
 该组件是官方提供的默认的配置组件，是面向 `Hyperf\Contract\ConfigInterface` 接口实现的，由 [hyperf/config](https://github.com/hyperf-cloud/config) 组件内的 `ConfigProvider` 将 `Hyperf\Config\Config` 对象绑定到接口上。   
 
-### 设置配置
+#### 设置配置
 只需在 `config/config.php` 与 `config/server.php` 与 `autoload` 文件夹内的配置，都能在服务启动时被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，这个流程是由 `Hyperf\Config\ConfigFactory` 在 Config 对象实例化时完成的。
 
-### 获取配置
+#### 获取配置
 
 Hyperf Config 组件提供了两种方式获取配置，通过 Config 对象获取和 `@Value` 注解获取。
 
-#### 通过 Config 对象获取配置
+##### 通过 Config 对象获取配置
 
 这种方式要求你已经拿到了 Config 对象的实例，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节；
 
@@ -75,7 +83,7 @@ Hyperf Config 组件提供了两种方式获取配置，通过 Config 对象获�
 $config->get($key，$default);
 ```
 
-#### 通过 `@Value` 注解获取配置
+##### 通过 `@Value` 注解获取配置
 
 这种方式要求当前的对象必须是通过 Hyperf DI 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 Controller 类，Controller 类一定是由 DI 创建出来的；   
 `@Value()` 内的字符串则对应到 `$config->get($key)` 内的 `$key` 参数，在创建该对象实例时，对应的配置会自动注入到定义的类属性中。
@@ -97,7 +105,7 @@ class IndexController
 }
 ```
 
-### 判断配置是否存在
+#### 判断配置是否存在
 
 ```php
 /**
@@ -107,7 +115,7 @@ class IndexController
 $config->has($key);
 ```
 
-## 环境变量
+### 环境变量
 
 对于不同的运行环境使用不同的配置是一种常见的需求，比如在测试环境和生产环境的 Redis 配置不一样，而生产环境的配置又不能提交到源代码版本管理系统中以免信息泄露。   
 
@@ -119,7 +127,7 @@ $config->has($key);
 
 > `.env` 文件中的所有变量均可被外部环境变量所覆盖（比如服务器级或系统级或 Docker 环境变量）。
 
-### 环境变量类型
+#### 环境变量类型
 
 `.env` 文件中的所有变量都会被解析为字符串类型，因此提供了一些保留值以允许您从 `env()` 函数中获取更多类型的变量：
 
@@ -140,7 +148,7 @@ $config->has($key);
 APP_NAME="Hyperf Skeleton"
 ```
 
-### 读取环境变量
+#### 读取环境变量
 
 我们在上面也有提到环境变量可以通过 `env()` 函数获取，在应用开发中，环境变量只应作为配置的一个值，通过环境变量的值来覆盖配置的值，对于应用层来说应只使用配置，而不是直接使用环境变量。   
 我们举个合理使用的例子：
@@ -152,7 +160,7 @@ return [
 ];
 ```
 
-## 配置中心
+### 配置中心
 
 Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
 关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。

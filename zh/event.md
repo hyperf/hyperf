@@ -4,6 +4,7 @@
 
 事件模式必须基于 [PSR-14](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-14-event-dispatcher.md) 去实现。   
 Hyperf 的事件管理器默认由 [hyperf/event](https://github.com/hyperf-cloud/event) 实现，该组件亦可用于其它框架或应用，只需通过 Composer 将该组件引入即可。
+
 ```bash
 composer require hyperf/event
 ```

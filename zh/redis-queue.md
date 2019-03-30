@@ -2,6 +2,12 @@
 
 异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种异步处理和异步延时处理的能力。
 
+## 安装
+
+```bash
+composer require hyperf/queue
+```
+
 ## 配置
 
 暂时只支持 `Redis Driver`。

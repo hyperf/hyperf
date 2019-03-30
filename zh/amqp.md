@@ -1,6 +1,12 @@
 # AMQP组件
 
-[hyperf-cloud/amqp](https://github.com/hyperf-cloud/amqp)
+[hyperf/amqp](https://github.com/hyperf-cloud/amqp) 是实现 AMQP 标准的组件，主要适用于对 RabbitMQ 的使用。
+
+## 安装
+
+```bash
+composer require hyperf/amqp
+```
 
 ## 默认配置
 ```php
