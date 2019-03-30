@@ -18,21 +18,22 @@ class IndexController
 {
     public function index(RequestInterface $request, ResponseInterface $response)
     {
-        $name = $request->input('user', 'Hyperf');
-        return $response->raw('Hello ' . $name);
+        $name = $request->input('target', 'World');
+        return 'Hello ' . $name;
     }
 }
-
 ```
+
+> 我们假设该 `Controller` 已经通过了配置文件的形式定义了路由为 `/`
 
 调用接口，即可看到返回。
 
 ```bash
-$ curl http://127.0.0.1:9501/\?user\=limx
-Hello limx
+$ curl http://127.0.0.1:9501/\?target\=Hyperf
+Hello Hyperf.
 ```
 
-到这里，有人会问，如果我想使用URL重定向和设置Cookies时怎么办？*下面提供一种暂时解决方案，后面可能会调整。*
+到这里，有人会问，如果我想使用 `URL重定向` 和 `设置 Cookies` 时怎么办？*下面提供一种暂时解决方案，后面可能会调整。*
 
 ```php
 <?php
