@@ -226,6 +226,8 @@ return [
 
 这样在注入 `UserServiceInterface` 的时候容器就会交由 `UserServiceFactory` 来创建对象了。
 
+> 当然在该场景中可以通过 `@Value` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
+
 ## 注意事项
 
 ### 容器仅管理长生命周期的对象
