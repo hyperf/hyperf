@@ -30,4 +30,9 @@ interface ResponseInterface
      * @param mixed $data
      */
     public function raw($data): PsrResponseInterface;
+
+    /**
+     * Redirect to a URL.
+     */
+    public function redirect(string $toUrl, int $status = 302, array $headers = [], string $schema = 'http'): PsrResponseInterface;
 }

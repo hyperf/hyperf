@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
 
@@ -44,6 +45,28 @@ class Response implements ResponseInterface
         return $this->getResponse()
             ->withAddedHeader('Content-Type', 'text/plain')
             ->withBody(new SwooleStream((string) $data));
+    }
+
+    public function redirect(
+        string $toUrl,
+        int $status = 302,
+        array $headers = [],
+        string $schema = 'http'
+    ): PsrResponseInterface {
+        $toUrl = value(function () use ($toUrl, $schema) {
+            if (Str::startsWith($toUrl, 'http://', 'https://')) {
+                return $toUrl;
+            }
+            // TODO: Get the HOST from somewhere.
+            $host = '';
+            // Build the url by $schema and host.
+            return $schema . '://' . $host . '/' . $toUrl;
+        });
+        $response = $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
+        foreach ($headers as $key => $value) {
+            $response = $response->withAddedHeader($key, $value);
+        }
+        return $response;
     }
 
     /**
