@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use BadMethodCallException;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\ApplicationContext;
@@ -21,9 +22,19 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Swoft\Http\Message\Stream\SwooleStream;
+use function get_class;
 
 class Response implements ResponseInterface
 {
+    public function __call($name, $arguments)
+    {
+        $response = $this->getResponse();
+        if (! method_exists($response, $name)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        }
+        return $response->{$name}(...$arguments);
+    }
+
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
      *
