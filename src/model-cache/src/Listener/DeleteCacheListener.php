@@ -30,8 +30,6 @@ class DeleteCacheListener implements ListenerInterface
     {
         return [
             Deleted::class,
-            Updated::class,
-            Created::class,
             Saved::class,
         ];
     }
