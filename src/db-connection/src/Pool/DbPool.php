@@ -33,6 +33,8 @@ class DbPool extends Pool
         if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
+        // Over
+        $config->set("{$key}.name", $name);
 
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);

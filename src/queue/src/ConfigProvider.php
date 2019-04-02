@@ -31,6 +31,14 @@ class ConfigProvider
                     __DIR__ . '/../config/queue.php' => BASE_PATH . '/config/autoload/queue.php',
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for queue.',
+                    'source' => __DIR__ . '/../publish/queue.php',
+                    'destination' => BASE_PATH . '/config/autoload/queue.php',
+                ],
+            ],
         ];
     }
 }
