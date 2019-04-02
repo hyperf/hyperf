@@ -33,7 +33,7 @@ class DbPool extends Pool
         if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
-        // Over
+        // Rewrite the `name` of the configuration item to ensure that the model query builder gets the right connection.
         $config->set("{$key}.name", $name);
 
         $this->config = $config->get($key);
