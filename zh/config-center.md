@@ -23,6 +23,7 @@ composer require hyperf/config-apollo
 如果您没有对配置组件进行替换使用默认的 [hyperf/config](https://github.com/hyperf-cloud/config) 组件的话，接入 Apollo 配置中心则是轻而易举，只需两步。
 - 通过 Composer 将 [hyperf/config-apollo](https://github.com/hyperf-cloud/config-apollo) ，即执行命令 `composer require hyperf/config-apollo`
 - 在 `config/autoload` 文件夹内增加一个 `apollo.php` 的配置文件，配置内容如下
+
 ```php
 <?php
 return [
