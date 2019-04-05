@@ -90,7 +90,7 @@ return [
 
 ```
 
-然后我们重写一个 Redis类 继承 `Hyperf\Redis\Redis`，置顶 poolName 为上述 redis2，示例如下
+然后我们重写一个 Redis类 继承 `Hyperf\Redis\Redis`，修改 poolName 为上述 redis2，示例如下
 
 ```php
 use Hyperf\Redis\Redis;
