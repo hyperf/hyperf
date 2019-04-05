@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace App\Processes;
+namespace App\Process;
 
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -37,6 +37,23 @@ class DemoProcess extends AbstractProcess
             sleep(1);
         }
     }
+
+    /**
+     * 进程是否启动
+     */
+    public function isEnable(): bool
+    {
+        return true;
+    }
 }
 
+```
+
+当然，除了注解模式，我们还提供了 `processes.php` 配置。
+
+```php
+// processes.php
+return [
+    App\Process\DemoProcess::class,
+];
 ```
