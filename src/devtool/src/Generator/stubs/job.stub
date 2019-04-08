@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace %NAMESPACE%;
 
-use Hyperf\Queue\Job;
+use Hyperf\AsyncQueue\Job;
 
 class %CLASS% extends Job
 {
