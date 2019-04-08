@@ -34,7 +34,7 @@ class UserService
     private $client;
 
     /**
-     * @CircuitBreaker(timeout=0.05, failCounter=1, successCounter=1, fallback="App\UserService@searchFallback")
+     * @CircuitBreaker(timeout=0.05, failCounter=1, successCounter=1, fallback="App\UserService::searchFallback")
      */
     public function search($offset, $limit)
     {
@@ -46,6 +46,7 @@ class UserService
         return [];
     }
 }
+
 ```
 
 默认熔断策略为`超时策略`，如果您想要自己实现熔断策略，只需要自己实现 `Handler` 继承于 `Hyperf\CircuitBreaker\Handler\AbstractHandler` 即可。

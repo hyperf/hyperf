@@ -1,7 +1,6 @@
 # Cache
 
-本模块是基于`Aspect` 的缓存模块，与 `SimpleCacheInterface` 不太一样。
-[hyperf/cache](https://github.com/hyperf-cloud/cache)
+[hyperf/cache](https://github.com/hyperf-cloud/cache) 提供了基于 `Aspect` 实现的切面缓存，也提供了实现 `Psr\SimpleCache\CacheInterface` 的缓存类。
 
 ## 安装
 ```
@@ -50,7 +49,7 @@ class UserService
      */
     public function user($id)
     {
-        $user =  User::query()->where('id',$id)->first();
+        $user = User::query()->where('id',$id)->first();
 
         if($user){
             return $user->toArray();

@@ -24,7 +24,7 @@ composer require hyperf/database
 
 默认配置如下，数据库支持多库配置，默认为 `default`。
 
-|        配置项         | 类型    |     默认值      |        备注        |
+|        配置项        |  类型  |     默认值      |        备注        |
 |:--------------------:|:------:|:---------------:|:------------------:|
 |        driver        | string |       无        |     数据库引擎     |
 |         host         | string |       无        |     数据库地址     |
@@ -40,6 +40,7 @@ composer require hyperf/database
 |  pool.wait_timeout   | float  |       3.0       |      超时时间      |
 |    pool.heartbeat    |  int   |       -1        |        心跳        |
 |  pool.max_idle_time  | float  |      60.0       |    最大闲置时间    |
+|       options        | array  |                 |      PDO 配置      |
 
 ```php
 <?php
@@ -64,4 +65,40 @@ return [
         ]
     ],
 ];
+```
+
+有时候用户需要修改 PDO 默认配置，比如所有字段需要返回为 string。这时候就需要修改 PDO 配置项 `ATTR_STRINGIFY_FETCHES` 为 true。
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            // 框架默认配置
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ],
+    ],
+];
+
 ```
