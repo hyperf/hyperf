@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Packer;
+namespace Hyperf\AsyncQueue\Packer;
 
 use Hyperf\Contract\PackerInterface;
 

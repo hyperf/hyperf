@@ -10,16 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Driver;
+namespace Hyperf\AsyncQueue\Driver;
 
+use Hyperf\AsyncQueue\Event\AfterHandle;
+use Hyperf\AsyncQueue\Event\BeforeHandle;
+use Hyperf\AsyncQueue\Event\FailedHandle;
+use Hyperf\AsyncQueue\Event\RetryHandle;
+use Hyperf\AsyncQueue\Exception\InvalidPackerException;
+use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\AsyncQueue\Packer\PhpSerializer;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Queue\Event\AfterHandle;
-use Hyperf\Queue\Event\BeforeHandle;
-use Hyperf\Queue\Event\FailedHandle;
-use Hyperf\Queue\Event\RetryHandle;
-use Hyperf\Queue\Exception\InvalidPackerException;
-use Hyperf\Queue\MessageInterface;
-use Hyperf\Queue\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 

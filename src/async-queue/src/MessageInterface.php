@@ -10,8 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Event;
+namespace Hyperf\AsyncQueue;
 
-class AfterHandle extends Event
+interface MessageInterface
 {
+    public function job(): JobInterface;
+
+    /**
+     * Whether the queue can be handle again.
+     */
+    public function attempts(): bool;
 }

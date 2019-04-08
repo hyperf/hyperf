@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\AsyncQueue;
 
 class ConfigProvider
 {
@@ -26,17 +26,12 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'configs' => [
-                'hyperf/queue' => [
-                    __DIR__ . '/../config/queue.php' => BASE_PATH . '/config/autoload/queue.php',
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for queue.',
-                    'source' => __DIR__ . '/../publish/queue.php',
-                    'destination' => BASE_PATH . '/config/autoload/queue.php',
+                    'description' => 'The config for async queue.',
+                    'source' => __DIR__ . '/../publish/async_queue.php',
+                    'destination' => BASE_PATH . '/config/autoload/async_queue.php',
                 ],
             ],
         ];

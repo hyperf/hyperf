@@ -10,14 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\AsyncQueue\Exception;
 
-interface MessageInterface
+class InvalidPackerException extends \RuntimeException
 {
-    public function job(): JobInterface;
-
-    /**
-     * Whether the queue can be handle again.
-     */
-    public function attempts(): bool;
 }

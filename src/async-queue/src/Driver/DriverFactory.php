@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Driver;
+namespace Hyperf\AsyncQueue\Driver;
 
+use Hyperf\AsyncQueue\Exception\InvalidDriverException;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Queue\Exception\InvalidDriverException;
 use Psr\Container\ContainerInterface;
 
 class DriverFactory
@@ -41,7 +41,7 @@ class DriverFactory
         $this->container = $container;
         $config = $container->get(ConfigInterface::class);
 
-        $this->configs = $config->get('queue', []);
+        $this->configs = $config->get('async_queue', []);
 
         foreach ($this->configs as $key => $item) {
             $driverClass = $item['driver'];

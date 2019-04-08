@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Exception;
+namespace Hyperf\AsyncQueue\Event;
 
-class InvalidPackerException extends \RuntimeException
+class AfterHandle extends Event
 {
 }

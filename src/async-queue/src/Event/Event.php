@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Event;
+namespace Hyperf\AsyncQueue\Event;
 
-use Hyperf\Queue\MessageInterface;
+use Hyperf\AsyncQueue\MessageInterface;
 
 class Event
 {

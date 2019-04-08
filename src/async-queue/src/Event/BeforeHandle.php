@@ -10,17 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue;
+namespace Hyperf\AsyncQueue\Event;
 
-abstract class Job implements JobInterface
+class BeforeHandle extends Event
 {
-    /**
-     * @var int
-     */
-    protected $maxAttempts = 1;
-
-    public function getMaxAttempts(): int
-    {
-        return $this->maxAttempts;
-    }
 }

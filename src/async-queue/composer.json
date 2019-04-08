@@ -1,11 +1,11 @@
 {
-    "name": "hyperf/queue",
-    "description": "A queue component for hyperf.",
+    "name": "hyperf/async-queue",
+    "description": "A async queue component for hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "hyperf",
-        "queue"
+        "async queue"
     ],
     "support": {
     },
@@ -30,7 +30,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\Queue\\": "src/"
+            "Hyperf\\AsyncQueue\\": "src/"
         }
     },
     "autoload-dev": {
@@ -44,7 +44,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\Queue\\ConfigProvider"
+            "config": "Hyperf\\AsyncQueue\\ConfigProvider"
         }
     },
     "bin": [

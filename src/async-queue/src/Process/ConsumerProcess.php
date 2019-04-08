@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Process;
+namespace Hyperf\AsyncQueue\Process;
 
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\Driver\DriverInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Queue\Driver\DriverFactory;
-use Hyperf\Queue\Driver\DriverInterface;
 use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess

@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Queue\Driver;
+namespace Hyperf\AsyncQueue\Driver;
 
-use Hyperf\Queue\JobInterface;
+use Hyperf\AsyncQueue\JobInterface;
 
 interface DriverInterface
 {
