@@ -20,7 +20,7 @@
 * 基础功能
 
   * [路由](zh/router.md)
-  * [中间件](zh/middleware.md)
+  * [中间件](zh/middleware/middleware.md)
   * [控制器](zh/controller.md)
   * [请求](zh/request.md)
   * [响应](zh/response.md)
