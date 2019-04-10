@@ -29,6 +29,7 @@ class ModelSaveStub extends Model
     public function save(array $options = []): bool
     {
         Context::set('__model.saved', true);
+        return true;
     }
 
     public function setIncrementing($value)

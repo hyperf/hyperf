@@ -1421,8 +1421,8 @@ class ModelTest extends TestCase
     public function testRemoveMultipleObservableEvents()
     {
         $class = new ModelStub();
-        $class->setEvents(['foo', 'bar']);
-        $class->removeEvents('foo', 'bar');
+        $class->setEvents(['foo' => 'fooEvent', 'bar' => 'barEvent']);
+        $class->removeEvents(['foo', 'bar']);
 
         $this->assertNotContains('foo', $class->getAvailableEvents());
         $this->assertNotContains('bar', $class->getAvailableEvents());

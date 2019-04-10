@@ -2666,7 +2666,7 @@ class QueryBuilderTest extends TestCase
         $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
             /** @var Collection $items */
             $items = $args['items'];
-            return new Paginator(collect(), $args['perPage'], $args['currentPage'], $args['options']);
+            return new Paginator(collect($items), $args['perPage'], $args['currentPage'], $args['options']);
         });
         ApplicationContext::setContainer($container);
 
