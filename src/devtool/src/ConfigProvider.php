@@ -26,6 +26,14 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for devtool.',
+                    'source' => __DIR__ . '/../publish/devtool.php',
+                    'destination' => BASE_PATH . '/config/autoload/devtool.php',
+                ],
+            ],
         ];
     }
 }

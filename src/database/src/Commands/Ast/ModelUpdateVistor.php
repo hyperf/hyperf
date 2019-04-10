@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands\Ast;
 
-use PhpParser\Node;
 use PhpParser\Comment\Doc;
+use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelUpdateVistor extends NodeVisitorAbstract
@@ -58,7 +58,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name']));
         }
 
-        $node->default = new Node\Expr\Array_($items);
+        $node->default = new Node\Expr\Array_($items, [
+            'kind' => Node\Expr\Array_::KIND_SHORT,
+        ]);
         return $node;
     }
 
@@ -89,7 +91,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             }
         }
 
-        $node->default = new Node\Expr\Array_($items);
+        $node->default = new Node\Expr\Array_($items, [
+            'kind' => Node\Expr\Array_::KIND_SHORT,
+        ]);
         return $node;
     }
 

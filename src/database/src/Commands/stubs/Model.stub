@@ -10,18 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace App\Models;
+namespace %NAMESPACE%;
 
-use Hyperf\DbConnection\Model\Model;
-
-class %s extends Model
+class %CLASS% extends %INHERITANCE%
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = '%s';
+    protected $table = '%TABLE%';
 
     /**
      * The attributes that are mass assignable.
