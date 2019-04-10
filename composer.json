@@ -173,5 +173,6 @@
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
