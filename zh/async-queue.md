@@ -5,26 +5,26 @@
 ## 安装
 
 ```bash
-composer require hyperf/queue
+composer require hyperf/async-queue
 ```
 
 ## 配置
 
 暂时只支持 `Redis Driver`。
 
-|     配置      |  类型  |                 默认值                 |        备注        |
-|:-------------:|:------:|:--------------------------------------:|:------------------:|
-|    driver     | string | Hyperf\Queue\Driver\RedisDriver::class |         无         |
-|    channel    | string |                 queue                  |      队列前缀      |
-| retry_seconds |  int   |                   5                    | 失败后重新尝试间隔 |
-|   processes   |  int   |                   1                    |     消费进程数     |
+|     配置      |  类型  |                   默认值                    |        备注        |
+|:-------------:|:------:|:-------------------------------------------:|:------------------:|
+|    driver     | string | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
+|    channel    | string |                    queue                    |      队列前缀      |
+| retry_seconds |  int   |                      5                      | 失败后重新尝试间隔 |
+|   processes   |  int   |                      1                      |     消费进程数     |
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => Hyperf\Queue\Driver\RedisDriver::class,
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => 5,
         'processes' => 1,
@@ -43,7 +43,7 @@ return [
 <?php
 
 return [
-    Hyperf\Queue\Process\ConsumerProcess::class,
+    Hyperf\AsyncQueue\Process\ConsumerProcess::class,
 ];
 
 ```
@@ -59,7 +59,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use Hyperf\Queue\Job;
+use Hyperf\AsyncQueue\Job;
 
 class ExampleJob extends Job
 {
@@ -80,7 +80,7 @@ class ExampleJob extends Job
 declare(strict_types=1);
 
 use Psr\Container\ContainerInterface;
-use Hyperf\Queue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\Driver\DriverFactory;
 
 class DemoService
 {
