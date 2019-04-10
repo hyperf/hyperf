@@ -22,6 +22,13 @@ class %CLASS% extends %INHERITANCE%
     protected $table = '%TABLE%';
 
     /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection = '%CONNECTION%';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

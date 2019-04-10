@@ -155,6 +155,7 @@ class ModelCommand extends Command
 
         return $this->replaceNamespace($stub, $name)
             ->replaceInheritance($stub, $option->getInheritance())
+            ->replaceConnection($stub, $option->getPool())
             ->replaceClass($stub, $name);
     }
 
@@ -192,6 +193,17 @@ class ModelCommand extends Command
         $stub = str_replace(
             ['%INHERITANCE%'],
             [$inheritance],
+            $stub
+        );
+
+        return $this;
+    }
+
+    protected function replaceConnection(&$stub, $connection)
+    {
+        $stub = str_replace(
+            ['%CONNECTION%'],
+            [$connection],
             $stub
         );
 
