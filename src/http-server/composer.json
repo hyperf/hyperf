@@ -18,7 +18,7 @@
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/event": "dev-master",
-        "swoft/http-message": "^1.0"
+        "hyperf/http-message": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

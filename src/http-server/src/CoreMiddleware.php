@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Swoft\Http\Message\Stream\SwooleStream;
+use Hyperf\Http\Message\Stream\SwooleStream;
 
 /**
  * Core middleware of Hyperf, main responsibility is use to handle route info

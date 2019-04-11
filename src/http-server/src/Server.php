@@ -24,8 +24,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Swoft\Http\Message\Server\Request as Psr7Request;
-use Swoft\Http\Message\Server\Response as Psr7Response;
+use Hyperf\Http\Message\Server\Request as Psr7Request;
+use Hyperf\Http\Message\Server\Response as Psr7Response;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
@@ -99,6 +99,7 @@ class Server implements ServerOnRequestInterface
             $middlewares = array_merge($this->middlewares, MiddlewareManager::get($psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+
         } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);

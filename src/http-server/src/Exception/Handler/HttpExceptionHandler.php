@@ -15,7 +15,7 @@ namespace Hyperf\HttpServer\Exception\Handler;
 use Hyperf\Framework\ExceptionHandler;
 use Hyperf\HttpServer\Exception\HttpException;
 use Psr\Http\Message\ResponseInterface;
-use Swoft\Http\Message\Stream\SwooleStream;
+use Hyperf\Http\Message\Stream\SwooleStream;
 use Throwable;
 
 class HttpExceptionHandler extends ExceptionHandler

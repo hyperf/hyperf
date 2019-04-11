@@ -77,7 +77,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
         $method = $server['request_method'] ?? 'GET';
         $headers = $swooleRequest->header ?? [];
         $uri = self::getUriFromGlobals($swooleRequest);
-        $body = new SwooleStream($swooleRequest->rawContent());
+        $body = new SwooleStream((string) $swooleRequest->rawContent());
         $protocol = isset($server['server_protocol']) ? str_replace('HTTP/', '', $server['server_protocol']) : '1.1';
         $request = new static($method, $uri, $headers, $body, $protocol);
         $request->cookieParams = ($swooleRequest->cookie ?? []);
