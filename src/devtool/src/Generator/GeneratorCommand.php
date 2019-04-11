@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool\Generator;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -219,6 +224,23 @@ abstract class GeneratorCommand extends Command
             ['force', 'f', InputOption::VALUE_OPTIONAL, 'Whether force to rewrite.', false],
             ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
         ];
+    }
+
+    /**
+     * Get the custom config for generator.
+     * @return array
+     */
+    protected function getConfig(): array
+    {
+        $class = Arr::last(explode('\\', static::class));
+        $class = str_replace('Command', '', $class);
+        $key = 'devtool.generator.' . Str::snake($class, '.');
+        return $this->getContainer()->get(ConfigInterface::class)->get($key) ?? [];
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return ApplicationContext::getContainer();
     }
 
     /**

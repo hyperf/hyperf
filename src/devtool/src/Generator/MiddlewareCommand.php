@@ -27,11 +27,11 @@ class MiddlewareCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/middleware.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/middleware.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Middlewares';
+        return $this->getConfig()['namespace'] ?? 'App\\Middlewares';
     }
 }

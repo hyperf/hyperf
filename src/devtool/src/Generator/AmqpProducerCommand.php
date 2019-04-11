@@ -27,11 +27,11 @@ class AmqpProducerCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/amqp-producer.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/amqp-producer.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Amqp\\Producers';
+        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Producers';
     }
 }

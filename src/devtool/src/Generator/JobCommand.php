@@ -27,11 +27,11 @@ class JobCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/job.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/job.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Jobs';
+        return $this->getConfig()['namespace'] ?? 'App\\Jobs';
     }
 }

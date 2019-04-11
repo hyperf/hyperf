@@ -27,11 +27,11 @@ class ProcessCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/process.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/process.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Processes';
+        return $this->getConfig()['namespace'] ?? 'App\\Processes';
     }
 }

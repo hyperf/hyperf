@@ -27,11 +27,11 @@ class ControllerCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/controller.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/controller.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Controllers';
+        return $this->getConfig()['namespace'] ?? 'App\\Controllers';
     }
 }

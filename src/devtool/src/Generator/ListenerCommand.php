@@ -27,11 +27,11 @@ class ListenerCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/listener.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/listener.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Listeners';
+        return $this->getConfig()['namespace'] ?? 'App\\Listeners';
     }
 }

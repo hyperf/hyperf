@@ -27,11 +27,11 @@ class AspectCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/aspect.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/aspect.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return 'App\\Aspects';
+        return $this->getConfig()['namespace'] ?? 'App\\Aspects';
     }
 }
