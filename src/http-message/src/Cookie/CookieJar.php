@@ -1,11 +1,22 @@
 <?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Cookie;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Cookie jar that stores cookies as an array
+ * Cookie jar that stores cookies as an array.
  */
 class CookieJar implements CookieJarInterface
 {
@@ -16,8 +27,8 @@ class CookieJar implements CookieJarInterface
     private $strictMode;
 
     /**
-     * @param bool $strictMode   Set to true to throw exceptions when invalid
-     *                           cookies are added to the cookie jar.
+     * @param bool $strictMode set to true to throw exceptions when invalid
+     *                         cookies are added to the cookie jar
      * @param array $cookieArray Array of SetCookie objects or a hash of
      *                           arrays that can be used with the SetCookie
      *                           constructor
@@ -27,7 +38,7 @@ class CookieJar implements CookieJarInterface
         $this->strictMode = $strictMode;
 
         foreach ($cookieArray as $cookie) {
-            if (!($cookie instanceof SetCookie)) {
+            if (! ($cookie instanceof SetCookie)) {
                 $cookie = new SetCookie($cookie);
             }
             $this->setCookie($cookie);
@@ -37,8 +48,8 @@ class CookieJar implements CookieJarInterface
     /**
      * Create a new Cookie jar from an associative array and domain.
      *
-     * @param array  $cookies Cookies to create the jar from
-     * @param string $domain  Domain to set the cookies to
+     * @param array $cookies Cookies to create the jar from
+     * @param string $domain Domain to set the cookies to
      *
      * @return self
      */
@@ -47,10 +58,10 @@ class CookieJar implements CookieJarInterface
         $cookieJar = new self();
         foreach ($cookies as $name => $value) {
             $cookieJar->setCookie(new SetCookie([
-                'Domain'  => $domain,
-                'Name'    => $name,
-                'Value'   => $value,
-                'Discard' => true
+                'Domain' => $domain,
+                'Name' => $name,
+                'Value' => $value,
+                'Discard' => true,
             ]));
         }
 
@@ -61,7 +72,7 @@ class CookieJar implements CookieJarInterface
      * Evaluate if this cookie should be persisted to storage
      * that survives between requests.
      *
-     * @param SetCookie $cookie Being evaluated.
+     * @param SetCookie $cookie being evaluated
      * @param bool $allowSessionCookies If we should persist session cookies
      * @return bool
      */
@@ -70,7 +81,7 @@ class CookieJar implements CookieJarInterface
         $allowSessionCookies = false
     ) {
         if ($cookie->getExpires() || $allowSessionCookies) {
-            if (!$cookie->getDiscard()) {
+            if (! $cookie->getDiscard()) {
                 return true;
             }
         }
@@ -79,19 +90,19 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * Finds and returns the cookie based on the name
+     * Finds and returns the cookie based on the name.
      *
      * @param string $name cookie name to search for
-     * @return SetCookie|null cookie that was found or null if not found
+     * @return null|SetCookie cookie that was found or null if not found
      */
     public function getCookieByName($name)
     {
         // don't allow a null name
-        if($name === null) {
+        if ($name === null) {
             return null;
         }
-        foreach($this->cookies as $cookie) {
-            if($cookie->getName() !== null && strcasecmp($cookie->getName(), $name) === 0) {
+        foreach ($this->cookies as $cookie) {
+            if ($cookie->getName() !== null && strcasecmp($cookie->getName(), $name) === 0) {
                 return $cookie;
             }
         }
@@ -106,21 +117,22 @@ class CookieJar implements CookieJarInterface
 
     public function clear($domain = null, $path = null, $name = null)
     {
-        if (!$domain) {
+        if (! $domain) {
             $this->cookies = [];
             return;
-        } elseif (!$path) {
+        }
+        if (! $path) {
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain) {
-                    return !$cookie->matchesDomain($domain);
+                    return ! $cookie->matchesDomain($domain);
                 }
             );
-        } elseif (!$name) {
+        } elseif (! $name) {
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain) {
-                    return !($cookie->matchesPath($path) &&
+                    return ! ($cookie->matchesPath($path) &&
                         $cookie->matchesDomain($domain));
                 }
             );
@@ -128,7 +140,7 @@ class CookieJar implements CookieJarInterface
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain, $name) {
-                    return !($cookie->getName() == $name &&
+                    return ! ($cookie->getName() == $name &&
                         $cookie->matchesPath($path) &&
                         $cookie->matchesDomain($domain));
                 }
@@ -141,7 +153,7 @@ class CookieJar implements CookieJarInterface
         $this->cookies = array_filter(
             $this->cookies,
             function (SetCookie $cookie) {
-                return !$cookie->getDiscard() && $cookie->getExpires();
+                return ! $cookie->getDiscard() && $cookie->getExpires();
             }
         );
     }
@@ -151,7 +163,7 @@ class CookieJar implements CookieJarInterface
         // If the name string is empty (but not 0), ignore the set-cookie
         // string entirely.
         $name = $cookie->getName();
-        if (!$name && $name !== '0') {
+        if (! $name && $name !== '0') {
             return false;
         }
 
@@ -160,15 +172,13 @@ class CookieJar implements CookieJarInterface
         if ($result !== true) {
             if ($this->strictMode) {
                 throw new \RuntimeException('Invalid cookie: ' . $result);
-            } else {
-                $this->removeCookieIfEmpty($cookie);
-                return false;
             }
+            $this->removeCookieIfEmpty($cookie);
+            return false;
         }
 
         // Resolve conflicts with previously set cookies
         foreach ($this->cookies as $i => $c) {
-
             // Two cookies are identical, when their path, and domain are
             // identical.
             if ($c->getPath() != $cookie->getPath() ||
@@ -180,7 +190,7 @@ class CookieJar implements CookieJarInterface
 
             // The previously set cookie is a discard cookie and this one is
             // not so allow the new cookie to be set
-            if (!$cookie->getDiscard() && $c->getDiscard()) {
+            if (! $cookie->getDiscard() && $c->getDiscard()) {
                 unset($this->cookies[$i]);
                 continue;
             }
@@ -224,42 +234,15 @@ class CookieJar implements CookieJarInterface
         if ($cookieHeader = $response->getHeader('Set-Cookie')) {
             foreach ($cookieHeader as $cookie) {
                 $sc = SetCookie::fromString($cookie);
-                if (!$sc->getDomain()) {
+                if (! $sc->getDomain()) {
                     $sc->setDomain($request->getUri()->getHost());
                 }
-                if (0 !== strpos($sc->getPath(), '/')) {
+                if (strpos($sc->getPath(), '/') !== 0) {
                     $sc->setPath($this->getCookiePathFromRequest($request));
                 }
                 $this->setCookie($sc);
             }
         }
-    }
-
-    /**
-     * Computes cookie path following RFC 6265 section 5.1.4
-     *
-     * @link https://tools.ietf.org/html/rfc6265#section-5.1.4
-     *
-     * @param RequestInterface $request
-     * @return string
-     */
-    private function getCookiePathFromRequest(RequestInterface $request)
-    {
-        $uriPath = $request->getUri()->getPath();
-        if (''  === $uriPath) {
-            return '/';
-        }
-        if (0 !== strpos($uriPath, '/')) {
-            return '/';
-        }
-        if ('/' === $uriPath) {
-            return '/';
-        }
-        if (0 === $lastSlashPos = strrpos($uriPath, '/')) {
-            return '/';
-        }
-
-        return substr($uriPath, 0, $lastSlashPos);
     }
 
     public function withCookieHeader(RequestInterface $request)
@@ -273,8 +256,8 @@ class CookieJar implements CookieJarInterface
         foreach ($this->cookies as $cookie) {
             if ($cookie->matchesPath($path) &&
                 $cookie->matchesDomain($host) &&
-                !$cookie->isExpired() &&
-                (!$cookie->getSecure() || $scheme === 'https')
+                ! $cookie->isExpired() &&
+                (! $cookie->getSecure() || $scheme === 'https')
             ) {
                 $values[] = $cookie->getName() . '='
                     . $cookie->getValue();
@@ -284,6 +267,33 @@ class CookieJar implements CookieJarInterface
         return $values
             ? $request->withHeader('Cookie', implode('; ', $values))
             : $request;
+    }
+
+    /**
+     * Computes cookie path following RFC 6265 section 5.1.4.
+     *
+     * @see https://tools.ietf.org/html/rfc6265#section-5.1.4
+     *
+     * @param RequestInterface $request
+     * @return string
+     */
+    private function getCookiePathFromRequest(RequestInterface $request)
+    {
+        $uriPath = $request->getUri()->getPath();
+        if ($uriPath === '') {
+            return '/';
+        }
+        if (strpos($uriPath, '/') !== 0) {
+            return '/';
+        }
+        if ($uriPath === '/') {
+            return '/';
+        }
+        if (0 === $lastSlashPos = strrpos($uriPath, '/')) {
+            return '/';
+        }
+
+        return substr($uriPath, 0, $lastSlashPos);
     }
 
     /**

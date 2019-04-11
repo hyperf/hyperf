@@ -1,9 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Base;
 
-use Psr\Http\Message\StreamInterface;
 use Hyperf\Http\Message\Stream\SwooleStream;
+use Psr\Http\Message\StreamInterface;
 use Zend\Mime\Decode;
 
 /**
@@ -11,9 +21,8 @@ use Zend\Mime\Decode;
  */
 trait MessageTrait
 {
-
     /**
-     * @var array 存放headers的小写name
+     * @var array lowercase headers
      */
     protected $headerNames;
 
@@ -36,7 +45,7 @@ trait MessageTrait
      * Retrieves the HTTP protocol version as a string.
      * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
      *
-     * @return string HTTP protocol version.
+     * @return string HTTP protocol version
      */
     public function getProtocolVersion()
     {
@@ -83,8 +92,8 @@ trait MessageTrait
      * exact case in which headers were originally specified.
      *
      * @return string[][] Returns an associative array of the message's headers. Each
-     *     key MUST be a header name, and each value MUST be an array of strings
-     *     for that header.
+     *                    key MUST be a header name, and each value MUST be an array of strings
+     *                    for that header.
      */
     public function getHeaders(): array
     {
@@ -94,10 +103,10 @@ trait MessageTrait
     /**
      * Checks if a header exists by the given case-insensitive name.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
      * @return bool Returns true if any header names match the given header
-     *                     name using a case-insensitive string comparison. Returns false if
-     *                     no matching header name is found in the message.
+     *              name using a case-insensitive string comparison. Returns false if
+     *              no matching header name is found in the message.
      */
     public function hasHeader($name): bool
     {
@@ -111,16 +120,16 @@ trait MessageTrait
      * If the header does not appear in the message, this method MUST return an
      * empty array.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
      * @return string[] An array of string values as provided for the given
-     *                     header. If the header does not appear in the message, this method MUST
-     *                     return an empty array.
+     *                  header. If the header does not appear in the message, this method MUST
+     *                  return an empty array.
      */
     public function getHeader($name): array
     {
         $name = strtolower($name);
 
-        if (!isset($this->headerNames[$name])) {
+        if (! isset($this->headerNames[$name])) {
             return [];
         }
 
@@ -140,10 +149,10 @@ trait MessageTrait
      * If the header does not appear in the message, this method MUST return
      * an empty string.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
      * @return string A string of values as provided for the given header
-     *                     concatenated together using a comma. If the header does not appear in
-     *                     the message, this method MUST return an empty string.
+     *                concatenated together using a comma. If the header does not appear in
+     *                the message, this method MUST return an empty string.
      */
     public function getHeaderLine($name): string
     {
@@ -158,14 +167,14 @@ trait MessageTrait
      * immutability of the message, and MUST return an instance that has the
      * new and/or updated header and value.
      *
-     * @param string $name Case-insensitive header field name.
-     * @param string|string[] $value Header value(s).
+     * @param string $name case-insensitive header field name
+     * @param string|string[] $value header value(s)
+     * @throws \InvalidArgumentException for invalid header names or values
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withHeader($name, $value)
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
 
@@ -204,14 +213,14 @@ trait MessageTrait
      * immutability of the message, and MUST return an instance that has the
      * new header and/or value.
      *
-     * @param string $name Case-insensitive header field name to add.
-     * @param string|string[] $value Header value(s).
+     * @param string $name case-insensitive header field name to add
+     * @param string|string[] $value header value(s)
+     * @throws \InvalidArgumentException for invalid header names or values
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withAddedHeader($name, $value)
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
 
@@ -237,14 +246,14 @@ trait MessageTrait
      * immutability of the message, and MUST return an instance that removes
      * the named header.
      *
-     * @param string $name Case-insensitive header field name to remove.
+     * @param string $name case-insensitive header field name to remove
      * @return static
      */
     public function withoutHeader($name)
     {
         $normalized = strtolower($name);
 
-        if (!isset($this->headerNames[$normalized])) {
+        if (! isset($this->headerNames[$normalized])) {
             return $this;
         }
 
@@ -257,6 +266,84 @@ trait MessageTrait
     }
 
     /**
+     * Gets the body of the message.
+     *
+     * @return StreamInterface returns the body as a stream
+     */
+    public function getBody()
+    {
+        if (! $this->stream) {
+            $this->stream = new SwooleStream('');
+        }
+
+        return $this->stream;
+    }
+
+    /**
+     * Return an instance with the specified message body.
+     * The body MUST be a StreamInterface object.
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return a new instance that has the
+     * new body stream.
+     *
+     * @param StreamInterface $body body
+     * @throws \InvalidArgumentException when the body is not valid
+     * @return static
+     */
+    public function withBody(StreamInterface $body)
+    {
+        if ($body === $this->stream) {
+            return $this;
+        }
+
+        $new = clone $this;
+        $new->stream = $body;
+        return $new;
+    }
+
+    /**
+     * Get a specific field from a header like content type or all fields as array.
+     *
+     * If the header occurs more than once, only the value from the first header
+     * is returned.
+     *
+     * Throws an Exception if the requested header does not exist. If
+     * the specific header field does not exist, returns null.
+     *
+     * @param string $name name of header, like in getHeader()
+     * @param string $wantedPart the wanted part, default is first, if null an array with all parts is returned
+     * @param string $firstName key name for the first part
+     * @throws \RuntimeException
+     * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
+     */
+    public function getHeaderField($name, $wantedPart = '0', $firstName = '0')
+    {
+        return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->getHeaderLine('Content-Type');
+    }
+
+    /**
+     * Check if part is a multipart message.
+     *
+     * @return bool if part is multipart
+     */
+    public function isMultipart()
+    {
+        try {
+            return stripos($this->getContentType(), 'multipart/') === 0;
+        } catch (\ExceptionInterface $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param array $headers
      * @return static
      */
@@ -264,7 +351,7 @@ trait MessageTrait
     {
         $this->headerNames = $this->headers = [];
         foreach ($headers as $header => $value) {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 $value = [$value];
             }
 
@@ -282,46 +369,10 @@ trait MessageTrait
     }
 
     /**
-     * Gets the body of the message.
-     *
-     * @return StreamInterface Returns the body as a stream.
-     */
-    public function getBody()
-    {
-        if (!$this->stream) {
-            $this->stream = new SwooleStream('');
-        }
-
-        return $this->stream;
-    }
-
-    /**
-     * Return an instance with the specified message body.
-     * The body MUST be a StreamInterface object.
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return a new instance that has the
-     * new body stream.
-     *
-     * @param StreamInterface $body Body.
-     * @return static
-     * @throws \InvalidArgumentException When the body is not valid.
-     */
-    public function withBody(StreamInterface $body)
-    {
-        if ($body === $this->stream) {
-            return $this;
-        }
-
-        $new = clone $this;
-        $new->stream = $body;
-        return $new;
-    }
-
-    /**
      * Trims whitespace from the header values.
      * Spaces and tabs ought to be excluded by parsers when extracting the field value from a header field.
      * header-field = field-name ":" OWS field-value OWS
-     * OWS          = *( SP / HTAB )
+     * OWS          = *( SP / HTAB ).
      *
      * @param string[] $values Header values
      * @return string[] Trimmed header values
@@ -332,47 +383,5 @@ trait MessageTrait
         return array_map(function ($value) {
             return trim($value, " \t");
         }, $values);
-    }
-
-    /**
-     * Get a specific field from a header like content type or all fields as array
-     *
-     * If the header occurs more than once, only the value from the first header
-     * is returned.
-     *
-     * Throws an Exception if the requested header does not exist. If
-     * the specific header field does not exist, returns null.
-     *
-     * @param  string $name name of header, like in getHeader()
-     * @param  string $wantedPart the wanted part, default is first, if null an array with all parts is returned
-     * @param  string $firstName key name for the first part
-     * @return string|array wanted part or all parts as array($firstName => firstPart, partname => value)
-     * @throws \RuntimeException
-     */
-    public function getHeaderField($name, $wantedPart = '0', $firstName = '0')
-    {
-        return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
-    }
-
-    /**
-     * @return string
-     */
-    public function getContentType()
-    {
-        return $this->getHeaderLine('Content-Type');
-    }
-
-    /**
-     * Check if part is a multipart message
-     *
-     * @return bool if part is multipart
-     */
-    public function isMultipart()
-    {
-        try {
-            return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\ExceptionInterface $e) {
-            return false;
-        }
     }
 }

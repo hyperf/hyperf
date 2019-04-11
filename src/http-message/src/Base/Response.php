@@ -1,21 +1,37 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Base;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Response父类
- *
- * @uses      Response
- * @version   2017年11月06日
- * @author    huangzhhui <huangzhhui@gmail.com>
- * @copyright Copyright 2010-2017 Hyperf software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- */
 class Response implements ResponseInterface
 {
     use MessageTrait;
+
+    /**
+     * @var string
+     */
+    protected $reasonPhrase = '';
+
+    /**
+     * @var int
+     */
+    protected $statusCode = 200;
+
+    /**
+     * @var string
+     */
+    protected $charset = 'utf-8';
 
     /** @var array Map of standard HTTP status code/reason phrases */
     private static $phrases = [
@@ -80,21 +96,6 @@ class Response implements ResponseInterface
     ];
 
     /**
-     * @var string
-     */
-    protected $reasonPhrase = '';
-
-    /**
-     * @var int
-     */
-    protected $statusCode = 200;
-
-    /**
-     * @var string
-     */
-    protected $charset = 'utf-8';
-
-    /**
      * @var array
      */
     private $attributes = [];
@@ -107,7 +108,7 @@ class Response implements ResponseInterface
      * deserializing non-form-encoded message bodies; etc. Attributes
      * will be application and request specific, and CAN be mutable.
      *
-     * @return array Attributes derived from the request.
+     * @return array attributes derived from the request
      */
     public function getAttributes()
     {
@@ -123,8 +124,8 @@ class Response implements ResponseInterface
      * specifying a default value to return if the attribute is not found.
      *
      * @see getAttributes()
-     * @param string $name    The attribute name.
-     * @param mixed  $default Default value to return if the attribute does not exist.
+     * @param string $name the attribute name
+     * @param mixed $default default value to return if the attribute does not exist
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -141,8 +142,8 @@ class Response implements ResponseInterface
      * updated attribute.
      *
      * @see getAttributes()
-     * @param string $name  The attribute name.
-     * @param mixed  $value The value of the attribute.
+     * @param string $name the attribute name
+     * @param mixed $value the value of the attribute
      * @return static
      */
     public function withAttribute($name, $value)
@@ -157,7 +158,7 @@ class Response implements ResponseInterface
      * The status code is a 3-digit integer result code of the server's attempt
      * to understand and satisfy the request.
      *
-     * @return int Status code.
+     * @return int status code
      */
     public function getStatusCode(): int
     {
@@ -173,19 +174,19 @@ class Response implements ResponseInterface
      * immutability of the message, and MUST return an instance that has the
      * updated status and reason phrase.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int    $code         The 3-digit integer result code to set.
-     * @param string $reasonPhrase The reason phrase to use with the
+     * @see http://tools.ietf.org/html/rfc7231#section-6
+     * @see http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @param int $code the 3-digit integer result code to set
+     * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
-     *                             use the defaults as suggested in the HTTP specification.
+     *                             use the defaults as suggested in the HTTP specification
+     * @throws \InvalidArgumentException for invalid status code arguments
      * @return static
-     * @throws \InvalidArgumentException For invalid status code arguments.
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
         $clone = clone $this;
-        $clone->statusCode = (int)$code;
+        $clone->statusCode = (int) $code;
         if (! $reasonPhrase && isset(self::$phrases[$code])) {
             $reasonPhrase = self::$phrases[$code];
         }
@@ -194,7 +195,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Return the reason phrase by code
+     * Return the reason phrase by code.
      *
      * @param $code
      * @return string
@@ -208,8 +209,8 @@ class Response implements ResponseInterface
      * Return an instance with the specified charset content type.
      *
      * @param $charset
-     * @return static
      * @throws \InvalidArgumentException
+     * @return static
      */
     public function withCharset($charset): self
     {
@@ -224,9 +225,9 @@ class Response implements ResponseInterface
      * listed in the IANA HTTP Status Code Registry) for the response's
      * status code.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @return string Reason phrase; must return an empty string if none present.
+     * @see http://tools.ietf.org/html/rfc7231#section-6
+     * @see http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @return string reason phrase; must return an empty string if none present
      */
     public function getReasonPhrase(): string
     {
@@ -334,7 +335,7 @@ class Response implements ResponseInterface
      */
     public function isOk()
     {
-        return 200 === $this->statusCode;
+        return $this->statusCode === 200;
     }
 
     /**
@@ -346,7 +347,7 @@ class Response implements ResponseInterface
      */
     public function isForbidden()
     {
-        return 403 === $this->statusCode;
+        return $this->statusCode === 403;
     }
 
     /**
@@ -358,7 +359,7 @@ class Response implements ResponseInterface
      */
     public function isNotFound()
     {
-        return 404 === $this->statusCode;
+        return $this->statusCode === 404;
     }
 
     /**
@@ -372,7 +373,7 @@ class Response implements ResponseInterface
      */
     public function isRedirect($location = null)
     {
-        return in_array($this->statusCode, array(201, 301, 302, 303, 307, 308)) && (null === $location ?: $location == $this->getHeaderLine('Location'));
+        return in_array($this->statusCode, [201, 301, 302, 303, 307, 308]) && ($location === null ?: $location == $this->getHeaderLine('Location'));
     }
 
     /**
@@ -384,6 +385,6 @@ class Response implements ResponseInterface
      */
     public function isEmpty()
     {
-        return in_array($this->statusCode, array(204, 304));
+        return in_array($this->statusCode, [204, 304]);
     }
 }

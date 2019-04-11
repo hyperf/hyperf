@@ -1,8 +1,19 @@
 <?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Cookie;
 
 /**
- * Persists non-session cookies using a JSON formatted file
+ * Persists non-session cookies using a JSON formatted file.
  */
 class FileCookieJar extends CookieJar
 {
@@ -13,11 +24,11 @@ class FileCookieJar extends CookieJar
     private $storeSessionCookies;
 
     /**
-     * Create a new FileCookieJar object
+     * Create a new FileCookieJar object.
      *
-     * @param string $cookieFile        File to store the cookie data
-     * @param bool $storeSessionCookies Set to true to store session cookies
-     *                                  in the cookie jar.
+     * @param string $cookieFile File to store the cookie data
+     * @param bool $storeSessionCookies set to true to store session cookies
+     *                                  in the cookie jar
      *
      * @throws \RuntimeException if the file cannot be found or created
      */
@@ -32,7 +43,7 @@ class FileCookieJar extends CookieJar
     }
 
     /**
-     * Saves the file when shutting down
+     * Saves the file when shutting down.
      */
     public function __destruct()
     {
@@ -56,7 +67,7 @@ class FileCookieJar extends CookieJar
         }
 
         $jsonStr = \GuzzleHttp\json_encode($json);
-        if (false === file_put_contents($filename, $jsonStr)) {
+        if (file_put_contents($filename, $jsonStr) === false) {
             throw new \RuntimeException("Unable to save file {$filename}");
         }
     }
@@ -66,15 +77,16 @@ class FileCookieJar extends CookieJar
      *
      * Old cookies are kept unless overwritten by newly loaded ones.
      *
-     * @param string $filename Cookie file to load.
-     * @throws \RuntimeException if the file cannot be loaded.
+     * @param string $filename cookie file to load
+     * @throws \RuntimeException if the file cannot be loaded
      */
     public function load($filename)
     {
         $json = file_get_contents($filename);
-        if (false === $json) {
+        if ($json === false) {
             throw new \RuntimeException("Unable to load file {$filename}");
-        } elseif ($json === '') {
+        }
+        if ($json === '') {
             return;
         }
 

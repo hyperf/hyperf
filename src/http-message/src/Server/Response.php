@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Server;
 
 use Hyperf\Contract\Arrayable;
@@ -8,25 +18,14 @@ use Hyperf\Helper\StringHelper;
 use Hyperf\Http\Message\Cookie\Cookie;
 use Hyperf\Http\Message\Stream\SwooleStream;
 
-/**
- * 响应response
- *
- * @uses      Response
- * @version   2017年05月11日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Hyperf software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- */
 class Response extends \Hyperf\Http\Message\Base\Response
 {
     /**
-     * @var \Throwable|null
+     * @var null|\Throwable
      */
     protected $exception;
 
     /**
-     * swoole响应请求
-     *
      * @var \Swoole\Http\Response
      */
     protected $swooleResponse;
@@ -37,8 +36,6 @@ class Response extends \Hyperf\Http\Message\Base\Response
     protected $cookies = [];
 
     /**
-     * 初始化响应请求
-     *
      * @param \Swoole\Http\Response $response
      */
     public function __construct(\Swoole\Http\Response $response)
@@ -47,24 +44,23 @@ class Response extends \Hyperf\Http\Message\Base\Response
     }
 
     /**
-     * Redirect to a URL
+     * Redirect to a URL.
      *
-     * @param string   $url
+     * @param string $url
      * @param null|int $status
      * @return static
      */
     public function redirect($url, $status = 302)
     {
         $response = $this;
-        $response = $response->withAddedHeader('Location', (string)$url)->withStatus($status);
-        return $response;
+        return $response->withAddedHeader('Location', (string) $url)->withStatus($status);
     }
 
     /**
-     * return a Raw format response
+     * return a Raw format response.
      *
-     * @param  string $data   The data
-     * @param  int    $status The HTTP status code.
+     * @param string $data The data
+     * @param int $status the HTTP status code
      * @return \Hyperf\Http\Message\Server\Response when $data not jsonable
      */
     public function raw(string $data = '', int $status = 200): Response
@@ -85,13 +81,13 @@ class Response extends \Hyperf\Http\Message\Base\Response
     }
 
     /**
-     * return a Json format response
+     * return a Json format response.
      *
-     * @param  array|Arrayable $data            The data
-     * @param  int             $status          The HTTP status code.
-     * @param  int             $encodingOptions Json encoding options
-     * @return static when $data not jsonable
+     * @param array|Arrayable $data The data
+     * @param int $status the HTTP status code
+     * @param int $encodingOptions Json encoding options
      * @throws \InvalidArgumentException
+     * @return static when $data not jsonable
      */
     public function json($data = [], int $status = 200, int $encodingOptions = JSON_UNESCAPED_UNICODE): Response
     {
@@ -113,18 +109,17 @@ class Response extends \Hyperf\Http\Message\Base\Response
         // Status code
         $status && $response = $response->withStatus($status);
 
-
         return $response;
     }
 
     /**
-     * 处理 Response 并发送数据
+     * 处理 Response 并发送数据.
      */
     public function send()
     {
         $response = $this;
 
-        /**
+        /*
          * Headers
          */
         // Write Headers to swoole response
@@ -132,32 +127,32 @@ class Response extends \Hyperf\Http\Message\Base\Response
             $this->swooleResponse->header($key, implode(';', $value));
         }
 
-        /**
+        /*
          * Cookies
          */
-        foreach ((array)$this->cookies as $domain => $paths) {
+        foreach ((array) $this->cookies as $domain => $paths) {
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {
-                        $this->swooleResponse->cookie($cookie->getName(), $cookie->getValue() ? : 1, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+                        $this->swooleResponse->cookie($cookie->getName(), $cookie->getValue() ?: 1, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
                     }
                 }
             }
         }
 
-        /**
+        /*
          * Status code
          */
         $this->swooleResponse->status($response->getStatusCode());
 
-        /**
+        /*
          * Body
          */
         $this->swooleResponse->end($response->getBody()->getContents());
     }
 
     /**
-     * 设置Body内容，使用默认的Stream
+     * 设置Body内容，使用默认的Stream.
      *
      * @param string $content
      * @return static

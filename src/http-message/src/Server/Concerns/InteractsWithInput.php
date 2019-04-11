@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Server\Concerns;
 
 use Hyperf\Helper\ArrayHelper;
 use Hyperf\Helper\JsonHelper;
 use Hyperf\Http\Message\Stream\SwooleStream;
 
-/**
- * @uses      InteractsWithInput
- * @version   2017-11-05
- * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2017 Hyperf software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- */
 trait InteractsWithInput
 {
-
     /**
-     * Retrieve a server variable from the request
+     * Retrieve a server variable from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function server(string $key = null, $default = null)
     {
@@ -32,11 +34,11 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a header from the request
+     * Retrieve a header from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function header(string $key = null, $default = null)
     {
@@ -47,11 +49,11 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a query string from the request
+     * Retrieve a query string from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function query(string $key = null, $default = null)
     {
@@ -62,11 +64,11 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a post item from the request
+     * Retrieve a post item from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function post(string $key = null, $default = null)
     {
@@ -77,11 +79,11 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a input item from the request
+     * Retrieve a input item from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function input(string $key = null, $default = null)
     {
@@ -93,11 +95,11 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a cookie from the request
+     * Retrieve a cookie from the request.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function cookie(string $key = null, $default = null)
     {
@@ -108,10 +110,10 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve raw body from the request
+     * Retrieve raw body from the request.
      *
      * @param null|mixed $default
-     * @return array|string|mixed
+     * @return array|mixed|string
      */
     public function raw($default = null)
     {
@@ -130,14 +132,14 @@ trait InteractsWithInput
      * The method will always return $default.
      *
      * @param null|string $key
-     * @param null|mixed  $default
-     * @return array|string|mixed
+     * @param null|mixed $default
+     * @return array|mixed|string
      */
     public function json(string $key = null, $default = null)
     {
         try {
             $contentType = $this->getHeader('content-type');
-            if (!$contentType || false === \stripos($contentType[0], 'application/json')) {
+            if (! $contentType || \stripos($contentType[0], 'application/json') === false) {
                 throw new \InvalidArgumentException(sprintf('Invalid Content-Type of the request, expects %s, %s given', 'application/json', ($contentType ? current($contentType) : 'null')));
             }
             $body = $this->getBody();
@@ -150,17 +152,16 @@ trait InteractsWithInput
         }
         if (is_null($key)) {
             return $decodedBody ?? $default;
-        } else {
-            return ArrayHelper::get($decodedBody, $key, $default);
         }
+        return ArrayHelper::get($decodedBody, $key, $default);
     }
 
     /**
-     * Retrieve a upload item from the request
+     * Retrieve a upload item from the request.
      *
-     * @param string|null $key
-     * @param null        $default
-     * @return array|\Hyperf\Web\UploadedFile|null
+     * @param null|string $key
+     * @param null $default
+     * @return null|array|\Hyperf\Web\UploadedFile
      */
     public function file(string $key = null, $default = null)
     {

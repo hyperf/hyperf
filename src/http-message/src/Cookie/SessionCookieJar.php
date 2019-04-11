@@ -1,9 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Cookie;
 
 /**
- * Persists cookies in the client session
+ * Persists cookies in the client session.
  */
 class SessionCookieJar extends CookieJar
 {
@@ -13,17 +23,17 @@ class SessionCookieJar extends CookieJar
     private $sessionKey;
 
     /**
-     * @var bool Control whether to persist session cookies or not.
+     * @var bool control whether to persist session cookies or not
      */
     private $storeSessionCookies;
 
     /**
-     * Create a new SessionCookieJar object
+     * Create a new SessionCookieJar object.
      *
      * @param string $sessionKey Session key name to store the cookie
-     *                                  data in session
-     * @param bool $storeSessionCookies Set to true to store session cookies
-     *                                  in the cookie jar.
+     *                           data in session
+     * @param bool $storeSessionCookies set to true to store session cookies
+     *                                  in the cookie jar
      */
     public function __construct($sessionKey, $storeSessionCookies = false)
     {
@@ -33,7 +43,7 @@ class SessionCookieJar extends CookieJar
     }
 
     /**
-     * Saves cookies to session when shutting down
+     * Saves cookies to session when shutting down.
      */
     public function __destruct()
     {
@@ -41,7 +51,7 @@ class SessionCookieJar extends CookieJar
     }
 
     /**
-     * Save cookies to the client session
+     * Save cookies to the client session.
      */
     public function save()
     {
@@ -57,11 +67,11 @@ class SessionCookieJar extends CookieJar
     }
 
     /**
-     * Load the contents of the client session into the data array
+     * Load the contents of the client session into the data array.
      */
     protected function load()
     {
-        if (!isset($_SESSION[$this->sessionKey])) {
+        if (! isset($_SESSION[$this->sessionKey])) {
             return;
         }
         $data = json_decode($_SESSION[$this->sessionKey], true);
@@ -70,7 +80,7 @@ class SessionCookieJar extends CookieJar
                 $this->setCookie(new SetCookie($cookie));
             }
         } elseif (strlen($data)) {
-            throw new \RuntimeException("Invalid cookie data");
+            throw new \RuntimeException('Invalid cookie data');
         }
     }
 }

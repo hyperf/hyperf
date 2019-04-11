@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Server;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UploadedFileInterface;
 use Hyperf\Http\Message\Server\Concerns\InteractsWithInput;
 use Hyperf\Http\Message\Stream\SwooleStream;
 use Hyperf\Http\Message\Upload\UploadedFile;
 use Hyperf\Http\Message\Uri\Uri;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
-/**
- * @uses      Request
- * @version   2017-11-04
- * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2017 Hyperf software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- */
 class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequestInterface
 {
     use InteractsWithInput;
@@ -56,14 +59,14 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     private $uploadedFiles = [];
 
     /**
-     * the body of parser
+     * the body of parser.
      *
      * @var mixed
      */
     private $bodyParams;
 
     /**
-     * Load a swoole request, and transfer to a swoft request object
+     * Load a swoole request, and transfer to a swoft request object.
      *
      * @param \Swoole\Http\Request $swooleRequest
      * @return \Hyperf\Http\Message\Server\Request
@@ -84,137 +87,6 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
         $request->uploadedFiles = self::normalizeFiles($swooleRequest->files ?? []);
         $request->swooleRequest = $swooleRequest;
         return $request;
-    }
-
-    /**
-     * Return an UploadedFile instance array.
-     *
-     * @param array $files A array which respect $_FILES structure
-     * @throws \InvalidArgumentException for unrecognized values
-     * @return array
-     */
-    private static function normalizeFiles(array $files)
-    {
-        $normalized = [];
-
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $normalized[$key] = $value;
-            } elseif (is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
-                continue;
-            } else {
-                throw new \InvalidArgumentException('Invalid value in files specification');
-            }
-        }
-
-        return $normalized;
-    }
-
-    /**
-     * Create and return an UploadedFile instance from a $_FILES specification.
-     * If the specification represents an array of values, this method will
-     * delegate to normalizeNestedFileSpec() and return that return value.
-     *
-     * @param array $value $_FILES struct
-     * @return array|UploadedFileInterface
-     */
-    private static function createUploadedFileFromSpec(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
-        }
-
-        return new UploadedFile($value['tmp_name'], (int)$value['size'], (int)$value['error'], $value['name'], $value['type']);
-    }
-
-    /**
-     * Normalize an array of file specifications.
-     * Loops through all nested files and returns a normalized array of
-     * UploadedFileInterface instances.
-     *
-     * @param array $files
-     * @return UploadedFileInterface[]
-     */
-    private static function normalizeNestedFileSpec(array $files = [])
-    {
-        $normalizedFiles = [];
-
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size' => $files['size'][$key],
-                'error' => $files['error'][$key],
-                'name' => $files['name'][$key],
-                'type' => $files['type'][$key],
-            ];
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
-        }
-
-        return $normalizedFiles;
-    }
-
-    /**
-     * Get a Uri populated with values from $swooleRequest->server.
-     * @param \Swoole\Http\Request $swooleRequest
-     * @return \Psr\Http\Message\UriInterface
-     * @throws \InvalidArgumentException
-     */
-    private static function getUriFromGlobals(\Swoole\Http\Request $swooleRequest)
-    {
-        $server = $swooleRequest->server;
-        $header = $swooleRequest->header;
-        $uri = new Uri();
-        $uri = $uri->withScheme(! empty($server['https']) && $server['https'] !== 'off' ? 'https' : 'http');
-
-        $hasPort = false;
-        if (isset($server['http_host'])) {
-            $hostHeaderParts = explode(':', $server['http_host']);
-            $uri = $uri->withHost($hostHeaderParts[0]);
-            if (isset($hostHeaderParts[1])) {
-                $hasPort = true;
-                $uri = $uri->withPort($hostHeaderParts[1]);
-            }
-        } elseif (isset($server['server_name'])) {
-            $uri = $uri->withHost($server['server_name']);
-        } elseif (isset($server['server_addr'])) {
-            $uri = $uri->withHost($server['server_addr']);
-        } elseif (isset($header['host'])) {
-            if (\strpos($header['host'], ':')) {
-                $hasPort = true;
-                list($host, $port) = explode(':', $header['host'], 2);
-
-                if ($port !== '80') {
-                    $uri = $uri->withPort($port);
-                }
-            } else {
-                $host = $header['host'];
-            }
-
-            $uri = $uri->withHost($host);
-        }
-
-        if (! $hasPort && isset($server['server_port'])) {
-            $uri = $uri->withPort($server['server_port']);
-        }
-
-        $hasQuery = false;
-        if (isset($server['request_uri'])) {
-            $requestUriParts = explode('?', $server['request_uri']);
-            $uri = $uri->withPath($requestUriParts[0]);
-            if (isset($requestUriParts[1])) {
-                $hasQuery = true;
-                $uri = $uri->withQuery($requestUriParts[1]);
-            }
-        }
-
-        if (! $hasQuery && isset($server['query_string'])) {
-            $uri = $uri->withQuery($server['query_string']);
-        }
-
-        return $uri;
     }
 
     /**
@@ -267,7 +139,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * immutability of the message, and MUST return an instance that has the
      * updated cookie values.
      *
-     * @param array $cookies Array of key/value pairs representing cookies.
+     * @param array $cookies array of key/value pairs representing cookies
      * @return static
      */
     public function withCookieParams(array $cookies)
@@ -293,10 +165,10 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     }
 
     /**
-     * add param
+     * add param.
      *
-     * @param string $name  the name of param
-     * @param mixed  $value the value of param
+     * @param string $name the name of param
+     * @param mixed $value the value of param
      *
      * @return static
      */
@@ -323,8 +195,8 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * immutability of the message, and MUST return an instance that has the
      * updated query string arguments.
      *
-     * @param array $query Array of query string arguments, typically from
-     *                     $_GET.
+     * @param array $query array of query string arguments, typically from
+     *                     $_GET
      * @return static
      */
     public function withQueryParams(array $query)
@@ -341,8 +213,8 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * These values MAY be prepared from $_FILES or the message body during
      * instantiation, or MAY be injected via withUploadedFiles().
      *
-     * @return array An array tree of UploadedFileInterface instances; an empty
-     *     array MUST be returned if no data is present.
+     * @return array an array tree of UploadedFileInterface instances; an empty
+     *               array MUST be returned if no data is present
      */
     public function getUploadedFiles()
     {
@@ -355,9 +227,9 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * immutability of the message, and MUST return an instance that has the
      * updated body parameters.
      *
-     * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
+     * @param array $uploadedFiles an array tree of UploadedFileInterface instances
+     * @throws \InvalidArgumentException if an invalid structure is provided
      * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided.
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -377,7 +249,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * the absence of body content.
      *
      * @return null|array|object The deserialized body parameters, if any.
-     *     These will typically be an array or object.
+     *                           These will typically be an array or object.
      */
     public function getParsedBody()
     {
@@ -385,10 +257,10 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     }
 
     /**
-     * add parser body
+     * add parser body.
      *
-     * @param string $name  the name of param
-     * @param mixed  $value the value of param
+     * @param string $name the name of param
+     * @param mixed $value the value of param
      *
      * @return static
      */
@@ -404,7 +276,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     }
 
     /**
-     * return parser result of body
+     * return parser result of body.
      *
      * @return mixed
      */
@@ -432,9 +304,9 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      *
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
-     * @return static
      * @throws \InvalidArgumentException if an unsupported argument type is
-     *                                provided.
+     *                                   provided
+     * @return static
      */
     public function withParsedBody($data)
     {
@@ -444,7 +316,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     }
 
     /**
-     * init body params from parser result
+     * init body params from parser result.
      *
      * @param mixed $data
      *
@@ -457,7 +329,6 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
         return $clone;
     }
 
-
     /**
      * Retrieve attributes derived from the request.
      * The request "attributes" may be used to allow injection of any
@@ -466,7 +337,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * deserializing non-form-encoded message bodies; etc. Attributes
      * will be application and request specific, and CAN be mutable.
      *
-     * @return array Attributes derived from the request.
+     * @return array attributes derived from the request
      */
     public function getAttributes()
     {
@@ -482,8 +353,8 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * specifying a default value to return if the attribute is not found.
      *
      * @see getAttributes()
-     * @param string $name    The attribute name.
-     * @param mixed  $default Default value to return if the attribute does not exist.
+     * @param string $name the attribute name
+     * @param mixed $default default value to return if the attribute does not exist
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -500,8 +371,8 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * updated attribute.
      *
      * @see getAttributes()
-     * @param string $name  The attribute name.
-     * @param mixed  $value The value of the attribute.
+     * @param string $name the attribute name
+     * @param mixed $value the value of the attribute
      * @return static
      */
     public function withAttribute($name, $value)
@@ -520,12 +391,12 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * the attribute.
      *
      * @see getAttributes()
-     * @param string $name The attribute name.
+     * @param string $name the attribute name
      * @return static
      */
     public function withoutAttribute($name)
     {
-        if (false === array_key_exists($name, $this->attributes)) {
+        if (array_key_exists($name, $this->attributes) === false) {
             return $this;
         }
 
@@ -579,7 +450,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      */
     public function isXmlHttpRequest()
     {
-        return 'XMLHttpRequest' == $this->hasHeader('X-Requested-With');
+        return $this->hasHeader('X-Requested-With') == 'XMLHttpRequest';
     }
 
     /**
@@ -598,5 +469,136 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
     {
         $this->swooleRequest = $swooleRequest;
         return $this;
+    }
+
+    /**
+     * Return an UploadedFile instance array.
+     *
+     * @param array $files A array which respect $_FILES structure
+     * @throws \InvalidArgumentException for unrecognized values
+     * @return array
+     */
+    private static function normalizeFiles(array $files)
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+            } elseif (is_array($value) && isset($value['tmp_name'])) {
+                $normalized[$key] = self::createUploadedFileFromSpec($value);
+            } elseif (is_array($value)) {
+                $normalized[$key] = self::normalizeFiles($value);
+                continue;
+            } else {
+                throw new \InvalidArgumentException('Invalid value in files specification');
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Create and return an UploadedFile instance from a $_FILES specification.
+     * If the specification represents an array of values, this method will
+     * delegate to normalizeNestedFileSpec() and return that return value.
+     *
+     * @param array $value $_FILES struct
+     * @return array|UploadedFileInterface
+     */
+    private static function createUploadedFileFromSpec(array $value)
+    {
+        if (is_array($value['tmp_name'])) {
+            return self::normalizeNestedFileSpec($value);
+        }
+
+        return new UploadedFile($value['tmp_name'], (int) $value['size'], (int) $value['error'], $value['name'], $value['type']);
+    }
+
+    /**
+     * Normalize an array of file specifications.
+     * Loops through all nested files and returns a normalized array of
+     * UploadedFileInterface instances.
+     *
+     * @param array $files
+     * @return UploadedFileInterface[]
+     */
+    private static function normalizeNestedFileSpec(array $files = [])
+    {
+        $normalizedFiles = [];
+
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size' => $files['size'][$key],
+                'error' => $files['error'][$key],
+                'name' => $files['name'][$key],
+                'type' => $files['type'][$key],
+            ];
+            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+        }
+
+        return $normalizedFiles;
+    }
+
+    /**
+     * Get a Uri populated with values from $swooleRequest->server.
+     * @param \Swoole\Http\Request $swooleRequest
+     * @throws \InvalidArgumentException
+     * @return \Psr\Http\Message\UriInterface
+     */
+    private static function getUriFromGlobals(\Swoole\Http\Request $swooleRequest)
+    {
+        $server = $swooleRequest->server;
+        $header = $swooleRequest->header;
+        $uri = new Uri();
+        $uri = $uri->withScheme(! empty($server['https']) && $server['https'] !== 'off' ? 'https' : 'http');
+
+        $hasPort = false;
+        if (isset($server['http_host'])) {
+            $hostHeaderParts = explode(':', $server['http_host']);
+            $uri = $uri->withHost($hostHeaderParts[0]);
+            if (isset($hostHeaderParts[1])) {
+                $hasPort = true;
+                $uri = $uri->withPort($hostHeaderParts[1]);
+            }
+        } elseif (isset($server['server_name'])) {
+            $uri = $uri->withHost($server['server_name']);
+        } elseif (isset($server['server_addr'])) {
+            $uri = $uri->withHost($server['server_addr']);
+        } elseif (isset($header['host'])) {
+            if (\strpos($header['host'], ':')) {
+                $hasPort = true;
+                [$host, $port] = explode(':', $header['host'], 2);
+
+                if ($port !== '80') {
+                    $uri = $uri->withPort($port);
+                }
+            } else {
+                $host = $header['host'];
+            }
+
+            $uri = $uri->withHost($host);
+        }
+
+        if (! $hasPort && isset($server['server_port'])) {
+            $uri = $uri->withPort($server['server_port']);
+        }
+
+        $hasQuery = false;
+        if (isset($server['request_uri'])) {
+            $requestUriParts = explode('?', $server['request_uri']);
+            $uri = $uri->withPath($requestUriParts[0]);
+            if (isset($requestUriParts[1])) {
+                $hasQuery = true;
+                $uri = $uri->withQuery($requestUriParts[1]);
+            }
+        }
+
+        if (! $hasQuery && isset($server['query_string'])) {
+            $uri = $uri->withQuery($server['query_string']);
+        }
+
+        return $uri;
     }
 }

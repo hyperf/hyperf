@@ -1,20 +1,23 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Http\Message\Base;
 
+use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\Http\Message\Uri\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use Hyperf\Http\Message\Stream\SwooleStream;
-use Hyperf\Http\Message\Uri\Uri;
 
-/**
- * @uses      Request
- * @version   2017-11-03
- * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2017 Hyperf software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- */
 class Request implements RequestInterface
 {
     use MessageTrait;
@@ -30,7 +33,7 @@ class Request implements RequestInterface
     protected $uri;
 
     /**
-     * Http Method
+     * Http Method.
      *
      * @var string
      */
@@ -42,11 +45,11 @@ class Request implements RequestInterface
     protected $requestTarget;
 
     /**
-     * @param string                               $method  HTTP method
-     * @param string|UriInterface                  $uri     URI
-     * @param array                                $headers Request headers
-     * @param string|null|resource|StreamInterface $body    Request body
-     * @param string                               $version Protocol version
+     * @param string $method HTTP method
+     * @param string|UriInterface $uri URI
+     * @param array $headers Request headers
+     * @param null|resource|StreamInterface|string $body Request body
+     * @param string $version Protocol version
      */
     public function __construct(
         string $method,
@@ -113,7 +116,7 @@ class Request implements RequestInterface
      * immutability of the message, and MUST return an instance that has the
      * changed request target.
      *
-     * @link http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
+     * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
      *     request-target forms allowed in request messages)
      * @param mixed $requestTarget
      * @return static
@@ -132,7 +135,7 @@ class Request implements RequestInterface
     /**
      * Retrieves the HTTP method of the request.
      *
-     * @return string Returns the request method.
+     * @return string returns the request method
      */
     public function getMethod()
     {
@@ -148,9 +151,9 @@ class Request implements RequestInterface
      * immutability of the message, and MUST return an instance that has the
      * changed request method.
      *
-     * @param string $method Case-sensitive method.
+     * @param string $method case-sensitive method
+     * @throws \InvalidArgumentException for invalid HTTP methods
      * @return static
-     * @throws \InvalidArgumentException for invalid HTTP methods.
      */
     public function withMethod($method)
     {
@@ -168,9 +171,9 @@ class Request implements RequestInterface
      * Retrieves the URI instance.
      * This method MUST return a UriInterface instance.
      *
-     * @link http://tools.ietf.org/html/rfc3986#section-4.3
-     * @return UriInterface Returns a UriInterface instance
-     *     representing the URI of the request.
+     * @see http://tools.ietf.org/html/rfc3986#section-4.3
+     * @return UriInterface returns a UriInterface instance
+     *                      representing the URI of the request
      */
     public function getUri(): UriInterface
     {
@@ -198,9 +201,9 @@ class Request implements RequestInterface
      * immutability of the message, and MUST return an instance that has the
      * new UriInterface instance.
      *
-     * @link http://tools.ietf.org/html/rfc3986#section-4.3
-     * @param UriInterface $uri          New request URI to use.
-     * @param bool         $preserveHost Preserve the original state of the Host header.
+     * @see http://tools.ietf.org/html/rfc3986#section-4.3
+     * @param UriInterface $uri new request URI to use
+     * @param bool $preserveHost preserve the original state of the Host header
      * @return static
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
@@ -220,9 +223,9 @@ class Request implements RequestInterface
     }
 
     /**
-     * Update Host Header according to Uri
+     * Update Host Header according to Uri.
      *
-     * @link http://tools.ietf.org/html/rfc7230#section-5.4
+     * @see http://tools.ietf.org/html/rfc7230#section-5.4
      */
     private function updateHostFromUri()
     {
