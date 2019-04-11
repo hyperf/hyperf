@@ -49,4 +49,19 @@ interface DriverInterface
      * Consume jobs from a queue.
      */
     public function consume(): void;
+
+    /**
+     * Reload failed message into waiting queue.
+     */
+    public function reload(): int;
+
+    /**
+     * Delete all failed message from failed queue.
+     */
+    public function flush(): bool;
+
+    /**
+     * Return info for current queue.
+     */
+    public function info(): array;
 }

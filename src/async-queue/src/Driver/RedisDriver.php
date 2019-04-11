@@ -134,6 +134,29 @@ class RedisDriver extends Driver
         return false;
     }
 
+    public function reload(): int
+    {
+        $num = 0;
+        while ($this->redis->rpoplpush($this->failed, $this->waiting)) {
+            ++$num;
+        }
+        return $num;
+    }
+
+    public function flush(): bool
+    {
+        return (bool) $this->redis->delete($this->failed);
+    }
+
+    public function info(): array
+    {
+        return [
+            'waiting' => $this->redis->lLen($this->waiting),
+            'delayed' => $this->redis->zCard($this->delayed),
+            'failed' => $this->redis->lLen($this->failed),
+        ];
+    }
+
     protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);

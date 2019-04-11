@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @Command
  */
-class ReloadFailedMessageCommand extends SymfonyCommand
+class InfoCommand extends SymfonyCommand
 {
     /**
      * @var DriverFactory
@@ -31,8 +31,8 @@ class ReloadFailedMessageCommand extends SymfonyCommand
 
     public function __construct(DriverFactory $factory)
     {
-        parent::__construct('queue:reload');
         $this->factory = $factory;
+        parent::__construct('queue:info');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -41,14 +41,15 @@ class ReloadFailedMessageCommand extends SymfonyCommand
 
         $driver = $this->factory->get($name);
 
-        $num = $driver->reload();
-
-        $output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
+        $info = $driver->info();
+        foreach ($info as $key => $count) {
+            $output->writeln(sprintf('<fg=green>%s count is %d.</>', $key, $count));
+        }
     }
 
     protected function configure()
     {
-        $this->setDescription('Reload all failed message into waiting queue.');
+        $this->setDescription('Delete all message from failed queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
     }
 }

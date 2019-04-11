@@ -50,7 +50,7 @@ class DriverFactory
                 throw new InvalidDriverException(sprintf('[Error] class %s is invalid.', $driverClass));
             }
 
-            $driver = new $driverClass($this->container, $item);
+            $driver = make($driverClass, ['config' => $item]);
             if (! $driver instanceof DriverInterface) {
                 throw new InvalidDriverException(sprintf('[Error] class %s is not instanceof %s.', $driverClass, DriverInterface::class));
             }
@@ -59,11 +59,17 @@ class DriverFactory
         }
     }
 
+    public function __get($name): DriverInterface
+    {
+        return $this->get($name);
+    }
+
     /**
-     * @param mixed $name
+     * @param string $name
      * @throws InvalidDriverException when the driver invalid
+     * @return DriverInterface
      */
-    public function __get($name): ?DriverInterface
+    public function get(string $name): DriverInterface
     {
         $driver = $this->drivers[$name] ?? null;
         if (! $driver || ! $driver instanceof DriverInterface) {
