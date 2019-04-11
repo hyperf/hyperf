@@ -134,7 +134,15 @@ class Response extends \Hyperf\HttpMessage\Base\Response
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {
-                        $this->swooleResponse->cookie($cookie->getName(), $cookie->getValue() ?: 1, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+                        $this->swooleResponse->cookie(
+                            $cookie->getName(),
+                            $cookie->getValue(),
+                            $cookie->getExpiresTime(),
+                            $cookie->getPath(),
+                            $cookie->getDomain(),
+                            $cookie->isSecure(),
+                            $cookie->isHttpOnly()
+                        );
                     }
                 }
             }

@@ -81,7 +81,7 @@ class Cookie
         }
 
         $this->name = $name;
-        $this->value = $value;
+        $this->value = (string) $value;
         $this->domain = $domain;
         $this->expire = 0 < $expire ? (int) $expire : 0;
         $this->path = empty($path) ? '/' : $path;
@@ -208,7 +208,7 @@ class Cookie
     /**
      * Gets the value of the cookie.
      *
-     * @return null|string
+     * @return string
      */
     public function getValue()
     {
