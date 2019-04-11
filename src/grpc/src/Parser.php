@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer\Utils;
+namespace Hyperf\Grpc;
 
 use Google\Protobuf\Internal\Message;
 
@@ -52,15 +52,15 @@ class Parser
 
         if (is_array($deserialize)) {
             [$className, $deserializeFunc] = $deserialize;
-            /** @var \Google\Protobuf\Internal\Message $obj */
-            $obj = new $className();
-            if ($deserializeFunc && method_exists($obj, $deserializeFunc)) {
-                $obj->{$deserializeFunc}($value);
+            /** @var \Google\Protobuf\Internal\Message $object */
+            $object = new $className();
+            if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
+                $object->{$deserializeFunc}($value);
             } else {
                 // @noinspection PhpUndefinedMethodInspection
-                $obj->mergeFromString($value);
+                $object->mergeFromString($value);
             }
-            return $obj;
+            return $object;
         }
         return call_user_func($deserialize, $value);
     }
@@ -70,7 +70,7 @@ class Parser
      * @param $deserialize
      * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
      */
-    public static function parseToResultArray($response, $deserialize): array
+    public static function parseResponse($response, $deserialize): array
     {
         if (! $response) {
             return ['No response', GRPC_ERROR_NO_RESPONSE, $response];

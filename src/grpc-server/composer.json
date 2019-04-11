@@ -17,7 +17,7 @@
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/http-server": "dev-master",
-        "google/protobuf": "^3.6.1",
+        "hyperf/grpc": "dev-master",
         "grpc/grpc": "^1.15"
     },
     "require-dev": {
@@ -27,8 +27,6 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "ext-grpc": "grpc/grpc require grpc extension.",
-        "ext-protobuf": "For better performance, install the protobuf C extension."
     },
     "autoload": {
         "files": [

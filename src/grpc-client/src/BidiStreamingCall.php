@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcClient;
 
-/**
- * Represents an active call that allows for sending and recieving messages
- * in streams in any order.
- */
 class BidiStreamingCall extends StreamingCall
 {
 }

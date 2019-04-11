@@ -13,14 +13,56 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
-use Hyperf\GrpcServer\Utils\Parser;
+use Hyperf\Grpc\Parser;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\ChannelPool;
+use InvalidArgumentException;
+use Swoole\Http2\Request;
 
-class BaseStub extends VirtualClient
+/**
+ * @method int send(Request $request)
+ * @method mixed recv(int $streamId, float $timeout = null)
+ */
+class BaseClient
 {
-    public function __construct(string $hostname, array $opts = [])
+    /**
+     * @var GrpcClient
+     */
+    private $grpcClient;
+
+    public function __construct(string $hostname, array $options = [])
     {
-        parent::__construct($hostname, $opts);
+        if (! empty($options['client'])) {
+            if (! ($options['client'] instanceof GrpcClient)) {
+                throw new InvalidArgumentException('parameter use must be instanceof Hyperf\GrpcClient\GrpcClient');
+            }
+            $this->setClient($options['client']);
+        } else {
+            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
+            $this->grpcClient->set($hostname, $options);
+        }
         $this->start();
+    }
+
+    public function __get($name)
+    {
+        return $this->getGrpcClient()->{$name};
+    }
+
+    public function __call($name, $arguments)
+    {
+        return $this->getGrpcClient()->{$name}(...$arguments);
+    }
+
+    public function start()
+    {
+        $client = $this->getGrpcClient();
+        return $client->isRunning() || $client->start();
+    }
+
+    public function getGrpcClient(): GrpcClient
+    {
+        return $this->grpcClient;
     }
 
     /**
@@ -33,27 +75,21 @@ class BaseStub extends VirtualClient
      * @param array $metadata A metadata map to send to the server
      *                        (optional)
      * @param array $options An array of options (optional)
-     *
      * @return []
      */
-    protected function _simpleRequest(
+    protected function simpleRequest(
         string $method,
         Message $argument,
-        $deserialize,
-        array $metadata = [],
-        array $options = []
+        $deserialize
     ) {
-        $request = new \Swoole\Http2\Request();
+        $request = new Request();
         $request->method = 'POST';
         $request->path = $method;
         $request->data = Parser::serializeMessage($argument);
 
         $streamId = $this->send($request);
 
-        return Parser::parseToResultArray(
-            $this->recv($streamId),
-            $deserialize
-        );
+        return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
 
     /**
@@ -68,44 +104,14 @@ class BaseStub extends VirtualClient
      *
      * @return ClientStreamingCall The active call object
      */
-    protected function _clientStreamRequest(
-        $method,
-        $deserialize,
-        array $metadata = [],
-        array $options = []
-    ) {
+    protected function clientStreamRequest(
+        string $method,
+        $deserialize
+    ): ClientStreamingCall {
         $call = new ClientStreamingCall();
-        $call->setClient($this);
-        $call->setMethod($method);
-        $call->setDeserialize($deserialize);
-
-        return $call;
-    }
-
-    /**
-     * Call a remote method that takes a single argument and returns a stream
-     * of responses.
-     *
-     * @param string $method The name of the method to call
-     * @param mixed $argument The argument to the method
-     * @param callable $deserialize A function that deserializes the responses
-     * @param array $metadata A metadata map to send to the server
-     *                        (optional)
-     * @param array $options An array of options (optional)
-     *
-     * @return ServerStreamingCall The active call object
-     */
-    protected function _serverStreamRequest(
-        $method,
-        $argument,
-        $deserialize,
-        array $metadata = [],
-        array $options = []
-    ) {
-        $call = new ServerStreamingCall();
-        $call->setClient($this);
-        $call->setMethod($method);
-        $call->setDeserialize($deserialize);
+        $call->setClient($this)
+            ->setMethod($method)
+            ->setDeserialize($deserialize);
 
         return $call;
     }
@@ -121,15 +127,13 @@ class BaseStub extends VirtualClient
      * @return BidiStreamingCall|bool
      */
     protected function _bidiRequest(
-        $method,
-        $deserialize,
-        array $metadata = [],
-        array $options = []
-    ) {
+        string $method,
+        $deserialize
+    ): BidiStreamingCall {
         $call = new BidiStreamingCall();
-        $call->setClient($this);
-        $call->setMethod($method);
-        $call->setDeserialize($deserialize);
+        $call->setClient($this)
+            ->setMethod($method)
+            ->setDeserialize($deserialize);
 
         return $call;
     }

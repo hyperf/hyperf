@@ -1,19 +1,18 @@
 {
-    "name": "hyperf/grpc-client",
-    "description": "A GRPC Client for Hyperf.",
+    "name": "hyperf/grpc",
+    "description": "A GRPC basic library for Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "grpc",
-        "grpc-client"
+        "grpc"
     ],
     "support": {
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/grpc": "dev-master"
+        "google/protobuf": "^3.6.1"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -21,11 +20,14 @@
         "phpunit/phpunit": "^7.0.0",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
+    "suggest": {
+        "ext-protobuf": "For better performance, install the protobuf C extension."
+    },
     "autoload": {
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\GrpcClient\\": "src"
+            "Hyperf\\Grpc\\": "src"
         }
     },
     "autoload-dev": {
@@ -39,7 +41,6 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\GrpcClient\\ConfigProvider"
         }
     },
     "bin": [

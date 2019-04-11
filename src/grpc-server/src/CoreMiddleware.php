@@ -17,7 +17,8 @@ use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\GrpcServer\Utils\Parser;
+use Hyperf\Grpc\Parser;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -25,7 +26,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {

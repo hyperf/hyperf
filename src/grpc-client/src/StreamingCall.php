@@ -12,51 +12,99 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcClient;
 
-use Hyperf\GrpcServer\Utils\Parser;
+use Hyperf\Grpc\Parser;
+use RuntimeException;
 
-class StreamingCall extends BaseCall
+class StreamingCall
 {
+    /**
+     * @var GrpcClient
+     */
+    protected $client;
+
+    /**
+     * @var string
+     */
+    protected $method = '';
+
+    /**
+     * @var mixed
+     */
+    protected $deserialize;
+
+    /**
+     * @var int
+     */
+    protected $streamId = 0;
+
+    public function setClient(GrpcClient $client): self
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    public function setMethod(string $method): self
+    {
+        $this->method = $method;
+        return $this;
+    }
+
+    public function setDeserialize($deserialize): self
+    {
+        $this->deserialize = $deserialize;
+        return $this;
+    }
+
+    public function getStreamId(): int
+    {
+        return $this->streamId;
+    }
+
+    public function setStreamId(int $streamId): self
+    {
+        $this->streamId = $streamId;
+        return $this;
+    }
+
     public function send($message = null): bool
     {
-        if (! $this->streamId) {
-            $this->streamId = $this->client->openStream($this->method, Parser::serializeMessage($message));
-            return $this->streamId > 0;
+        if (! $this->getStreamId()) {
+            $this->setStreamId($this->client->openStream($this->method, Parser::serializeMessage($message)));
+            return $this->getStreamId() > 0;
         }
-        trigger_error(E_USER_WARNING, // warning because it may be a wrong retry
-                'You can only send once by a streaming call except connection closed and you retry.');
-        return false;
+        throw new RuntimeException('You can only send once by a streaming call except connection closed and you retry.');
     }
 
     public function push($message): bool
     {
-        if (! $this->streamId) {
-            $this->streamId = $this->client->openStream($this->method);
+        if (! $this->getStreamId()) {
+            $this->setStreamId($this->client->openStream($this->method));
         }
-        return $this->client->write($this->streamId, Parser::serializeMessage($message), false);
+        return $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
     }
 
     public function recv(float $timeout = -1)
     {
-        if ($this->streamId <= 0) {
+        if ($this->getStreamId() <= 0) {
             $recv = false;
         } else {
-            $recv = $this->client->recv($this->streamId, $timeout);
-            if (! $this->client->isStreamExist($this->streamId)) {
+            $recv = $this->client->recv($this->getStreamId(), $timeout);
+            if (! $this->client->isStreamExist($this->getStreamId())) {
                 // stream lost, we need re-push
                 $this->streamId = 0;
             }
         }
-        return Parser::parseToResultArray($recv, $this->deserialize);
+        return Parser::parseResponse($recv, $this->deserialize);
     }
 
     public function end(): bool
     {
-        if (! $this->streamId) {
+        if (! $this->getStreamId()) {
             return false;
         }
-        $ret = $this->client->write($this->streamId, null, true);
+        $ret = $this->client->write($this->getStreamId(), null, true);
         if ($ret) {
-            $this->streamId = 0;
+            $this->setStreamId(0);
         }
         return $ret;
     }
