@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Server\Concerns;
+namespace Hyperf\HttpMessage\Server\Concerns;
 
 use Hyperf\Helper\ArrayHelper;
 use Hyperf\Helper\JsonHelper;
-use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 
 trait InteractsWithInput
 {

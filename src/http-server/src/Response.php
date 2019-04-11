@@ -21,7 +21,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use function get_class;
 
 class Response implements ResponseInterface

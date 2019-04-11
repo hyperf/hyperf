@@ -10,15 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Server;
+namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\Contract\Arrayable;
 use Hyperf\Helper\JsonHelper;
 use Hyperf\Helper\StringHelper;
-use Hyperf\Http\Message\Cookie\Cookie;
-use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\Http\Message\Base\Response
+class Response extends \Hyperf\HttpMessage\Base\Response
 {
     /**
      * @var null|\Throwable
@@ -61,7 +61,7 @@ class Response extends \Hyperf\Http\Message\Base\Response
      *
      * @param string $data The data
      * @param int $status the HTTP status code
-     * @return \Hyperf\Http\Message\Server\Response when $data not jsonable
+     * @return \Hyperf\HttpMessage\Server\Response when $data not jsonable
      */
     public function raw(string $data = '', int $status = 200): Response
     {

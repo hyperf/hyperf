@@ -25,7 +25,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {

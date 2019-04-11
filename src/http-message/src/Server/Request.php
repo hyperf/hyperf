@@ -10,16 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Server;
+namespace Hyperf\HttpMessage\Server;
 
-use Hyperf\Http\Message\Server\Concerns\InteractsWithInput;
-use Hyperf\Http\Message\Stream\SwooleStream;
-use Hyperf\Http\Message\Upload\UploadedFile;
-use Hyperf\Http\Message\Uri\Uri;
+use Hyperf\HttpMessage\Server\Concerns\InteractsWithInput;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Upload\UploadedFile;
+use Hyperf\HttpMessage\Uri\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
-class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequestInterface
+class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface
 {
     use InteractsWithInput;
 
@@ -69,7 +69,7 @@ class Request extends \Hyperf\Http\Message\Base\Request implements ServerRequest
      * Load a swoole request, and transfer to a swoft request object.
      *
      * @param \Swoole\Http\Request $swooleRequest
-     * @return \Hyperf\Http\Message\Server\Request
+     * @return \Hyperf\HttpMessage\Server\Request
      */
     public static function loadFromSwooleRequest(\Swoole\Http\Request $swooleRequest)
     {

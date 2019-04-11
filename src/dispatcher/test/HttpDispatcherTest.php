@@ -18,7 +18,7 @@ use App\Middlewares\TestMiddleware;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\Http\Message\Server\Response;
+use Hyperf\HttpMessage\Server\Response;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;

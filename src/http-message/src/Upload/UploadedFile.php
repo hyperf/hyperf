@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Upload;
+namespace Hyperf\HttpMessage\Upload;
 
 use Hyperf\App;
 use Psr\Http\Message\StreamInterface;

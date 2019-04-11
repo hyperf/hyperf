@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Base;
+namespace Hyperf\HttpMessage\Base;
 
-use Hyperf\Http\Message\Stream\SwooleStream;
-use Hyperf\Http\Message\Uri\Uri;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Uri\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;

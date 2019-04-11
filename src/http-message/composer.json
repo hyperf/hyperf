@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Http\\Message\\": "src/"
+            "Hyperf\\HttpMessage\\": "src/"
         }
     },
     "autoload-dev": {

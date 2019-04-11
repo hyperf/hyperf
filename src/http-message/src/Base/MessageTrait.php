@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Http\Message\Base;
+namespace Hyperf\HttpMessage\Base;
 
-use Hyperf\Http\Message\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\StreamInterface;
 use Zend\Mime\Decode;
 
