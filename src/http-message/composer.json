@@ -1,0 +1,43 @@
+{
+    "name": "hyperf/http-message",
+    "type": "library",
+    "description": "microservice framework base on swoole",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "http-message"
+    ],
+    "require": {
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "swoft/swoole-ide-helper": "dev-master",
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Http\\Message\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+        },
+        "hyperf": {
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}
