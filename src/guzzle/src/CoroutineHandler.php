@@ -146,11 +146,12 @@ class CoroutineHandler
             'statusCode' => $statusCode,
             'errCode' => $errCode,
         ];
+
         if ($statusCode === -1) {
-            return new ConnectException(sprintf('Connection timed out errCode=%s', $errCode), $request, null, $ctx);
+            return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
         }
         if ($statusCode === -2) {
-            return new RequestException('Request timed out', $request, null, null, $ctx);
+            return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
         }
 
         return true;
