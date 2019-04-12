@@ -16,6 +16,8 @@ use Google\Protobuf\Internal\Message;
 
 class Parser
 {
+    const GRPC_ERROR_NO_RESPONSE = -1;
+
     public static function pack(string $data): string
     {
         return $data = pack('CN', 0, strlen($data)) . $data;
@@ -73,7 +75,7 @@ class Parser
     public static function parseResponse($response, $deserialize): array
     {
         if (! $response) {
-            return ['No response', GRPC_ERROR_NO_RESPONSE, $response];
+            return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
         }
         if ($response->statusCode !== 200) {
             return ['Http status Error', $response->errCode ?: $response->statusCode, $response];
