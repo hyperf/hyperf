@@ -82,6 +82,10 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function getActiveConnection(): AbstractConnection
     {
         if ($this->check()) {
+            // The connection is valid, reset the last heartbeat time.
+            $currentTime = microtime(true);
+            $this->lastHeartbeatTime = $currentTime;
+
             return $this->connection;
         }
 
@@ -92,7 +96,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function getChannel(): AMQPChannel
     {
-        if (! $this->channel) {
+        if (! $this->channel || ! $this->check()) {
             $this->channel = $this->getConnection()->channel();
         }
         return $this->channel;
@@ -100,7 +104,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function getConfirmChannel(): AMQPChannel
     {
-        if (! $this->confirmChannel) {
+        if (! $this->confirmChannel || ! $this->check()) {
             $this->confirmChannel = $this->getConnection()->channel();
             $this->confirmChannel->confirm_select();
         }
@@ -146,7 +150,6 @@ class Connection extends BaseConnection implements ConnectionInterface
 
         $lastHeartbeatTime = $this->lastHeartbeatTime;
         $currentTime = microtime(true);
-        $this->lastHeartbeatTime = $currentTime;
 
         if ($lastHeartbeatTime && $lastHeartbeatTime > 0) {
             if ($currentTime - $lastHeartbeatTime > $this->params->getHeartbeat()) {
