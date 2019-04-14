@@ -113,7 +113,7 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        $this->connection->reconnect();
+        $this->connection = $this->initConnection();
         $this->channel = null;
         $this->confirmChannel = null;
         return true;
