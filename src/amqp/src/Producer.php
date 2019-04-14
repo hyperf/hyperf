@@ -36,9 +36,13 @@ class Producer extends Builder
         $channel->set_ack_handler(function () use (&$result) {
             $result = true;
         });
-        $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
-        $channel->wait_for_pending_acks_returns($timeout);
-        $connection->release();
+
+        try {
+            $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
+            $channel->wait_for_pending_acks_returns($timeout);
+        } finally {
+            $connection->release();
+        }
 
         return $confirm ? $result : true;
     }
