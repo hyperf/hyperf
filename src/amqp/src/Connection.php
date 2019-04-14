@@ -139,6 +139,7 @@ class Connection extends BaseConnection implements ConnectionInterface
             $class = AMQPSwooleConnection::class;
         }
 
+        $this->lastHeartbeatTime = 0;
         return new $class($this->config['host'] ?? 'localhost', $this->config['port'] ?? 5672, $this->config['user'] ?? 'guest', $this->config['password'] ?? 'guest', $this->config['vhost'] ?? '/', $this->params->isInsist(), $this->params->getLoginMethod(), $this->params->getLoginResponse(), $this->params->getLocale(), $this->params->getConnectionTimeout(), $this->params->getReadWriteTimeout(), $this->params->getContext(), $this->params->isKeepalive(), $this->params->getHeartbeat());
     }
 
