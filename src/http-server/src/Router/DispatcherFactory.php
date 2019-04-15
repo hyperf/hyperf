@@ -176,7 +176,7 @@ class DispatcherFactory
     private function getPrefix(string $className, string $prefix): string
     {
         if (! $prefix) {
-            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controllers\\'));
+            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
             $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
             $prefix = Str::snake($handledNamespace);
         }
