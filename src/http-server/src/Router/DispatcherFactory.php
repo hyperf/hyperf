@@ -92,7 +92,7 @@ class DispatcherFactory
                     throw new ConflictAnnotationException($message);
                 }
                 $middlewares = $this->handleMiddleware($metadata['_c']);
-                $this->handleAutoController($className, $metadata['_c'][AutoController::class], $middlewares);
+                $this->handleAutoController($className, $metadata['_c'][AutoController::class], $middlewares, $metadata['_m'] ?? []);
             }
             if (isset($metadata['_c'][Controller::class])) {
                 $middlewares = $this->handleMiddleware($metadata['_c']);
@@ -104,7 +104,7 @@ class DispatcherFactory
     /**
      * Register route according to AutoController annotation.
      */
-    private function handleAutoController(string $className, AutoController $annotation, array $middlewares): void
+    private function handleAutoController(string $className, AutoController $annotation, array $middlewares, array $methodMetadata = []): void
     {
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -115,13 +115,23 @@ class DispatcherFactory
         $defaultAction = '/index';
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
-            $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
+            $methodName = $method->getName();
+            $router->addRoute($autoMethods, $path, [$className, $methodName]);
+
+            // Handle method level middlewares.
+            if (isset($methodMetadata[$methodName])) {
+                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
+                $middlewares = array_merge($methodMiddlewares, $middlewares);
+            }
+            $middlewares = array_unique($middlewares);
+
+            // Register middlewares.
             foreach ($autoMethods as $autoMethod) {
                 MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
             }
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
-                $router->addRoute($autoMethods, $path, [$className, $method->getName()]);
+                $router->addRoute($autoMethods, $path, [$className, $methodName]);
                 foreach ($autoMethods as $autoMethod) {
                     MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
                 }
@@ -149,7 +159,7 @@ class DispatcherFactory
             DeleteMapping::class,
         ];
 
-        foreach ($methodMetadata as $method => $values) {
+        foreach ($methodMetadata as $methodName => $values) {
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
@@ -163,8 +173,17 @@ class DispatcherFactory
                     }
                     $router->addRoute($mapping->methods, $path, [
                         $className,
-                        $method,
+                        $methodName,
                     ]);
+
+                    // Handle method level middlewares.
+                    if (isset($methodMetadata[$methodName])) {
+                        $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
+                        $middlewares = array_merge($methodMiddlewares, $middlewares);
+                    }
+                    $middlewares = array_unique($middlewares);
+
+                    // Register middlewares.
                     foreach ($mapping->methods as $mappingMethod) {
                         MiddlewareManager::addMiddlewares($path, $mappingMethod, $middlewares);
                     }
@@ -196,10 +215,10 @@ class DispatcherFactory
         return isset($item[Controller::class]);
     }
 
-    private function handleMiddleware(array $classAnnotation): array
+    private function handleMiddleware(array $metadata): array
     {
-        $hasMiddlewares = isset($classAnnotation[Middlewares::class]);
-        $hasMiddleware = isset($classAnnotation[Middleware::class]);
+        $hasMiddlewares = isset($metadata[Middlewares::class]);
+        $hasMiddleware = isset($metadata[Middleware::class]);
         if (! $hasMiddlewares && ! $hasMiddleware) {
             return [];
         }
@@ -209,7 +228,7 @@ class DispatcherFactory
         if ($hasMiddlewares) {
             // @Middlewares
             /** @var Middlewares $middlewares */
-            $middlewares = $classAnnotation[Middlewares::class];
+            $middlewares = $metadata[Middlewares::class];
             $result = [];
             foreach ($middlewares->middlewares as $middleware) {
                 $result[] = $middleware->middleware;
@@ -218,7 +237,7 @@ class DispatcherFactory
         }
         // @Middleware
         /** @var Middleware $middleware */
-        $middleware = $classAnnotation[Middleware::class];
+        $middleware = $metadata[Middleware::class];
         return [$middleware->middleware];
     }
 }
