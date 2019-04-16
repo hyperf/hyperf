@@ -40,6 +40,10 @@ class Producer extends Builder
         try {
             $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
             $channel->wait_for_pending_acks_returns($timeout);
+        } catch (\Throwable $exception) {
+            // Reconnect the connection before release.
+            $connection->reconnect();
+            throw $exception;
         } finally {
             $connection->release();
         }
