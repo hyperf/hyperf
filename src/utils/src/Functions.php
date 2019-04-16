@@ -66,7 +66,7 @@ if (! function_exists('retry')) {
      *
      * @param int $times
      * @param int $sleep
-     * @throws \Exception
+     * @throws \Throwable
      */
     function retry($times, callable $callback, $sleep = 0)
     {
@@ -74,7 +74,7 @@ if (! function_exists('retry')) {
         beginning:
         try {
             return $callback();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (! $times) {
                 throw $e;
             }
