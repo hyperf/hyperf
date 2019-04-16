@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Command;
 
 use Hyperf\Framework\Annotation\Command;
+use Hyperf\HttpServer\Router\Router;
 use OpenApi\Analysis;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,9 +22,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function OpenApi\scan;
 use const OpenApi\UNDEFINED;
 
-/**
- * @Command
- */
 class GenCommand extends SymfonyCommand
 {
     public function __construct()

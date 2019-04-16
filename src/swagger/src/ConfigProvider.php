@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Swagger;
 
+use Hyperf\Swagger\Command\GenCommand;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -20,6 +22,7 @@ class ConfigProvider
             'dependencies' => [
             ],
             'commands' => [
+                GenCommand::class,
             ],
             'scan' => [
             ],
