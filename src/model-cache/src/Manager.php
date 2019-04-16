@@ -206,7 +206,6 @@ class Manager
             return false;
         }
 
-        var_dump($handler, $name);
         $this->logger->alert('Cache handler not exist, increment failed.');
         return false;
     }
