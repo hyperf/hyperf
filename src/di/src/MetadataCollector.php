@@ -68,7 +68,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
         return true;
     }
 
-    public static function getContainer(): array
+    public static function list(): array
     {
         return static::$container;
     }

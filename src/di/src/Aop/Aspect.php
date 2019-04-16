@@ -23,7 +23,7 @@ class Aspect
     public static function parse(string $class): array
     {
         $matched = [];
-        $container = AspectCollector::getContainer();
+        $container = AspectCollector::list();
         foreach ($container as $type => $collection) {
             if ($type === 'classes') {
                 static::parseClasses($collection, $class, $matched);

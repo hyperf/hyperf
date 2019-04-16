@@ -50,7 +50,7 @@ class DispatcherFactory
 
     public function __construct()
     {
-        $this->initAnnotationRoute(AnnotationCollector::getContainer());
+        $this->initAnnotationRoute(AnnotationCollector::list());
         $this->initConfigRoute();
     }
 

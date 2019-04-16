@@ -48,7 +48,7 @@ class ListenerProviderFactory
 
     private function registerAnnotations(ListenerProvider $provider, ContainerInterface $container): void
     {
-        foreach (AnnotationCollector::getContainer() as $className => $values) {
+        foreach (AnnotationCollector::list() as $className => $values) {
             /** @var Listener $annotation */
             if ($annotation = $values['_c'][Listener::class] ?? null) {
                 $this->register($provider, $container, $className, (int) $annotation->priority);

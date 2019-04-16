@@ -30,7 +30,7 @@ class Aspects extends AbstractAdapter
     public function prepareResult(): array
     {
         $result = [];
-        $aspects = AspectCollector::getContainer();
+        $aspects = AspectCollector::list();
         foreach ($aspects as $type => $collections) {
             foreach ($collections as $aspect => $target) {
                 $result[$aspect][$type] = $target;
