@@ -84,4 +84,10 @@ abstract class Driver implements DriverInterface
      * Handle a job again some seconds later.
      */
     abstract protected function retry(MessageInterface $message): bool;
+
+    /**
+     * Remove data from reserved queue.
+     * @param mixed $data
+     */
+    abstract protected function remove($data): bool;
 }
