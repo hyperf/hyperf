@@ -17,7 +17,6 @@ return [
             ],
         ]
     ],
-    'processes' => [],
     'settings' => [
         'enable_coroutine' => true,
         'worker_num' => 4,
