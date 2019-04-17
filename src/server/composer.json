@@ -1,42 +1,31 @@
 {
-    "name": "hyperf/framework",
-    "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
+    "name": "hyperf/server",
+    "description": "A base server library for Hyperf.",
     "license": "Apache-2.0",
     "keywords": [
         "php",
         "swoole",
-        "framework",
         "hyperf",
-        "microservice",
-        "middleware"
+        "server"
     ],
     "support": {
     },
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.3",
-        "fig/http-message-util": "^1.1.2",
         "psr/container": "^1.0",
-        "psr/http-message": "^1.0.1",
-        "psr/http-server-middleware": "^1.0",
-        "psr/event-dispatcher": "^0.7",
         "psr/log": "^1.0",
+        "psr/event-dispatcher": "^0.7",
         "symfony/console": "^4.2",
-        "symfony/routing": "^4.2",
-        "symfony/http-foundation": "^4.2",
         "hyperf/contract": "dev-master",
-        "hyperf/memory": "dev-master",
         "hyperf/utils": "dev-master",
-        "vlucas/phpdotenv": "^3.1"
+        "hyperf/framework": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9",
-        "symfony/console": "^4.1",
-        "php-di/php-di": "^6.0",
-        "doctrine/common": "@stable"
+        "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
     },
@@ -44,7 +33,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\Framework\\": "src"
+            "Hyperf\\Server\\": "src"
         }
     },
     "autoload-dev": {
@@ -58,7 +47,7 @@
         "branch-alias": {
         },
         "hyperf": {
-            "config": "Hyperf\\Framework\\ConfigProvider"
+            "config": "Hyperf\\Server\\ConfigProvider"
         }
     },
     "bin": [

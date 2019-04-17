@@ -10,29 +10,25 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpServer\Command;
+namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Framework\Server;
+use Hyperf\Framework\Annotation\Command;
+use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @\Hyperf\Framework\Annotation\Command
+ * @Command
  */
-class StartServer extends Command
+class StartServer extends SymfonyCommand
 {
     /**
      * @var ContainerInterface
      */
     private $container;
-
-    /**
-     * @var Server
-     */
-    private $server;
 
     public function __construct(ContainerInterface $container)
     {
@@ -43,19 +39,12 @@ class StartServer extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->checkEnv($output);
-        $this->initServer();
-        $this->server->run();
-    }
 
-    private function initServer()
-    {
-        $config = $this->container->get(ConfigInterface::class);
-        $serverConfigs = $config->get('servers', []);
-        if (! $serverConfigs) {
-            throw new \InvalidArgumentException('No available server.');
-        }
+        $factory = $this->container->get(ServerFactory::class);
+        $config = $this->container->get(ConfigInterface::class)->get('server');
 
-        $this->server = $this->container->get(Server::class)->initConfigs($serverConfigs);
+        $factory->configure($config);
+        $factory->start();
     }
 
     private function checkEnv(OutputInterface $output)

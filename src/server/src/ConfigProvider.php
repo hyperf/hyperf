@@ -10,11 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpServer;
+namespace Hyperf\Server;
 
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\Server\Command\StartServer;
 
 class ConfigProvider
 {
@@ -22,16 +20,21 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Server::class => ServerFactory::class,
-                RequestInterface::class => Request::class,
-                ServerRequestInterface::class => Request::class,
-                ResponseInterface::class => Response::class,
             ],
             'commands' => [
+                StartServer::class,
             ],
             'scan' => [
                 'paths' => [
                     __DIR__,
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for async queue.',
+                    'source' => __DIR__ . '/../publish/server.php',
+                    'destination' => BASE_PATH . '/config/autoload/server.php',
                 ],
             ],
         ];

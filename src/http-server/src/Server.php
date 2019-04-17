@@ -17,6 +17,8 @@ use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Server\Request as Psr7Request;
+use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\Context;
@@ -24,8 +26,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Hyperf\HttpMessage\Server\Request as Psr7Request;
-use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
@@ -99,7 +99,6 @@ class Server implements ServerOnRequestInterface
             $middlewares = array_merge($this->middlewares, MiddlewareManager::get($psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-
         } catch (Throwable $throwable) {
             if (! $throwable instanceof HttpException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);

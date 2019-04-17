@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\HttpException;
 use Hyperf\Utils\ApplicationContext;
@@ -21,7 +22,6 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use function get_class;
 
 class Response implements ResponseInterface

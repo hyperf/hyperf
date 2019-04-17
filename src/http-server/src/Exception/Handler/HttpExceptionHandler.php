@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Exception\Handler;
 
 use Hyperf\Framework\ExceptionHandler;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Exception\HttpException;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Throwable;
 
 class HttpExceptionHandler extends ExceptionHandler

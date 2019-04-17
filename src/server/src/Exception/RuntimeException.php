@@ -10,14 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpServer\Command;
+namespace Hyperf\Server\Exception;
 
-use Psr\Container\ContainerInterface;
-
-class StartServerFactory
+class RuntimeException extends \RuntimeException
 {
-    public function __invoke(ContainerInterface $container)
-    {
-        return new StartServer($container);
-    }
 }

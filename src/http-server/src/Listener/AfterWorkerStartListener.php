@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\HttpServer\Listener;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\HttpServer\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
@@ -9,11 +18,10 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 
 /**
- * @Listener()
+ * @Listener
  */
 class AfterWorkerStartListener implements ListenerInterface
 {
-
     /**
      * @var StdoutLoggerInterface
      */

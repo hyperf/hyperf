@@ -14,7 +14,6 @@ namespace Hyperf\Contract;
 
 interface PoolInterface
 {
-
     /**
      * Get a connection from the connection pool.
      */

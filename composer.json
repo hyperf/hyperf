@@ -115,6 +115,7 @@
             "Hyperf\\AsyncQueue\\": "src/async-queue/src/",
             "Hyperf\\RateLimit\\": "src/rate-limit/src/",
             "Hyperf\\Redis\\": "src/redis/src/",
+            "Hyperf\\Server\\": "src/server/src/",
             "Hyperf\\Tracer\\": "src/tracer/src/",
             "Hyperf\\Utils\\": "src/utils/src/"
         }

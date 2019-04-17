@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
 use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -21,7 +22,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 
 /**
  * Core middleware of Hyperf, main responsibility is use to handle route info

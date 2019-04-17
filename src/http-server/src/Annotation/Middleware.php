@@ -20,7 +20,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Middleware extends AbstractAnnotation
 {
-
     /**
      * @var string
      */
@@ -31,5 +30,4 @@ class Middleware extends AbstractAnnotation
         parent::__construct($value);
         $this->bindMainProperty('middleware', $value);
     }
-
 }

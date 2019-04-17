@@ -18,7 +18,8 @@
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/event": "dev-master",
-        "hyperf/http-message": "dev-master"
+        "hyperf/http-message": "dev-master",
+        "hyperf/server": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
