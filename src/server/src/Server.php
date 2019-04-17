@@ -83,15 +83,15 @@ class Server implements ServerInterface
     {
         $servers = $this->sortServers($config->getServers());
 
-        foreach ($servers as $i => $server) {
-            $type = $server['type'] ?? ServerInterface::SERVER_HTTP;
-            $host = $server['host'] ?? '0.0.0.0';
-            $port = $server['port'] ?? 9501;
-            $sockType = $server['sock_type'] ?? SWOOLE_SOCK_TCP;
-            $callbacks = $server['callbacks'] ?? [];
+        foreach ($servers as $server) {
+            $name = $server->getName();
+            $type = $server->getType();
+            $host = $server->getHost();
+            $port = $server->getPort();
+            $sockType = $server->getSockType();
+            $callbacks = $server->getCallbacks();
 
             if (! $this->server instanceof SwooleServer) {
-                $name = $server['name'] ?? 'http';
                 $this->server = $this->makeServer($type, $host, $port, $config->getMode(), $sockType);
                 $callbacks = array_replace($this->defaultCallbacks(), $config->getCallbacks(), $callbacks);
                 $this->registerSwooleEvents($this->server, $callbacks, $name);
@@ -100,7 +100,6 @@ class Server implements ServerInterface
                 // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
                 $this->dispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
             } else {
-                $name = $server['name'] ?? 'http' . $i;
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
             }
@@ -118,11 +117,15 @@ class Server implements ServerInterface
         }
     }
 
+    /**
+     * @param Port[] $servers
+     * @return Port[]
+     */
     protected function sortServers(array $servers)
     {
         $sortServers = [];
         foreach ($servers as $server) {
-            switch ($server['type'] ?? 0) {
+            switch ($server->getType() ?? 0) {
                 case ServerInterface::SERVER_HTTP:
                     $this->http = true;
                     if (! $this->ws) {

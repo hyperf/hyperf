@@ -61,11 +61,14 @@ class BeforeMainServerStartListener implements ListenerInterface
     {
         /** @var BeforeMainServerStart $event */
         $server = $event->server;
+        $serverConfig = $event->serverConfig;
+
+        $serverProcesses = $serverConfig['processes'] ?? [];
         $processes = $this->config->get('processes', []);
         $annotationProcesses = $this->getAnnotationProcesses();
 
         // Retrieve the processes have been registered.
-        $processes = array_merge($processes, ProcessRegister::all(), array_keys($annotationProcesses));
+        $processes = array_merge($serverProcesses, $processes, ProcessRegister::all(), array_keys($annotationProcesses));
         foreach ($processes as $process) {
             if (is_string($process)) {
                 $instance = $this->container->get($process);

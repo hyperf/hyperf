@@ -18,31 +18,6 @@ use Hyperf\Utils\Contracts\Arrayable;
 class ServerConfig implements Arrayable
 {
     /**
-     * @var int
-     */
-    protected $mode;
-
-    /**
-     * @var array
-     */
-    protected $servers;
-
-    /**
-     * @var array
-     */
-    protected $processes;
-
-    /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @var array
-     */
-    protected $callbacks;
-
-    /**
      * @var array
      */
     protected $config;
@@ -51,13 +26,17 @@ class ServerConfig implements Arrayable
     {
         $this->config = $config;
 
-        $servers = $config['servers'] ?? [];
-        if (empty($servers)) {
+        if (empty($config['servers'] ?? [])) {
             throw new InvalidArgumentException('Config server.servers not exist.');
         }
 
+        $servers = [];
+        foreach ($config['servers'] as $item) {
+            $servers[] = Port::build($item);
+        }
+
         $this->setMode($config['mode'] ?? SWOOLE_BASE)
-            ->setServers($config['servers'] ?? [])
+            ->setServers($servers)
             ->setProcesses($config['processes'] ?? [])
             ->setSettings($config['settings'] ?? [])
             ->setCallbacks($config['callbacks'] ?? []);
@@ -68,7 +47,7 @@ class ServerConfig implements Arrayable
      */
     public function getMode(): int
     {
-        return $this->mode;
+        return $this->config['mode'] ?? SWOOLE_BASE;
     }
 
     /**
@@ -77,25 +56,34 @@ class ServerConfig implements Arrayable
      */
     public function setMode(int $mode): ServerConfig
     {
-        $this->mode = $mode;
+        $this->config['mode'] = $mode;
         return $this;
     }
 
     /**
-     * @return array
+     * @return Port[]
      */
     public function getServers(): array
     {
-        return $this->servers;
+        return $this->config['servers'] ?? [];
     }
 
     /**
-     * @param array $servers
+     * @param Port[] $servers
      * @return ServerConfig
      */
     public function setServers(array $servers): ServerConfig
     {
-        $this->servers = $servers;
+        $this->config['servers'] = $servers;
+        return $this;
+    }
+
+    /**
+     * @return ServerConfig
+     */
+    public function addServer(Port $port): ServerConfig
+    {
+        $this->config['servers'][] = $port;
         return $this;
     }
 
@@ -104,7 +92,7 @@ class ServerConfig implements Arrayable
      */
     public function getProcesses(): array
     {
-        return $this->processes;
+        return $this->config['processes'] ?? [];
     }
 
     /**
@@ -113,7 +101,7 @@ class ServerConfig implements Arrayable
      */
     public function setProcesses(array $processes): ServerConfig
     {
-        $this->processes = $processes;
+        $this->config['processes'] = $processes;
         return $this;
     }
 
@@ -122,7 +110,7 @@ class ServerConfig implements Arrayable
      */
     public function getSettings(): array
     {
-        return $this->settings;
+        return $this->config['settings'] ?? [];
     }
 
     /**
@@ -131,7 +119,7 @@ class ServerConfig implements Arrayable
      */
     public function setSettings(array $settings): ServerConfig
     {
-        $this->settings = $settings;
+        $this->config['settings'] = $settings;
         return $this;
     }
 
@@ -140,7 +128,7 @@ class ServerConfig implements Arrayable
      */
     public function getCallbacks(): array
     {
-        return $this->callbacks;
+        return $this->config['callbacks'] ?? [];
     }
 
     /**
@@ -149,13 +137,12 @@ class ServerConfig implements Arrayable
      */
     public function setCallbacks(array $callbacks): ServerConfig
     {
-        $this->callbacks = $callbacks;
+        $this->config['callbacks'] = $callbacks;
         return $this;
     }
 
     public function toArray(): array
     {
-        return [
-        ];
+        return $this->config;
     }
 }
