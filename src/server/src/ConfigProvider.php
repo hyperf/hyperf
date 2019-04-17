@@ -32,7 +32,7 @@ class ConfigProvider
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for async queue.',
+                    'description' => 'The config for server.',
                     'source' => __DIR__ . '/../publish/server.php',
                     'destination' => BASE_PATH . '/config/autoload/server.php',
                 ],
