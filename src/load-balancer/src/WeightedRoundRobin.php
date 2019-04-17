@@ -40,7 +40,8 @@ class WeightedRoundRobin extends AbstractLoadBalancer
                 if ($this->currentWeight <= 0) {
                     $this->currentWeight = $this->maxWeight;
                     if ($this->currentWeight == 0) {
-                        return null;
+                        // Degrade to random algorithm.
+                        return array_rand($this->nodes);
                     }
                 }
             }
