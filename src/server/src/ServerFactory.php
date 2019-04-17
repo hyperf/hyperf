@@ -20,12 +20,6 @@ class ServerFactory
 {
     use EntrySupport;
 
-    const SERVER_HTTP = 1;
-
-    const SERVER_WS = 2;
-
-    const SERVER_TCP = 3;
-
     /**
      * @var ContainerInterface
      */
