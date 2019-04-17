@@ -34,6 +34,8 @@ class StartServer extends SymfonyCommand
     {
         parent::__construct('start');
         $this->container = $container;
+
+        $this->setDescription('Start swoole server.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

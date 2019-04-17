@@ -22,7 +22,6 @@ class ConfigProvider
             'dependencies' => [
             ],
             'commands' => [
-                StartServer::class,
             ],
             'scan' => [
                 'paths' => [
