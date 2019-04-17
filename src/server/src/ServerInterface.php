@@ -18,6 +18,12 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 interface ServerInterface
 {
+    const SERVER_HTTP = 1;
+
+    const SERVER_WS = 2;
+
+    const SERVER_TCP = 3;
+
     public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, EventDispatcherInterface $dispatcher);
 
     public function init(ServerConfig $config): ServerInterface;

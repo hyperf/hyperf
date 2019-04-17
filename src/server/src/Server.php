@@ -84,7 +84,7 @@ class Server implements ServerInterface
         $servers = $this->sortServers($config->getServers());
 
         foreach ($servers as $i => $server) {
-            $type = $server['type'] ?? ServerFactory::SERVER_HTTP;
+            $type = $server['type'] ?? ServerInterface::SERVER_HTTP;
             $host = $server['host'] ?? '0.0.0.0';
             $port = $server['port'] ?? 9501;
             $sockType = $server['sock_type'] ?? SWOOLE_SOCK_TCP;
@@ -123,7 +123,7 @@ class Server implements ServerInterface
         $sortServers = [];
         foreach ($servers as $server) {
             switch ($server['type'] ?? 0) {
-                case ServerFactory::SERVER_HTTP:
+                case ServerInterface::SERVER_HTTP:
                     $this->http = true;
                     if (! $this->ws) {
                         array_unshift($sortServers, $server);
@@ -131,7 +131,7 @@ class Server implements ServerInterface
                         $sortServers[] = $server;
                     }
                     break;
-                case ServerFactory::SERVER_WS:
+                case ServerInterface::SERVER_WS:
                     $this->ws = true;
                     array_unshift($sortServers, $server);
                     break;
@@ -147,11 +147,11 @@ class Server implements ServerInterface
     protected function makeServer(int $type, string $host, int $port, int $mode, int $sockType)
     {
         switch ($type) {
-            case ServerFactory::SERVER_HTTP:
+            case ServerInterface::SERVER_HTTP:
                 return new \Swoole\Http\Server($host, $port, $mode, $sockType);
-            case ServerFactory::SERVER_WS:
+            case ServerInterface::SERVER_WS:
                 return new \Swoole\WebSocket\Server($host, $port, $mode, $sockType);
-            case ServerFactory::SERVER_TCP:
+            case ServerInterface::SERVER_TCP:
                 return new SwooleServer($host, $port, $mode, $sockType);
         }
 
