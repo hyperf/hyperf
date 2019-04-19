@@ -100,12 +100,12 @@ class RedisDriver extends Driver
         return $this->redis->zAdd($this->delayed, time() + $delay, $data) > 0;
     }
 
-    public function pop(int $timeout = 0): array
+    public function pop(): array
     {
-        $this->move($this->delayed);
-        $this->move($this->reserved);
+        $this->move($this->delayed, $this->waiting);
+        $this->move($this->reserved, $this->failed);
 
-        $res = $this->redis->brPop($this->waiting, $timeout);
+        $res = $this->redis->brPop($this->waiting, $this->timeout);
         if (! isset($res[1])) {
             return [false, null];
         }
@@ -175,13 +175,13 @@ class RedisDriver extends Driver
     /**
      * Move message to the waiting queue.
      */
-    protected function move(string $from): void
+    protected function move(string $from, string $to): void
     {
         $now = time();
         if ($expired = $this->redis->zrevrangebyscore($from, (string) $now, '-inf')) {
             foreach ($expired as $job) {
                 if ($this->redis->zRem($from, $job) > 0) {
-                    $this->redis->lPush($this->waiting, $job);
+                    $this->redis->lPush($to, $job);
                 }
             }
         }

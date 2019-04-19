@@ -54,7 +54,7 @@ abstract class Driver implements DriverInterface
     public function consume(): void
     {
         while (true) {
-            [$data, $message] = $this->pop($this->timeout);
+            [$data, $message] = $this->pop();
 
             if ($data === false) {
                 continue;

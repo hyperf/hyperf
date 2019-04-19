@@ -29,7 +29,7 @@ interface DriverInterface
     /**
      * Pop a job from queue.
      */
-    public function pop(int $timeout = 0): array;
+    public function pop(): array;
 
     /**
      * Ack a job.
