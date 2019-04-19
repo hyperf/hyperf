@@ -31,14 +31,22 @@ class RedisDriver extends Driver
     protected $channel;
 
     /**
+     * Max polling time.
      * @var int
      */
     protected $timeout;
 
     /**
+     * Retry delay time.
      * @var int
      */
     protected $retrySeconds;
+
+    /**
+     * Handle timeout.
+     * @var int
+     */
+    protected $handleTimeout;
 
     public function __construct(ContainerInterface $container, $config)
     {
@@ -48,6 +56,8 @@ class RedisDriver extends Driver
         $this->redis = $container->get(Redis::class);
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
+        $this->handleTimeout = $config['handle_timeout'] ?? 10;
+
         $this->channel = make(ChannelConfig::class, ['channel' => $channel]);
     }
 
@@ -85,7 +95,7 @@ class RedisDriver extends Driver
             return [false, null];
         }
 
-        $this->redis->zadd($this->channel->getReserved(), time() + 10, $data);
+        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
 
         return [$data, $message];
     }
