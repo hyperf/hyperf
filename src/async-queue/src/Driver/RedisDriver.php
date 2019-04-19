@@ -157,7 +157,8 @@ class RedisDriver extends Driver
     protected function move(string $from, string $to): void
     {
         $now = time();
-        if ($expired = $this->redis->zrevrangebyscore($from, (string) $now, '-inf')) {
+        $options = ['LIMIT' => [0, 100]];
+        if ($expired = $this->redis->zrevrangebyscore($from, (string) $now, '-inf', $options)) {
             foreach ($expired as $job) {
                 if ($this->redis->zRem($from, $job) > 0) {
                     $this->redis->lPush($to, $job);
