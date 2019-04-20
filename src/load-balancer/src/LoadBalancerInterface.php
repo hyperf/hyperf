@@ -17,5 +17,5 @@ interface LoadBalancerInterface
     /**
      * Select an item via the load balancer.
      */
-    public function select(array ...$parameters);
+    public function select(array ...$parameters): Node;
 }

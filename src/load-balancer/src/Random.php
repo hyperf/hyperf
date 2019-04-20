@@ -17,8 +17,9 @@ class Random extends AbstractLoadBalancer
     /**
      * Select an item via the load balancer.
      */
-    public function select(array ...$parameters)
+    public function select(array ...$parameters): Node
     {
-        return array_rand($this->nodes);
+        $key = array_rand($this->nodes);
+        return $this->nodes[$key];
     }
 }

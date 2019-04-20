@@ -24,7 +24,7 @@ class RoundRobin extends AbstractLoadBalancer
     /**
      * Select an item via the load balancer.
      */
-    public function select(array ...$parameters)
+    public function select(array ...$parameters): Node
     {
         $count = count($this->nodes);
         if ($count <= 0) {

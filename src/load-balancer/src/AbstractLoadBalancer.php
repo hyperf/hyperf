@@ -15,12 +15,12 @@ namespace Hyperf\LoadBalancer;
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
-     * @var \iterable
+     * @var Node[]
      */
     protected $nodes;
 
-    public function __construct(\iterable $list)
+    public function __construct(iterable $nodes)
     {
-        $this->nodes = $list;
+        $this->nodes = $nodes;
     }
 }
