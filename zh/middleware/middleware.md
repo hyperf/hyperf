@@ -116,3 +116,45 @@ class IndexController
     }
 }
 ```
+
+#### 定义方法级别的中间件
+
+在通过配置文件的方式配置中间件时定义到方法级别上很简单，那么要通过注解的形式定义到方法级别呢？您只需将注解直接定义到方法上即可。   
+方法级别上的中间件会优先于类级别的中间件，我们通过代码来举例一下：   
+
+```php
+<?php
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+
+/**
+ * @AutoController()
+ * @Middlewares({
+ *     @Middleware(FooMiddleware::class)
+ * })
+ */
+class IndexController
+{
+    
+    /**
+     * @AutoController()
+     * @Middlewares({
+     *     @Middleware(BarMiddleware::class)
+     * })
+     */
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+中间件的执行顺序为 `BarMiddleware -> FooMiddleware`。
+
+## 中间件的执行顺序
+
+我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 类级别中间件 -> 方法级别中间件`。
+
