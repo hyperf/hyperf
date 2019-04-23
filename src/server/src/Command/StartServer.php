@@ -40,16 +40,19 @@ class StartServer extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkEnv($output);
+        $this->checkEnvironment($output);
 
-        $factory = $this->container->get(ServerFactory::class);
-        $config = $this->container->get(ConfigInterface::class)->get('server');
+        $serverFactory = $this->container->get(ServerFactory::class);
+        $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
+        if (! $serverConfig) {
+            throw new \InvalidArgumentException('At least one server should be defined.');
+        }
 
-        $factory->configure($config);
-        $factory->start();
+        $serverFactory->configure($serverConfig);
+        $serverFactory->start();
     }
 
-    private function checkEnv(OutputInterface $output)
+    private function checkEnvironment(OutputInterface $output)
     {
         if (ini_get_all('swoole')['swoole.use_shortname']['local_value'] !== 'Off') {
             $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = \'Off\' into your php.ini.');

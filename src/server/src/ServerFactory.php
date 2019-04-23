@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Server;
 
+use Hyperf\Server\Entry\EventDispatcher;
+use Hyperf\Server\Entry\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 
 class ServerFactory
 {
-    use EntrySupport;
-
     /**
      * @var ContainerInterface
      */
@@ -33,7 +33,7 @@ class ServerFactory
     /**
      * @var EventDispatcherInterface
      */
-    protected $dispatcher;
+    protected $eventDispatcher;
 
     /**
      * @var ServerInterface
@@ -45,7 +45,7 @@ class ServerFactory
         $this->container = $container;
     }
 
-    public function configure($config)
+    public function configure(array $config)
     {
         $this->getServer()->init(new ServerConfig($config));
     }
@@ -55,64 +55,60 @@ class ServerFactory
         return $this->getServer()->start();
     }
 
-    /**
-     * @return Server
-     */
     public function getServer(): ServerInterface
     {
         if (! $this->server instanceof ServerInterface) {
             $this->server = new Server(
                 $this->container,
                 $this->getLogger(),
-                $this->getDispatcher()
+                $this->getEventDispatcher()
             );
         }
 
         return $this->server;
     }
 
-    /**
-     * @param Server $server
-     * @return ServerFactory
-     */
     public function setServer(Server $server): self
     {
         $this->server = $server;
         return $this;
     }
 
-    /**
-     * @return EventDispatcherInterface
-     */
-    public function getDispatcher(): EventDispatcherInterface
+    public function getEventDispatcher(): EventDispatcherInterface
     {
-        return $this->getEntryInstance('dispatcher');
+        if ($this->eventDispatcher instanceof EventDispatcherInterface) {
+            return $this->eventDispatcher;
+        }
+        return $this->getDefaultEventDispatcher();
     }
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
-    public function setDispatcher(EventDispatcherInterface $dispatcher): self
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
     {
-        $this->dispatcher = $dispatcher;
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
-    /**
-     * @return LoggerInterface
-     */
     public function getLogger(): LoggerInterface
     {
-        return $this->getEntryInstance('logger');
+        if ($this->logger instanceof LoggerInterface) {
+            return $this->logger;
+        }
+        return $this->getDefaultLogger();
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @return ServerFactory
-     */
     public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
         return $this;
+    }
+
+    private function getDefaultEventDispatcher(): EventDispatcher
+    {
+        return new EventDispatcher();
+    }
+
+    private function getDefaultLogger(): Logger
+    {
+        return new Logger();
     }
 }

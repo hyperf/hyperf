@@ -21,7 +21,10 @@ use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Exception\RuntimeException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use Swoole\Http\Server as SwooleHttpServer;
 use Swoole\Server as SwooleServer;
+use Swoole\WebSocket\Server as SwooleWebSocketServer;
 
 class Server implements ServerInterface
 {
@@ -33,7 +36,7 @@ class Server implements ServerInterface
     /**
      * @var bool
      */
-    protected $ws = false;
+    protected $enableWebsocket = false;
 
     /**
      * @var SwooleServer
@@ -43,7 +46,7 @@ class Server implements ServerInterface
     /**
      * @var array
      */
-    protected $requests = [];
+    protected $onRequestCallbacks = [];
 
     /**
      * @var StdoutLoggerInterface
@@ -58,13 +61,13 @@ class Server implements ServerInterface
     /**
      * @var EventDispatcherInterface
      */
-    protected $dispatcher;
+    protected $eventDispatcher;
 
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, EventDispatcherInterface $dispatcher)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
     {
         $this->container = $container;
         $this->logger = $logger;
-        $this->dispatcher = $dispatcher;
+        $this->eventDispatcher = $dispatcher;
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -98,7 +101,7 @@ class Server implements ServerInterface
                 $this->server->set($config->getSettings());
 
                 // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
-                $this->dispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
+                $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
             } else {
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
@@ -113,7 +116,7 @@ class Server implements ServerInterface
             }
 
             // Trigger BeforeEventStart event.
-            $this->dispatcher->dispatch(new BeforeServerStart($name));
+            $this->eventDispatcher->dispatch(new BeforeServerStart($name));
         }
     }
 
@@ -128,14 +131,14 @@ class Server implements ServerInterface
             switch ($server->getType() ?? 0) {
                 case ServerInterface::SERVER_HTTP:
                     $this->http = true;
-                    if (! $this->ws) {
+                    if (! $this->enableWebsocket) {
                         array_unshift($sortServers, $server);
                     } else {
                         $sortServers[] = $server;
                     }
                     break;
-                case ServerInterface::SERVER_WS:
-                    $this->ws = true;
+                case ServerInterface::SERVER_WEBSOCKET:
+                    $this->enableWebsocket = true;
                     array_unshift($sortServers, $server);
                     break;
                 default:
@@ -151,9 +154,9 @@ class Server implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
-                return new \Swoole\Http\Server($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_WS:
-                return new \Swoole\WebSocket\Server($host, $port, $mode, $sockType);
+                return new SwooleHttpServer($host, $port, $mode, $sockType);
+            case ServerInterface::SERVER_WEBSOCKET:
+                return new SwooleWebSocketServer($host, $port, $mode, $sockType);
             case ServerInterface::SERVER_TCP:
                 return new SwooleServer($host, $port, $mode, $sockType);
         }
@@ -172,11 +175,11 @@ class Server implements ServerInterface
             }
             if (is_array($callback)) {
                 [$className, $method] = $callback;
-                if (array_key_exists($className, $this->requests)) {
-                    $this->logger->warning(sprintf('WARN: %s will be replaced by %s, please check your server.callbacks.request! ', $this->requests[$callback[0]], $serverName));
+                if (array_key_exists($className, $this->onRequestCallbacks)) {
+                    $this->logger->warning(sprintf('WARN: %s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$callback[0]], $serverName));
                 }
 
-                $this->requests[$className] = $serverName;
+                $this->onRequestCallbacks[$className] = $serverName;
                 $class = $this->container->get($className);
                 if ($event == SwooleEvent::ON_REQUEST) {
                     if (! $class instanceof ServerOnRequestInterface) {

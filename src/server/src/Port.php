@@ -56,108 +56,66 @@ class Port
         return $port;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Port
-     */
     public function setName(string $name): Port
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @param int $type
-     * @return Port
-     */
     public function setType(int $type): Port
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getHost(): string
     {
         return $this->host;
     }
 
-    /**
-     * @param string $host
-     * @return Port
-     */
     public function setHost(string $host): Port
     {
         $this->host = $host;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPort(): int
     {
         return $this->port;
     }
 
-    /**
-     * @param int $port
-     * @return Port
-     */
     public function setPort(int $port): Port
     {
         $this->port = $port;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSockType(): int
     {
         return $this->sockType;
     }
 
-    /**
-     * @param int $sockType
-     * @return Port
-     */
     public function setSockType(int $sockType): Port
     {
         $this->sockType = $sockType;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCallbacks(): array
     {
         return $this->callbacks;
     }
 
-    /**
-     * @param array $callbacks
-     * @return Port
-     */
     public function setCallbacks(array $callbacks): Port
     {
         $this->callbacks = $callbacks;

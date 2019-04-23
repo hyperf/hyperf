@@ -15,6 +15,18 @@ namespace Hyperf\Server;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Contracts\Arrayable;
 
+/**
+ * @method ServerConfig setMode(int $mode)
+ * @method ServerConfig setServers(array $servers)
+ * @method ServerConfig setProcesses(array $processes)
+ * @method ServerConfig setSettings(array $settings)
+ * @method ServerConfig setCallbacks(array $callbacks)
+ * @method int getMode()
+ * @method array getServers()
+ * @method array getProcesses()
+ * @method array getSettings()
+ * @method array getCallbacks()
+ */
 class ServerConfig implements Arrayable
 {
     /**
@@ -42,107 +54,50 @@ class ServerConfig implements Arrayable
             ->setCallbacks($config['callbacks'] ?? []);
     }
 
-    /**
-     * @return int
-     */
-    public function getMode(): int
+    public function __set($name, $value): self
     {
-        return $this->config['mode'] ?? SWOOLE_BASE;
-    }
-
-    /**
-     * @param int $mode
-     * @return ServerConfig
-     */
-    public function setMode(int $mode): ServerConfig
-    {
-        $this->config['mode'] = $mode;
+        if (! $this->isAvailableProperty($name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid property %s', $name));
+        }
+        $this->config[$name] = $value;
         return $this;
     }
 
-    /**
-     * @return Port[]
-     */
-    public function getServers(): array
+    public function __get($name)
     {
-        return $this->config['servers'] ?? [];
+        if (! $this->isAvailableProperty($name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid property %s', $name));
+        }
+        return $this->config[$name] ?? null;
     }
 
-    /**
-     * @param Port[] $servers
-     * @return ServerConfig
-     */
-    public function setServers(array $servers): ServerConfig
+    public function __call($name, $arguments)
     {
-        $this->config['servers'] = $servers;
-        return $this;
+        $prefix = strtolower(substr($name, 0, 3));
+        if (in_array($prefix, ['set', 'get'])) {
+            $propertyName = strtolower(substr($name, 3));
+            if (! $this->isAvailableProperty($propertyName)) {
+                throw new \InvalidArgumentException(sprintf('Invalid property %s', $propertyName));
+            }
+            return $prefix === 'set' ? $this->__set($propertyName, ...$arguments) : $this->__get($propertyName);
+        }
     }
 
-    /**
-     * @return ServerConfig
-     */
     public function addServer(Port $port): ServerConfig
     {
         $this->config['servers'][] = $port;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getProcesses(): array
-    {
-        return $this->config['processes'] ?? [];
-    }
-
-    /**
-     * @param array $processes
-     * @return ServerConfig
-     */
-    public function setProcesses(array $processes): ServerConfig
-    {
-        $this->config['processes'] = $processes;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSettings(): array
-    {
-        return $this->config['settings'] ?? [];
-    }
-
-    /**
-     * @param array $settings
-     * @return ServerConfig
-     */
-    public function setSettings(array $settings): ServerConfig
-    {
-        $this->config['settings'] = $settings;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCallbacks(): array
-    {
-        return $this->config['callbacks'] ?? [];
-    }
-
-    /**
-     * @param array $callbacks
-     * @return ServerConfig
-     */
-    public function setCallbacks(array $callbacks): ServerConfig
-    {
-        $this->config['callbacks'] = $callbacks;
-        return $this;
-    }
-
     public function toArray(): array
     {
         return $this->config;
+    }
+
+    private function isAvailableProperty(string $name)
+    {
+        return in_array($name, [
+            'mode', 'servers', 'processes', 'settings', 'callbacks',
+        ]);
     }
 }
