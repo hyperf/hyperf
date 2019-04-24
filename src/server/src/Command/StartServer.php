@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Annotation\Command;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,7 +44,10 @@ class StartServer extends SymfonyCommand
     {
         $this->checkEnvironment($output);
 
-        $serverFactory = $this->container->get(ServerFactory::class);
+        $serverFactory = $this->container->get(ServerFactory::class)
+            ->setEventDispatcher($this->container->get(EventDispatcherInterface::class))
+            ->setLogger($this->container->get(StdoutLoggerInterface::class));
+
         $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
         if (! $serverConfig) {
             throw new \InvalidArgumentException('At least one server should be defined.');
