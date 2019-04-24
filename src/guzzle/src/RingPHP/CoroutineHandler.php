@@ -121,7 +121,7 @@ class CoroutineHandler
             'effective_url' => $effectiveUrl,
             'headers' => isset($client->headers) ? $client->headers : [],
             'status' => $client->statusCode,
-            'body' => stream_for($client->body),
+            'body' => $this->getStream($client->body),
         ]);
     }
 
@@ -138,5 +138,16 @@ class CoroutineHandler
         }
 
         return true;
+    }
+
+    protected function getStream(string $resource)
+    {
+        $stream = fopen('php://temp', 'r+');
+        if ($resource !== '') {
+            fwrite($stream, $resource);
+            fseek($stream, 0);
+        }
+
+        return $stream;
     }
 }
