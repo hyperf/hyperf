@@ -11,6 +11,7 @@
     <testsuites>
         <testsuite name="Tests">
             <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
         </testsuite>

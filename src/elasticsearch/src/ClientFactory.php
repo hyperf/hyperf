@@ -29,13 +29,19 @@ class ClientFactory
         $this->container = $container;
     }
 
-    public function create()
+    public function builder()
     {
-        $client = ClientBuilder::create();
-        if (Coroutine::getCid() > 0) {
-            $client->setHandler(new CoroutineHandler());
+        if (method_exists($this->container, 'make')) {
+            // Create by DI for AOP.
+            $builder = $this->container->make(ClientBuilder::class);
+        } else {
+            $builder = ClientBuilder::create();
         }
 
-        return $client;
+        if (Coroutine::getCid() > 0) {
+            $builder->setHandler(new CoroutineHandler());
+        }
+
+        return $builder;
     }
 }
