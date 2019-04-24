@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
-use Hyperf\Elasticsearch\ClientFactory;
+use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -24,13 +24,13 @@ use Psr\Container\ContainerInterface;
  */
 class ClientFactoryTest extends TestCase
 {
-    public function testClientFactoryCreate()
+    public function testClientBuilderFactoryCreate()
     {
         $container = Mockery::mock(ContainerInterface::class);
 
-        $clientFactory = new ClientFactory($container);
+        $clientFactory = new ClientBuilderFactory($container);
 
-        $client = $clientFactory->builder();
+        $client = $clientFactory->create();
 
         $this->assertInstanceOf(ClientBuilder::class, $client);
     }

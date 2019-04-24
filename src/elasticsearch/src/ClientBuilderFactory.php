@@ -14,30 +14,13 @@ namespace Hyperf\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 
-class ClientFactory
+class ClientBuilderFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function create()
     {
-        $this->container = $container;
-    }
-
-    public function builder()
-    {
-        if (method_exists($this->container, 'make')) {
-            // Create by DI for AOP.
-            $builder = $this->container->make(ClientBuilder::class);
-        } else {
-            $builder = ClientBuilder::create();
-        }
-
+        $builder = ClientBuilder::create();
         if (Coroutine::getCid() > 0) {
             $builder->setHandler(new CoroutineHandler());
         }
