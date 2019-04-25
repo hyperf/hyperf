@@ -14,9 +14,7 @@ namespace HyperfTest\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
-use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -26,9 +24,7 @@ class ClientFactoryTest extends TestCase
 {
     public function testClientBuilderFactoryCreate()
     {
-        $container = Mockery::mock(ContainerInterface::class);
-
-        $clientFactory = new ClientBuilderFactory($container);
+        $clientFactory = new ClientBuilderFactory();
 
         $client = $clientFactory->create();
 
