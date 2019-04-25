@@ -65,6 +65,7 @@
         "hyperf/grpc-client": "self.version",
         "hyperf/grpc-server": "self.version",
         "hyperf/guzzle": "self.version",
+        "hyperf/http-message": "self.version",
         "hyperf/http-server": "self.version",
         "hyperf/logger": "self.version",
         "hyperf/memory": "self.version",
@@ -75,6 +76,7 @@
         "hyperf/async-queue": "self.version",
         "hyperf/rate-limit": "self.version",
         "hyperf/redis": "self.version",
+        "hyperf/server": "self.version",
         "hyperf/tracer": "self.version",
         "hyperf/utils": "self.version"
     },
@@ -105,6 +107,7 @@
             "Hyperf\\GrpcClient\\": "src/grpc-client/src/",
             "Hyperf\\GrpcServer\\": "src/grpc-server/src/",
             "Hyperf\\Guzzle\\": "src/guzzle/src/",
+            "Hyperf\\HttpMessage\\": "src/http-message/src/",
             "Hyperf\\HttpServer\\": "src/http-server/src/",
             "Hyperf\\Logger\\": "src/logger/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
@@ -162,6 +165,7 @@
                 "Hyperf\\AsyncQueue\\ConfigProvider",
                 "Hyperf\\RateLimit\\ConfigProvider",
                 "Hyperf\\Redis\\ConfigProvider",
+                "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\Tracer\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider"
             ]
