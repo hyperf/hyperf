@@ -18,7 +18,7 @@ use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\Event\OtherWorkerStart;
-use Hyperf\Framework\SwooleEvent;
+use Hyperf\Server\SwooleEvent;
 use Hyperf\Memory\AtomicManager;
 use Hyperf\Memory\LockManager;
 use Psr\Container\ContainerInterface;

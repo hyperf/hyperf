@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use Hyperf\Framework\SwooleEvent;
+use Hyperf\Server\SwooleEvent;
 use Hyperf\Memory;
 
 class ServerStartCallback
