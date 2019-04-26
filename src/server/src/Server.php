@@ -16,7 +16,6 @@ use Hyperf\Contract\ServerOnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
-use Hyperf\Server\SwooleEvent;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Exception\RuntimeException;
 use Psr\Container\ContainerInterface;
