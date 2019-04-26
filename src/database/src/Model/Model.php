@@ -12,20 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Exception;
 use ArrayAccess;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use JsonSerializable;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\Arrayable;
+use Exception;
+use Hyperf\Contracts\Queue\QueueableCollection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Contracts\Queue\QueueableCollection;
-use Psr\EventDispatcher\StoppableEventInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Str;
+use JsonSerializable;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {

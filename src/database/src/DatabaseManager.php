@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
-use PDO;
+use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
-use Hyperf\Database\Connectors\ConnectionFactory;
+use PDO;
 
 /**
  * @mixin \Hyperf\Database\Connection

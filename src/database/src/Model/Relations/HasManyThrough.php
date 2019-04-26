@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
+use Hyperf\Database\Model\SoftDeletes;
 
 class HasManyThrough extends Relation
 {

@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use Hyperf\Utils\Fluent;
-use Hyperf\Database\Connection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\TableDiff;
+use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
+use Hyperf\Utils\Fluent;
 
 class RenameColumn
 {

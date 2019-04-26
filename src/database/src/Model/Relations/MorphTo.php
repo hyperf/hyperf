@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Relations;
 
 use BadMethodCallException;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 
 class MorphTo extends BelongsTo
 {

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
 class HasOneThrough extends HasManyThrough

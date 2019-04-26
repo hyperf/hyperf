@@ -12,24 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
-use PDO;
 use Closure;
-use Exception;
-use PDOStatement;
-use LogicException;
-use Hyperf\Utils\Arr;
 use DateTimeInterface;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\Expression;
+use Doctrine\DBAL\Connection as DoctrineConnection;
+use Exception;
 use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\QueryException;
-use Hyperf\Database\Query\Processors\Processor;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Builder as QueryBuilder;
-use Doctrine\DBAL\Connection as DoctrineConnection;
-use Hyperf\Database\Schema\Builder as SchemaBuilder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Schema\Builder as SchemaBuilder;
+use Hyperf\Utils\Arr;
+use LogicException;
+use PDO;
+use PDOStatement;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Connection implements ConnectionInterface
 {

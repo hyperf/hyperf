@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
-use PDO;
-use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
+use Hyperf\Database\Schema\MySqlBuilder;
+use PDO;
 
 class MySqlConnection extends Connection
 {

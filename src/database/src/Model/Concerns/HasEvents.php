@@ -12,22 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Booted;
-use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Booting;
 use Hyperf\Database\Model\Events\Created;
-use Hyperf\Database\Model\Events\Deleted;
-use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Deleting;
+use Hyperf\Database\Model\Events\ForceDeleted;
 use Hyperf\Database\Model\Events\Restored;
-use Hyperf\Database\Model\Events\Updating;
 use Hyperf\Database\Model\Events\Restoring;
 use Hyperf\Database\Model\Events\Retrieved;
-use Hyperf\Database\Model\Events\ForceDeleted;
-use Psr\EventDispatcher\StoppableEventInterface;
+use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Events\Saving;
+use Hyperf\Database\Model\Events\Updated;
+use Hyperf\Database\Model\Events\Updating;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
  * @method retrieved(Retrieved $event)

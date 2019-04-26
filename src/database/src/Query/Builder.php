@@ -13,23 +13,23 @@ declare(strict_types=1);
 namespace Hyperf\Database\Query;
 
 use Closure;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use RuntimeException;
 use DateTimeInterface;
-use Hyperf\Utils\Collection;
-use InvalidArgumentException;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Traits\Macroable;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Traits\ForwardsCalls;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Utils\Traits\Macroable;
+use InvalidArgumentException;
+use RuntimeException;
 
 class Builder
 {
