@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Database\Grammar as BaseGrammar;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\JoinClause;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use RuntimeException;
-use Hyperf\Database\Query\Builder;
-use Hyperf\Database\Query\JoinClause;
-use Hyperf\Database\Grammar as BaseGrammar;
 
 class Grammar extends BaseGrammar
 {

@@ -12,22 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Relations\HasOne;
-use Hyperf\Database\Model\Relations\HasMany;
-use Hyperf\Database\Model\Relations\MorphTo;
-use Hyperf\Database\Model\Relations\MorphOne;
-use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
-use Hyperf\Database\Model\Relations\MorphMany;
-use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\BelongsToMany;
-use Hyperf\Database\Model\Relations\HasOneThrough;
+use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\Database\Model\Relations\HasManyThrough;
+use Hyperf\Database\Model\Relations\HasOne;
+use Hyperf\Database\Model\Relations\HasOneThrough;
+use Hyperf\Database\Model\Relations\MorphMany;
+use Hyperf\Database\Model\Relations\MorphOne;
+use Hyperf\Database\Model\Relations\MorphTo;
+use Hyperf\Database\Model\Relations\MorphToMany;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
 
 trait HasRelationships
 {

@@ -17,7 +17,6 @@ use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client;
-use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
