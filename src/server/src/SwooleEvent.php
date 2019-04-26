@@ -45,6 +45,21 @@ class SwooleEvent
     const ON_REQUEST = 'request';
 
     /**
+     * Swoole onReceive event.
+     */
+    const ON_RECEIVE = 'receive';
+
+    /**
+     * Swoole onConnect event.
+     */
+    const ON_CONNECT = 'connect';
+
+    /**
+     * Swoole onClose event.
+     */
+    const ON_CLOSE = 'close';
+
+    /**
      * Before server start, it's not a swoole event.
      */
     const ON_BEFORE_START = 'beforeStart';

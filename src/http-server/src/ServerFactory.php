@@ -20,6 +20,6 @@ class ServerFactory
 
     public function __invoke(ContainerInterface $container): Server
     {
-        return new Server($this->coreMiddleware, $container);
+        return new Server('http', $this->coreMiddleware, $container);
     }
 }
