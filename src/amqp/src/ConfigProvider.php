@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\Packer\JsonPacker;
+use Hyperf\Utils\Packer\JsonPacker;
 use Hyperf\Amqp\Packer\Packer;
 
 class ConfigProvider

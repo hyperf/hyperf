@@ -3,7 +3,7 @@
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Cache\Packer\PhpSerializer::class,
+        'packer' => Hyperf\Utils\Packer\PhpSerializer::class,
         'prefix' => 'c:',
     ],
 ];
