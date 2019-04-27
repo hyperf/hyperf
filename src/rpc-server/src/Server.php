@@ -161,7 +161,7 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
         if (! isset($data['params'])) {
             $data['params'] = [];
         }
-        /** @var \Swoole\Server\Port $port*/
+        /** @var \Swoole\Server\Port $port */
         [$type, $port] = ServerManager::get($this->serverName);
 
         $uri = new Uri();
@@ -181,7 +181,7 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
         $response = new Psr7Response($fd, $server);
         if ($response instanceof EofInterface) {
             $eof = value(function () use ($server) {
-                /** @var \Swoole\Server\Port $port*/
+                /** @var \Swoole\Server\Port $port */
                 [$type, $port] = ServerManager::get($this->serverName);
                 if (isset($port->setting['package_eof'])) {
                     return $port->setting['package_eof'];

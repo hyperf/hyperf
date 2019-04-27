@@ -26,7 +26,6 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\RpcServer\Annotation\RpcMapping;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\Utils\Str;
-use ReflectionMethod;
 
 class DispatcherFactory
 {
