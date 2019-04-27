@@ -99,7 +99,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
             Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
