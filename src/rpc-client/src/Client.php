@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
+use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 class Client
@@ -45,30 +46,35 @@ class Client
             'package_eof' => "\r\n",
         ]);
 
-        for ($i = 0; $i < 2; ++$i) {
+        return retry(2, function () use ($client) {
             $result = $client->connect('0.0.0.0', 9502, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
                 // Force close and reconnect to server.
                 $client->close(true);
-                continue;
+                throw new RuntimeException('Connect to server failure.');
             }
-
-            break;
-        }
-        return $client;
+            return $client;
+        });
     }
 
     public function send(array $data)
     {
-        $connection = $this->getConnection();
-        $sendData = json_encode($data);
-        if ($connection->send($sendData . "\r\n") === false) {
-            var_dump('send failure');
-            if ($connection->errCode == 104) {
-                // @TODO Reconnect to server.
+        $sendData = $this->packer->pack($data);
+        $connection = retry(2, function () use ($sendData) {
+            $connection = $this->getConnection();
+            if ($connection->send($sendData . $this->getEof()) === false) {
+                if ($connection->errCode == 104) {
+                    throw new RuntimeException('Connect to server failure.');
+                }
             }
-        }
+            return $connection;
+        });
         $response = $connection->recv($this->recvTimeout);
         return $this->packer->unpack($response);
+    }
+
+    private function getEof()
+    {
+        return "\r\n";
     }
 }
