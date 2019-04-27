@@ -14,7 +14,7 @@ namespace Hyperf\Utils\Packer;
 
 use Hyperf\Contract\PackerInterface;
 
-class PhpSerializer implements PackerInterface
+class PhpSerializerPacker implements PackerInterface
 {
     public function pack($data): string
     {

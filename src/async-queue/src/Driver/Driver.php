@@ -19,7 +19,7 @@ use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Packer\PhpSerializer;
+use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -43,7 +43,7 @@ abstract class Driver implements DriverInterface
     public function __construct(ContainerInterface $container, $config)
     {
         $this->container = $container;
-        $this->packer = $container->get($config['packer'] ?? PhpSerializer::class);
+        $this->packer = $container->get($config['packer'] ?? PhpSerializerPacker::class);
         $this->event = $container->get(EventDispatcherInterface::class);
 
         if (! $this->packer instanceof PackerInterface) {
