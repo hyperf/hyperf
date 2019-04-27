@@ -18,8 +18,8 @@ use Hyperf\AsyncQueue\Event\FailedHandle;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
-use Hyperf\AsyncQueue\Packer\PhpSerializer;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Utils\Packer\PhpSerializer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
