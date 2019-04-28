@@ -4,31 +4,31 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Event;
 
-use Mockery;
-use ReflectionClass;
 use Hyperf\Config\Config;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Event\EventDispatcher;
-use HyperfTest\Event\Event\Alpha;
-use Hyperf\Event\ListenerProvider;
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
-use Hyperf\Event\EventDispatcherFactory;
-use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\Contract\StdoutLoggerInterface;
-use HyperfTest\Event\Listener\BetaListener;
+use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\EventDispatcherFactory;
+use Hyperf\Event\ListenerProvider;
+use Hyperf\Framework\Logger\StdoutLogger;
+use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Listener\AlphaListener;
+use HyperfTest\Event\Listener\BetaListener;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use ReflectionClass;
 
 /**
  * @internal

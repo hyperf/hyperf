@@ -4,20 +4,18 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
-use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
-use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Exception\RuntimeException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

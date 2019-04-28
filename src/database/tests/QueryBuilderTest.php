@@ -4,30 +4,30 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Database;
 
-use Mockery;
-use Hyperf\Di\Container;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Collection;
-use InvalidArgumentException;
-use Hyperf\Paginator\Paginator;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Database\Query\Builder;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Query\Expression as Raw;
-use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression as Raw;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Di\Container;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Context;
+use InvalidArgumentException;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal

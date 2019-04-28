@@ -4,17 +4,17 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyerfTest\Guzzle\Cases;
 
-use Swoole\Coroutine;
-use PHPUnit\Framework\TestCase;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 
 /**
  * @internal

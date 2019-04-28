@@ -1,7 +1,17 @@
 <?php
 
-use Hyperf\Server\SwooleEvent;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 use Hyperf\Server\Server;
+use Hyperf\Server\SwooleEvent;
 
 return [
     'mode' => SWOOLE_BASE,
@@ -15,7 +25,7 @@ return [
             'callbacks' => [
                 SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
-        ]
+        ],
     ],
     'processes' => [
     ],

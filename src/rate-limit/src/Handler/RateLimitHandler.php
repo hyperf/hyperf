@@ -4,9 +4,9 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
@@ -36,8 +36,8 @@ class RateLimitHandler
      * @param int $limit
      * @param int $capacity
      * @param int $timeout
-     * @return TokenBucket
      * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
+     * @return TokenBucket
      */
     public function build(string $key, int $limit, int $capacity, int $timeout)
     {

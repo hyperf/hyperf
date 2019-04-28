@@ -4,20 +4,20 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Database;
 
-use PDO;
-use Mockery;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Database\Query\Builder;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Processors\Processor;
+use Mockery;
+use PDO;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal

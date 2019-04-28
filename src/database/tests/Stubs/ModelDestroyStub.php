@@ -4,18 +4,18 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Model;
 use Mockery;
 use stdClass;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Builder;
 
 class ModelDestroyStub extends Model
 {

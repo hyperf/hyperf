@@ -4,24 +4,24 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Dispatcher;
 
-use Hyperf\Utils\Context;
-use PHPUnit\Framework\TestCase;
 use App\Middlewares\TestMiddleware;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\HttpMessage\Server\Response;
+use Hyperf\Utils\Context;
+use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Hyperf\HttpMessage\Server\Response;
-use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 
 /**
  * @property ProphecyInterface container

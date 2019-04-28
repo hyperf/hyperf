@@ -4,20 +4,20 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Guzzle\Cases;
 
-use Swoole\Coroutine;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Guzzle\CoroutineHandler;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
+use Hyperf\Guzzle\CoroutineHandler;
+use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 
 /**
  * @internal

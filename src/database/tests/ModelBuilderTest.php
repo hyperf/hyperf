@@ -4,34 +4,34 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Database;
 
-use PDO;
-use Closure;
-use Mockery;
-use stdClass;
 use Carbon\Carbon;
+use Closure;
 use Hyperf\Database\Connection;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Register;
-use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\SoftDeletes;
-use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionInterface;
-use HyperfTest\Database\Stubs\ModelStub;
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
+use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Database\Query\Builder as BaseBuilder;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Utils\Collection as BaseCollection;
+use HyperfTest\Database\Stubs\ModelStub;
+use Mockery;
+use PDO;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal

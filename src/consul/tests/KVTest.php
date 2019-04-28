@@ -4,25 +4,25 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.org
- * @document https://wiki.hyperf.org
- * @contact  group@hyperf.org
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Consul;
 
-use Mockery;
-use Hyperf\Consul\KV;
 use GuzzleHttp\Client;
-use Psr\Log\NullLogger;
-use Hyperf\Di\Container;
-use Hyperf\Consul\KVInterface;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Consul\ConsulResponse;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Consul\KV;
+use Hyperf\Consul\KVInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Utils\ApplicationContext;
+use Mockery;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 /**
  * @internal
