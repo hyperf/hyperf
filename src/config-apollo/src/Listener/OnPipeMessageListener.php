@@ -37,11 +37,6 @@ class OnPipeMessageListener implements ListenerInterface
     private $logger;
 
     /**
-     * @var string
-     */
-    private static $releaseKey;
-
-    /**
      * @var \Hyperf\ConfigApollo\ClientInterface
      */
     private $client;
