@@ -21,7 +21,6 @@ class ConfigProvider
         return [
             'dependencies' => [
                 \Redis::class => Redis::class,
-                PoolFactory::class => PoolFactory::class,
             ],
             'commands' => [
             ],
