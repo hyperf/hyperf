@@ -35,12 +35,13 @@ class RateLimitHandler
      * @param string $key
      * @param int $limit
      * @param int $capacity
-     * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
+     * @param int $timeout
      * @return TokenBucket
+     * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
      */
-    public function build(string $key, int $limit, int $capacity)
+    public function build(string $key, int $limit, int $capacity, int $timeout)
     {
-        $storage = make(CoRedisStorage::class, ['key' => $key, 'redis' => $this->redis]);
+        $storage = make(CoRedisStorage::class, ['key' => $key, 'redis' => $this->redis, 'timeout' => $timeout]);
         $rate = make(Rate::class, ['tokens' => $limit, 'unit' => Rate::SECOND]);
         $bucket = make(TokenBucket::class, ['capacity' => $capacity, 'rate' => $rate, 'storage' => $storage]);
         $bucket->bootstrap($capacity);

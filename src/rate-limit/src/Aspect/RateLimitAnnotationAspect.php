@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\RateLimit\Aspect;
 
+use bandwidthThrottle\tokenBucket\storage\StorageException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ArroundInterface;
@@ -20,6 +21,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
 use Hyperf\RateLimit\Exception\RateLimiterException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
+use Swoole\Coroutine;
 
 /**
  * @Aspect
@@ -62,7 +64,6 @@ class RateLimitAnnotationAspect implements ArroundInterface
 
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint
-     * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
      * @return mixed
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -77,11 +78,23 @@ class RateLimitAnnotationAspect implements ArroundInterface
             $bucketsKey = trim(str_replace('/', ':', $this->request->getUri()->getPath()), ':');
         }
 
-        $bucket = $this->rateLimitHandler->build($bucketsKey, $annotation->limit, $annotation->capacity);
+        $bucket = $this->rateLimitHandler->build($bucketsKey, $annotation->limit, $annotation->capacity, $annotation->timeout ?? 1);
 
-        // TODO
-        if ($bucket->consume($annotation->demand ?? 1, $seconds)) {
-            return $proceedingJoinPoint->process();
+        $currentTime = time();
+        $maxTime = $currentTime + $annotation->timeout;
+
+        while(true){
+            try {
+                if ($bucket->consume($annotation->demand ?? 1, $seconds)) {
+                    return $proceedingJoinPoint->process();
+                }
+            } catch (StorageException $exception) {
+            }
+            if (($currentTime += $seconds) < $maxTime) {
+                Coroutine::sleep($seconds);
+                continue;
+            }
+            break;
         }
 
         if (! $annotation->callback || ! is_callable($annotation->callback)) {
