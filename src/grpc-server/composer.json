@@ -14,7 +14,6 @@
     "require": {
         "php": ">=7.2",
         "nikic/fast-route": "^1.3",
-        "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/http-server": "dev-master",
         "hyperf/grpc": "dev-master",
