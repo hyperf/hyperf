@@ -45,4 +45,9 @@ class RateLimit extends AbstractAnnotation
      * @var callable|string
      */
     public $bucketsKey;
+
+    /**
+     * @var int
+     */
+    public $timeout;
 }

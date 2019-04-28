@@ -40,7 +40,7 @@ class CoRedisStorage implements Storage, GlobalScope
      */
     private $key;
 
-    public function __construct($key, $redis)
+    public function __construct($key, $redis, $timeout = 0)
     {
         $key = self::KEY_PREFIX . $key;
         $this->key = $key;
@@ -48,6 +48,7 @@ class CoRedisStorage implements Storage, GlobalScope
         $this->mutex = make(PHPRedisMutex::class, [
             'redisAPIs' => [$redis],
             'name' => $key,
+            'timeout' => $timeout,
         ]);
     }
 
