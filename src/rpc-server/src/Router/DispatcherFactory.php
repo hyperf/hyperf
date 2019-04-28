@@ -101,7 +101,7 @@ class DispatcherFactory
         if (! $methodMetadata) {
             return;
         }
-        $prefix = $this->getServicePrefix($className, $annotation->service);
+        $prefix = $this->getServicePrefix($className, $annotation->name);
         $router = $this->getRouter($annotation->server);
         $mappingAnnotations = [
             RpcMapping::class,

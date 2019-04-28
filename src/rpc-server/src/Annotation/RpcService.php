@@ -23,7 +23,7 @@ class RpcService extends AbstractAnnotation
     /**
      * @var string
      */
-    public $service = '';
+    public $name = '';
 
     /**
      * @var string
