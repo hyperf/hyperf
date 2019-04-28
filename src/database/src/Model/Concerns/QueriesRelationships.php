@@ -13,13 +13,13 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
-use Hyperf\Utils\Str;
-use RuntimeException;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Utils\Str;
+use RuntimeException;
 
 trait QueriesRelationships
 {

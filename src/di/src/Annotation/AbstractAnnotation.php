@@ -41,7 +41,7 @@ abstract class AbstractAnnotation implements AnnotationInterface
     protected function bindMainProperty(string $key, array $value)
     {
         if (isset($value['value'])) {
-            $this->$key = $value['value'];
+            $this->{$key} = $value['value'];
         }
     }
 }

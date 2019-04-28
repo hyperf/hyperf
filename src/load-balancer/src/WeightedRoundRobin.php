@@ -1,13 +1,21 @@
 <?php
 
-namespace Hyperf\LoadBalancer;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\LoadBalancer;
 
 use MathPHP\Algebra;
 
 class WeightedRoundRobin extends AbstractLoadBalancer
 {
-
     /**
      * @var int
      */

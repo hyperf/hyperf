@@ -1,0 +1,52 @@
+{
+    "name": "hyperf/rpc-server",
+    "description": "An abstract rpc server component for Hyperf.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "rpc",
+        "rpc-server"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+        ],
+        "psr-4": {
+            "Hyperf\\RpcServer\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\RpcServer\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}

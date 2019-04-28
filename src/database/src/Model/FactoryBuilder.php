@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model;
 
 use Faker\Generator as Faker;
-use InvalidArgumentException;
 use Hyperf\Utils\Traits\Macroable;
+use InvalidArgumentException;
 
 class FactoryBuilder
 {

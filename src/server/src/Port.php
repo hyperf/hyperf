@@ -44,6 +44,11 @@ class Port
      */
     protected $callbacks = [];
 
+    /**
+     * @var array
+     */
+    protected $settings = [];
+
     public static function build(array $config)
     {
         $port = new static();
@@ -52,6 +57,7 @@ class Port
         isset($config['host']) && $port->setHost($config['host']);
         isset($config['port']) && $port->setPort($config['port']);
         isset($config['callbacks']) && $port->setCallbacks($config['callbacks']);
+        isset($config['settings']) && $port->setSettings($config['settings']);
 
         return $port;
     }
@@ -119,6 +125,17 @@ class Port
     public function setCallbacks(array $callbacks): Port
     {
         $this->callbacks = $callbacks;
+        return $this;
+    }
+
+    public function getSettings(): array
+    {
+        return $this->settings;
+    }
+
+    public function setSettings(array $settings): Port
+    {
+        $this->settings = $settings;
         return $this;
     }
 }

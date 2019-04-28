@@ -1,11 +1,19 @@
 <?php
 
-namespace Hyperf\GrpcClient;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.org
+ * @document https://wiki.hyperf.org
+ * @contact  group@hyperf.org
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\GrpcClient;
 
 final class Status
 {
-
     public const CLOSE_KEYWORD = '>>>SWOOLE|CLOSE<<<';
 
     public const WAIT_PENDDING = 0;
@@ -15,5 +23,4 @@ final class Status
     public const WAIT_CLOSE = 2;
 
     public const WAIT_CLOSE_FORCE = 3;
-
 }

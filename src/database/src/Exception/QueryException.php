@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Database\Exception;
 
 use Exception;
-use PDOException;
 use Hyperf\Utils\Str;
+use PDOException;
 
 class QueryException extends PDOException
 {

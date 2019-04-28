@@ -15,6 +15,7 @@
         "hyperf/framework": "dev-master",
         "hyperf/pool": "dev-master",
         "hyperf/di": "dev-master",
+        "hyperf/utils": "dev-master",
         "php-amqplib/php-amqplib": "^2.7"
     },
     "require-dev": {

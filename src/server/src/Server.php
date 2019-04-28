@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Server;
 
-use Hyperf\Contract\ServerOnRequestInterface;
+use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
-use Hyperf\Framework\SwooleEvent;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Exception\RuntimeException;
 use Psr\Container\ContainerInterface;
@@ -31,12 +31,12 @@ class Server implements ServerInterface
     /**
      * @var bool
      */
-    protected $http = false;
+    protected $enableHttpServer = false;
 
     /**
      * @var bool
      */
-    protected $enableWebsocket = false;
+    protected $enableWebsocketServer = false;
 
     /**
      * @var SwooleServer
@@ -98,13 +98,17 @@ class Server implements ServerInterface
                 $this->server = $this->makeServer($type, $host, $port, $config->getMode(), $sockType);
                 $callbacks = array_replace($this->defaultCallbacks(), $config->getCallbacks(), $callbacks);
                 $this->registerSwooleEvents($this->server, $callbacks, $name);
-                $this->server->set($config->getSettings());
+                $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
+                ServerManager::add($name, [$type, current($this->server->ports)]);
 
                 // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
                 $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
             } else {
+                /** @var \Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
+                $server->getSettings() && $slaveServer->set($server->getSettings());
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
+                ServerManager::add($name, [$type, $slaveServer]);
             }
 
             // Trigger beforeStart event.
@@ -130,15 +134,15 @@ class Server implements ServerInterface
         foreach ($servers as $server) {
             switch ($server->getType() ?? 0) {
                 case ServerInterface::SERVER_HTTP:
-                    $this->http = true;
-                    if (! $this->enableWebsocket) {
+                    $this->enableHttpServer = true;
+                    if (! $this->enableWebsocketServer) {
                         array_unshift($sortServers, $server);
                     } else {
                         $sortServers[] = $server;
                     }
                     break;
                 case ServerInterface::SERVER_WEBSOCKET:
-                    $this->enableWebsocket = true;
+                    $this->enableWebsocketServer = true;
                     array_unshift($sortServers, $server);
                     break;
                 default:
@@ -176,16 +180,12 @@ class Server implements ServerInterface
             if (is_array($callback)) {
                 [$className, $method] = $callback;
                 if (array_key_exists($className, $this->onRequestCallbacks)) {
-                    $this->logger->warning(sprintf('WARN: %s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$callback[0]], $serverName));
+                    $this->logger->warning(sprintf('%s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$callback[0]], $serverName));
                 }
 
                 $this->onRequestCallbacks[$className] = $serverName;
                 $class = $this->container->get($className);
-                if ($event == SwooleEvent::ON_REQUEST) {
-                    if (! $class instanceof ServerOnRequestInterface) {
-                        throw new InvalidArgumentException(sprintf('%s is not instanceof %s', $callback[0], ServerOnRequestInterface::class));
-                    }
-
+                if ($class instanceof MiddlewareInitializerInterface) {
                     $class->initCoreMiddleware($serverName);
                 }
                 $callback = [$class, $method];

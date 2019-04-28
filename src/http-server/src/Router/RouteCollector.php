@@ -65,10 +65,11 @@ class RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
+        $server = $options['server'] ?? 'http';
         foreach ((array) $httpMethod as $method) {
             foreach ($routeDatas as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, $handler);
-                MiddlewareManager::addMiddlewares($routeData[0], $method, $options['middleware'] ?? []);
+                MiddlewareManager::addMiddlewares($server, $routeData[0], $method, $options['middleware'] ?? []);
             }
         }
     }

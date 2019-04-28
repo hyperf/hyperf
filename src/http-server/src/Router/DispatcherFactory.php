@@ -68,7 +68,9 @@ class DispatcherFactory
     {
         Router::init($this);
         foreach ($this->routes as $route) {
-            require_once $route;
+            if (file_exists($route)) {
+                require_once $route;
+            }
         }
     }
 
@@ -116,7 +118,7 @@ class DispatcherFactory
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            $router->addRoute($autoMethods, $path, [$className, $methodName]);
+            $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
@@ -127,13 +129,13 @@ class DispatcherFactory
 
             // Register middlewares.
             foreach ($autoMethods as $autoMethod) {
-                MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
+                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $middlewares);
             }
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
-                $router->addRoute($autoMethods, $path, [$className, $methodName]);
+                $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
                 foreach ($autoMethods as $autoMethod) {
-                    MiddlewareManager::addMiddlewares($path, $autoMethod, $middlewares);
+                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $middlewares);
                 }
             }
         }
@@ -174,6 +176,7 @@ class DispatcherFactory
                     $router->addRoute($mapping->methods, $path, [
                         $className,
                         $methodName,
+                        $annotation->server,
                     ]);
 
                     // Handle method level middlewares.
@@ -185,7 +188,7 @@ class DispatcherFactory
 
                     // Register middlewares.
                     foreach ($mapping->methods as $mappingMethod) {
-                        MiddlewareManager::addMiddlewares($path, $mappingMethod, $middlewares);
+                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $middlewares);
                     }
                 }
             }

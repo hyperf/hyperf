@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Framework;
+namespace Hyperf\Server;
 
 class SwooleEvent
 {
@@ -43,6 +43,21 @@ class SwooleEvent
      * Swoole onRequest event.
      */
     const ON_REQUEST = 'request';
+
+    /**
+     * Swoole onReceive event.
+     */
+    const ON_RECEIVE = 'receive';
+
+    /**
+     * Swoole onConnect event.
+     */
+    const ON_CONNECT = 'connect';
+
+    /**
+     * Swoole onClose event.
+     */
+    const ON_CLOSE = 'close';
 
     /**
      * Before server start, it's not a swoole event.

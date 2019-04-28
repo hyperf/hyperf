@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use LogicException;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Str;
+use LogicException;
 
 class Collection extends BaseCollection
 {

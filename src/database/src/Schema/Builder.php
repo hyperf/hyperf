@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\Schema;
 
 use Closure;
-use LogicException;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use LogicException;
 
 class Builder
 {

@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Schema\Grammars;
 
-use Hyperf\Utils\Fluent;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Utils\Fluent;
 
 class MySqlGrammar extends Grammar
 {

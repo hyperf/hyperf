@@ -13,7 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ServerOnRequestInterface;
+use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
@@ -30,7 +31,7 @@ use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
 
-class Server implements ServerOnRequestInterface
+class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
     /**
      * @var array
@@ -65,12 +66,14 @@ class Server implements ServerOnRequestInterface
     /**
      * @var string
      */
-    private $serverName = 'http';
+    private $serverName;
 
     public function __construct(
+        string $serverName = 'http',
         string $coreHandler,
         ContainerInterface $container
     ) {
+        $this->serverName = $serverName;
         $this->coreHandler = $coreHandler;
         $this->container = $container;
         $this->dispatcher = $container->get(HttpDispatcher::class);
@@ -96,7 +99,7 @@ class Server implements ServerOnRequestInterface
             Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
             Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {

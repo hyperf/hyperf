@@ -19,23 +19,23 @@ class MiddlewareManager
      */
     public static $container = [];
 
-    public static function addMiddleware(string $path, string $method, string $middleware): void
+    public static function addMiddleware(string $server, string $path, string $method, string $middleware): void
     {
         $method = strtoupper($method);
-        static::$container[$path][$method][] = $middleware;
+        static::$container[$server][$path][$method][] = $middleware;
     }
 
-    public static function addMiddlewares(string $path, string $method, array $middlewares): void
+    public static function addMiddlewares(string $server, string $path, string $method, array $middlewares): void
     {
         $method = strtoupper($method);
         foreach ($middlewares as $middleware) {
-            static::$container[$path][$method][] = $middleware;
+            static::$container[$server][$path][$method][] = $middleware;
         }
     }
 
-    public static function get(string $rule, string $method): array
+    public static function get(string $server, string $rule, string $method): array
     {
         $method = strtoupper($method);
-        return static::$container[$rule][$method] ?? [];
+        return static::$container[$server][$rule][$method] ?? [];
     }
 }

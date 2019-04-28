@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Cache\Packer;
+namespace Hyperf\Utils\Packer;
 
 use Hyperf\Contract\PackerInterface;
 
-class PhpSerializer implements PackerInterface
+class PhpSerializerPacker implements PackerInterface
 {
     public function pack($data): string
     {

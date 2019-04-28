@@ -42,4 +42,12 @@ trait Container
     {
         return isset(static::$container[$id]);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function list(): array
+    {
+        return static::$container;
+    }
 }

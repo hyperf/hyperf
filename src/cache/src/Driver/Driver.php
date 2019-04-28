@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
-use Hyperf\Cache\Packer\PhpSerializer;
+use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Hyperf\Contract\PackerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -44,7 +44,7 @@ abstract class Driver implements DriverInterface
         $this->config = $config;
         $this->prefix = $config['prefix'] ?? 'cache:';
 
-        $packerClass = $config['packer'] ?? PhpSerializer::class;
+        $packerClass = $config['packer'] ?? PhpSerializerPacker::class;
         $this->packer = $container->get($packerClass);
     }
 

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database;
 
-use Throwable;
 use Hyperf\Utils\Str;
+use Throwable;
 
 trait DetectsLostConnections
 {

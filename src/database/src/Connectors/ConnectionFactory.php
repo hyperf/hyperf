@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Connectors;
 
-use PDOException;
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\MySqlConnection;
+use Hyperf\Database\PostgresConnection;
+use Hyperf\Database\SQLiteConnection;
+use Hyperf\Database\SqlServerConnection;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlConnection;
-use Hyperf\Database\SQLiteConnection;
+use PDOException;
 use Psr\Container\ContainerInterface;
-use Hyperf\Database\PostgresConnection;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\SqlServerConnection;
 
 class ConnectionFactory
 {

@@ -12,12 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
+use Swoole\Server as SwooleServer;
 
-interface ServerOnRequestInterface
+interface OnReceiveInterface
 {
-    public function initCoreMiddleware(string $serverName): void;
-
-    public function onRequest(SwooleRequest $request, SwooleResponse $response): void;
+    public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void;
 }

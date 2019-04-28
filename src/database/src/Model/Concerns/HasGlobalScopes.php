@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
+use Hyperf\Database\Model\GlobalScope;
+use Hyperf\Database\Model\Scope;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
-use Hyperf\Database\Model\Scope;
-use Hyperf\Database\Model\GlobalScope;
 
 trait HasGlobalScopes
 {

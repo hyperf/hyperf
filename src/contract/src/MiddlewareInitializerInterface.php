@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpServer\Contract;
+namespace Hyperf\Contract;
 
-interface RouterInterface
+interface MiddlewareInitializerInterface
 {
-    public function add();
+    public function initCoreMiddleware(string $serverName): void;
 }
