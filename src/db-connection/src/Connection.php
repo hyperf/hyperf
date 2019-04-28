@@ -47,6 +47,11 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
      */
     protected $config;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
     protected $transaction = false;
 
     public function __construct(ContainerInterface $container, DbPool $pool, array $config)
@@ -54,6 +59,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
         $this->config = $config;
+        $this->logger = $container->get(StdoutLoggerInterface::class);
 
         $this->reconnect();
     }
@@ -80,12 +86,20 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     {
         $this->connection = $this->factory->make($this->config);
 
-        // Reset event dispatcher after db reconnect.
-        if ($this->container->has(EventDispatcherInterface::class)) {
-            if ($this->connection instanceof \Hyperf\Database\Connection) {
+        if ($this->connection instanceof \Hyperf\Database\Connection) {
+            // Reset event dispatcher after db reconnect.
+            if ($this->container->has(EventDispatcherInterface::class)) {
                 $dispatcher = $this->container->get(EventDispatcherInterface::class);
                 $this->connection->setEventDispatcher($dispatcher);
             }
+
+            // Reset reconnector after db reconnect.
+            $this->connection->setReconnector(function ($connection) {
+                $this->logger->warning('Database connection refreshing.');
+                if ($connection instanceof \Hyperf\Database\Connection) {
+                    $this->refresh($connection);
+                }
+            });
         }
 
         $this->lastUseTime = microtime(true);
@@ -101,8 +115,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     {
         if ($this->isTransaction()) {
             $this->rollBack();
-            $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+            $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
         }
         parent::release();
     }
@@ -115,5 +128,20 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function isTransaction(): bool
     {
         return $this->transaction;
+    }
+
+    /**
+     * Refresh pdo and readPdo for current connection.
+     */
+    protected function refresh(\Hyperf\Database\Connection $connection)
+    {
+        $refresh = $this->factory->make($this->config);
+        if ($refresh instanceof \Hyperf\Database\Connection) {
+            $connection->disconnect();
+            $connection->setPdo($refresh->getPdo());
+            $connection->setReadPdo($refresh->getReadPdo());
+        }
+
+        $this->logger->warning('Database connection refreshed.');
     }
 }

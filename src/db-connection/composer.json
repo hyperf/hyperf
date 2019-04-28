@@ -12,6 +12,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "hyperf/framework": "dev-master",
         "hyperf/database": "dev-master",
         "hyperf/di": "dev-master",
         "hyperf/event": "dev-master",
