@@ -18,14 +18,13 @@ use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteParser\Std;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Exception\ConflictAnnotationException;
-use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\Mapping;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\MiddlewareManager;
-use Hyperf\RpcServer\Annotation\RpcMapping;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\Utils\Str;
+use ReflectionMethod;
 
 class DispatcherFactory
 {
@@ -103,36 +102,28 @@ class DispatcherFactory
         }
         $prefix = $this->getServicePrefix($className, $annotation->name);
         $router = $this->getRouter($annotation->server);
-        $mappingAnnotations = [
-            RpcMapping::class,
-        ];
 
-        foreach ($methodMetadata as $methodName => $values) {
-            foreach ($mappingAnnotations as $mappingAnnotation) {
-                /** @var Mapping $mapping */
-                if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path)) {
-                        continue;
-                    }
-                    $path = $mapping->path;
-                    $path = $prefix . $path;
-                    $router->addRoute($path, [
-                        $className,
-                        $methodName,
-                    ]);
+        $publicMethods = ReflectionManager::reflectClass($className)->getMethods(ReflectionMethod::IS_PUBLIC);
 
-                    // Handle method level middlewares.
-                    if (isset($methodMetadata[$methodName])) {
-                        $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
-                        $middlewares = array_merge($methodMiddlewares, $middlewares);
-                    }
-                    $middlewares = array_unique($middlewares);
+        foreach ($publicMethods as $reflectionMethod) {
+            $methodName = $reflectionMethod->getName();
+            $path = $prefix . '/' . $methodName;
+            $router->addRoute($path, [
+                $className,
+                $methodName,
+            ]);
 
-                    // Register middlewares.
-                    MiddlewareManager::addMiddlewares($annotation->server, $path, 'GET', $middlewares);
-                }
+            // Handle method level middlewares.
+            if (isset($methodMetadata[$methodName])) {
+                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
+                $middlewares = array_merge($methodMiddlewares, $middlewares);
             }
+            $middlewares = array_unique($middlewares);
+
+            // Register middlewares.
+            MiddlewareManager::addMiddlewares($annotation->server, $path, 'GET', $middlewares);
         }
+
     }
 
     private function getServicePrefix(string $className, string $prefix): string
@@ -141,10 +132,10 @@ class DispatcherFactory
             $handledNamespace = explode('\\', $className);
             $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
             $handledNamespace = Str::replaceLast('Service', '', $handledNamespace);
-            $prefix = Str::snake($handledNamespace) . '.';
+            $prefix = Str::snake($handledNamespace);
         }
-        if ($prefix[strlen($prefix) - 1] !== '.') {
-            $prefix = $prefix . '.';
+        if ($prefix[0] !== '/') {
+            $prefix = '/' . $prefix;
         }
         return $prefix;
     }
