@@ -15,13 +15,13 @@ namespace Hyperf\Process\Listener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Process\Event\AfterProcessHandle;
+use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
  */
-class AfterProcessHandleListener implements ListenerInterface
+class LogBeforeProcessStartListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -36,16 +36,16 @@ class AfterProcessHandleListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            AfterProcessHandle::class,
+            BeforeProcessHandle::class,
         ];
     }
 
     /**
-     * @param AfterProcessHandle $event
+     * @param BeforeProcessHandle $event
      */
     public function process(object $event)
     {
-        $message = sprintf('Process[%s.%d] stoped.', $event->process->name, $event->index);
+        $message = sprintf('Process[%s.%d] start.', $event->process->name, $event->index);
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
             $logger->info($message);

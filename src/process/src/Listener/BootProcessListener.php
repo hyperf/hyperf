@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @Listener
  */
-class BeforeMainServerStartListener implements ListenerInterface
+class BootProcessListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
