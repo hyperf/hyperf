@@ -23,7 +23,9 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\RpcServer\Annotation\RpcService;
+use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\Utils\Str;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
 class DispatcherFactory
@@ -40,8 +42,14 @@ class DispatcherFactory
      */
     private $dispatchers = [];
 
-    public function __construct()
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
+        $this->eventDispatcher = $eventDispatcher;
         $this->initAnnotationRoute(AnnotationCollector::list());
         $this->initConfigRoute();
     }
@@ -97,9 +105,6 @@ class DispatcherFactory
         array $methodMetadata,
         array $middlewares = []
     ): void {
-        if (! $methodMetadata) {
-            return;
-        }
         $prefix = $this->getServicePrefix($className, $annotation->name);
         $router = $this->getRouter($annotation->server);
 
@@ -122,6 +127,9 @@ class DispatcherFactory
 
             // Register middlewares.
             MiddlewareManager::addMiddlewares($annotation->server, $path, 'GET', $middlewares);
+
+            // Trigger the AfterPathRegister event.
+            $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));
         }
 
     }
