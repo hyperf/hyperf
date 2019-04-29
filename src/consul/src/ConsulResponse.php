@@ -15,10 +15,12 @@ namespace Hyperf\Consul;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * @method int getStatusCode()
  * @method string getReasonPhrase()
+ * @method StreamInterface getBody()
  */
 class ConsulResponse
 {
@@ -47,5 +49,10 @@ class ConsulResponse
             return $data;
         }
         return Arr::get($data, $key, $default);
+    }
+
+    public function getBodyContents(): string
+    {
+        return $this->getBody()->getContents();
     }
 }
