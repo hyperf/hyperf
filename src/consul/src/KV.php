@@ -26,7 +26,7 @@ class KV extends Client implements KVInterface
     public function put($key, $value, array $options = []): ConsulResponse
     {
         $params = [
-            'body' => (string) $value,
+            'body' => json_encode($value),
             'query' => $this->resolveOptions($options, ['dc', 'flags', 'cas', 'acquire', 'release']),
         ];
 

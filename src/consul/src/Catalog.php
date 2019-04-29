@@ -17,7 +17,7 @@ class Catalog extends Client implements CatalogInterface
     public function register($node): ConsulResponse
     {
         $params = [
-            'body' => (string) $node,
+            'body' => json_encode($node),
         ];
 
         return $this->request('GET', '/v1/catalog/register', $params);
@@ -26,7 +26,7 @@ class Catalog extends Client implements CatalogInterface
     public function deregister($node): ConsulResponse
     {
         $params = [
-            'body' => (string) $node,
+            'body' => json_encode($node),
         ];
 
         return $this->request('PUT', '/v1/catalog/deregister', $params);

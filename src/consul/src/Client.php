@@ -20,7 +20,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class Client
+abstract class Client
 {
     const DEFAULT_URI = 'http://127.0.0.1:8500';
 

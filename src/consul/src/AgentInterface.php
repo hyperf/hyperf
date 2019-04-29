@@ -36,7 +36,7 @@ interface AgentInterface
 
     public function failCheck($checkId, array $options = []): ConsulResponse;
 
-    public function registerService($service): ConsulResponse;
+    public function registerService(array $service): ConsulResponse;
 
     public function deregisterService($serviceId): ConsulResponse;
 }
