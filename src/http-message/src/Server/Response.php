@@ -134,9 +134,10 @@ class Response extends \Hyperf\HttpMessage\Base\Response
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {
+                        $value = $cookie->isRaw() ? $cookie->getValue() : rawurlencode($cookie->getValue());
                         $this->swooleResponse->rawcookie(
                             $cookie->getName(),
-                            $cookie->getValue(),
+                            $value,
                             $cookie->getExpiresTime(),
                             $cookie->getPath(),
                             $cookie->getDomain(),
