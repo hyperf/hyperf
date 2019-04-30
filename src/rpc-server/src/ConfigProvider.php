@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer;
 
 use Hyperf\Rpc\Contract\PackerInterface;
+use Hyperf\RpcServer\Register\Adapter\ConsulAgent;
+use Hyperf\RpcServer\Register\Adapter\ConsulAgentFactory;
 use Hyperf\Utils\Packer\JsonPacker;
 
 class ConfigProvider
@@ -23,6 +25,7 @@ class ConfigProvider
             'dependencies' => [
                 Server::class => ServerFactory::class,
                 PackerInterface::class => JsonPacker::class,
+                ConsulAgent::class => ConsulAgentFactory::class,
             ],
             'commands' => [
             ],
