@@ -50,9 +50,4 @@ class ConsulResponse
         }
         return Arr::get($data, $key, $default);
     }
-
-    public function getBodyContents(): string
-    {
-        return $this->getBody()->getContents();
-    }
 }
