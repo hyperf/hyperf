@@ -42,21 +42,32 @@ class PoolFactory
         return $this;
     }
 
-    public function getPool(string $name, callable $callback, array $option = [])
+    public function get(string $name, callable $callback, array $option = []): Pool
     {
         if (! $this->hasConfig($name)) {
             $config = new Config($name, $callback, $option);
             $this->addConfig($config);
         }
 
-        return $this->pools[$name] = make(Pool::class, [
-            'callback' => $callback,
-            'option' => $option,
-        ]);
+        $config = $this->getConfig($name);
+
+        if (! isset($this->pools[$name])) {
+            $this->pools[$name] = make(Pool::class, [
+                'callback' => $config->getCallback(),
+                'option' => $config->getOption(),
+            ]);
+        }
+
+        return $this->pools[$name];
     }
 
     protected function hasConfig(string $name): bool
     {
         return isset($this->configs[$name]);
+    }
+
+    protected function getConfig(string $name): Config
+    {
+        return $this->configs[$name];
     }
 }

@@ -27,6 +27,17 @@ class Pool extends AbstractPool
         parent::__construct($container, $option);
     }
 
+    public function get(): ConnectionInterface
+    {
+        $connection = parent::get();
+
+        defer(function () use ($connection) {
+            $connection->release();
+        });
+
+        return $connection;
+    }
+
     protected function createConnection(): ConnectionInterface
     {
         return make(Connection::class, [

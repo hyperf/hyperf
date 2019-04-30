@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pool\SimpleImpl;
 
 use Hyperf\Pool\Connection as AbstractConnection;
+use Psr\Container\ContainerInterface;
 
 class Connection extends AbstractConnection
 {
@@ -31,7 +32,7 @@ class Connection extends AbstractConnection
 
     public function getActiveConnection()
     {
-        if (! $this->check()) {
+        if (! $this->connection || ! $this->check()) {
             $this->reconnect();
         }
 
