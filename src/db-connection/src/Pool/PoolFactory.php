@@ -24,7 +24,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var DbPool[]
      */
     protected $pools = [];
 
