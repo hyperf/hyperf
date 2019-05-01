@@ -56,6 +56,7 @@ class Container implements ContainerInterface
 
     /**
      * Container constructor.
+     * @param Definition\DefinitionSourceInterface $definitionSource
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {

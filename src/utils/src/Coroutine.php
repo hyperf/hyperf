@@ -49,7 +49,7 @@ class Coroutine
             try {
                 call($callable);
             } catch (Throwable $throwable) {
-                if (ApplicationContext::hasContainter()) {
+                if (ApplicationContext::hasContainer()) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         /* @var LoggerInterface $logger */

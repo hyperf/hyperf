@@ -26,7 +26,7 @@ class ApplicationContext
         return self::$container;
     }
 
-    public static function hasContainter(): bool
+    public static function hasContainer(): bool
     {
         return isset(self::$container);
     }
