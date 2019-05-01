@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RpcServer\Register\Adapter;
+namespace Hyperf\ServiceGovernance\Register;
 
 use Hyperf\Consul\AgentInterface;
 

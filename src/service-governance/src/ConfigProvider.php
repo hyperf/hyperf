@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RpcServer;
+namespace Hyperf\ServiceGovernance;
 
-use Hyperf\Rpc\Contract\PackerInterface;
-use Hyperf\Utils\Packer\JsonPacker;
+use Hyperf\ServiceGovernance\Register\ConsulAgent;
+use Hyperf\ServiceGovernance\Register\ConsulAgentFactory;
 
 class ConfigProvider
 {
@@ -21,8 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Server::class => ServerFactory::class,
-                PackerInterface::class => JsonPacker::class,
+                ConsulAgent::class => ConsulAgentFactory::class,
             ],
             'commands' => [
             ],

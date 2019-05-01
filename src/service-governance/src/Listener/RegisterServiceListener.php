@@ -10,13 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RpcServer\Listener;
+namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\RpcServer\Event\AfterPathRegister;
-use Hyperf\RpcServer\Register\Adapter\ConsulAgent;
+use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -58,7 +58,7 @@ class RegisterServiceListener implements ListenerInterface
                 $address = '127.0.0.1';
                 $port = 9502;
                 if ($this->isRegistered($annotation->name, $address, $port, $annotation->protocol)) {
-                    $this->logger->debug(sprintf('The %s service has been register to the consul already.', $annotation->name));
+                    $this->logger->info(sprintf('The %s service has been register to the consul already.', $annotation->name));
                     return;
                 }
                 $nextId = $this->generateId($this->getLastServiceId($annotation->name));
