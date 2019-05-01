@@ -15,11 +15,10 @@
         "ext-swoole": ">=4.3",
         "psr/container": "^1.0",
         "psr/log": "^1.0",
-        "psr/event-dispatcher": "^0.7",
+        "psr/event-dispatcher": "^1.0",
         "symfony/console": "^4.2",
         "hyperf/contract": "dev-master",
-        "hyperf/utils": "dev-master",
-        "hyperf/framework": "dev-master"
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -28,6 +27,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/framework": "Dump the info after server start.",
+        "hyperf/event": "Dump the info after server start."
     },
     "autoload": {
         "files": [

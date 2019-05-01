@@ -13,8 +13,8 @@
     },
     "require": {
         "php": ">=7.2",
+        "psr/container": "^1.0",
         "nikic/fast-route": "^1.3",
-        "hyperf/di": "dev-master",
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/event": "dev-master",
@@ -28,6 +28,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/di": "Require this component for annotation."
     },
     "autoload": {
         "files": [

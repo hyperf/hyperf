@@ -99,8 +99,10 @@ class Server implements ServerInterface
                 $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
                 ServerManager::add($name, [$type, current($this->server->ports)]);
 
-                // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
-                $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
+                if (class_exists(BeforeMainServerStart::class)) {
+                    // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
+                    $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
+                }
             } else {
                 /** @var \Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
@@ -117,8 +119,10 @@ class Server implements ServerInterface
                 }
             }
 
-            // Trigger BeforeEventStart event.
-            $this->eventDispatcher->dispatch(new BeforeServerStart($name));
+            if (class_exists(BeforeServerStart::class)) {
+                // Trigger BeforeEventStart event.
+                $this->eventDispatcher->dispatch(new BeforeServerStart($name));
+            }
         }
     }
 

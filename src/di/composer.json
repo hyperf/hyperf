@@ -13,7 +13,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/framework": "dev-master",
+        "psr/container": "^1.0",
         "nikic/php-parser": "^4.1",
         "doctrine/annotations": "^1.6",
         "symfony/finder": "^4.1",
@@ -27,6 +27,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
     },
     "autoload": {
         "files": [
