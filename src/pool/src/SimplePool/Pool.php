@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Pool\SimpleImpl;
+namespace Hyperf\Pool\SimplePool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool as AbstractPool;
@@ -25,17 +25,6 @@ class Pool extends AbstractPool
         $this->callback = $callback;
 
         parent::__construct($container, $option);
-    }
-
-    public function get(): ConnectionInterface
-    {
-        $connection = parent::get();
-
-        defer(function () use ($connection) {
-            $connection->release();
-        });
-
-        return $connection;
     }
 
     protected function createConnection(): ConnectionInterface
