@@ -48,6 +48,7 @@ class Connection extends AbstractConnection
 
     public function close(): bool
     {
+        $this->connection = null;
         return true;
     }
 }

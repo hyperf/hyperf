@@ -76,6 +76,8 @@ class PoolHandler extends CoroutineHandler
         $client->execute($path);
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
+            $connection->close();
+            $connection->release();
             return \GuzzleHttp\Promise\rejection_for($ex);
         }
 
