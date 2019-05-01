@@ -16,8 +16,7 @@
         "nikic/fast-route": "^1.3",
         "hyperf/utils": "dev-master",
         "hyperf/http-server": "dev-master",
-        "hyperf/grpc": "dev-master",
-        "grpc/grpc": "^1.15"
+        "hyperf/grpc": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
