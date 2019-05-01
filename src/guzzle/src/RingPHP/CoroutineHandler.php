@@ -23,7 +23,7 @@ use Swoole\Coroutine\Http\Client;
  */
 class CoroutineHandler
 {
-    private $options;
+    protected $options;
 
     public function __construct($options = [])
     {
