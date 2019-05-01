@@ -39,9 +39,12 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     public function listen(): array
     {
-        return [
-            AfterWorkerStart::class,
-        ];
+        if (class_exists(AfterWorkerStart::class)) {
+            return [
+                AfterWorkerStart::class,
+            ];
+        }
+        return [];
     }
 
     /**
