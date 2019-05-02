@@ -21,7 +21,7 @@ use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\ServerException;
 use Hyperf\Rpc\Contract\EofInterface;
 use Hyperf\Rpc\Contract\ResponseInterface;
 use Hyperf\Rpc\Response as Psr7Response;
@@ -126,7 +126,7 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
             var_dump($throwable->getMessage());
             echo '</pre>';
             exit();
-            if (! $throwable instanceof HttpException) {
+            if (! $throwable instanceof ServerException) {
                 $errMsg = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
                 $this->logger->error($errMsg);
             }
@@ -195,4 +195,5 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
         }
         return $response;
     }
+
 }

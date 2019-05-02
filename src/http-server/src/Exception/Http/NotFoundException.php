@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Exception\Http;
 
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\ServerException;
 
-class NotFoundException extends HttpException
+class NotFoundException extends ServerException
 {
 }

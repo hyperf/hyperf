@@ -21,7 +21,7 @@ use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -103,7 +103,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
-            if (! $throwable instanceof HttpException) {
+            if (! $throwable instanceof ServerException) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
                 $errMsg = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
                 $logger->error($errMsg);

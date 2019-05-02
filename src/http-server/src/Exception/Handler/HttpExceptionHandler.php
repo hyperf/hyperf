@@ -14,7 +14,7 @@ namespace Hyperf\HttpServer\Exception\Handler;
 
 use Hyperf\Framework\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -37,6 +37,6 @@ class HttpExceptionHandler extends ExceptionHandler
      */
     public function isValid(Throwable $throwable): bool
     {
-        return $throwable instanceof HttpException;
+        return $throwable instanceof ServerException;
     }
 }

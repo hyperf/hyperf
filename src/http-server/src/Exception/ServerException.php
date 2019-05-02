@@ -12,6 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Exception;
 
-class HttpException extends \RuntimeException
+class ServerException extends \RuntimeException
 {
 }
