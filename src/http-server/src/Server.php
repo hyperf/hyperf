@@ -68,6 +68,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     private $serverName;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         string $serverName = 'http',
         string $coreHandler,
@@ -77,6 +82,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->coreHandler = $coreHandler;
         $this->container = $container;
         $this->dispatcher = $container->get(HttpDispatcher::class);
+        $this->logger = $this->container->get(StdoutLoggerInterface::class);
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -104,9 +110,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             if (! $throwable instanceof ServerException) {
-                $logger = $this->container->get(StdoutLoggerInterface::class);
-                $errMsg = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
-                $logger->error($errMsg);
+                $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
+                $this->logger->error($message);
             }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
