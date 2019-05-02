@@ -27,6 +27,7 @@ use Hyperf\Rpc\Contract\ResponseInterface;
 use Hyperf\Rpc\Response as Psr7Response;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -127,8 +128,8 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
             echo '</pre>';
             exit();
             if (! $throwable instanceof ServerException) {
-                $errMsg = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
-                $this->logger->error($errMsg);
+                $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
+                $this->logger->error($message);
             }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
@@ -155,25 +156,10 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
     private function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
         $data = $this->packer->unpack($data);
-        if (! isset($data['method'])) {
-            $data['method'] = '';
+        if (isset($data['jsonrpc'])) {
+            return $this->buildJsonRpcRequest($fd, $fromId, $data);
         }
-        if (! isset($data['params'])) {
-            $data['params'] = [];
-        }
-        /** @var \Swoole\Server\Port $port */
-        [$type, $port] = ServerManager::get($this->serverName);
-
-        $uri = new Uri();
-        $uri = $uri->withPath($data['method'])
-            ->withScheme('jsonrpc')
-            ->withHost($port->host)
-            ->withPort($port->port);
-        $request = new Psr7Request('GET', $uri);
-        return $request->withAttribute('fd', $fd)
-            ->withAttribute('fromId', $fromId)
-            ->withAttribute('data', $data)
-            ->withParsedBody($data['params']);
+        throw new InvalidArgumentException('Doesn\'t match any protocol.');
     }
 
     private function buildResponse(int $fd, SwooleServer $server): ResponseInterface
@@ -196,4 +182,27 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
         return $response;
     }
 
+    private function buildJsonRpcRequest(int $fd, int $fromId, string $data)
+    {
+        if (! isset($data['method'])) {
+            $data['method'] = '';
+        }
+        if (! isset($data['params'])) {
+            $data['params'] = [];
+        }
+        /** @var \Swoole\Server\Port $port */
+        [$type, $port] = ServerManager::get($this->serverName);
+
+        $uri = (new Uri())
+            ->withPath($data['method'])
+            ->withScheme('jsonrpc')
+            ->withHost($port->host)
+            ->withPort($port->port);
+        return (new Psr7Request('GET', $uri))
+            ->withAttribute('fd', $fd)
+            ->withAttribute('fromId', $fromId)
+            ->withAttribute('data', $data)
+            ->withProtocolVersion($data['jsonrpc'] ?? '2.0')
+            ->withParsedBody($data['params']);
+    }
 }
