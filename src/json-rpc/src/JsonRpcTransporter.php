@@ -21,7 +21,7 @@ use Swoole\Coroutine\Client as SwooleClient;
 class JsonRpcTransporter implements TransporterInterface
 {
     /**
-     * @var LoadBalancerInterface
+     * @var null|LoadBalancerInterface
      */
     private $loadBalancer;
 
@@ -80,7 +80,7 @@ class JsonRpcTransporter implements TransporterInterface
         });
     }
 
-    public function getLoadBalancer(): LoadBalancerInterface
+    public function getLoadBalancer(): ?LoadBalancerInterface
     {
         return $this->loadBalancer;
     }

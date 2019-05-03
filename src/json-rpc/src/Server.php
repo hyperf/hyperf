@@ -67,12 +67,13 @@ class Server extends \Hyperf\RpcServer\Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        $packer = $this->protocolManager->getPacker('jsonrpc-20');
-        $data = $this->container->get($packer)->unpack($data);
+        $class = $this->protocolManager->getPacker('jsonrpc-20');
+        $packer = $this->container->get($class);
+        $data = $packer->unpack($data);
         if (isset($data['jsonrpc'])) {
             return $this->buildJsonRpcRequest($fd, $fromId, $data);
         }
-        throw new InvalidArgumentException('Doesn\'t match any protocol.');
+        throw new InvalidArgumentException('Doesn\'t match JSON RPC protocol.');
     }
 
     protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)

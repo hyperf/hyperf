@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
 class ProtocolManager
@@ -45,27 +46,29 @@ class ProtocolManager
 
     public function getPacker(string $name): string
     {
-        $packer = $this->config->get('protocols.' . $name . '.packer');
-        if (! is_string($packer)) {
-            throw new InvalidArgumentException(sprintf('Packer %s is not exists.', $name));
-        }
-        return $packer;
+        return $this->getTarget($name, 'packer');
     }
 
     public function getTransporter(string $name): string
     {
-        $result = $this->config->get('protocols.' . $name . '.transporter');
-        if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $name));
-        }
-        return $result;
+        return $this->getTarget($name, 'transporter');
     }
 
     public function getPathGenerator(string $name): string
     {
-        $result = $this->config->get('protocols.' . $name . '.path-generator');
+        return $this->getTarget($name, 'path-generator');
+    }
+
+    public function getDataFormatter(string $name): string
+    {
+        return $this->getTarget($name, 'data-formatter');
+    }
+
+    private function getTarget(string $name, string $target)
+    {
+        $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('Path Generator %s is not exists.', $name));
+            throw new InvalidArgumentException(sprintf('Data Formatter %s is not exists.', Str::studly($target, ' ')));
         }
         return $result;
     }

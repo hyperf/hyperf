@@ -19,6 +19,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\ProtocolManager;
@@ -77,6 +78,11 @@ abstract class AbstractServiceClient
     protected $pathGenerator;
 
     /**
+     * @var DataFormatterInterface
+     */
+    protected $dataFormatter;
+
+    /**
      * @var \Hyperf\Contract\ConfigInterface
      */
     protected $config;
@@ -87,10 +93,11 @@ abstract class AbstractServiceClient
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $this->protocolManager = $container->get(ProtocolManager::class);
         $this->pathGenerator = $this->createPathGenerator();
-        $loadBalancer = $this->createLoadBalancer($this->createNodes());
+        $this->dataFormatter = $this->createDataFormatter();
         $this->client = $this->container->get(Client::class)
             ->setPacker($this->createPacker())
-            ->setTransporter($this->createTransporter($loadBalancer));
+            ->setTransporter($this->createTransporter())
+            ->setLoadBalancer($this->createLoadBalancer($this->createNodes()));
     }
 
     protected function __request(string $method, array $params)
@@ -110,13 +117,9 @@ abstract class AbstractServiceClient
         return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
-    protected function __generateData(string $methodName, array $params): array
+    protected function __generateData(string $methodName, array $params)
     {
-        return [
-            'jsonrpc' => '2.0',
-            'method' => $this->__generateRpcPath($methodName),
-            'params' => $params,
-        ];
+        return $this->dataFormatter->format([$this->serviceName, $this->__generateRpcPath($methodName), $params]);
     }
 
     protected function createLoadBalancer(array $nodes): LoadBalancerInterface
@@ -124,7 +127,7 @@ abstract class AbstractServiceClient
         return $this->loadBalancerManager->getInstance($this->loadBalancer)->setNodes($nodes);
     }
 
-    protected function createTransporter(LoadBalancerInterface $loadBalancer): TransporterInterface
+    protected function createTransporter(?LoadBalancerInterface $loadBalancer = null): TransporterInterface
     {
         $transporter = $this->protocolManager->getTransporter($this->protocol);
         if (! class_exists($transporter)) {
@@ -132,7 +135,7 @@ abstract class AbstractServiceClient
         }
         /** @var TransporterInterface $instance */
         $instance = $this->container->get($transporter);
-        $instance->setLoadBalancer($loadBalancer);
+        $loadBalancer && $instance->setLoadBalancer($loadBalancer);
         return $instance;
     }
 
@@ -156,13 +159,20 @@ abstract class AbstractServiceClient
         return $this->container->get($pathGenerator);
     }
 
+    protected function createDataFormatter(): DataFormatterInterface
+    {
+        $dataFormatter = $this->protocolManager->getDataFormatter($this->protocol);
+        if (! class_exists($dataFormatter)) {
+            throw new InvalidArgumentException(sprintf('Data Formatter %s is not exists.', $dataFormatter));
+        }
+        /* @var DataFormatterInterface $dataFormatter */
+        return $this->container->get($dataFormatter);
+    }
+
     protected function createNodes(): array
     {
         if (! $this->container->has(ConfigInterface::class)) {
-            throw new RuntimeException(sprintf(
-                'The object implementation of %s missing.',
-                ConfigInterface::class
-            ));
+            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
         }
         $config = $this->container->get(ConfigInterface::class);
 
@@ -205,9 +215,7 @@ abstract class AbstractServiceClient
     protected function getNodesFromConsul(array $config): array
     {
         if (! $this->container->has(Agent::class)) {
-            throw new InvalidArgumentException(
-                'Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.'
-            );
+            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
         $agent = make(Agent::class, [
             'clientFactory' => function () use ($config) {

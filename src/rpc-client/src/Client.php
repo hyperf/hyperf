@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
+use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use InvalidArgumentException;
 
@@ -27,6 +28,11 @@ class Client
      * @var TransporterInterface
      */
     private $transporter;
+
+    /**
+     * @var LoadBalancerInterface
+     */
+    private $loadBalancer;
 
     public function send($data)
     {
@@ -60,7 +66,24 @@ class Client
 
     public function setTransporter(TransporterInterface $transporter): self
     {
+        if ($this->loadBalancer && ! $transporter->getLoadBalancer()) {
+            $transporter->setLoadBalancer($this->getLoadBalancer());
+        }
         $this->transporter = $transporter;
+        return $this;
+    }
+
+    public function getLoadBalancer(): LoadBalancerInterface
+    {
+        return $this->loadBalancer;
+    }
+
+    public function setLoadBalancer($loadBalancer): self
+    {
+        $this->loadBalancer = $loadBalancer;
+        if ($this->getTransporter()) {
+            $this->getTransporter()->setLoadBalancer($loadBalancer);
+        }
         return $this;
     }
 }

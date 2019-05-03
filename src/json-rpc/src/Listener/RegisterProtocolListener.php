@@ -16,6 +16,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
+use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
@@ -55,6 +56,7 @@ class RegisterProtocolListener implements ListenerInterface
             'packer' => JsonPacker::class,
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
+            'data-formatter' => DataFormatter::class,
         ]);
     }
 }
