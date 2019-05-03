@@ -18,6 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
+                Server::class => ServerFactory::class,
             ],
             'commands' => [
             ],
