@@ -13,8 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 
 class ProtocolManager
 {
@@ -35,15 +34,24 @@ class ProtocolManager
 
     public function getProtocol(string $name): array
     {
-        return Arr::get(static::$protocols, 'protocols.' . $name, []);
+        return $this->config->get('protocols.' . $name, []);
     }
 
-    public function getPacker(string $name): PackerInterface
+    public function getPacker(string $name): string
     {
-        $packer = Arr::get(static::$protocols, 'protocols.' . $name . '.packer');
-        if (! $packer instanceof PackerInterface) {
-            throw new \InvalidArgumentException('Packer does not exist.');
+        $result = $this->config->get('protocols.' . $name . '.packer');
+        if (! is_string($result)) {
+            throw new InvalidArgumentException(sprintf('Packer %s not exists.', $name));
         }
-        return $packer;
+        return $result;
+    }
+
+    public function getTransporter(string $name): string
+    {
+        $result = $this->config->get('protocols.' . $name . '.transporter');
+        if (! is_string($result)) {
+            throw new InvalidArgumentException(sprintf('Transporter %s not exists.', $name));
+        }
+        return $result;
     }
 }
