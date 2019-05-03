@@ -18,7 +18,7 @@ interface TransporterInterface
 {
     public function send(string $data);
 
-    public function getLoadBalancer(): LoadBalancerInterface;
+    public function getLoadBalancer(): ?LoadBalancerInterface;
 
     public function setLoadBalancer(LoadBalancerInterface $loadBalancer);
 }
