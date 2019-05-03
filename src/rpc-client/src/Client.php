@@ -14,6 +14,7 @@ namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use InvalidArgumentException;
 
 class Client
 {
@@ -27,18 +28,39 @@ class Client
      */
     private $transporter;
 
-    public function __construct(
-        PackerInterface $packer,
-        TransporterInterface $transporter
-    ) {
-        $this->packer = $packer;
-        $this->transporter = $transporter;
-    }
-
     public function send($data)
     {
-        $packedData = $this->packer->pack($data);
-        $response = $this->transporter->send($packedData);
-        return $this->packer->unpack($response);
+        if (! $this->packer) {
+            throw new InvalidArgumentException('Packer missing.');
+        }
+        if (! $this->transporter) {
+            throw new InvalidArgumentException('Transporter missing.');
+        }
+        $packer = $this->getPacker();
+        $packedData = $packer->pack($data);
+        $response = $this->getTransporter()->send($packedData);
+        return $packer->unpack($response);
+    }
+
+    public function getPacker(): PackerInterface
+    {
+        return $this->packer;
+    }
+
+    public function setPacker(PackerInterface $packer): self
+    {
+        $this->packer = $packer;
+        return $this;
+    }
+
+    public function getTransporter(): TransporterInterface
+    {
+        return $this->transporter;
+    }
+
+    public function setTransporter(TransporterInterface $transporter): self
+    {
+        $this->transporter = $transporter;
+        return $this;
     }
 }

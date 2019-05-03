@@ -25,16 +25,24 @@ use RuntimeException;
 abstract class AbstractServiceClient
 {
     /**
+     * The service name of the target service.
+     *
      * @var string
      */
     protected $serviceName = '';
 
     /**
+     * The protocol of the target service, this protocol name
+     * needs to register into \Hyperf\Rpc\ProtocolManager.
+     *
      * @var string
      */
     protected $protocol = 'jsonrpc-2.0';
 
     /**
+     * The load balancer of the client, this name of the load balancer
+     * needs to register into \Hyperf\LoadBalancer\LoadBalancerManager.
+     *
      * @var string
      */
     protected $loadBalancer = 'random';
@@ -65,7 +73,9 @@ abstract class AbstractServiceClient
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $this->protocolManager = $container->get(ProtocolManager::class);
         $loadBalancer = $this->createLoadBalancer($this->createNodes());
-        $this->client = new Client($this->createPacker(), $this->createTransporter($loadBalancer));
+        $this->client = $this->container->get(Client::class)
+            ->setPacker($this->createPacker())
+            ->setTransporter($this->createTransporter($loadBalancer));
     }
 
     protected function __request(string $method, array $params)
@@ -117,6 +127,7 @@ abstract class AbstractServiceClient
         if (! class_exists($packer)) {
             throw new InvalidArgumentException(sprintf('Packer %s not exists.', $packer));
         }
+        /** @var PackerInterface $packer */
         return $this->container->get($packer);
     }
 
