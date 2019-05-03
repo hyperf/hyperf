@@ -249,13 +249,8 @@ class Str
 
     /**
      * Limit the number of words in a string.
-     *
-     * @param string $value
-     * @param int $words
-     * @param string $end
-     * @return string
      */
-    public static function words($value, $words = 100, $end = '...')
+    public static function words(string $value, int $words = 100, string $end = '...'): string
     {
         preg_match('/^\s*+(?:\S++\s*+){1,' . $words . '}/u', $value, $matches);
 
@@ -269,11 +264,9 @@ class Str
     /**
      * Parse a Class@method style callback into class and method.
      *
-     * @param string $callback
      * @param null|string $default
-     * @return array
      */
-    public static function parseCallback($callback, $default = null)
+    public static function parseCallback(string $callback, $default = null): array
     {
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
@@ -300,11 +293,8 @@ class Str
 
     /**
      * Generate a more truly "random" alpha-numeric string.
-     *
-     * @param int $length
-     * @return string
      */
-    public static function random($length = 16)
+    public static function random(int $length = 16): string
     {
         $string = '';
 
@@ -321,12 +311,8 @@ class Str
 
     /**
      * Replace a given value in the string sequentially with an array.
-     *
-     * @param string $search
-     * @param string $subject
-     * @return string
      */
-    public static function replaceArray($search, array $replace, $subject)
+    public static function replaceArray(string $search, array $replace, string $subject): string
     {
         foreach ($replace as $value) {
             $subject = static::replaceFirst($search, $value, $subject);
@@ -337,13 +323,8 @@ class Str
 
     /**
      * Replace the first occurrence of a given value in the string.
-     *
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
      */
-    public static function replaceFirst($search, $replace, $subject)
+    public static function replaceFirst(string $search, string  $replace, string $subject): string
     {
         if ($search == '') {
             return $subject;
@@ -360,13 +341,8 @@ class Str
 
     /**
      * Replace the last occurrence of a given value in the string.
-     *
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
      */
-    public static function replaceLast($search, $replace, $subject)
+    public static function replaceLast(string $search, string  $replace, string $subject): string
     {
         $position = strrpos($subject, $search);
 
@@ -379,12 +355,8 @@ class Str
 
     /**
      * Begin a string with a single instance of a given value.
-     *
-     * @param string $value
-     * @param string $prefix
-     * @return string
      */
-    public static function start($value, $prefix)
+    public static function start(string $value, string $prefix): string
     {
         $quoted = preg_quote($prefix, '/');
 
@@ -393,46 +365,32 @@ class Str
 
     /**
      * Convert the given string to upper-case.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function upper($value)
+    public static function upper(string $value): string
     {
         return mb_strtoupper($value, 'UTF-8');
     }
 
     /**
      * Convert the given string to title case.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function title($value)
+    public static function title(string $value): string
     {
         return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
     }
 
     /**
      * Get the singular form of an English word.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function singular($value)
+    public static function singular(string $value): string
     {
         return Pluralizer::singular($value);
     }
 
     /**
      * Generate a URL friendly "slug" from a given string.
-     *
-     * @param string $title
-     * @param string $separator
-     * @param null|string $language
-     * @return string
      */
-    public static function slug($title, $separator = '-', $language = 'en')
+    public static function slug(string $title, string $separator = '-', string $language = 'en'): string
     {
         $title = $language ? static::ascii($title, $language) : $title;
 
@@ -455,12 +413,8 @@ class Str
 
     /**
      * Convert a string to snake case.
-     *
-     * @param string $value
-     * @param string $delimiter
-     * @return string
      */
-    public static function snake($value, $delimiter = '_')
+    public static function snake(string $value, string $delimiter = '_'): string
     {
         $key = $value;
 
@@ -480,11 +434,9 @@ class Str
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
-    public static function startsWith($haystack, $needles)
+    public static function startsWith(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
             if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
@@ -497,11 +449,8 @@ class Str
 
     /**
      * Convert a value to studly caps case.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function studly($value)
+    public static function studly(string $value, string $gap = ''): string
     {
         $key = $value;
 
@@ -511,7 +460,7 @@ class Str
 
         $value = ucwords(str_replace(['-', '_'], ' ', $value));
 
-        return static::$studlyCache[$key] = str_replace(' ', '', $value);
+        return static::$studlyCache[$key] = str_replace(' ', $gap, $value);
     }
 
     /**
@@ -529,11 +478,8 @@ class Str
 
     /**
      * Make a string's first character uppercase.
-     *
-     * @param string $string
-     * @return string
      */
-    public static function ucfirst($string)
+    public static function ucfirst(string $string): string
     {
         return static::upper(static::substr($string, 0, 1)) . static::substr($string, 1);
     }
@@ -543,9 +489,8 @@ class Str
      * Note: Adapted from Stringy\Stringy.
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
-     * @return array
      */
-    protected static function charsArray()
+    protected static function charsArray(): array
     {
         static $charsArray;
 
@@ -1094,10 +1039,9 @@ class Str
      * Note: Adapted from Stringy\Stringy.
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
-     * @param string $language
      * @return null|array
      */
-    protected static function languageSpecificCharsArray($language)
+    protected static function languageSpecificCharsArray(string $language)
     {
         static $languageSpecific;
 
