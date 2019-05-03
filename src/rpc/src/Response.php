@@ -14,7 +14,6 @@ namespace Hyperf\Rpc;
 
 use Hyperf\Rpc\Contract\EofInterface;
 use Hyperf\Rpc\Contract\ResponseInterface;
-use Swoole\Server as SwooleServer;
 
 class Response extends \Hyperf\HttpMessage\Base\Response implements ResponseInterface, EofInterface
 {
@@ -34,22 +33,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements ResponseInte
     private $eof;
 
     /**
-     * @var SwooleServer
-     */
-    private $server;
-
-    /**
      * @var null|array
      */
     private $error;
 
-    public function __construct(int $fd, SwooleServer $server)
+    public function __construct(int $fd)
     {
-        $this->server = $server;
         $this->fd = $fd;
     }
 
-    public function send(): bool
+    public function __toString()
     {
         $sendData = [
             'jsonrpc' => '2.0',
@@ -60,18 +53,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements ResponseInte
         } else {
             $sendData['result'] = $this->getBody()->getContents();
         }
-        return $this->server->send($this->fd, json_encode($sendData) . $this->getEof());
-    }
-
-    public function getServer(): SwooleServer
-    {
-        return $this->server;
-    }
-
-    public function setServer(SwooleServer $server): self
-    {
-        $this->server = $server;
-        return $this;
+        return json_encode($sendData) . $this->getEof();
     }
 
     public function getError(): array
