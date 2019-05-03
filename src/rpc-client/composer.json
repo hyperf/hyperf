@@ -7,12 +7,15 @@
         "swoole",
         "hyperf",
         "rpc",
-        "rpc-server"
+        "rpc-client",
+        "json-rpc"
     ],
     "support": {
     },
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "psr/container": "^1.0",
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -21,6 +24,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/consul": "For fetch the nodes info from consul.",
+        "hyperf/di": "For better container experience."
     },
     "autoload": {
         "files": [

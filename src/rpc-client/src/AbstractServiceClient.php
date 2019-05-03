@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
+use Hyperf\Consul\Agent;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
@@ -66,6 +69,11 @@ abstract class AbstractServiceClient
      * @var \Hyperf\Rpc\ProtocolManager
      */
     protected $protocolManager;
+
+    /**
+     * @var \Hyperf\Contract\ConfigInterface
+     */
+    protected $config;
 
     public function __construct(ContainerInterface $container)
     {
@@ -127,12 +135,77 @@ abstract class AbstractServiceClient
         if (! class_exists($packer)) {
             throw new InvalidArgumentException(sprintf('Packer %s not exists.', $packer));
         }
-        /** @var PackerInterface $packer */
+        /* @var PackerInterface $packer */
         return $this->container->get($packer);
     }
 
     protected function createNodes(): array
     {
-        return [new Node('127.0.0.1', 9502)];
+        if (! $this->container->has(ConfigInterface::class)) {
+            throw new RuntimeException(sprintf(
+                'The object implementation of %s missing.',
+                ConfigInterface::class
+            ));
+        }
+        $config = $this->container->get(ConfigInterface::class);
+
+        // According to the registry config of the consumer, retrieve the nodes.
+        $consumers = $config->get('services.consumers');
+        foreach ($consumers as $consumer) {
+            if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
+                break;
+            }
+        }
+        // Current $consumer is the config of the specified consumer.
+        if (isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
+            // According to the protocol and address of the registry, retrieve the nodes.
+            switch ($registryProtocol = $consumer['registry']['protocol'] ?? '') {
+                case 'consul':
+                    $nodes = $this->getNodesFromConsul($consumer['registry'] ?? []);
+                    break;
+                default:
+                    throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
+                    break;
+            }
+            return $nodes;
+        }
+        if (isset($consumer['nodes'])) {
+            // Not exists the registry config, then looking for the 'nodes' property.
+            $nodes = [];
+            foreach ($consumer['nodes'] ?? [] as $item) {
+                if (isset($item['host'], $item['port'])) {
+                    if (! is_int($item['port'])) {
+                        throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
+                    }
+                    $nodes[] = new Node($item['host'], $item['port']);
+                }
+            }
+            return $nodes;
+        }
+        throw new InvalidArgumentException('Config of registry or nodes missing.');
+    }
+
+    protected function getNodesFromConsul(array $config): array
+    {
+        if (! $this->container->has(Agent::class)) {
+            throw new InvalidArgumentException(
+                'Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.'
+            );
+        }
+        $agent = make(Agent::class, [
+            'clientFactory' => function () use ($config) {
+                return $this->container->get(ClientFactory::class)->create([
+                    'base_uri' => $config['address'] ?? null,
+                ]);
+            },
+        ]);
+        $services = $agent->services()->json();
+        $nodes = [];
+        foreach ($services as $serviceId => $service) {
+            if (isset($service['Service'], $service['Address'], $service['Port']) && $service['Service'] === $this->serviceName) {
+                $nodes[] = new Node($service['Address'], $service['Port']);
+            }
+        }
+        return $nodes;
     }
 }
