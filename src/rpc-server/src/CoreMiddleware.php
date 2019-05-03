@@ -61,8 +61,7 @@ class CoreMiddleware implements \Psr\Http\Server\MiddlewareInterface
          *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
          *            [self::FOUND, $handler, ['varName' => 'value', ...]]
          */
-        $path = substr($request->getUri()->getPath(), 1);
-        $routes = $this->dispatcher->dispatch('GET', $path);
+        $routes = $this->dispatcher->dispatch('GET', $request->getUri()->getPath());
         switch ($routes[0]) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->responseNotFound();
