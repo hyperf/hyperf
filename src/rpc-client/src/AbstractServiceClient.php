@@ -17,7 +17,7 @@ use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\RpcServer\ProtocolManager;
+use Hyperf\Rpc\ProtocolManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -55,7 +55,7 @@ abstract class AbstractServiceClient
     protected $loadBalancerManager;
 
     /**
-     * @var \Hyperf\RpcServer\ProtocolManager
+     * @var \Hyperf\Rpc\ProtocolManager
      */
     protected $protocolManager;
 

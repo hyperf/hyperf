@@ -17,7 +17,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\RpcClient\Transporter\JsonRpcTransporter;
-use Hyperf\RpcServer\ProtocolManager;
+use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
 
 /**
