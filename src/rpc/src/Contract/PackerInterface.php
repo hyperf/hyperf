@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Rpc\Contract;
 
+/**
+ * This interface ONLY use for retrieve the packer from DI container,
+ * Please DONOT implement this interface, should ALWAYS implement the
+ * \Hyperf\Contract\PackerInterface interface.
+ */
 interface PackerInterface extends \Hyperf\Contract\PackerInterface
 {
 }
