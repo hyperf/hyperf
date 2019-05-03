@@ -19,6 +19,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\ProtocolManager;
 use InvalidArgumentException;
@@ -71,6 +72,11 @@ abstract class AbstractServiceClient
     protected $protocolManager;
 
     /**
+     * @var PathGeneratorInterface
+     */
+    protected $pathGenerator;
+
+    /**
      * @var \Hyperf\Contract\ConfigInterface
      */
     protected $config;
@@ -80,6 +86,7 @@ abstract class AbstractServiceClient
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $this->protocolManager = $container->get(ProtocolManager::class);
+        $this->pathGenerator = $this->createPathGenerator();
         $loadBalancer = $this->createLoadBalancer($this->createNodes());
         $this->client = $this->container->get(Client::class)
             ->setPacker($this->createPacker())
@@ -100,7 +107,7 @@ abstract class AbstractServiceClient
         if (! $this->serviceName) {
             throw new InvalidArgumentException('Parameter $serviceName missing.');
         }
-        return '/' . $this->serviceName . '/' . $methodName;
+        return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
     protected function __generateData(string $methodName, array $params): array
@@ -121,7 +128,7 @@ abstract class AbstractServiceClient
     {
         $transporter = $this->protocolManager->getTransporter($this->protocol);
         if (! class_exists($transporter)) {
-            throw new InvalidArgumentException(sprintf('Transporter %s not exists.', $transporter));
+            throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $transporter));
         }
         /** @var TransporterInterface $instance */
         $instance = $this->container->get($transporter);
@@ -133,10 +140,20 @@ abstract class AbstractServiceClient
     {
         $packer = $this->protocolManager->getPacker($this->protocol);
         if (! class_exists($packer)) {
-            throw new InvalidArgumentException(sprintf('Packer %s not exists.', $packer));
+            throw new InvalidArgumentException(sprintf('Packer %s is not exists.', $packer));
         }
         /* @var PackerInterface $packer */
         return $this->container->get($packer);
+    }
+
+    protected function createPathGenerator(): PathGeneratorInterface
+    {
+        $pathGenerator = $this->protocolManager->getPathGenerator($this->protocol);
+        if (! class_exists($pathGenerator)) {
+            throw new InvalidArgumentException(sprintf('Path Generator %s is not exists.', $pathGenerator));
+        }
+        /* @var PathGeneratorInterface $pathGenerator */
+        return $this->container->get($pathGenerator);
     }
 
     protected function createNodes(): array
@@ -169,8 +186,8 @@ abstract class AbstractServiceClient
             }
             return $nodes;
         }
+        // Not exists the registry config, then looking for the 'nodes' property.
         if (isset($consumer['nodes'])) {
-            // Not exists the registry config, then looking for the 'nodes' property.
             $nodes = [];
             foreach ($consumer['nodes'] ?? [] as $item) {
                 if (isset($item['host'], $item['port'])) {
@@ -203,6 +220,7 @@ abstract class AbstractServiceClient
         $nodes = [];
         foreach ($services as $serviceId => $service) {
             if (isset($service['Service'], $service['Address'], $service['Port']) && $service['Service'] === $this->serviceName) {
+                // @TODO Get and set the weight property.
                 $nodes[] = new Node($service['Address'], $service['Port']);
             }
         }

@@ -32,6 +32,12 @@ class ProtocolManager
         return $this->config->set('protocols.' . $name, $data);
     }
 
+    public function registerOrAppend(string $name, array $data)
+    {
+        $key = 'protocols.' . $name;
+        return $this->config->set($key, array_merge($this->config->get($key, []), $data));
+    }
+
     public function getProtocol(string $name): array
     {
         return $this->config->get('protocols.' . $name, []);
@@ -39,18 +45,27 @@ class ProtocolManager
 
     public function getPacker(string $name): string
     {
-        $result = $this->config->get('protocols.' . $name . '.packer');
-        if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('Packer %s not exists.', $name));
+        $packer = $this->config->get('protocols.' . $name . '.packer');
+        if (! is_string($packer)) {
+            throw new InvalidArgumentException(sprintf('Packer %s is not exists.', $name));
         }
-        return $result;
+        return $packer;
     }
 
     public function getTransporter(string $name): string
     {
         $result = $this->config->get('protocols.' . $name . '.transporter');
         if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('Transporter %s not exists.', $name));
+            throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $name));
+        }
+        return $result;
+    }
+
+    public function getPathGenerator(string $name): string
+    {
+        $result = $this->config->get('protocols.' . $name . '.path-generator');
+        if (! is_string($result)) {
+            throw new InvalidArgumentException(sprintf('Path Generator %s is not exists.', $name));
         }
         return $result;
     }
