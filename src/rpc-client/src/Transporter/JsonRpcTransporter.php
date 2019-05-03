@@ -26,6 +26,11 @@ class JsonRpcTransporter implements TransporterInterface
     private $loadBalancer;
 
     /**
+     * @var Node[]
+     */
+    private $nodes = [];
+
+    /**
      * @var float
      */
     private $connectTimeout = 5;
@@ -35,8 +40,12 @@ class JsonRpcTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
-    public function __construct(LoadBalancerInterface $loadBalancer)
+    public function __construct(array $nodes = [], ?LoadBalancerInterface $loadBalancer = null)
     {
+        $this->nodes = $nodes;
+        if ($loadBalancer instanceof LoadBalancerInterface) {
+            $loadBalancer->setNodes($nodes);
+        }
         $this->loadBalancer = $loadBalancer;
     }
 
@@ -71,15 +80,31 @@ class JsonRpcTransporter implements TransporterInterface
         });
     }
 
+    public function getLoadBalancer(): LoadBalancerInterface
+    {
+        return $this->loadBalancer;
+    }
+
+    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): self
+    {
+        $this->loadBalancer = $loadBalancer;
+        return $this;
+    }
+
     private function getEof()
     {
         return "\r\n";
     }
 
+    /**
+     * If the load balancer is exists, then the node will select by the load balancer,
+     * otherwise will get a random node.
+     */
     private function getNode(): Node
     {
-        /** @var \Hyperf\LoadBalancer\Node $node */
-        $node = $this->loadBalancer->select();
-        return $node;
+        if ($this->loadBalancer instanceof LoadBalancerInterface) {
+            return $this->loadBalancer->select();
+        }
+        return $this->nodes[array_rand($this->nodes)];
     }
 }

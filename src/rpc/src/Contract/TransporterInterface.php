@@ -12,7 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Rpc\Contract;
 
+use Hyperf\LoadBalancer\LoadBalancerInterface;
+
 interface TransporterInterface
 {
     public function send(string $data);
+
+    public function getLoadBalancer(): LoadBalancerInterface;
+
+    public function setLoadBalancer(LoadBalancerInterface $loadBalancer);
 }
