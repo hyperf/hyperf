@@ -19,12 +19,32 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Rpc\Response as Psr7Response;
 use Hyperf\Server\ServerManager;
 use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
 class Server extends \Hyperf\RpcServer\Server
 {
+
+    /**
+     * @var ProtocolManager
+     */
+    protected $protocolManager;
+
+    public function __construct(
+        string $serverName,
+        string $coreHandler,
+        ContainerInterface $container,
+        $dispatcher,
+        LoggerInterface $logger,
+        ProtocolManager $protocolManager
+    ) {
+        parent::__construct($serverName, $coreHandler, $container, $dispatcher, $logger);
+        $this->protocolManager = $protocolManager;
+    }
+
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
     {
         $response = new Psr7Response($fd, $server);
@@ -47,8 +67,7 @@ class Server extends \Hyperf\RpcServer\Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        $protocolManager = $this->container->get(ProtocolManager::class);
-        $packer = $protocolManager->getPacker('jsonrpc-20');
+        $packer = $this->protocolManager->getPacker('jsonrpc-20');
         $data = $this->container->get($packer)->unpack($data);
         if (isset($data['jsonrpc'])) {
             return $this->buildJsonRpcRequest($fd, $fromId, $data);
