@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
+use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
-use Hyperf\LoadBalancer\Random;
 use Hyperf\Rpc\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\RpcClient\Transporter\JsonRpcTransporter;
@@ -27,7 +27,12 @@ abstract class AbstractServiceClient
     /**
      * @var string
      */
-    public $serviceName = '';
+    protected $serviceName = '';
+
+    /**
+     * @var string
+     */
+    protected $loadBalancer = 'random';
 
     /**
      * @var \Hyperf\RpcClient\Client
@@ -39,17 +44,22 @@ abstract class AbstractServiceClient
      */
     protected $container;
 
+    /**
+     * @var \Hyperf\LoadBalancer\LoadBalancerManager
+     */
+    protected $loadBalancerManager;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $nodes = $this->createNodes();
-        $loadBalancer = $this->createLoadBalancer($nodes);
+        $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
+        $loadBalancer = $this->createLoadBalancer($this->createNodes());
         $this->client = new Client($this->createPacker(), $this->createTransporter($loadBalancer));
     }
 
-    protected function __request(string $methodName, array $params)
+    protected function __request(string $method, array $params)
     {
-        $response = $this->client->send($this->__generateData($methodName, $params));
+        $response = $this->client->send($this->__generateData($method, $params));
         if (is_array($response) && isset($response['result'])) {
             return $response['result'];
         }
@@ -75,7 +85,7 @@ abstract class AbstractServiceClient
 
     protected function createLoadBalancer(array $nodes): LoadBalancerInterface
     {
-        return new Random($nodes);
+        return $this->loadBalancerManager->getInstance($this->loadBalancer)->setNodes($nodes);
     }
 
     protected function createTransporter(LoadBalancerInterface $loadBalancer): TransporterInterface

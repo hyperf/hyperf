@@ -19,8 +19,21 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
      */
     protected $nodes;
 
+    /**
+     * @param \Hyperf\LoadBalancer\Node[]|iterable $nodes
+     */
     public function __construct(iterable $nodes = [])
     {
         $this->nodes = $nodes;
+    }
+
+    /**
+     * @param \Hyperf\LoadBalancer\Node[]|iterable $nodes
+     * @return $this
+     */
+    public function setNodes(iterable $nodes)
+    {
+        $this->nodes = $nodes;
+        return $this;
     }
 }

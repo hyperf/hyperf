@@ -18,4 +18,10 @@ interface LoadBalancerInterface
      * Select an item via the load balancer.
      */
     public function select(array ...$parameters): Node;
+
+    /**
+     * @param \Hyperf\LoadBalancer\Node[]|iterable $nodes
+     * @return $this
+     */
+    public function setNodes(iterable $nodes);
 }
