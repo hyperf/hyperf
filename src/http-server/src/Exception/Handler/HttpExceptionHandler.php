@@ -14,7 +14,7 @@ namespace Hyperf\HttpServer\Exception\Handler;
 
 use Hyperf\Framework\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpServer\Exception\ServerException;
+use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

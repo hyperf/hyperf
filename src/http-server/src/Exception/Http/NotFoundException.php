@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Exception\Http;
 
-use Hyperf\HttpServer\Exception\ServerException;
+use Hyperf\Server\Exception\ServerException;
 
 class NotFoundException extends ServerException
 {

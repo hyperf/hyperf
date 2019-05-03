@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpServer\Exception;
+namespace Hyperf\Server\Exception;
 
-class ServerException extends \RuntimeException
+class ServerException extends RuntimeException
 {
 }
