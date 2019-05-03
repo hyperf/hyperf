@@ -10,13 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RpcServer\Listener;
+namespace Hyperf\JsonRpc\Listener;
 
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
-use Hyperf\RpcClient\Transporter\JsonRpcTransporter;
+use Hyperf\JsonRpc\JsonRpcTransporter;
+use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
 
@@ -53,6 +54,7 @@ class RegisterProtocolListener implements ListenerInterface
         $this->protocolManager->register('jsonrpc-2.0', [
             'packer' => JsonPacker::class,
             'transporter' => JsonRpcTransporter::class,
+            'path-generator' => PathGenerator::class,
         ]);
     }
 }
