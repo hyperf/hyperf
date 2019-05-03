@@ -68,7 +68,7 @@ class RegisterServiceListener implements ListenerInterface
                     'Address' => $address,
                     'Port' => $port,
                     'Meta' => [
-                        'Protocol' => 'jsonrpc-2.0',
+                        'Protocol' => 'jsonrpc-20',
                     ],
                 ]);
                 if ($response->getStatusCode() === 200) {

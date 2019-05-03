@@ -41,7 +41,7 @@ abstract class AbstractServiceClient
      *
      * @var string
      */
-    protected $protocol = 'jsonrpc-2.0';
+    protected $protocol = 'jsonrpc-20';
 
     /**
      * The load balancer of the client, this name of the load balancer

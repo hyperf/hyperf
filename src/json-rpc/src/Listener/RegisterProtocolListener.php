@@ -51,7 +51,7 @@ class RegisterProtocolListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $this->protocolManager->register('jsonrpc-2.0', [
+        $this->protocolManager->register('jsonrpc-20', [
             'packer' => JsonPacker::class,
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
