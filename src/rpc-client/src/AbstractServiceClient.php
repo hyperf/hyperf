@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
+use Hyperf\Contract\PackerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
-use Hyperf\Rpc\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\RpcClient\Transporter\JsonRpcTransporter;
+use Hyperf\RpcServer\ProtocolManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -28,6 +28,11 @@ abstract class AbstractServiceClient
      * @var string
      */
     protected $serviceName = '';
+
+    /**
+     * @var string
+     */
+    protected $protocol = 'jsonrpc-2.0';
 
     /**
      * @var string
@@ -49,10 +54,16 @@ abstract class AbstractServiceClient
      */
     protected $loadBalancerManager;
 
+    /**
+     * @var \Hyperf\RpcServer\ProtocolManager
+     */
+    protected $protocolManager;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
+        $this->protocolManager = $container->get(ProtocolManager::class);
         $loadBalancer = $this->createLoadBalancer($this->createNodes());
         $this->client = new Client($this->createPacker(), $this->createTransporter($loadBalancer));
     }
@@ -90,12 +101,23 @@ abstract class AbstractServiceClient
 
     protected function createTransporter(LoadBalancerInterface $loadBalancer): TransporterInterface
     {
-        return new JsonRpcTransporter($loadBalancer);
+        $transporter = $this->protocolManager->getTransporter($this->protocol);
+        if (! class_exists($transporter)) {
+            throw new InvalidArgumentException(sprintf('Transporter %s not exists.', $transporter));
+        }
+        /** @var TransporterInterface $instance */
+        $instance = $this->container->get($transporter);
+        $instance->setLoadBalancer($loadBalancer);
+        return $instance;
     }
 
     protected function createPacker(): PackerInterface
     {
-        return $this->container->get(PackerInterface::class);
+        $packer = $this->protocolManager->getPacker($this->protocol);
+        if (! class_exists($packer)) {
+            throw new InvalidArgumentException(sprintf('Packer %s not exists.', $packer));
+        }
+        return $this->container->get($packer);
     }
 
     protected function createNodes(): array
