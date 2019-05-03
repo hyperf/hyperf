@@ -21,8 +21,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Client::class => ClientFactory::class,
-                //PackerInterface::class => JsonPacker::class,
             ],
             'commands' => [
             ],
