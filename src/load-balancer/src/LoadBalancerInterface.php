@@ -20,8 +20,8 @@ interface LoadBalancerInterface
     public function select(array ...$parameters): Node;
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[]|iterable $nodes
+     * @param \Hyperf\LoadBalancer\Node[] $nodes
      * @return $this
      */
-    public function setNodes(iterable $nodes);
+    public function setNodes(array $nodes);
 }
