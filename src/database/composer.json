@@ -15,7 +15,7 @@
         "hyperf/paginator": "dev-master",
         "psr/container": "^1.0",
         "nesbot/carbon": "^2.0",
-        "psr/event-dispatcher": "^0.7"
+        "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
