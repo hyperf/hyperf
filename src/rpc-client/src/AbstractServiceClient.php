@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
+use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
 use Hyperf\Rpc\Contract\PackerInterface;
+use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\RpcClient\Transporter\JsonRpcTransporter;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -32,14 +34,17 @@ abstract class AbstractServiceClient
      */
     protected $client;
 
+    /**
+     * @var ContainerInterfaces
+     */
+    protected $container;
+
     public function __construct(ContainerInterface $container)
     {
-        $nodes = value(function () {
-            // Retrieve the nodes from service center.
-            return [new Node('127.0.0.1', 9502)];
-        });
-        $loadBalancer = new Random($nodes);
-        $this->client = new Client($container->get(PackerInterface::class), new JsonRpcTransporter($loadBalancer));
+        $this->container = $container;
+        $nodes = $this->createNodes();
+        $loadBalancer = $this->createLoadBalancer($nodes);
+        $this->client = new Client($this->createPacker(), $this->createTransporter($loadBalancer));
     }
 
     protected function __request(string $methodName, array $params)
@@ -59,12 +64,32 @@ abstract class AbstractServiceClient
         return '/' . $this->serviceName . '/' . $methodName;
     }
 
-    protected function __generateData(string $methodName, array $params)
+    protected function __generateData(string $methodName, array $params): array
     {
         return [
             'jsonrpc' => '2.0',
             'method' => $this->__generateRpcPath($methodName),
             'params' => $params,
         ];
+    }
+
+    protected function createLoadBalancer(array $nodes): LoadBalancerInterface
+    {
+        return new Random($nodes);
+    }
+
+    protected function createTransporter(LoadBalancerInterface $loadBalancer): TransporterInterface
+    {
+        return new JsonRpcTransporter($loadBalancer);
+    }
+
+    protected function createPacker(): PackerInterface
+    {
+        return $this->container->get(PackerInterface::class);
+    }
+
+    protected function createNodes(): array
+    {
+        return [new Node('127.0.0.1', 9502)];
     }
 }
