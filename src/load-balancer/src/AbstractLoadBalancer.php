@@ -19,7 +19,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
      */
     protected $nodes;
 
-    public function __construct(iterable $nodes)
+    public function __construct(iterable $nodes = [])
     {
         $this->nodes = $nodes;
     }
