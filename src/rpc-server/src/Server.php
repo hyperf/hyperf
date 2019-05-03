@@ -123,10 +123,6 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 
             $response = $this->dispatcher->dispatch($request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
-            echo '<pre>';
-            var_dump($throwable->getMessage());
-            echo '</pre>';
-            exit();
             if (! $throwable instanceof ServerException) {
                 $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
                 $this->logger->error($message);
@@ -182,7 +178,7 @@ class Server implements OnReceiveInterface, MiddlewareInitializerInterface
         return $response;
     }
 
-    private function buildJsonRpcRequest(int $fd, int $fromId, string $data)
+    private function buildJsonRpcRequest(int $fd, int $fromId, array $data)
     {
         if (! isset($data['method'])) {
             $data['method'] = '';

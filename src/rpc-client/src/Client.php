@@ -13,78 +13,32 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
-use Hyperf\RpcClient\Pool\PoolFactory;
-use RuntimeException;
-use Swoole\Coroutine\Client as SwooleClient;
+use Hyperf\Rpc\Contract\TransporterInterface;
 
 class Client
 {
-    /**
-     * @var float
-     */
-    private $connectTimeout = 5;
-
-    /**
-     * @var float
-     */
-    private $recvTimeout = 5;
-
-    /**
-     * @var array
-     */
-    private $config;
-
     /**
      * @var PackerInterface
      */
     private $packer;
 
     /**
-     * @var PoolFactory
+     * @var TransporterInterface
      */
-    private $poolFactory;
+    private $transporter;
 
-    public function __construct(array $config, PackerInterface $packer, PoolFactory $poolFactory)
-    {
-        $this->config = $config;
+    public function __construct(
+        PackerInterface $packer,
+        TransporterInterface $transporter
+    ) {
         $this->packer = $packer;
-        $this->poolFactory = $poolFactory;
+        $this->transporter = $transporter;
     }
 
-    public function getConnection(): SwooleClient
+    public function send($data)
     {
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
-
-        return retry(2, function () use ($client) {
-            $result = $client->connect($this->config['host'], $this->config['port'], $this->connectTimeout);
-            if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
-                // Force close and reconnect to server.
-                $client->close(true);
-                throw new RuntimeException('Connect to server failed.');
-            }
-            return $client;
-        });
-    }
-
-    public function send(array $data)
-    {
-        $sendData = $this->packer->pack($data);
-        $connection = retry(2, function () use ($sendData) {
-            $connection = $this->getConnection();
-            if ($connection->send($sendData . $this->getEof()) === false) {
-                if ($connection->errCode == 104) {
-                    throw new RuntimeException('Connect to server failed.');
-                }
-            }
-            return $connection;
-        });
-        $response = $connection->recv($this->recvTimeout);
+        $packedData = $this->packer->pack($data);
+        $response = $this->transporter->send($packedData);
         return $this->packer->unpack($response);
-    }
-
-    private function getEof()
-    {
-        return "\r\n";
     }
 }
