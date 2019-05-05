@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use DI\FactoryInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Invoker\InvokerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -67,8 +65,6 @@ class Container implements ContainerInterface
         $this->resolvedEntries = [
             self::class => $this,
             ContainerInterface::class => $this,
-            FactoryInterface::class => $this,
-            InvokerInterface::class => $this,
         ];
     }
 
