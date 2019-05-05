@@ -200,14 +200,76 @@ if ($request->has(['name', 'email'])) {
 
 ## Cookies
 
-### 从请求中获取 Cookie
+### 从请求中获取 Cookies
+
+使用 `getCookieParams()` 方法从请求中获取所有的 `Cookies`，结果会返回一个关联数组。
+
+```php
+$cookies = $request->getCookieParams();
+```
+
+如果希望获取某一个 `Cookie` 值，可通过 `cookie(string $key, $default = null)` 方法来获取对应的值：
+
+ ```php
+// 存在则返回，不存在则返回 null
+$name = $request->cookie('name');
+// 存在则返回，不存在则返回默认值 Hyperf
+$name = $request->cookie('name', 'Hyperf');
+ ```
 
 ## 文件
 
 ### 获取上传文件
 
+你可以使用 `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` 方法从请求中获取上传的文件对象。如果上传的文件存在则该方法返回一个 `Hyperf\HttpMessage\Upload\UploadedFile` 类的实例，该类继承了 `PHP` 的 `SplFileInfo` 类的同时也提供了各种与文件交互的方法：
+
+```php
+// 存在则返回一个 Hyperf\HttpMessage\Upload\UploadedFile 对象，不存在则返回 null
+$file = $request->file('photo');
+```
+
+### 检查文件是否存在
+
+您可以使用 `hasFile(string $key): bool` 方法确认请求中是否存在文件：
+
+```php
+if ($request->hasFile('photo')) {
+    // ...
+}
+```
+
 ### 验证成功上传
+
+除了检查上传的文件是否存在外，您也可以通过 `isValid(): bool` 方法验证上传的文件是否有效：
+
+```php
+if ($request->file('photo')->isValid()) {
+    //
+}
+```
 
 ### 文件路径 & 扩展名
 
+`UploadedFile` 类还包含访问文件的完整路径及其扩展名方法。`getExtension()` 方法会根据文件内容判断文件的扩展名。该扩展名可能会和客户端提供的扩展名不同：
+
+```php
+// 该路径为上传文件的临时路径
+$path = $request->file('photo')->getPath();
+
+// 由于 Swoole 上传文件的 tmp_name 并没有保持文件原名，顾这个方法已重写为获取原文件名的后缀名
+$extension = $request->file('photo')->getExtension();
+```
+
 ### 存储上传文件
+
+上传的文件在未手动储存之前，都是存在一个临时位置上的，如果您没有对该文件进行储存处理，则在请求结束后会从临时位置上移除，顾我们可能需要对文件进行持久化储存处理，通过 `moveTo(string $targetPath): void` 将临时文件移动到 `$targetPath` 位置持久化储存，代码示例如下：
+
+```php
+$file = $request->file('photo');
+$file->moveTo('/foo/bar.jpg');
+
+// 通过 isMoved(): bool 方法判断方法是否已移动
+if ($file->isMoved()) {
+    // ...
+}
+```
