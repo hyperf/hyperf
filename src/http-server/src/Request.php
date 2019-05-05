@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
@@ -19,6 +20,7 @@ use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use SplFileInfo;
 
 /**
  * @property string $pathInfo
@@ -245,13 +247,13 @@ class Request implements RequestInterface
      * It builds a normalized query string, where keys/value pairs are alphabetized
      * and have consistent escaping.
      *
-     * @return string|null A normalized query string for the Request
+     * @return null|string A normalized query string for the Request
      */
     public function getQueryString(): ?string
     {
         $qs = static::normalizeQueryString($this->getServerParams()['query_string']);
 
-        return '' === $qs ? null : $qs;
+        return $qs === '' ? null : $qs;
     }
 
     /**
@@ -265,7 +267,7 @@ class Request implements RequestInterface
      */
     public function normalizeQueryString(string $qs): string
     {
-        if ('' == $qs) {
+        if ($qs == '') {
             return '';
         }
 
@@ -277,6 +279,7 @@ class Request implements RequestInterface
 
     /**
      * Retrieve a cookie from the request.
+     * @param null|mixed $default
      */
     public function cookie(string $key, $default = null)
     {
@@ -294,7 +297,8 @@ class Request implements RequestInterface
     /**
      * Retrieve a server variable from the request.
      *
-     * @return string|array|null
+     * @param null|mixed $default
+     * @return null|array|string
      */
     public function server(string $key, $default = null)
     {
@@ -314,11 +318,23 @@ class Request implements RequestInterface
     /**
      * Retrieve a file from the request.
      *
-     * @return \Hyperf\HttpMessage\Upload\UploadedFile|array|null
+     * @param null|mixed $default
+     * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
      */
-    public function file(string $key, $default = null)
+    public function file(string $key, $default = null): ?UploadedFile
     {
-        return data_get($this->allFiles(), $key, $default);
+        return Arr::get($this->getUploadedFiles(), $key, $default);
+    }
+
+    /**
+     * Determine if the uploaded data contains a file.
+     */
+    public function hasFile(string $key): bool
+    {
+        if (is_array($file = $this->file($key))) {
+            return $this->isValidFile($file);
+        }
+        return false;
     }
 
     public function getProtocolVersion()
@@ -472,6 +488,15 @@ class Request implements RequestInterface
     }
 
     /**
+     * Check that the given file is a valid SplFileInfo instance.
+     * @param mixed $file
+     */
+    protected function isValidFile($file): bool
+    {
+        return $file instanceof SplFileInfo && $file->getPath() !== '';
+    }
+
+    /**
      * Prepares the path info.
      */
     protected function preparePathInfo(): string
@@ -488,7 +513,7 @@ class Request implements RequestInterface
             $requestUri = '/' . $requestUri;
         }
 
-        return (string)$requestUri;
+        return (string) $requestUri;
     }
 
     /*
