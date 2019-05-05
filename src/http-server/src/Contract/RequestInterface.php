@@ -44,11 +44,11 @@ interface RequestInterface extends ServerRequestInterface
      * Determine if the $keys is exist in parameters.
      * @return []array [found, not-found]
      */
-    public function hasInput(array $keys = []): array;
+    public function hasInput(array $keys): array;
 
     /**
      * Retrieve the data from request headers.
      * @param mixed $default
      */
-    public function header(?string $key = null, $default = null);
+    public function header(string $key, $default = null);
 }
