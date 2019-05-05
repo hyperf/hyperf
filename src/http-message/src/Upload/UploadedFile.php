@@ -81,6 +81,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
             ->setClientFilename($clientFilename)
             ->setClientMediaType($clientMediaType);
         $this->isOk() && $this->setFile($tmpFile);
+        parent::__construct($tmpFile);
+    }
+
+    public function getExtension(): ?string
+    {
+        $clientName = $this->getClientFilename();
+        $segments = explode('.', $clientName);
+        return end($segments) ?? null;
     }
 
     /**
