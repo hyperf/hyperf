@@ -29,14 +29,13 @@ interface RequestInterface extends ServerRequestInterface
     public function post(?string $key = null, $default = null);
 
     /**
-     * Retrieve the data from request, include query parameters, parsed body and json body,
-     * if $key is null, will return all the parameters.
+     * Retrieve the input data from request, include query parameters, parsed body and json body.
      * @param mixed $default
      */
-    public function input(?string $key = null, $default = null);
+    public function input(string $key, $default = null);
 
     /**
-     * Retrieve the data from request via multi keys, include query parameters, parsed body and json body.
+     * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
      * @param mixed $default
      */
     public function inputs(array $keys, $default = null): array;

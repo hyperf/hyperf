@@ -20,15 +20,33 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @property string $pathInfo
+ * @property string $requestUri
+ */
 class Request implements RequestInterface
 {
     /**
-     * The key to identify the parsed data in coroutine context.
+     * @var array the keys to identify the data of request in coroutine context
      */
-    const CONTEXT_KEY = 'httpRequestParsedData';
+    protected $contextkeys
+        = [
+            'parsedData' => 'http.request.parsedData',
+        ];
+
+    public function __get($name)
+    {
+        return $this->getRequestProperty($name);
+    }
+
+    public function __set($name, $value)
+    {
+        return $this->storeRequestProperty($name, $value);
+    }
 
     /**
      * Retrieve the data from query parameters, if $key is null, will return all query parameters.
+     *
      * @param mixed $default
      */
     public function query(?string $key = null, $default = null)
@@ -36,11 +54,12 @@ class Request implements RequestInterface
         if ($key === null) {
             return $this->getQueryParams();
         }
-        return Arr::get($this->getQueryParams(), $key, $default);
+        return data_get($this->getQueryParams(), $key, $default);
     }
 
     /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
+     *
      * @param mixed $default
      */
     public function post(?string $key = null, $default = null)
@@ -48,27 +67,25 @@ class Request implements RequestInterface
         if ($key === null) {
             return $this->getParsedBody();
         }
-        return Arr::get($this->getParsedBody(), $key, $default);
+        return data_get($this->getParsedBody(), $key, $default);
     }
 
     /**
-     * Retrieve the data from request, include query parameters, parsed body and json body,
+     * Retrieve the input data from request, include query parameters, parsed body and json body,
      * if $key is null, will return all the parameters.
+     *
      * @param mixed $default
      */
-    public function input(?string $key = null, $default = null)
+    public function input(string $key, $default = null)
     {
         $data = $this->getInputData();
 
-        if ($key === null) {
-            return $data;
-        }
-
-        return Arr::get($data, $key, $default);
+        return data_get($data, $key, $default);
     }
 
     /**
-     * Retrieve the data from request via multi keys, include query parameters, parsed body and json body.
+     * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
+     *
      * @param mixed $default
      */
     public function inputs(array $keys, $default = null): array
@@ -77,14 +94,24 @@ class Request implements RequestInterface
         $result = $default ?? [];
 
         foreach ($keys as $key) {
-            $result[$key] = Arr::get($data, $key);
+            $result[$key] = data_get($data, $key);
         }
 
         return $result;
     }
 
     /**
+     * Retrieve all input data from request, include query parameters, parsed body and json body.
+     */
+    public function all(): array
+    {
+        $data = $this->getInputData();
+        return $data ?? [];
+    }
+
+    /**
      * Determine if the $keys is exist in parameters.
+     *
      * @return []array [found, not-found]
      */
     public function hasInput(array $keys = []): array
@@ -105,7 +132,18 @@ class Request implements RequestInterface
     }
 
     /**
+     * Determine if the $keys is exist in parameters.
+     *
+     * @param array|string $keys
+     */
+    public function has($keys): bool
+    {
+        return Arr::has($this->getInputData(), $keys);
+    }
+
+    /**
      * Retrieve the data from request headers.
+     *
      * @param mixed $default
      */
     public function header(string $key = null, $default = null)
@@ -114,6 +152,141 @@ class Request implements RequestInterface
             return $this->getRequest()->getHeaders();
         }
         return $this->getRequest()->getHeaderLine($key) ?? $default;
+    }
+
+    /**
+     * Get the current path info for the request.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        $pattern = trim($this->getPathInfo(), '/');
+
+        return $pattern == '' ? '/' : $pattern;
+    }
+
+    /**
+     * Returns the path being requested relative to the executed script.
+     * The path info always starts with a /.
+     * Suppose this request is instantiated from /mysite on localhost:
+     *  * http://localhost/mysite              returns an empty string
+     *  * http://localhost/mysite/about        returns '/about'
+     *  * http://localhost/mysite/enco%20ded   returns '/enco%20ded'
+     *  * http://localhost/mysite/about?var=1  returns '/about'.
+     *
+     * @return string The raw path (i.e. not urldecoded)
+     */
+    public function getPathInfo(): string
+    {
+        if ($this->pathInfo === null) {
+            $this->pathInfo = $this->preparePathInfo();
+        }
+
+        return $this->pathInfo ?? '';
+    }
+
+    /**
+     * Determine if the current request URI matches a pattern.
+     *
+     * @param mixed ...$patterns
+     */
+    public function is(...$patterns): bool
+    {
+        foreach ($patterns as $pattern) {
+            if (Str::is($pattern, $this->decodedPath())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the current decoded path info for the request.
+     */
+    public function decodedPath(): string
+    {
+        return rawurldecode($this->path());
+    }
+
+    /**
+     * Returns the requested URI (path and query string).
+     *
+     * @return string The raw URI (i.e. not URI decoded)
+     */
+    public function getRequestUri()
+    {
+        if ($this->requestUri === null) {
+            $this->requestUri = $this->prepareRequestUri();
+        }
+
+        return $this->requestUri;
+    }
+
+    /**
+     * Get the URL (no query string) for the request.
+     */
+    public function url(): string
+    {
+        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+    }
+
+    /**
+     * Get the full URL for the request.
+     */
+    public function fullUrl(): string
+    {
+        $query = $this->getQueryString();
+
+        return $this->url() . '?' . $query;
+    }
+
+    /**
+     * Generates the normalized query string for the Request.
+     *
+     * It builds a normalized query string, where keys/value pairs are alphabetized
+     * and have consistent escaping.
+     *
+     * @return string|null A normalized query string for the Request
+     */
+    public function getQueryString(): ?string
+    {
+        $qs = static::normalizeQueryString($this->getServerParams()['query_string']);
+
+        return '' === $qs ? null : $qs;
+    }
+
+    /**
+     * Normalizes a query string.
+     *
+     * It builds a normalized query string, where keys/value pairs are alphabetized,
+     * have consistent escaping and unneeded delimiters are removed.
+     *
+     * @param string $qs Query string
+     *
+     * @return string A normalized query string for the Request
+     */
+    public function normalizeQueryString(string $qs): string
+    {
+        if ('' == $qs) {
+            return '';
+        }
+
+        parse_str($qs, $qs);
+        ksort($qs);
+
+        return http_build_query($qs, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * Checks if the request method is of specified type.
+     *
+     * @param string $method Uppercase request method (GET, POST etc)
+     */
+    public function isMethod(string $method): bool
+    {
+        return $this->getMethod() === strtoupper($method);
     }
 
     public function getProtocolVersion()
@@ -266,7 +439,68 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    private function getInputData(): array
+    /**
+     * Prepares the path info.
+     */
+    protected function preparePathInfo(): string
+    {
+        if (($requestUri = $this->getRequestUri()) === null) {
+            return '/';
+        }
+
+        // Remove the query string from REQUEST_URI
+        if (false !== $pos = strpos($requestUri, '?')) {
+            $requestUri = substr($requestUri, 0, $pos);
+        }
+        if ($requestUri !== '' && $requestUri[0] !== '/') {
+            $requestUri = '/' . $requestUri;
+        }
+
+        return (string)$requestUri;
+    }
+
+    /*
+     * The following methods are derived from code of the Zend Framework (1.10dev - 2010-01-24)
+     *
+     * Code subject to the new BSD license (http://framework.zend.com/license/new-bsd).
+     *
+     * Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+     */
+    protected function prepareRequestUri()
+    {
+        $requestUri = '';
+
+        $serverParams = $this->getServerParams();
+        if (isset($serverParams['request_uri'])) {
+            $requestUri = $serverParams['request_uri'];
+
+            if ($requestUri !== '' && $requestUri[0] === '/') {
+                // To only use path and query remove the fragment.
+                if (false !== $pos = strpos($requestUri, '#')) {
+                    $requestUri = substr($requestUri, 0, $pos);
+                }
+            } else {
+                // HTTP proxy reqs setup request URI with scheme and host [and port] + the URL path,
+                // only use URL path.
+                $uriComponents = parse_url($requestUri);
+
+                if (isset($uriComponents['path'])) {
+                    $requestUri = $uriComponents['path'];
+                }
+
+                if (isset($uriComponents['query'])) {
+                    $requestUri .= '?' . $uriComponents['query'];
+                }
+            }
+        }
+
+        // normalize the request URI to ease creating sub-requests from this request
+        $serverParams['request_uri'] = $requestUri;
+
+        return $requestUri;
+    }
+
+    protected function getInputData(): array
     {
         return $this->storeParsedData(function () {
             $request = $this->getRequest();
@@ -284,15 +518,26 @@ class Request implements RequestInterface
         });
     }
 
-    private function storeParsedData(callable $callback)
+    protected function storeParsedData(callable $callback)
     {
-        if (! Context::has(self::CONTEXT_KEY)) {
-            return Context::set(self::CONTEXT_KEY, call($callback));
+        if (! Context::has($this->contextkeys['parsedData'])) {
+            return Context::set($this->contextkeys['parsedData'], call($callback));
         }
-        return Context::get(self::CONTEXT_KEY);
+        return Context::get($this->contextkeys['parsedData']);
     }
 
-    private function call($name, $arguments)
+    protected function storeRequestProperty(string $key, $value): self
+    {
+        Context::set(__CLASS__ . '.properties.' . $key, value($value));
+        return $this;
+    }
+
+    protected function getRequestProperty(string $key)
+    {
+        return Context::get(__CLASS__ . '.properties.' . $key);
+    }
+
+    protected function call($name, $arguments)
     {
         $request = $this->getRequest();
         if (! method_exists($request, $name)) {
@@ -301,7 +546,7 @@ class Request implements RequestInterface
         return $request->{$name}(...$arguments);
     }
 
-    private function getRequest(): ServerRequestInterface
+    protected function getRequest(): ServerRequestInterface
     {
         return Context::get(ServerRequestInterface::class);
     }
