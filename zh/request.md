@@ -116,7 +116,7 @@ $url = $request->fullUrl();
 $method = $request->getMethod();
 
 if ($request->isMethod('post')) {
-    //
+    // ...
 }
 ```
 
@@ -190,11 +190,11 @@ $name = $request->input();
 ```php
 // 仅判断单个值
 if ($request->has('name')) {
-    //
+    // ...
 }
 // 同时判断多个值
 if ($request->has(['name', 'email'])) {
-    //
+    // ...
 }
 ```
 
@@ -244,7 +244,7 @@ if ($request->hasFile('photo')) {
 
 ```php
 if ($request->file('photo')->isValid()) {
-    //
+    // ...
 }
 ```
 
