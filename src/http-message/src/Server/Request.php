@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Server;
 
-use Hyperf\HttpMessage\Server\Concerns\InteractsWithInput;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -21,8 +20,6 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface
 {
-    use InteractsWithInput;
-
     /**
      * @var \Swoole\Http\Request
      */
