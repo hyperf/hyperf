@@ -114,7 +114,7 @@ class Request implements RequestInterface
      *
      * @return []array [found, not-found]
      */
-    public function hasInput(array $keys = []): array
+    public function hasInput(array $keys): array
     {
         $data = $this->getInputData();
         $found = [];
@@ -146,12 +146,9 @@ class Request implements RequestInterface
      *
      * @param mixed $default
      */
-    public function header(string $key = null, $default = null)
+    public function header(string $key, $default = null)
     {
-        if ($key === null) {
-            return $this->getRequest()->getHeaders();
-        }
-        return $this->getRequest()->getHeaderLine($key) ?? $default;
+        return $this->getHeaderLine($key) ?? $default;
     }
 
     /**
@@ -264,7 +261,6 @@ class Request implements RequestInterface
      * have consistent escaping and unneeded delimiters are removed.
      *
      * @param string $qs Query string
-     *
      * @return string A normalized query string for the Request
      */
     public function normalizeQueryString(string $qs): string
@@ -280,6 +276,32 @@ class Request implements RequestInterface
     }
 
     /**
+     * Retrieve a cookie from the request.
+     */
+    public function cookie(string $key, $default = null)
+    {
+        return data_get($this->getCookieParams(), $key, $default);
+    }
+
+    /**
+     * Determine if a cookie is set on the request.
+     */
+    public function hasCookie(string $key): bool
+    {
+        return ! is_null($this->cookie($key));
+    }
+
+    /**
+     * Retrieve a server variable from the request.
+     *
+     * @return string|array|null
+     */
+    public function server(string $key, $default = null)
+    {
+        return data_get($this->getServerParams(), $key, $default);
+    }
+
+    /**
      * Checks if the request method is of specified type.
      *
      * @param string $method Uppercase request method (GET, POST etc)
@@ -287,6 +309,16 @@ class Request implements RequestInterface
     public function isMethod(string $method): bool
     {
         return $this->getMethod() === strtoupper($method);
+    }
+
+    /**
+     * Retrieve a file from the request.
+     *
+     * @return \Hyperf\HttpMessage\Upload\UploadedFile|array|null
+     */
+    public function file(string $key, $default = null)
+    {
+        return data_get($this->allFiles(), $key, $default);
     }
 
     public function getProtocolVersion()
