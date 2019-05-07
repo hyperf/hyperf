@@ -12,31 +12,34 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Generator;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
 /**
  * DB Helper.
- * @method static table(string $table)
- * @method static raw($value)
+ * @method static Builder table(string $table)
+ * @method static Expression raw($value)
  * @method static selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static select(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static cursor(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static insert(string $query, array $bindings = [])
- * @method static update(string $query, array $bindings = [])
- * @method static delete(string $query, array $bindings = [])
- * @method static statement(string $query, array $bindings = [])
- * @method static affectingStatement(string $query, array $bindings = [])
- * @method static unprepared(string $query)
- * @method static prepareBindings(array $bindings)
+ * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
+ * @method static Generator cursor(string $query, array $bindings = [], bool $useReadPdo = true)
+ * @method static bool insert(string $query, array $bindings = [])
+ * @method static int update(string $query, array $bindings = [])
+ * @method static int delete(string $query, array $bindings = [])
+ * @method static bool statement(string $query, array $bindings = [])
+ * @method static int affectingStatement(string $query, array $bindings = [])
+ * @method static bool unprepared(string $query)
+ * @method static array prepareBindings(array $bindings)
  * @method static transaction(Closure $callback, int $attempts = 1)
  * @method static beginTransaction()
  * @method static rollBack()
  * @method static commit()
- * @method static transactionLevel()
- * @method static pretend(Closure $callback)
- * @method static connection(string $pool)
+ * @method static int transactionLevel()
+ * @method static array pretend(Closure $callback)
+ * @method static ConnectionInterface connection(string $pool)
  */
 class Db
 {
