@@ -36,6 +36,7 @@ use Psr\Container\ContainerInterface;
  * @method static commit()
  * @method static transactionLevel()
  * @method static pretend(Closure $callback)
+ * @method static connection(string $pool)
  */
 class Db
 {
@@ -51,16 +52,22 @@ class Db
 
     public function __call($name, $arguments)
     {
-        return $this->connection()->{$name}(...$arguments);
+        if ($name === 'connection') {
+            return $this->__connection(...$arguments);
+        }
+        return $this->__connection()->{$name}(...$arguments);
     }
 
     public static function __callStatic($name, $arguments)
     {
         $db = ApplicationContext::getContainer()->get(Db::class);
-        return $db->connection()->{$name}(...$arguments);
+        if ($name === 'connection') {
+            return $db->__connection(...$arguments);
+        }
+        return $db->__connection()->{$name}(...$arguments);
     }
 
-    public function connection($pool = 'default'): ConnectionInterface
+    private function __connection($pool = 'default'): ConnectionInterface
     {
         $resolver = $this->container->get(ConnectionResolver::class);
         return $resolver->connection($pool);
