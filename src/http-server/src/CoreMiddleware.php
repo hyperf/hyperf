@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -72,14 +73,18 @@ class CoreMiddleware implements MiddlewareInterface
                 $response = $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
                 break;
             case Dispatcher::FOUND:
-                [$controller, $action] = $this->prepareHandler($routes[1]);
-                $controllerInstance = $this->container->get($controller);
-                if (! method_exists($controller, $action)) {
-                    $response = $this->response()->withStatus(500)->withBody(new SwooleStream('Action not exist.'));
-                    break;
+                if ($routes[1] instanceof Closure) {
+                    $response = call($routes[1]);
+                } else {
+                    [$controller, $action] = $this->prepareHandler($routes[1]);
+                    $controllerInstance = $this->container->get($controller);
+                    if (! method_exists($controller, $action)) {
+                        $response = $this->response()->withStatus(500)->withBody(new SwooleStream('Action not exist.'));
+                        break;
+                    }
+                    $parameters = $this->parseParameters($controller, $action, $routes[2]);
+                    $response = $controllerInstance->{$action}(...$parameters);
                 }
-                $parameters = $this->parseParameters($controller, $action, $routes[2]);
-                $response = $controllerInstance->{$action}(...$parameters);
                 if (! $response instanceof ResponseInterface) {
                     $response = $this->transferToResponse($response);
                 }
