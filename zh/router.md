@@ -47,12 +47,12 @@ Router::get('/hello-hyperf', [App\Controller\IndexController::class, 'hello']);
 use Hyperf\HttpServer\Router\Router;
 
 // 注册与方法名一致的 HTTP METHOD 的路由
-Router::get($uri', $callback);
-Router::post($uri', $callback);
-Router::put($uri', $callback);
-Router::patch($uri', $callback);
-Router::delete($uri', $callback);
-Router::head($uri', $callback);
+Router::get($uri, $callback);
+Router::post($uri, $callback);
+Router::put($uri, $callback);
+Router::patch($uri, $callback);
+Router::delete($uri, $callback);
+Router::head($uri, $callback);
 
 // 注册任意 HTTP METHOD 的路由
 Router::addRoute($httpMethod, $uri, $callback);
