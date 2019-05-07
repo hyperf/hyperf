@@ -16,6 +16,7 @@
         "hyperf/database": "dev-master",
         "hyperf/di": "dev-master",
         "hyperf/event": "dev-master",
+        "hyperf/logger": "dev-master",
         "hyperf/pool": "dev-master"
     },
     "require-dev": {
