@@ -52,4 +52,4 @@
 虽然 `微服务架构(Microservice)` 好处众多，但 **微服务不是银弹 ！！！** ，您需要面对所有分布式系统都需要面对的复杂性，你可能需要在部署、测试和监控上做很多的工作，在服务间调用、服务的可靠性上做很多工作，甚至您还需要处理类似于 分布式事务 或者与 CAP 相关的问题。
 
 
-*\* 本章节部分译自 Sam Newman 的 《Building Microservices 》*
+* | 本章节部分内容译自 Sam Newman 的 《Building Microservices 》*
