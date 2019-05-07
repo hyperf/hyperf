@@ -32,6 +32,6 @@ class AspectCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Aspects';
+        return $this->getConfig()['namespace'] ?? 'App\\Aspect';
     }
 }

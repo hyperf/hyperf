@@ -32,6 +32,6 @@ class JobCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Jobs';
+        return $this->getConfig()['namespace'] ?? 'App\\Job';
     }
 }

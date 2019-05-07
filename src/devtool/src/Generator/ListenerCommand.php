@@ -32,6 +32,6 @@ class ListenerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Listeners';
+        return $this->getConfig()['namespace'] ?? 'App\\Listener';
     }
 }
