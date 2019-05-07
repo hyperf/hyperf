@@ -14,7 +14,7 @@ namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
 
-class ProcessRegister
+class ProcessManager
 {
     /**
      * @var array

@@ -17,7 +17,7 @@ use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\ProcessRegister;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
 class ConsumerManager
@@ -53,7 +53,7 @@ class ConsumerManager
             $process = $this->createProcess($instance);
             $process->nums = (int) $nums;
             $process->name = 'Consumer-' . $instance->getQueue();
-            ProcessRegister::register($process);
+            ProcessManager::register($process);
         }
     }
 

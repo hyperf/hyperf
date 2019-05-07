@@ -19,7 +19,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Process\Annotation\Process;
-use Hyperf\Process\ProcessRegister;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -68,7 +68,7 @@ class BootProcessListener implements ListenerInterface
         $annotationProcesses = $this->getAnnotationProcesses();
 
         // Retrieve the processes have been registered.
-        $processes = array_merge($serverProcesses, $processes, ProcessRegister::all(), array_keys($annotationProcesses));
+        $processes = array_merge($serverProcesses, $processes, ProcessManager::all(), array_keys($annotationProcesses));
         foreach ($processes as $process) {
             if (is_string($process)) {
                 $instance = $this->container->get($process);
