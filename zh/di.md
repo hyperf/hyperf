@@ -13,38 +13,6 @@ Hyperf 默认采用 [hyperf/di](https://github.com/hyperf-cloud/di) 作为框架
 composer require hyperf/di
 ```
 
-## 获取容器
-
-有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC服务提供者等）都是由 `容器(Container)` 创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject` 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
-
-```php
-<?php
-namespace App\Controller;
-
-use Hyperf\HttpServer\Annotation\AutoController;
-use Psr\Container\ContainerInterface;
-
-class IndexController
-{
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-    
-    // 通过在构造函数的参数上声明参数类型完成自动注入
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-}
-```   
-
-在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)` 对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
-
-```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
-```
-
 ## 绑定对象关系
 
 ### 简单对象注入
@@ -284,3 +252,35 @@ $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
 > 注意仅 `$name` 对应的对象为短生命周期对象，该对象的所有依赖都是通过 `get()` 方法获取的，即为长生命周期的对象
+
+## 获取容器对象
+
+有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC服务提供者等）都是由 `容器(Container)` 创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject` 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
+
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+use Psr\Container\ContainerInterface;
+
+class IndexController
+{
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+    
+    // 通过在构造函数的参数上声明参数类型完成自动注入
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+}
+```   
+
+在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)` 对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
+
+```php
+$container = \Hyperf\Utils\ApplicationContext::getContainer();
+```
