@@ -14,8 +14,7 @@
         "psr/container": "^1.0",
         "hyperf/contract": "dev-master",
         "hyperf/utils": "dev-master",
-        "hyperf/di": "dev-master",
-        "monolog/monolog": "^1.24"
+        "hyperf/di": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

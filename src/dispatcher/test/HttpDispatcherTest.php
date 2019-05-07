@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Dispatcher;
 
-use App\Middlewares\TestMiddleware;
+use App\Middleware\TestMiddleware;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Utils\Context;
