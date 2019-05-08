@@ -315,7 +315,7 @@ class Str
     public static function replaceArray(string $search, array $replace, string $subject): string
     {
         foreach ($replace as $value) {
-            $subject = static::replaceFirst($search, $value, $subject);
+            $subject = static::replaceFirst($search, (string) $value, $subject);
         }
 
         return $subject;
