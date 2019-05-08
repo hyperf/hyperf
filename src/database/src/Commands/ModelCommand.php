@@ -145,11 +145,8 @@ class ModelCommand extends Command
 
     /**
      * Build the class with the given name.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function buildClass($name, ModelOption $option)
+    protected function buildClass(string $name, ModelOption $option): string
     {
         $stub = file_get_contents(__DIR__ . '/stubs/Model.stub');
 
@@ -161,12 +158,8 @@ class ModelCommand extends Command
 
     /**
      * Replace the namespace for the given stub.
-     *
-     * @param string $stub
-     * @param string $name
-     * @return $this
      */
-    protected function replaceNamespace(&$stub, $name)
+    protected function replaceNamespace(string &$stub, string $name): self
     {
         $stub = str_replace(
             ['%NAMESPACE%'],
@@ -179,16 +172,13 @@ class ModelCommand extends Command
 
     /**
      * Get the full namespace for a given class, without the class name.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function getNamespace($name)
+    protected function getNamespace(strinf $name): string
     {
         return trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
     }
 
-    protected function replaceInheritance(&$stub, $inheritance)
+    protected function replaceInheritance(string &$stub, string $inheritance): self
     {
         $stub = str_replace(
             ['%INHERITANCE%'],
@@ -199,7 +189,7 @@ class ModelCommand extends Command
         return $this;
     }
 
-    protected function replaceConnection(&$stub, $connection)
+    protected function replaceConnection(string &$stub, string $connection): self
     {
         $stub = str_replace(
             ['%CONNECTION%'],
@@ -212,12 +202,8 @@ class ModelCommand extends Command
 
     /**
      * Replace the class name for the given stub.
-     *
-     * @param string $stub
-     * @param string $name
-     * @return string
      */
-    protected function replaceClass($stub, $name)
+    protected function replaceClass(string $stub, string $name): string
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
@@ -228,11 +214,8 @@ class ModelCommand extends Command
 
     /**
      * Get the destination class path.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function getPath($name)
+    protected function getPath(string $name): string
     {
         return BASE_PATH . '/' . str_replace('\\', '/', $name) . '.php';
     }

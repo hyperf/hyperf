@@ -51,7 +51,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
         }
     }
 
-    protected function rewriteFillable(Node\Stmt\PropertyProperty $node)
+    protected function rewriteFillable(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
     {
         $items = [];
         foreach ($this->columns as $column) {
@@ -64,7 +64,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
         return $node;
     }
 
-    protected function rewriteCasts(Node\Stmt\PropertyProperty $node)
+    protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
     {
         $items = [];
         $exists = [];
