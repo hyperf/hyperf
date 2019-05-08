@@ -133,6 +133,7 @@ class RedisDriver extends Driver
             'waiting' => $this->redis->lLen($this->channel->getWaiting()),
             'delayed' => $this->redis->zCard($this->channel->getDelayed()),
             'failed' => $this->redis->lLen($this->channel->getFailed()),
+            'timeout' => $this->redis->lLen($this->channel->getTimeout()),
         ];
     }
 
