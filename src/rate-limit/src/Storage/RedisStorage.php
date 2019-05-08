@@ -21,7 +21,7 @@ use malkusch\lock\mutex\PHPRedisMutex;
 use Psr\SimpleCache\InvalidArgumentException;
 use Redis;
 
-class CoRedisStorage implements Storage, GlobalScope
+class RedisStorage implements Storage, GlobalScope
 {
     const KEY_PREFIX = 'rateLimiter:storage:';
 

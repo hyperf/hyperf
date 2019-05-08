@@ -19,7 +19,7 @@ use Hyperf\Di\Aop\ArroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
-use Hyperf\RateLimit\Exception\RateLimiterException;
+use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Swoole\Coroutine;
 
@@ -63,29 +63,30 @@ class RateLimitAnnotationAspect implements ArroundInterface
     }
 
     /**
-     * @param ProceedingJoinPoint $proceedingJoinPoint
-     * @return mixed
+     * @throws RateLimitException Limit but without handle.
+     * @throws StorageException When the storage driver bootstrap failed.
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $annotation = $this->getWeightingAnnotation($this->getAnnotations($proceedingJoinPoint));
 
-        $bucketsKey = $annotation->bucketsKey;
-        if (is_callable($bucketsKey)) {
-            $bucketsKey = $bucketsKey($proceedingJoinPoint);
+        $bucketKey = $annotation->key;
+        if (is_callable($bucketKey)) {
+            $bucketKey = $bucketKey($proceedingJoinPoint);
         }
-        if (! $bucketsKey) {
-            $bucketsKey = trim(str_replace('/', ':', $this->request->getUri()->getPath()), ':');
+        if (! $bucketKey) {
+            $bucketKey = trim(str_replace('/', ':', $this->request->getUri()->getPath()), ':');
         }
 
-        $bucket = $this->rateLimitHandler->build($bucketsKey, $annotation->limit, $annotation->capacity, $annotation->timeout ?? 1);
+        $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout ?? 1);
 
         $currentTime = time();
-        $maxTime = $currentTime + $annotation->timeout;
+        $maxTime = $currentTime + $annotation->waitTimeout;
+        $seconds = 0;
 
         while (true) {
             try {
-                if ($bucket->consume($annotation->demand ?? 1, $seconds)) {
+                if ($bucket->consume($annotation->consume ?? 1, $seconds)) {
                     return $proceedingJoinPoint->process();
                 }
             } catch (StorageException $exception) {
@@ -97,17 +98,16 @@ class RateLimitAnnotationAspect implements ArroundInterface
             break;
         }
 
-        if (! $annotation->callback || ! is_callable($annotation->callback)) {
-            throw new RateLimiterException('Request rate limit');
+        if (! $annotation->limitCallback || ! is_callable($annotation->limitCallback)) {
+            throw new RateLimitException('Service Unavailable.', 503);
         }
-        return call_user_func($annotation->callback, $seconds, $proceedingJoinPoint);
+        return call_user_func($annotation->limitCallback, $seconds, $proceedingJoinPoint);
     }
 
     /**
      * @param RateLimit[] $annotations
-     * @return RateLimit
      */
-    public function getWeightingAnnotation(array $annotations)
+    public function getWeightingAnnotation(array $annotations): RateLimit
     {
         $property = array_merge($this->annotationProperty, $this->config->get('rate-limit', []));
         foreach ($annotations as $annotation) {
@@ -119,7 +119,7 @@ class RateLimitAnnotationAspect implements ArroundInterface
         return new RateLimit($property);
     }
 
-    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint)
+    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): array
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         return [

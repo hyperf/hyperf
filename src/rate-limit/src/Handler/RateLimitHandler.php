@@ -14,7 +14,7 @@ namespace Hyperf\RateLimit\Handler;
 
 use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
-use Hyperf\RateLimit\Storage\CoRedisStorage;
+use Hyperf\RateLimit\Storage\RedisStorage;
 use Psr\Container\ContainerInterface;
 
 class RateLimitHandler
@@ -32,16 +32,11 @@ class RateLimitHandler
     }
 
     /**
-     * @param string $key
-     * @param int $limit
-     * @param int $capacity
-     * @param int $timeout
      * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
-     * @return TokenBucket
      */
-    public function build(string $key, int $limit, int $capacity, int $timeout)
+    public function build(string $key, int $limit, int $capacity, int $timeout): TokenBucket
     {
-        $storage = make(CoRedisStorage::class, ['key' => $key, 'redis' => $this->redis, 'timeout' => $timeout]);
+        $storage = make(RedisStorage::class, ['key' => $key, 'redis' => $this->redis, 'timeout' => $timeout]);
         $rate = make(Rate::class, ['tokens' => $limit, 'unit' => Rate::SECOND]);
         $bucket = make(TokenBucket::class, ['capacity' => $capacity, 'rate' => $rate, 'storage' => $storage]);
         $bucket->bootstrap($capacity);

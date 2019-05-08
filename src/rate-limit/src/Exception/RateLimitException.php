@@ -14,6 +14,6 @@ namespace Hyperf\RateLimit\Exception;
 
 use RuntimeException;
 
-class RateLimiterException extends RuntimeException
+class RateLimitException extends RuntimeException
 {
 }
