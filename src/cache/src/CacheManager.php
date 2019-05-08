@@ -17,6 +17,7 @@ use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Psr\Container\ContainerInterface;
 use function call;
@@ -72,11 +73,8 @@ class CacheManager
 
     public function getAnnotationValue(string $className, string $method, array $arguments)
     {
-        $collector = AnnotationCollector::get($className);
-        $annotation = $collector['_m'][$method][Cacheable::class] ?? null;
-        if (! $annotation instanceof Cacheable) {
-            throw new CacheException(sprintf('Annotation %s in %s:%s not exist.', Cacheable::class, $className, $method));
-        }
+        /** @var Cacheable $annotation */
+        $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
 
         $key = $annotation->key;
         $key = $this->formatKey($key, $arguments);
@@ -86,7 +84,18 @@ class CacheManager
         return [$key, $ttl, $group];
     }
 
-    protected function formatKey($key, array $arguments)
+    public function getAnnotation(string $annotation, string $className, string $method): AbstractAnnotation
+    {
+        $collector = AnnotationCollector::get($className);
+        $result = $collector['_m'][$method][$annotation] ?? null;
+        if (! $result instanceof $annotation) {
+            throw new CacheException(sprintf('Annotation %s in %s:%s not exist.', $annotation, $className, $method));
+        }
+
+        return $result;
+    }
+
+    public function formatKey($key, array $arguments)
     {
         $hasObject = false;
         foreach ($arguments as $argument) {

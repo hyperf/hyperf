@@ -10,18 +10,19 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Cache;
+namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Cache\CacheManager;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 
 /**
  * @Aspect
  */
-class CacheAspect implements ArroundInterface
+class CacheableAspect extends AbstractAspect
 {
     public $classes = [];
 
@@ -39,9 +40,6 @@ class CacheAspect implements ArroundInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $className = $proceedingJoinPoint->className;

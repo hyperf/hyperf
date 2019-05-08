@@ -66,12 +66,7 @@ class RedisDriver extends Driver
 
     public function clear()
     {
-        $iterator = null;
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey('*'), 100)) {
-            $this->redis->delete(...$keys);
-        }
-
-        return true;
+        return $this->clearPrefix('');
     }
 
     public function getMultiple($keys, $default = null)
@@ -124,5 +119,16 @@ class RedisDriver extends Driver
     public function has($key)
     {
         return (bool) $this->redis->exists($this->getCacheKey($key));
+    }
+
+    public function clearPrefix(string $prefix): bool
+    {
+        $iterator = null;
+        $key = $prefix . '*';
+        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 100)) {
+            $this->redis->delete(...$keys);
+        }
+
+        return true;
     }
 }

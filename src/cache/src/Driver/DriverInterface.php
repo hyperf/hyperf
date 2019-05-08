@@ -21,7 +21,12 @@ interface DriverInterface extends CacheInterface
 
     /**
      * Return state of existence and data at the same time.
-     * @param mixed $default
+     * @param null|mixed $default
      */
     public function fetch(string $key, $default = null): array;
+
+    /**
+     * Clean up data of the same prefix.
+     */
+    public function clearPrefix(string $prefix): bool;
 }
