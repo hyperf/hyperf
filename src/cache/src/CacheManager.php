@@ -17,27 +17,27 @@ use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Psr\Container\ContainerInterface;
+use Hyperf\Utils\Str;
 use function call;
 
 class CacheManager
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     protected $config;
 
     protected $drivers = [];
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
 
-        $this->config = $container->get(ConfigInterface::class)->get('cache', []);
+    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
+    {
+        $this->config = $config->get('cache', []);
+        $this->logger = $logger;
     }
 
     public function getDriver($name = 'default'): DriverInterface
@@ -51,7 +51,8 @@ class CacheManager
         }
 
         $driverClass = $this->config[$name]['driver'] ?? RedisDriver::class;
-        $driver = new $driverClass($this->container, $this->config[$name]);
+
+        $driver = make($driverClass, ['config' => $this->config[$name]]);
 
         return $this->drivers[$name] = $driver;
     }
@@ -76,8 +77,8 @@ class CacheManager
         /** @var Cacheable $annotation */
         $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
 
-        $key = $annotation->key;
-        $key = $this->formatKey($key, $arguments);
+        $key = $annotation->prefix;
+        $key = $this->formatKey($key, $arguments, $annotation->value);
         $group = $annotation->group ?? 'default';
         $ttl = $annotation->ttl ?? $this->config[$group]['ttl'] ?? 3600;
 
@@ -95,26 +96,33 @@ class CacheManager
         return $result;
     }
 
-    public function formatKey($key, array $arguments)
+    public function formatKey($prefix, array $arguments, ?string $value = null)
     {
-        $hasObject = false;
-        foreach ($arguments as $argument) {
-            if (is_object($argument)) {
-                $hasObject = true;
-                break;
-            }
-        }
+        if ($value !== null) {
+            if ($matches = $this->getMatches($value)) {
+                foreach ($matches as $search) {
+                    $k = str_replace('#{', '', $search);
+                    $k = str_replace('}', '', $k);
 
-        if ($hasObject) {
-            $key .= ':' . md5(serialize($arguments));
+                    $value = Str::replaceFirst($search, (string) data_get($arguments, $k), $value);
+                }
+            }
+            $key = $prefix . ':' . $value;
         } else {
-            $key .= ':' . implode(':', $arguments);
+            $key = $prefix . ':' . implode(':', $arguments);
         }
 
         if (strlen($key) > 64) {
-            $key = 'cache:' . md5($key);
+            $this->logger->warning('The cache key length is too long. The key is ' . $key);
         }
 
         return $key;
+    }
+
+    protected function getMatches(string $value): array
+    {
+        preg_match_all('/\#\{[\w\.]+\}/', $value, $matches);
+
+        return $matches[0] ?? [];
     }
 }

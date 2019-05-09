@@ -61,7 +61,7 @@ class CachePutAspect extends AbstractAspect
 
         $ttl = $annotation->ttl ?? 3600;
         $group = $annotation->group ?? 'default';
-        $key = $this->manager->formatKey($annotation->key, $arguments);
+        $key = $this->manager->formatKey($annotation->prefix, $arguments);
 
         return [$key, $ttl, $group];
     }

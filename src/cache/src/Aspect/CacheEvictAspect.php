@@ -61,11 +61,13 @@ class CacheEvictAspect extends AbstractAspect
         /** @var CacheEvict $annotation */
         $annotation = $this->manager->getAnnotation(CacheEvict::class, $className, $method);
 
-        $key = $annotation->key;
+        $prefix = $annotation->prefix;
         $all = $annotation->all;
         $group = $annotation->group ?? 'default';
         if (! $all) {
-            $key = $this->manager->formatKey($key, $arguments);
+            $key = $this->manager->formatKey($prefix, $arguments, $annotation->value);
+        } else {
+            $key = $prefix;
         }
 
         return [$key, $all, $group];

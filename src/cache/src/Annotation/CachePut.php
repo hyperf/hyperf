@@ -20,7 +20,9 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class CachePut extends AbstractAnnotation
 {
-    public $key;
+    public $prefix;
+
+    public $value;
 
     public $ttl;
 
