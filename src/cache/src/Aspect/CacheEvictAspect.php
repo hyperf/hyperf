@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\CacheEvict;
+use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
@@ -32,9 +33,15 @@ class CacheEvictAspect extends AbstractAspect
      */
     protected $manager;
 
-    public function __construct(CacheManager $manager)
+    /**
+     * @var AnnotationManager
+     */
+    protected $annotationManager;
+
+    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
     {
         $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -43,7 +50,7 @@ class CacheEvictAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $all, $group] = $this->getAnnotationValue($className, $method, $arguments);
+        [$key, $all, $group] = $this->annotationManager->getCacheEvictValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
@@ -54,20 +61,5 @@ class CacheEvictAspect extends AbstractAspect
         }
 
         return $proceedingJoinPoint->process();
-    }
-
-    protected function getAnnotationValue(string $className, string $method, array $arguments)
-    {
-        /** @var CacheEvict $annotation */
-        $annotation = $this->manager->getAnnotation(CacheEvict::class, $className, $method);
-
-        $key = $annotation->key;
-        $all = $annotation->all;
-        $group = $annotation->group ?? 'default';
-        if (! $all) {
-            $key = $this->manager->formatKey($key, $arguments);
-        }
-
-        return [$key, $all, $group];
     }
 }

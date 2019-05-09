@@ -173,7 +173,7 @@ class ModelCommand extends Command
     /**
      * Get the full namespace for a given class, without the class name.
      */
-    protected function getNamespace(strinf $name): string
+    protected function getNamespace(string $name): string
     {
         return trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
     }

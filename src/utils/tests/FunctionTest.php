@@ -28,4 +28,21 @@ class FunctionTest extends TestCase
 
         $this->assertSame(2, $result);
     }
+
+    public function testDataGet()
+    {
+        $data = ['id' => 1];
+        $result = data_get($data, 'id');
+        $this->assertSame(1, $result);
+        $result = data_get($data, 'id2', 2);
+        $this->assertSame(2, $result);
+
+        $obj = new \stdClass();
+        $obj->name = 'hyperf';
+        $data = ['id' => 2, 'obj' => $obj];
+        $result = data_get($data, 'obj');
+        $this->assertSame($obj, $result);
+        $result = data_get($data, 'obj.name');
+        $this->assertSame('hyperf', $result);
+    }
 }

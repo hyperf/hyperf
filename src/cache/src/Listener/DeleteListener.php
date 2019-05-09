@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Listener;
 
+use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
@@ -24,13 +24,16 @@ use Psr\Container\ContainerInterface;
 class DeleteListener implements ListenerInterface
 {
     /**
-     * @var ContainerInterface
+     * @var CacheManager
      */
-    protected $container;
+    protected $manager;
 
-    public function __construct(ContainerInterface $container)
+    protected $annotationManager;
+
+    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
     {
-        $this->container = $container;
+        $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
     }
 
     public function listen(): array
@@ -49,12 +52,10 @@ class DeleteListener implements ListenerInterface
         $method = $event->getMethod();
         $arguments = $event->getArguments();
 
-        $manager = $this->container->get(CacheManager::class);
-
-        [$key, , $group] = $manager->getAnnotationValue($className, $method, $arguments);
+        [$key, , $group] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
         /** @var DriverInterface $driver */
-        $driver = $manager->getDriver($group);
+        $driver = $this->manager->getDriver($group);
         $driver->delete($key);
     }
 }

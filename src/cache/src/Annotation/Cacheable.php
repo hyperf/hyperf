@@ -22,7 +22,9 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  */
 class Cacheable extends AbstractAnnotation
 {
-    public $key;
+    public $prefix;
+
+    public $value;
 
     public $ttl;
 
@@ -32,10 +34,6 @@ class Cacheable extends AbstractAnnotation
 
     public function collectMethod(string $className, ?string $target): void
     {
-        if (! isset($this->key)) {
-            $this->key = $className . ':' . $target;
-        }
-
         if (isset($this->listener)) {
             CacheListenerCollector::set($this->listener, [
                 'className' => $className,

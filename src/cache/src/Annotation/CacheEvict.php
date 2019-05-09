@@ -20,7 +20,9 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class CacheEvict extends AbstractAnnotation
 {
-    public $key;
+    public $prefix;
+
+    public $value;
 
     public $all = false;
 

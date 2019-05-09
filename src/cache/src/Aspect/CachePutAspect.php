@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\CachePut;
+use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
@@ -32,9 +33,15 @@ class CachePutAspect extends AbstractAspect
      */
     protected $manager;
 
-    public function __construct(CacheManager $manager)
+    /**
+     * @var AnnotationManager
+     */
+    protected $annotationManager;
+
+    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
     {
         $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -43,7 +50,7 @@ class CachePutAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $ttl, $group] = $this->getAnnotationValue($className, $method, $arguments);
+        [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
@@ -52,17 +59,5 @@ class CachePutAspect extends AbstractAspect
         $driver->set($key, $result, $ttl);
 
         return $result;
-    }
-
-    protected function getAnnotationValue(string $className, string $method, array $arguments)
-    {
-        /** @var CachePut $annotation */
-        $annotation = $this->manager->getAnnotation(CachePut::class, $className, $method);
-
-        $ttl = $annotation->ttl ?? 3600;
-        $group = $annotation->group ?? 'default';
-        $key = $this->manager->formatKey($annotation->key, $arguments);
-
-        return [$key, $ttl, $group];
     }
 }
