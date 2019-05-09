@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
@@ -33,11 +34,17 @@ class CacheableAspect extends AbstractAspect
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected $manager;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var AnnotationManager
+     */
+    protected $annotationManager;
+
+    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
     {
-        $this->container = $container;
+        $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -46,11 +53,9 @@ class CacheableAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        /** @var CacheManager $manager */
-        $manager = $this->container->get(CacheManager::class);
-        [$key, $ttl, $group] = $manager->getAnnotationValue($className, $method, $arguments);
+        [$key, $ttl, $group] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
-        $driver = $manager->getDriver($group);
+        $driver = $this->manager->getDriver($group);
 
         [$has, $result] = $driver->fetch($key);
         if ($has) {
