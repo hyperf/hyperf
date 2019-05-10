@@ -67,13 +67,11 @@ class ProxyFactory
         if (! file_exists($path)) {
             while (! Locker::lock($key)) {
                 $this->createProxyFile($path, $className, $proxyClassName);
-                include_once $path;
                 break;
             }
             Locker::unlock($key);
-        } else {
-            include_once $path;
         }
+        include_once $path;
     }
 
     private function createProxyFile(string $path, string $className, string $proxyClassName): void
