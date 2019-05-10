@@ -64,11 +64,8 @@ class ProxyFactory
         $path = $dir . $proxyFileName . '.proxy.php';
 
         $key = md5($path);
-        if (! file_exists($path)) {
-            while (! Locker::lock($key)) {
-                $this->createProxyFile($path, $className, $proxyClassName);
-                break;
-            }
+        if (! file_exists($path) && Locker::lock($key)) {
+            $this->createProxyFile($path, $className, $proxyClassName);
             Locker::unlock($key);
         }
         include_once $path;
