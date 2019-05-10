@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
+use HyperfTest\Utils\Exception\RetryException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,5 +45,37 @@ class FunctionTest extends TestCase
         $this->assertSame($obj, $result);
         $result = data_get($data, 'obj.name');
         $this->assertSame('hyperf', $result);
+    }
+
+    /**
+     * @expectedException \HyperfTest\Utils\Exception\RetryException
+     */
+    public function testRetry()
+    {
+        $result = 0;
+        try {
+            retry(2, function () use (&$result) {
+                ++$result;
+                throw new RetryException('Retry Test');
+            });
+        } finally {
+            $this->assertSame(2, $result);
+        }
+    }
+
+    /**
+     * @expectedException \HyperfTest\Utils\Exception\RetryException
+     */
+    public function testRetryErrorTimes()
+    {
+        $result = 0;
+        try {
+            retry(0, function () use (&$result) {
+                ++$result;
+                throw new RetryException('Retry Test');
+            });
+        } finally {
+            $this->assertSame(1, $result);
+        }
     }
 }
