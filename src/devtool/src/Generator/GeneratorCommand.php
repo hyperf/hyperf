@@ -233,7 +233,7 @@ abstract class GeneratorCommand extends Command
     protected function getConfig(): array
     {
         $class = Arr::last(explode('\\', static::class));
-        $class = str_replace('Command', '', $class);
+        $class = Str::replaceLast('Command', '', $class);
         $key = 'devtool.generator.' . Str::snake($class, '.');
         return $this->getContainer()->get(ConfigInterface::class)->get($key) ?? [];
     }
