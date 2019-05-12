@@ -86,10 +86,9 @@ class DemoService
 {
     protected $driver;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(DriverFactory $driverFactory)
     {
-        $this->container = $container;
-        $this->driver = $container->get(DriverFactory::class)->get('default');
+        $this->driver = $driverFactory->get('default');
     }
 
     public function publish()
