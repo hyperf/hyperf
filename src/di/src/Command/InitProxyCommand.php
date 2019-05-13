@@ -14,6 +14,7 @@ namespace Hyperf\Di\Command;
 
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
@@ -57,6 +58,16 @@ class InitProxyCommand extends Command
                 $this->container->get($item);
             } catch (\Throwable $ex) {
                 // Entry cannot be resoleved.
+            }
+        }
+
+        if ($this->container instanceof Container) {
+            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
+                try {
+                    $this->container->get($key);
+                } catch (\Throwable $ex) {
+                    // Entry cannot be resoleved.
+                }
             }
         }
 

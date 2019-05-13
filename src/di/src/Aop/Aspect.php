@@ -106,7 +106,7 @@ class Aspect
             return [true, isset($method) && $method ? [$method] : []];
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^${preg}$/";
+        $pattern = "/^{$preg}$/";
 
         if (preg_match($pattern, $class)) {
             return [true, []];

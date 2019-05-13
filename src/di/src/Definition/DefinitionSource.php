@@ -309,7 +309,7 @@ class DefinitionSource implements DefinitionSourceInterface
             return true;
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^${preg}$/";
+        $pattern = "/^{$preg}$/";
 
         if (preg_match($pattern, $target)) {
             return true;
