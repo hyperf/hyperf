@@ -14,6 +14,7 @@ namespace Hyperf\AsyncQueue\Command;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Framework\Annotation\Command;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,21 +26,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FlushFailedMessageCommand extends SymfonyCommand
 {
     /**
-     * @var DriverFactory
+     * @var ContainerInterface
      */
-    protected $factory;
+    protected $container;
 
-    public function __construct(DriverFactory $factory)
+    public function __construct(ContainerInterface $container)
     {
-        $this->factory = $factory;
+        $this->container = $container;
         parent::__construct('queue:flush');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
-
-        $driver = $this->factory->get($name);
+        $factory = $this->container->get(DriverFactory::class);
+        $driver = $factory->get($name);
 
         $driver->flush();
 
