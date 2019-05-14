@@ -16,7 +16,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
-use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
@@ -64,7 +63,7 @@ class RegisterServiceListener implements ListenerInterface
     }
 
     /**
-     * @param AfterPathRegister $event
+     * @param MainWorkerStart $event
      */
     public function process(object $event)
     {
