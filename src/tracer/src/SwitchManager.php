@@ -22,9 +22,9 @@ class SwitchManager
      */
     private $config
         = [
-            'guzzle' => true,
-            'redis' => true,
-            'db' => true,
+            'guzzle' => false,
+            'redis' => false,
+            'db' => false,
         ];
 
     /**
