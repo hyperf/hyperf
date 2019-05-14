@@ -73,24 +73,32 @@ class CoreMiddleware implements MiddlewareInterface
                 $response = $this->handleMethodNotAllowed($routes);
                 break;
             case Dispatcher::FOUND:
-                if ($routes[1] instanceof Closure) {
-                    $response = call($routes[1]);
-                } else {
-                    [$controller, $action] = $this->prepareHandler($routes[1]);
-                    $controllerInstance = $this->container->get($controller);
-                    if (! method_exists($controller, $action)) {
-                        $response = $this->response()->withStatus(500)->withBody(new SwooleStream('Action not exist.'));
-                        break;
-                    }
-                    $parameters = $this->parseParameters($controller, $action, $routes[2]);
-                    $response = $controllerInstance->{$action}(...$parameters);
-                }
-                if (! $response instanceof ResponseInterface) {
-                    $response = $this->transferToResponse($response);
-                }
+                $response = $this->handleFound($routes);
                 break;
         }
+        if (! $response instanceof ResponseInterface) {
+            $response = $this->transferToResponse($response);
+        }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    /**
+     * Handle the response when found.
+     */
+    protected function handleFound(array $routes): ResponseInterface
+    {
+        if ($routes[1] instanceof Closure) {
+            $response = call($routes[1]);
+        } else {
+            [$controller, $action] = $this->prepareHandler($routes[1]);
+            $controllerInstance = $this->container->get($controller);
+            if (! method_exists($controller, $action)) {
+                return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
+            }
+            $parameters = $this->parseParameters($controller, $action, $routes[2]);
+            $response = $controllerInstance->{$action}(...$parameters);
+        }
+        return $response;
     }
 
     /**
@@ -115,7 +123,10 @@ class CoreMiddleware implements MiddlewareInterface
     protected function prepareHandler($handler): array
     {
         if (is_string($handler)) {
-            return explode('@', $handler);
+            if (strpos($handler, '@') !== false) {
+                return explode('@', $handler);
+            }
+            return explode('::', $handler);
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
