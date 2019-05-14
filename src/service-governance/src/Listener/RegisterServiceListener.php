@@ -15,8 +15,10 @@ namespace Hyperf\ServiceGovernance\Listener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
+use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -34,16 +36,30 @@ class RegisterServiceListener implements ListenerInterface
      */
     private $logger;
 
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
+    /**
+     * @var ServiceManager
+     */
+    private $serviceManager;
+
+    /**
+     * @var array
+     */
+    private $defaultLoggerContext
+        = [
+            'component' => 'service-governance',
+        ];
+
+    public function __construct(ContainerInterface $container)
     {
         $this->consulAgent = $container->get(ConsulAgent::class);
-        $this->logger = $logger;
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->serviceManager = $container->get(ServiceManager::class);
     }
 
     public function listen(): array
     {
         return [
-            AfterPathRegister::class,
+            MainWorkerStart::class,
         ];
     }
 
@@ -52,29 +68,44 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $annotation = $event->annotation;
-        switch ($annotation->publishTo) {
-            case 'consul':
-                $address = '127.0.0.1';
-                $port = 9502;
-                if ($this->isRegistered($annotation->name, $address, $port, $annotation->protocol)) {
-                    $this->logger->info(sprintf('The %s service has been register to the consul already.', $annotation->name));
-                    return;
+        $services = $this->serviceManager->all();
+        foreach ($services as $serviceName => $paths) {
+            foreach ($paths as $path => $service) {
+                if (! isset($service['publishTo'])) {
+                    continue;
                 }
-                $nextId = $this->generateId($this->getLastServiceId($annotation->name));
-                $response = $this->consulAgent->registerService([
-                    'Name' => $annotation->name,
-                    'ID' => $nextId,
-                    'Address' => $address,
-                    'Port' => $port,
-                    'Meta' => [
-                        'Protocol' => 'jsonrpc-20',
-                    ],
-                ]);
-                if ($response->getStatusCode() === 200) {
-                    $this->logger->info(sprintf('Service %s[%s] register to the consul successfully.', $annotation->name, $nextId));
+                switch ($service['publishTo']) {
+                    case 'consul':
+                        // @TODO Retrieve the address and port automatically.
+                        $address = '127.0.0.1';
+                        $port = 9502;
+                        $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
+                        if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
+                            $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
+                            return;
+                        }
+                        if ($service['ID']) {
+                            $nextId = $service['ID'];
+                        } else {
+                            $nextId = $this->generateId($this->getLastServiceId($serviceName));
+                        }
+                        $response = $this->consulAgent->registerService([
+                            'Name' => $serviceName,
+                            'ID' => $nextId,
+                            'Address' => $address,
+                            'Port' => $port,
+                            'Meta' => [
+                                'Protocol' => 'jsonrpc-20',
+                            ],
+                        ]);
+                        if ($response->getStatusCode() === 200) {
+                            $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
+                        } else {
+                            $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
+                        }
+                        break;
                 }
-                break;
+            }
         }
     }
 
@@ -113,14 +144,24 @@ class RegisterServiceListener implements ListenerInterface
 
     private function isRegistered(string $name, string $address, int $port, string $protocol): bool
     {
-        $services = $this->consulAgent->services()->json();
+        $response = $this->consulAgent->services();
+        if ($response->getStatusCode() !== 200) {
+            $this->logger->warning(sprintf('Service %s register to the consul failed.', $name), $this->defaultLoggerContext);
+            return false;
+        }
+        $services = $response->json();
         $glue = '-';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
         foreach ($services as $serviceId => $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
                 continue;
             }
-            $currentTag = implode($glue, [$service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol']]);
+            $currentTag = implode($glue, [
+                $service['Service'],
+                $service['Address'],
+                $service['Port'],
+                $service['Meta']['Protocol'],
+            ]);
             if ($currentTag === $tag) {
                 return true;
             }
