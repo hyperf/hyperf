@@ -67,10 +67,10 @@ class CoreMiddleware implements MiddlewareInterface
         $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
         switch ($routes[0]) {
             case Dispatcher::NOT_FOUND:
-                $response = $this->response()->withStatus(404);
+                $response = $this->handleNotFound();
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
+                $response = $this->handleMethodNotAllowed($routes);
                 break;
             case Dispatcher::FOUND:
                 if ($routes[1] instanceof Closure) {
@@ -91,6 +91,22 @@ class CoreMiddleware implements MiddlewareInterface
                 break;
         }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    /**
+     * Handle the response when cannot found any routes.
+     */
+    protected function handleNotFound(): ResponseInterface
+    {
+        return $this->response()->withStatus(404);
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     */
+    protected function handleMethodNotAllowed(array $routes): ResponseInterface
+    {
+        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
     }
 
     /**
@@ -124,7 +140,7 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->withBody(new SwooleStream((string)$response));
     }
 
     /**
@@ -155,16 +171,16 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int) $arguments[$definition['name']] ?? null;
+                        return (int)$arguments[$definition['name']] ?? null;
                         break;
                     case 'float':
-                        return (float) $arguments[$definition['name']] ?? null;
+                        return (float)$arguments[$definition['name']] ?? null;
                         break;
                     case 'bool':
-                        return (bool) $arguments[$definition['name']] ?? null;
+                        return (bool)$arguments[$definition['name']] ?? null;
                         break;
                     case 'string':
-                        return (string) $arguments[$definition['name']] ?? null;
+                        return (string)$arguments[$definition['name']] ?? null;
                         break;
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
