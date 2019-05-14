@@ -37,6 +37,13 @@ class StdoutLogger implements StdoutLoggerInterface
      */
     private $output;
 
+    /**
+     * @var array
+     */
+    private $tags = [
+        'component',
+    ];
+
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
@@ -116,15 +123,23 @@ class StdoutLogger implements StdoutLoggerInterface
         if (! in_array($level, $config['log_level'])) {
             return;
         }
+        $keys = array_keys($context);
+        $tags = [];
+        foreach ($keys as $k => $key) {
+            if (in_array($key, $this->tags)) {
+                $tags[$key] = $context[$key];
+                unset($keys[$k]);
+            }
+        }
         $search = array_map(function ($key) {
             return sprintf('{%s}', $key);
-        }, array_keys($context));
-        $message = str_replace($search, $context, $message);
+        }, $keys);
+        $message = str_replace($search, $context, $this->getMessage($message, $level, $tags));
 
-        $this->output->writeln($this->getMessage($message, $level));
+        $this->output->writeln($message);
     }
 
-    protected function getMessage($message, $level = LogLevel::INFO)
+    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags)
     {
         $tag = null;
         switch ($level) {
@@ -141,12 +156,16 @@ class StdoutLogger implements StdoutLoggerInterface
                 $tag = 'comment';
                 break;
             case LogLevel::INFO:
-                $tag = 'info';
-                break;
             default:
-                return sprintf('[%s] %s', strtoupper($level), $message);
+                $tag = 'info';
         }
 
-        return sprintf('<%s>[%s] %s</>', $tag, strtoupper($level), $message);
+        $template = sprintf('<%s>[%s]</>', $tag, strtoupper($level));
+        $implodedTags = '';
+        foreach ($tags as $value) {
+            $implodedTags .= (' [' . $value . ']');
+        }
+
+        return sprintf($template . $implodedTags . ' %s', $message);
     }
 }
