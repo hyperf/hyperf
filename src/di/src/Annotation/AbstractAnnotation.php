@@ -12,7 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-abstract class AbstractAnnotation implements AnnotationInterface
+use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Contracts\Arrayable;
+use ReflectionProperty;
+
+abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
     public function __construct($value = null)
     {
@@ -21,6 +25,16 @@ abstract class AbstractAnnotation implements AnnotationInterface
                 $this->{$key} = $val;
             }
         }
+    }
+
+    public function toArray(): array
+    {
+        $properties = ReflectionManager::reflectClass(static::class)->getProperties(ReflectionProperty::IS_PUBLIC);
+        $result = [];
+        foreach ($properties as $property) {
+            $result[$property->getName()] = $property->getValue($this);
+        }
+        return $result;
     }
 
     public function collectClass(string $className): void
