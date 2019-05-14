@@ -14,7 +14,6 @@ namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
