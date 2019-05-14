@@ -53,12 +53,12 @@ interface DriverInterface
     /**
      * Reload failed message into waiting queue.
      */
-    public function reload(): int;
+    public function reload(string $queue = null): int;
 
     /**
      * Delete all failed message from failed queue.
      */
-    public function flush(): bool;
+    public function flush(string $queue = null): bool;
 
     /**
      * Return info for current queue.

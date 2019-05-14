@@ -18,6 +18,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -39,10 +40,12 @@ class FlushFailedMessageCommand extends SymfonyCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
+        $queue = $input->getOption('queue');
+
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($name);
 
-        $driver->flush();
+        $driver->flush($queue);
 
         $output->writeln('<fg=red>Flush all message from failed queue.</>');
     }
@@ -51,5 +54,6 @@ class FlushFailedMessageCommand extends SymfonyCommand
     {
         $this->setDescription('Delete all message from failed queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
+        $this->addOption('queue', 'Q', InputOption::VALUE_OPTIONAL, 'The channel name of queue.');
     }
 }
