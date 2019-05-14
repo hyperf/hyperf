@@ -18,6 +18,7 @@ use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -84,8 +85,10 @@ class CoreMiddleware implements MiddlewareInterface
 
     /**
      * Handle the response when found.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleFound(array $routes): ResponseInterface
+    protected function handleFound(array $routes)
     {
         if ($routes[1] instanceof Closure) {
             $response = call($routes[1]);
@@ -103,16 +106,20 @@ class CoreMiddleware implements MiddlewareInterface
 
     /**
      * Handle the response when cannot found any routes.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleNotFound(): ResponseInterface
+    protected function handleNotFound()
     {
         return $this->response()->withStatus(404);
     }
 
     /**
      * Handle the response when the routes found but doesn't match any available methods.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleMethodNotAllowed(array $routes): ResponseInterface
+    protected function handleMethodNotAllowed(array $routes)
     {
         return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
     }
