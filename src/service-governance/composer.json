@@ -44,6 +44,7 @@
         "branch-alias": {
         },
         "hyperf": {
+            "config": "Hyperf\\ServiceGovernance\\ConfigProvider"
         }
     },
     "bin": [
