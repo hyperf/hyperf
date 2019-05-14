@@ -110,10 +110,6 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
             $response = $this->dispatcher->dispatch($request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
-            if (! $throwable instanceof ServerException) {
-                $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
-                $this->logger->error($message);
-            }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
