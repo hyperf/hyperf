@@ -15,7 +15,7 @@ namespace Hyperf\Di;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
-use Hyperf\Utils\Coroutine\Locker;
+use Hyperf\Utils\Coroutine\Locker as CoLocker;
 
 class ProxyFactory
 {
@@ -64,16 +64,20 @@ class ProxyFactory
         $path = $dir . $proxyFileName . '.proxy.php';
 
         $key = md5($path);
-        if (! file_exists($path) && Locker::lock($key)) {
-            $this->createProxyFile($path, $className, $proxyClassName);
-            Locker::unlock($key);
+        // If the proxy file does not exist, then try to acquire the coroutine lock.
+        if (! file_exists($path) && CoLocker::lock($key)) {
+            // Try to acquire the file lock via the worker who acquired the coroutine lock.
+            $resource = fopen($path, 'a+');
+            if (flock($resource, LOCK_EX)) {
+                ftruncate($resource, 0);
+                $code = $this->ast->proxy($className, $proxyClassName);
+                fwrite($resource, $code);
+                fflush($resource);
+                flock($resource, LOCK_UN);
+                CoLocker::unlock($key);
+            }
+            fclose($resource);
         }
         include_once $path;
-    }
-
-    private function createProxyFile(string $path, string $className, string $proxyClassName): void
-    {
-        $code = $this->ast->proxy($className, $proxyClassName);
-        file_put_contents($path, $code);
     }
 }
