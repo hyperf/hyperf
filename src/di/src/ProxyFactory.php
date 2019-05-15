@@ -67,16 +67,12 @@ class ProxyFactory
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if (! file_exists($path) && CoLocker::lock($key)) {
             // Try to acquire the file lock via the worker who acquired the coroutine lock.
-            $resource = fopen($path, 'a+');
-            if (flock($resource, LOCK_EX)) {
-                ftruncate($resource, 0);
-                $code = $this->ast->proxy($className, $proxyClassName);
-                fwrite($resource, $code);
-                fflush($resource);
-                flock($resource, LOCK_UN);
-                CoLocker::unlock($key);
-            }
-            fclose($resource);
+            $tp = $path . '.' . uniqid();
+            $code = $this->ast->proxy($className, $proxyClassName);
+            file_put_contents($tp, $code);
+            copy($tp, $path);
+            unlink($tp);
+            CoLocker::unlock($key);
         }
         include_once $path;
     }
