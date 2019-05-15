@@ -60,7 +60,7 @@ class ProxyFactory
         if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
-        $proxyFileName = str_replace('\\', '_', $proxyClassName);
+        $proxyFileName = str_replace('\\', '_', $className);
         $path = $dir . $proxyFileName . '.proxy.php';
 
         $key = md5($path);
@@ -72,6 +72,6 @@ class ProxyFactory
             rename($targetPath, $path);
             CoLocker::unlock($key);
         }
-        include_once $path;
+        include $path;
     }
 }
