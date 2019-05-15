@@ -70,8 +70,7 @@ class ProxyFactory
             $tp = $path . '.' . uniqid();
             $code = $this->ast->proxy($className, $proxyClassName);
             file_put_contents($tp, $code);
-            copy($tp, $path);
-            unlink($tp);
+            rename($tp, $path);
             CoLocker::unlock($key);
         }
         include_once $path;
