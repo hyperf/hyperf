@@ -79,6 +79,7 @@ class ProxyFactory
                 CoLocker::unlock($key);
             }
             fclose($resource);
+            unlink($tp);
         }
         include_once $path;
     }
