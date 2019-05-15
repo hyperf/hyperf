@@ -72,6 +72,6 @@ class ProxyFactory
             rename($targetPath, $path);
             CoLocker::unlock($key);
         }
-        include $path;
+        include_once $path;
     }
 }
