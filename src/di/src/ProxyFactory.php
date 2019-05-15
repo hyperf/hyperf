@@ -66,11 +66,10 @@ class ProxyFactory
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if (! file_exists($path) && CoLocker::lock($key)) {
-            // Try to acquire the file lock via the worker who acquired the coroutine lock.
-            $tp = $path . '.' . uniqid();
+            $targetPath = $path . '.' . uniqid();
             $code = $this->ast->proxy($className, $proxyClassName);
-            file_put_contents($tp, $code);
-            rename($tp, $path);
+            file_put_contents($targetPath, $code);
+            rename($targetPath, $path);
             CoLocker::unlock($key);
         }
         include_once $path;
