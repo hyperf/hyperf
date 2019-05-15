@@ -13,8 +13,8 @@ composer require hyperf/rate-limit
 | consume        | 1      | 每次请求消耗令牌数  |
 | capacity       | 2      | 令牌桶最大容量      |
 | limitCallback  | NULL   | 触发限流时回调方法  |
-| key            | NULL   | 缓存前缀            |
-| waitTimeout    | 3      | 缓存前缀            |
+| key            | NULL   | 生成令牌桶的key     |
+| waitTimeout    | 3      | 排队超时时间        |
 
 ```php
 <?php
