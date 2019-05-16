@@ -83,10 +83,11 @@ class Manager
             // Fetch it from database, because it not exist in cache handler.
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
-                $ttl = $handler->getConfig()->getTtl();
                 if ($model) {
+                    $ttl = $handler->getConfig()->getTtl();
                     $handler->set($key, $model->toArray(), $ttl);
                 } else {
+                    $ttl = $handler->getConfig()->getEmptyModelTtl();
                     $handler->set($key, [], $ttl);
                 }
                 return $model;
