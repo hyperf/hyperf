@@ -13,15 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\LoadBalancer;
 
 use InvalidArgumentException;
-use Psr\Container\ContainerInterface;
 
 class LoadBalancerManager
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    private $container;
-
     /**
      * @var array
      */
@@ -32,10 +26,10 @@ class LoadBalancerManager
         'weighted-round-robin' => WeightedRoundRobin::class,
     ];
 
-    public function __construct(?ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    /**
+     * @var \Hyperf\LoadBalancer\LoadBalancerInterface[]
+     */
+    private $instances = [];
 
     /**
      * Retrieve a class name of load balancer.
@@ -43,7 +37,7 @@ class LoadBalancerManager
     public function get(string $name): string
     {
         if (! $this->has($name)) {
-            throw new InvalidArgumentException(sprintf('%s algorithm class not exists.', $name));
+            throw new InvalidArgumentException(sprintf('The %s algorithm does not exists.', $name));
         }
         return $this->algorithms[$name];
     }
@@ -51,14 +45,23 @@ class LoadBalancerManager
     /**
      * Retrieve a class name of load balancer and create a object instance,
      * If $container object exists, then the class will create via container.
+     *
+     * @param string $key Key of the load balancer instance.
+     * @param string $algorithm The name of the load balance algorithm
      */
-    public function getInstance(string $name): LoadBalancerInterface
+    public function getInstance(string $key, string $algorithm): LoadBalancerInterface
     {
-        $class = $this->get($name);
-        if ($this->container) {
-            return $this->container->get($class);
+        if (isset($this->instances[$key])) {
+            return $this->instances[$key];
         }
-        return new $class();
+        $class = $this->get($algorithm);
+        if (function_exists('make')) {
+            $instance = make($class);
+        } else {
+            $instance = new $class();
+        }
+        $this->instances[$key] = $instance;
+        return $instance;
     }
 
     /**
@@ -76,7 +79,7 @@ class LoadBalancerManager
     {
         foreach ($algorithms as $algorithm) {
             if (! class_exists($algorithm)) {
-                throw new InvalidArgumentException(sprintf('%s algorithm class not exists.', $algorithm));
+                throw new InvalidArgumentException(sprintf('The class of %s algorithm does not exists.', $algorithm));
             }
         }
         $this->algorithms = $algorithms;
@@ -89,7 +92,7 @@ class LoadBalancerManager
     public function register(string $key, string $algorithm): self
     {
         if (! class_exists($algorithm)) {
-            throw new InvalidArgumentException(sprintf('%s algorithm class not exists.', $algorithm));
+            throw new InvalidArgumentException(sprintf('The class of %s algorithm does not exists.', $algorithm));
         }
         $this->algorithms[$key] = $algorithm;
         return $this;
