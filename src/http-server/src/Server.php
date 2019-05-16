@@ -110,7 +110,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             if (! $throwable instanceof ServerException) {
-                $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
+                $message = sprintf("%s\nin %s:%s\n%s", $throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getTraceAsString());
                 $this->logger->error($message);
             }
             // Delegate the exception to exception handler.
