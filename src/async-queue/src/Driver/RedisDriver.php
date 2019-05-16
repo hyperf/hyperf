@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Driver;
 
+use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
@@ -113,18 +114,32 @@ class RedisDriver extends Driver
         return false;
     }
 
-    public function reload(): int
+    public function reload(string $queue = null): int
     {
+        $channel = $this->channel->getFailed();
+        if ($queue) {
+            if (! in_array($queue, ['timeout', 'failed'])) {
+                throw new InvalidQueueException(sprintf('Queue %s is not supported.', $queue));
+            }
+
+            $channel = $this->channel->get($queue);
+        }
+
         $num = 0;
-        while ($this->redis->rpoplpush($this->channel->getFailed(), $this->channel->getWaiting())) {
+        while ($this->redis->rpoplpush($channel, $this->channel->getWaiting())) {
             ++$num;
         }
         return $num;
     }
 
-    public function flush(): bool
+    public function flush(string $queue = null): bool
     {
-        return (bool) $this->redis->delete($this->channel->getFailed());
+        $channel = $this->channel->getFailed();
+        if ($queue) {
+            $channel = $this->channel->get($queue);
+        }
+
+        return (bool) $this->redis->delete($channel);
     }
 
     public function info(): array

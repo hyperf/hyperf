@@ -42,7 +42,7 @@ abstract class AbstractServiceClient
      *
      * @var string
      */
-    protected $protocol = 'jsonrpc-20';
+    protected $protocol = 'jsonrpc';
 
     /**
      * The load balancer of the client, this name of the load balancer
@@ -94,10 +94,11 @@ abstract class AbstractServiceClient
         $this->protocolManager = $container->get(ProtocolManager::class);
         $this->pathGenerator = $this->createPathGenerator();
         $this->dataFormatter = $this->createDataFormatter();
+        $loadBalancer = $this->createLoadBalancer($this->createNodes());
+        $transporter = $this->createTransporter()->setLoadBalancer($loadBalancer);
         $this->client = $this->container->get(Client::class)
             ->setPacker($this->createPacker())
-            ->setTransporter($this->createTransporter())
-            ->setLoadBalancer($this->createLoadBalancer($this->createNodes()));
+            ->setTransporter($transporter);
     }
 
     protected function __request(string $method, array $params)
@@ -124,19 +125,17 @@ abstract class AbstractServiceClient
 
     protected function createLoadBalancer(array $nodes): LoadBalancerInterface
     {
-        return $this->loadBalancerManager->getInstance($this->loadBalancer)->setNodes($nodes);
+        return $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
     }
 
-    protected function createTransporter(?LoadBalancerInterface $loadBalancer = null): TransporterInterface
+    protected function createTransporter(): TransporterInterface
     {
         $transporter = $this->protocolManager->getTransporter($this->protocol);
         if (! class_exists($transporter)) {
             throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $transporter));
         }
-        /** @var TransporterInterface $instance */
-        $instance = $this->container->get($transporter);
-        $loadBalancer && $instance->setLoadBalancer($loadBalancer);
-        return $instance;
+        /* @var TransporterInterface $instance */
+        return $this->container->get($transporter);
     }
 
     protected function createPacker(): PackerInterface
@@ -169,6 +168,9 @@ abstract class AbstractServiceClient
         return $this->container->get($dataFormatter);
     }
 
+    /**
+     * Create nodes the first time,
+     */
     protected function createNodes(): array
     {
         if (! $this->container->has(ConfigInterface::class)) {

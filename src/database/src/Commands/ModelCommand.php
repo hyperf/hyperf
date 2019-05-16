@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Schema\MySqlBuilder;
@@ -19,6 +20,7 @@ use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,9 +30,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ModelCommand extends Command
 {
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * @var ConnectionResolverInterface
      */
     protected $resolver;
+
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
 
     /**
      * @var \PhpParser\Parser
@@ -47,37 +59,52 @@ class ModelCommand extends Command
      */
     protected $output;
 
-    public function __construct(ConnectionResolverInterface $resolver)
+    /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct('db:model');
-        $this->resolver = $resolver;
-
-        $parserFactory = new ParserFactory();
-        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
-        $this->printer = new Standard();
+        $this->container = $container;
     }
 
     protected function configure()
     {
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want to associated with the Model.');
+
         $this->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which connection pool you want the Model use.', 'default');
-        $this->addOption('path', 'pt', InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.', 'app/Models');
-        $this->addOption('force-casts', 'fc', InputOption::VALUE_OPTIONAL, 'Whether force generate the casts for model.', false);
-        $this->addOption('prefix', 'pf', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.', '');
-        $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.', 'Model');
+        $this->addOption('path', 'pt', InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.', false);
+        $this->addOption('force-casts', 'F', InputOption::VALUE_OPTIONAL, 'Whether force generate the casts for model.', false);
+        $this->addOption('prefix', 'pf', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.', false);
+        $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.', false);
+    }
+
+    protected function init(InputInterface $input, OutputInterface $output)
+    {
+        $this->output = $output;
+        $this->input = $input;
+
+        $this->resolver = $this->container->get(ConnectionResolverInterface::class);
+        $this->config = $this->container->get(ConfigInterface::class);
+        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->printer = new Standard();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output = $output;
+        $this->init($input, $output);
+
         $table = $input->getArgument('table');
+        $pool = $input->getOption('pool');
 
         $option = new ModelOption();
-        $option->setPool($input->getOption('pool'))
-            ->setPath($input->getOption('path'))
-            ->setPrefix($input->getOption('prefix'))
-            ->setForceCasts($input->getOption('force-casts') !== false)
-            ->setInheritance($input->getOption('inheritance'));
+        $option->setPool($pool)
+            ->setPath($this->getOption('path', 'commands.db:model.path', $pool, 'app/Model'))
+            ->setPrefix($this->getOption('prefix', 'prefix', $pool, ''))
+            ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false) !== false)
+            ->setInheritance($this->getOption('inheritance', 'commands.db:model.inheritance', $pool, 'Model'));
 
         // $path = BASE_PATH . '/' . $path;
         if ($table) {
@@ -111,7 +138,7 @@ class ModelCommand extends Command
     protected function createModel(string $table, ModelOption $option)
     {
         $builder = $this->getSchemaBuilder($option->getPool());
-
+        $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $builder->getColumnTypeListing($table);
 
         $class = $option->getPath() . '/' . Str::studly($table);
@@ -137,10 +164,14 @@ class ModelCommand extends Command
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
     }
 
-    protected function getTemplate(string $table)
+    protected function getOption(string $name, string $key, string $pool = 'default', $default = null)
     {
-        $code = file_get_contents(__DIR__ . '/stubs/Model.stub');
-        return sprintf($code, Str::studly($table), $table);
+        $result = $this->input->getOption($name);
+        if ($result === false) {
+            $result = $this->config->get("databases.{$pool}.{$key}", $default);
+        }
+
+        return $result;
     }
 
     /**

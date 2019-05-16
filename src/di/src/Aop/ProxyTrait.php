@@ -95,7 +95,7 @@ trait ProxyTrait
                 }
                 if (strpos($rule, '*') !== false) {
                     $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                    $pattern = "/^${preg}$/";
+                    $pattern = "/^{$preg}$/";
                     if (preg_match($pattern, $className)) {
                         $matchedAspect[] = $aspect;
                         break;
@@ -124,7 +124,7 @@ trait ProxyTrait
                 foreach ($annotations as $annotation) {
                     if (strpos($rule, '*') !== false) {
                         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                        $pattern = "/^${preg}$/";
+                        $pattern = "/^{$preg}$/";
                         if (! preg_match($pattern, $annotation)) {
                             continue;
                         }

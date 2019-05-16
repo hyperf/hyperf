@@ -21,7 +21,7 @@ class SwitchManagerFactory
     {
         $config = $container->get(ConfigInterface::class);
         $manager = new SwitchManager();
-        $manager->apply($config->get('opentracing.switch', []));
+        $manager->apply($config->get('opentracing.enable', []));
         return $manager;
     }
 }

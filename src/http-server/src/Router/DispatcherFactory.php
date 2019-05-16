@@ -41,12 +41,12 @@ class DispatcherFactory
     /**
      * @var \FastRoute\RouteCollector[]
      */
-    private $routers = [];
+    protected $routers = [];
 
     /**
      * @var Dispatcher[]
      */
-    private $dispatchers = [];
+    protected $dispatchers = [];
 
     public function __construct()
     {
@@ -85,7 +85,7 @@ class DispatcherFactory
         return $this->routers[$serverName] = new RouteCollector($parser, $generator);
     }
 
-    private function initAnnotationRoute(array $collector): void
+    protected function initAnnotationRoute(array $collector): void
     {
         foreach ($collector as $className => $metadata) {
             if (isset($metadata['_c'][AutoController::class])) {
@@ -106,7 +106,7 @@ class DispatcherFactory
     /**
      * Register route according to AutoController annotation.
      */
-    private function handleAutoController(string $className, AutoController $annotation, array $middlewares, array $methodMetadata = []): void
+    protected function handleAutoController(string $className, AutoController $annotation, array $middlewares, array $methodMetadata = []): void
     {
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -145,7 +145,7 @@ class DispatcherFactory
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
      */
-    private function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
+    protected function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
     {
         if (! $methodMetadata) {
             return;
@@ -195,7 +195,7 @@ class DispatcherFactory
         }
     }
 
-    private function getPrefix(string $className, string $prefix): string
+    protected function getPrefix(string $className, string $prefix): string
     {
         if (! $prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
@@ -208,17 +208,17 @@ class DispatcherFactory
         return $prefix;
     }
 
-    private function parsePath(string $prefix, ReflectionMethod $method): string
+    protected function parsePath(string $prefix, ReflectionMethod $method): string
     {
         return $prefix . '/' . $method->getName();
     }
 
-    private function hasControllerAnnotation(array $item): bool
+    protected function hasControllerAnnotation(array $item): bool
     {
         return isset($item[Controller::class]);
     }
 
-    private function handleMiddleware(array $metadata): array
+    protected function handleMiddleware(array $metadata): array
     {
         $hasMiddlewares = isset($metadata[Middlewares::class]);
         $hasMiddleware = isset($metadata[Middleware::class]);

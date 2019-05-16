@@ -67,7 +67,7 @@ class Server extends \Hyperf\RpcServer\Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        $class = $this->protocolManager->getPacker('jsonrpc-20');
+        $class = $this->protocolManager->getPacker('jsonrpc');
         $packer = $this->container->get($class);
         $data = $packer->unpack($data);
         if (isset($data['jsonrpc'])) {

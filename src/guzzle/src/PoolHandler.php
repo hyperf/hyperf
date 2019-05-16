@@ -61,29 +61,29 @@ class PoolHandler extends CoroutineHandler
 
         $connection = $pool->get();
 
-        $client = $connection->getConnection();
-        $client->setMethod($request->getMethod());
-        $client->setData((string) $request->getBody());
+        try {
+            $client = $connection->getConnection();
+            $client->setMethod($request->getMethod());
+            $client->setData((string) $request->getBody());
 
-        // 初始化Headers
-        $this->initHeaders($client, $request, $options);
-        // 初始化配置
-        $settings = $this->getSettings($request, $options);
-        // 设置客户端参数
-        if (! empty($settings)) {
-            $client->set($settings);
-        }
-        $client->execute($path);
-        $ex = $this->checkStatusCode($client, $request);
-        if ($ex !== true) {
-            $connection->close();
+            $this->initHeaders($client, $request, $options);
+            $settings = $this->getSettings($request, $options);
+            if (! empty($settings)) {
+                $client->set($settings);
+            }
+            $client->execute($path);
+
+            $ex = $this->checkStatusCode($client, $request);
+            if ($ex !== true) {
+                $connection->close();
+                $connection->release();
+                return \GuzzleHttp\Promise\rejection_for($ex);
+            }
+
+            $response = $this->getResponse($client);
+        } finally {
             $connection->release();
-            return \GuzzleHttp\Promise\rejection_for($ex);
         }
-
-        $response = $this->getResponse($client);
-
-        $connection->release();
 
         return new FulfilledPromise($response);
     }

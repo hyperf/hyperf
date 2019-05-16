@@ -40,7 +40,7 @@ class RateLimitAnnotationAspect implements ArroundInterface
     private $annotationProperty;
 
     /**
-     * @var ConfigInterface
+     * @var array
      */
     private $config;
 
@@ -57,7 +57,7 @@ class RateLimitAnnotationAspect implements ArroundInterface
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
-        $this->config = $config;
+        $this->config = $config->get('rate-limit', []);
         $this->request = $request;
         $this->rateLimitHandler = $rateLimitHandler;
     }
@@ -75,10 +75,10 @@ class RateLimitAnnotationAspect implements ArroundInterface
             $bucketKey = $bucketKey($proceedingJoinPoint);
         }
         if (! $bucketKey) {
-            $bucketKey = trim(str_replace('/', ':', $this->request->getUri()->getPath()), ':');
+            $bucketKey = $this->request->getUri()->getPath();
         }
 
-        $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout ?? 1);
+        $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout);
 
         $currentTime = time();
         $maxTime = $currentTime + $annotation->waitTimeout;
@@ -109,7 +109,7 @@ class RateLimitAnnotationAspect implements ArroundInterface
      */
     public function getWeightingAnnotation(array $annotations): RateLimit
     {
-        $property = array_merge($this->annotationProperty, $this->config->get('rate-limit', []));
+        $property = array_merge($this->annotationProperty, $this->config);
         foreach ($annotations as $annotation) {
             if (! $annotation) {
                 continue;

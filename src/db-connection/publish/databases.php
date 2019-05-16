@@ -35,5 +35,12 @@ return [
             'ttl' => 3600 * 24,
             'load_script' => true,
         ],
+        'commands' => [
+            'db:model' => [
+                'path' => 'app/Model',
+                'force_casts' => true,
+                'inheritance' => 'Model',
+            ],
+        ],
     ],
 ];

@@ -86,7 +86,7 @@ class Container implements ContainerInterface
         $definition = $this->getDefinition($name);
 
         if (! $definition) {
-            throw new NotFoundException("No entry or class found for '${name}'");
+            throw new NotFoundException("No entry or class found for '{$name}'");
         }
 
         return $this->resolveDefinition($definition, $parameters);
@@ -141,15 +141,9 @@ class Container implements ContainerInterface
         return $this->proxyFactory;
     }
 
-    /**
-     * Init defined dependencies, not include dynamic definition.
-     */
-    public function initDependencies(): void
+    public function getDefinitionSource(): Definition\DefinitionSourceInterface
     {
-        $definitions = $this->definitionSource->getDefinitions();
-        foreach ($definitions as $key => $definition) {
-            $this->get($key);
-        }
+        return $this->definitionSource;
     }
 
     protected function setDefinition(string $name, DefinitionInterface $definition): void

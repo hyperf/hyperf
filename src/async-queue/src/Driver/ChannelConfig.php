@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Driver;
 
+use Hyperf\AsyncQueue\Exception\InvalidQueueException;
+
 class ChannelConfig
 {
     /**
@@ -62,6 +64,15 @@ class ChannelConfig
         $this->delayed = "{$channel}:delayed";
         $this->failed = "{$channel}:failed";
         $this->timeout = "{$channel}:timeout";
+    }
+
+    public function get(string $queue)
+    {
+        if (isset($this->{$queue}) && is_string($this->{$queue})) {
+            return $this->{$queue};
+        }
+
+        throw new InvalidQueueException(sprintf('Queue %s is not exist.', $queue));
     }
 
     /**

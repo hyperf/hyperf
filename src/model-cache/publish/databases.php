@@ -33,6 +33,7 @@ return [
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'ttl' => 3600 * 24,
+            'empty_model_ttl' => 3600,
             'load_script' => true,
         ],
     ],

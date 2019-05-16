@@ -29,9 +29,16 @@ class Config
     protected $prefix = 'hyperf';
 
     /**
+     * The lifetime of model cache.
      * @var int
      */
     protected $ttl = 3600;
+
+    /**
+     * The lifetime of empty model cache.
+     * @var int
+     */
+    protected $emptyModelTtl = 60;
 
     /**
      * @var bool
@@ -53,6 +60,9 @@ class Config
         }
         if (isset($values['load_script'])) {
             $this->loadScript = $values['load_script'];
+        }
+        if (isset($values['empty_model_ttl'])) {
+            $this->emptyModelTtl = $values['empty_model_ttl'];
         }
     }
 
@@ -86,6 +96,17 @@ class Config
     public function setTtl(int $ttl): Config
     {
         $this->ttl = $ttl;
+        return $this;
+    }
+
+    public function getEmptyModelTtl(): int
+    {
+        return $this->emptyModelTtl;
+    }
+
+    public function setEmptyModelTtl(int $emptyModelTtl): Config
+    {
+        $this->emptyModelTtl = $emptyModelTtl;
         return $this;
     }
 

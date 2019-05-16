@@ -15,13 +15,11 @@ namespace Hyperf\HttpServer;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
-use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -68,13 +66,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     private $serverName;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
     public function __construct(
-        string $serverName = 'http',
+        string $serverName,
         string $coreHandler,
         ContainerInterface $container
     ) {
@@ -82,7 +75,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->coreHandler = $coreHandler;
         $this->container = $container;
         $this->dispatcher = $container->get(HttpDispatcher::class);
-        $this->logger = $this->container->get(StdoutLoggerInterface::class);
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -109,10 +101,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
-            if (! $throwable instanceof ServerException) {
-                $message = sprintf("%s\nin %s:%s\n%s", $throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getTraceAsString());
-                $this->logger->error($message);
-            }
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);

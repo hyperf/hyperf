@@ -26,6 +26,9 @@ class JsonRpcTransporter implements TransporterInterface
     private $loadBalancer;
 
     /**
+     * If $loadBalancer is null, will select a node in $nodes to request,
+     * otherwise, use the nodes in $loadBalancer.
+     *
      * @var Node[]
      */
     private $nodes = [];
@@ -39,15 +42,6 @@ class JsonRpcTransporter implements TransporterInterface
      * @var float
      */
     private $recvTimeout = 5;
-
-    public function __construct(array $nodes = [], ?LoadBalancerInterface $loadBalancer = null)
-    {
-        $this->nodes = $nodes;
-        if ($loadBalancer instanceof LoadBalancerInterface) {
-            $loadBalancer->setNodes($nodes);
-        }
-        $this->loadBalancer = $loadBalancer;
-    }
 
     public function send(string $data)
     {
@@ -85,10 +79,24 @@ class JsonRpcTransporter implements TransporterInterface
         return $this->loadBalancer;
     }
 
-    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): self
+    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): TransporterInterface
     {
         $this->loadBalancer = $loadBalancer;
         return $this;
+    }
+
+    /**
+     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     */
+    public function setNodes(array $nodes): self
+    {
+        $this->nodes = $nodes;
+        return $this;
+    }
+
+    public function getNodes(): array
+    {
+        return $this->nodes;
     }
 
     private function getEof()

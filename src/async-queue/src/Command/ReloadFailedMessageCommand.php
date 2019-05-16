@@ -14,9 +14,11 @@ namespace Hyperf\AsyncQueue\Command;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Framework\Annotation\Command;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -25,23 +27,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ReloadFailedMessageCommand extends SymfonyCommand
 {
     /**
-     * @var DriverFactory
+     * @var ContainerInterface
      */
-    protected $factory;
+    protected $container;
 
-    public function __construct(DriverFactory $factory)
+    public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
         parent::__construct('queue:reload');
-        $this->factory = $factory;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
+        $queue = $input->getOption('queue');
 
-        $driver = $this->factory->get($name);
+        $factory = $this->container->get(DriverFactory::class);
+        $driver = $factory->get($name);
 
-        $num = $driver->reload();
+        $num = $driver->reload($queue);
 
         $output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
     }
@@ -50,5 +54,6 @@ class ReloadFailedMessageCommand extends SymfonyCommand
     {
         $this->setDescription('Reload all failed message into waiting queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
+        $this->addOption('queue', 'Q', InputOption::VALUE_OPTIONAL, 'The channel name of queue.');
     }
 }

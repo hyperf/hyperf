@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer\Event;
 
 use Hyperf\RpcServer\Annotation\RpcService as Annotation;
+use Hyperf\Utils\Contracts\Arrayable;
 
-class AfterPathRegister
+class AfterPathRegister implements Arrayable
 {
     /**
      * @var string
@@ -36,17 +37,21 @@ class AfterPathRegister
      */
     public $annotation;
 
-    /**
-     * @param string $path
-     * @param Annotation $annotation
-     * @param string $className
-     * @param string $methodName
-     */
     public function __construct(string $path, string $className, string $methodName, Annotation $annotation)
     {
         $this->path = $path;
         $this->className = $className;
         $this->methodName = $methodName;
         $this->annotation = $annotation;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'path' => $this->path,
+            'className' => $this->className,
+            'methodName' => $this->methodName,
+            'annotation' => $this->annotation->toArray(),
+        ];
     }
 }

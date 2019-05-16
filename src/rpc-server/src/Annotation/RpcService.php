@@ -33,7 +33,7 @@ class RpcService extends AbstractAnnotation
     /**
      * @var string
      */
-    public $protocol = 'jsonrpc-20';
+    public $protocol = 'jsonrpc';
 
     /**
      * @var string

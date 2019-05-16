@@ -18,6 +18,7 @@ use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,30 +68,60 @@ class CoreMiddleware implements MiddlewareInterface
         $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
         switch ($routes[0]) {
             case Dispatcher::NOT_FOUND:
-                $response = $this->response()->withStatus(404);
+                $response = $this->handleNotFound();
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
+                $response = $this->handleMethodNotAllowed($routes);
                 break;
             case Dispatcher::FOUND:
-                if ($routes[1] instanceof Closure) {
-                    $response = call($routes[1]);
-                } else {
-                    [$controller, $action] = $this->prepareHandler($routes[1]);
-                    $controllerInstance = $this->container->get($controller);
-                    if (! method_exists($controller, $action)) {
-                        $response = $this->response()->withStatus(500)->withBody(new SwooleStream('Action not exist.'));
-                        break;
-                    }
-                    $parameters = $this->parseParameters($controller, $action, $routes[2]);
-                    $response = $controllerInstance->{$action}(...$parameters);
-                }
-                if (! $response instanceof ResponseInterface) {
-                    $response = $this->transferToResponse($response);
-                }
+                $response = $this->handleFound($routes);
                 break;
         }
+        if (! $response instanceof ResponseInterface) {
+            $response = $this->transferToResponse($response);
+        }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    /**
+     * Handle the response when found.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
+     */
+    protected function handleFound(array $routes)
+    {
+        if ($routes[1] instanceof Closure) {
+            $response = call($routes[1]);
+        } else {
+            [$controller, $action] = $this->prepareHandler($routes[1]);
+            $controllerInstance = $this->container->get($controller);
+            if (! method_exists($controller, $action)) {
+                return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
+            }
+            $parameters = $this->parseParameters($controller, $action, $routes[2]);
+            $response = $controllerInstance->{$action}(...$parameters);
+        }
+        return $response;
+    }
+
+    /**
+     * Handle the response when cannot found any routes.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
+     */
+    protected function handleNotFound()
+    {
+        return $this->response()->withStatus(404);
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     *
+     * @return ResponseInterface|array|string|Arrayable|mixed
+     */
+    protected function handleMethodNotAllowed(array $routes)
+    {
+        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
     }
 
     /**
@@ -99,7 +130,10 @@ class CoreMiddleware implements MiddlewareInterface
     protected function prepareHandler($handler): array
     {
         if (is_string($handler)) {
-            return explode('@', $handler);
+            if (strpos($handler, '@') !== false) {
+                return explode('@', $handler);
+            }
+            return explode('::', $handler);
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
@@ -124,7 +158,7 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->withBody(new SwooleStream((string)$response));
     }
 
     /**
@@ -155,16 +189,16 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int) $arguments[$definition['name']] ?? null;
+                        return (int)$arguments[$definition['name']] ?? null;
                         break;
                     case 'float':
-                        return (float) $arguments[$definition['name']] ?? null;
+                        return (float)$arguments[$definition['name']] ?? null;
                         break;
                     case 'bool':
-                        return (bool) $arguments[$definition['name']] ?? null;
+                        return (bool)$arguments[$definition['name']] ?? null;
                         break;
                     case 'string':
-                        return (string) $arguments[$definition['name']] ?? null;
+                        return (string)$arguments[$definition['name']] ?? null;
                         break;
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
