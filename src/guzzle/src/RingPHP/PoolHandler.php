@@ -55,36 +55,39 @@ class PoolHandler extends CoroutineHandler
 
         $connection = $pool->get();
 
-        $client = $connection->getConnection();
-        $client->setMethod($method);
-        $client->setData($body);
+        try {
+            $client = $connection->getConnection();
+            $client->setMethod($method);
+            $client->setData($body);
 
-        // 初始化Headers
-        $this->initHeaders($client, $request);
-        $settings = $this->getSettings($this->options);
+            // 初始化Headers
+            $this->initHeaders($client, $request);
+            $settings = $this->getSettings($this->options);
 
-        // 设置客户端参数
-        if (! empty($settings)) {
-            $client->set($settings);
-        }
+            // 设置客户端参数
+            if (! empty($settings)) {
+                $client->set($settings);
+            }
 
-        $btime = microtime(true);
-        $client->execute($path);
+            $btime = microtime(true);
+            $client->execute($path);
 
-        $ex = $this->checkStatusCode($client, $request);
-        if ($ex !== true) {
-            $connection->close();
+            $ex = $this->checkStatusCode($client, $request);
+            if ($ex !== true) {
+                $connection->close();
+                $connection->release();
+                return [
+                    'status' => null,
+                    'reason' => null,
+                    'headers' => [],
+                    'error' => $ex,
+                ];
+            }
+
+            $response = $this->getResponse($client, $btime, $effectiveUrl);
+        } finally {
             $connection->release();
-            return [
-                'status' => null,
-                'reason' => null,
-                'headers' => [],
-                'error' => $ex,
-            ];
         }
-
-        $response = $this->getResponse($client, $btime, $effectiveUrl);
-        $connection->release();
 
         return $response;
     }
