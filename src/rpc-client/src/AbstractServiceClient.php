@@ -125,7 +125,7 @@ abstract class AbstractServiceClient
 
     protected function createLoadBalancer(array $nodes): LoadBalancerInterface
     {
-        return $this->loadBalancerManager->getInstance($this->loadBalancer)->setNodes($nodes);
+        return $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
     }
 
     protected function createTransporter(): TransporterInterface
