@@ -45,7 +45,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 class UserService
 {
     /**
-     * @Cacheable(key="user", ttl=9000, listener="user-update")
+     * @Cacheable(prefix="user", ttl=9000, listener="user-update")
      */
     public function user($id)
     {
@@ -101,3 +101,86 @@ class SystemService
 $cache = $container->get(Psr\SimpleCache\CacheInterface::class);
 
 ```
+
+## 注解介绍
+
+### Cacheable
+
+例如以下配置，缓存前缀为 user, 超时时间为 7200, 删除事件名为 USER_CACHE。生成对应缓存 KEY 为 `c:user:1`。
+
+```php
+use App\Models\User;
+use Hyperf\Cache\Annotation\Cacheable;
+
+/**
+ * @Cacheable(prefix="user", ttl=7200, listener="USER_CACHE")
+ */
+public function user(int $id): array
+{
+    $user = User::query()->find($id);
+
+    return [
+        'user' => $user->toArray(),
+        'uuid' => $this->unique(),
+    ];
+}
+```
+
+当设置 value 后，框架会根据设置的规则，进行缓存 KEY 键命名。如下实例，当 $user->id = 1 时，缓存 KEY 为 `c:userBook:_1`
+
+```php
+use App\Models\User;
+use Hyperf\Cache\Annotation\Cacheable;
+
+/**
+ * @Cacheable(prefix="userBook", ttl=6666, value="_#{user.id}")
+ */
+public function userBook(User $user): array
+{
+    return [
+        'book' => $user->book->toArray(),
+        'uuid' => $this->unique(),
+    ];
+}
+```
+
+### CachePut
+
+CachePut 不同于 Cacheable，它每次调用都会执行函数体，然后再对缓存进行重写。所以当我们想更新缓存时，可以调用相关方法。
+
+```php
+use App\Models\User;
+use Hyperf\Cache\Annotation\CachePut;
+
+/**
+ * @CachePut(prefix="user", ttl=3601)
+ */
+public function updateUser(int $id)
+{
+    $user = User::query()->find($id);
+    $user->name = 'HyperfDoc';
+    $user->save();
+
+    return [
+        'user' => $user->toArray(),
+        'uuid' => $this->unique(),
+    ];
+}
+```
+
+### CacheEvict
+
+CacheEvict 更容易理解了，当执行方法体后，会主动清理缓存。
+
+```php
+use Hyperf\Cache\Annotation\CacheEvict;
+
+/**
+ * @CacheEvict(prefix="userBook", value="_#{id}")
+ */
+public function updateUserBook(int $id)
+{
+    return true;
+}
+```
+
