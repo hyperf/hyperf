@@ -60,11 +60,9 @@ class PoolHandler extends CoroutineHandler
             $client->setMethod($method);
             $client->setData($body);
 
-            // 初始化Headers
             $this->initHeaders($client, $request);
             $settings = $this->getSettings($this->options);
 
-            // 设置客户端参数
             if (! empty($settings)) {
                 $client->set($settings);
             }
