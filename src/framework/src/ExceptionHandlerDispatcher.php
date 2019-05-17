@@ -33,7 +33,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
     /**
      * {@inheritdoc}
      */
-    public function dispatch(...$params): ResponseInterface
+    public function dispatch(...$params)
     {
         return parent::dispatch(...$params);
     }
