@@ -84,7 +84,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @param array|string $response
      */
-    protected function transferToResponse($response): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
         if ($response instanceof Message) {
             $body = Parser::serializeMessage($response);

@@ -68,19 +68,19 @@ class Response extends ServerResponse implements ResponseInterface
     {
         $data = $this->toJson($data);
         return $this->getResponse()
-            ->withAddedHeader('Content-Type', 'application/json')
+            ->withAddedHeader('content-type', 'application/json')
             ->withBody(new SwooleStream($data));
     }
 
     /**
-     * Format data to a string and return data with Content-Type:text/plain header.
+     * Format data to a string and return data with content-type:text/plain header.
      *
      * @param mixed $data will transfer to a string value
      */
     public function raw($data): PsrResponseInterface
     {
         return $this->getResponse()
-            ->withAddedHeader('Content-Type', 'text/plain')
+            ->withAddedHeader('content-type', 'text/plain')
             ->withBody(new SwooleStream((string) $data));
     }
 

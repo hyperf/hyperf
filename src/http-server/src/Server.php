@@ -19,9 +19,11 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Event\BeforeResponse;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,47 +36,48 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     /**
      * @var array
      */
-    private $middlewares;
+    protected $middlewares;
 
     /**
      * @var string
      */
-    private $coreHandler;
+    protected $coreHandler;
 
     /**
      * @var MiddlewareInterface
      */
-    private $coreMiddleware;
+    protected $coreMiddleware;
 
     /**
      * @var array
      */
-    private $exceptionHandlers;
+    protected $exceptionHandlers;
 
     /**
      * @var \Psr\Container\ContainerInterface
      */
-    private $container;
+    protected $container;
 
     /**
      * @var HttpDispatcher
      */
-    private $dispatcher;
+    protected $dispatcher;
 
     /**
      * @var string
      */
-    private $serverName;
+    protected $serverName;
 
     public function __construct(
         string $serverName,
         string $coreHandler,
-        ContainerInterface $container
+        ContainerInterface $container,
+        $dispatcher
     ) {
         $this->serverName = $serverName;
         $this->coreHandler = $coreHandler;
         $this->container = $container;
-        $this->dispatcher = $container->get(HttpDispatcher::class);
+        $this->dispatcher = $dispatcher;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -93,9 +96,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
-            // Initialize PSR-7 Request and Response objects.
-            Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
-            Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+            [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
             $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
@@ -106,7 +107,18 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
+            if (! $psr7Response instanceof Psr7Response) {
+                return;
+            }
             $psr7Response->send();
         }
+    }
+
+    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    {
+        // Initialize PSR-7 Request and Response objects.
+        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        return [$psr7Request, $psr7Response];
     }
 }
