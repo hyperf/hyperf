@@ -28,13 +28,23 @@ class DataFormatter implements DataFormatterInterface
         $this->packer = make(JsonPacker::class);
     }
 
-    public function format($data)
+    public function formatRequest($data)
     {
-        [$serviceName, $path, $params] = $data;
+        [$path, $params] = $data;
         return [
             'jsonrpc' => '2.0',
             'method' => $path,
             'params' => $params,
+        ];
+    }
+
+    public function formatResponse($data)
+    {
+        [$id, $result] = $data;
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => $result,
         ];
     }
 }
