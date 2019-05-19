@@ -19,6 +19,7 @@ use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Deleting;
 use Hyperf\Database\Model\Events\ForceDeleted;
+use Hyperf\Database\Model\Events\Nothing;
 use Hyperf\Database\Model\Events\Restored;
 use Hyperf\Database\Model\Events\Restoring;
 use Hyperf\Database\Model\Events\Retrieved;
@@ -57,6 +58,13 @@ trait HasEvents
      */
     public function setEvents(array $events): self
     {
+        foreach ($events as $key => $value) {
+            if (is_numeric($key) && is_string($value)) {
+                $events[$value] = '';
+                unset($events[$key]);
+            }
+        }
+
         $this->events = $events;
 
         return $this;
@@ -65,7 +73,7 @@ trait HasEvents
     /**
      * Add some observable event.
      *
-     * @param array $events
+     * @param array|string $events
      */
     public function addEvents($events): void
     {
