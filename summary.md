@@ -62,6 +62,7 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [自动化测试](zh/testing.md)
+  * [限流器](zh/rate-limit.md)
   
 * Awesome Hyperf
 
