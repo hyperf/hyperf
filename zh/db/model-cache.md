@@ -15,7 +15,7 @@ composer require hyperf/model-cache
 |    配置     |  类型  |                         默认值                         |                备注                 |
 |:-----------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
 |   handler   | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
-|  cache_key  | string |                  'mc:%s:m :%s:%s:%s'                   | mc:缓存前缀:m :表名:主键KEY:主键值  |
+|  cache_key  | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值`  |
 |   prefix    | string |                   db connection name                   |              缓存前缀               |
 |     ttl     |  int   |                          3600                          |              超时时间               |
 | load_script |  bool  |                          true                          | Redis引擎下 是否使用evalSha代替eval |
