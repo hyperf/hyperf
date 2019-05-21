@@ -126,7 +126,7 @@ class StdoutLogger implements StdoutLoggerInterface
         $keys = array_keys($context);
         $tags = [];
         foreach ($keys as $k => $key) {
-            if (in_array($key, $this->tags)) {
+            if (in_array($key, $this->tags, true)) {
                 $tags[$key] = $context[$key];
                 unset($keys[$k]);
             }
