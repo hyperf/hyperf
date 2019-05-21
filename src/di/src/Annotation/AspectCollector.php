@@ -27,7 +27,7 @@ class AspectCollector extends MetadataCollector
      */
     protected static $aspectRules = [];
 
-    public static function setArround(string $aspect, array $classes, array $annotations): void
+    public static function setAround(string $aspect, array $classes, array $annotations): void
     {
         $savedClasses = static::get('classes.' . $aspect, []);
         $savedAnnotations = static::get('annotations.' . $aspect, []);

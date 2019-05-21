@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\Tracing;
@@ -21,7 +21,7 @@ use Hyperf\Tracer\Tracing;
 /**
  * @Aspect
  */
-class TraceAnnotationAspect implements ArroundInterface
+class TraceAnnotationAspect implements AroundInterface
 {
     public $classes = [];
 

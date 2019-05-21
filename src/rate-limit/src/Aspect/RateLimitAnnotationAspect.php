@@ -15,7 +15,7 @@ namespace Hyperf\RateLimit\Aspect;
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
@@ -26,7 +26,7 @@ use Swoole\Coroutine;
 /**
  * @Aspect
  */
-class RateLimitAnnotationAspect implements ArroundInterface
+class RateLimitAnnotationAspect implements AroundInterface
 {
     public $classes = [];
 
