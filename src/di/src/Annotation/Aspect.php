@@ -33,7 +33,7 @@ class Aspect extends AbstractAnnotation
             $instance = $instantitor->instantiate($className);
             switch ($instance) {
                 case $instance instanceof ArroundInterface:
-                    AspectCollector::setArround($className, $instance->classes, $instance->annotations);
+                    AspectCollector::setAround($className, $instance->classes, $instance->annotations);
                     break;
             }
         }
