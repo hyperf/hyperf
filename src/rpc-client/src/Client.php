@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
-use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use InvalidArgumentException;
 

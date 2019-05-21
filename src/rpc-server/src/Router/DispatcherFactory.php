@@ -96,8 +96,7 @@ class DispatcherFactory
     }
 
     /**
-     * Register route according to Controller and XxxMapping annotations.
-     * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
+     * Register route according to RpcService annotation.
      */
     private function handleRpcService(
         string $className,
@@ -126,12 +125,11 @@ class DispatcherFactory
             $middlewares = array_unique($middlewares);
 
             // Register middlewares.
-            MiddlewareManager::addMiddlewares($annotation->server, $path, 'GET', $middlewares);
+            MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $middlewares);
 
             // Trigger the AfterPathRegister event.
             $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));
         }
-
     }
 
     private function getServicePrefix(string $className, string $prefix): string

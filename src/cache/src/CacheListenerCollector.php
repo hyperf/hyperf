@@ -17,4 +17,9 @@ use Hyperf\Utils\Traits\Container;
 class CacheListenerCollector
 {
     use Container;
+
+    /**
+     * @var array
+     */
+    protected static $container = [];
 }

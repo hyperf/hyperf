@@ -14,9 +14,9 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\Rpc\Contract\EofInterface;
+use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\Rpc\Response as Psr7Response;
+use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -25,13 +25,18 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
-class Server extends \Hyperf\RpcServer\Server
+class TcpServer extends Server
 {
 
     /**
      * @var ProtocolManager
      */
     protected $protocolManager;
+
+    /**
+     * @var \Hyperf\Rpc\Contract\PackerInterface
+     */
+    protected $packer;
 
     public function __construct(
         string $serverName,
@@ -43,33 +48,21 @@ class Server extends \Hyperf\RpcServer\Server
     ) {
         parent::__construct($serverName, $coreHandler, $container, $dispatcher, $logger);
         $this->protocolManager = $protocolManager;
+        $packerClass = $this->protocolManager->getPacker('jsonrpc');
+        $this->packer = $this->container->get($packerClass);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
     {
-        $response = new Psr7Response($fd, $server);
-        if ($response instanceof EofInterface) {
-            $eof = value(function () use ($server) {
-                /** @var \Swoole\Server\Port $port */
-                [$type, $port] = ServerManager::get($this->serverName);
-                if (isset($port->setting['package_eof'])) {
-                    return $port->setting['package_eof'];
-                }
-                if (isset($server->setting['package_eof'])) {
-                    return $server->setting['package_eof'];
-                }
-                return "\r\n";
-            });
-            $response->setEof($eof);
-        }
-        return $response;
+        $response = new Psr7Response();
+        return $response->withAttribute('fd', $fd)->withAttribute('server', $server);
     }
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
         $class = $this->protocolManager->getPacker('jsonrpc');
         $packer = $this->container->get($class);
-        $data = $packer->unpack($data);
+        $data = $this->packer->unpack($data);
         if (isset($data['jsonrpc'])) {
             return $this->buildJsonRpcRequest($fd, $fromId, $data);
         }
@@ -87,14 +80,10 @@ class Server extends \Hyperf\RpcServer\Server
         /** @var \Swoole\Server\Port $port */
         [$type, $port] = ServerManager::get($this->serverName);
 
-        $uri = (new Uri())->withPath($data['method'])
-            ->withScheme('jsonrpc')
-            ->withHost($port->host)
-            ->withPort($port->port);
-        return (new Psr7Request('GET', $uri))->withAttribute('fd', $fd)
+        $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
+        return (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
             ->withAttribute('fromId', $fromId)
             ->withAttribute('data', $data)
-            ->withProtocolVersion($data['jsonrpc'] ?? '2.0')
             ->withParsedBody($data['params']);
     }
 }

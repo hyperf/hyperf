@@ -68,17 +68,17 @@ class CoreMiddleware implements MiddlewareInterface
         $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
         switch ($routes[0]) {
             case Dispatcher::NOT_FOUND:
-                $response = $this->handleNotFound();
+                $response = $this->handleNotFound($request);
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->handleMethodNotAllowed($routes);
+                $response = $this->handleMethodNotAllowed($routes, $request);
                 break;
             case Dispatcher::FOUND:
-                $response = $this->handleFound($routes);
+                $response = $this->handleFound($routes, $request);
                 break;
         }
         if (! $response instanceof ResponseInterface) {
-            $response = $this->transferToResponse($response);
+            $response = $this->transferToResponse($response, $request);
         }
         return $response->withAddedHeader('Server', 'Hyperf');
     }
@@ -88,7 +88,7 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleFound(array $routes)
+    protected function handleFound(array $routes, ServerRequestInterface $request)
     {
         if ($routes[1] instanceof Closure) {
             $response = call($routes[1]);
@@ -96,6 +96,7 @@ class CoreMiddleware implements MiddlewareInterface
             [$controller, $action] = $this->prepareHandler($routes[1]);
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
+                // Route found, but the handler does not exist.
                 return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
             }
             $parameters = $this->parseParameters($controller, $action, $routes[2]);
@@ -109,7 +110,7 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleNotFound()
+    protected function handleNotFound(ServerRequestInterface $request)
     {
         return $this->response()->withStatus(404);
     }
@@ -119,7 +120,7 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface|array|string|Arrayable|mixed
      */
-    protected function handleMethodNotAllowed(array $routes)
+    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
     {
         return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
     }
@@ -146,7 +147,7 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @param array|string $response
      */
-    protected function transferToResponse($response): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
         if (is_string($response)) {
             return $this->response()->withBody(new SwooleStream($response));
@@ -154,7 +155,7 @@ class CoreMiddleware implements MiddlewareInterface
 
         if (is_array($response)) {
             return $this->response()
-                ->withAddedHeader('Content-Type', 'application/json')
+                ->withAddedHeader('content-type', 'application/json')
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 

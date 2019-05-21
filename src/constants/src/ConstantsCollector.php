@@ -18,6 +18,11 @@ class ConstantsCollector
 {
     use Container;
 
+    /**
+     * @var array
+     */
+    protected static $container = [];
+
     public static function getValue($className, $code, $key)
     {
         return static::$container[$className][$code][$key] ?? '';

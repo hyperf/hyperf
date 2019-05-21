@@ -100,10 +100,10 @@ class ModelTest extends TestCase
         $this->assertFalse(isset($model->name));
 
         // test mutation
-        $model->list_items = ['name' => 'taylor'];
-        $this->assertEquals(['name' => 'taylor'], $model->list_items);
+        $model->list_items = ['name' => 'hyperf'];
+        $this->assertEquals(['name' => 'hyperf'], $model->list_items);
         $attributes = $model->getAttributes();
-        $this->assertEquals(json_encode(['name' => 'taylor']), $attributes['list_items']);
+        $this->assertEquals(json_encode(['name' => 'hyperf']), $attributes['list_items']);
     }
 
     public function testDirtyAttributes()
@@ -194,21 +194,21 @@ class ModelTest extends TestCase
     public function testOnly()
     {
         $model = new ModelStub();
-        $model->first_name = 'taylor';
+        $model->first_name = 'hyperf';
         $model->last_name = 'otwell';
         $model->project = 'laravel';
 
         $this->assertEquals(['project' => 'laravel'], $model->only('project'));
-        $this->assertEquals(['first_name' => 'taylor', 'last_name' => 'otwell'], $model->only('first_name', 'last_name'));
-        $this->assertEquals(['first_name' => 'taylor', 'last_name' => 'otwell'], $model->only(['first_name', 'last_name']));
+        $this->assertEquals(['first_name' => 'hyperf', 'last_name' => 'otwell'], $model->only('first_name', 'last_name'));
+        $this->assertEquals(['first_name' => 'hyperf', 'last_name' => 'otwell'], $model->only(['first_name', 'last_name']));
     }
 
     public function testNewInstanceReturnsNewInstanceWithAttributesSet()
     {
         $model = new ModelStub();
-        $instance = $model->newInstance(['name' => 'taylor']);
+        $instance = $model->newInstance(['name' => 'hyperf']);
         $this->assertInstanceOf(ModelStub::class, $instance);
-        $this->assertEquals('taylor', $instance->name);
+        $this->assertEquals('hyperf', $instance->name);
     }
 
     public function testNewInstanceReturnsNewInstanceWithTableSet()
@@ -223,17 +223,17 @@ class ModelTest extends TestCase
     public function testCreateMethodSavesNewModel()
     {
         Context::set('__model.saved', false);
-        $model = ModelSaveStub::create(['name' => 'taylor']);
+        $model = ModelSaveStub::create(['name' => 'hyperf']);
         $this->assertTrue(Context::get('__model.saved'));
-        $this->assertEquals('taylor', $model->name);
+        $this->assertEquals('hyperf', $model->name);
     }
 
     public function testMakeMethodDoesNotSaveNewModel()
     {
         Context::set('__model.saved', false);
-        $model = ModelSaveStub::make(['name' => 'taylor']);
+        $model = ModelSaveStub::make(['name' => 'hyperf']);
         $this->assertFalse(Context::get('__model.saved'));
-        $this->assertEquals('taylor', $model->name);
+        $this->assertEquals('hyperf', $model->name);
     }
 
     public function testForceCreateMethodSavesNewModelWithGuardedAttributes()
@@ -302,7 +302,7 @@ class ModelTest extends TestCase
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
-        $query->shouldReceive('update')->once()->with(['name' => 'taylor'])->andReturn(1);
+        $query->shouldReceive('update')->once()->with(['name' => 'hyperf'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
@@ -315,7 +315,7 @@ class ModelTest extends TestCase
         $model->foo = 'bar';
         // make sure foo isn't synced so we can test that dirty attributes only are updated
         $model->syncOriginal();
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = true;
         $this->assertTrue($model->save());
     }
@@ -387,7 +387,7 @@ class ModelTest extends TestCase
         $model->timestamps = false;
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
-        $query->shouldReceive('update')->once()->with(['name' => 'taylor'])->andReturn(1);
+        $query->shouldReceive('update')->once()->with(['name' => 'hyperf'])->andReturn(1);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->never())->method('updateTimestamps');
         $model->expects($this->any())->method('fireModelEvent')->willReturnCallback(function ($result) {
@@ -396,7 +396,7 @@ class ModelTest extends TestCase
 
         $model->id = 1;
         $model->syncOriginal();
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = true;
         $this->assertTrue($model->save());
     }
@@ -542,7 +542,7 @@ class ModelTest extends TestCase
     {
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
@@ -553,7 +553,7 @@ class ModelTest extends TestCase
         $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
         $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model);
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $this->assertTrue($model->save());
         $this->assertEquals(1, $model->id);
@@ -561,7 +561,7 @@ class ModelTest extends TestCase
 
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insert')->once()->with(['name' => 'taylor']);
+        $query->shouldReceive('insert')->once()->with(['name' => 'hyperf']);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
@@ -573,7 +573,7 @@ class ModelTest extends TestCase
         $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
         $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model);
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $this->assertTrue($model->save());
         $this->assertNull($model->id);
@@ -611,12 +611,12 @@ class ModelTest extends TestCase
     {
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
 
         $this->assertTrue($model->push());
@@ -628,12 +628,12 @@ class ModelTest extends TestCase
     {
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $model->setRelation('relationOne', null);
 
@@ -656,12 +656,12 @@ class ModelTest extends TestCase
 
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $model->setRelation('relationOne', $related1);
 
@@ -678,12 +678,12 @@ class ModelTest extends TestCase
     {
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $model->setRelation('relationMany', new Collection([]));
 
@@ -715,12 +715,12 @@ class ModelTest extends TestCase
 
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('insertGetId')->once()->with(['name' => 'taylor'], 'id')->andReturn(1);
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model->name = 'taylor';
+        $model->name = 'hyperf';
         $model->exists = false;
         $model->setRelation('relationMany', new Collection([$related1, $related2]));
 
@@ -1023,7 +1023,7 @@ class ModelTest extends TestCase
     }
 
     /**
-     * @expectedException \Illuminate\Database\\MassAssignmentException
+     * @expectedException \Hyperf\Database\Model\MassAssignmentException
      * @expectedExceptionMessage name
      */
     public function testGlobalGuarded()
@@ -1317,7 +1317,7 @@ class ModelTest extends TestCase
         $class = new ModelStub();
         $class->id = 1;
         $class->exists = true;
-        $class->first = 'taylor';
+        $class->first = 'hyperf';
         $class->last = 'otwell';
         $class->created_at = $class->freshTimestamp();
         $class->updated_at = $class->freshTimestamp();
@@ -1327,72 +1327,22 @@ class ModelTest extends TestCase
 
         $this->assertNull($clone->id);
         $this->assertFalse($clone->exists);
-        $this->assertEquals('taylor', $clone->first);
+        $this->assertEquals('hyperf', $clone->first);
         $this->assertEquals('otwell', $clone->last);
         $this->assertObjectNotHasAttribute('created_at', $clone);
         $this->assertObjectNotHasAttribute('updated_at', $clone);
         $this->assertEquals(['bar'], $clone->foo);
     }
 
-    public function testModelObserversCanBeAttachedToModels()
-    {
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
-        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
-        $events->shouldReceive('forget');
-        ModelStub::observe(new TestObserverStub());
-        ModelStub::flushEventListeners();
-    }
-
-    public function testModelObserversCanBeAttachedToModelsWithString()
-    {
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
-        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
-        $events->shouldReceive('forget');
-        ModelStub::observe(TestObserverStub::class);
-        ModelStub::flushEventListeners();
-    }
-
-    public function testModelObserversCanBeAttachedToModelsThroughAnArray()
-    {
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('listen')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
-        $events->shouldReceive('listen')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
-        $events->shouldReceive('forget');
-        ModelStub::observe([TestObserverStub::class]);
-        ModelStub::flushEventListeners();
-    }
-
-    public function testModelObserversCanBeAttachedToModelsThroughCallingObserveMethodOnlyOnce()
-    {
-        $listenerProvider = Mockery::mock(ListenerProvider::class);
-        Register::setEventDispatcher($events = new EventDispatcher($listenerProvider));
-        $listenerProvider->shouldReceive('on')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@creating');
-        $listenerProvider->shouldReceive('on')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestObserverStub::class . '@saved');
-
-        $listenerProvider->shouldReceive('on')->once()->with('model.creating: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@creating');
-        $listenerProvider->shouldReceive('on')->once()->with('model.saved: Illuminate\Tests\Database\ModelStub', TestAnotherObserverStub::class . '@saved');
-
-        $listenerProvider->shouldReceive('forget');
-
-        ModelStub::observe([
-            TestObserverStub::class,
-            TestAnotherObserverStub::class,
-        ]);
-
-        ModelStub::flushEventListeners();
-    }
-
-    public function testSetObservableEvents()
+    public function testSetEvents()
     {
         $class = new ModelStub();
         $class->setEvents(['foo']);
 
-        $this->assertContains('foo', $class->getAvailableEvents());
+        $this->assertArrayHasKey('foo', $class->getAvailableEvents());
     }
 
-    public function testAddObservableEvent()
+    public function testAddEvent()
     {
         $class = new ModelStub();
         $class->addEvents('foo');
@@ -1400,7 +1350,7 @@ class ModelTest extends TestCase
         $this->assertContains('foo', $class->getAvailableEvents());
     }
 
-    public function testAddMultipleObserveableEvents()
+    public function testAddMultipleEvents()
     {
         $class = new ModelStub();
         $class->addEvents('foo', 'bar');
@@ -1409,16 +1359,16 @@ class ModelTest extends TestCase
         $this->assertContains('bar', $class->getAvailableEvents());
     }
 
-    public function testRemoveObservableEvent()
+    public function testRemoveEvent()
     {
         $class = new ModelStub();
         $class->setEvents(['foo', 'bar']);
-        $class->removeEvents('bar');
+        $class->removeEvents(['bar']);
 
         $this->assertNotContains('bar', $class->getAvailableEvents());
     }
 
-    public function testRemoveMultipleObservableEvents()
+    public function testRemoveMultipleEvents()
     {
         $class = new ModelStub();
         $class->setEvents(['foo' => 'fooEvent', 'bar' => 'barEvent']);
@@ -1430,7 +1380,7 @@ class ModelTest extends TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Illuminate\Tests\Database\ModelStub::incorrectRelationStub must return a relationship instance.
+     * @expectedExceptionMessage HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.
      */
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {

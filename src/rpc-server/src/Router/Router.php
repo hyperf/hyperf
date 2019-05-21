@@ -50,6 +50,6 @@ class Router
 
     public static function add(string $route, $handler, array $options = [])
     {
-        return self::addRoute('GET', $route, $handler, $options);
+        return self::addRoute('POST', $route, $handler, $options);
     }
 }

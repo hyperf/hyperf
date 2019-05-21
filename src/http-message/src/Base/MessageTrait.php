@@ -321,10 +321,7 @@ trait MessageTrait
         return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
     }
 
-    /**
-     * @return string
-     */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->getHeaderLine('Content-Type');
     }
@@ -334,7 +331,7 @@ trait MessageTrait
      *
      * @return bool if part is multipart
      */
-    public function isMultipart()
+    public function isMultipart(): bool
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;

@@ -17,8 +17,8 @@ use Hyperf\Contract\DispatcherInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnReceiveInterface;
 use Hyperf\Framework\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
-use Hyperf\Server\Exception\ServerException;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -100,6 +100,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void
     {
+        $request = $response = null;
         try {
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
@@ -114,11 +115,14 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
-            if (! $response instanceof ResponseInterface) {
-                $response = $this->morphToResponse($response);
+            if (! $response || ! $response instanceof ResponseInterface) {
+                $response = $this->transferToResponse($response);
             }
-            // Send the Response to client.
-            $server->send($fd, (string) $response);
+            if (! $response) {
+                $this->logger->debug(sprintf('No content to response at fd[%d]', $fd));
+            } else {
+                $server->send($fd, (string) $response);
+            }
         }
     }
 
@@ -134,8 +138,13 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     abstract protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface;
 
-    protected function morphToResponse($response)
+    protected function transferToResponse($response): ?ResponseInterface
     {
-        return Context::get(ResponseInterface::class);
+        $psr7Response = Context::get(ResponseInterface::class);
+        if ($psr7Response instanceof ResponseInterface) {
+            return $psr7Response->withBody(new SwooleStream($response));
+        } else {
+            return null;
+        }
     }
 }

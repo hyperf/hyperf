@@ -189,7 +189,7 @@ class Response implements ResponseInterface
      * @throws \InvalidArgumentException for invalid status code arguments
      * @return static
      */
-    public function withStatus($code, $reasonPhrase = ''): self
+    public function withStatus($code, $reasonPhrase = '')
     {
         $clone = clone $this;
         $clone->statusCode = (int) $code;
@@ -214,7 +214,7 @@ class Response implements ResponseInterface
      * @throws \InvalidArgumentException
      * @return static
      */
-    public function withCharset(string $charset): self
+    public function withCharset(string $charset)
     {
         return $this->withAddedHeader('Content-Type', sprintf('charset=%s', $charset));
     }

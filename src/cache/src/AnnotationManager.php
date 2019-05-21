@@ -15,6 +15,7 @@ namespace Hyperf\Cache;
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\Annotation\CacheEvict;
 use Hyperf\Cache\Annotation\CachePut;
+use Hyperf\Cache\Annotation\FailCache;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Helper\StringHelper;
 use Hyperf\Contract\ConfigInterface;
@@ -40,7 +41,7 @@ class AnnotationManager
         $this->logger = $logger;
     }
 
-    public function getCacheableValue(string $className, string $method, array $arguments)
+    public function getCacheableValue(string $className, string $method, array $arguments): array
     {
         /** @var Cacheable $annotation */
         $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
@@ -52,7 +53,7 @@ class AnnotationManager
         return [$key, $ttl, $group];
     }
 
-    public function getCacheEvictValue(string $className, string $method, array $arguments)
+    public function getCacheEvictValue(string $className, string $method, array $arguments): array
     {
         /** @var CacheEvict $annotation */
         $annotation = $this->getAnnotation(CacheEvict::class, $className, $method);
@@ -69,12 +70,25 @@ class AnnotationManager
         return [$key, $all, $group];
     }
 
-    public function getCachePutValue(string $className, string $method, array $arguments)
+    public function getCachePutValue(string $className, string $method, array $arguments): array
     {
         /** @var CachePut $annotation */
         $annotation = $this->getAnnotation(CachePut::class, $className, $method);
 
         $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
+        $group = $annotation->group;
+        $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+
+        return [$key, $ttl, $group];
+    }
+
+    public function getFailCacheValue(string $className, string $method, array $arguments): array
+    {
+        /** @var FailCache $annotation */
+        $annotation = $this->getAnnotation(FailCache::class, $className, $method);
+
+        $prefix = $annotation->prefix ?? ($className . '::' . $method);
+        $key = $this->getFormatedKey($prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
@@ -92,7 +106,7 @@ class AnnotationManager
         return $result;
     }
 
-    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null)
+    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
     {
         $key = StringHelper::format($prefix, $arguments, $value);
 

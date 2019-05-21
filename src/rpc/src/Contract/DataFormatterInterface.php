@@ -14,5 +14,7 @@ namespace Hyperf\Rpc\Contract;
 
 interface DataFormatterInterface
 {
-    public function format($data);
+    public function formatRequest($data);
+
+    public function formatResponse($data);
 }

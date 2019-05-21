@@ -120,7 +120,7 @@ abstract class AbstractServiceClient
 
     protected function __generateData(string $methodName, array $params)
     {
-        return $this->dataFormatter->format([$this->serviceName, $this->__generateRpcPath($methodName), $params]);
+        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params]);
     }
 
     protected function createLoadBalancer(array $nodes): LoadBalancerInterface
