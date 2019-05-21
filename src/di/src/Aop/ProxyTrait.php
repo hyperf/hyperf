@@ -27,7 +27,7 @@ trait ProxyTrait
         Closure $closure
     ) {
         $proceedingJoinPoint = new ProceedingJoinPoint($closure, $originalClassName, $method, $arguments);
-        $result = self::handleArround($proceedingJoinPoint);
+        $result = self::handleAround($proceedingJoinPoint);
         unset($proceedingJoinPoint);
         return $result;
     }
@@ -53,7 +53,7 @@ trait ProxyTrait
         return $map;
     }
 
-    private static function handleArround(ProceedingJoinPoint $proceedingJoinPoint)
+    private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
