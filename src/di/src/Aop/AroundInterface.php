@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-interface ArroundInterface
+interface AroundInterface
 {
     /**
      * @return mixed return the value from process method of ProceedingJoinPoint, or the value that you handled

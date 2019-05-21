@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-abstract class AbstractAspect implements ArroundInterface
+abstract class AbstractAspect implements AroundInterface
 {
     /**
      * The classes that you want to weaving.

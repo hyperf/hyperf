@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
 use Hyperf\Tracer\SwitchManager;
@@ -22,7 +22,7 @@ use Hyperf\Tracer\Tracing;
 /**
  * @Aspect
  */
-class RedisAspect implements ArroundInterface
+class RedisAspect implements AroundInterface
 {
     /**
      * @var array

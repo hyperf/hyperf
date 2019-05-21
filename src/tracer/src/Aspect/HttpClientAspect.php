@@ -14,7 +14,7 @@ namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\Tracing;
@@ -23,7 +23,7 @@ use Zipkin\Propagation\Map;
 /**
  * @Aspect
  */
-class HttpClientAspect implements ArroundInterface
+class HttpClientAspect implements AroundInterface
 {
     public $classes = [
         Client::class . '::requestAsync',

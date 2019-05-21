@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Doctrine\Instantiator\Instantiator;
-use Hyperf\Di\Aop\ArroundInterface;
+use Hyperf\Di\Aop\AroundInterface;
 
 /**
  * @Annotation
@@ -32,7 +32,7 @@ class Aspect extends AbstractAnnotation
             $instantitor = new Instantiator();
             $instance = $instantitor->instantiate($className);
             switch ($instance) {
-                case $instance instanceof ArroundInterface:
+                case $instance instanceof AroundInterface:
                     AspectCollector::setAround($className, $instance->classes, $instance->annotations);
                     break;
             }
