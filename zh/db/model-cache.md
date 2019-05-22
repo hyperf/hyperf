@@ -12,13 +12,14 @@ composer require hyperf/model-cache
 
 模型缓存的配置在 `databases` 中。示例如下
 
-|    配置     |  类型  |                         默认值                         |                备注                 |
-|:-----------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
-|   handler   | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
-|  cache_key  | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值`  |
-|   prefix    | string |                   db connection name                   |              缓存前缀               |
-|     ttl     |  int   |                          3600                          |              超时时间               |
-| load_script |  bool  |                          true                          | Redis引擎下 是否使用evalSha代替eval |
+|      配置       |  类型  |                         默认值                         |                备注                 |
+|:---------------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
+|     handler     | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
+|    cache_key    | string |                   `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值` |
+|     prefix      | string |                   db connection name                   |              缓存前缀               |
+|       ttl       |  int   |                          3600                          |              超时时间               |
+| empty_model_ttl |  int   |                           60                           |      查询不到数据时的超时时间       |
+|   load_script   |  bool  |                          true                          | Redis引擎下 是否使用evalSha代替eval |
 
 ```php
 <?php
@@ -46,6 +47,7 @@ return [
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'ttl' => 3600 * 24,
+            'empty_model_ttl' => 3600,
             'load_script' => true,
         ]
     ],
