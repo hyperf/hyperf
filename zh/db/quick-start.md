@@ -215,7 +215,9 @@ use Hyperf\DbConnection\Db;
 
 Db::beginTransaction();
 try{
-    // Do somethind
+    
+    // Do something...
+
     Db::commit();
 } catch(\Throwable $ex){
     Db::rollBack();
