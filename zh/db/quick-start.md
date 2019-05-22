@@ -170,13 +170,13 @@ foreach($users as $user){
 
 ### 运行插入语句
 
-可以使用 `DB` 的 `insert` 方法来执行 `insert` 语句。与 `select` 一样，该方法将原生 `SQL` 查询作为其第一个参数，并将绑定数据作为第二个参数：
+可以使用 `Db` 的 `insert` 方法来执行 `insert` 语句。与 `select` 一样，该方法将原生 `SQL` 查询作为其第一个参数，并将绑定数据作为第二个参数：
 
 ```php
 <?php
 use Hyperf\DbConnection\Db;
 
-DB::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']);
+Db::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']);
 ```
 
 ### 运行更新语句
@@ -187,35 +187,35 @@ DB::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']);
 <?php
 use Hyperf\DbConnection\Db;
 
-$affected = DB::update('update user set name = ? where id = ?', ['John', 1]);
+$affected = Db::update('update user set name = ? where id = ?', ['John', 1]);
 ```
 
 ### 数据库事务
 
-你可以使用 `DB` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
+你可以使用 `Db` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
 
 ```php
 <?php
 use Hyperf\DbConnection\Db;
 
-DB::transaction(function () {
-    DB::table('user')->update(['votes' => 1]);
+Db::transaction(function () {
+    Db::table('user')->update(['votes' => 1]);
 
-    DB::table('posts')->delete();
+    Db::table('posts')->delete();
 });
 
 ```
 
 ### 手动使用事务
 
-如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `DB` 的 `beginTransaction`, `commit`, `rollBack`:
+如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `Db` 的 `beginTransaction`, `commit`, `rollBack`:
 
 ```php
 use Hyperf\DbConnection\Db;
 
 Db::beginTransaction();
 try{
-    
+
     // Do something...
 
     Db::commit();
