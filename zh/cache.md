@@ -29,6 +29,16 @@ return [
 
 ## 使用
 
+### SimpleCache 方式
+
+如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
+
+```php
+
+$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
+
+```
+
 ### 注解方式
 
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
@@ -90,16 +100,6 @@ class SystemService
         return true;
     }
 }
-```
-
-### SimpleCache方式
-
-如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
-
-```php
-
-$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
-
 ```
 
 ## 注解介绍
