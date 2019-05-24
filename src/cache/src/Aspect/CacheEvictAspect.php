@@ -56,11 +56,13 @@ class CacheEvictAspect extends AbstractAspect
         $driver = $this->manager->getDriver($group);
 
         if ($all) {
-            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheEvict) {
+            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheEvict && $annotation->collect) {
                 $collector = $annotation->prefix . 'MEMBERS';
                 $keys = $driver->keys($collector);
-                $driver->deleteMultiple($keys);
-                $driver->delKey($collector, ...$keys);
+                if ($keys) {
+                    $driver->deleteMultiple($keys);
+                    $driver->delKey($collector, ...$keys);
+                }
             } else {
                 $driver->clearPrefix($key);
             }

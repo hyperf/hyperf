@@ -32,6 +32,8 @@ class Cacheable extends AbstractAnnotation
 
     public $group = 'default';
 
+    public $collect = false;
+
     public function collectMethod(string $className, ?string $target): void
     {
         if (isset($this->listener)) {
