@@ -61,7 +61,7 @@ class CacheEvictAspect extends AbstractAspect
                 $keys = $driver->keys($collector);
                 if ($keys) {
                     $driver->deleteMultiple($keys);
-                    $driver->delKey($collector, ...$keys);
+                    $driver->delete($collector);
                 }
             } else {
                 $driver->clearPrefix($key);
