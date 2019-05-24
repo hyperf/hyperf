@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Listener;
 
+use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\DriverInterface;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
@@ -52,10 +54,14 @@ class DeleteListener implements ListenerInterface
         $method = $event->getMethod();
         $arguments = $event->getArguments();
 
-        [$key, , $group] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
+        [$key, , $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
         /** @var DriverInterface $driver */
         $driver = $this->manager->getDriver($group);
         $driver->delete($key);
+
+        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable) {
+            $driver->delKey($annotation->prefix . 'MEMBERS', $key);
+        }
     }
 }

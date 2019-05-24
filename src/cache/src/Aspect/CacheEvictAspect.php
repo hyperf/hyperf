@@ -15,6 +15,7 @@ namespace Hyperf\Cache\Aspect;
 use Hyperf\Cache\Annotation\CacheEvict;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -50,12 +51,19 @@ class CacheEvictAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $all, $group] = $this->annotationManager->getCacheEvictValue($className, $method, $arguments);
+        [$key, $all, $group, $annotation] = $this->annotationManager->getCacheEvictValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
         if ($all) {
-            $driver->clearPrefix($key);
+            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheEvict) {
+                $collector = $annotation->prefix . 'MEMBERS';
+                $keys = $driver->keys($collector);
+                $driver->deleteMultiple($keys);
+                $driver->delKey($collector, ...$keys);
+            } else {
+                $driver->clearPrefix($key);
+            }
         } else {
             $driver->delete($key);
         }
