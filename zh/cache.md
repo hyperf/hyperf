@@ -11,9 +11,9 @@ composer require hyperf/cache
 
 |  配置  |                  默认值                  |         备注          |
 |:------:|:----------------------------------------:|:---------------------:|
-| driver |  Hyperf\Cache\Driver\RedisDriver::class  | 缓存驱动，默认为Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer::class |        打包器         |
-| prefix |                   'c:'                   |       缓存前缀        |
+| driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为Redis |
+| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| prefix |                   c:                   |       缓存前缀        |
 
 ```php
 <?php
