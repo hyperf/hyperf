@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Commands\Migrations\InstallCommand;
 use Hyperf\Database\Commands\ModelCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Migrations\DatabaseMigrationRepository;
+use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -28,9 +31,11 @@ class ConfigProvider
                 ConnectionFactory::class => ConnectionFactory::class,
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
+                MigrationRepositoryInterface::class => DatabaseMigrationRepository::class,
             ],
             'commands' => [
                 ModelCommand::class,
+                InstallCommand::class,
             ],
             'scan' => [
                 'paths' => [
