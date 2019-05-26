@@ -232,7 +232,7 @@ abstract class Command extends SymfonyCommand
         $this->comment(str_repeat('*', $length));
         $this->comment('*     ' . $string . '     *');
         $this->comment(str_repeat('*', $length));
-        $this->output->writeln('');
+        $this->output->newLine();
     }
 
     /**
