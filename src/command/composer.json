@@ -1,0 +1,35 @@
+{
+    "name": "hyperf/command",
+    "type": "library",
+    "license": "Apache-2.0",
+    "keywords": [
+        "php",
+        "swoole",
+        "command"
+    ],
+    "description": "Command for hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Command\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/container": "^1.0",
+        "symfony/console": "^4.2"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml",
+        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
+    }
+}

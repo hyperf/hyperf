@@ -4,22 +4,34 @@ declare(strict_types=1);
 
 namespace %NAMESPACE%;
 
+use Hyperf\Command\AbstractCommand;
 use Hyperf\Framework\Annotation\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Psr\Container\ContainerInterface;
 
 /**
  * @Command
  */
-class %CLASS% extends SymfonyCommand
+class %CLASS% extends AbstractCommand
 {
-    public function __construct()
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct('hyperf');
+        $this->container = $container;
+
+        parent::__construct('demo:command');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function configure()
     {
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        $this->output->writeln('Hello Hyperf!');
     }
 }
