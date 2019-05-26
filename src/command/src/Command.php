@@ -16,7 +16,7 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractCommand extends SymfonyCommand
+abstract class Command extends SymfonyCommand
 {
     /**
      * @var InputInterface
@@ -34,6 +34,20 @@ abstract class AbstractCommand extends SymfonyCommand
         $this->output = $output;
 
         $this->handle();
+    }
+
+    /**
+     * Write a string as standard output.
+     *
+     * @param  string  $string
+     * @param  string  $style
+     * @param  int|string|null  $verbosity
+     * @return void
+     */
+    public function line($string, $style = null)
+    {
+        $styled = $style ? "<$style>$string</$style>" : $string;
+        $this->output->writeln($styled);
     }
 
     abstract protected function handle();
