@@ -20,7 +20,8 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "symfony/console": "^4.2"
+        "symfony/console": "^4.2",
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
