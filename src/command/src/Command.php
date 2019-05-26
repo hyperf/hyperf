@@ -12,11 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
+use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
@@ -51,22 +56,111 @@ abstract class Command extends SymfonyCommand
     ];
 
     /**
-     * Write a string as information output.
-     *
-     * @param string $string
-     * @param null|int|string $verbosity
+     * Run the console command.
      */
-    public function info($string, $verbosity = null)
+    public function run(InputInterface $input, OutputInterface $output): int
     {
-        $this->line($string, 'info', $verbosity);
+        $this->output = new SymfonyStyle($input, $output);
+
+        return parent::run(
+            $this->input = $input,
+            $this->output
+        );
+    }
+
+    /**
+     * Confirm a question with the user.
+     */
+    public function confirm(string $question, bool $default = false): bool
+    {
+        return $this->output->confirm($question, $default);
+    }
+
+    /**
+     * Prompt the user for input.
+     * @param null|mixed $default
+     */
+    public function ask(string $question, $default = null)
+    {
+        return $this->output->ask($question, $default);
+    }
+
+    /**
+     * Prompt the user for input with auto completion.
+     * @param null|mixed $default
+     */
+    public function anticipate(string $question, array $choices, $default = null)
+    {
+        return $this->askWithCompletion($question, $choices, $default);
+    }
+
+    /**
+     * Prompt the user for input with auto completion.
+     * @param null|mixed $default
+     */
+    public function askWithCompletion(string $question, array $choices, $default = null)
+    {
+        $question = new Question($question, $default);
+
+        $question->setAutocompleterValues($choices);
+
+        return $this->output->askQuestion($question);
+    }
+
+    /**
+     * Prompt the user for input but hide the answer from the console.
+     */
+    public function secret(string $question, bool $fallback = true)
+    {
+        $question = new Question($question);
+
+        $question->setHidden(true)->setHiddenFallback($fallback);
+
+        return $this->output->askQuestion($question);
+    }
+
+    /**
+     * Give the user a single choice from an array of answers.
+     * @param null|mixed $default
+     * @param null|mixed $attempts
+     * @param null|mixed $multiple
+     */
+    public function choice(string $question, array $choices, $default = null, $attempts = null, $multiple = null): string
+    {
+        $question = new ChoiceQuestion($question, $choices, $default);
+
+        $question->setMaxAttempts($attempts)->setMultiselect($multiple);
+
+        return $this->output->askQuestion($question);
+    }
+
+    /**
+     * Format input to textual table.
+     * @param mixed $rows
+     * @param mixed $tableStyle
+     */
+    public function table(array $headers, $rows, $tableStyle = 'default', array $columnStyles = []): void
+    {
+        $table = new Table($this->output);
+
+        if ($rows instanceof Arrayable) {
+            $rows = $rows->toArray();
+        }
+
+        $table->setHeaders((array) $headers)->setRows($rows)->setStyle($tableStyle);
+
+        foreach ($columnStyles as $columnIndex => $columnStyle) {
+            $table->setColumnStyle($columnIndex, $columnStyle);
+        }
+
+        $table->render();
     }
 
     /**
      * Write a string as standard output.
-     *
-     * @param string $string
-     * @param string $style
-     * @param null|int|string $verbosity
+     * @param mixed $string
+     * @param null|mixed $style
+     * @param null|mixed $verbosity
      */
     public function line($string, $style = null, $verbosity = null)
     {
@@ -75,10 +169,19 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
+     * Write a string as information output.
+     * @param mixed $string
+     * @param null|mixed $verbosity
+     */
+    public function info($string, $verbosity = null)
+    {
+        $this->line($string, 'info', $verbosity);
+    }
+
+    /**
      * Write a string as comment output.
-     *
-     * @param string $string
-     * @param null|int|string $verbosity
+     * @param mixed $string
+     * @param null|mixed $verbosity
      */
     public function comment($string, $verbosity = null)
     {
@@ -87,9 +190,8 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as question output.
-     *
-     * @param string $string
-     * @param null|int|string $verbosity
+     * @param mixed $string
+     * @param null|mixed $verbosity
      */
     public function question($string, $verbosity = null)
     {
@@ -98,9 +200,8 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as error output.
-     *
-     * @param string $string
-     * @param null|int|string $verbosity
+     * @param mixed $string
+     * @param null|mixed $verbosity
      */
     public function error($string, $verbosity = null)
     {
@@ -109,9 +210,8 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as warning output.
-     *
-     * @param string $string
-     * @param null|int|string $verbosity
+     * @param mixed $string
+     * @param null|mixed $verbosity
      */
     public function warn($string, $verbosity = null)
     {
@@ -124,8 +224,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string in an alert box.
-     *
-     * @param string $string
+     * @param mixed $string
      */
     public function alert($string)
     {
@@ -138,8 +237,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Set the verbosity level.
-     *
-     * @param int|string $level
+     * @param mixed $level
      */
     protected function setVerbosity($level)
     {
@@ -148,11 +246,9 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Get the verbosity level in terms of Symfony's OutputInterface level.
-     *
-     * @param null|int|string $level
-     * @return int
+     * @param null|mixed $level
      */
-    protected function parseVerbosity($level = null)
+    protected function parseVerbosity($level = null): int
     {
         if (isset($this->verbosityMap[$level])) {
             $level = $this->verbosityMap[$level];
@@ -164,10 +260,7 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-
-        $this->handle();
+        call([$this, 'handle']);
     }
 
     /**
