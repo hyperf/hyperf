@@ -31,7 +31,6 @@ class ConfigProvider
                 ConnectionFactory::class => ConnectionFactory::class,
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
-                MigrationRepositoryInterface::class => DatabaseMigrationRepository::class,
             ],
             'commands' => [
                 ModelCommand::class,
