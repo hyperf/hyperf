@@ -24,6 +24,11 @@ class PropertyHandlerManager
         static::$container[$annotation][] = $callback;
     }
 
+    public static function has(string $annotation): bool
+    {
+        return isset(static::$container[$annotation]);
+    }
+
     /**
      * @return callable[]
      */
