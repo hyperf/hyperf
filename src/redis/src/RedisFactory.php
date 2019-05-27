@@ -31,6 +31,9 @@ class RedisFactory
         }
     }
 
+    /**
+     * @return \Redis
+     */
     public function get(string $poolName)
     {
         $proxy = $this->proxies[$poolName] ?? null;
