@@ -30,7 +30,9 @@
         "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
     },
     "autoload": {
-        "files": [],
+        "files": [
+            "src/Functions.php"
+        ],
         "psr-4": {
             "Hyperf\\Di\\": "src"
         }
