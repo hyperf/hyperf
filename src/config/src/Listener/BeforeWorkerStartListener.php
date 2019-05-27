@@ -17,6 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Definition\PropertyInjection;
+use Hyperf\Di\Event\AfterScan;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
@@ -33,6 +34,7 @@ class BeforeWorkerStartListener implements ListenerInterface
     public function listen(): array
     {
         return [
+            AfterScan::class,
             BeforeWorkerStart::class,
         ];
     }
@@ -43,15 +45,17 @@ class BeforeWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
-            if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
-                $key = $annotation->key;
-                $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
-                    $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
-                    return $config->get($key, null);
-                });
-                $definition->addPropertyInjection($propertyInjection);
-            }
-        });
+        if (! PropertyHandlerManager::has(Value::class)) {
+            PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
+                if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
+                    $key = $annotation->key;
+                    $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
+                        $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
+                        return $config->get($key, null);
+                    });
+                    $definition->addPropertyInjection($propertyInjection);
+                }
+            });
+        }
     }
 }
