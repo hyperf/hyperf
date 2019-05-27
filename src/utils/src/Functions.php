@@ -394,10 +394,9 @@ if (! function_exists('make')) {
     {
         if (ApplicationContext::hasContainer()) {
             $container = ApplicationContext::getContainer();
-            if (! method_exists($container, 'make')) {
-                throw new \RuntimeException(sprintf('Make error, make() method does not exist in %s', get_class($container)));
+            if (method_exists($container, 'make')) {
+                return $container->make($name, $parameters);
             }
-            return $container->make($name, $parameters);
         }
         $parameters = array_values($parameters);
         return new $name(...$parameters);
