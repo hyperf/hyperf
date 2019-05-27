@@ -21,7 +21,9 @@ class ConsulAgentFactory
     public function __invoke(ContainerInterface $container)
     {
         return new Agent(function () use ($container) {
-            $options = [];
+            $options = [
+                'timeout' => 2,
+            ];
             return $container->get(ClientFactory::class)->create($options);
         });
     }
