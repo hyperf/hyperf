@@ -16,6 +16,7 @@ use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\RateLimit\Storage\RedisStorage;
 use Psr\Container\ContainerInterface;
+use function make;
 
 class RateLimitHandler
 {

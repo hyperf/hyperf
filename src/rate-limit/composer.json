@@ -12,16 +12,20 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "dev-master",
-        "hyperf/event": "dev-master",
-        "hyperf/redis": "dev-master",
+        "psr/container": "^1.0",
+        "psr/simple-cache": "^1.0",
+        "hyperf/utils": "dev-master",
         "bandwidth-throttle/token-bucket": "^2.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "friendsofphp/php-cs-fixer": "^2.9",
+        "hyperf/contract": "dev-master",
+        "hyperf/di": "dev-master",
+        "hyperf/http-server": "dev-master",
+        "hyperf/redis": "dev-master"
     },
     "suggest": {
     },

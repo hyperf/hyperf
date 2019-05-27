@@ -20,6 +20,7 @@ use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
 use Psr\SimpleCache\InvalidArgumentException;
 use Redis;
+use function make;
 
 class RedisStorage implements Storage, GlobalScope
 {
@@ -50,6 +51,7 @@ class RedisStorage implements Storage, GlobalScope
             'name' => $key,
             'timeout' => $timeout,
         ]);
+
     }
 
     public function bootstrap($microtime)
