@@ -90,6 +90,8 @@ return [
 
 ```
 
+### 新建代理类
+
 然后我们重写一个 Redis类 继承 `Hyperf\Redis\Redis`，修改 poolName 为上述 redis2，示例如下
 
 ```php
@@ -105,3 +107,16 @@ $redis = $this->container->get(UserRedis::class);
 $result = $redis->keys('*');
 
 ```
+
+### 使用工厂类
+
+如果你觉得上述方法不方便，也可以试试 `Hyperf\Redis\RedisFactory` 工厂类。
+
+```php
+use Hyperf\Redis\RedisFactory;
+
+$redis = $this->container->get(RedisFactory::class)->get('redis2');
+
+$result = $redis->keys('*');
+```
+
