@@ -15,6 +15,7 @@ namespace Hyperf\Cache\Aspect;
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -53,7 +54,7 @@ class CacheableAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $ttl, $group] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
+        [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
@@ -65,6 +66,9 @@ class CacheableAspect extends AbstractAspect
         $result = $proceedingJoinPoint->process();
 
         $driver->set($key, $result, $ttl);
+        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
+            $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+        }
 
         return $result;
     }

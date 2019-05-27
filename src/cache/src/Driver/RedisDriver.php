@@ -15,7 +15,7 @@ namespace Hyperf\Cache\Driver;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
-class RedisDriver extends Driver
+class RedisDriver extends Driver implements KeyCollectorInterface
 {
     /**
      * @var \Redis
@@ -125,10 +125,25 @@ class RedisDriver extends Driver
     {
         $iterator = null;
         $key = $prefix . '*';
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 100)) {
+        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
             $this->redis->delete(...$keys);
         }
 
         return true;
+    }
+
+    public function addKey(string $collector, string $key): bool
+    {
+        return (bool) $this->redis->sAdd($this->getCacheKey($collector), $key);
+    }
+
+    public function keys(string $collector): array
+    {
+        return $this->redis->sMembers($this->getCacheKey($collector)) ?? [];
+    }
+
+    public function delKey(string $collector, ...$key): bool
+    {
+        return (bool) $this->redis->sRem($this->getCacheKey($collector), ...$key);
     }
 }
