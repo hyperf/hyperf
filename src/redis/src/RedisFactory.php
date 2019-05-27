@@ -38,7 +38,7 @@ class RedisFactory
     {
         $proxy = $this->proxies[$poolName] ?? null;
         if (! $proxy instanceof RedisProxy) {
-            throw new InvalidRedisProxyException('Redis prosy is invalid.');
+            throw new InvalidRedisProxyException('Redis proxy is invalid.');
         }
 
         return $proxy;
