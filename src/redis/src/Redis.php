@@ -25,7 +25,7 @@ class Redis
     /**
      * @var string
      */
-    public $poolName = 'default';
+    protected $poolName = 'default';
 
     public function __construct(PoolFactory $factory)
     {

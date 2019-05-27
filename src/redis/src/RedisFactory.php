@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
+namespace Hyperf\Redis;
+
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Redis\Exception\InvalidRedisProxyException;
+
+class RedisFactory
+{
+    /**
+     * @var RedisProxy[]
+     */
+    protected $proxies;
+
+    public function __construct(ConfigInterface $config)
+    {
+        $redisConfig = $config->get('redis');
+
+        foreach ($redisConfig as $poolName => $item) {
+            $this->proxies[$poolName] = make(RedisProxy::class, ['poolName' => $poolName]);
+        }
+    }
+
+    public function get(string $poolName)
+    {
+        $proxy = $this->proxies[$poolName] ?? null;
+        if (! $proxy instanceof RedisProxy) {
+            throw new InvalidRedisProxyException('Redis prosy is invalid.');
+        }
+
+        return $proxy;
+    }
+}
