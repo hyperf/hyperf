@@ -17,6 +17,10 @@ use FilesystemIterator;
 use Hyperf\Utils\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Most of the methods in this file come from illuminate/filesystem,
+ * thanks Laravel Team provide such a useful class.
+ */
 class Filesystem
 {
     use Macroable;
