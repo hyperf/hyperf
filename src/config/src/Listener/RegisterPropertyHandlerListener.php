@@ -26,7 +26,7 @@ use Hyperf\Utils\ApplicationContext;
 /**
  * @Listener
  */
-class BeforeWorkerStartListener implements ListenerInterface
+class RegisterPropertyHandlerListener implements ListenerInterface
 {
     /**
      * @return string[] returns the events that you want to listen
