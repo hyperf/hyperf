@@ -17,10 +17,9 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Definition\PropertyInjection;
-use Hyperf\Di\Event\AfterScan;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeWorkerStart;
+use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Utils\ApplicationContext;
 
 /**
@@ -34,8 +33,7 @@ class RegisterPropertyHandlerListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            AfterScan::class,
-            BeforeWorkerStart::class,
+            BootApplication::class,
         ];
     }
 

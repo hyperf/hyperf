@@ -15,13 +15,20 @@ namespace Hyperf\Framework;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Annotation\Command;
+use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Application;
 
 class ApplicationFactory
 {
     public function __invoke(ContainerInterface $container)
     {
+        if ($container->has(EventDispatcherInterface::class)) {
+            $eventDispatcher = $container->get(EventDispatcherInterface::class);
+            $eventDispatcher->dispatch(new BootApplication());
+        }
+
         $config = $container->get(ConfigInterface::class);
         $commands = $config->get('commands', []);
         // Append commands that defined by annotation.
