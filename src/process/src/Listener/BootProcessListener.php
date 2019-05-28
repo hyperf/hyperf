@@ -74,7 +74,7 @@ class BootProcessListener implements ListenerInterface
                 $instance = $this->container->get($process);
                 if (isset($annotationProcesses[$process])) {
                     foreach ($annotationProcesses[$process] as $property => $value) {
-                        if (property_exists($instance, $property)) {
+                        if (property_exists($instance, $property) && ! is_null($value)) {
                             $instance->{$property} = $value;
                         }
                     }

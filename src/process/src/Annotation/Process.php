@@ -24,25 +24,25 @@ class Process extends AbstractAnnotation
     /**
      * @var int
      */
-    public $nums = 1;
+    public $nums;
 
     /**
      * @var string
      */
-    public $name = 'hyperf-user-process';
+    public $name;
 
     /**
      * @var bool
      */
-    public $redirectStdinStdout = false;
+    public $redirectStdinStdout;
 
     /**
      * @var int
      */
-    public $pipeType = 2;
+    public $pipeType;
 
     /**
      * @var bool
      */
-    public $enableCoroutine = true;
+    public $enableCoroutine;
 }
