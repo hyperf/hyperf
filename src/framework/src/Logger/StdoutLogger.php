@@ -44,10 +44,10 @@ class StdoutLogger implements StdoutLoggerInterface
         'component',
     ];
 
-    public function __construct(ConfigInterface $config)
+    public function __construct(ConfigInterface $config, $output = null)
     {
         $this->config = $config;
-        $this->output = new ConsoleOutput();
+        $this->output = $output ? $output : new ConsoleOutput();
     }
 
     /**
