@@ -17,6 +17,7 @@ use Hyperf\Utils\Str;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -251,6 +252,19 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
+     * Call another console command.
+     */
+    public function call(string $command, array $arguments = []): int
+    {
+        $arguments['command'] = $command;
+
+        return $this->getApplication()->find($command)->run(
+            $this->createInputFromArguments($arguments),
+            $this->output
+        );
+    }
+
+    /**
      * Set the verbosity level.
      * @param mixed $level
      */
@@ -271,6 +285,34 @@ abstract class Command extends SymfonyCommand
             $level = $this->verbosity;
         }
         return $level;
+    }
+
+    /**
+     * Create an input instance from the given arguments.
+     */
+    protected function createInputFromArguments(array $arguments): ArrayInput
+    {
+        return tap(new ArrayInput(array_merge($this->context(), $arguments)), function (InputInterface $input) {
+            if ($input->hasParameterOption(['--no-interaction'], true)) {
+                $input->setInteractive(false);
+            }
+        });
+    }
+
+    /**
+     * Get all of the context passed to the command.
+     */
+    protected function context(): array
+    {
+        return collect($this->input->getOptions())->only([
+            'ansi',
+            'no-ansi',
+            'no-interaction',
+            'quiet',
+            'verbose',
+        ])->filter()->mapWithKeys(function ($value, $key) {
+            return ["--{$key}" => $value];
+        })->all();
     }
 
     /**
@@ -308,5 +350,5 @@ abstract class Command extends SymfonyCommand
     /**
      * Handle the current command.
      */
-    abstract protected function handle();
+    abstract public function handle();
 }
