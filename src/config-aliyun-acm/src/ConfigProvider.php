@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ConfigApollo;
+namespace Hyperf\ConfigAliyunAcm;
 
 class ConfigProvider
 {
@@ -18,7 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ClientInterface::class => ClientFactory::class,
+                ClientInterface::class => Client::class,
             ],
             'scan' => [
                 'paths' => [
@@ -28,8 +28,8 @@ class ConfigProvider
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for apollo.',
-                    'source' => __DIR__ . '/../publish/apollo.php',
+                    'description' => 'The config for aliyun acm.',
+                    'source' => __DIR__ . '/../publish/aliyun_acm.php',
                     'destination' => BASE_PATH . '/config/autoload/aliyun_acm.php',
                 ],
             ],
