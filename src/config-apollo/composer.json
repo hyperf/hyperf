@@ -14,10 +14,15 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/config": "dev-master",
-        "hyperf/process": "dev-master"
+        "psr/container": "^1.0",
+        "hyperf/contract": "dev-master",
+        "hyperf/process": "dev-master",
+        "hyperf/utils": "dev-master"
     },
     "require-dev": {
+        "hyperf/config": "dev-master",
+        "hyperf/event": "dev-master",
+        "hyperf/framework": "dev-master",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
