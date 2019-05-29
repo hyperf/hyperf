@@ -20,14 +20,10 @@ use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 /**
- * @Process(name="config-fetcher")
+ * @Process(name="apollo-config-fetcher")
  */
 class ConfigFetcherProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    public $name = 'config';
 
     /**
      * @var Server
