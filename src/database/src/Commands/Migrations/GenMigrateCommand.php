@@ -79,14 +79,21 @@ class GenMigrateCommand extends BaseCommand
         $this->writeMigration($name, $table, $create);
     }
 
-    protected function configure()
+    protected function getArguments(): array
     {
-        parent::configure();
-        $this->addArgument('name', null, InputArgument::REQUIRED, 'The name of the migration');
-        $this->addOption('create', null, InputOption::VALUE_OPTIONAL, 'The table to be created');
-        $this->addOption('table', null, InputOption::VALUE_OPTIONAL, 'The table to migrate');
-        $this->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The location where the migration file should be created');
-        $this->addOption('realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths');
+        return [
+            ['name', InputArgument::REQUIRED, 'The name of the migration'],
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            ['create', null, InputOption::VALUE_OPTIONAL, 'The table to be created'],
+            ['table', null, InputOption::VALUE_OPTIONAL, 'The table to migrate'],
+            ['path', null, InputOption::VALUE_OPTIONAL, 'The location where the migration file should be created'],
+            ['realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths'],
+        ];
     }
 
     /**
