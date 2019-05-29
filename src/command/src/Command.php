@@ -26,12 +26,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 abstract class Command extends SymfonyCommand
 {
     /**
+     * The name of the command.
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
      * @var InputInterface
      */
     protected $input;
 
     /**
-     * @var OutputInterface
+     * @var OutputInterface|SymfonyStyle
      */
     protected $output;
 
@@ -54,6 +61,14 @@ abstract class Command extends SymfonyCommand
         'quiet' => OutputInterface::VERBOSITY_QUIET,
         'normal' => OutputInterface::VERBOSITY_NORMAL,
     ];
+
+    public function __construct(string $name = null)
+    {
+        if (! $name && $this->name) {
+            $name = $this->name;
+        }
+        parent::__construct($name);
+    }
 
     /**
      * Run the console command.
@@ -256,6 +271,33 @@ abstract class Command extends SymfonyCommand
             $level = $this->verbosity;
         }
         return $level;
+    }
+
+    /**
+     * Specify the arguments and options on the command.
+     */
+    protected function specifyParameters(): void
+    {
+        // We will loop through all of the arguments and options for the command and
+        // set them all on the base command instance. This specifies what can get
+        // passed into these commands as "parameters" to control the execution.
+        if (method_exists($this, 'getArguments')) {
+            foreach ($this->getArguments() ?? [] as $arguments) {
+                call_user_func_array([$this, 'addArgument'], $arguments);
+            }
+        }
+
+        if (method_exists($this, 'getOptions')) {
+            foreach ($this->getOptions() ?? [] as $options) {
+                call_user_func_array([$this, 'addOption'], $options);
+            }
+        }
+    }
+
+    protected function configure()
+    {
+        parent::configure();
+        $this->specifyParameters();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
