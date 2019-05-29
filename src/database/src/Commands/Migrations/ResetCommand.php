@@ -84,13 +84,9 @@ class ResetCommand extends BaseCommand
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
-
             ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production'],
-
             ['path', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The path(s) to the migrations files to be executed'],
-
             ['realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths'],
-
             ['pretend', null, InputOption::VALUE_NONE, 'Dump the SQL queries that would be run'],
         ];
     }
