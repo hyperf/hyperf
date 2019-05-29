@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Database\Migrations;
 
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
@@ -44,15 +54,15 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     public function getRan()
     {
         return $this->table()
-                ->orderBy('batch', 'asc')
-                ->orderBy('migration', 'asc')
-                ->pluck('migration')->all();
+            ->orderBy('batch', 'asc')
+            ->orderBy('migration', 'asc')
+            ->pluck('migration')->all();
     }
 
     /**
      * Get list of migrations.
      *
-     * @param  int  $steps
+     * @param int $steps
      * @return array
      */
     public function getMigrations($steps)
@@ -60,8 +70,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
         $query = $this->table()->where('batch', '>=', '1');
 
         return $query->orderBy('batch', 'desc')
-                     ->orderBy('migration', 'desc')
-                     ->take($steps)->get()->all();
+            ->orderBy('migration', 'desc')
+            ->take($steps)->get()->all();
     }
 
     /**
@@ -84,17 +94,16 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     public function getMigrationBatches()
     {
         return $this->table()
-                ->orderBy('batch', 'asc')
-                ->orderBy('migration', 'asc')
-                ->pluck('batch', 'migration')->all();
+            ->orderBy('batch', 'asc')
+            ->orderBy('migration', 'asc')
+            ->pluck('batch', 'migration')->all();
     }
 
     /**
      * Log that a migration was run.
      *
-     * @param  string  $file
-     * @param  int  $batch
-     * @return void
+     * @param string $file
+     * @param int $batch
      */
     public function log($file, $batch)
     {
@@ -106,8 +115,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Remove a migration from the log.
      *
-     * @param  object  $migration
-     * @return void
+     * @param object $migration
      */
     public function delete($migration)
     {
@@ -136,8 +144,6 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Create the migration repository data store.
-     *
-     * @return void
      */
     public function createRepository()
     {
@@ -166,16 +172,6 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     }
 
     /**
-     * Get a query builder for the migration table.
-     *
-     * @return \Hyperf\Database\Query\Builder
-     */
-    protected function table()
-    {
-        return $this->getConnection()->table($this->table)->useWritePdo();
-    }
-
-    /**
      * Get the connection resolver instance.
      *
      * @return \Hyperf\Database\ConnectionResolverInterface
@@ -198,11 +194,20 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Set the information source to gather data.
      *
-     * @param  string  $name
-     * @return void
+     * @param string $name
      */
     public function setSource($name)
     {
         $this->connection = $name;
+    }
+
+    /**
+     * Get a query builder for the migration table.
+     *
+     * @return \Hyperf\Database\Query\Builder
+     */
+    protected function table()
+    {
+        return $this->getConnection()->table($this->table)->useWritePdo();
     }
 }

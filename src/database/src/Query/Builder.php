@@ -2228,7 +2228,7 @@ class Builder
 
         $wrapped = $this->grammar->wrap($column);
 
-        $columns = array_merge([$column => $this->raw("${wrapped} + ${amount}")], $extra);
+        $columns = array_merge([$column => $this->raw("{$wrapped} + {$amount}")], $extra);
 
         return $this->update($columns);
     }
@@ -2248,7 +2248,7 @@ class Builder
 
         $wrapped = $this->grammar->wrap($column);
 
-        $columns = array_merge([$column => $this->raw("${wrapped} - ${amount}")], $extra);
+        $columns = array_merge([$column => $this->raw("{$wrapped} - {$amount}")], $extra);
 
         return $this->update($columns);
     }

@@ -12,11 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Commands\Migrations\FreshCommand;
+use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
+use Hyperf\Database\Commands\Migrations\InstallCommand;
+use Hyperf\Database\Commands\Migrations\MigrateCommand;
+use Hyperf\Database\Commands\Migrations\RefreshCommand;
+use Hyperf\Database\Commands\Migrations\ResetCommand;
+use Hyperf\Database\Commands\Migrations\RollbackCommand;
+use Hyperf\Database\Commands\Migrations\StatusCommand;
 use Hyperf\Database\Commands\ModelCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
+use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -29,10 +37,18 @@ class ConfigProvider
                 ConnectionFactory::class => ConnectionFactory::class,
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
+                MigrationRepositoryInterface::class => DatabaseMigrationRepositoryFactory::class,
             ],
             'commands' => [
                 ModelCommand::class,
                 GenMigrateCommand::class,
+                InstallCommand::class,
+                MigrateCommand::class,
+                FreshCommand::class,
+                RefreshCommand::class,
+                ResetCommand::class,
+                RollbackCommand::class,
+                StatusCommand::class,
             ],
             'scan' => [
                 'paths' => [

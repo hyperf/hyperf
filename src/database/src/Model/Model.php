@@ -29,7 +29,13 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
-    use Concerns\HasAttributes, Concerns\HasEvents, Concerns\HasGlobalScopes, Concerns\HasRelationships, Concerns\HasTimestamps, Concerns\HidesAttributes, Concerns\GuardsAttributes;
+    use Concerns\HasAttributes;
+    use Concerns\HasEvents;
+    use Concerns\HasGlobalScopes;
+    use Concerns\HasRelationships;
+    use Concerns\HasTimestamps;
+    use Concerns\HidesAttributes;
+    use Concerns\GuardsAttributes;
 
     /**
      * The name of the "created at" column.

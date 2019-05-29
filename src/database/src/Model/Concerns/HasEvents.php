@@ -19,7 +19,6 @@ use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Deleting;
 use Hyperf\Database\Model\Events\ForceDeleted;
-use Hyperf\Database\Model\Events\Nothing;
 use Hyperf\Database\Model\Events\Restored;
 use Hyperf\Database\Model\Events\Restoring;
 use Hyperf\Database\Model\Events\Retrieved;

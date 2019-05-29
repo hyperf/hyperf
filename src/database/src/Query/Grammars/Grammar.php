@@ -141,7 +141,7 @@ class Grammar extends BaseGrammar
             return '(' . $this->parameterize($record) . ')';
         })->implode(', ');
 
-        return "insert into ${table} (${columns}) values ${parameters}";
+        return "insert into {$table} ({$columns}) values {$parameters}";
     }
 
     /**
@@ -163,7 +163,7 @@ class Grammar extends BaseGrammar
      */
     public function compileInsertUsing(Builder $query, array $columns, string $sql)
     {
-        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) ${sql}";
+        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) {$sql}";
     }
 
     /**
@@ -197,7 +197,7 @@ class Grammar extends BaseGrammar
         // intended records are updated by the SQL statements we generate to run.
         $wheres = $this->compileWheres($query);
 
-        return trim("update {$table}{$joins} set ${columns} ${wheres}");
+        return trim("update {$table}{$joins} set {$columns} {$wheres}");
     }
 
     /**
@@ -223,7 +223,7 @@ class Grammar extends BaseGrammar
     {
         $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
 
-        return trim("delete from {$this->wrapTable($query->from)} ${wheres}");
+        return trim("delete from {$this->wrapTable($query->from)} {$wheres}");
     }
 
     /**
@@ -717,7 +717,7 @@ class Grammar extends BaseGrammar
     {
         $select = $this->compileSelect($where['query']);
 
-        return $this->wrap($where['column']) . ' ' . $where['operator'] . " (${select})";
+        return $this->wrap($where['column']) . ' ' . $where['operator'] . " ({$select})";
     }
 
     /**

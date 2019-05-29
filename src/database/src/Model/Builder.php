@@ -29,7 +29,9 @@ use Hyperf\Utils\Traits\ForwardsCalls;
  */
 class Builder
 {
-    use BuildsQueries, ForwardsCalls, Concerns\QueriesRelationships;
+    use BuildsQueries;
+    use ForwardsCalls;
+    use Concerns\QueriesRelationships;
 
     /**
      * The base query builder instance.
