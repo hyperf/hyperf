@@ -9,7 +9,7 @@ abstract class Migration
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * Enables, if supported, wrapping the migration within a transaction.
