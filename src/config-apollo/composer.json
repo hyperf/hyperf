@@ -14,7 +14,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/config": "dev-master"
+        "hyperf/config": "dev-master",
+        "hyperf/process": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
