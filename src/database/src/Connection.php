@@ -33,9 +33,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Connection implements ConnectionInterface
 {
-    use DetectsDeadlocks,
-        DetectsLostConnections,
-        Concerns\ManagesTransactions;
+    use DetectsDeadlocks;
+    use DetectsLostConnections;
+    use Concerns\ManagesTransactions;
 
     /**
      * The active PDO connection.

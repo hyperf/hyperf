@@ -51,18 +51,6 @@ class InstallCommand extends BaseCommand
     }
 
     /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
-        ];
-    }
-
-    /**
      * Handle the current command.
      */
     public function handle()
@@ -72,5 +60,17 @@ class InstallCommand extends BaseCommand
         $this->repository->createRepository();
 
         $this->output->writeln('<info>[INFO] Migration table created successfully.</info>');
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
+        ];
     }
 }

@@ -1,22 +1,32 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Database\Migrations;
 
 abstract class Migration
 {
-    /**
-     * The name of the database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'default';
-
     /**
      * Enables, if supported, wrapping the migration within a transaction.
      *
      * @var bool
      */
     public $withinTransaction = true;
+
+    /**
+     * The name of the database connection to use.
+     *
+     * @var string
+     */
+    protected $connection = 'default';
 
     /**
      * Get the migration connection name.

@@ -275,7 +275,7 @@ class Migrator
     /**
      * Resolve the database connection instance.
      *
-     * @return Connection The return object maybe is a non-extends proxy class, so DONOT define the return type.
+     * @return Connection the return object maybe is a non-extends proxy class, so DONOT define the return type
      */
     public function resolveConnection(string $connection)
     {
@@ -325,8 +325,8 @@ class Migrator
     {
         return Collection::make($files)
             ->reject(function ($file) use ($ran) {
-                    return in_array($this->getMigrationName($file), $ran);
-                })->values()->all();
+                return in_array($this->getMigrationName($file), $ran);
+            })->values()->all();
     }
 
     /**
@@ -515,7 +515,7 @@ class Migrator
     /**
      * Get the schema grammar out of a migration connection.
      *
-     * @param Connection $connection The return object maybe is a non-extends proxy class, so DONOT define the return type.
+     * @param Connection $connection the return object maybe is a non-extends proxy class, so DONOT define the return type
      */
     protected function getSchemaGrammar($connection): Grammar
     {

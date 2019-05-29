@@ -104,7 +104,7 @@ class MySqlGrammar extends Grammar
         // intended records are updated by the SQL statements we generate to run.
         $where = $this->compileWheres($query);
 
-        $sql = rtrim("update {$table}{$joins} set ${columns} ${where}");
+        $sql = rtrim("update {$table}{$joins} set {$columns} {$where}");
 
         // If the query has an order by clause we will compile it since MySQL supports
         // order bys on update statements. We'll compile them using the typical way
