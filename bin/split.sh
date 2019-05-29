@@ -22,7 +22,9 @@ remote amqp git@github.com:hyperf-cloud/amqp.git
 remote async-queue git@github.com:hyperf-cloud/async-queue.git
 remote cache git@github.com:hyperf-cloud/cache.git
 remote circuit-breaker git@github.com:hyperf-cloud/circuit-breaker.git
+remote command git@github.com:hyperf-cloud/command.git
 remote config git@github.com:hyperf-cloud/config.git
+remote config-aliyun-acm git@github.com:hyperf-cloud/config-aliyun-acm.git
 remote config-apollo git@github.com:hyperf-cloud/config-apollo.git
 remote constants git@github.com:hyperf-cloud/constants.git
 remote consul git@github.com:hyperf-cloud/consul.git
@@ -64,7 +66,9 @@ split 'src/amqp' amqp
 split 'src/async-queue' async-queue
 split 'src/cache' cache
 split 'src/circuit-breaker' circuit-breaker
+split 'src/command' command
 split 'src/config' config
+split 'src/config-aliyun-acm' config-aliyun-acm
 split 'src/config-apollo' config-apollo
 split 'src/constants' constants
 split 'src/consul' consul
