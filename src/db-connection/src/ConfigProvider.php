@@ -16,6 +16,7 @@ use Hyperf\Database\Commands\ModelCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -31,6 +32,7 @@ class ConfigProvider
             ],
             'commands' => [
                 ModelCommand::class,
+                GenMigrateCommand::class,
             ],
             'scan' => [
                 'paths' => [

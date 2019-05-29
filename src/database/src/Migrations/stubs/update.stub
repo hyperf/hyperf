@@ -1,0 +1,32 @@
+<?php
+
+use Hyperf\Database\Schema\MysqlBuilder as Schema;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Migrations\Migration;
+
+class DummyClass extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('DummyTable', function (Blueprint $table) {
+            //
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('DummyTable', function (Blueprint $table) {
+            //
+        });
+    }
+}
