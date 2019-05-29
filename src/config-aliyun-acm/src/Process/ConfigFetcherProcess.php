@@ -20,15 +20,10 @@ use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 /**
- * @Process(name="config-fetcher")
+ * @Process(name="aliyun-acm-config-fetcher")
  */
 class ConfigFetcherProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    public $name = 'config';
-
     /**
      * @var Server
      */
@@ -43,6 +38,11 @@ class ConfigFetcherProcess extends AbstractProcess
      * @var ConfigInterface
      */
     private $config;
+
+    /**
+     * @var string
+     */
+    private $cacheConfig;
 
     public function __construct(ContainerInterface $container)
     {
@@ -65,10 +65,18 @@ class ConfigFetcherProcess extends AbstractProcess
     public function handle(): void
     {
         while (true) {
-            $this->client->pull();
-            $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-            for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                $this->server->sendMessage($this->client->fetchConfig, $workerId);
+            $config = $this->client->pull();
+            if ($config !== $this->cacheConfig) {
+                if ($this->cacheConfig !== null) {
+                    $diff = array_diff($this->cacheConfig ?? [], $config);
+                } else {
+                    $diff = $config;
+                }
+                $this->cacheConfig = $config;
+                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
+                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
+                    $this->server->sendMessage($diff, $workerId);
+                }
             }
             sleep($this->config->get('aliyun_acm.interval', 5));
         }

@@ -35,7 +35,7 @@ class OnPipeMessageListener implements ListenerInterface
     private $logger;
 
     /**
-     * @var \Hyperf\ConfigAliyunAcm\ClientInterface
+     * @var ClientInterface
      */
     private $client;
 

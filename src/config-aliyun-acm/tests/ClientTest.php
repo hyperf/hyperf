@@ -30,18 +30,21 @@ class ClientTest extends TestCase
     public function testPull()
     {
         $container = Mockery::mock(ContainerInterface::class);
-        $configInstance = new Config([]);
-        $configInstance->set('aliyun_acm.addressServer', 'pre-value');
+        // @TODO Add a test env.
+        $configInstance = new Config([
+            'aliyun_acm' => [
+                'namespace' => '',
+                'data_id' => 'hyperf',
+                'access_key' => '',
+                'secret_key' => '',
+            ],
+        ]);
+        $configInstance->set('aliyun_acm.test-key', 'pre-value');
+        $container->shouldReceive('get')->with(ClientFactory::class)->andReturn(new ClientFactory($container));
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($configInstance);
         ApplicationContext::setContainer($container);
-        $client = new Client(function () use ($container) {
-            return (new ClientFactory($container))->create();
-        });
-        $client->pull();
-        $config = $container->get(ConfigInterface::class);
-        $this->assertSame('after-value', $config->get('aliyun_acm.test-key'));
-        $this->assertSame([
-            'test-key' => 'after-value',
-        ], $config->get('aliyun_acm'));
+        $client = new Client($container);
+        $fetchConfig = $client->pull();
+        $this->assertSame('after-value', $fetchConfig['aliyun_acm.test-key']);
     }
 }

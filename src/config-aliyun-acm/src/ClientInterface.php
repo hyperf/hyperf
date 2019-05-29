@@ -17,5 +17,5 @@ interface ClientInterface
     /**
      * Pull the config values from configuration center, and then update the Config values.
      */
-    public function pull(): void;
+    public function pull(): array;
 }
