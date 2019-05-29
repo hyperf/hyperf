@@ -15,7 +15,7 @@ trait ConfirmableTrait
      * @param  \Closure|bool|null  $callback
      * @return bool
      */
-    public function confirmToProceed($warning = 'Application In Production!', $callback)
+    public function confirmToProceed($warning = 'Application In Production!', $callback = false)
     {
         $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
 
