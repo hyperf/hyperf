@@ -58,7 +58,7 @@ class Client implements ClientInterface
         $namespace = $this->config->get('aliyun_acm.namespace', '');
         $dataId = $this->config->get('aliyun_acm.data_id', '');
         $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
-        $accessKey = $this->config->get('aliyun_acm.access_key', '');
+        $ak = $this->config->get('aliyun_acm.access_key', '');
         $sk = $this->config->get('aliyun_acm.secret_key', '');
 
         // sign
@@ -78,7 +78,7 @@ class Client implements ClientInterface
         // get config
         $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
             'headers' => [
-                'Spas-AccessKey' => $accessKey,
+                'Spas-AccessKey' => $ak,
                 'timeStamp' => $timestamp,
                 'Spas-Signature' => $sign,
             ],

@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 
 return [
-    'enable' => true,
+    'enable' => false,
     'interval' => 5,
-    'addressServer' => env('ALIYUN_ACM_ADDRESS_SERVER', 'acm.aliyun.com'),
-    'namespace' => env('ALIYUN_ACM_NAMESPACE', 'namespace-id'),
-    'dataId' => env('ALIYUN_ACM_DATA_ID', 'app'),
-    'group' => env('ALIYUN_ACM_GROUP', 'app'),
-    'ak' => env('ALIYUN_ACM_AK', 'ak'),
-    'sk' => env('ALIYUN_ACM_SK', 'sk'),
+    'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+    'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+    'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+    'access_key' => env('ALIYUN_ACM_AK', ''),
+    'secret_key' => env('ALIYUN_ACM_SK', ''),
 ];

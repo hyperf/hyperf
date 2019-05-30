@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 return [
-    'enable' => true,
+    'enable' => false,
     'server' => 'http://localhost:8080',
     'appid' => 'test',
     'cluster' => 'default',
