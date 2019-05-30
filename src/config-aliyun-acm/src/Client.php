@@ -53,32 +53,32 @@ class Client implements ClientInterface
             throw new RuntimeException('aliyun acm: Invalid http client.');
         }
 
-        // config
-        $addressServer = $this->config->get('aliyun_acm.endpoint', 'acm.aliyun.com');
+        // ACM config
+        $endpoint = $this->config->get('aliyun_acm.endpoint', 'acm.aliyun.com');
         $namespace = $this->config->get('aliyun_acm.namespace', '');
         $dataId = $this->config->get('aliyun_acm.data_id', '');
         $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
-        $ak = $this->config->get('aliyun_acm.access_key', '');
-        $sk = $this->config->get('aliyun_acm.secret_key', '');
+        $accessKey = $this->config->get('aliyun_acm.access_key', '');
+        $secretKey = $this->config->get('aliyun_acm.secret_key', '');
 
-        // sign
+        // Sign
         $timestamp = round(microtime(true) * 1000);
-        $sign = base64_encode(hash_hmac('sha1', "{$namespace}+{$group}+{$timestamp}", $sk, true));
+        $sign = base64_encode(hash_hmac('sha1', "{$namespace}+{$group}+{$timestamp}", $secretKey, true));
 
         if (! $this->servers) {
             // server list
-            $response = $client->get("http://{$addressServer}:8080/diamond-server/diamond");
+            $response = $client->get("http://{$endpoint}:8080/diamond-server/diamond");
             if ($response->getStatusCode() !== 200) {
-                throw new RuntimeException('aliyun acm: get server list fail.');
+                throw new RuntimeException('Get server list failed from Aliyun ACM.');
             }
             $this->servers = array_filter(explode("\n", $response->getBody()->getContents()));
         }
         $server = $this->servers[array_rand($this->servers)];
 
-        // get config
+        // Get config
         $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
             'headers' => [
-                'Spas-AccessKey' => $ak,
+                'Spas-AccessKey' => $accessKey,
                 'timeStamp' => $timestamp,
                 'Spas-Signature' => $sign,
             ],
@@ -89,7 +89,7 @@ class Client implements ClientInterface
             ],
         ]);
         if ($response->getStatusCode() !== 200) {
-            throw new RuntimeException('aliyun acm: get config fail.');
+            throw new RuntimeException('Get config failed from Aliyun ACM.');
         }
         return json_decode($response->getBody()->getContents(), true);
     }
