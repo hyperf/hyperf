@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Illuminate\Tests\Database;
+namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\InstallCommand;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
