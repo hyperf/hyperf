@@ -18,10 +18,10 @@ class RedisProxy extends Redis
 {
     protected $poolName;
 
-    public function __construct(PoolFactory $factory, string $poolName)
+    public function __construct(PoolFactory $factory, string $pool)
     {
         parent::__construct($factory);
 
-        $this->poolName = $poolName;
+        $this->poolName = $pool;
     }
 }

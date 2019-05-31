@@ -27,7 +27,7 @@ class RedisFactory
         $redisConfig = $config->get('redis');
 
         foreach ($redisConfig as $poolName => $item) {
-            $this->proxies[$poolName] = make(RedisProxy::class, ['poolName' => $poolName]);
+            $this->proxies[$poolName] = make(RedisProxy::class, ['pool' => $poolName]);
         }
     }
 
