@@ -13,6 +13,7 @@ declare(strict_types=1);
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
@@ -282,14 +283,21 @@ if (! function_exists('call')) {
 if (! function_exists('go')) {
     function go(callable $callable)
     {
-        \Hyperf\Utils\Coroutine::create($callable);
+        Coroutine::create($callable);
+    }
+}
+
+if (! function_exists('co')) {
+    function co(callable $callable)
+    {
+        Coroutine::create($callable);
     }
 }
 
 if (! function_exists('defer')) {
     function defer(callable $callable): void
     {
-        \Hyperf\Utils\Coroutine::defer($callable);
+        Coroutine::defer($callable);
     }
 }
 
