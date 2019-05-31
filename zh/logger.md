@@ -1,6 +1,6 @@
 # 日志
 
-`hyperf/logger` 组件对 [monolog/monolog](https://github.com/Seldaek/monolog) 进行了封装，默认使用 `Monolog\Handler\StreamHandler`, Swoole 已经对 `fopen`, `fwrite` 等方法进行了协程化，所以只要不将 `useLocking` 设置为true，就不会阻塞协程。
+`hyperf/logger` 组件是基于 [psr/logger](https://github.com/php-fig/logger) 实现的，默认使用 [monolog/monolog](https://github.com/Seldaek/monolog) 作为驱动，在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认使用 `Monolog\Handler\StreamHandler`, 由于 `Swoole` 已经对 `fopen`, `fwrite` 等函数进行了协程化处理，所以只要不将 `useLocking` 参数设置为 `true`，就是协程安全的。
 
 ## 安装
 
@@ -10,7 +10,7 @@ composer require hyperf/logger
 
 ## 配置
 
-模型缓存的配置在 `logger` 中。示例如下
+在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认情况下，日志的配置文件为 `config/autoload/logger.php` ，示例如下：
 
 ```php
 <?php
@@ -50,11 +50,16 @@ use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
+    
+    /**
+     * @var \Psr\Logger\LoggerInterface
+     */
     protected $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(LoggerFactory $loggerFactory)
     {
-        $this->logger =  $container->get(LoggerFactory::class)->get('logname');
+        // default 对应 config/autoload/logger.php 内的 key
+        $this->logger = $loggerFactory->get('default');
     }
 
     public function method()
@@ -67,33 +72,32 @@ class DemoService
 
 ## 关于 monolog 的基础知识
 
-结合代码来看 monolog 中涉及的基础概念:
+我们结合代码来看一些 `monolog` 中所涉及到的基础概念:
 
 ```php
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FirePHPHandler;
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
-// create log channel
+// 创建一个 Channel，参数 log 即为 Channel 的名字
 $log = new Logger('log');
 
-// create log handler
+// 创建两个 Handler，对应变量 $stream 和 $fire
 $stream = new StreamHandler('test.log', Logger::WARNING);
 $fire = new FirePHPHandler();
 
-// custom log format
-// the default date format is "Y-m-d H:i:s"
+// 定义时间格式为 "Y-m-d H:i:s"
 $dateFormat = "Y n j, g:i a";
-// the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+// 定义日志格式为 "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
 $output = "%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n";
-// finally, create a formatter
+// 根据 时间格式 和 日志格式，创建一个 Formatter
 $formatter = new LineFormatter($output, $dateFormat);
 
-// set log format
+// 将 Formatter 设置到 Handler 里面
 $stream->setFormatter($formatter);
 
-// add handler to log channel
+// 讲 Handler 推入到 Channel 的 Handler 队列内
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 
@@ -122,9 +126,11 @@ $log->alert('czl');
 - 日志包含那些部分: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
 - 区分一下日志中添加的额外信息 `context` 和 `extra`: `context` 由用户打日志时额外指定, 更加灵活; `extra` 由绑定到 `Logger` 上的 `Processor` 固定添加, 比较适合收集一些 **常见信息**
 
-## hyperf/logger 的高级用法
+## 更多用法
 
-### 封装 Log 类
+### 封装 `Log` 类
+
+可能有些时候您更想保持大多数框架使用日志的习惯，那么您可以在 `App` 下创建一个 `Log` 类，并通过 `__callStatic` 魔术方法静态方法调用实现对 `Logger` 的取用以及各个等级的日志记录，我们通过代码来演示一下：
 
 ```php
 namespace App;
@@ -134,38 +140,45 @@ use Hyperf\Utils\ApplicationContext;
 
 /**
  * @method static Logger get($name)
- * @method static log($level, $message, array $context = array())
- * @method static info($message, array $context = array())
- * @method static error($message, array $context = array())
+ * @method static void log($level, $message, array $context = array())
+ * @method static void emergency($message, array $context = array())
+ * @method static void alert($message, array $context = array())
+ * @method static void critical($message, array $context = array())
+ * @method static void error($message, array $context = array())
+ * @method static void warning($message, array $context = array())
+ * @method static void notice($message, array $context = array())
+ * @method static void info($message, array $context = array())
+ * @method static void debug($message, array $context = array())
  */
 class Log
 {
     public static function __callStatic($name, $arguments)
     {
         $container = ApplicationContext::getContainer();
-        $log = $container->get(\Hyperf\Logger\LoggerFactory::class);
-        if ($name == 'get') {
-            return $log->get(...$arguments);
+        $factory = $container->get(\Hyperf\Logger\LoggerFactory::class);
+        if ($name === 'get') {
+            return $factory->get(...$arguments);
         }
-        $log = $log->get('app');
+        $log = $factory->get('default');
         $log->$name(...$arguments);
     }
 }
 ```
 
-- `__callStatic()` 使用魔术方法实现 **静态方法调用**
-- 默认使用 `app` channel(回忆一下上面提到的 monolog 基础概念) 来打日志, 
-- 使用 `Log::get()` 就可以切换到不同 channel, 强大的 `container` 解决了这一切
+默认使用 `default` 的 `Channel` 来记录日志，您也可以通过使用 `Log::get($name)` 方法获得不同 `Channel` 的 `Logger`, 强大的 `容器(Container)` 帮您解决了这一切
 
 ### stdout 日志
 
-默认 `StdoutLoggerInterface` 接口的实现类 `StdoutLogger`, 其实并没有使用 monolog, 如果想要使用 monolog 保持一致呢?
+框架组件所输出的日志在默认情况下是由 `Hyperf\Contract\StdoutLoggerInterface` 接口的实现类 `Hyperf\Framework\Logger\StdoutLogger` 提供支持的，该实现类只是为了将相关的信息通过 `print_r()` 输出在 `标准输出(stdout)`，即为启动 `Hyperf` 的 `终端(Terminal)` 上，也就意味着其实并没有使用到 `monolog` 的，那么如果想要使用 `monolog` 来保持一致要怎么处理呢？
 
-是的, 还是强大的 `container`.
+是的, 还是通过强大的 `容器(Container)`.
 
-- 首先, 实现一个 `StdoutLoggerFactory`
+- 首先, 实现一个 `StdoutLoggerFactory` 类，关于 `Factory` 的用法可在 [依赖注入](zh/di.md) 章节获得更多详细的说明。
 
 ```php
+<?php
+declare(strict_types=1);
+
 namespace App;
 
 use Psr\Container\ContainerInterface;
@@ -196,8 +209,8 @@ return [
 
 ```php
 // config/autoload/logger.php
-$app_env = env('APP_ENV', 'dev');
-if ($app_env == 'dev') {
+$appEnv = env('APP_ENV', 'dev');
+if ($appEnv == 'dev') {
     $formatter = [
         'class' => \Monolog\Formatter\LineFormatter::class,
         'constructor' => [
@@ -229,5 +242,5 @@ return [
 
 - 默认配置了名为 `default` 的 `Handler`, 并包含了此 `Handler` 及其 `Formatter` 的信息
 - 获取 `Logger` 时, 如果没有指定 `Handler`, 底层会自动把 `default` 这一 `Handler` 绑定到 `Logger` 上
-- dev(开发)环境: 日志使用 `php://stdout` 输出到 stdout, 并且 `Formatter` 中设置 `allowInlineLineBreaks`, 方便查看多行日志
+- dev(开发)环境: 日志使用 `php://stdout` 输出到 `标准输出(stdout)`, 并且 `Formatter` 中设置 `allowInlineLineBreaks`, 方便查看多行日志
 - 非 dev 环境: 日志使用 `JsonFormatter`, 会被格式为 json, 方便投递到第三方日志服务

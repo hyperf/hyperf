@@ -1,6 +1,8 @@
 # 模型缓存
 
-模型缓存暂支持 `Redis`存储，其他存储引擎会慢慢补充。
+在高频场景下，我们会频繁的查询数据库，虽然有主键加持，但也会影响到数据库性能。这种kv查询方式，我们可以很方便的使用 `模型缓存` 来减缓数据库压力。本模块实现了自动缓存，删除和修改模型时，自动删除缓存。累加、减操作时，直接操作缓存进行对应累加、减。
+
+> 模型缓存暂支持 `Redis`存储，其他存储引擎会慢慢补充。
 
 ## 安装
 
@@ -12,13 +14,14 @@ composer require hyperf/model-cache
 
 模型缓存的配置在 `databases` 中。示例如下
 
-|    配置     |  类型  |                         默认值                         |                备注                 |
-|:-----------:|:------:|:------------------------------------------------------:|:-----------------------------------:|
-|   handler   | string | \Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
-|  cache_key  | string |                  'mc:%s:m :%s:%s:%s'                   | mc:缓存前缀:m :表名:主键KEY:主键值  |
-|   prefix    | string |                   db connection name                   |              缓存前缀               |
-|     ttl     |  int   |                          3600                          |              超时时间               |
-| load_script |  bool  |                          true                          | Redis引擎下 是否使用evalSha代替eval |
+|      配置       |  类型  |                        默认值                         |                备注                 |
+|:---------------:|:------:|:-----------------------------------------------------:|:-----------------------------------:|
+|     handler     | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
+|    cache_key    | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值` |
+|     prefix      | string |                  db connection name                   |              缓存前缀               |
+|       ttl       |  int   |                         3600                          |              超时时间               |
+| empty_model_ttl |  int   |                          60                           |      查询不到数据时的超时时间       |
+|   load_script   |  bool  |                         true                          | Redis引擎下 是否使用evalSha代替eval |
 
 ```php
 <?php
@@ -46,6 +49,7 @@ return [
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'ttl' => 3600 * 24,
+            'empty_model_ttl' => 3600,
             'load_script' => true,
         ]
     ],
@@ -95,7 +99,10 @@ class User extends Model implements CacheableInterface
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
+// 查询单个缓存
 $model = User::findFromCache($id);
+
+// 批量查询缓存，返回 Hyperf\Database\Model\Collection
 $models = User::findManyFromCache($ids);
 
 ```

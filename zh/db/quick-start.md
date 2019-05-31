@@ -102,3 +102,125 @@ return [
 ];
 
 ```
+
+### 读写分离
+
+有时候你希望 `SELECT` 语句使用一个数据库连接，而 `INSERT`，`UPDATE`，和 `DELETE` 语句使用另一个数据库连接。在 `Hyperf` 中，无论你是使用原生查询，查询构造器，或者是模型，都能轻松的实现
+
+为了弄明白读写分离是如何配置的，我们先来看个例子：
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'read' => [
+            'host' => ['192.168.1.1'],
+        ],
+        'write' => [
+            'host' => ['196.168.1.2'],
+        ],
+        'sticky'    => true,
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+        ],
+    ],
+];
+
+```
+
+注意在以上的例子中，配置数组中增加了三个键，分别是 `read`， `write` 和 `sticky`。 `read` 和 `write` 的键都包含一个键为 `host` 的数组。而 `read` 和 `write` 的其他数据库都在键为 mysql 的数组中。
+
+如果你想重写主数组中的配置，只需要修改 `read` 和 `write` 数组即可。所以，这个例子中： 192.168.1.1 将作为 「读」 连接主机，而 192.168.1.2 将作为 「写」 连接主机。这两个连接会共享 mysql 数组的各项配置，如数据库的凭据（用户名 / 密码），前缀，字符编码等。
+
+`sticky` 是一个 可选值，它可用于立即读取在当前请求周期内已写入数据库的记录。若 `sticky` 选项被启用，并且当前请求周期内执行过 「写」 操作，那么任何 「读」 操作都将使用 「写」 连接。这样可确保同一个请求周期内写入的数据可以被立即读取到，从而避免主从延迟导致数据不一致的问题。不过是否启用它，取决于应用程序的需求。
+
+## 执行原生SQL查询
+
+配置好数据库后，便可以使用 `Hyperf\DbConnection\Db` 进行查询。
+
+### Select 查询
+
+`select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
+
+```php
+<?php
+
+use Hyperf\DbConnection\Db;
+
+$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]);
+
+foreach($users as $user){
+    echo $user->name;
+}
+
+```
+
+### 运行插入语句
+
+可以使用 `Db` 的 `insert` 方法来执行 `insert` 语句。与 `select` 一样，该方法将原生 `SQL` 查询作为其第一个参数，并将绑定数据作为第二个参数：
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+Db::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']);
+```
+
+### 运行更新语句
+
+`update` 方法用于更新数据库中现有的记录。该方法返回受该语句影响的行数：
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$affected = Db::update('update user set name = ? where id = ?', ['John', 1]);
+```
+
+### 数据库事务
+
+你可以使用 `Db` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+Db::transaction(function () {
+    Db::table('user')->update(['votes' => 1]);
+
+    Db::table('posts')->delete();
+});
+
+```
+
+### 手动使用事务
+
+如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `Db` 的 `beginTransaction`, `commit`, `rollBack`:
+
+```php
+use Hyperf\DbConnection\Db;
+
+Db::beginTransaction();
+try{
+
+    // Do something...
+
+    Db::commit();
+} catch(\Throwable $ex){
+    Db::rollBack();
+}
+```
+

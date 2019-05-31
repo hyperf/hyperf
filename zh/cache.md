@@ -11,9 +11,9 @@ composer require hyperf/cache
 
 |  配置  |                  默认值                  |         备注          |
 |:------:|:----------------------------------------:|:---------------------:|
-| driver |  Hyperf\Cache\Driver\RedisDriver::class  | 缓存驱动，默认为Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer::class |        打包器         |
-| prefix |                   'c:'                   |       缓存前缀        |
+| driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为Redis |
+| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| prefix |                   c:                   |       缓存前缀        |
 
 ```php
 <?php
@@ -28,6 +28,16 @@ return [
 ```
 
 ## 使用
+
+### SimpleCache 方式
+
+如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
+
+```php
+
+$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
+
+```
 
 ### 注解方式
 
@@ -90,16 +100,6 @@ class SystemService
         return true;
     }
 }
-```
-
-### SimpleCache方式
-
-如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
-
-```php
-
-$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
-
 ```
 
 ## 注解介绍

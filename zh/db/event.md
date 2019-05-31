@@ -2,6 +2,7 @@
 模型事件实现于 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口。
 
 ## 自定义监听器
+
 得益于 [hyperf/event](https://github.com/hyperf-cloud/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
 例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
 接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
@@ -67,6 +68,10 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ## 模型事件
 
+模型事件与 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 监听模型事件。`Hyperf` 直接使用 `钩子函数` 来处理对应的事件。如果你还是喜欢 `Observer` 的方式，可以通过 `事件监听`，自己实现。当然，你也可以在 [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2) 下面告诉我们。
+
+### 钩子函数
+
 |    事件名    |     触发实际     | 是否阻断 |               备注                |
 |:------------:|:----------------:|:--------:|:-------------------------- --:|
 |   booting    |  模型首次加载前  |    否    |    进程生命周期中只会触发一次         |
@@ -84,7 +89,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   deleted    |    数据删除后   |    否    |                                  |
 | forceDeleted |  数据强制删除后  |    否    |                                  |
 
-模型事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
+针对某个模型的事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
 
 ```php
 <?php
@@ -123,6 +128,50 @@ class User extends Model
     public function saving(Saving $event)
     {
         $this->setCreatedAt('2019-01-01');
+    }
+}
+
+```
+
+### 事件监听
+
+当你需要监听所有的模型事件时，可以很方便的自定义对应的 `Listener`，比如下方模型缓存的监听器，当模型修改和删除后，会删除对应缓存。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Hyperf\ModelCache\Listener;
+
+use Hyperf\Database\Model\Events\Deleted;
+use Hyperf\Database\Model\Events\Event;
+use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\ModelCache\CacheableInterface;
+
+/**
+ * @Listener
+ */
+class DeleteCacheListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            Deleted::class,
+            Saved::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        if ($event instanceof Event) {
+            $model = $event->getModel();
+            if ($model instanceof CacheableInterface) {
+                $model->deleteCache();
+            }
+        }
     }
 }
 
