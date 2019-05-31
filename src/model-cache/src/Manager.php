@@ -16,7 +16,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\DbConnection\Model\Model;
-use Hyperf\Di\Container;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Psr\Container\ContainerInterface;
@@ -51,11 +50,8 @@ class Manager
             $handlerClass = $item['handler'] ?? RedisHandler::class;
             $config = new Config($item['cache'] ?? [], $key);
 
-            if ($container instanceof Container) {
-                $handler = $container->make($handlerClass, ['config' => $config]);
-            } else {
-                $handler = new $handlerClass($this->container, $config);
-            }
+            /** @var HandlerInterface $handler */
+            $handler = make($handlerClass, ['config' => $config]);
 
             $this->handlers[$key] = $handler;
         }

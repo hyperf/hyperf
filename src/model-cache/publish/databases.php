@@ -32,6 +32,7 @@ return [
             'handler' => \Hyperf\DbConnection\Cache\Handler\RedisHandler::class,
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
+            'pool' => 'default',
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,

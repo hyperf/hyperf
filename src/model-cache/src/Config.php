@@ -29,6 +29,11 @@ class Config
     protected $prefix = 'hyperf';
 
     /**
+     * @var string
+     */
+    protected $pool = 'default';
+
+    /**
      * The lifetime of model cache.
      * @var int
      */
@@ -54,6 +59,9 @@ class Config
             $this->prefix = $values['prefix'];
         } else {
             $this->prefix = $name;
+        }
+        if (isset($values['pool'])) {
+            $this->pool = $values['pool'];
         }
         if (isset($values['ttl'])) {
             $this->ttl = $values['ttl'];
@@ -85,6 +93,24 @@ class Config
     public function setPrefix(string $prefix): Config
     {
         $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPool(): string
+    {
+        return $this->pool;
+    }
+
+    /**
+     * @param string $pool
+     * @return Config
+     */
+    public function setPool(string $pool): Config
+    {
+        $this->pool = $pool;
         return $this;
     }
 

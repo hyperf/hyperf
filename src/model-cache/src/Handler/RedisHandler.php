@@ -15,6 +15,7 @@ namespace Hyperf\ModelCache\Handler;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\ModelCache\Redis\HashsGetMultiple;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
 use Redis;
@@ -54,7 +55,7 @@ class RedisHandler implements HandlerInterface
             throw new CacheException(sprintf('Entry[%s] of the container is not exist.', Redis::class));
         }
 
-        $this->redis = $container->get(Redis::class);
+        $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
         $this->config = $config;
         $this->multiple = new HashsGetMultiple();
     }
