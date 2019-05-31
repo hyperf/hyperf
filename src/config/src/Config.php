@@ -36,7 +36,7 @@ class Config implements ConfigInterface
      */
     public function get(string $key, $default = null)
     {
-        return Arr::get($this->configs, $key, $default);
+        return data_get($this->configs, $key, $default);
     }
 
     /**
@@ -59,6 +59,6 @@ class Config implements ConfigInterface
      */
     public function set(string $key, $value)
     {
-        Arr::set($this->configs, $key, $value);
+        data_set($this->configs, $key, $value);
     }
 }
