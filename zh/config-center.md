@@ -1,10 +1,17 @@
 # 简介
 
-Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
+Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
+
+- 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。
+- 阿里云提供的免费配置中心服务 [应用配置管理(ACM, application config manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) 组件提供功能支持。
+因此，我们可以通过一个配置中心以一种科学的管理方式来统一管理相关的配置。
+
+下面使用 apollo 为示例进行讲解, 其他配置中心参照即可.
 
 ## 安装
 
 ```bash
+# apollo
 composer require hyperf/config-apollo
 ```
 
@@ -47,4 +54,4 @@ return [
 ## 配置更新的作用范围
 
 在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
-需要注意的是，更新的配置只会更新 `Config` 对象，顾仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
+需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
