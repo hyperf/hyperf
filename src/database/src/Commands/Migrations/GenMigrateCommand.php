@@ -132,6 +132,6 @@ class GenMigrateCommand extends BaseCommand
      */
     protected function usingRealPath(): bool
     {
-        return $this->input->hasOption('realpath') && $this->option('realpath');
+        return $this->input->hasOption('realpath') && $this->input->getOption('realpath');
     }
 }
