@@ -43,17 +43,15 @@ class RegisterPropertyHandlerListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if (! PropertyHandlerManager::has(Value::class)) {
-            PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
-                if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
-                    $key = $annotation->key;
-                    $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
-                        $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
-                        return $config->get($key, null);
-                    });
-                    $definition->addPropertyInjection($propertyInjection);
-                }
-            });
-        }
+        PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
+            if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
+                $key = $annotation->key;
+                $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
+                    $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
+                    return $config->get($key, null);
+                });
+                $definition->addPropertyInjection($propertyInjection);
+            }
+        });
     }
 }
