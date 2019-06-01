@@ -74,11 +74,11 @@ return [
 
 #### 获取配置
 
-Hyperf Config 组件提供了两种方式获取配置，通过 Config 对象获取和 `@Value` 注解获取。
+Config 组件提供了三种方式获取配置，通过 `Hyperf\Config\Config` 对象获取、通过 `@Value` 注解获取和通过 `config(string $key, $default)` 函数获取。
 
 ##### 通过 Config 对象获取配置
 
-这种方式要求你已经拿到了 Config 对象的实例，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节；
+这种方式要求你已经拿到了 `Config` 对象的实例，默认对象为 `Hyperf\Config\Config`，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节；
 
 ```php
 /**
@@ -90,7 +90,7 @@ $config->get($key，$default);
 
 ##### 通过 `@Value` 注解获取配置
 
-这种方式要求当前的对象必须是通过 Hyperf DI 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 Controller 类，Controller 类一定是由 DI 创建出来的；   
+这种方式要求注解的应用对象必须是通过 [hyperf/di](https://github.com/hyperf-cloud/di) 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 `Controller` 类，`Controller` 类一定是由 `DI` 容器创建出来的；   
 `@Value()` 内的字符串则对应到 `$config->get($key)` 内的 `$key` 参数，在创建该对象实例时，对应的配置会自动注入到定义的类属性中。
 
 ```php
@@ -109,6 +109,10 @@ class IndexController
     
 }
 ```
+
+##### 通过 config 函数获取
+
+在任意地方可以通过 `config(string $key, $default)` 函数获取对应的配置，但这样的使用方式也就意味着您对 [hyperf/config](https://github.com/hyperf-cloud/config) 和 [hyperf/utils](https://github.com/hyperf-cloud/utils) 组件是强依赖的。
 
 #### 判断配置是否存在
 
@@ -155,7 +159,7 @@ APP_NAME="Hyperf Skeleton"
 
 #### 读取环境变量
 
-我们在上面也有提到环境变量可以通过 `env()` 函数获取，在应用开发中，环境变量只应作为配置的一个值，通过环境变量的值来覆盖配置的值，对于应用层来说应只使用配置，而不是直接使用环境变量。   
+我们在上面也有提到环境变量可以通过 `env()` 函数获取，在应用开发中，环境变量只应作为配置的一个值，通过环境变量的值来覆盖配置的值，对于应用层来说应 **只使用配置**，而不是直接使用环境变量。   
 我们举个合理使用的例子：
 
 ```php
