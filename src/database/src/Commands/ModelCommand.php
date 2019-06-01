@@ -156,7 +156,8 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new ModelUpdateVistor($columns, $option->isForceCasts()));
+        $visitor = make(ModelUpdateVistor::class, ['columns' => $columns, 'forceCasts' => $option->isForceCasts()]);
+        $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
