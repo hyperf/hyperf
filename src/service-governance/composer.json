@@ -15,8 +15,7 @@
         "hyperf/consul": "dev-master",
         "hyperf/contract": "dev-master",
         "hyperf/event": "dev-master",
-        "hyperf/guzzle": "dev-master",
-        "hyperf/rpc-server": "dev-master"
+        "hyperf/guzzle": "dev-master"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
