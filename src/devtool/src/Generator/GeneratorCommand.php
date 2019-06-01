@@ -221,8 +221,8 @@ abstract class GeneratorCommand extends Command
     protected function getOptions()
     {
         return [
-            ['force', 'f', InputOption::VALUE_OPTIONAL, 'Whether force to rewrite.', false],
-            ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
+            ['force', 'f', InputOption::VALUE_NONE, 'Whether force to rewrite.'],
+            ['namespace', 'N', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
         ];
     }
 
