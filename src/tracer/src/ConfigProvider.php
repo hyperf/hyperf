@@ -34,6 +34,14 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for tracer.',
+                    'source' => __DIR__ . '/../publish/opentracing.php',
+                    'destination' => BASE_PATH . '/config/autoload/opentracing.php',
+                ],
+            ],
         ];
     }
 }
