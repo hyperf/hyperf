@@ -52,7 +52,7 @@ $result = $redis->keys('*');
 
 ## 多库配置
 
-有时候在实际使用中，一个Redis库并不满足需求，需要用户在项目中配置多个。这个时候，我们就需要修改一下配置文件 `redis.php`。
+有时候在实际使用中，一个 `Redis` 库并不满足需求，一个项目往往需要配置多个库，这个时候，我们就需要修改一下配置文件 `redis.php`，如下：
 
 ```php
 <?php
@@ -72,7 +72,8 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
-    'redis2'=>[
+    // 增加一个名为 foo 的 Redis 连接池
+    'foo' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
@@ -90,19 +91,23 @@ return [
 
 ```
 
-### 新建代理类
+### 通过代理类使用
 
-然后我们重写一个 Redis类 继承 `Hyperf\Redis\Redis`，修改 poolName 为上述 redis2，示例如下
+我们可以重写一个 `FooRedis` 类并继承 `Hyperf\Redis\Redis` 类，修改 `poolName` 为上述的 `foo`，即可完成对连接池的切换，示例：
 
 ```php
+<?php
+
 use Hyperf\Redis\Redis;
 
-class UserRedis extends Redis
+class FooRedis extends Redis
 {
-    protected $poolName = 'redis2';
+    // 对应的 Pool 的 key 值
+    protected $poolName = 'foo';
 }
 
-$redis = $this->container->get(UserRedis::class);
+// 通过 DI 容器获取或直接注入当前类
+$redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
 
@@ -110,12 +115,15 @@ $result = $redis->keys('*');
 
 ### 使用工厂类
 
-如果你觉得上述方法不方便，也可以试试 `Hyperf\Redis\RedisFactory` 工厂类。
+在每个库对应一个静态的场景时，通过代理类是一种很好的区分的方法，但有时候需求可能会更加的动态，这时候我们可以通过 `Hyperf\Redis\RedisFactory` 工厂类来动态的传递 `poolName` 来获得对应的连接池的客户端，而无需为每个库创建代理类，示例如下：
 
 ```php
+<?php
+
 use Hyperf\Redis\RedisFactory;
 
-$redis = $this->container->get(RedisFactory::class)->get('redis2');
+// 通过 DI 容器获取或直接注入 RedisFactory 类
+$redis = $this->container->get(RedisFactory::class)->get('foo');
 
 $result = $redis->keys('*');
 ```
