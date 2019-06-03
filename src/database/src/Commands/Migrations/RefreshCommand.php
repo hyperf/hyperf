@@ -48,7 +48,7 @@ class RefreshCommand extends Command
         // use and the path to use for the migration. Then we'll run the command.
         $connection = $this->input->getOption('database') ?? 'default';
 
-        $path = $this->input->getOption('path');
+        $path = $this->input->getOption('path') ?? '';
 
         // If the "step" option is specified it means we only want to rollback a small
         // number of migrations before migrating again. For example, the user might
