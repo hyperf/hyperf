@@ -39,6 +39,11 @@ class ModelOption
      */
     protected $inheritance;
 
+    /**
+     * @var string
+     */
+    protected $uses;
+
     public function getPool(): string
     {
         return $this->pool;
@@ -91,6 +96,24 @@ class ModelOption
     public function setInheritance(string $inheritance): ModelOption
     {
         $this->inheritance = $inheritance;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUses(): string
+    {
+        return $this->uses;
+    }
+
+    /**
+     * @param string $uses
+     * @return ModelOption
+     */
+    public function setUses(string $uses): ModelOption
+    {
+        $this->uses = $uses;
         return $this;
     }
 }

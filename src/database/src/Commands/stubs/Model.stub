@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace %NAMESPACE%;
 
-use Hyperf\DbConnection\Model\Model;
+%USES%
 
 class %CLASS% extends %INHERITANCE%
 {
