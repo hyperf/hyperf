@@ -49,9 +49,9 @@ class PoolHandler extends CoroutineHandler
             $path .= '?' . $params['query'];
         }
 
-        $pool = $this->factory->get($this->getPoolName($uri), function () use ($host, $port, $ssl) {
+        $pool = $this->factory->get($this->getPoolName($host, $port), function () use ($host, $port, $ssl) {
             return new Client($host, $port, $ssl);
-        }, $this->option);
+        }, $this->options);
 
         $connection = $pool->get();
 
@@ -90,8 +90,8 @@ class PoolHandler extends CoroutineHandler
         return $response;
     }
 
-    protected function getPoolName($host, $port, $scheme)
+    protected function getPoolName($host, $port)
     {
-        return sprintf('guzzle.handler.%s.%d.%s', $host, $port, $scheme);
+        return sprintf('guzzle.ring.handler.%s.%d', $host, $port);
     }
 }
