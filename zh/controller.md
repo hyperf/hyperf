@@ -17,7 +17,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class IndexController
 {
-    // 在 Action 的参数上通过定义 RequestInterface 和 ResponseInterface 来获取相关对象，对象会被依赖注入容器自动注入
+    // 在参数上通过定义 RequestInterface 和 ResponseInterface 来获取相关对象，对象会被依赖注入容器自动注入
     public function index(RequestInterface $request, ResponseInterface $response)
     {
         $target = $request->input('target', 'World');
@@ -26,7 +26,7 @@ class IndexController
 }
 ```
 
-> 我们假设该 `Controller` 已经通过了配置文件的形式定义了路由为 `/`
+> 我们假设该 `Controller` 已经通过了配置文件的形式定义了路由为 `/`，当然您也可以使用注解路由
 
 通过 `cURL` 调用该地址，即可看到返回的内容。
 
