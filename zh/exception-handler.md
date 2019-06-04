@@ -32,8 +32,8 @@ return [
 namespace App\ExceptionHandler;
 
 use Hyperf\Framework\ExceptionHandler;
-use Psr\Http\Message\ResponseInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class FooExceptionHandler extends ExceptionHandler
