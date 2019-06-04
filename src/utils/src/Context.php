@@ -47,6 +47,14 @@ class Context
     }
 
     /**
+     * Release the context when you are not in coroutine environment.
+     */
+    public static function destroy(string $id)
+    {
+        unset(static::$nonCoContext[$id]);
+    }
+
+    /**
      * Copy the context from a coroutine to current coroutine.
      */
     public static function copy(int $fromCoroutineId): void
