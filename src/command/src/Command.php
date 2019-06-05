@@ -265,6 +265,11 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
+     * Handle the current command.
+     */
+    abstract public function handle();
+
+    /**
      * Set the verbosity level.
      * @param mixed $level
      */
@@ -346,9 +351,4 @@ abstract class Command extends SymfonyCommand
     {
         call([$this, 'handle']);
     }
-
-    /**
-     * Handle the current command.
-     */
-    abstract public function handle();
 }

@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Command;
 
 use Closure;
@@ -11,8 +21,8 @@ trait ConfirmableTrait
      *
      * This method only asks for confirmation in production.
      *
-     * @param  string  $warning
-     * @param  \Closure|bool|null  $callback
+     * @param string $warning
+     * @param null|bool|\Closure $callback
      * @return bool
      */
     public function confirmToProceed($warning = 'Application In Production!', $callback = false)
@@ -37,5 +47,4 @@ trait ConfirmableTrait
 
         return true;
     }
-
 }
