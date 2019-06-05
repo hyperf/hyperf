@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Coroutine;
 use PHPUnit\Framework\TestCase;
 
 /**

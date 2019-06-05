@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Hyperf\Contract\StdoutLoggerInterface;
+use Throwable;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
-use Throwable;
+use Hyperf\Contract\StdoutLoggerInterface;
 
 /**
  * @method static void defer(callable $callable)

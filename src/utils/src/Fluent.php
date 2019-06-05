@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
+use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Arrayable;
 
 /**
  * Most of the methods in this file come from illuminate/support,

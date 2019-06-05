@@ -112,9 +112,10 @@ class Filesystem
     /**
      * Write the contents of a file.
      *
+     * @param resource|string $contents
      * @return bool|int
      */
-    public function put(string $path, string $contents, bool $lock = false)
+    public function put(string $path, $contents, bool $lock = false)
     {
         return file_put_contents($path, $contents, $lock ? LOCK_EX : 0);
     }

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Carbon\Carbon;
 use DateInterval;
+use Carbon\Carbon;
 use DateTimeInterface;
 
 trait InteractsWithTime

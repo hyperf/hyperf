@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
-use HyperfTest\Utils\Exception\RetryException;
 use PHPUnit\Framework\TestCase;
+use HyperfTest\Utils\Exception\RetryException;
 
 /**
  * @internal
