@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace %NAMESPACE%;
 
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Framework\Annotation\Command;
+use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
 /**

@@ -14,7 +14,7 @@ namespace Hyperf\Framework;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Framework\Annotation\Command;
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

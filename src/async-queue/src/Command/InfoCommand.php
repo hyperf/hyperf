@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\AsyncQueue\Command;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
-use Hyperf\Framework\Annotation\Command;
+use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;

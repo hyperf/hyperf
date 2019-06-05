@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool;
 
-use Hyperf\Framework\Annotation\Command;
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;

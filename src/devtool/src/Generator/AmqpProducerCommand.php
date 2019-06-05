@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Devtool\Generator;
 
-use Hyperf\Framework\Annotation\Command;
+use Hyperf\Command\Annotation\Command;
 
 /**
  * @Command
