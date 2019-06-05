@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Upload;
 
-use Hyperf\App;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -166,7 +165,6 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     public function moveTo($targetPath)
     {
-        $targetPath = App::getAlias($targetPath);
         $this->validateActive();
 
         if (! $this->isStringNotEmpty($targetPath)) {
