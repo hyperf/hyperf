@@ -10,13 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Str;
 
 if (! function_exists('value')) {
     /**

@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use stdClass;
-use Countable;
-use Exception;
 use ArrayAccess;
-use Traversable;
 use ArrayIterator;
 use CachingIterator;
-use JsonSerializable;
-use IteratorAggregate;
-use Hyperf\Utils\Contracts\Jsonable;
+use Countable;
+use Exception;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
+use IteratorAggregate;
+use JsonSerializable;
+use stdClass;
 use Symfony\Component\VarDumper\VarDumper;
+use Traversable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
