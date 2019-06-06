@@ -36,3 +36,50 @@ class Foo {
     }
 }
 ```
+
+## 连接池
+
+Hyperf 除了实现了 `Hyperf\Guzzle\CoroutineHandler` 外，还基于 `Hyperf\Pool\SimplePool` 实现了 `Hyperf\Guzzle\PoolHandler`。
+
+### 原因
+
+简单来说，主机 TCP连接数 是有上限的，当我们并发大到超过这个上限值时，就导致请求无法正常建立。另外，TCP连接是否后还会有一个 TIME-WAIT 阶段，所以也无法实时释放连接。这就导致了实际并发可能远低于 TCP 上限值。所以，我们需要一个连接池来维持这个阶段，尽量减少 TIME-WAIT 造成的影响，让TCP连接进行复用。
+
+### 使用
+
+```php
+use GuzzleHttp\Client;
+use Hyperf\Utils\Coroutine;
+use GuzzleHttp\HandlerStack;
+use Hyperf\Guzzle\PoolHandler;
+use Hyperf\Guzzle\RetryMiddleware;
+
+function default_guzzle_handler(): HandlerStack
+{
+    $handler = null;
+    if (Coroutine::inCoroutine()) {
+        $handler = make(PoolHandler::class, [
+            'option' => [
+                'max_connections' => 50,
+            ],
+        ]);
+    }
+
+    // 默认的重试Middleware
+    $retry = make(RetryMiddleware::class, [
+        'retries' => 1,
+        'delay' => 10,
+    ]);
+
+    $stack = HandlerStack::create($handler);
+    $stack->push($retry->getMiddleware(), 'retry');
+
+    return $stack;
+}
+
+$client = make(Client::class, [
+    'config' => [
+        'handler' => default_guzzle_handler(),
+    ],
+]);
+```
