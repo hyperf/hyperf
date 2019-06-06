@@ -1,7 +1,7 @@
 {
     "name": "hyperf/grpc",
     "description": "A GRPC basic library for Hyperf.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

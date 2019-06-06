@@ -1,7 +1,7 @@
 {
     "name": "hyperf/rate-limit",
     "description": "A rate limiter implemented for Hyperf or other coroutine framework",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "hyperf",

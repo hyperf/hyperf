@@ -1,16 +1,16 @@
 {
-    "name": "hyperf/command",
+    "name": "hyperf/exception-handler",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
-        "command"
+        "exception-handler"
     ],
-    "description": "Command for hyperf",
+    "description": "Exception handler for hyperf",
     "autoload": {
         "psr-4": {
-            "Hyperf\\Command\\": "src/"
+            "Hyperf\\ExceptionHandler\\": "src/"
         }
     },
     "autoload-dev": {
@@ -20,7 +20,9 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "symfony/console": "^4.2",
+        "psr/http-message": "^1.0",
+        "hyperf/contract": "dev-master",
+        "hyperf/dispatcher": "dev-master",
         "hyperf/utils": "dev-master"
     },
     "require-dev": {
@@ -30,7 +32,6 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/di": "Require this component for annotation."
     },
     "scripts": {
         "test": "./vendor/bin/phpunit -c phpunit.xml",

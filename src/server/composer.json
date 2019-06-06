@@ -1,7 +1,7 @@
 {
     "name": "hyperf/server",
     "description": "A base server library for Hyperf.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

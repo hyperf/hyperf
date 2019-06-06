@@ -1,7 +1,7 @@
 {
     "name": "hyperf/grpc-server",
     "description": "A GRPC Server for Hyperf.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

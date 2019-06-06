@@ -1,7 +1,7 @@
 {
     "name": "hyperf/logger",
     "description": "A logger component for hyperf.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "hyperf",

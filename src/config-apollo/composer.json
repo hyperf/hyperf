@@ -1,7 +1,7 @@
 {
     "name": "hyperf/config-apollo",
     "description": "An apollo adapter for Hyperf config component.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

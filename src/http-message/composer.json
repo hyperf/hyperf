@@ -2,7 +2,7 @@
     "name": "hyperf/http-message",
     "type": "library",
     "description": "microservice framework base on swoole",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

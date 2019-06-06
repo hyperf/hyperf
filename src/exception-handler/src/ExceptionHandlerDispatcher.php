@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Framework;
+namespace Hyperf\ExceptionHandler;
 
 use Hyperf\Dispatcher\AbstractDispatcher;
 use Hyperf\Utils\Context;
@@ -18,9 +18,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
-/**
- * @deprecated
- */
 class ExceptionHandlerDispatcher extends AbstractDispatcher
 {
     /**
