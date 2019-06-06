@@ -116,7 +116,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
         switch ($node) {
             case $node instanceof ClassMethod:
                 if (! $this->shouldRewrite($node)) {
-                    return $node;
+                    return $this->formatMethod($node);
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
@@ -174,6 +174,26 @@ class ProxyCallVistor extends NodeVisitorAbstract
             $traits[] = new Name($proxyTrait);
         }
         return new TraitUse($traits);
+    }
+
+    /**
+     * Format a normal class method of no need proxy call.
+     */
+    private function formatMethod(ClassMethod $node)
+    {
+        if ($node->name->toString() === '__construct') {
+            // Rewrite parent::__construct to class::__construct.
+            foreach ($node->stmts as $stmt) {
+                if ($stmt instanceof Node\Stmt\Expression && $stmt->expr instanceof Node\Expr\StaticCall) {
+                    $class = $stmt->expr->class;
+                    if ($class instanceof Node\Name && $class->toString() === 'parent') {
+                        $stmt->expr->class = new Node\Name($this->extends->toCodeString());
+                    }
+                }
+            }
+        }
+
+        return $node;
     }
 
     /**
