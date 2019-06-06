@@ -72,23 +72,20 @@ class JsonRpcHttpTransporter implements TransporterInterface
         $url = $schema . $uri;
         $response = $this->getClient()->post($url, [
             'headers' => [
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
             ],
             'body' => $data,
         ]);
         if ($response->getStatusCode() === 200) {
             return $response->getBody()->getContents();
-        } else {
-
         }
     }
 
     public function getClient(): Client
     {
-        $client = $this->clientFactory->create([
+        return $this->clientFactory->create([
             'timeout' => ($this->connectTimeout + $this->recvTimeout),
         ]);
-        return $client;
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
