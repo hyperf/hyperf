@@ -40,6 +40,15 @@ class Coroutine
     }
 
     /**
+     * Returns the parent coroutine ID.
+     * Returns -1 when running in non-coroutine context.
+     */
+    public static function parentId(): int
+    {
+        return SwooleCoroutine::getPcid();
+    }
+
+    /**
      * @return int Returns the coroutine ID of the coroutine just created.
      *             Returns -1 when coroutine create failed.
      */
