@@ -65,7 +65,7 @@ class Context
          */
         $from = SwCoroutine::getContext($fromCoroutineId);
         $current = SwCoroutine::getContext();
-        $current->unserialize($from->serialize());
+        $current->exchangeArray($from->getArrayCopy());
     }
 
     public static function getContainer()
