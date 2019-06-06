@@ -227,7 +227,18 @@ class ProxyCallVistor extends NodeVisitorAbstract
             ]),
             // A closure that wrapped original method code.
             new Closure([
-                'params' => $node->getParams(),
+                'params' => value(function () use ($node) {
+                    // Transfer the variadic variable to normal variable at closure argument. ...$params => $parms
+                    $params = $node->getParams();
+                    foreach ($params as $key => $param) {
+                        if ($param instanceof Node\Param && $param->variadic) {
+                            $newParam = clone $param;
+                            $newParam->variadic = false;
+                            $params[$key] = $newParam;
+                        }
+                    }
+                    return $params;
+                }),
                 'stmts' => $node->stmts,
             ]),
         ]);
