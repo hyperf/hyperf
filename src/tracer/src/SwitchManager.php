@@ -25,6 +25,7 @@ class SwitchManager
             'guzzle' => false,
             'redis' => false,
             'db' => false,
+            'method' => false,
         ];
 
     /**
