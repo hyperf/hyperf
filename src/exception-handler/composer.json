@@ -20,6 +20,9 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
+        "psr/http-message": "^1.0",
+        "hyperf/contract": "dev-master",
+        "hyperf/dispatcher": "dev-master",
         "hyperf/utils": "dev-master"
     },
     "require-dev": {

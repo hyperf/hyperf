@@ -18,6 +18,7 @@
         "hyperf/framework": "dev-master",
         "hyperf/utils": "dev-master",
         "hyperf/event": "dev-master",
+        "hyperf/exception-handler": "dev-master",
         "hyperf/http-message": "dev-master",
         "hyperf/server": "dev-master"
     },

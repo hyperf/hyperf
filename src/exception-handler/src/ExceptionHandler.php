@@ -10,14 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Framework;
+namespace Hyperf\ExceptionHandler;
 
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
-/**
- * @deprecated
- */
 abstract class ExceptionHandler
 {
     /**
