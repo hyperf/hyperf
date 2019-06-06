@@ -1,7 +1,7 @@
 {
     "name": "hyperf/utils",
     "description": "A tools package that could help developer solved the problem quickly.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

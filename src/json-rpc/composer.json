@@ -1,7 +1,7 @@
 {
     "name": "hyperf/json-rpc",
     "description": "A JSON RPC component for Hyperf RPC Server or Client.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "swoole",

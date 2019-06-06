@@ -1,7 +1,7 @@
 {
     "name": "hyperf/model-cache",
     "description": "A model cache component for hyperf.",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "php",
         "hyperf",
