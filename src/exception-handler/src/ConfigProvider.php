@@ -21,7 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                FormatterInterface::class => DefaultFormatter::class
+                FormatterInterface::class => DefaultFormatter::class,
             ],
             'commands' => [
             ],
