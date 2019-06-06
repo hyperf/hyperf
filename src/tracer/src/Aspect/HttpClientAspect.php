@@ -59,7 +59,11 @@ class HttpClientAspect implements AroundInterface
         if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
             return $proceedingJoinPoint->process();
         }
-        $span = $this->tracing->span('guzzlehttp.request', \Zipkin\Kind\CLIENT);
+        $arguments = $proceedingJoinPoint->arguments;
+        $method = $arguments['keys']['method'] ?? 'Null';
+        $uri = $arguments['keys']['uri'] ?? 'Null';
+        $key = "HTTP Request [$method] $uri";
+        $span = $this->tracing->span($key);
         $span->tag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         $appendHeaders = [];
         // Injects the context into the wire
