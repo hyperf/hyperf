@@ -17,7 +17,6 @@ use Hyperf\Utils\Packer\JsonPacker;
 
 class DataFormatter implements DataFormatterInterface
 {
-
     /**
      * @var JsonPacker
      */

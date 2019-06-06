@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Framework\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
-use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Server;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Server\Exception\InvalidArgumentException;
@@ -25,7 +23,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
-use Throwable;
 
 class HttpServer extends Server
 {

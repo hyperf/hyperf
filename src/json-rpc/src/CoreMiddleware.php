@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @inheritDoc
+ * {@inheritdoc}
  */
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {

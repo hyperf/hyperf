@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
-use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
@@ -27,7 +27,6 @@ use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
 {
-
     /**
      * @var ProtocolManager
      */
