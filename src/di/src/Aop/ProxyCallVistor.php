@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-use a;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure;
