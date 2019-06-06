@@ -33,6 +33,13 @@
     },
     "suggest": {
     },
+    "extra": {
+        "branch-alias": {
+        },
+        "hyperf": {
+            "config": "Hyperf\\ExceptionHandler\\ConfigProvider"
+        }
+    },
     "scripts": {
         "test": "./vendor/bin/phpunit -c phpunit.xml",
         "co_test": "php tests/co_phpunit.php -c phpunit.xml"
