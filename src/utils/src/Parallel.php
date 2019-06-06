@@ -19,9 +19,9 @@ class Parallel
      */
     private $callbacks = [];
 
-    public function add(callable $callable, ?string $key = null)
+    public function add(callable $callable, $key = null)
     {
-        if ($key) {
+        if (is_string($key)) {
             $this->callbacks[$key] = $callable;
         } else {
             $this->callbacks[] = $callable;
