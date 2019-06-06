@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
+use a;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure;
@@ -23,6 +24,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
@@ -184,7 +186,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
         if ($node->name->toString() === '__construct') {
             // Rewrite parent::__construct to class::__construct.
             foreach ($node->stmts as $stmt) {
-                if ($stmt instanceof Node\Stmt\Expression && $stmt->expr instanceof Node\Expr\StaticCall) {
+                if ($stmt instanceof Expression && $stmt->expr instanceof Node\Expr\StaticCall) {
                     $class = $stmt->expr->class;
                     if ($class instanceof Node\Name && $class->toString() === 'parent') {
                         $stmt->expr->class = new Node\Name($this->extends->toCodeString());
@@ -206,26 +208,38 @@ class ProxyCallVistor extends NodeVisitorAbstract
         if (! $this->class) {
             return $node;
         }
+        $shouldReturn = true;
+        $returnType = $node->getReturnType();
+        if ($returnType instanceof Identifier && $returnType->name === 'void') {
+            $shouldReturn = false;
+        }
         $class = $this->class->toString();
-        $node->stmts = [
-            new Return_(new StaticCall(new Name('self'), '__proxyCall', [
-                // OriginalClass::class
+        $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
+            // OriginalClass::class
+            new ClassConstFetch(new Name($class), new Identifier('class')),
+            // __FUNCTION__
+            new MagicConstFunction(),
+            // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
+            new StaticCall(new Name('self'), 'getParamsMap', [
                 new ClassConstFetch(new Name($class), new Identifier('class')),
-                // __FUNCTION__
                 new MagicConstFunction(),
-                // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
-                new StaticCall(new Name('self'), 'getParamsMap', [
-                    new ClassConstFetch(new Name($class), new Identifier('class')),
-                    new MagicConstFunction(),
-                    new FuncCall(new Name('func_get_args')),
-                ]),
-                // A closure that wrapped original method code.
-                new Closure([
-                    'params' => $node->getParams(),
-                    'stmts' => $node->stmts,
-                ]),
-            ])),
-        ];
+                new FuncCall(new Name('func_get_args')),
+            ]),
+            // A closure that wrapped original method code.
+            new Closure([
+                'params' => $node->getParams(),
+                'stmts' => $node->stmts,
+            ]),
+        ]);
+        if ($shouldReturn) {
+            $node->stmts = [
+                new Return_($staticCall),
+            ];
+        } else {
+            $node->stmts = [
+                new Expression($staticCall),
+            ];
+        }
         return $node;
     }
 
