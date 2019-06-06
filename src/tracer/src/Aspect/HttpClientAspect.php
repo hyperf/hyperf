@@ -18,6 +18,7 @@ use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\Tracing;
+use Psr\Http\Message\ResponseInterface;
 use Zipkin\Propagation\Map;
 
 /**
@@ -73,6 +74,9 @@ class HttpClientAspect implements AroundInterface
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
         $span->start();
         $result = $proceedingJoinPoint->process();
+        if ($result instanceof ResponseInterface) {
+            $span->tag('status', $result->getStatusCode());
+        }
         $span->finish();
         return $result;
     }
