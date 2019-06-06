@@ -28,18 +28,24 @@ class Context
         return $value;
     }
 
-    public static function get(string $id, $default = null)
+    public static function get(string $id, $default = null, $coroutineId = null)
     {
         if (Coroutine::inCoroutine()) {
+            if ($coroutineId !== null) {
+                return SwCoroutine::getContext($coroutineId)[$id] ?? $default;
+            }
             return SwCoroutine::getContext()[$id] ?? $default;
         }
 
         return static::$nonCoContext[$id] ?? $default;
     }
 
-    public static function has(string $id)
+    public static function has(string $id, $coroutineId = null)
     {
         if (Coroutine::inCoroutine()) {
+            if ($coroutineId !== null) {
+                return isset(SwCoroutine::getContext($coroutineId)[$id]);
+            }
             return isset(SwCoroutine::getContext()[$id]);
         }
 
@@ -57,7 +63,7 @@ class Context
     /**
      * Copy the context from a coroutine to current coroutine.
      */
-    public static function copy(int $fromCoroutineId): void
+    public static function copy(int $fromCoroutineId, array $keys = []): void
     {
         /**
          * @var \ArrayObject
@@ -65,7 +71,7 @@ class Context
          */
         $from = SwCoroutine::getContext($fromCoroutineId);
         $current = SwCoroutine::getContext();
-        $current->exchangeArray($from->getArrayCopy());
+        $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
     }
 
     public static function getContainer()
