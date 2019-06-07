@@ -55,13 +55,14 @@ abstract class Command extends SymfonyCommand
      *
      * @var array
      */
-    protected $verbosityMap = [
-        'v' => OutputInterface::VERBOSITY_VERBOSE,
-        'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
-        'vvv' => OutputInterface::VERBOSITY_DEBUG,
-        'quiet' => OutputInterface::VERBOSITY_QUIET,
-        'normal' => OutputInterface::VERBOSITY_NORMAL,
-    ];
+    protected $verbosityMap
+        = [
+            'v' => OutputInterface::VERBOSITY_VERBOSE,
+            'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
+            'vvv' => OutputInterface::VERBOSITY_DEBUG,
+            'quiet' => OutputInterface::VERBOSITY_QUIET,
+            'normal' => OutputInterface::VERBOSITY_NORMAL,
+        ];
 
     public function __construct(string $name = null)
     {
@@ -78,10 +79,7 @@ abstract class Command extends SymfonyCommand
     {
         $this->output = new SymfonyStyle($input, $output);
 
-        return parent::run(
-            $this->input = $input,
-            $this->output
-        );
+        return parent::run($this->input = $input, $this->output);
     }
 
     /**
@@ -94,6 +92,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Prompt the user for input.
+     *
      * @param null|mixed $default
      */
     public function ask(string $question, $default = null)
@@ -103,6 +102,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Prompt the user for input with auto completion.
+     *
      * @param null|mixed $default
      */
     public function anticipate(string $question, array $choices, $default = null)
@@ -112,6 +112,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Prompt the user for input with auto completion.
+     *
      * @param null|mixed $default
      */
     public function askWithCompletion(string $question, array $choices, $default = null)
@@ -137,12 +138,18 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Give the user a single choice from an array of answers.
+     *
      * @param null|mixed $default
      * @param null|mixed $attempts
      * @param null|mixed $multiple
      */
-    public function choice(string $question, array $choices, $default = null, $attempts = null, $multiple = null): string
-    {
+    public function choice(
+        string $question,
+        array $choices,
+        $default = null,
+        $attempts = null,
+        $multiple = null
+    ): string {
         $question = new ChoiceQuestion($question, $choices, $default);
 
         $question->setMaxAttempts($attempts)->setMultiselect($multiple);
@@ -152,6 +159,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Format input to textual table.
+     *
      * @param mixed $rows
      * @param mixed $tableStyle
      */
@@ -174,6 +182,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as standard output.
+     *
      * @param mixed $string
      * @param null|mixed $style
      * @param null|mixed $verbosity
@@ -186,6 +195,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as information output.
+     *
      * @param mixed $string
      * @param null|mixed $verbosity
      */
@@ -196,6 +206,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as comment output.
+     *
      * @param mixed $string
      * @param null|mixed $verbosity
      */
@@ -206,6 +217,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as question output.
+     *
      * @param mixed $string
      * @param null|mixed $verbosity
      */
@@ -216,6 +228,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as error output.
+     *
      * @param mixed $string
      * @param null|mixed $verbosity
      */
@@ -226,6 +239,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string as warning output.
+     *
      * @param mixed $string
      * @param null|mixed $verbosity
      */
@@ -240,6 +254,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Write a string in an alert box.
+     *
      * @param mixed $string
      */
     public function alert($string)
@@ -258,10 +273,7 @@ abstract class Command extends SymfonyCommand
     {
         $arguments['command'] = $command;
 
-        return $this->getApplication()->find($command)->run(
-            $this->createInputFromArguments($arguments),
-            $this->output
-        );
+        return $this->getApplication()->find($command)->run($this->createInputFromArguments($arguments), $this->output);
     }
 
     /**
@@ -271,6 +283,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Set the verbosity level.
+     *
      * @param mixed $level
      */
     protected function setVerbosity($level)
@@ -280,6 +293,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Get the verbosity level in terms of Symfony's OutputInterface level.
+     *
      * @param null|mixed $level
      */
     protected function parseVerbosity($level = null): int
@@ -349,6 +363,10 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        call([$this, 'handle']);
+        try {
+            call([$this, 'handle']);
+        } catch (\Throwable $throwable) {
+            $this->line(sprintf("<error>[ERROR]</error> Uncaught exception '%s' with message '%s' at %s line %d", '\\' . get_class($throwable), $throwable->getMessage(), $throwable->getFile(), $throwable->getLine()));
+        }
     }
 }
