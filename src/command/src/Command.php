@@ -363,10 +363,6 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try {
-            call([$this, 'handle']);
-        } catch (\Throwable $throwable) {
-            $this->line(sprintf("<error>[ERROR]</error> Uncaught exception '%s' with message '%s' at %s line %d", '\\' . get_class($throwable), $throwable->getMessage(), $throwable->getFile(), $throwable->getLine()));
-        }
+        call([$this, 'handle']);
     }
 }
