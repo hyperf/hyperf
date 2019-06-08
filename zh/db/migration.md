@@ -59,48 +59,48 @@ class CreateUsersTable extends Migration
 
 通过执行 `migrate` 命令运行所有尚未完成的迁移文件：
 
-``bash
+```bash
 php bin/hyperf.php migrate
-``
+```
 
 ## 强制执行迁移
 
 一些迁移操作是具有破坏性的，这意味着可能会导致数据丢失，为了防止有人在生产环境中运行这些命令，系统会在这些命令运行之前与你进行确认，但如果您希望忽略这些确认信息强制运行命令，可以使用 `--force` 标记:
 
-``bash
+````bash
 php bin/hyperf.php migrate --force
-``
+```
 
 ## 回滚迁移
 
 若您希望回滚最后一次的迁移，可以通过 `migrate:rollback` 命令回滚最后一侧的迁移，注意一次迁移可能会包含多个迁移文件：
 
-``bash
+```bash
 php bin/hyperf.php migrate:rollback
-``
+```
 
 您还可以在 `migrate:rollback` 命令后面加上 `step` 参数来设置回滚迁移的次数，比如以下命令将回滚最近 5 次迁移：
 
-``bash
+````bash
 php bin/hyperf.php migrate:rollback --step=5
-``
+```
 
 如果您希望回滚所有的迁移，可以通过 `migrate:reset` 来回滚：
 
-``bash
+```bash
 php bin/hyperf.php migrate:reset
-``
+```
 
 ## 回滚并迁移
 
 `migrate:refresh` 命令不仅会回滚迁移还会接着运行 `migrate` 命令，这样可以高效地重建某些迁移：
 
-``bash
+```bash
 php bin/hyperf.php migrate:refresh
 
 // 重建数据库结构并执行数据填充
 php bin/hyperf.php migrate:refresh --seed
-``
+```
 
 通过 `--step` 参数指定回滚和重建次数，比如以下命令将回滚并重新执行最后 5 次迁移:
 
