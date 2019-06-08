@@ -51,6 +51,13 @@ abstract class Command extends SymfonyCommand
     protected $verbosity = OutputInterface::VERBOSITY_NORMAL;
 
     /**
+     * Execution in a coroutine environment.
+     *
+     * @var bool
+     */
+    protected $coroutine = false;
+
+    /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
      *
      * @var array
@@ -363,6 +370,12 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        call([$this, 'handle']);
+        if ($this->coroutine) {
+            go(function () {
+                call([$this, 'handle']);
+            });
+            return 0;
+        }
+        return call([$this, 'handle']);
     }
 }
