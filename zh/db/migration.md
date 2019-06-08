@@ -146,6 +146,41 @@ class CreateUsersTable extends Migration
 }
 ```
 
+您可以在数据库结构生成器上使用以下命令来定义表的选项:
+
+```php
+// 指定表存储引擎
+$table->engine = 'InnoDB';
+// 指定数据表的默认字符集
+$table->charset = 'utf8';
+// 指定数据表默认的排序规则
+$table->collation = 'utf8_unicode_ci';
+// 创建临时表
+$table->temporary();
+```
+
+## 重命名数据表
+
+若您希望重命名一个数据表，可以通过 `rename` 方法:
+
+```php
+Schema::rename($from, $to);
+```
+
+### 重命名带外键的数据表
+
+在重命名表之前，您应该验证表上的所有外键约束在迁移文件中都有明确的名称，而不是让迁移程序按照约定来设置一个名称，否则，外键的约束名称将引用旧表名。
+
+## 删除数据表
+
+删除一个已存在的数据表，可以通过 `drop` 或 `dropIfExists` 方法:
+
+```php
+Schema::drop('users');
+
+Schema::dropIfExists('users');
+```
+
 ## 检查数据表或字段是否存在
 
 可以通过 `hasTable` 和 `hasColumn` 方法来检查数据表或字段是否存在:
@@ -184,39 +219,4 @@ class CreateUsersTable extends Migration
         });
     }
 }
-```
-
-您可以在数据库结构生成器上使用以下命令来定义表的选项:
-
-```php
-// 指定表存储引擎
-$table->engine = 'InnoDB';
-// 指定数据表的默认字符集
-$table->charset = 'utf8';
-// 指定数据表默认的排序规则
-$table->collation = 'utf8_unicode_ci';
-// 创建临时表
-$table->temporary();
-```
-
-## 重命名数据表
-
-若您希望重命名一个数据表，可以通过 `rename` 方法:
-
-```php
-Schema::rename($from, $to);
-```
-
-### 重命名带外键的数据表
-
-在重命名表之前，您应该验证表上的所有外键约束在迁移文件中都有明确的名称，而不是让迁移程序按照约定来设置一个名称，否则，外键的约束名称将引用旧表名。
-
-## 删除数据表
-
-删除一个已存在的数据表，可以通过 `drop` 或 `dropIfExists` 方法:
-
-```php
-Schema::drop('users');
-
-Schema::dropIfExists('users');
 ```
