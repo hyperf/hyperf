@@ -67,7 +67,7 @@ php bin/hyperf.php migrate
 
 一些迁移操作是具有破坏性的，这意味着可能会导致数据丢失，为了防止有人在生产环境中运行这些命令，系统会在这些命令运行之前与你进行确认，但如果您希望忽略这些确认信息强制运行命令，可以使用 `--force` 标记:
 
-````bash
+```bash
 php bin/hyperf.php migrate --force
 ```
 
@@ -81,7 +81,7 @@ php bin/hyperf.php migrate:rollback
 
 您还可以在 `migrate:rollback` 命令后面加上 `step` 参数来设置回滚迁移的次数，比如以下命令将回滚最近 5 次迁移：
 
-````bash
+```bash
 php bin/hyperf.php migrate:rollback --step=5
 ```
 
@@ -119,4 +119,104 @@ php bin/hyperf.php migrate:fresh
 php bin/hyperf.php migrate:fresh --seed
 ```
 
+# 数据表
 
+在迁移文件中主要通过 `Hyperf\Database\Schema\Schema` 类来定义数据表和管理迁移流程。
+
+## 创建数据表
+
+通过 `create` 方法来创建新的数据库表。 `create` 方法接受两个参数：第一个参数为数据表的名称，第二个参数是一个 `闭包(Closure)`，此闭包会接收一个用于定义新数据表的 `Hyperf\Database\Schema\Blueprint` 对象:
+
+```php
+<?php
+
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Migrations\Migration;
+
+class CreateUsersTable extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->timestamps();
+        });
+    }
+}
+```
+
+## 检查数据表或字段是否存在
+
+可以通过 `hasTable` 和 `hasColumn` 方法来检查数据表或字段是否存在:
+
+```php
+if (Schema::hasTable('users')) {
+    //
+}
+
+if (Schema::hasColumn('name', 'email')) {
+    //
+}
+```
+
+## 数据库连接选项
+
+如果在同时管理多个数据库的情况下，不同的迁移会对应不同的数据库连接，那么此时我们可以在迁移文件中通过重写父类的 `$connection` 类属性来定义不同的数据库连接:
+
+```php
+<?php
+
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Migrations\Migration;
+
+class CreateUsersTable extends Migration
+{
+    // 这里对应 config/autoload/databases.php 内的连接 key
+    protected $connection = 'foo';
+    
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->timestamps();
+        });
+    }
+}
+```
+
+您可以在数据库结构生成器上使用以下命令来定义表的选项:
+
+```php
+// 指定表存储引擎
+$table->engine = 'InnoDB';
+// 指定数据表的默认字符集
+$table->charset = 'utf8';
+// 指定数据表默认的排序规则
+$table->collation = 'utf8_unicode_ci';
+// 创建临时表
+$table->temporary();
+```
+
+## 重命名数据表
+
+若您希望重命名一个数据表，可以通过 `rename` 方法:
+
+```php
+Schema::rename($from, $to);
+```
+
+### 重命名带外键的数据表
+
+在重命名表之前，您应该验证表上的所有外键约束在迁移文件中都有明确的名称，而不是让迁移程序按照约定来设置一个名称，否则，外键的约束名称将引用旧表名。
+
+## 删除数据表
+
+删除一个已存在的数据表，可以通过 `drop` 或 `dropIfExists` 方法:
+
+```php
+Schema::drop('users');
+
+Schema::dropIfExists('users');
+```
