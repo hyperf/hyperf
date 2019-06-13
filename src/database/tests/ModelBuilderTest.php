@@ -1196,6 +1196,24 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
+    public function testUpdateWithAlias()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = new BaseBuilder(Mockery::mock(ConnectionInterface::class), new Grammar, Mockery::mock(Processor::class));
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStub;
+        $this->mockConnectionForModel($model, '');
+        $builder->setModel($model);
+        $builder->getConnection()->shouldReceive('update')->once()
+            ->with('update "table" as "alias" set "foo" = ?, "alias"."updated_at" = ?', ['bar', $now])->andReturn(1);
+
+        $result = $builder->from('table as alias')->update(['foo' => 'bar']);
+        $this->assertEquals(1, $result);
+
+        Carbon::setTestNow(null);
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
