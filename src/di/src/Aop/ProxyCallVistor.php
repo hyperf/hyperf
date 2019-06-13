@@ -13,11 +13,13 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
@@ -137,6 +139,14 @@ class ProxyCallVistor extends NodeVisitorAbstract
                     return $node;
                 }
                 break;
+            case $node instanceof Node\Scalar\MagicConst\Function_:
+                // Rewrite __FUNCTION__ to $__function__ variable.
+                return new Variable('__function__');
+                break;
+            case $node instanceof Node\Scalar\MagicConst\Method:
+                // Rewrite __METHOD__ to $__method__ variable.
+                return new Variable('__method__');
+                break;
         }
     }
 
@@ -238,15 +248,25 @@ class ProxyCallVistor extends NodeVisitorAbstract
                     }
                     return $params;
                 }),
+                'uses' => [
+                    new Variable('__function__'),
+                    new Variable('__method__'),
+                ],
                 'stmts' => $node->stmts,
             ]),
         ]);
+        $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new Node\Scalar\MagicConst\Function_()));
+        $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new Node\Scalar\MagicConst\Method()));
         if ($shouldReturn) {
             $node->stmts = [
+                $magicConstFunction,
+                $magicConstMethod,
                 new Return_($staticCall),
             ];
         } else {
             $node->stmts = [
+                $magicConstFunction,
+                $magicConstMethod,
                 new Expression($staticCall),
             ];
         }
