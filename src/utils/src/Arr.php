@@ -54,9 +54,9 @@ class Arr
             } elseif (! is_array($values)) {
                 continue;
             }
-            $results = array_merge($results, $values);
+            $results[] = $values;
         }
-        return $results;
+        return array_merge([], ...$results);
     }
 
     /**
