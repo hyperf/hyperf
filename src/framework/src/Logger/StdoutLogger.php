@@ -120,7 +120,7 @@ class StdoutLogger implements StdoutLoggerInterface
     public function log($level, $message, array $context = [])
     {
         $config = $this->config->get(StdoutLoggerInterface::class, ['log_level' => []]);
-        if (! in_array($level, $config['log_level'])) {
+        if (! in_array($level, $config['log_level'], true)) {
             return;
         }
         $keys = array_keys($context);
