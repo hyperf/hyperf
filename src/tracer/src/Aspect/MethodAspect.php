@@ -19,7 +19,7 @@ use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\Tracing;
 
 /**
- * @Aspect
+ * Aspect
  */
 class MethodAspect extends AbstractAspect
 {
