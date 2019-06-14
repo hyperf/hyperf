@@ -6,7 +6,7 @@ Hyperf 的数据库查询构造器为创建和运行数据库查询提供了一�
 
 Hyperf 的查询构造器使用 PDO 参数绑定来保护您的应用程序免受 SQL 注入攻击。因此没有必要清理作为绑定传递的字符串。
 
-这里只提供一部分常用的教程，具体教程可以到Laravel官网查看。
+这里只提供一部分常用的教程，具体教程可以到 Laravel 官网查看。
 [Laravel Query Builder](https://laravel.com/docs/5.8/queries)
 
 ## 获取结果
@@ -26,6 +26,42 @@ $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 
 foreach ($users as $user) {
     echo $user->name;
+}
+```
+
+### 将结果转为数组格式
+
+在某些场景下，您可能会希望查询出来的结果内采用 `数组(Array)` 而不是 `stdClass` 对象结构时，而 `Eloquent` 又去除了通过配置的形式配置默认的 `FetchMode`，那么此时可以通过监听器来监听 `Hyperf\Database\Events\StatementPrepared` 事件来变更该配置：
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Events\StatementPrepared;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use PDO;
+
+/**
+ * @Listener
+ */
+class FetchModeListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            StatementPrepared::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        if ($event instanceof StatementPrepared) {
+            $event->statement->setFetchMode(PDO::FETCH_ASSOC);
+        }
+    }
 }
 ```
 
