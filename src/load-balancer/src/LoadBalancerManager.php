@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -46,7 +46,7 @@ class LoadBalancerManager
      * Retrieve a class name of load balancer and create a object instance,
      * If $container object exists, then the class will create via container.
      *
-     * @param string $key Key of the load balancer instance.
+     * @param string $key key of the load balancer instance
      * @param string $algorithm The name of the load balance algorithm
      */
     public function getInstance(string $key, string $algorithm): LoadBalancerInterface

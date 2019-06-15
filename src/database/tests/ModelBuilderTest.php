@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -1200,9 +1200,9 @@ class ModelBuilderTest extends TestCase
     {
         Carbon::setTestNow($now = '2017-10-10 10:10:10');
 
-        $query = new BaseBuilder(Mockery::mock(ConnectionInterface::class), new Grammar, Mockery::mock(Processor::class));
+        $query = new BaseBuilder(Mockery::mock(ConnectionInterface::class), new Grammar(), Mockery::mock(Processor::class));
         $builder = new Builder($query);
-        $model = new ModelBuilderTestStub;
+        $model = new ModelBuilderTestStub();
         $this->mockConnectionForModel($model, '');
         $builder->setModel($model);
         $builder->getConnection()->shouldReceive('update')->once()

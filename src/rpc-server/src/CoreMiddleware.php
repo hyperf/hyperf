@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -16,7 +16,9 @@ use Closure;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * {@inheritdoc}
@@ -28,6 +30,11 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         $this->container = $container;
         $factory = $container->get(DispatcherFactory::class);
         $this->dispatcher = $factory->getDispatcher($serverName);
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        return parent::process($request, $handler);
     }
 
     protected function handleFound(array $routes, ServerRequestInterface $request)
