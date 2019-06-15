@@ -34,6 +34,7 @@
   * [快速开始](zh/db/quick-start.md)
   * [查询构造器](zh/db/querybuilder.md)
   * [模型](zh/db/model.md)
+  * [分页](zh/db/paginator.md)
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
