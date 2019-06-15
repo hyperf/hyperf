@@ -48,6 +48,11 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
         $this->setItems($items);
     }
 
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
+
     /**
      * Get the URL for the next page.
      */
