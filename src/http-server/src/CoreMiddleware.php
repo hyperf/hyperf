@@ -19,6 +19,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -157,6 +158,12 @@ class CoreMiddleware implements MiddlewareInterface
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
+        }
+
+        if ($response instanceof Jsonable) {
+            return $this->response()
+                ->withAddedHeader('content-type', 'application/json')
+                ->withBody(new SwooleStream((string) $response));
         }
 
         return $this->response()->withBody(new SwooleStream((string) $response));
