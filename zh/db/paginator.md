@@ -12,23 +12,8 @@
 
 ```php
 <?php
-
-namespace App\Controller;
-
-use Hyperf\DbConnection\Db;
-use Hyperf\HttpServer\Annotation\AutoController;
-
-/**
- * @AutoController
- */
-class UserController
-{
-    public function index()
-    {
-        // 展示应用中的所有用户，每页显示 10 条数据
-        return Db::table('users')->paginate(10);
-    }
-}
+// 展示应用中的所有用户，每页显示 10 条数据
+return Db::table('users')->paginate(10);
 ```
 
 ## 模型分页 
