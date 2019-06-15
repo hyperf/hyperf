@@ -3,17 +3,7 @@
 Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 - 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。
-- 阿里云提供的免费配置中心服务 [应用配置管理(ACM, application config manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) 组件提供功能支持。
-因此，我们可以通过一个配置中心以一种科学的管理方式来统一管理相关的配置。
-
-下面使用 apollo 为示例进行讲解, 其他配置中心参照即可.
-
-## 安装
-
-```bash
-# apollo
-composer require hyperf/config-apollo
-```
+- 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) 组件提供功能支持。
 
 ## 为什么要使用配置中心？
 
@@ -24,6 +14,20 @@ composer require hyperf/config-apollo
 - 局限性：无法支持动态调整，例如日志开关、功能开关等   
 
 因此，我们可以通过一个配置中心以一种科学的管理方式来统一管理相关的配置。
+
+## 安装
+
+### Apollo
+
+```bash
+composer require hyperf/config-apollo
+```
+
+### Aliyun ACM
+
+```bash
+composer require hyperf/config-aliyun-acm
+```
 
 ## 接入 Apollo 配置中心
 
@@ -48,6 +52,34 @@ return [
     ],
     // 配置更新间隔（秒）
     'interval' => 5,
+];
+```
+
+## 接入 Aliyun ACM 配置中心
+
+接入 Aliyun ACM 配置中心与 Apollo 一样都是轻而易举的，同样只需两步。
+- 通过 Composer 将 [hyperf/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) ，即执行命令 `composer require hyperf/config-aliyun-acm`
+- 在 `config/autoload` 文件夹内增加一个 `aliyun_acm.php` 的配置文件，配置内容如下
+
+```php
+<?php
+return [
+    // 是否开启配置中心的接入流程，为 true 时会自动启动一个 ConfigFetcherProcess 进程用于更新配置
+    'enable' => true,
+    // 配置更新间隔（秒）
+    'interval' => 5,
+    // 阿里云 ACM 断点地址，取决于您的可用区
+    'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+    // 当前应用需要接入的 Namespace
+    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+    // 您的配置对应的 Data ID
+    'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+    // 您的配置对应的 Group
+    'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+    // 您的阿里云账号的 Access Key
+    'access_key' => env('ALIYUN_ACM_AK', ''),
+    // 您的阿里云账号的 Secret Key
+    'secret_key' => env('ALIYUN_ACM_SK', ''),
 ];
 ```
 
