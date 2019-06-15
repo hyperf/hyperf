@@ -483,15 +483,15 @@ $table->foreign('user_id')
 
 您可以通过 `dropForeign` 方法来删除外键。外键约束采用的命名方式与索引相同，然后加上 `_foreign` 后缀：
 
-``php
+```php
 $table->dropForeign('posts_user_id_foreign');
-``
+```
 
 或者传递一个字段数组，让迁移程序按照约定的规则生成名称：
 
-``php
+````php
 $table->dropForeign(['user_id'']);
-``
+```
 
 您可以在迁移文件中使用以下方法来开启或关闭外键约束：
 
