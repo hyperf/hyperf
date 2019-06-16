@@ -28,7 +28,6 @@
   * [缓存](zh/cache.md)
   * [日志](zh/logger.md)
   * [分页器](zh/paginator.md)
-  * [单元测试](zh/phpunit.md)
   
 * 数据库模型
 
