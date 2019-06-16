@@ -1,6 +1,10 @@
 # 单元测试
 
-单元测试没有特定的组件，但是在 Hyperf 提供的骨架包里，都会有对应实现。
+## 安装
+
+```
+composer require hyperf/testing
+```
 
 ## co-phpunit
 
