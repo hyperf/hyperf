@@ -16,6 +16,23 @@ composer require hyperf/testing
 
 Hyperf 提供了默认的 `bootstrap.php` 文件，它让用户在运行单元测试时，扫描并加载对应的库到内存里。
 
+```php
+<?php
+
+declare(strict_types=1);
+
+error_reporting(E_ALL);
+
+! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
+
+\Swoole\Runtime::enableCoroutine(true);
+
+require BASE_PATH . '/vendor/autoload.php';
+
+require BASE_PATH . '/config/container.php';
+
+```
+
 > 当用户修改的代码需要重新生成代理类时，需要主动运行一下脚本。因为你单元测试运行时，并不会重置代理类。
 
 ```
