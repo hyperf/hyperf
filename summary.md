@@ -28,6 +28,7 @@
   * [缓存](zh/cache.md)
   * [日志](zh/logger.md)
   * [分页器](zh/paginator.md)
+  * [自动化测试](zh/testing.md)
   
 * 数据库模型
 
@@ -63,7 +64,6 @@
   * [自定义进程](zh/process.md)
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
-  * [自动化测试](zh/testing.md)
   * [限流器](zh/rate-limit.md)
   
 * Awesome Hyperf
