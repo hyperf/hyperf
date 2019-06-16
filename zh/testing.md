@@ -2,6 +2,10 @@
 
 在 Hyperf 里测试默认通过 `phpunit` 来实现，但由于 Hyperf 是一个协程框架，所以默认的 `phpunit` 并不能很好的工作，因此我们提供了一个 `co-phpunit` 脚本来进行适配，您可直接调用脚本或者使用对应的 composer 命令来运行。自动化测试没有特定的组件，但是在 Hyperf 提供的骨架包里都会有对应实现。
 
+```
+composer require hyperf/testing
+```
+
 ```json
 "scripts": {
     "test": "./test/co-phpunit -c phpunit.xml --colors=always"
@@ -23,11 +27,11 @@ composer test
 
 ## 模拟 HTTP 请求
 
-在开发接口时，我们通常需要一段自动化测试脚本来保证我们提供的接口按预期在运行，Hyperf 框架下提供了 `HyperfTest\Client` 类，可以让您在不启动 Server 的情况下，模拟 HTTP 服务的请求：
+在开发接口时，我们通常需要一段自动化测试脚本来保证我们提供的接口按预期在运行，Hyperf 框架下提供了 `Hyperf\Testing\Client` 类，可以让您在不启动 Server 的情况下，模拟 HTTP 服务的请求：
 
 ```php
 <?php
-use HyperfTest\Client;
+use Hyperf\Testing\Client;
 
 $client = make(Client::class);
 
@@ -39,7 +43,7 @@ $result = $client->get('/');
 ```php
 <?php
 
-use HyperfTest\Client;
+use Hyperf\Testing\Client;
 
 $client = make(Client::class,['server' => 'adminHttp']);
 
@@ -60,7 +64,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Cases;
 
-use HyperfTest\Client;
+use Hyperf\Testing\Client;
 use PHPUnit\Framework\TestCase;
 
 /**
