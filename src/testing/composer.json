@@ -1,0 +1,39 @@
+{
+    "name": "hyperf/testing",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "testing"
+    ],
+    "description": "Testing for hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Testing\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "phpunit/phpunit": "^7.0",
+        "hyperf/utils": "dev-master"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "bin": [
+        "co-phpunit"
+    ],
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml",
+        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
+    }
+}
