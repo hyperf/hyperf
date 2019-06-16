@@ -28,14 +28,14 @@
   * [缓存](zh/cache.md)
   * [日志](zh/logger.md)
   * [分页器](zh/paginator.md)
-  * [单元测试](zh/phpunit.md)
+  * [自动化测试](zh/testing.md)
   
 * 数据库模型
 
   * [快速开始](zh/db/quick-start.md)
   * [查询构造器](zh/db/querybuilder.md)
   * [模型](zh/db/model.md)
-  * [分页](zh/db/paginator.md)
+  * [查询分页](zh/db/paginator.md)
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
@@ -64,7 +64,6 @@
   * [自定义进程](zh/process.md)
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
-  * [自动化测试](zh/testing.md)
   * [限流器](zh/rate-limit.md)
   
 * Awesome Hyperf

@@ -10,7 +10,7 @@
 
 图中的顺序为按照 `Middleware 1 -> Middleware 2 -> Middleware 3` 的顺序组织着，我们可以注意到当中间的横线穿过 `内核` 即 `Middleware 3` 后，又回到了 `Middleware 2`，为一个嵌套模型，那么实际的顺序其实就是：   
 `Request -> Middleware 1 -> Middleware 2 -> Middleware 3 -> Middleware 2 -> Middleware 1 -> Response`   
-重点放在 `核心` 即 `Middleware 3`，它是洋葱的分界点，分界点前面的部分其实都是基于 `请求(Request)` 进行处理，而经过了分界点时，`内核` 就产出了 `响应(Response)` 对象，也是 `内核` 的主要代码目标，在之后便是对 `响应(Response)` 进行处理了，`内核` 通常是由框架负责实现的，而其它的就由你来编排了。
+重点放在 `核心` 即 `Middleware 3`，它是洋葱的分界点，分界点前面的部分其实都是基于 `请求(Request)` 进行处理，而经过了分界点时，`内核` 就产出了 `响应(Response)` 对象，也是 `内核` 的主要代码目标，在之后便是对 `响应(Response)` 进行处理了，`内核` 通常是由框架负责实现的，而其它的就由您来编排了。
 
 ## 定义全局中间件
 
@@ -66,7 +66,7 @@ Router::addGroup(
   - `@Middleware` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
   - `@Middlewares` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `@Middleware` 注解实现多个中间件的定义
   
-> 使用 `@Middleware` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；
+> 使用 `@Middleware` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `@Middlewares` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
 定义单个中间件：
@@ -129,6 +129,7 @@ use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 
 /**
  * @AutoController()
