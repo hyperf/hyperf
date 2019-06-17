@@ -247,6 +247,16 @@ $user = User::query()->where('id', 1)->first();
 $user = User::query()->find(1);
 ```
 
+### 检索多个模型
+
+当然 `find` 的方法不止支持单个模型。
+
+```php
+use App\Models\User;
+
+$users = User::query()->find([1, 2, 3]);
+```
+
 ### 聚合函数
 
 你还可以使用 查询构造器 提供的 `count`，`sum`, `max`, 和其他的聚合函数。这些方法只会返回适当的标量值而不是一个模型实例：
