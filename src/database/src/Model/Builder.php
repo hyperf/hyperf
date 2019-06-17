@@ -399,7 +399,7 @@ class Builder
      * Find a model by its primary key.
      *
      * @param array $columns
-     * @param mixed $id
+     * @param array|int|string $id
      * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
      */
     public function find($id, $columns = ['*'])
