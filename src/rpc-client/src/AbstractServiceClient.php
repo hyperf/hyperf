@@ -179,7 +179,7 @@ abstract class AbstractServiceClient
         $config = $this->container->get(ConfigInterface::class);
 
         // According to the registry config of the consumer, retrieve the nodes.
-        $consumers = $config->get('services.consumers');
+        $consumers = $config->get('services.consumers', []);
         foreach ($consumers as $consumer) {
             if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
                 break;
