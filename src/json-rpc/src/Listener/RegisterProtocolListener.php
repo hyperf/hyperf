@@ -23,9 +23,6 @@ use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
 
-/**
- * @Listener
- */
 class RegisterProtocolListener implements ListenerInterface
 {
     /**

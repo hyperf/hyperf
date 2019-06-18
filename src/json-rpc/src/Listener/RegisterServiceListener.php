@@ -17,9 +17,6 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\ServiceManager;
 
-/**
- * @Listener
- */
 class RegisterServiceListener implements ListenerInterface
 {
     /**

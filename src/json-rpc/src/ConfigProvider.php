@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
+use Hyperf\JsonRpc\Listener\RegisterServiceListener;
+use Hyperf\ServiceGovernance\ServiceManager;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -22,6 +26,15 @@ class ConfigProvider
                 HttpServer::class => HttpServerFactory::class,
             ],
             'commands' => [
+            ],
+            'listeners' => [
+                RegisterProtocolListener::class,
+                value(function () {
+                    if (class_exists(ServiceManager::class)) {
+                        return RegisterServiceListener::class;
+                    }
+                    return null;
+                }),
             ],
             'scan' => [
                 'paths' => [
