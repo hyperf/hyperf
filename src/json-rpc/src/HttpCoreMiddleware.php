@@ -29,9 +29,4 @@ class HttpCoreMiddleware extends CoreMiddleware
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
     }
-
-    protected function format($response, ServerRequestInterface $request): string
-    {
-        return parent::format($response, $request);
-    }
 }
