@@ -24,4 +24,9 @@ interface LoadBalancerInterface
      * @return $this
      */
     public function setNodes(array $nodes);
+
+    /**
+     * Remove a node from the node list.
+     */
+    public function removeNode(Node $node): bool;
 }
