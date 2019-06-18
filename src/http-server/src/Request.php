@@ -251,7 +251,7 @@ class Request implements RequestInterface
      */
     public function getQueryString(): ?string
     {
-        $qs = static::normalizeQueryString($this->getServerParams()['query_string']);
+        $qs = static::normalizeQueryString($this->getServerParams()['query_string'] ?? '');
 
         return $qs === '' ? null : $qs;
     }
