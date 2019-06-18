@@ -27,6 +27,11 @@ interface DriverInterface
     public function delay(JobInterface $job, int $delay = 0): bool;
 
     /**
+     * Delete a delay job to queue.
+     */
+    public function delete(JobInterface $job): bool;
+
+    /**
      * Pop a job from queue.
      */
     public function pop(): array;
