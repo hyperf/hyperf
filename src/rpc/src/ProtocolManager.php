@@ -68,7 +68,7 @@ class ProtocolManager
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('Data Formatter %s is not exists.', Str::studly($target, ' ')));
+            throw new InvalidArgumentException(sprintf('%s is not exists.', Str::studly($target, ' ')));
         }
         return $result;
     }

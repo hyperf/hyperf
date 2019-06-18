@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\ServiceManager;
