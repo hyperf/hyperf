@@ -80,6 +80,14 @@ class RedisDriver extends Driver
         return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
     }
 
+    public function delete(JobInterface $job): bool
+    {
+        $message = new Message($job);
+        $data = $this->packer->pack($message);
+
+        return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);
+    }
+
     public function pop(): array
     {
         $this->move($this->channel->getDelayed(), $this->channel->getWaiting());
