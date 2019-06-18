@@ -187,6 +187,10 @@ class Server implements ServerInterface
 
                 $this->onRequestCallbacks[$className] = $serverName;
                 $class = $this->container->get($className);
+                if (method_exists($class, 'setServerName')) {
+                    // Override the server name.
+                    $class->setServerName($serverName);
+                }
                 if ($class instanceof MiddlewareInitializerInterface) {
                     $class->initCoreMiddleware($serverName);
                 }

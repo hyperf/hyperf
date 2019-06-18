@@ -119,4 +119,18 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
     }
+
+    public function getServerName(): string
+    {
+        return $this->serverName;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setServerName(string $serverName)
+    {
+        $this->serverName = $serverName;
+        return $this;
+    }
 }
