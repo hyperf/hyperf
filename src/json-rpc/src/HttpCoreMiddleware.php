@@ -12,51 +12,26 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\ProtocolManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * {@inheritdoc}
  */
-class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
+class HttpCoreMiddleware extends CoreMiddleware
 {
-    /**
-     * @var \Hyperf\Rpc\ProtocolManager
-     */
-    protected $protocolManager;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
-     */
-    protected $packer;
-
     public function __construct(ContainerInterface $container, string $serverName)
     {
         parent::__construct($container, $serverName);
         $this->protocolManager = $container->get(ProtocolManager::class);
-        $protocolName = 'jsonrpc';
+        $protocolName = 'jsonrpc-http';
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
     }
 
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
-    {
-        return $this->response()
-            ->withAddedHeader('content-type', 'application/json')
-            ->withBody(new SwooleStream($this->format($response, $request)));
-    }
-
     protected function format($response, ServerRequestInterface $request): string
     {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
-        return $this->packer->pack($response);
+        return parent::format($response, $request);
     }
 }

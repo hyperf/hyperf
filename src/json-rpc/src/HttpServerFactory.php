@@ -18,7 +18,7 @@ use Psr\Container\ContainerInterface;
 
 class HttpServerFactory
 {
-    protected $coreMiddleware = CoreMiddleware::class;
+    protected $coreMiddleware = HttpCoreMiddleware::class;
 
     public function __invoke(ContainerInterface $container): HttpServer
     {
