@@ -19,11 +19,11 @@ class Random extends AbstractLoadBalancer
      */
     public function select(array ...$parameters): Node
     {
-        $key = array_rand($this->nodes);
-        $node = $this->nodes[$key];
-        if (! $node instanceof Node) {
+        if (empty($this->nodes)) {
             throw new \RuntimeException('Cannot select any node from load balancer.');
         }
+        $key = array_rand($this->nodes);
+        $node = $this->nodes[$key];
         return $node;
     }
 }
