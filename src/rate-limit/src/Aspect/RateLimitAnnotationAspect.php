@@ -80,8 +80,7 @@ class RateLimitAnnotationAspect implements AroundInterface
 
         $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout);
 
-        $currentTime = time();
-        $maxTime = $currentTime + $annotation->waitTimeout;
+        $maxTime = microtime(true) + $annotation->waitTimeout;
         $seconds = 0;
 
         while (true) {
@@ -91,11 +90,10 @@ class RateLimitAnnotationAspect implements AroundInterface
                 }
             } catch (StorageException $exception) {
             }
-            if (($currentTime += $seconds) < $maxTime) {
-                Coroutine::sleep($seconds);
-                continue;
+            if (microtime(true) + $seconds > $maxTime) {
+                break;
             }
-            break;
+            Coroutine::sleep($seconds > 0.001 ? $seconds : 0.001);
         }
 
         if (! $annotation->limitCallback || ! is_callable($annotation->limitCallback)) {
