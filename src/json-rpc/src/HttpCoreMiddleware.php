@@ -29,4 +29,14 @@ class HttpCoreMiddleware extends CoreMiddleware
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
     }
+
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        // @TODO Allow more health check conditions.
+        if ($request->getHeaderLine('user-agent') === 'Consul Health Check') {
+            // The request that from health checker, return 200 directly.
+            return $this->response()->withStatus(200);
+        }
+        return parent::handleNotFound($request);
+    }
 }

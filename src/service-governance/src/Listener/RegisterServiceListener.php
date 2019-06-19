@@ -89,8 +89,8 @@ class RegisterServiceListener implements ListenerInterface
                             $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
                             return;
                         }
-                        if (isset($service['ID']) && $service['ID']) {
-                            $nextId = $service['ID'];
+                        if (isset($service['id']) && $service['id']) {
+                            $nextId = $service['id'];
                         } else {
                             $nextId = $this->generateId($this->getLastServiceId($serviceName));
                         }
@@ -100,7 +100,12 @@ class RegisterServiceListener implements ListenerInterface
                             'Address' => $address,
                             'Port' => $port,
                             'Meta' => [
-                                'Protocol' => 'jsonrpc',
+                                'Protocol' => $service['protocol'],
+                            ],
+                            'Check' => [
+                                'DeregisterCriticalServiceAfter' => '90m',
+                                'HTTP' => "http://{$address}:{$port}/",
+                                'Interval' => '1s',
                             ],
                         ]);
                         if ($response->getStatusCode() === 200) {
@@ -155,7 +160,7 @@ class RegisterServiceListener implements ListenerInterface
             return false;
         }
         $services = $response->json();
-        $glue = '-';
+        $glue = ',';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
         foreach ($services as $serviceId => $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
@@ -196,7 +201,7 @@ class RegisterServiceListener implements ListenerInterface
             if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
                 throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
-            $port = (int)$port;
+            $port = (int) $port;
             $result[$server['name']] = [$host, $port];
         }
         return $result;
