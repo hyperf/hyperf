@@ -29,4 +29,6 @@ interface LoadBalancerInterface
      * Remove a node from the node list.
      */
     public function removeNode(Node $node): bool;
+
+    public function refresh(callable $callback, int $tickMs = 5000);
 }

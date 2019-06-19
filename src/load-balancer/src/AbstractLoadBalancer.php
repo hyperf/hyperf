@@ -50,4 +50,12 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         }
         return false;
     }
+
+    public function refresh(callable $callback, int $tickMs = 5000)
+    {
+        swoole_timer_tick($tickMs, function () use ($callback) {
+            $nodes = call($callback);
+            is_array($nodes) && $this->setNodes($nodes);
+        });
+    }
 }
