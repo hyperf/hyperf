@@ -4,7 +4,7 @@
 
 Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下，但由于 Docker 虚拟化技术的发展，在 Windows 下也可以通过 Docker for Windows 来作为运行环境。   
 
-[hyperf-cloud\hyperf](https://github.com/hyperf-cloud/hyperf) 项目内已经为您准备好了一个 Dockerfile ，或直接基于已经构建好的 hyperf\hyperf 镜像来运行。   
+[hyperf-cloud\hyperf-docker](https://github.com/hyperf-cloud/hyperf-docker) 项目内已经为您准备好了一个 Dockerfile ，或直接基于已经构建好的 hyperf\hyperf 镜像来运行。   
 
 当您不想采用 Docker 来作为运行的环境基础时，你需要确保您的运行环境达到了以下的要求：   
 
