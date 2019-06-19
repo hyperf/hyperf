@@ -23,7 +23,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/di": "Require this component for annotation."
+        "hyperf/di": "Required to use annotations."
     },
     "autoload": {
         "files": [

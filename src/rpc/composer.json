@@ -12,7 +12,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~1.0.0"
+        "hyperf/contract": "~1.0.0",
+        "hyperf/utils": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

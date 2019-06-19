@@ -28,6 +28,10 @@
         "hyperf/redis": "~1.0.0"
     },
     "suggest": {
+        "hyperf/contract": "Required to use annotations.",
+        "hyperf/di": "Required to use annotations.",
+        "hyperf/http-server": "Required to use annotations.",
+        "hyperf/redis": "Required to use RedisStorage."
     },
     "autoload": {
         "files": [

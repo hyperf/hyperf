@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\RateLimit\Annotation;
 
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
