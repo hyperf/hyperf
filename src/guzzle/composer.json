@@ -24,7 +24,7 @@
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
+        "swoft/swoole-ide-helper": "~1.0.0",
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },

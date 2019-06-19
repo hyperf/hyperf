@@ -12,12 +12,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/framework": "dev-master",
-        "hyperf/database": "dev-master",
-        "hyperf/di": "dev-master",
-        "hyperf/event": "dev-master",
-        "hyperf/logger": "dev-master",
-        "hyperf/pool": "dev-master"
+        "hyperf/framework": "~1.0.0",
+        "hyperf/database": "~1.0.0",
+        "hyperf/di": "~1.0.0",
+        "hyperf/event": "~1.0.0",
+        "hyperf/logger": "~1.0.0",
+        "hyperf/pool": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

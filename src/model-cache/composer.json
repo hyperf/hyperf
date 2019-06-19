@@ -12,7 +12,7 @@
     "require": {
         "php": ">=7.2",
         "psr/simple-cache": "^1.0",
-        "hyperf/db-connection": "dev-master"
+        "hyperf/db-connection": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

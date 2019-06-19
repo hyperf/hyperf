@@ -13,8 +13,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/http-server": "dev-master",
-        "hyperf/rpc": "dev-master"
+        "hyperf/http-server": "~1.0.0",
+        "hyperf/rpc": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

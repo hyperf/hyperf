@@ -12,8 +12,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "dev-master",
-        "hyperf/event": "dev-master",
+        "hyperf/di": "~1.0.0",
+        "hyperf/event": "~1.0.0",
         "openzipkin/zipkin": "^1.3.2"
     },
     "require-dev": {

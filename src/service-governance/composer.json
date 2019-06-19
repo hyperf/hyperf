@@ -12,10 +12,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/consul": "dev-master",
-        "hyperf/contract": "dev-master",
-        "hyperf/event": "dev-master",
-        "hyperf/guzzle": "dev-master"
+        "hyperf/consul": "~1.0.0",
+        "hyperf/contract": "~1.0.0",
+        "hyperf/event": "~1.0.0",
+        "hyperf/guzzle": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

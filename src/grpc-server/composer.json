@@ -14,9 +14,9 @@
     "require": {
         "php": ">=7.2",
         "nikic/fast-route": "^1.3",
-        "hyperf/utils": "dev-master",
-        "hyperf/http-server": "dev-master",
-        "hyperf/grpc": "dev-master"
+        "hyperf/utils": "~1.0.0",
+        "hyperf/http-server": "~1.0.0",
+        "hyperf/grpc": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

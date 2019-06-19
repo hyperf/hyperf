@@ -13,7 +13,7 @@
     "require": {
         "php": ">=7.2",
         "doctrine/inflector": "^1.3",
-        "hyperf/contract": "dev-master"
+        "hyperf/contract": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

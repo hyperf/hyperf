@@ -13,7 +13,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/grpc": "dev-master"
+        "hyperf/grpc": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

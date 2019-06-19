@@ -12,9 +12,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/load-balancer": "dev-master",
-        "hyperf/rpc": "dev-master",
-        "hyperf/utils": "dev-master"
+        "hyperf/load-balancer": "~1.0.0",
+        "hyperf/rpc": "~1.0.0",
+        "hyperf/utils": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
