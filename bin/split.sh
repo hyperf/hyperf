@@ -36,6 +36,7 @@ remote di git@github.com:hyperf-cloud/di.git
 remote dispatcher git@github.com:hyperf-cloud/dispatcher.git
 remote elasticsearch git@github.com:hyperf-cloud/elasticsearch.git
 remote event git@github.com:hyperf-cloud/event.git
+remote exception-handler git@github.com:hyperf-cloud/exception-handler.git
 remote framework git@github.com:hyperf-cloud/framework.git
 remote grpc git@github.com:hyperf-cloud/grpc.git
 remote grpc-client git@github.com:hyperf-cloud/grpc-client.git
@@ -81,6 +82,7 @@ split 'src/di' di
 split 'src/dispatcher' dispatcher
 split 'src/elasticsearch' elasticsearch
 split 'src/event' event
+split 'src/exception-handler' exception-handler
 split 'src/framework' framework
 split 'src/grpc' grpc
 split 'src/grpc-client' grpc-client
