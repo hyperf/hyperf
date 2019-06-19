@@ -19,7 +19,6 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/container": "^1.0",
         "symfony/console": "^4.2",
         "hyperf/utils": "~1.0.0"
     },
@@ -30,7 +29,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/di": "Require this component for annotation."
+        "hyperf/di": "Required to use annotations."
     },
     "scripts": {
         "test": "./vendor/bin/phpunit -c phpunit.xml",

@@ -53,9 +53,11 @@ class Producer extends Builder
 
     private function injectMessageProperty(ProducerMessageInterface $producerMessage)
     {
-        /** @var \Hyperf\Amqp\Annotation\Producer $annotation */
-        $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
-        $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
-        $annotation->exchange && $producerMessage->setExchange($annotation->exchange);
+        if (class_exists(AnnotationCollector::class)) {
+            /** @var \Hyperf\Amqp\Annotation\Producer $annotation */
+            $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
+            $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
+            $annotation->exchange && $producerMessage->setExchange($annotation->exchange);
+        }
     }
 }
