@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -97,7 +97,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         /*
          * Cookies
          */
-        foreach ((array)$this->cookies as $domain => $paths) {
+        foreach ((array) $this->cookies as $domain => $paths) {
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {

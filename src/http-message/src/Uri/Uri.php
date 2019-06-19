@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -91,7 +91,7 @@ class Uri implements UriInterface
         if ($uri != '') {
             $parts = parse_url($uri);
             if ($parts === false) {
-                throw new \InvalidArgumentException("Unable to parse URI: ${uri}");
+                throw new \InvalidArgumentException("Unable to parse URI: {$uri}");
             }
 
             $this->applyParts($parts);

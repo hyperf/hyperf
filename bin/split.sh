@@ -36,6 +36,7 @@ remote di git@github.com:hyperf-cloud/di.git
 remote dispatcher git@github.com:hyperf-cloud/dispatcher.git
 remote elasticsearch git@github.com:hyperf-cloud/elasticsearch.git
 remote event git@github.com:hyperf-cloud/event.git
+remote exception-handler git@github.com:hyperf-cloud/exception-handler.git
 remote framework git@github.com:hyperf-cloud/framework.git
 remote grpc git@github.com:hyperf-cloud/grpc.git
 remote grpc-client git@github.com:hyperf-cloud/grpc-client.git
@@ -59,6 +60,7 @@ remote rpc-server git@github.com:hyperf-cloud/rpc-server.git
 remote server git@github.com:hyperf-cloud/server.git
 remote service-governance git@github.com:hyperf-cloud/service-governance.git
 remote swagger git@github.com:hyperf-cloud/swagger.git
+remote testing git@github.com:hyperf-cloud/testing.git
 remote tracer git@github.com:hyperf-cloud/tracer.git
 remote utils git@github.com:hyperf-cloud/utils.git
 
@@ -80,6 +82,7 @@ split 'src/di' di
 split 'src/dispatcher' dispatcher
 split 'src/elasticsearch' elasticsearch
 split 'src/event' event
+split 'src/exception-handler' exception-handler
 split 'src/framework' framework
 split 'src/grpc' grpc
 split 'src/grpc-client' grpc-client
@@ -102,6 +105,7 @@ split 'src/rpc-client' rpc-client
 split 'src/rpc-server' rpc-server
 split 'src/server' server
 split 'src/service-governance' service-governance
+split 'src/testing' testing
 split 'src/tracer' tracer
 split 'src/swagger' swagger
 split 'src/utils' utils

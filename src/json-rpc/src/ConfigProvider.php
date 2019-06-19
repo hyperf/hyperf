@@ -4,13 +4,17 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
+
+use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
+use Hyperf\JsonRpc\Listener\RegisterServiceListener;
+use Hyperf\ServiceGovernance\ServiceManager;
 
 class ConfigProvider
 {
@@ -22,6 +26,15 @@ class ConfigProvider
                 HttpServer::class => HttpServerFactory::class,
             ],
             'commands' => [
+            ],
+            'listeners' => [
+                RegisterProtocolListener::class,
+                value(function () {
+                    if (class_exists(ServiceManager::class)) {
+                        return RegisterServiceListener::class;
+                    }
+                    return null;
+                }),
             ],
             'scan' => [
                 'paths' => [

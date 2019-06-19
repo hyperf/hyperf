@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\DbConnection;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -17,8 +26,7 @@ class DatabaseMigrationRepositoryFactory
         $table = $config->get('databases.migrations', 'migrations');
         return make(DatabaseMigrationRepository::class, [
             'resolver' => $reslover,
-            'table' => $table
+            'table' => $table,
         ]);
     }
-
 }

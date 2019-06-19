@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -157,6 +157,7 @@ interface RequestInterface extends ServerRequestInterface
     /**
      * Retrieve a file from the request.
      *
+     * @param null|mixed $default
      * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
      */
     public function file(string $key, $default = null): ?UploadedFile;

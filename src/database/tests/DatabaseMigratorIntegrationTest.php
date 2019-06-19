@@ -1,8 +1,17 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Database;
 
-use Hyperf\Container\Container;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -18,6 +27,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class DatabaseMigratorIntegrationTest extends TestCase
 {
     protected $migrator;
@@ -51,7 +64,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $this->migrator = new Migrator(
             $repository = new DatabaseMigrationRepository($resolver, 'migrations'),
             $resolver,
-            new Filesystem
+            new Filesystem()
         );
 
         $output = m::mock(OutputStyle::class);
@@ -67,7 +80,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testBasicMigrationOfSingleFolder()
     {
         $schema = new Schema();
-        $ran = $this->migrator->run([__DIR__.'/migrations/one']);
+        $ran = $this->migrator->run([__DIR__ . '/migrations/one']);
 
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
@@ -79,10 +92,10 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testMigrationsCanBeRolledBack()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one']);
+        $this->migrator->run([__DIR__ . '/migrations/one']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
-        $rolledBack = $this->migrator->rollback([__DIR__.'/migrations/one']);
+        $rolledBack = $this->migrator->rollback([__DIR__ . '/migrations/one']);
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
 
@@ -93,10 +106,10 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testMigrationsCanBeReset()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one']);
+        $this->migrator->run([__DIR__ . '/migrations/one']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
-        $rolledBack = $this->migrator->reset([__DIR__.'/migrations/one']);
+        $rolledBack = $this->migrator->reset([__DIR__ . '/migrations/one']);
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
 
@@ -107,28 +120,28 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testNoErrorIsThrownWhenNoOutstandingMigrationsExist()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one']);
+        $this->migrator->run([__DIR__ . '/migrations/one']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
-        $this->migrator->run([__DIR__.'/migrations/one']);
+        $this->migrator->run([__DIR__ . '/migrations/one']);
     }
 
     public function testNoErrorIsThrownWhenNothingToRollback()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one']);
+        $this->migrator->run([__DIR__ . '/migrations/one']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
-        $this->migrator->rollback([__DIR__.'/migrations/one']);
+        $this->migrator->rollback([__DIR__ . '/migrations/one']);
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
-        $this->migrator->rollback([__DIR__.'/migrations/one']);
+        $this->migrator->rollback([__DIR__ . '/migrations/one']);
     }
 
     public function testMigrationsCanRunAcrossMultiplePaths()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one', __DIR__.'/migrations/two']);
+        $this->migrator->run([__DIR__ . '/migrations/one', __DIR__ . '/migrations/two']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
         $this->assertTrue($schema->hasTable('flights'));
@@ -137,11 +150,11 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testMigrationsCanBeRolledBackAcrossMultiplePaths()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one', __DIR__.'/migrations/two']);
+        $this->migrator->run([__DIR__ . '/migrations/one', __DIR__ . '/migrations/two']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
         $this->assertTrue($schema->hasTable('flights'));
-        $this->migrator->rollback([__DIR__.'/migrations/one', __DIR__.'/migrations/two']);
+        $this->migrator->rollback([__DIR__ . '/migrations/one', __DIR__ . '/migrations/two']);
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
         $this->assertFalse($schema->hasTable('flights'));
@@ -150,11 +163,11 @@ class DatabaseMigratorIntegrationTest extends TestCase
     public function testMigrationsCanBeResetAcrossMultiplePaths()
     {
         $schema = new Schema();
-        $this->migrator->run([__DIR__.'/migrations/one', __DIR__.'/migrations/two']);
+        $this->migrator->run([__DIR__ . '/migrations/one', __DIR__ . '/migrations/two']);
         $this->assertTrue($schema->hasTable('users'));
         $this->assertTrue($schema->hasTable('password_resets'));
         $this->assertTrue($schema->hasTable('flights'));
-        $this->migrator->reset([__DIR__.'/migrations/one', __DIR__.'/migrations/two']);
+        $this->migrator->reset([__DIR__ . '/migrations/one', __DIR__ . '/migrations/two']);
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
         $this->assertFalse($schema->hasTable('flights'));

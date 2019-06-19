@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -14,6 +14,7 @@ namespace Hyperf\Paginator;
 
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Paginator\Listener\PageResolverListener;
 
 class ConfigProvider
 {
@@ -25,6 +26,9 @@ class ConfigProvider
                 LengthAwarePaginatorInterface::class => LengthAwarePaginator::class,
             ],
             'commands' => [
+            ],
+            'listeners' => [
+                PageResolverListener::class,
             ],
             'scan' => [
                 'paths' => [

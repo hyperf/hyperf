@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -24,4 +24,11 @@ interface LoadBalancerInterface
      * @return $this
      */
     public function setNodes(array $nodes);
+
+    /**
+     * Remove a node from the node list.
+     */
+    public function removeNode(Node $node): bool;
+
+    public function refresh(callable $callback, int $tickMs = 5000);
 }

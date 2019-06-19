@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
+use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
@@ -23,9 +22,6 @@ use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
 
-/**
- * @Listener
- */
 class RegisterProtocolListener implements ListenerInterface
 {
     /**
@@ -41,7 +37,7 @@ class RegisterProtocolListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeServerStart::class,
+            BootApplication::class,
         ];
     }
 

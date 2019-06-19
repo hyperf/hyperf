@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -78,6 +78,14 @@ class RedisDriver extends Driver
         $message = new Message($job);
         $data = $this->packer->pack($message);
         return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
+    }
+
+    public function delete(JobInterface $job): bool
+    {
+        $message = new Message($job);
+        $data = $this->packer->pack($message);
+
+        return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);
     }
 
     public function pop(): array

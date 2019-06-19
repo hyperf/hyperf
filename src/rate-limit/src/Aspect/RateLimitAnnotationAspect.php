@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -63,8 +63,8 @@ class RateLimitAnnotationAspect implements AroundInterface
     }
 
     /**
-     * @throws RateLimitException Limit but without handle.
-     * @throws StorageException When the storage driver bootstrap failed.
+     * @throws RateLimitException limit but without handle
+     * @throws StorageException when the storage driver bootstrap failed
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {

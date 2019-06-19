@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -19,7 +19,11 @@ class Random extends AbstractLoadBalancer
      */
     public function select(array ...$parameters): Node
     {
+        if (empty($this->nodes)) {
+            throw new \RuntimeException('Cannot select any node from load balancer.');
+        }
         $key = array_rand($this->nodes);
-        return $this->nodes[$key];
+        $node = $this->nodes[$key];
+        return $node;
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -19,6 +19,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -86,7 +87,7 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Handle the response when found.
      *
-     * @return ResponseInterface|array|string|Arrayable|mixed
+     * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleFound(array $routes, ServerRequestInterface $request)
     {
@@ -108,7 +109,7 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Handle the response when cannot found any routes.
      *
-     * @return ResponseInterface|array|string|Arrayable|mixed
+     * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
@@ -118,7 +119,7 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Handle the response when the routes found but doesn't match any available methods.
      *
-     * @return ResponseInterface|array|string|Arrayable|mixed
+     * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
     {
@@ -159,7 +160,13 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 
-        return $this->response()->withBody(new SwooleStream((string)$response));
+        if ($response instanceof Jsonable) {
+            return $this->response()
+                ->withAddedHeader('content-type', 'application/json')
+                ->withBody(new SwooleStream((string) $response));
+        }
+
+        return $this->response()->withBody(new SwooleStream((string) $response));
     }
 
     /**
@@ -190,16 +197,16 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int)$arguments[$definition['name']] ?? null;
+                        return (int) $arguments[$definition['name']] ?? null;
                         break;
                     case 'float':
-                        return (float)$arguments[$definition['name']] ?? null;
+                        return (float) $arguments[$definition['name']] ?? null;
                         break;
                     case 'bool':
-                        return (bool)$arguments[$definition['name']] ?? null;
+                        return (bool) $arguments[$definition['name']] ?? null;
                         break;
                     case 'string':
-                        return (string)$arguments[$definition['name']] ?? null;
+                        return (string) $arguments[$definition['name']] ?? null;
                         break;
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {

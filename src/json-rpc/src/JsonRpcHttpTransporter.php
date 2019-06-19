@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -56,7 +56,6 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function send(string $data)
     {
         $node = $this->getNode();
-        $node->port = 9504;
         $uri = $node->host . ':' . $node->port;
         $schema = value(function () use ($node) {
             $schema = 'http';
@@ -74,11 +73,15 @@ class JsonRpcHttpTransporter implements TransporterInterface
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
+            'http_errors' => false,
             'body' => $data,
         ]);
         if ($response->getStatusCode() === 200) {
             return $response->getBody()->getContents();
+        } else {
+            $this->loadBalancer->removeNode($node);
         }
+        return '';
     }
 
     public function getClient(): Client

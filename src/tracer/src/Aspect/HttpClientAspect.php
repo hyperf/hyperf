@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -63,7 +63,7 @@ class HttpClientAspect implements AroundInterface
         $arguments = $proceedingJoinPoint->arguments;
         $method = $arguments['keys']['method'] ?? 'Null';
         $uri = $arguments['keys']['uri'] ?? 'Null';
-        $key = "HTTP Request [$method] $uri";
+        $key = "HTTP Request [{$method}] {$uri}";
         $span = $this->tracing->span($key);
         $span->tag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         $appendHeaders = [];

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ServiceGovernance\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -41,6 +42,11 @@ class RegisterServiceListener implements ListenerInterface
     private $serviceManager;
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
      * @var array
      */
     private $defaultLoggerContext
@@ -53,6 +59,7 @@ class RegisterServiceListener implements ListenerInterface
         $this->consulAgent = $container->get(ConsulAgent::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->serviceManager = $container->get(ServiceManager::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function listen(): array
@@ -68,23 +75,22 @@ class RegisterServiceListener implements ListenerInterface
     public function process(object $event)
     {
         $services = $this->serviceManager->all();
+        $servers = $this->getServers();
         foreach ($services as $serviceName => $paths) {
             foreach ($paths as $path => $service) {
-                if (! isset($service['publishTo'])) {
+                if (! isset($service['publishTo'], $service['server'])) {
                     continue;
                 }
                 switch ($service['publishTo']) {
                     case 'consul':
-                        // @TODO Retrieve the address and port automatically.
-                        $address = '127.0.0.1';
-                        $port = 9502;
+                        [$address, $port] = $servers[$service['server']];
                         $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
                         if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
                             $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
                             return;
                         }
-                        if ($service['ID']) {
-                            $nextId = $service['ID'];
+                        if (isset($service['id']) && $service['id']) {
+                            $nextId = $service['id'];
                         } else {
                             $nextId = $this->generateId($this->getLastServiceId($serviceName));
                         }
@@ -94,7 +100,12 @@ class RegisterServiceListener implements ListenerInterface
                             'Address' => $address,
                             'Port' => $port,
                             'Meta' => [
-                                'Protocol' => 'jsonrpc',
+                                'Protocol' => $service['protocol'],
+                            ],
+                            'Check' => [
+                                'DeregisterCriticalServiceAfter' => '90m',
+                                'HTTP' => "http://{$address}:{$port}/",
+                                'Interval' => '1s',
                             ],
                         ]);
                         if ($response->getStatusCode() === 200) {
@@ -149,7 +160,7 @@ class RegisterServiceListener implements ListenerInterface
             return false;
         }
         $services = $response->json();
-        $glue = '-';
+        $glue = ',';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
         foreach ($services as $serviceId => $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
@@ -166,5 +177,38 @@ class RegisterServiceListener implements ListenerInterface
             }
         }
         return false;
+    }
+
+    private function getServers(): array
+    {
+        $result = [];
+        $servers = $this->config->get('server.servers', []);
+        foreach ($servers as $server) {
+            if (! isset($server['name'], $server['host'], $server['port'])) {
+                continue;
+            }
+            if (! $server['name']) {
+                throw new \InvalidArgumentException('Invalid server name');
+            }
+            $host = $server['host'];
+            if (in_array($host, ['0.0.0.0', 'localhost'])) {
+                $host = $this->getInternalIp();
+            }
+            if (! filter_var($host, FILTER_VALIDATE_IP)) {
+                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
+            }
+            $port = $server['port'];
+            if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
+                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
+            }
+            $port = (int) $port;
+            $result[$server['name']] = [$host, $port];
+        }
+        return $result;
+    }
+
+    private function getInternalIp(): string
+    {
+        return gethostbyname(gethostname());
     }
 }

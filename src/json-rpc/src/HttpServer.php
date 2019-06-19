@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -19,6 +19,7 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
@@ -53,18 +54,25 @@ class HttpServer extends Server
     {
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
-        if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
-            throw new InvalidArgumentException('Invalid Json RPC request.');
+        if (! $this->isHealthCheck($psr7Request)) {
+            if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
+                throw new InvalidArgumentException('Invalid Json RPC request.');
+            }
+            $content = $this->packer->unpack($psr7Request->getBody()->getContents());
+            if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
+                throw new InvalidArgumentException('Invalid Json RPC request.');
+            }
         }
-        $content = $this->packer->unpack($psr7Request->getBody()->getContents());
-        if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
-            throw new InvalidArgumentException('Invalid Json RPC request.');
-        }
-        $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method']))
-            ->withParsedBody($content['params'])
-            ->withAttribute('data', $content);
+        $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
+            ->withParsedBody($content['params'] ?? null)
+            ->withAttribute('data', $content ?? []);
         Context::set(ServerRequestInterface::class, $psr7Request);
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
+    }
+
+    protected function isHealthCheck(RequestInterface $request)
+    {
+        return $request->getHeaderLine('user-agent') === 'Consul Health Check';
     }
 }

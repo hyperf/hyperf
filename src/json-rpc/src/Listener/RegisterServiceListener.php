@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -12,14 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\ServiceManager;
 
-/**
- * @Listener
- */
 class RegisterServiceListener implements ListenerInterface
 {
     /**
@@ -48,7 +44,7 @@ class RegisterServiceListener implements ListenerInterface
     public function process(object $event)
     {
         $annotation = $event->annotation;
-        if ($annotation->protocol !== 'jsonrpc') {
+        if (! in_array($annotation->protocol, ['jsonrpc', 'jsonrpc-http'])) {
             return;
         }
         $metadata = $event->toArray();

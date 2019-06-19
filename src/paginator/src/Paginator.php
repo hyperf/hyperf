@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -46,6 +46,11 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
         $this->path = $this->path !== '/' ? rtrim($this->path, '/') : $this->path;
 
         $this->setItems($items);
+    }
+
+    public function __toString(): string
+    {
+        return $this->toJson();
     }
 
     /**

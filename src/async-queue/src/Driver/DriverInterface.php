@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -25,6 +25,11 @@ interface DriverInterface
      * Push a delay job to queue.
      */
     public function delay(JobInterface $job, int $delay = 0): bool;
+
+    /**
+     * Delete a delay job to queue.
+     */
+    public function delete(JobInterface $job): bool;
 
     /**
      * Pop a job from queue.

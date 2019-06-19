@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -42,7 +42,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
     {
         parent::__construct($container, $serverName);
         $this->protocolManager = $container->get(ProtocolManager::class);
-        $protocolName = 'jsonrpc-http';
+        $protocolName = 'jsonrpc';
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
     }
@@ -56,9 +56,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
     protected function format($response, ServerRequestInterface $request): string
     {
-        if (is_string($response) || is_array($response)) {
-            $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
-        }
+        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
         return $this->packer->pack($response);
     }
 }

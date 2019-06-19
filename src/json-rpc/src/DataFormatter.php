@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -13,20 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Rpc\Contract\DataFormatterInterface;
-use Hyperf\Utils\Packer\JsonPacker;
 
 class DataFormatter implements DataFormatterInterface
 {
-    /**
-     * @var JsonPacker
-     */
-    private $packer;
-
-    public function __construct()
-    {
-        $this->packer = make(JsonPacker::class);
-    }
-
     public function formatRequest($data)
     {
         [$path, $params] = $data;

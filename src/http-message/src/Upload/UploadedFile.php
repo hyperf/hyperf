@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -83,19 +83,19 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         parent::__construct($tmpFile);
     }
 
-    public function getExtension(): ?string
-    {
-        $clientName = $this->getClientFilename();
-        $segments = explode('.', $clientName);
-        return end($segments) ?? null;
-    }
-
     /**
      * @return string
      */
     public function __toString()
     {
         return json_encode($this->toArray());
+    }
+
+    public function getExtension(): ?string
+    {
+        $clientName = $this->getClientFilename();
+        $segments = explode('.', $clientName);
+        return end($segments) ?? null;
     }
 
     /**
@@ -105,7 +105,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     public function isValid(): bool
     {
-        $isOk = UPLOAD_ERR_OK === $this->error;
+        $isOk = $this->error === UPLOAD_ERR_OK;
 
         return $isOk && is_uploaded_file($this->getPathname());
     }
@@ -278,8 +278,8 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     }
 
     /**
-     * @param null|int $size the file size in bytes or null if unknown.
-     * @throws \InvalidArgumentException If the size is not a interger.
+     * @param null|int $size the file size in bytes or null if unknown
+     * @throws \InvalidArgumentException if the size is not a interger
      */
     private function setSize($size): self
     {
