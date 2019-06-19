@@ -59,6 +59,7 @@ remote rpc-server git@github.com:hyperf-cloud/rpc-server.git
 remote server git@github.com:hyperf-cloud/server.git
 remote service-governance git@github.com:hyperf-cloud/service-governance.git
 remote swagger git@github.com:hyperf-cloud/swagger.git
+remote testing git@github.com:hyperf-cloud/testing.git
 remote tracer git@github.com:hyperf-cloud/tracer.git
 remote utils git@github.com:hyperf-cloud/utils.git
 
@@ -102,6 +103,7 @@ split 'src/rpc-client' rpc-client
 split 'src/rpc-server' rpc-server
 split 'src/server' server
 split 'src/service-governance' service-governance
+split 'src/testing' testing
 split 'src/tracer' tracer
 split 'src/swagger' swagger
 split 'src/utils' utils
