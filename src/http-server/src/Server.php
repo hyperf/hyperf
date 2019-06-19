@@ -105,19 +105,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! $psr7Response instanceof Psr7Response) {
+            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
             $psr7Response->send();
         }
-    }
-
-    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
-    {
-        // Initialize PSR-7 Request and Response objects.
-        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
-        return [$psr7Request, $psr7Response];
     }
 
     public function getServerName(): string
@@ -132,5 +124,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         return $this;
+    }
+
+    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    {
+        // Initialize PSR-7 Request and Response objects.
+        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        return [$psr7Request, $psr7Response];
     }
 }
