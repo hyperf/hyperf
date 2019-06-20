@@ -66,12 +66,14 @@ class RateLimitController
     }
 }
 ``` 
-配置优先级 `默认配置 < 配置文件 < 类注解 < 方法注解`
+配置优先级 `方法注解 > 类注解 > 配置文件 > 默认配置`
 
 ## 触发限流
 当限流被触发时, 默认会抛出 `Hyperf\RateLimit\Exception\RateLimitException` 异常
 
-或者配置 `limitCallback` 限流回调来处理。例如:
+可以通过[异常处理](zh/exception-handler.md)或者配置 `limitCallback` 限流回调处理。
+
+例如:
 ```php
 <?php
 
@@ -84,7 +86,7 @@ use Hyperf\RateLimit\Annotation\RateLimit;
 
 /**
  * @Controller(prefix="rate-limit")
- * @RateLimit(limitCallback={RateLimitController, 'limitCallback'})
+ * @RateLimit(limitCallback={RateLimitController::class, 'limitCallback'})
  */
 class RateLimitController
 {
@@ -97,10 +99,12 @@ class RateLimitController
         return ["QPS 1, 峰值3"];
     }
     
-    public function limitCallback(float $seconds, ProceedingJoinPoint $proceedingJoinPoint)
+    public static function limitCallback(float $seconds, ProceedingJoinPoint $proceedingJoinPoint)
     {
-        
+        // $seconds 下次生成Token 的间隔, 单位为秒
+        // $proceedingJoinPoint 此次请求执行的切入点
+        // 可以通过调用 `$proceedingJoinPoint->process()` 继续执行或者自行处理
+        return $proceedingJoinPoint->process();
     }
 }
 ```
-回调方法中的 `$seconds` 参数是下次生成Token 的间隔, `$proceedingJoinPoint` 则是此次请求要执行的切入点, 可以通过调用 `$proceedingJoinPoint->process()` 继续执行或者自行处理。

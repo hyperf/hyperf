@@ -25,7 +25,7 @@ Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在
 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目是我们已经为您准备好的一个骨架项目，内置了一些常用的组件及相关配置的文件及结构，是一个可以快速用于业务开发的 Web 项目基础。   
 执行下面的命令可以于当前所在位置创建一个 hyperf-skeleton 项目
 ```
-composer create hyperf/hyperf-skeleton 
+composer create-project hyperf/hyperf-skeleton 
 ```
 
 ## 存在兼容性的扩展
