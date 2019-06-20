@@ -39,12 +39,13 @@
         "monolog/monolog": "^1.24"
     },
     "require-dev": {
+        "doctrine/common": "@stable",
+        "friendsofphp/php-cs-fixer": "^2.14",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
         "php-di/php-di": "^6.0",
-        "doctrine/common": "@stable",
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "phpunit/phpunit": "^7.0.0",
+        "swoft/swoole-ide-helper": "^4.3"
     },
     "replace": {
         "hyperf/amqp": "self.version",

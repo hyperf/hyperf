@@ -371,6 +371,8 @@ abstract class Command extends SymfonyCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($this->coroutine) {
+            // Enable Coroutine in co environment.
+            \Swoole\Runtime::enableCoroutine(true);
             go(function () {
                 call([$this, 'handle']);
             });
