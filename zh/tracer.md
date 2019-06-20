@@ -77,7 +77,7 @@ return [
 
 ## 接入阿里云链路追踪服务
 
-当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，顾可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
+当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
 # Reference
 - [Opentracing](https://opentracing.io)
