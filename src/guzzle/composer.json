@@ -33,6 +33,11 @@
     "suggest": {
         "hyperf/pool": "Required to use pool handler."
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
     "scripts": {
         "test": "./vendor/bin/phpunit -c phpunit.xml",
         "co_test": "php tests/co_phpunit.php -c phpunit.xml"

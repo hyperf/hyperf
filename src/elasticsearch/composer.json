@@ -27,6 +27,11 @@
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
     "scripts": {
         "test": "./vendor/bin/phpunit -c phpunit.xml",
         "co_test": "php tests/co_phpunit.php -c phpunit.xml"
