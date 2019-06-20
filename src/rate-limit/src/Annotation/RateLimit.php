@@ -39,7 +39,7 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var callable
      */
-    public $limitCallback;
+    public $limitCallback = [];
 
     /**
      * @var callable|string
@@ -49,5 +49,5 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var int
      */
-    public $waitTimeout = 3;
+    public $waitTimeout = 1;
 }
