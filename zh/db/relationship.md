@@ -156,6 +156,62 @@ return $this->belongsToMany(Role::class, 'role_user');
 return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
 ```
 
+#### 获取中间表字段
+
+就如你刚才所了解的一样，多对多的关联关系需要一个中间表来提供支持， `Hyperf` 提供了一些有用的方法来和这张表进行交互。例如，假设我们的 `User` 对象关联了多个 `Role` 对象。在获得这些关联对象后，可以使用模型的 `pivot` 属性访问中间表的数据：
+
+```php
+$user = User::find(1);
+
+foreach ($user->roles as $role) {
+    echo $role->pivot->created_at;
+}
+```
+
+需要注意的是，我们获取的每个 `Role` 模型对象，都会被自动赋予 `pivot` 属性，它代表中间表的一个模型对象，并且可以像其他的 `Hyperf` 模型一样使用。
+
+默认情况下，`pivot` 对象只包含两个关联模型的主键，如果你的中间表里还有其他额外字段，你必须在定义关联时明确指出：
+
+```php
+return $this->belongsToMany(Role::class)->withPivot('column1', 'column2');
+```
+
+如果你想让中间表自动维护 `created_at` 和 `updated_at` 时间戳，那么在定义关联时附加上 `withTimestamps` 方法即可：
+
+```php
+return $this->belongsToMany(Role::class)->withTimestamps();
+```
+
+#### 自定义 `pivot` 属性名称
+
+如前所述，来自中间表的属性可以使用 `pivot` 属性访问。但是，你可以自由定制此属性的名称，以便更好的反应其在应用中的用途。
+
+例如，如果你的应用中包含可能订阅的用户，则用户与博客之间可能存在多对多的关系。如果是这种情况，你可能希望将中间表访问器命名为 `subscription` 取代 `pivot` 。这可以在定义关系时使用 `as` 方法完成：
+
+```php
+return $this->belongsToMany(Podcast::class)->as('subscription')->withTimestamps();
+```
+
+一旦定义完成，你可以使用自定义名称访问中间表数据：
+
+```php
+$users = User::with('podcasts')->get();
+
+foreach ($users->flatMap->podcasts as $podcast) {
+    echo $podcast->subscription->created_at;
+}
+```
+
+#### 通过中间表过滤关系
+
+在定义关系时，你还可以使用 `wherePivot` 和 `wherePivotIn` 方法来过滤 `belongsToMany` 返回的结果：
+
+```php
+return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
+
+return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
+```
+
 
 ## 预加载
 
