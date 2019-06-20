@@ -64,7 +64,6 @@
   * [ETCD 协程客户端](zh/etcd.md)
   * [AMQP](zh/amqp.md)
   * [异步队列](zh/async-queue.md)
-  * [内存操作](zh/memory.md)
   * [自定义进程](zh/process.md)
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
