@@ -73,11 +73,11 @@ return [
 
 ## 更换采样器
 
-默认的采样器为所有请求都记录调用链，这对性能会存在一定程度上的影响，尤其是内存的占用，顾我们只需要在我们希望的时候才对调用链进行追踪，那么我们就需要对采样器进行更换，更换也很简单，只需对配置项 `opentracing.zipkin.sampler` 对应的值改为您的采样器对象实例即可，只要您的采样器对象实现了 `Zipkin\Sampler` 接口类即可。
+默认的采样器为所有请求都记录调用链，这对性能会存在一定程度上的影响，尤其是内存的占用，所以我们只需要在我们希望的时候才对调用链进行追踪，那么我们就需要对采样器进行更换，更换也很简单，只需对配置项 `opentracing.zipkin.sampler` 对应的值改为您的采样器对象实例即可，只要您的采样器对象实现了 `Zipkin\Sampler` 接口类即可。
 
 ## 接入阿里云链路追踪服务
 
-当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，顾可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
+当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
 # Reference
 - [Opentracing](https://opentracing.io)

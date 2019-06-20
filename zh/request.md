@@ -256,13 +256,13 @@ if ($request->file('photo')->isValid()) {
 // 该路径为上传文件的临时路径
 $path = $request->file('photo')->getPath();
 
-// 由于 Swoole 上传文件的 tmp_name 并没有保持文件原名，顾这个方法已重写为获取原文件名的后缀名
+// 由于 Swoole 上传文件的 tmp_name 并没有保持文件原名，所以这个方法已重写为获取原文件名的后缀名
 $extension = $request->file('photo')->getExtension();
 ```
 
 ### 存储上传文件
 
-上传的文件在未手动储存之前，都是存在一个临时位置上的，如果您没有对该文件进行储存处理，则在请求结束后会从临时位置上移除，顾我们可能需要对文件进行持久化储存处理，通过 `moveTo(string $targetPath): void` 将临时文件移动到 `$targetPath` 位置持久化储存，代码示例如下：
+上传的文件在未手动储存之前，都是存在一个临时位置上的，如果您没有对该文件进行储存处理，则在请求结束后会从临时位置上移除，所以我们可能需要对文件进行持久化储存处理，通过 `moveTo(string $targetPath): void` 将临时文件移动到 `$targetPath` 位置持久化储存，代码示例如下：
 
 ```php
 $file = $request->file('photo');

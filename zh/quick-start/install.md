@@ -30,7 +30,7 @@ composer create-project hyperf/hyperf-skeleton
 
 ## 存在兼容性的扩展
 
-由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，顾在与不少扩展都仍存在兼容性的问题。   
+由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，所以在与不少扩展都仍存在兼容性的问题。   
 以下扩展（包括但不限于）都会造成一定的兼容性问题，不能与之共用或共存：
 
 - xhprof
