@@ -2,5 +2,5 @@
 
 ## composer
 ```
-composer create hyperf/hyperf-skeleton 
+composer create-project hyperf/hyperf-skeleton 
 ```
