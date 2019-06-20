@@ -43,7 +43,8 @@
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
         "php-di/php-di": "^6.0",
-        "doctrine/common": "@stable"
+        "doctrine/common": "@stable",
+        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "replace": {
         "hyperf/amqp": "self.version",
@@ -184,7 +185,8 @@
     "scripts": {
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "license-check": "docheader check src/ test/"
+        "license-check": "docheader check src/ test/",
+        "cs-fix": "php-cs-fixer fix $1"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

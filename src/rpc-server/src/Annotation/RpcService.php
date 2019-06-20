@@ -28,15 +28,15 @@ class RpcService extends AbstractAnnotation
     /**
      * @var string
      */
-    public $server = 'rpc';
+    public $server = 'jsonrpc-http';
 
     /**
      * @var string
      */
-    public $protocol = 'jsonrpc';
+    public $protocol = 'jsonrpc-http';
 
     /**
      * @var string
      */
-    public $publishTo = 'consul';
+    public $publishTo = '';
 }

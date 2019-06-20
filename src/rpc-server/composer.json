@@ -13,8 +13,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/http-server": "dev-master",
-        "hyperf/rpc": "dev-master"
+        "hyperf/http-server": "~1.0.0",
+        "hyperf/rpc": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -23,7 +23,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/di": "Require this component for annotation."
+        "hyperf/di": "Required to use annotations."
     },
     "autoload": {
         "files": [

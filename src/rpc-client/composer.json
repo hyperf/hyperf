@@ -15,7 +15,9 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/utils": "dev-master"
+        "hyperf/rpc": "~1.0.0",
+        "hyperf/load-balancer": "~1.0.0",
+        "hyperf/utils": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -25,7 +27,8 @@
     },
     "suggest": {
         "hyperf/consul": "For fetch the nodes info from consul.",
-        "hyperf/di": "For better container experience."
+        "hyperf/di": "For better container experience.",
+        "hyperf/pool": "Required to use connection pool."
     },
     "autoload": {
         "files": [

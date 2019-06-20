@@ -30,16 +30,6 @@ class Consumer extends Builder
     protected $status = true;
 
     /**
-     * @var array
-     */
-    protected $signals
-        = [
-            SIGQUIT,
-            SIGTERM,
-            SIGTSTP,
-        ];
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -53,20 +43,8 @@ class Consumer extends Builder
         $this->logger = $logger;
     }
 
-    public function signalHandler(): void
-    {
-        $this->status = false;
-    }
-
     public function consume(ConsumerMessageInterface $consumerMessage): void
     {
-        // @TODO Support coroutine.
-        pcntl_async_signals(true);
-
-        foreach ($this->signals as $signal) {
-            pcntl_signal($signal, [$this, 'signalHandler']);
-        }
-
         $pool = $this->getConnectionPool($consumerMessage->getPoolName());
         /** @var \Hyperf\Amqp\Connection $connection */
         $connection = $pool->get();
@@ -104,7 +82,7 @@ class Consumer extends Builder
             }
         );
 
-        while ($this->status && count($channel->callbacks) > 0) {
+        while (count($channel->callbacks) > 0) {
             $channel->wait();
         }
 

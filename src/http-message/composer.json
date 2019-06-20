@@ -10,10 +10,11 @@
         "http-message"
     ],
     "require": {
-        "psr/http-message": "^1.0"
+        "psr/http-message": "^1.0",
+        "zendframework/zend-mime": "^2.7"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
+        "swoft/swoole-ide-helper": "~1.0.0",
         "phpunit/phpunit": "^5.7"
     },
     "autoload": {

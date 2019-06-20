@@ -19,11 +19,11 @@
     },
     "require": {
         "php": ">=7.0",
-        "hyperf/guzzle": "dev-master",
+        "hyperf/guzzle": "~1.0.0",
         "elasticsearch/elasticsearch": "^6.1"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
+        "swoft/swoole-ide-helper": "~1.0.0",
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },

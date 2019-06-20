@@ -21,10 +21,10 @@
         "php": ">=7.2",
         "psr/container": "^1.0",
         "phpunit/phpunit": "^7.0",
-        "hyperf/contract": "dev-master",
-        "hyperf/http-message": "dev-master",
-        "hyperf/http-server": "dev-master",
-        "hyperf/utils": "dev-master"
+        "hyperf/contract": "~1.0.0",
+        "hyperf/http-message": "~1.0.0",
+        "hyperf/http-server": "~1.0.0",
+        "hyperf/utils": "~1.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

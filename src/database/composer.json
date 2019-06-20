@@ -11,8 +11,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "dev-master",
-        "hyperf/paginator": "dev-master",
+        "hyperf/utils": "~1.0.0",
+        "hyperf/paginator": "~1.0.0",
         "psr/container": "^1.0",
         "nesbot/carbon": "^2.0",
         "psr/event-dispatcher": "^1.0"
