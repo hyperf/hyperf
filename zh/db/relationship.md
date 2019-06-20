@@ -76,6 +76,36 @@ foreach ($books as $book) {
 $book = User::query()->find(1)->books()->where('title', '一个月精通Hyperf框架')->first();
 ```
 
+### 一对多（反向）
+
+现在，我们已经能获得一个作者的所有作品，接着再定义一个通过书获得其作者的关联关系。这个关联是 `hasMany` 关联的反向关联，需要在子级模型中使用 `belongsTo` 方法定义它：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Hyperf\DbConnection\Model\Model;
+
+class Book extends Model
+{
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+}
+```
+
+这个关系定义好以后，我们就可以通过访问 `Book` 模型的 author 这个『动态属性』来获取关联的 `User` 模型了：
+
+```php
+$book = Book::find(1);
+
+echo $book->author->name;
+```
+
 ## 预加载
 
 当以属性方式访问 `Hyperf` 关联时，关联数据「懒加载」。这着直到第一次访问属性时关联数据才会被真实加载。不过 `Hyperf` 能在查询父模型时「预先载入」子关联。预加载可以缓解 N + 1 查询问题。为了说明 N + 1 查询问题，考虑 `User` 模型关联到 `Role` 的情形：
