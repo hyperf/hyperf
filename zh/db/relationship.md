@@ -106,6 +106,57 @@ $book = Book::find(1);
 echo $book->author->name;
 ```
 
+### 多对多
+
+多对多关联比 `hasOne` 和 `hasMany` 关联稍微复杂些。举个例子，一个用户可以拥有很多种角色，同时这些角色也被其他用户共享。例如，许多用户可能都有 「管理员」 这个角色。要定义这种关联，需要三个数据库表： `users`，`roles` 和 `role_user`。`role_user` 表的命名是由关联的两个模型按照字母顺序来的，并且包含了 `user_id` 和 `role_id` 字段。
+
+多对多关联通过调用 `belongsToMany` 这个内部方法返回的结果来定义，例如，我们在 `User` 模型中定义 `roles` 方法：
+
+```php
+<?php
+
+namespace App;
+
+use Hyperf\DbConnection\Model\Model;
+
+class User extends Model
+{
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+}
+```
+
+一旦关联关系被定义后，你可以通过 `roles` 动态属性获取用户角色：
+
+```php
+$user = User::query()->find(1);
+
+foreach ($user->roles as $role) {
+    //
+}
+```
+
+当然，像其它所有关联模型一样，你可以使用 `roles` 方法，利用链式调用对查询语句添加约束条件：
+
+```php
+$roles = User::find(1)->roles()->orderBy('name')->get();
+```
+
+正如前面所提到的，为了确定关联连接表的表名，`Hyperf` 会按照字母顺序连接两个关联模型的名字。当然，你也可以不使用这种约定，传递第二个参数到 belongsToMany 方法即可：
+
+```php
+return $this->belongsToMany(Role::class, 'role_user');
+```
+
+除了自定义连接表的表名，你还可以通过传递额外的参数到 `belongsToMany` 方法来定义该表中字段的键名。第三个参数是定义此关联的模型在连接表里的外键名，第四个参数是另一个模型在连接表里的外键名：
+
+```php
+return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+```
+
+
 ## 预加载
 
 当以属性方式访问 `Hyperf` 关联时，关联数据「懒加载」。这着直到第一次访问属性时关联数据才会被真实加载。不过 `Hyperf` 能在查询父模型时「预先载入」子关联。预加载可以缓解 N + 1 查询问题。为了说明 N + 1 查询问题，考虑 `User` 模型关联到 `Role` 的情形：
