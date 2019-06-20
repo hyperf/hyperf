@@ -56,7 +56,7 @@ class DbQueryExecutedListener implements ListenerInterface
                 }
             }
 
-            $message = sprintf('[%s]%s', $event->time, $sql);
+            $message = sprintf('[%s][%s]%s', $event->connectionName, $event->time, $sql);
             $this->logger->debug($message);
         }
     }
