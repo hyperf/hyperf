@@ -10,10 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\WebSocketServer;
+namespace Hyperf\Contract;
 
-use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Swoole\Server;
+use Swoole\Websocket\Frame;
 
-class CoreMiddleware extends HttpCoreMiddleware
+interface OnMessageInterface
 {
+    public function onMessage(Server $server, Frame $frame): void;
 }

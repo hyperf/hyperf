@@ -12,16 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
-use Hyperf\Contract\WebSocketServerInteface;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Server\Request as Psr7Request;
+use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
-use Swoole\Websocket\Frame;
+use Throwable;
 
-class Server implements MiddlewareInitializerInterface, OnRequestInterface, WebSocketServerInteface
+class Server implements MiddlewareInitializerInterface, OnRequestInterface
 {
     /**
      * @var ContainerInterface
@@ -34,9 +42,14 @@ class Server implements MiddlewareInitializerInterface, OnRequestInterface, WebS
     protected $coreMiddleware;
 
     /**
+     * @var array
+     */
+    protected $middlewares = [];
+
+    /**
      * @var string
      */
-    protected $serverName;
+    protected $serverName = 'websocket';
 
     /**
      * @var HttpDispatcher
@@ -54,24 +67,44 @@ class Server implements MiddlewareInitializerInterface, OnRequestInterface, WebS
     {
         $this->serverName = $serverName;
         $this->coreMiddleware = new CoreMiddleware($this->container, $serverName);
+
+        $config = $this->container->get(ConfigInterface::class);
+        $this->middlewares = $config->get('middlewares.' . $serverName, []);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
+            // HttpExceptionHandler::class,
+        ]);
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
+        try {
+            /**
+             * @var ServerRequestInterface
+             * @var ResponseInterface $psr7Response
+             */
+            [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
+
+            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        } catch (Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
+            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        } finally {
+            // Send the Response to client.
+            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+                return;
+            }
+            $psr7Response->send();
+        }
     }
 
-    public function onOpen(\Swoole\WebSocket\Server $server, SwooleRequest $request): void
+    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
     {
-        // TODO: Implement onOpen() method.
-    }
-
-    public function onMessage(\Swoole\WebSocket\Server $server, Frame $frame): void
-    {
-        // TODO: Implement onMessage() method.
-    }
-
-    public function onClose(\Swoole\WebSocket\Server $server, int $fd, int $reactorId): void
-    {
-        // TODO: Implement onClose() method.
+        // Initialize PSR-7 Request and Response objects.
+        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        return [$psr7Request, $psr7Response];
     }
 }

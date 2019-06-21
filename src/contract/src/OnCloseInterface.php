@@ -12,15 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-use Swoole\WebSocket\Server;
-use Swoole\Http\Request;
-use Swoole\Websocket\Frame;
+use Swoole\Server;
 
-interface WebSocketServerInteface
+interface OnCloseInterface
 {
-    public function onOpen(Server $server, Request $request): void;
-
-    public function onMessage(Server $server, Frame $frame): void;
-
     public function onClose(Server $server, int $fd, int $reactorId): void;
 }
