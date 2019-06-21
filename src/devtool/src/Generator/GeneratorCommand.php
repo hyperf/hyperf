@@ -117,7 +117,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function getPath($name)
     {
-        return BASE_PATH . '/' . str_replace('\\', '/', $name) . '.php';
+        return BASE_PATH . '/' . str_replace('\\', '/', lcfirst($name)) . '.php';
     }
 
     /**
