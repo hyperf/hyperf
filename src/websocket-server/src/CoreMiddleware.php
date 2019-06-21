@@ -64,7 +64,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleFound(array $routes, ServerRequestInterface $request)
     {
-        [$controller,] = $this->prepareHandler($routes[1]);
+        [$controller, $method] = $this->prepareHandler($routes[1]);
         if (! $this->container->has($controller)) {
             throw new WebSocketHandeShakeException('Router not exist.');
         }
@@ -80,6 +80,6 @@ class CoreMiddleware extends HttpCoreMiddleware
             $response = $response->withHeader(Security::SEC_WEBSOCKET_PROTOCOL, $wsProtocol);
         }
 
-        return $response;
+        return $response->withAttribute('class', $controller)->withAttribute('method', $method);
     }
 }

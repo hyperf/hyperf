@@ -14,8 +14,9 @@ namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnHandShakeInterface;
-use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
@@ -23,8 +24,8 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\MiddlewareManager;
-use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
+use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Container\ContainerInterface;
@@ -34,9 +35,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
-use Swoole\WebSocket\Server as WebSocketServer;
+use Swoole\Websocket\Frame;
 
-class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnOpenInterface
+class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
     /**
      * @var ContainerInterface
@@ -108,6 +109,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
+            $class = $psr7Response->getAttribute('class');
+            $method = $psr7Response->getAttribute('method');
+
+            FdCollector::set($fd, $class, $method);
+
             $psr7Response->send();
         } catch (\Throwable $exception) {
             $this->logger->warning($this->container->get(FormatterInterface::class)->format($exception));
@@ -115,17 +121,21 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    /**
-     * @param WebSocketServer $server
-     * @param Request $request
-     */
-    public function onOpen(\Swoole\Server $server, Request $request): void
+    public function onMessage(\Swoole\Server $server, Frame $frame): void
     {
-        $request = $this->initRequest($request);
+        $fdObj = FdCollector::get($frame->fd);
 
-        $factory = $this->container->get(DispatcherFactory::class);
+        $class = $this->container->get($fdObj->class);
+        $method = $fdObj->method;
 
-        $dispatcher = $factory->getDispatcher($this->serverName);
+        $class->{$method}($server, $frame);
+    }
+
+    public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void
+    {
+        $this->logger->debug("WebSocket: fd[{$fd}] close a active connection.");
+
+        FdCollector::del($fd);
     }
 
     /**
