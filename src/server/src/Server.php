@@ -181,11 +181,11 @@ class Server implements ServerInterface
             }
             if (is_array($callback)) {
                 [$className, $method] = $callback;
-                if (array_key_exists($className, $this->onRequestCallbacks)) {
-                    $this->logger->warning(sprintf('%s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$callback[0]], $serverName));
+                if (array_key_exists($className . $method, $this->onRequestCallbacks)) {
+                    $this->logger->warning(sprintf('%s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
                 }
 
-                $this->onRequestCallbacks[$className] = $serverName;
+                $this->onRequestCallbacks[$className . $method] = $serverName;
                 $class = $this->container->get($className);
                 if (method_exists($class, 'setServerName')) {
                     // Override the server name.
