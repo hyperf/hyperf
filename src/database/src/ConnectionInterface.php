@@ -21,8 +21,9 @@ interface ConnectionInterface
 {
     /**
      * Begin a fluent query against a database table.
+     * @param string|Expression $table
      */
-    public function table(string $table): Builder;
+    public function table($table): Builder;
 
     /**
      * Get a new raw query expression.
