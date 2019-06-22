@@ -33,3 +33,22 @@ class MyConnectionPool extends Pool
 }
 ``` 
 这样便可以通过对实例化后的 `MyConnectionPool` 对象调用 `get(): ConnectionInterface` 和 `release(ConnectionInterface $connection): void` 方法执行连接的取用和归还了。   
+
+## SimplePool
+
+这里框架提供了一个非常简单的连接池实现。
+
+```php
+use Hyperf\Pool\SimplePool\PoolFactory;
+use Swoole\Coroutine\Http\Client;
+
+$factory = $container->get(PoolFactory::class);
+
+$pool = $factory->get('your pool name', function () use ($host, $port, $ssl) {
+    return new Client($host, $port, $ssl);
+}, $this->option);
+
+$connection = $pool->get();
+
+$client = $connection->getConnection(); // 即上述 Client.
+```
