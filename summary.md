@@ -31,6 +31,7 @@
   * [缓存](zh/cache.md)
   * [日志](zh/logger.md)
   * [分页器](zh/paginator.md)
+  * [命令行](zh/command.md)
   * [自动化测试](zh/testing.md)
   
 * 数据库模型
