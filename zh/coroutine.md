@@ -68,9 +68,9 @@ Swoole 协程也是对异步回调的一种解决方案，在 `PHP` 语言下，
 在 `Swoole` 的持久化应用下，一个 `Worker` 内的全局变量是 `Worker` 内共享的，而从协程的介绍我们可以知道同一个 `Worker` 内还会存在多个协程并存在协程切换，也就意味着一个 `Worker` 会在一个时间周期内同时处理多个协程（或直接理解为请求）的代码，也就意味着如果使用了全局变量来储存状态可能会被多个协程所使用，也就是说不同的请求之间可能会混淆数据，这里的全局变量指的是 `$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER`等`$_`开头的变量、`global` 变量，以及 `static` 静态属性。    
 那么当我们需要使用到这些特性时应该怎么办？   
 
-对于全局变量，均是跟随着一个 `请求(Request)` 而产生的，而 `Hyperf` 的 `请求(Request)/响应(Response)` 是由 [hyperf/http-message](https://github.com/hyperf-cloud/http-message) 通过实现 [PSR-7](https://www.php-fig.org/psr/psr-7/) 处理的，顾所有的全局变量均可以在 `请求(Request)` 对象中得到相关的值；   
+对于全局变量，均是跟随着一个 `请求(Request)` 而产生的，而 `Hyperf` 的 `请求(Request)/响应(Response)` 是由 [hyperf/http-message](https://github.com/hyperf-cloud/http-message) 通过实现 [PSR-7](https://www.php-fig.org/psr/psr-7/) 处理的，故所有的全局变量均可以在 `请求(Request)` 对象中得到相关的值；   
 
-对于 `global` 变量和 `static` 变量，在 `PHP-FPM` 模式下，本质都是存活于一个请求声明周期内的，而在 `Hyperf` 内因为是 `CLI` 应用，会存在 `全局周期` 和 `请求周期(协程周期)` 两种长生命周期。   
+对于 `global` 变量和 `static` 变量，在 `PHP-FPM` 模式下，本质都是存活于一个请求生命周期内的，而在 `Hyperf` 内因为是 `CLI` 应用，会存在 `全局周期` 和 `请求周期(协程周期)` 两种长生命周期。   
 - 全局周期，我们只需要创建一个静态变量供全局调用即可，静态变量意味着在服务启动后，任意协程和代码逻辑均共享此静态变量内的数据，也就意味着存放的数据不能是特别服务于某一个请求或某一个协程；
 - 协程周期，由于 `Hyperf` 会为每个请求自动创建一个协程来处理，那么一个协程周期在此也可以理解为一个请求周期，在协程内，所有的状态数据均应存放于 `Hyperf\Utils\Context` 类中，通过该类的 `get`、`set` 来读取和存储任意结构的数据，这个 `Context(协程上下文)` 类在执行任意协程时读取或存储的数据都是仅限对应的协程的，同时在协程结束时也会自动销毁相关的上下文数据。
 
