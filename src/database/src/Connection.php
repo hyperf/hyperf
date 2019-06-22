@@ -230,7 +230,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Begin a fluent query against a database table.
-     * @param string|Expression $table
+     * @param Expression|string $table
      */
     public function table($table): Builder
     {
