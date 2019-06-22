@@ -39,6 +39,8 @@ class MyConnectionPool extends Pool
 这里框架提供了一个非常简单的连接池实现。
 
 ```php
+<?php
+
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Swoole\Coroutine\Http\Client;
 
@@ -46,9 +48,16 @@ $factory = $container->get(PoolFactory::class);
 
 $pool = $factory->get('your pool name', function () use ($host, $port, $ssl) {
     return new Client($host, $port, $ssl);
-}, $this->option);
+}, [
+    'max_connections' => 50
+]);
 
 $connection = $pool->get();
 
 $client = $connection->getConnection(); // 即上述 Client.
+
+// Do somethind.
+
+$connection->release();
+
 ```
