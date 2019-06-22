@@ -32,7 +32,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Request;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Websocket\Frame;
@@ -110,9 +109,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
             $class = $psr7Response->getAttribute('class');
-            $method = $psr7Response->getAttribute('method');
 
-            FdCollector::set($fd, $class, $method);
+            FdCollector::set($fd, $class);
 
             $psr7Response->send();
         } catch (\Throwable $exception) {
@@ -126,9 +124,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $fdObj = FdCollector::get($frame->fd);
 
         $class = $this->container->get($fdObj->class);
-        $method = $fdObj->method;
 
-        $class->{$method}($server, $frame);
+        if (! $class instanceof OnMessageInterface) {
+            $this->logger->warning("{$class} is not instanceof " . OnMessageInterface::class);
+            return;
+        }
+
+        $class->onMessage($server, $frame);
     }
 
     public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void

@@ -24,15 +24,9 @@ class Fd
      */
     public $class;
 
-    /**
-     * @var string
-     */
-    public $method;
-
-    public function __construct(int $fd, string $class, string $method)
+    public function __construct(int $fd, string $class)
     {
         $this->fd = $fd;
         $this->class = $class;
-        $this->method = $method;
     }
 }

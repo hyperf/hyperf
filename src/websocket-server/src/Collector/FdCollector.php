@@ -19,9 +19,9 @@ class FdCollector
      */
     protected static $fds = [];
 
-    public static function set(int $id, string $class, string $method): void
+    public static function set(int $id, string $class): void
     {
-        static::$fds[$id] = new Fd($id, $class, $method);
+        static::$fds[$id] = new Fd($id, $class);
     }
 
     public static function get(int $id, $default = null): Fd
