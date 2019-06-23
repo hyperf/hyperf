@@ -1,0 +1,53 @@
+{
+    "name": "hyperf/crontab",
+    "description": "A crontab component for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "crontab"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2",
+        "nesbot/carbon": "^2.0"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "files": [
+        ],
+        "psr-4": {
+            "Hyperf\\Crontab\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Crontab\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "hyperf": {
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}
