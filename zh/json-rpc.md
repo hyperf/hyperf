@@ -151,6 +151,26 @@ class CaculatorService extends AbstractServiceClient implements CaculatorService
 }
 ```
 
+然后还需要在配置文件定义一个配置标记要从何服务中心获取节点信息，位于 `config/autoload/services.php` (如不存在可自行创建)
+
+```php
+<?php
+return [
+    'consumers' => [
+        [
+            // 对应消费者类的 $serviceName
+            'name' => 'CalculatorService',
+            // 这个消费者要从哪获取节点信息
+            'registry' => [
+                'protocol' => 'consul',
+                'address' => 'http://127.0.0.1:8500',
+            ],
+        ]
+    ],
+];
+```
+
+
 这样我们便可以通过 `CaculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CaculatorServiceInterface` 和 `CaculatorService` 的关系，示例如下：
 
 ```php
