@@ -49,7 +49,7 @@ cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-接下来，就可以在 /tmp/skeleton 中看到你的代码了。当然修改完代码后，不要忘了重新build以下，然后 run 以下你起来的镜像即可。
+接下来，就可以在 /tmp/skeleton 中看到你的代码了。当然修改完代码后，重启一下 hyperf-skeleton 即可。
 
 ## 存在兼容性的扩展
 
