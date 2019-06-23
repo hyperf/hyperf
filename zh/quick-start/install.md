@@ -22,11 +22,34 @@ Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下�
 Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在使用 Hyperf 之前，请确保你的运行环境已经安装好了 Composer。
 
 ### 通过 `Composer` 创建项目
+
 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目是我们已经为您准备好的一个骨架项目，内置了一些常用的组件及相关配置的文件及结构，是一个可以快速用于业务开发的 Web 项目基础。   
 执行下面的命令可以于当前所在位置创建一个 hyperf-skeleton 项目
 ```
 composer create-project hyperf/hyperf-skeleton 
 ```
+
+### Docker下开发【持续更新中】
+
+假设你本机环境并没有达到要求，但是对于多PHP版本配置又不是那么在行。那么你可以试试以下方法。
+
+```
+# 下载并执行 Docker 镜像
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+
+# 安装 hyperf-skeleton
+wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
+chmod u+x composer.phar
+mv composer.phar /usr/local/bin/composer
+composer config -g repo.packagist composer https://packagist.laravel-china.org
+composer create-project hyperf/hyperf-skeleton
+cd hyperf-skeleton
+
+# 启动
+php bin/hyperf.php start
+```
+
+接下来，就可以在 /tmp/skeleton 中看到你的代码了。当然修改完代码后，不要忘了重新build以下，然后 run 以下你起来的镜像即可。
 
 ## 存在兼容性的扩展
 
