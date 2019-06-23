@@ -63,7 +63,41 @@ Router::addRoute($httpMethod, $uri, $callback);
 ```php
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['get', 'post'], $uri, $callback);
+Router::addRoute(['GET', 'POST','PUT','DELETE'], $uri, $callback);
+```
+
+#### 路由组的定义方式  
+>以Users 表模型为例，定义一个增、删、改、查路由组  
+>Tips:本框架定义的路由参数必须和控制器参数键名保持一致，否则控制器无法接受到相关参数    
+```php
+Router::addGroup('/user/',function (){
+    //1. 查询,实际访问地址：http://host:por/user/index
+    Router::addRoute(
+        ['GET'],
+        'index/',
+        'App\Controller\Api\V1\UserController@index'
+    );
+    //2. 新增
+    Router::addRoute(
+        ['POST'],
+        'store',
+        'App\Controller\Api\V1\UserController@store'
+    );
+
+    //3.修改
+    Router::addRoute(
+        ['GET'],
+        'update',
+        'App\Controller\Api\V1\UserController@update'
+    );
+    //4.删除
+    Router::addRoute(
+        ['POST'],
+        'delete',
+        'App\Controller\Api\V1\UserController@delete'
+    );
+});
+
 ```
 
 ### 通过注解定义路由
@@ -151,6 +185,28 @@ class UserController
 `server` 表示该路由是定义在哪个 `Server` 之上的，由于 `Hyperf` 支持同时启动多个 `Server`，也就意味着有可能会同时存在多个 `HTTP Server`，则在定义路由是可以通过 `server` 参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
 
 ### 路由参数
+>Tips: 路由参数的键名必须和控制器函数参数键名一致  
+>定义一个通过关键词参数查询用户数据的路由  
+```php
+Router::addGroup('/user/',function (){
+    //1. 查询,实际访问地址：http://your domain/user/index
+    Router::addRoute(
+        ['GET'],
+        'index/{keywords}',
+        'App\Controller\Api\V1\UserController@index'
+    );
+});
+```
+>以上路由对应的控制器函数参数名必须是keywords  
+```php
+
+    public function index(string $keywords)
+    {
+        var_dump("关键词参数：{$keywords}");
+        return "控制器根据需要返回相关数据";
+    }
+
+```
 
 #### 必填参数
 
