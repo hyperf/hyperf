@@ -153,7 +153,7 @@ class Client extends Server
         $context = SwCoroutine::getContext();
 
         foreach ($context as $key => $value) {
-            unset($context[$key]);
+            $context[$key] = null;
         }
     }
 
