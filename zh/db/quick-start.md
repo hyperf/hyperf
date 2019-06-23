@@ -151,7 +151,7 @@ return [
 
 配置好数据库后，便可以使用 `Hyperf\DbConnection\Db` 进行查询。
 
-### Select 查询
+###  query查询类(Select、属性为 READS SQL DATA 的存储过程、函数)
 
 `select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
 
@@ -160,7 +160,7 @@ return [
 
 use Hyperf\DbConnection\Db;
 
-$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]);
+$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]);  //  返回array 
 
 foreach($users as $user){
     echo $user->name;
@@ -168,29 +168,21 @@ foreach($users as $user){
 
 ```
 
-### 运行插入语句
+###  execute执行类(insert、update、delete，属性为 MODIFIES SQL DATA 的存储过程、)
 
-可以使用 `Db` 的 `insert` 方法来执行 `insert` 语句。与 `select` 一样，该方法将原生 `SQL` 查询作为其第一个参数，并将绑定数据作为第二个参数：
-
-```php
-<?php
-use Hyperf\DbConnection\Db;
-
-Db::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']);
-```
-
-### 运行更新语句
-
-`update` 方法用于更新数据库中现有的记录。该方法返回受该语句影响的行数：
+`select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
 
 ```php
 <?php
+
 use Hyperf\DbConnection\Db;
 
-$affected = Db::update('update user set name = ? where id = ?', ['John', 1]);
+$result = Db::statement(" CALL pro_test(?,'?') ",[1,'your words']);  //返回bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
+return $result ;  //  执行成功返回1，否则返回 0 ;
 ```
 
-### 数据库事务
+
+### 自动数据库事务
 
 你可以使用 `Db` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
 
@@ -206,7 +198,7 @@ Db::transaction(function () {
 
 ```
 
-### 手动使用事务
+### 手动数据库使用事务
 
 如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `Db` 的 `beginTransaction`, `commit`, `rollBack`:
 
@@ -222,5 +214,14 @@ try{
 } catch(\Throwable $ex){
     Db::rollBack();
 }
+```
+
+### 原生sql还提供了以下静态函数，供不同的需求调用  
+```sql
+use Hyperf\Dbconnection\Db;
+
+Db::insert("sql语句",[参数1，参数2，..])  // 返回：bool
+Db::update("sql语句",[参数1，参数2，..])  // 返回：int
+Db::delete("sql语句",[参数1，参数2，..])  // 返回：int
 ```
 
