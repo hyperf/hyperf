@@ -98,7 +98,6 @@ class DatabaseMigrationCreatorTest extends TestCase
     protected function getCreator()
     {
         $files = Mockery::mock(Filesystem::class);
-        $files->allows('put');
         return $this->getMockBuilder(MigrationCreator::class)->setMethods(['getDatePrefix'])->setConstructorArgs([$files])->getMock();
     }
 }
