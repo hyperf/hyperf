@@ -43,7 +43,7 @@ class DatabaseGenMigrationCommandTest extends TestCase
         $command = new GenMigrateCommand(
             $creator = Mockery::mock(MigrationCreator::class)
         );
-        $creator->shouldReceive('create')->once()->with('create_foo', __DIR__ . DIRECTORY_SEPARATOR . 'migrations', 'foo', true)->andReturn('');
+        $creator->shouldReceive('create')->once()->with('create_foo', BASE_PATH . DIRECTORY_SEPARATOR . 'migrations', 'foo', true)->andReturn('');
 
         $this->runCommand($command, ['name' => 'create_foo']);
     }
@@ -53,7 +53,7 @@ class DatabaseGenMigrationCommandTest extends TestCase
         $command = new GenMigrateCommand(
             $creator = Mockery::mock(MigrationCreator::class)
         );
-        $creator->shouldReceive('create')->once()->with('create_foo', __DIR__ . DIRECTORY_SEPARATOR . 'migrations', 'foo', true)->andReturn('');
+        $creator->shouldReceive('create')->once()->with('create_foo', BASE_PATH . DIRECTORY_SEPARATOR . 'migrations', 'foo', true)->andReturn('');
 
         $this->runCommand($command, ['name' => 'CreateFoo']);
     }
@@ -63,7 +63,7 @@ class DatabaseGenMigrationCommandTest extends TestCase
         $command = new GenMigrateCommand(
             $creator = Mockery::mock(MigrationCreator::class)
         );
-        $creator->shouldReceive('create')->once()->with('create_foo', __DIR__ . DIRECTORY_SEPARATOR . 'migrations', 'users', true)->andReturn('');
+        $creator->shouldReceive('create')->once()->with('create_foo', BASE_PATH . DIRECTORY_SEPARATOR . 'migrations', 'users', true)->andReturn('');
 
         $this->runCommand($command, ['name' => 'create_foo', '--create' => 'users']);
     }
@@ -73,7 +73,7 @@ class DatabaseGenMigrationCommandTest extends TestCase
         $command = new GenMigrateCommand(
             $creator = Mockery::mock(MigrationCreator::class)
         );
-        $creator->shouldReceive('create')->once()->with('create_users_table', __DIR__ . DIRECTORY_SEPARATOR . 'migrations', 'users', true)->andReturn('');
+        $creator->shouldReceive('create')->once()->with('create_users_table', BASE_PATH . DIRECTORY_SEPARATOR . 'migrations', 'users', true)->andReturn('');
 
         $this->runCommand($command, ['name' => 'create_users_table']);
     }
