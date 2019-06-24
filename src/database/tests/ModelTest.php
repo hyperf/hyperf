@@ -22,8 +22,7 @@ use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Events\Saving;
-use Hyperf\Database\Model\Events\Updating;
+use Hyperf\Database\Model\Events;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -302,10 +301,10 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.updating: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.updated: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saving::class))->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Updating::class))->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Updated::class))->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saved::class))->andReturn(null);
 
         $model->id = 1;
         $model->foo = 'bar';
@@ -341,7 +340,8 @@ class ModelTest extends TestCase
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('dispatch')->once()->with($saving = new Saving($model))->andReturn($saving);
+        $saving = new Events\Saving($model);
+        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saving::class))->andReturn($saving);
         $model->exists = true;
 
         $this->assertFalse($model->save());
@@ -353,9 +353,9 @@ class ModelTest extends TestCase
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $saving = new Saving($model, 'saving');
+        $saving = new Events\Saving($model, 'saving');
         $events->shouldReceive('dispatch')->once()->with($saving)->andReturn($saving);
-        $updating = new Updating($model, 'updating');
+        $updating = new Events\Updating($model, 'updating');
         $events->shouldReceive('dispatch')->once()->with($updating)->andReturn($updating);
         //$events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
         //$events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(false);
@@ -578,13 +578,15 @@ class ModelTest extends TestCase
 
     public function testInsertIsCancelledIfCreatingEventReturnsFalse()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with($this->isInstanceOf(Events\Creating::class))->andReturn(false);
+        $events->shouldReceive('dispatch')->once()->andReturn(null);
+
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('getConnection')->once();
-        // $query->shouldReceive('insertGetId')->once();
+        $query->shouldReceive('insertGetId')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('dispatch')->with(new Saving($model))->andReturn(new Saving($model));
 
         $this->assertFalse($model->save());
         $this->assertFalse($model->exists);
@@ -592,12 +594,16 @@ class ModelTest extends TestCase
 
     public function testDeleteProperlyDeletesModel()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->allows('dispatch');
+
         $model = $this->getMockBuilder(Model::class)->setMethods(['newModelQuery', 'updateTimestamps', 'touchOwners'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1)->andReturn($query);
         $query->shouldReceive('delete')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('touchOwners');
+
         $model->exists = true;
         $model->id = 1;
         $model->delete();
