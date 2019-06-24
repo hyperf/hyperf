@@ -40,5 +40,6 @@ install:
 before_script:
   - cd $TRAVIS_BUILD_DIR
   - composer config -g process-timeout 900 && composer update
+  
 script:
   - composer test
