@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 declare(strict_types=1);
 /**
@@ -56,7 +56,7 @@ class ContainerStub
                 'default' => [
                     'driver' => 'mysql',
                     'host' => 'localhost',
-                    'port' =>'3306',
+                    'port' => '3306',
                     'database' => 'hyperf',
                     'username' => 'root',
                     'password' => '',
