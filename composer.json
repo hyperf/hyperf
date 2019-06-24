@@ -140,6 +140,7 @@
             "HyperfTest\\Database\\": "./src/database/tests",
             "HyperfTest\\DbConnection\\": "./src/db-connection/tests",
             "HyperfTest\\Event\\": "./src/event/tests",
+            "HyperfTest\\Redis\\": "./src/redis/tests",
             "HyperfTest\\Utils\\": "./src/utils/tests"
         }
     },
