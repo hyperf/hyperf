@@ -14,6 +14,7 @@ namespace HyperfTest\Database;
 
 use Hyperf\Database\Migrations\MigrationCreator;
 use Hyperf\Utils\Filesystem\Filesystem;
+use HyperfTest\Database\Stubs\MigrationCreatorFakeMigration;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -86,18 +87,18 @@ class DatabaseMigrationCreatorTest extends TestCase
     public function testTableUpdateMigrationWontCreateDuplicateClass()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A MigrationCreatorFakeMigration class already exists.');
+        $this->expectExceptionMessage('A HyperfTest\Database\Stubs\MigrationCreatorFakeMigration class already exists.');
 
         $creator = $this->getCreator();
         $creator->getFilesystem()->shouldReceive('get');
 
-        $creator->create('migration_creator_fake_migration', 'foo');
+        $creator->create(MigrationCreatorFakeMigration::class, 'foo');
     }
 
     protected function getCreator()
     {
         $files = Mockery::mock(Filesystem::class);
-
+        $files->allows('put');
         return $this->getMockBuilder(MigrationCreator::class)->setMethods(['getDatePrefix'])->setConstructorArgs([$files])->getMock();
     }
 }

@@ -336,14 +336,18 @@ class ModelTest extends TestCase
 
     public function testSaveIsCancelledIfSavingEventReturnsFalse()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->twice()->andReturn(null);
+
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $saving = new Events\Saving($model);
-        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saving::class))->andReturn($saving);
-        $model->exists = true;
+        $events->shouldReceive('dispatch')->with($this->isInstanceOf(Saving::class))->andReturn($saving->setPropagation(true));
 
+        $model->exists = true;
         $this->assertFalse($model->save());
     }
 
@@ -579,14 +583,14 @@ class ModelTest extends TestCase
     public function testInsertIsCancelledIfCreatingEventReturnsFalse()
     {
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('dispatch')->with($this->isInstanceOf(Events\Creating::class))->andReturn(false);
-        $events->shouldReceive('dispatch')->once()->andReturn(null);
+        $events->shouldReceive('dispatch')->twice()->andReturn(null);
 
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('getConnection')->once();
-        $query->shouldReceive('insertGetId')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+
+        $event = new Events\Creating($model);
+        $events->shouldReceive('dispatch')->once()->andReturn($event->setPropagation(true));
 
         $this->assertFalse($model->save());
         $this->assertFalse($model->exists);
