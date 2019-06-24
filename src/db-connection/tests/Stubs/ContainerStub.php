@@ -56,6 +56,7 @@ class ContainerStub
                 'default' => [
                     'driver' => 'mysql',
                     'host' => 'localhost',
+                    'port' =>'3306',
                     'database' => 'hyperf',
                     'username' => 'root',
                     'password' => '',
