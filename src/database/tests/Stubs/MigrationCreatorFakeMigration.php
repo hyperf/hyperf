@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace HyperfTest\Database\Stubs;
+
 /**
  * This file is part of Hyperf.
  *

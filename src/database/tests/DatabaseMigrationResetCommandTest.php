@@ -45,7 +45,7 @@ class DatabaseMigrationResetCommandTest extends TestCase
         $migrator->shouldReceive('setConnection')->once()->with('default');
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
-        $migrator->shouldReceive('reset')->once()->with([__DIR__ . DIRECTORY_SEPARATOR . 'migrations'], false);
+        $migrator->shouldReceive('reset')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], false);
 
         $this->runCommand($command);
     }
@@ -57,7 +57,7 @@ class DatabaseMigrationResetCommandTest extends TestCase
         $migrator->shouldReceive('setConnection')->once()->with('foo');
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
-        $migrator->shouldReceive('reset')->once()->with([__DIR__ . DIRECTORY_SEPARATOR . 'migrations'], true);
+        $migrator->shouldReceive('reset')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], true);
 
         $this->runCommand($command, ['--pretend' => true, '--database' => 'foo']);
     }
