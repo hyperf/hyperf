@@ -43,4 +43,4 @@ before_script:
   - composer config -g process-timeout 900 && composer update
   
 script:
-  - composer test
+  - ./bin/co-phpunit
