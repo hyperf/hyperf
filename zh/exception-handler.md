@@ -15,7 +15,8 @@ return [
         // 这里的 http 对应 config/autoload/server.php 内的 server 所对应的 name 值
         'http' => [
             // 这里配置完整的类命名空间地址已完成对该异常处理器的注册
-            \App\ExceptionHandler\FooExceptionHandler::class,
+            \App\Exception\Handler\FooExceptionHandler::class,
+            \App\Exception\Handler\MyExceptionHandler::class,
         ],    
     ],
 ];
@@ -25,23 +26,24 @@ return [
 
 # 定义异常处理器
 
-我们可以在任意位置定义一个 `类(Class)` 并基础抽象类 `Hyperf\Framework\ExceptionHandler` 并实现其中的抽象方法，如下：
+我们可以在任意位置定义一个 `类(Class)` 并继承抽象类 ` Hyperf\ExceptionHandler\ExceptionHandler;` 并实现其中的抽象方法，如下：
 
 ```php
 <?php
-namespace App\ExceptionHandler;
+namespace App\Exception\Handler;
 
-use Hyperf\Framework\ExceptionHandler;
+use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
+use App\Exception\CustomException\MyException;
 use Throwable;
 
-class FooExceptionHandler extends ExceptionHandler
+class MyExceptionHandler extends  ExceptionHandler
 {
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         // 判断传入的异常是否是该处理器希望处理的异常
-        if ($throwable instanceof FooException) {
+        if ($throwable instanceof MyException) {
             // 传入的异常是我们希望捕获的 FooException，我们格式化为 JSON 格式并输出到用户端
             $data = json_encode([
                 'code' => $throwable->getCode(),
@@ -51,7 +53,51 @@ class FooExceptionHandler extends ExceptionHandler
         }
         // 传入的异常不是该处理器希望处理的异常，不处理并交由下一个异常处理器处理
     }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return true;
+    }
 }
 ```
 
+# 自定义我的异常类
+```php
+<?php
+namespace App\Exception\CustomException;
+
+use Throwable;
+
+class MyException  extends  \Exception
+{
+    function  __construct(string $message = "", int $code = 0, Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+    
+    function fun_custom(){
+        // Tudo  something  
+    }
+}
+```
+
+# 我们可以在控制器手动抛出异常，就会触发以上异常处理相关代码
+```php
+//以下是控制器代码片段
+    use App\Exception\CustomException\MyException;
+    ... ...  
+
+    public function index()
+    {
+        //假设用户没有提交参数username，我们就触发刚才定义的异常类
+        if($this->request->input('username')){
+            return $this->response->redirect('http://www.baidu.com');  
+        }else{
+            throw new MyException('MyExceptions',-1);
+        }
+    }
+
+// 如果程序没有收到username参数，浏览器收到的结果就是状态码：500，并且收到了json数据（MyExceptionHandler响应的数据）
+
+```
 在上面这个例子，我们先假设 `FooException` 是存在的一个异常，以及假设已经完成了该处理器的配置，那么当业务抛出一个没有被捕获处理的异常时，就会根据配置的顺序依次传递，整一个处理流程可以理解为一个管道，若前一个异常处理器存在返回值则不再往后传递，若最后一个配置的异常处理器仍不对该异常进行捕获处理，那么就会交由 Hyperf 的默认异常处理器处理了。

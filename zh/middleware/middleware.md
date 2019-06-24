@@ -152,7 +152,72 @@ class IndexController
     }
 }
 ```
+#### 中间件相关的代码
+>快捷生成命令：php  ./bin/hyperf.php    gen:middleware   Auth/FooMiddleware
 
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware\Auth;
+
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface as resp;  //  这里需要手动引入response类，便于向浏览器响应信息
+
+
+class FooMiddleware implements MiddlewareInterface
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+    protected $request;
+    protected $response;
+
+    public function __construct(ContainerInterface $container,resp $response)
+    {
+        $this->container = $container;
+        $this->response = $response;
+        
+/*        $this->request = $container->get(RequestInterface::class);  //  从容器解析出request对象
+        $this->response = $container->get(ResponseInterface::class);  //  从容器解析出response对象*/
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+/*      
+        var_dump($request->getQueryParams());  //  获取requests对象中相关的请求参数，便也业务逻辑判断
+        var_dump($request->getServerParams());  //  获取requests对象中相关的请求参数，便也业务逻辑判断
+*/
+        //  根据具体业务判断逻辑走向，这里假设用户携带的token有效
+        $is_valid_token=true;
+        if($is_valid_token){
+            return $handler->handle($request);
+        }else{
+            /*
+             *  如果不满足条件，那么程序直接从这里向浏览器响应，停止继续向下执行后续代码
+            */
+            return $this->response->json(
+                array(
+                    'code'=>-1,
+                    'msg'=>"failed",
+                    'data'=>[
+                        "error"=>"中间里验证token无效，阻止继续向下执行"
+                    ],
+                )
+            ); 
+        }
+
+ 
+    }
+}
+
+```
 中间件的执行顺序为 `BarMiddleware -> FooMiddleware`。
 
 ## 中间件的执行顺序
