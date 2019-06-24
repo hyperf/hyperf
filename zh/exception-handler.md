@@ -87,20 +87,10 @@ class BusinessException extends ServerException
 ### 触发异常DEMO
 
 ```php
-use App\Exception\CustomException\MyException;
-... ...  
-
-public function index()
-{
-    //假设用户没有提交参数username，我们就触发刚才定义的异常类
-    if($this->request->input('username')){
-        return $this->response->redirect('http://www.baidu.com');  
-    }else{
-        throw new BusinessException('MyExceptions',-1);
-    }
-}
 
 namespace App\Controller;
+
+use App\Exception\BusinessException;
 
 class IndexController extends Controller
 {
