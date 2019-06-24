@@ -62,9 +62,12 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $port = $this->config['port'] ?? 6379;
         $auth = $this->config['auth'] ?? null;
         $db = $this->config['db'] ?? 0;
+        $timeout = $this->config['timeout'] ?? 0.0;
+        $reserved = $this->config['reserved'] ?? null;
+        $retryInterval = $this->config['retry_interval'] ?? 0;
 
         $redis = new \Redis();
-        if (! $redis->connect($host, $port)) {
+        if (! $redis->connect($host, $port, $timeout, $reserved, $retryInterval)) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
