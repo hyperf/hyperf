@@ -20,6 +20,7 @@ use Exception;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Booted;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Events;
@@ -47,6 +48,7 @@ use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
 use HyperfTest\Database\Stubs\ModelGetMutatorsStub;
 use HyperfTest\Database\Stubs\ModelNonIncrementingStub;
 use HyperfTest\Database\Stubs\ModelSaveStub;
+use HyperfTest\Database\Stubs\ModelSavingEventStub;
 use HyperfTest\Database\Stubs\ModelStub;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
 use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
@@ -83,6 +85,8 @@ class ModelTest extends TestCase
 
         Register::unsetEventDispatcher();
         Carbon::resetToStringFormat();
+
+        Booted::$container = [];
     }
 
     public function testAttributeManipulation()
@@ -301,10 +305,10 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saving::class))->andReturn(null);
-        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Updating::class))->andReturn(null);
-        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Updated::class))->andReturn(null);
-        $events->shouldReceive('dispatch')->once()->with($this->isInstanceOf(Events\Saved::class))->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with(Events\Saving::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with(Events\Updating::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with(Events\Updated::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->once()->with(Events\Saved::class)->andReturn(null);
 
         $model->id = 1;
         $model->foo = 'bar';
@@ -337,7 +341,8 @@ class ModelTest extends TestCase
     public function testSaveIsCancelledIfSavingEventReturnsFalse()
     {
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('dispatch')->twice()->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
 
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
@@ -345,7 +350,7 @@ class ModelTest extends TestCase
 
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $saving = new Events\Saving($model);
-        $events->shouldReceive('dispatch')->with($this->isInstanceOf(Saving::class))->andReturn($saving->setPropagation(true));
+        $events->shouldReceive('dispatch')->with(Events\Saving::class)->andReturn($saving->setPropagation(true));
 
         $model->exists = true;
         $this->assertFalse($model->save());
@@ -353,16 +358,17 @@ class ModelTest extends TestCase
 
     public function testUpdateIsCancelledIfUpdatingEventReturnsFalse()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
         $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $saving = new Events\Saving($model, 'saving');
-        $events->shouldReceive('dispatch')->once()->with($saving)->andReturn($saving);
+
+        $events->shouldReceive('dispatch')->with(Events\Saving::class)->andReturn(null);
         $updating = new Events\Updating($model, 'updating');
-        $events->shouldReceive('dispatch')->once()->with($updating)->andReturn($updating);
-        //$events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        //$events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('dispatch')->once()->with(Events\Updating::class)->andReturn($updating->setPropagation(true));
         $model->exists = true;
         $model->foo = 'bar';
 
@@ -371,11 +377,15 @@ class ModelTest extends TestCase
 
     public function testEventsCanBeFiredWithCustomEventObjects()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
         $model = $this->getMockBuilder(ModelEventObjectStub::class)->setMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
-        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with(Mockery::type(ModelSavingEventStub::class))->andReturn(false);
+        $events->shouldReceive('dispatch')->with(ModelSavingEventStub::class)->andReturn(new ModelSavingEventStub($model));
+
         $model->exists = true;
 
         $this->assertFalse($model->save());
@@ -410,10 +420,7 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.updating: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.updated: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->times(4)->andReturn(null);
 
         $model->id = 1;
         $model->syncOriginal();
@@ -426,6 +433,9 @@ class ModelTest extends TestCase
 
     public function testTimestampsAreReturnedAsObjects()
     {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->times(2)->andReturn(null);
+
         $model = $this->getMockBuilder(DateModelStub::class)->setMethods(['getDateFormat'])->getMock();
         $model->expects($this->any())->method('getDateFormat')->will($this->returnValue('Y-m-d'));
         $model->setRawAttributes([
@@ -548,10 +558,7 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('updateTimestamps');
 
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.creating: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model);
+        $events->shouldReceive('dispatch')->times(4)->andReturn(null);
 
         $model->name = 'hyperf';
         $model->exists = false;
@@ -568,10 +575,7 @@ class ModelTest extends TestCase
         $model->setIncrementing(false);
 
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('model.saving: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('model.creating: ' . get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('model.created: ' . get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('model.saved: ' . get_class($model), $model);
+        $events->shouldReceive('dispatch')->times(4)->andReturn(null);
 
         $model->name = 'hyperf';
         $model->exists = false;
