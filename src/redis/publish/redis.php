@@ -16,6 +16,9 @@ return [
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
+        'timeout' => 0.0,
+        'reserved' => null,
+        'retry_interval' => 0,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
