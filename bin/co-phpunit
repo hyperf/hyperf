@@ -50,7 +50,7 @@
 
     require PHPUNIT_COMPOSER_INSTALL;
 
-    PHPUnit\TextUI\Command::main();
+    PHPUnit\TextUI\Command::main(false);
 
     swoole_event_exit();
 });

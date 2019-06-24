@@ -184,7 +184,7 @@
     "bin": [
     ],
     "scripts": {
-        "test": "phpunit --colors=always",
+        "test": "./bin/co-phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1"
