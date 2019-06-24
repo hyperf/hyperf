@@ -177,8 +177,13 @@ foreach($users as $user){
 
 use Hyperf\DbConnection\Db;
 
-$result = Db::statement(" CALL pro_test(?,'?') ",[1,'your words']);  //返回bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
-return $result ;  //  执行成功返回1，否则返回 0 ;
+$inserted = Db::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']); // 返回是否成功 bool
+
+$affected = Db::update('update user set name = ? where id = ?', ['John', 1]); // 返回受影响的行数 int
+
+$result = Db::statement(" CALL pro_test(?,'?') ",[1,'your words']);  // 返回 bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
+
+return $result ;  // 执行成功返回1，否则返回 0
 ```
 
 
