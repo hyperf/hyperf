@@ -44,10 +44,8 @@ class LoggerFactoryTest extends TestCase
     public function testInvokeLoggerFromFactory()
     {
         $container = $this->mockContainer();
-        // $container->shouldReceive('make')->once()->with(LoggerFactory::class)->andReturn(new LoggerFactory($container));
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
-
         $logger = $factory->get('hyperf');
         $this->assertInstanceOf(StdoutLoggerInterface::class, $logger);
         $this->assertInstanceOf(LoggerInterface::class, $logger);
