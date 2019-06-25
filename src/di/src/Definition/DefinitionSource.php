@@ -279,7 +279,7 @@ class DefinitionSource implements DefinitionSourceInterface
             $defined = [];
             $annotations = AnnotationCollector::get($className . '._m', []);
             foreach ($annotations as $method => $annotation) {
-                $defined = array_replace($defined, array_keys($annotation));
+                $defined = array_merge($defined, array_keys($annotation));
             }
             return $defined;
         });
