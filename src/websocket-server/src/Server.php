@@ -154,15 +154,20 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void
     {
-        $this->logger->debug("WebSocket: fd[{$fd}] close a active connection.");
+        if ($obj = FdCollector::get($fd)) {
+            $this->logger->debug("WebSocket: fd[{$fd}] close a active connection.");
+            if (! $this->container->has($obj)) {
+                $this->logger->error("WebSocket: class[{$obj}] is not defined.");
+                return;
+            }
 
-        $obj = FdCollector::get($fd);
-        $class = $this->container->get($obj->class);
-        if ($class instanceof OnCloseInterface) {
-            $class->onClose($server, $fd, $reactorId);
+            $class = $this->container->get($obj->class);
+            if ($class instanceof OnCloseInterface) {
+                $class->onClose($server, $fd, $reactorId);
+            }
+
+            FdCollector::del($fd);
         }
-
-        FdCollector::del($fd);
     }
 
     /**

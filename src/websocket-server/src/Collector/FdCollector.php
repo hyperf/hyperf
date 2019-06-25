@@ -24,7 +24,7 @@ class FdCollector
         static::$fds[$id] = new Fd($id, $class);
     }
 
-    public static function get(int $id, $default = null): Fd
+    public static function get(int $id, $default = null): ?Fd
     {
         return static::$fds[$id] ?? $default;
     }
