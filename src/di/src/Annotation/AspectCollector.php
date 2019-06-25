@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\MetadataCollector;
 
 class AspectCollector extends MetadataCollector
@@ -29,11 +28,12 @@ class AspectCollector extends MetadataCollector
 
     public static function setAround(string $aspect, array $classes, array $annotations): void
     {
-        $savedClasses = static::get('classes.' . $aspect, []);
-        $savedAnnotations = static::get('annotations.' . $aspect, []);
-        $classes && static::set('classes.' . $aspect, array_replace($savedClasses, $classes));
-        $annotations && static::set('annotations.' . $aspect, array_replace($savedAnnotations, $annotations));
-        static::collectRules($aspect);
+        $classes && static::set('classes.' . $aspect, $classes);
+        $annotations && static::set('annotations.' . $aspect, $annotations);
+        static::$aspectRules[$aspect] = [
+            'classes' => $classes,
+            'annotations' => $annotations,
+        ];
     }
 
     public static function getRule(string $aspect): array
@@ -44,15 +44,5 @@ class AspectCollector extends MetadataCollector
     public static function getRules(): array
     {
         return static::$aspectRules;
-    }
-
-    private static function collectRules(string $aspect)
-    {
-        $instantiator = new Instantiator();
-        $instance = $instantiator->instantiate($aspect);
-        static::$aspectRules[$aspect] = [
-            'classes' => $instance->classes ?? '',
-            'annotations' => $instance->annotations ?? '',
-        ];
     }
 }
