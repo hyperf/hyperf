@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Di\Command\InitProxyCommand;
+use Hyperf\Di\Listener\BootApplicationListener;
 
 class ConfigProvider
 {
@@ -23,6 +24,9 @@ class ConfigProvider
             ],
             'commands' => [
                 InitProxyCommand::class,
+            ],
+            'listeners' => [
+                BootApplicationListener::class,
             ],
             'scan' => [
                 'paths' => [
