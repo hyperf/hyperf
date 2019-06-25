@@ -1,6 +1,22 @@
 # master
 
-# v1.0.2
+## Added
+
+- Nothing.
+
+## Changed
+
+- Nothing.
+
+## Removed
+
+- Nothing.
+
+## Fixed
+
+- Nothing.
+
+# v1.0.2 - 2019-06-25
 
 ## Added
 
