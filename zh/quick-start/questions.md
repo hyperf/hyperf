@@ -33,12 +33,12 @@ runtime/container/proxy/
 php bin/hyperf.php di:init-proxy
 ```
 
-所以单测命令可以使用一下代替
+所以单测命令可以使用以下代替
 ```
 php bin/hyperf.php di:init-proxy && composer test
 ```
 
-同理，启动命令可以使用一下代替
+同理，启动命令可以使用以下代替
 ```
 php bin/hyperf.php di:init-proxy && php bin/hyperf.php start
 ```
