@@ -6,7 +6,7 @@
 
 ## Changed
 
-- Nothing.
+- Removed framework dependency of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`.
 
 ## Removed
 
@@ -14,7 +14,7 @@
 
 ## Fixed
 
-- Fixed http server start failed, when include `hyperf\websocket-server`.
+- Fixed http server start failed, when include `hyperf/websocket-server`.
 
 # v1.0.2 - 2019-06-25
 
