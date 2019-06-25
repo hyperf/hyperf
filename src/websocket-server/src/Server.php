@@ -156,8 +156,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     {
         if ($obj = FdCollector::get($fd)) {
             $this->logger->debug("WebSocket: fd[{$fd}] close a active connection.");
-            if (! $this->container->has($obj)) {
-                $this->logger->error("WebSocket: class[{$obj}] is not defined.");
+            if (! $this->container->has($obj->class)) {
+                $this->logger->error("WebSocket: class[{$obj->class}] is not defined.");
                 return;
             }
 
