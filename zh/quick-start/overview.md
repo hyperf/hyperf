@@ -93,7 +93,7 @@ class IndexController
 {
     // Hyperf 会自动为此方法生成一个 /index/index 的路由，允许通过 GET 或 POST 方式请求
     /**
-     * @RequestMapping(path="index", method="get,post")
+     * @RequestMapping(path="index", methods="get,post")
      */
     public function index(RequestInterface $request)
     {
