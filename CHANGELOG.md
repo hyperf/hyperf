@@ -6,7 +6,7 @@
 
 ## Changed
 
-- Removed framework dependency of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`.
+- Moved framework requirement `hyperf/di`, `hyperf/command` and `hyperf/dispatcher` into suggest.
 
 ## Removed
 
