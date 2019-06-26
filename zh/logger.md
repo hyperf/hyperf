@@ -52,7 +52,7 @@ class DemoService
 {
     
     /**
-     * @var \Psr\Logger\LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
 
