@@ -1,4 +1,4 @@
-# v1.0.3 TBD
+# v1.0.3 - TBD
 
 ## Added
 
