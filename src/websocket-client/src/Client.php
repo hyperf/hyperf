@@ -38,15 +38,38 @@ class Client
         $this->client = new Coroutine\Http\Client($host, $port, $ssl);
 
         parse_str($this->uri->getQuery(), $query);
-        $query = $this->getQueryParams() + $query;
+
         $query = http_build_query($query);
 
         $path = $this->uri->getPath() ?: '/';
         $path = empty($query) ? $path : $path . '?' . $query;
 
         $ret = $this->client->upgrade($path);
-        if (! $ret) {
-            throw new ConnectException('Websocket upgrade failed by [' . swoole_strerror($this->client->errCode) . '].');
+        if (!$ret) {
+            $errCode = $this->client->errCode;
+            throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, swoole_strerror($errCode)));
         }
+    }
+
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    public function recv(float $timeout = -1)
+    {
+        $ret = $this->client->recv($timeout);
+        var_dump($ret instanceof \Swoole\WebSocket\Frame);
+        return $ret ? new Frame($ret) : $ret;
+    }
+
+    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, bool $finish = true): bool
+    {
+        return $this->client->push($data, $opcode, $finish);
+    }
+
+    public function close(): bool
+    {
+        return $this->client->close();
     }
 }
