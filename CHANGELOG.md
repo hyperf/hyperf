@@ -3,7 +3,7 @@
 ## Added
 
 - [#48](https://github.com/hyperf-cloud/hyperf/pull/48) Added WebSocket Client.
-- [#51](https://github.com/hyperf-cloud/hyperf/pull/51) Added property `enableCache` of `DefinitionSource` to enable annotation cache. 
+- [#51](https://github.com/hyperf-cloud/hyperf/pull/51) Added property `enableCache` to `DefinitionSource` to enable annotation cache. 
 
 ## Changed
 
