@@ -1,12 +1,13 @@
-# master
+# v1.0.3 TBD
 
 ## Added
 
-- Added WebSocket Client.
+- [#48](https://github.com/hyperf-cloud/hyperf/pull/48) Added WebSocket Client.
+- [#51](https://github.com/hyperf-cloud/hyperf/pull/51) Added property `enableCache` of `DefinitionSource` to enable annotation cache. 
 
 ## Changed
 
-- Moved framework requirement `hyperf/di`, `hyperf/command` and `hyperf/dispatcher` into suggest.
+- [#46](https://github.com/hyperf-cloud/hyperf/pull/46) Removed hyperf/framework requirement of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`. 
 
 ## Removed
 
@@ -14,14 +15,15 @@
 
 ## Fixed
 
-- Fixed http server start failed, when include `hyperf/websocket-server`.
+- [#45](https://github.com/hyperf-cloud/hyperf/pull/55) Fixed http server start failed, when the skeleton included `hyperf/websocket-server`. 
+- [#55](https://github.com/hyperf-cloud/hyperf/pull/55) Fixed the method level middleware annotation. 
 
 # v1.0.2 - 2019-06-25
 
 ## Added
 
-- Added Travis Ci. [#25](https://github.com/hyperf-cloud/hyperf/pull/25)
-- Added some paramater of `Redis::connect`. [#29](https://github.com/hyperf-cloud/hyperf/pull/29)
+- [#25](https://github.com/hyperf-cloud/hyperf/pull/25) Added Travis CI.
+- [#29](https://github.com/hyperf-cloud/hyperf/pull/29) Added some paramater of `Redis::connect`.
 
 ## Fixed
 
