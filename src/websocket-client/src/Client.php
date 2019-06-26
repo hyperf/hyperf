@@ -15,6 +15,7 @@ namespace Hyperf\WebSocketClient;
 use Hyperf\WebSocketClient\Exception\ConnectException;
 use Psr\Http\Message\UriInterface;
 use Swoole\Coroutine;
+use Swoole\WebSocket\Frame as SwFrame;
 
 class Client
 {
@@ -45,7 +46,7 @@ class Client
         $path = empty($query) ? $path : $path . '?' . $query;
 
         $ret = $this->client->upgrade($path);
-        if (!$ret) {
+        if (! $ret) {
             $errCode = $this->client->errCode;
             throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, swoole_strerror($errCode)));
         }
@@ -59,8 +60,11 @@ class Client
     public function recv(float $timeout = -1)
     {
         $ret = $this->client->recv($timeout);
-        var_dump($ret instanceof \Swoole\WebSocket\Frame);
-        return $ret ? new Frame($ret) : $ret;
+        if ($ret instanceof SwFrame) {
+            return new Frame($ret);
+        }
+
+        return $ret;
     }
 
     public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, bool $finish = true): bool

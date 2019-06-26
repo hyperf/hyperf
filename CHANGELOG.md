@@ -2,7 +2,7 @@
 
 ## Added
 
-- Nothing.
+- Added WebSocket Client.
 
 ## Changed
 
