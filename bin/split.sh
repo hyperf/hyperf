@@ -64,6 +64,7 @@ remote testing git@github.com:hyperf-cloud/testing.git
 remote tracer git@github.com:hyperf-cloud/tracer.git
 remote utils git@github.com:hyperf-cloud/utils.git
 remote websocket-server git@github.com:hyperf-cloud/websocket-server.git
+remote websocket-client git@github.com:hyperf-cloud/websocket-client.git
 
 split 'src/amqp' amqp
 split 'src/async-queue' async-queue
@@ -111,3 +112,4 @@ split 'src/tracer' tracer
 split 'src/swagger' swagger
 split 'src/utils' utils
 split 'src/websocket-server' websocket-server
+split 'src/websocket-client' websocket-client
