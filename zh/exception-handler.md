@@ -18,7 +18,7 @@ return [
         'http' => [
             // 这里配置完整的类命名空间地址已完成对该异常处理器的注册
             \App\Exception\Handler\FooExceptionHandler::class,
-            \App\Exception\Handler\BusinessExceptionHandler::class,
+            \App\Exception\Handler\AppExceptionHandler::class,
         ],    
     ],
 ];
@@ -37,25 +37,31 @@ namespace App\Exception\Handler;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
-use App\Exception\BusinessException;
+use App\Exception\FooException;
 use Throwable;
 
-class BusinessExceptionHandler extends  ExceptionHandler
+class FooExceptionHandler extends  ExceptionHandler
 {
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         // 判断被捕获到的异常是希望被捕获的异常
-        if ($throwable instanceof BusinessException) {
+        if ($throwable instanceof FooException) {
             // 格式化输出
             $data = json_encode([
                 'code' => $throwable->getCode(),
                 'message' => $throwable->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
+
+            // 阻止异常冒泡
+            $this->stopPropagation();
             return $response->withStatus(500)->withBody(new SwooleStream($data));
         }
 
-        // 系统内部异常或者是不能暴露到外网的异常
-        return $response->withStatus(500)->withBody('Server Error');
+        // 交给下一个异常处理器
+        return $respose;
+
+        // 或者直接屏蔽异常
+        // return $response->withStatus(500)->withBody('Server Error');
     }
 
     public function isValid(Throwable $throwable): bool
@@ -75,7 +81,7 @@ use App\Constants\ErrorCode;
 use Hyperf\Server\Exception\ServerException;
 use Throwable;
 
-class BusinessException extends ServerException
+class FooException extends ServerException
 {
     public function __construct(string $message = null, int $code = 0, Throwable $previous = null)
     {
@@ -96,9 +102,9 @@ class IndexController extends Controller
 {
     public function index()
     {
-        throw new BusinessException('Business Exception...', 800);
+        throw new FooException('Foo Exception...', 800);
     }
 }
 
 ```
-在上面这个例子，我们先假设 `FooException` 是存在的一个异常，以及假设已经完成了该处理器的配置，那么当业务抛出一个没有被捕获处理的异常时，就会根据配置的顺序依次传递，整一个处理流程可以理解为一个管道，若前一个异常处理器存在返回值则不再往后传递，若最后一个配置的异常处理器仍不对该异常进行捕获处理，那么就会交由 Hyperf 的默认异常处理器处理了。
+在上面这个例子，我们先假设 `FooException` 是存在的一个异常，以及假设已经完成了该处理器的配置，那么当业务抛出一个没有被捕获处理的异常时，就会根据配置的顺序依次传递，整一个处理流程可以理解为一个管道，若前一个异常处理器调用 `$this->stopPropagation()` 则不再往后传递，若最后一个配置的异常处理器仍不对该异常进行捕获处理，那么就会交由 Hyperf 的默认异常处理器处理了。
