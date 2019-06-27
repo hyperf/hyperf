@@ -100,11 +100,8 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     protected function getProperty($column): array
     {
         $name = $column['column_name'];
-        $type = $column['data_type'];
-        $ptype = $this->formatPropertyType($type);
-        if ($ptype) {
-            $type = $type . '|' . $ptype;
-        }
+
+        $type = $this->formatPropertyType($column['data_type']);
 
         return [$name, $type];
     }
@@ -135,14 +132,17 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $result = $this->formatDatabaseType($type);
         if (is_null($result)) {
-            switch ($type) {
-                case 'varchar':
-                    return 'string';
-                case 'datetime':
-                    return '\Carbon\Carbon';
-                default:
-                    return null;
-            }
+            // switch ($type) {
+            //     case 'varchar':
+            //         return 'string';
+            //     case 'datetime':
+            //         return '\Carbon\Carbon';
+            //     default:
+            //         return null;
+            // }
+
+            // TODO: 有效监测会被模型转化为 \Carbon\Carbon 对象的字段。
+            return 'string';
         }
 
         return $result;
