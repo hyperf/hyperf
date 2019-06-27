@@ -42,8 +42,8 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
-                    $name = $column['column_name'];
-                    $doc .= ' * @property $' . $name . PHP_EOL;
+                    [$name, $type] = $this->getProperty($column);
+                    $doc .= sprintf(' * @property %s $%s', $type, $name) . PHP_EOL;
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
@@ -97,6 +97,18 @@ class ModelUpdateVistor extends NodeVisitorAbstract
         return $node;
     }
 
+    protected function getProperty($column): array
+    {
+        $name = $column['column_name'];
+        $type = $column['data_type'];
+        $ptype = $this->formatPropertyType($type);
+        if ($ptype) {
+            $type = $type . '|' . $ptype;
+        }
+
+        return [$name, $type];
+    }
+
     protected function formatDatabaseType(string $type): ?string
     {
         switch ($type) {
@@ -117,5 +129,22 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             default:
                 return null;
         }
+    }
+
+    protected function formatPropertyType(string $type): ?string
+    {
+        $result = $this->formatDatabaseType($type);
+        if (is_null($result)) {
+            switch ($type) {
+                case 'varchar':
+                    return 'string';
+                case 'datetime':
+                    return '\Carbon\Carbon';
+                default:
+                    return null;
+            }
+        }
+
+        return $result;
     }
 }
