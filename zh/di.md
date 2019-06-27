@@ -168,6 +168,8 @@ class IndexController
 ```
 
 ### 工厂对象注入
+>本功能或许在其他比较流行的框架中，也叫作服务提供者（ServiceProvider），目的在于将UserService类初始化在容器，供后续业务直接使用而不需要传递参数   
+>我们将本类独立在一个命名空间（文件夹），使得代码功能模块更清晰,这里手动创建一个服务提供者命名空间   
 
 我们假设 `UserService` 的实现会更加复杂一些，在创建 `UserService` 对象时构造函数还需要传递进来一些非直接注入型的参数，假设我们需要从配置中取得一个值，然后 `UserService` 需要根据这个值来决定是否开启缓存模式（顺带一说 Hyperf 提供了更好用的 [模型缓存](zh/db/model-cache.md) 功能）   
 
@@ -175,7 +177,7 @@ class IndexController
 
 ```php
 <?php 
-namespace App\Service;
+namespace App\ServiceProvider;  
 
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
@@ -194,7 +196,7 @@ class UserServiceFactory
 }
 ```
 
-`UserService` 也许在构造函数提供一个参数接收对应的值：
+`UserService` 也许在构造函数初始化时需要提供一个默认参数才能进行工作
 
 ```php
 <?php
@@ -208,6 +210,7 @@ class UserService implements UserServiceInterface
      */
     private $enableCache;
     
+    // 请注意：本函数的参数：$enableCache，在上一段代码中与初始化本类时传递的参数键名：enableCache    必须保持一致，否则构造函数无法收到参数值
     public function __construct(bool $enableCache)
     {
         // 接收值并储存于类属性中
@@ -227,9 +230,32 @@ class UserService implements UserServiceInterface
 <?php
 return [
     'dependencies' => [
-        \App\Service\UserServiceInterface::class => \App\Service\UserServiceFactory::class
+        \App\Service\UserServiceInterface::class => \App\ServiceProvider\UserServiceFactory::class
     ],
 ];
+```
+
+最后我们在控制器调用：
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Api\V1;
+
+use App\Controller\Controller;
+use \App\Service\UserServiceInterface;
+
+class TestController extends Controller
+{
+    public function index(UserServiceInterface $userServiceInterface)
+    {
+        $user_id=100 ; // 假设一个参数
+        $userServiceInterface->getInfoById($user_id);
+
+    }
+}
+
 ```
 
 这样在注入 `UserServiceInterface` 的时候容器就会交由 `UserServiceFactory` 来创建对象了。
