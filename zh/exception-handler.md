@@ -18,7 +18,6 @@ return [
         'http' => [
             // 这里配置完整的类命名空间地址已完成对该异常处理器的注册
             \App\Exception\Handler\FooExceptionHandler::class,
-            \App\Exception\Handler\AppExceptionHandler::class,
         ],    
     ],
 ];
@@ -60,10 +59,12 @@ class FooExceptionHandler extends  ExceptionHandler
         // 交给下一个异常处理器
         return $respose;
 
-        // 或者直接屏蔽异常
-        // return $response->withStatus(500)->withBody('Server Error');
+        // 或者不做处理直接屏蔽异常
     }
 
+    /**
+     * 判断该异常处理器是否要对该异常进行处理
+     */
     public function isValid(Throwable $throwable): bool
     {
         return true;
@@ -83,20 +84,16 @@ use Throwable;
 
 class FooException extends ServerException
 {
-    public function __construct(string $message = null, int $code = 0, Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
 }
 ```
 
-### 触发异常DEMO
+### 触发异常
 
 ```php
 
 namespace App\Controller;
 
-use App\Exception\BusinessException;
+use App\Exception\FooException;
 
 class IndexController extends Controller
 {

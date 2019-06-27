@@ -222,7 +222,7 @@ class IndexController
 ## 启动 Hyperf 服务
 
 由于 `Hyperf` 内置了协程服务器，也就意味着 `Hyperf` 将以 `CLI` 的形式去运行，所以在定义好路由及实际的逻辑代码之后，我们需要在项目根目录并通过命令行运行 `php bin/hyperf.php start` 来启动服务。   
-当 `Console` 界面显示服务启动后便可通过 `cURL` 或 浏览器对服务正常发起访问了。
+当 `Console` 界面显示服务启动后便可通过 `cURL` 或 浏览器对服务正常发起访问了，默认情况下上面的例子是访问 `http://127.0.0.1:9501/index/info?id=1`。
 
 ## 重新加载代码
 
