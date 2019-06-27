@@ -94,8 +94,6 @@ class ModelCommand extends Command
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false));
 
-        var_dump($option);
-
         if ($table) {
             $this->createModel($table, $option);
         } else {
