@@ -4,6 +4,7 @@
 
 - [#48](https://github.com/hyperf-cloud/hyperf/pull/48) Added WebSocket Client.
 - [#51](https://github.com/hyperf-cloud/hyperf/pull/51) Added property `enableCache` to `DefinitionSource` to enable annotation cache. 
+- [#61](https://github.com/hyperf-cloud/hyperf/pull/61) Added property type of `Model` created by command `db:model`.
 
 ## Changed
 
