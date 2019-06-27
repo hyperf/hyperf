@@ -139,3 +139,65 @@ class ExampleTest extends TestCase
     }
 }
 ```
+
+## 调试代码
+
+在FPM场景下，我们通常改完代码，然后打开浏览器访问对应接口，所以我们通常会需要两个函数 `dd` 和 `dump`，但 `Hyperf` 跑在 `CLI` 模式下，就算提供了这两个函数，也需要在 `CLI` 中重启 `Server`，然后再到浏览器中调用对应接口查看结果。这样其实并没有简化流程，反而更麻烦了。
+
+接下来，我来介绍如何通过配合 `testing`，来快速调试代码，顺便完成单元测试。
+
+假设我们在 `UserDao` 中实现了一个查询用户信息的函数
+```php
+namespace App\Service\Dao;
+
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
+use App\Model\User;
+
+class UserDao extends Dao
+{
+    /**
+     * @param $id
+     * @param bool $throw
+     * @return
+     */
+    public function first($id, $throw = true)
+    {
+        $model = User::query()->find($id);
+        if ($throw && empty($model)) {
+            throw new BusinessException(ErrorCode::USRE_NOT_EXIST);
+        }
+        return $model;
+    }
+}
+```
+
+那我们编写对应的单元测试
+
+```php
+namespace HyperfTest\Cases;
+
+use HyperfTest\HttpTestCase;
+use App\Service\Dao\UserDao;
+/**
+ * @internal
+ * @coversNothing
+ */
+class UserTest extends HttpTestCase
+{
+    public function testUserDaoFirst()
+    {
+        $model = di()->get(UserDao::class)->first(1);
+
+        var_dump($model);
+
+        $this->assertSame(1, $model->id);
+    }
+}
+```
+
+然后执行我们的单测
+
+```
+composer test -- --filter=testUserDaoFirst
+```
