@@ -20,12 +20,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
 {
     protected $columns = [];
 
-    protected $forceCasts = false;
-
-    public function __construct($columns = [], bool $forceCasts)
+    public function __construct($columns = [])
     {
         $this->columns = $columns;
-        $this->forceCasts = $forceCasts;
     }
 
     public function leaveNode(Node $node)
@@ -67,23 +64,10 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
     {
         $items = [];
-        $exists = [];
-
-        /** @var Node\Expr\ArrayItem $item */
-        foreach ($node->default->items as $item) {
-            $exists[] = $item->key->value;
-            $items[] = $item;
-        }
-
-        if ($this->forceCasts) {
-            $items = [];
-        }
-
         foreach ($this->columns as $column) {
             $name = $column['column_name'];
-            $type = $this->formatDatabaseType($column['data_type']);
-
-            if ($type && (! in_array($name, $exists) || $this->forceCasts)) {
+            $type = $column['cast'] ?? null;
+            if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
                 $items[] = new Node\Expr\ArrayItem(
                     new Node\Scalar\String_($type),
                     new Node\Scalar\String_($name)
@@ -101,7 +85,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $name = $column['column_name'];
 
-        $type = $this->formatPropertyType($column['data_type']);
+        $type = $this->formatPropertyType($column['cast'] ?? $column['data_type']);
 
         return [$name, $type];
     }
@@ -132,16 +116,12 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $result = $this->formatDatabaseType($type);
         if (is_null($result)) {
-            // switch ($type) {
-            //     case 'varchar':
-            //         return 'string';
-            //     case 'datetime':
-            //         return '\Carbon\Carbon';
-            //     default:
-            //         return null;
-            // }
+            switch ($type) {
+                case 'date':
+                case 'datetime':
+                    return '\Carbon\Carbon';
+            }
 
-            // TODO: 有效监测会被模型转化为 \Carbon\Carbon 对象的字段。
             return 'string';
         }
 

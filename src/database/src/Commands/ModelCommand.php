@@ -16,6 +16,7 @@ use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
@@ -89,9 +90,11 @@ class ModelCommand extends Command
         $option->setPool($pool)
             ->setPath($this->getOption('path', 'commands.db:model.path', $pool, 'app/Model'))
             ->setPrefix($this->getOption('prefix', 'prefix', $pool, ''))
-            ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
             ->setInheritance($this->getOption('inheritance', 'commands.db:model.inheritance', $pool, 'Model'))
-            ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'));
+            ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
+            ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false));
+
+        var_dump($option);
 
         if ($table) {
             $this->createModel($table, $option);
@@ -142,19 +145,21 @@ class ModelCommand extends Command
         $class = $option->getPath() . '/' . Str::studly($table);
         $path = BASE_PATH . '/' . $class . '.php';
 
+        $class = str_replace('/', '\\', Str::ucfirst($class));
         if (! file_exists($path)) {
             $dir = dirname($path);
             if (! is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
 
-            $class = str_replace('/', '\\', Str::ucfirst($class));
             file_put_contents($path, $this->buildClass($class, $option));
         }
 
+        $columns = $this->getColumns($class, $columns, $option->isForceCasts());
+
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $visitor = make(ModelUpdateVistor::class, ['columns' => $columns, 'forceCasts' => $option->isForceCasts()]);
+        $visitor = make(ModelUpdateVistor::class, ['columns' => $columns]);
         $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
@@ -163,10 +168,34 @@ class ModelCommand extends Command
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
     }
 
+    protected function getColumns($className, $columns, $forceCasts): array
+    {
+        /** @var Model $model */
+        $model = new $className();
+        $dates = $model->getDates();
+        $casts = [];
+        if (! $forceCasts) {
+            $casts = $model->getCasts();
+        }
+
+        foreach ($dates as $date) {
+            if (! isset($casts[$date])) {
+                $casts[$date] = 'datetime';
+            }
+        }
+
+        foreach ($columns as $key => $value) {
+            $columns[$key]['cast'] = $casts[$value['column_name']] ?? null;
+        }
+
+        return $columns;
+    }
+
     protected function getOption(string $name, string $key, string $pool = 'default', $default = null)
     {
         $result = $this->input->getOption($name);
-        if ($result === null) {
+        $nonInput = $name === 'force-casts' ? false : null;
+        if ($result === $nonInput) {
             $result = $this->config->get("databases.{$pool}.{$key}", $default);
         }
 
