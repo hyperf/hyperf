@@ -144,6 +144,7 @@
             "HyperfTest\\Database\\": "./src/database/tests/",
             "HyperfTest\\DbConnection\\": "./src/db-connection/tests/",
             "HyperfTest\\Event\\": "./src/event/tests/",
+            "HyperfTest\\ModelCache\\": "./src/model-cache/tests/",
             "HyperfTest\\Redis\\": "./src/redis/tests/",
             "HyperfTest\\Utils\\": "./src/utils/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",

@@ -85,7 +85,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $name = $column['column_name'];
 
-        $type = $this->formatPropertyType($column['cast'] ?? $column['data_type']);
+        $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
 
         return [$name, $type];
     }
@@ -112,19 +112,22 @@ class ModelUpdateVistor extends NodeVisitorAbstract
         }
     }
 
-    protected function formatPropertyType(string $type): ?string
+    protected function formatPropertyType(string $type, ?string $cast): ?string
     {
-        $result = $this->formatDatabaseType($type);
-        if (is_null($result)) {
-            switch ($type) {
-                case 'date':
-                case 'datetime':
-                    return '\Carbon\Carbon';
-            }
-
-            return 'string';
+        if (! isset($cast)) {
+            $cast = $this->formatDatabaseType($type) ?? 'string';
         }
 
-        return $result;
+        switch ($cast) {
+            case 'integer':
+                return 'int';
+            case 'date':
+            case 'datetime':
+                return '\Carbon\Carbon';
+            case 'json':
+                return 'array';
+        }
+
+        return $cast;
     }
 }
