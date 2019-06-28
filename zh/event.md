@@ -31,7 +31,7 @@ namespace App\Event;
 
 class UserRegistered
 {
-    //  这里必须定义成public，供监听器接受使用，否则监听器无权限使用本事件的属性变量
+    //  这里必须定义成public，供监听器接收使用，否则监听器无权限使用本事件的属性变量
     public $user;
     
     public function __construct($user)
