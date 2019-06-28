@@ -1,18 +1,21 @@
-# 介绍
+# Introduction
 
-Hyperf 是基于 `Swoole 4.3+` 实现的高性能、高灵活性的 PHP 持久化框架，内置协程服务器及大量常用的组件，性能较传统基于 `PHP-FPM` 的框架有质的提升，提供超高性能的同时，也保持着极其灵活的可扩展性，标准组件均以最新的 [PSR 标准](https://www.php-fig.org/psr) 实现，基于强大的依赖注入设计可确保框架内的绝大部分组件或类都是可替换的。
-   
-框架组件库除了常见的协程版的 `MySQL 客户端`、`Redis 客户端`，还为您准备了协程版的 `Eloquent ORM`、`GRPC 服务端及客户端`、`Zipkin (OpenTracing) 客户端`、`Guzzle HTTP 客户端`、`Elasticsearch 客户端`、`Consul 客户端`、`ETCD 客户端`、`AMQP 组件`、`Apollo 配置中心`、`基于令牌桶算法的限流器`、`通用连接池` 等组件的提供也省去了自己去实现对应协程版本的麻烦，并提供了 `依赖注入`、`注解`、`AOP 面向切面编程`、`中间件`、`自定义进程`、`事件管理器`、`简易的 Redis 消息队列和全功能的 RabbitMQ 消息队列` 等非常便捷的功能，满足丰富的技术场景和业务场景，开箱即用。
+Hyperf is a high-performance, highly flexible PHP CLI framework based on `Swoole 4.3+`. It has a built-in coroutine server and a large number of commonly used components. The performance is better than the traditional PHP-FPM-based framework, providing ultra-high performance, and also maintains extremely flexible scalability at the same time. Standard components are implemented in the latest PSR standards, and a powerful dependency injection design ensures that most components or classes within the framework are replaceable.
 
-# 框架初衷
+In addition to providing `MySQL coroutine client` and `Redis coroutine client`, these common coroutine client, the hyperf component library also prepares the coroutine version of `Eloquent ORM`, `GRPC server and client`, `Zipkin (OpenTracing) client`, `Guzzle HTTP client`, and `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `token bucket algorithm-based limiter`, `universal connection pool`, etc. Avoids the trouble of implementing the corresponding coroutine version client by yourself. Also provides convenient functions such as `dependency injection`, `annotation`, `AOP (aspect-oriented programming)`, `middleware`, `custom processes`, `event manager`, `simple Redis message queue`, and `full-featured RabbitMQ message queue` to meet a wide range of technical scenarios and business scenarios.
 
-尽管现在基于 PHP 语言开发的框架处于一个百花争鸣的时代，但仍旧没能看到一个优雅的设计与超高性能的共存的完美框架，亦没有看到一个真正为 PHP 微服务铺路的框架，此为 Hyperf 及其团队成员的初衷，我们将持续投入并为此付出努力，也欢迎你加入我们参与开源建设。
+# Original intention
 
-# 设计理念
+Although there are many new PHP frameworks have been appeared, but our still does not see a perfect framework for the coexistence of elegant design and ultra-high performance, nor does it see a framework that really paves the way for PHP microservices. For the original intention of Hyperf and its team members, we will continue to invest to it, and you are welcome to join us to participate in open source construction.
 
-`Hyperspeed + Flexibility = Hyperf`，从名字上我们就将 `超高速` 和 `灵活性` 作为 Hyperf 的基因。
-   
-- 对于超高速，我们基于 Swoole 协程并在框架设计上进行大量的优化以确保超高性能的输出。   
-- 对于灵活性，我们基于 Hyperf 强大的依赖注入组件，组件均基于 [PSR 标准](https://www.php-fig.org/psr) 的契约和由 Hyperf 定义的契约实现，达到框架内的绝大部分的组件或类都是可替换的。   
+# Design concept
 
-基于以上的特点，Hyperf 将存在丰富的可能性，如实现 Web 服务，网关服务，分布式中间件，微服务架构，游戏服务器，物联网（IOT）等。
+`Hyperspeed + Flexibility = Hyperf`, from the framework name we have been used `hyperfspeed (ultra-high performance)` and `flexibility` as the gene of Hyperf.
+
+For ultra-high performance, Hyperf based on the Swoole coroutine, and make a lots of optimization on the framework design to ensure ultra-high performance.   
+For flexibility, Hyperf based on the powerful dependency injection component of Hyperf, which is based on [PSR](https://www.php-fig.org/psr) and the contracts defined by Hyperf, so that most of the components or classes within the framework are replaceable and re-useable.   
+Based on the above characteristics, Hyperf will have a lots of possibilities, such as implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet of Things (IoT).
+
+# Documentation
+
+[https://doc.hyperf.io/](https://doc.hyperf.io/)
