@@ -187,7 +187,7 @@ class UserTest extends HttpTestCase
 {
     public function testUserDaoFirst()
     {
-        $model = di()->get(UserDao::class)->first(1);
+        $model = \Hyperf\Utils\ApplicationContext::getContaienr()->get(UserDao::class)->first(1);
 
         var_dump($model);
 
