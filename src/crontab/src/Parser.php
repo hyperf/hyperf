@@ -39,15 +39,13 @@ class Parser
         if (! $this->isValid($crontabString)) {
             throw new \InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
-        if ($startTime === null) {
-            if ($startTime instanceof Carbon) {
-                $start = $startTime->getTimestamp();
-            }
-            if (! is_numeric($startTime)) {
-                throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
-            }
+        if ($startTime instanceof Carbon) {
+            $startTime = $startTime->getTimestamp();
         } else {
-            $start = time();
+            $startTime = time();
+        }
+        if (! is_numeric($startTime)) {
+            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
         }
         $cron = preg_split('/[\\s]+/i', trim($crontabString));
         if (count($cron) == 6) {
@@ -59,7 +57,7 @@ class Parser
                 'month' => $this->parseSegment($cron[4], 1, 12),
                 'week' => $this->parseSegment($cron[5], 0, 6),
             ];
-        } elseif (count($cron) == 5) {
+        } else {
             $date = [
                 'second' => [1 => 0],
                 'minutes' => $this->parseSegment($cron[0], 0, 59),
@@ -69,15 +67,15 @@ class Parser
                 'week' => $this->parseSegment($cron[4], 0, 6),
             ];
         }
-        if (in_array(intval(date('i', $start)), $date['minutes'])
-            && in_array(intval(date('G', $start)), $date['hours'])
-            && in_array(intval(date('j', $start)), $date['day'])
-            && in_array(intval(date('w', $start)), $date['week'])
-            && in_array(intval(date('n', $start)), $date['month'])
+        if (in_array(intval(date('i', $startTime)), $date['minutes'])
+            && in_array(intval(date('G', $startTime)), $date['hours'])
+            && in_array(intval(date('j', $startTime)), $date['day'])
+            && in_array(intval(date('w', $startTime)), $date['week'])
+            && in_array(intval(date('n', $startTime)), $date['month'])
         ) {
             $result = [];
             foreach ($date['second'] as $second) {
-                $result[] = Carbon::createFromTimestamp($start + $second);
+                $result[] = Carbon::createFromTimestamp($startTime + $second);
             }
             return $result;
         }
