@@ -81,7 +81,7 @@ class Manager
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
                     $ttl = $handler->getConfig()->getTtl();
-                    $handler->set($key, $model->toArray(), $ttl);
+                    $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
                     $handler->set($key, [], $ttl);
@@ -136,10 +136,10 @@ class Manager
                 foreach ($models as $model) {
                     $id = $model->getKey();
                     $key = $this->getCacheKey($id, $instance, $handler->getConfig());
-                    $handler->set($key, $model->toArray(), $ttl);
+                    $handler->set($key, $this->formatModel($model), $ttl);
                 }
 
-                $items = array_merge($items, $models->toArray());
+                $items = array_merge($items, $this->formatModels($models));
             }
             $map = [];
             foreach ($items as $item) {
@@ -220,5 +220,28 @@ class Manager
             $model->getKeyName(),
             $id
         );
+    }
+
+    protected function formatModel(Model $model): array
+    {
+        $casts = $model->getCasts();
+        $result = $model->toArray();
+        foreach ($result as $key => $value) {
+            if (isset($casts[$key]) && $casts[$key] === 'json' && ! is_null($value)) {
+                $result[$key] = json_encode($value);
+            }
+        }
+
+        return $result;
+    }
+
+    protected function formatModels($models): array
+    {
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $this->formatModel($model);
+        }
+
+        return $result;
     }
 }
