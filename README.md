@@ -5,8 +5,6 @@ English | [中文](./README-CN.md)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.3.3-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
 [![Hyperf License](https://img.shields.io/github/license/hyperf-cloud/hyperf.svg?maxAge=2592000)](https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE.md)
 
-
-
 # Introduction
 
 Hyperf is a high-performance, highly flexible PHP CLI framework based on `Swoole 4.3+`. It has a built-in coroutine server and a large number of commonly used components. The performance is better than the traditional PHP-FPM-based framework, providing ultra-high performance, and also maintains extremely flexible scalability at the same time. Standard components are implemented in the latest PSR standards, and a powerful dependency injection design ensures that most components or classes within the framework are replaceable.

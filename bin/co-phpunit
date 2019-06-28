@@ -15,11 +15,11 @@
         die(1);
     }
 
-    if (!ini_get('date.timezone')) {
+    if (! ini_get('date.timezone')) {
         ini_set('date.timezone', 'UTC');
     }
 
-    foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
+    foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
         if (file_exists($file)) {
             define('PHPUNIT_COMPOSER_INSTALL', $file);
 
@@ -29,7 +29,7 @@
 
     unset($file);
 
-    if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+    if (! defined('PHPUNIT_COMPOSER_INSTALL')) {
         fwrite(
             STDERR,
             'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL .
@@ -40,7 +40,7 @@
         die(1);
     }
 
-    $options = getopt('', array('prepend:'));
+    $options = getopt('', ['prepend:']);
 
     if (isset($options['prepend'])) {
         require $options['prepend'];
@@ -50,7 +50,10 @@
 
     require PHPUNIT_COMPOSER_INSTALL;
 
-    PHPUnit\TextUI\Command::main();
+    $code = PHPUnit\TextUI\Command::main(false);
+    if ($code > 0) {
+        exit($code);
+    }
 
     swoole_event_exit();
 });

@@ -21,7 +21,7 @@ interface ConfigInterface
      * @param mixed $default default value of the entry when does not found
      * @return mixed entry
      */
-    public function get(string $key, $default);
+    public function get(string $key, $default = null);
 
     /**
      * Returns true if the container can return an entry for the given identifier.

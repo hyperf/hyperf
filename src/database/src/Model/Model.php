@@ -608,8 +608,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             return;
         }
 
-        if ($this->fireModelEvent('deleting') === false) {
-            return false;
+        if ($event = $this->fireModelEvent('deleting')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
         }
 
         // Here, we'll touch the owning models, verifying these timestamps get updated
@@ -622,7 +624,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         // Once the model has been deleted, we will fire off the deleted event so that
         // the developers may hook into post-delete operations. We will then return
         // a boolean true as the delete is presumably successful on the database.
-        $this->fireModelEvent('deleted', false);
+        $this->fireModelEvent('deleted');
 
         return true;
     }
@@ -1326,8 +1328,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         // If the updating event returns false, we will cancel the update operation so
         // developers can hook Validation systems into their models and cancel this
         // operation if the model does not pass validation. Otherwise, we update.
-        if ($this->fireModelEvent('updating') === false) {
-            return false;
+        if ($event = $this->fireModelEvent('updating')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
         }
 
         // First we need to create a fresh query instance and touch the creation and
@@ -1382,8 +1386,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     protected function performInsert(Builder $query)
     {
-        if ($this->fireModelEvent('creating') === false) {
-            return false;
+        if ($event = $this->fireModelEvent('creating')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
         }
 
         // First we'll need to create a fresh query instance and touch the creation and

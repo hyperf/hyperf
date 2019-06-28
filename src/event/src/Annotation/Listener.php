@@ -24,4 +24,11 @@ class Listener extends AbstractAnnotation
      * @var int
      */
     public $priority = 1;
+
+    public function __construct($value = null)
+    {
+        if (isset($value['priority']) && is_numeric($value['priority'])) {
+            $this->priority = (int) $value['priority'];
+        }
+    }
 }

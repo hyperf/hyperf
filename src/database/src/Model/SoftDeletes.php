@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
+use Psr\EventDispatcher\StoppableEventInterface;
+
 trait SoftDeletes
 {
     /**
@@ -42,7 +44,7 @@ trait SoftDeletes
             $this->forceDeleting = false;
 
             if ($deleted) {
-                $this->fireModelEvent('forceDeleted', false);
+                $this->fireModelEvent('forceDeleted');
             }
         });
     }
@@ -57,8 +59,10 @@ trait SoftDeletes
         // If the restoring event does not return false, we will proceed with this
         // restore operation. Otherwise, we bail out so the developer will stop
         // the restore totally. We will clear the deleted timestamp and save.
-        if ($this->fireModelEvent('restoring') === false) {
-            return false;
+        if ($event = $this->fireModelEvent('restoring')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
         }
 
         $this->{$this->getDeletedAtColumn()} = null;
@@ -70,7 +74,7 @@ trait SoftDeletes
 
         $result = $this->save();
 
-        $this->fireModelEvent('restored', false);
+        $this->fireModelEvent('restored');
 
         return $result;
     }

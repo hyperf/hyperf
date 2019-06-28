@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -20,9 +20,11 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
     public function __construct($value = null)
     {
-        foreach ($value ?? [] as $key => $val) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $val;
+        if (is_array($value)) {
+            foreach ($value as $key => $val) {
+                if (property_exists($this, $key)) {
+                    $this->{$key} = $val;
+                }
             }
         }
     }

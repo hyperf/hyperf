@@ -16,6 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\LoggerFactory;
+use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,11 @@ use Psr\Log\LoggerInterface;
  */
 class LoggerFactoryTest extends TestCase
 {
+    public function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testInvokeLoggerFactory()
     {
         $container = $this->mockContainer();
@@ -38,8 +44,8 @@ class LoggerFactoryTest extends TestCase
     public function testInvokeLoggerFromFactory()
     {
         $container = $this->mockContainer();
+        ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
-
         $logger = $factory->get('hyperf');
         $this->assertInstanceOf(StdoutLoggerInterface::class, $logger);
         $this->assertInstanceOf(LoggerInterface::class, $logger);
