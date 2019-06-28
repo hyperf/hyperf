@@ -34,24 +34,26 @@ class CrontabManager
         if (! $this->isValidCrontab($crontab)) {
             return false;
         }
-        $this->crontabs[] = $crontab;
+        $this->crontabs[$crontab->getName()] = $crontab;
         return true;
     }
 
-    public function parse(int $start = null): array
+    public function parse(): array
     {
         $result = [];
         $crontabs = $this->getCrontabs();
+        $last = time();
         foreach ($crontabs ?? [] as $key => $crontab) {
             if (! $crontab instanceof Crontab) {
                 unset($this->crontabs[$key]);
                 continue;
             }
-            $time = $this->parser->parse($crontab->rule, $start);
-            $result[spl_object_hash($crontab)] = [
-                'crontab' => $crontab,
-                'time' => $time,
-            ];
+            $time = $this->parser->parse($crontab->getRule(), $last);
+            if ($time) {
+                foreach ($time as $t) {
+                    $result[] = clone $crontab->setExecuteTime($t);
+                }
+            }
         }
         return $result;
     }
@@ -63,6 +65,6 @@ class CrontabManager
 
     private function isValidCrontab(Crontab $crontab): bool
     {
-        return isset($crontab->name, $crontab->rule, $crontab->command) && $this->parser->isValid($crontab->rule);
+        return $crontab->getName() && $crontab->getRule() && $crontab->getCommand() && $this->parser->isValid($crontab->getRule());
     }
 }

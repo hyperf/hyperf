@@ -12,25 +12,115 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab;
 
+use Carbon\Carbon;
+
 class Crontab
 {
     /**
-     * @var string|null
+     * @var null|string
      */
-    public $name;
+    protected $name;
 
     /**
-     * @var string|null
+     * @var string
      */
-    public $rule;
+    protected $type = 'command';
 
     /**
-     * @var string|null
+     * @var null|string
      */
-    public $command;
+    protected $rule;
 
     /**
-     * @var string|null
+     * @var null|string
      */
-    public $memo;
+    protected $command;
+
+    /**
+     * @var null|string
+     */
+    protected $memo;
+
+    /**
+     * @var null|\Carbon\Carbon
+     */
+    protected $executeTime;
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param null|string $name
+     */
+    public function setName(?string $name): Crontab
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getRule(): ?string
+    {
+        return $this->rule;
+    }
+
+    /**
+     * @param null|string $rule
+     */
+    public function setRule(?string $rule): Crontab
+    {
+        $this->rule = $rule;
+        return $this;
+    }
+
+    public function getCommand(): ?string
+    {
+        return $this->command;
+    }
+
+    /**
+     * @param null|string $command
+     */
+    public function setCommand(?string $command): Crontab
+    {
+        $this->command = $command;
+        return $this;
+    }
+
+    public function getMemo(): ?string
+    {
+        return $this->memo;
+    }
+
+    /**
+     * @param null|string $memo
+     */
+    public function setMemo(?string $memo): Crontab
+    {
+        $this->memo = $memo;
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): Crontab
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getExecuteTime(): ?Carbon
+    {
+        return $this->executeTime;
+    }
+
+    public function setExecuteTime(Carbon $executeTime): Crontab
+    {
+        $this->executeTime = $executeTime;
+        return $this;
+    }
 }
