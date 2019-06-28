@@ -31,6 +31,7 @@ namespace App\Event;
 
 class UserRegistered
 {
+    //  这里必须定义成public，供监听器接受使用，否则监听器无权限使用本事件的属性变量
     public $user;
     
     public function __construct($user)
@@ -66,7 +67,10 @@ class UserRegisteredListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        // 事件触发后该监听器要执行的代码写在这里，比如该示例下的发送用户注册成功短信
+        // 这里就可以获取事件传触发时候的参数以及相关属性，例如：
+        //$event->user  ;  
+        // 事件触发后该监听器要执行的代码写在这里，比如该示例下的发送用户注册成功短信等
+        
     }
 }
 ```
@@ -112,7 +116,9 @@ class UserRegisteredListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        // 事件触发后该监听器要执行的代码写在这里，比如该示例下的发送用户注册成功短信
+        // 这里就可以获取事件传触发时候的参数以及相关属性，例如：
+        //$event->user  ;  
+        // 事件触发后该监听器要执行的代码写在这里，比如该示例下的发送用户注册成功短信等
     }
 }
 ```
@@ -131,6 +137,7 @@ namespace App\Service;
 
 use Hyperf\Di\Annotation\Inject;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use App\Event\UserRegistered;
 
 class UserService
 {
