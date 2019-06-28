@@ -47,7 +47,7 @@ class Manager
         }
 
         foreach ($config->get('databases') as $key => $item) {
-            $handlerClass = $item['handler'] ?? RedisHandler::class;
+            $handlerClass = $item['cache']['handler'] ?? RedisHandler::class;
             $config = new Config($item['cache'] ?? [], $key);
 
             /** @var HandlerInterface $handler */
