@@ -20,7 +20,9 @@ Although there are many new PHP frameworks have been appeared, our team still ha
 `Hyperspeed + Flexibility = Hyperf`, from the framework name we have been used `hyperfspeed (ultra-high performance)` and `flexibility` as the gene of Hyperf.
 
 For ultra-high performance, Hyperf, based on the Swoole coroutine, makes a lots of optimizations on the framework design to ensure ultra-high performance.   
-For flexibility, Hyperf has a powerful dependency injection component based on [PSR](https://www.php-fig.org/psr) and the contracts are defined by Hyperf, so that most of the components or classes within the framework are replaceable and re-useable.   
+
+For flexibility, Hyperf has a powerful dependency injection component based on [PSR](https://www.php-fig.org/psr) and the contracts are defined by Hyperf, so that most of the components or classes within the framework are replaceable and re-useable.
+
 Based on the above characteristics, Hyperf will have a lots of possibilities, such as implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet of Things (IoT).
 
 # Documentation
