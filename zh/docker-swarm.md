@@ -47,7 +47,21 @@ gitlab/gitlab-ce:latest
 
 [官方地址](https://docs.gitlab.com/runner/install/linux-repository.html)
 
-> 后续完善DEMO
+以 `CentOS` 为例
+
+```
+curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
+yum install gitlab-runner
+```
+
+当然，可以用 `curl https://setup.ius.io | sh` 命令，更新为最新的 `git` 源，然后直接使用 yum 安装 git 和 gitlab-runner。
+
+```
+$ curl https://setup.ius.io | sh
+$ yum -y install git2u
+$ git version
+$ yum install gitlab-runner
+```
 
 ### 注册 gitlab-runner
 
