@@ -12,7 +12,7 @@ curl -sSL https://get.daocloud.io/docker | sh
 
 ### 安装Gitlab
 
-首先我们修改一下端口号，把 `22` 端口让出来给 `gitlab` 使用。
+首先我们修改一下端口号，把 `sshd` 服务的 `22` 端口改为 `2222`，让 `gitlab` 可以使用 `22` 端口。
 
 ```
 $ vim /etc/ssh/sshd_config
