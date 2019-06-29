@@ -70,6 +70,7 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
+  * [WebSocket](zh/websocket.md)
 
 * 其他教程
 
