@@ -73,7 +73,8 @@
 
 * 其他教程
 
-  * [Docker Swarm集群搭建教程](zh/docker-swarm.md)
+  * [Docker Swarm集群搭建教程](zh/tutorial/docker-swarm.md)
+  * [DaoCloud Devops搭建教程](zh/tutorial/daocloud.md)
   
 * Awesome Hyperf
 
