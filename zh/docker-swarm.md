@@ -68,7 +68,7 @@ shell
 
 ## 初始化 Swarm 集群
 
-初始化集群
+登录另外一台机器，初始化集群
 ```
 $ docker swarm init
 ```
