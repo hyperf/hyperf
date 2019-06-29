@@ -106,9 +106,9 @@ class ModelCommand extends Command
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want to associated with the Model.');
 
         $this->addOption('pool', 'p', InputOption::VALUE_OPTIONAL, 'Which connection pool you want the Model use.', 'default');
-        $this->addOption('path', 'pt', InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.');
+        $this->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path that you want the Model file to be generated.');
         $this->addOption('force-casts', 'F', InputOption::VALUE_NONE, 'Whether force generate the casts for model.');
-        $this->addOption('prefix', 'pf', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
+        $this->addOption('prefix', 'P', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
     }
