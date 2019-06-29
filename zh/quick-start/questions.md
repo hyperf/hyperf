@@ -42,3 +42,14 @@ php bin/hyperf.php di:init-proxy && composer test
 ```
 php bin/hyperf.php di:init-proxy && php bin/hyperf.php start
 ```
+
+## Docker打包失败
+
+显示 `wget: error getting response: Connection reset by peer`
+
+修改我们默认的 `Dockerfile`，在 wget 之前添加以下代码
+
+```
+&& apk add ca-certificates wget openssl \
+&& update-ca-certificates \
+```
