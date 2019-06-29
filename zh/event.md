@@ -137,7 +137,7 @@ namespace App\Service;
 
 use Hyperf\Di\Annotation\Inject;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use App\Event\UserRegistered;
+use App\Event\UserRegistered; 
 
 class UserService
 {
