@@ -70,6 +70,10 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
+
+* 其他教程
+
+  * [Docker Swarm集群搭建教程](zh/docker-swarm.md)
   
 * Awesome Hyperf
 
