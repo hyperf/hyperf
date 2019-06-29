@@ -47,9 +47,8 @@ php bin/hyperf.php di:init-proxy && php bin/hyperf.php start
 
 显示 `wget: error getting response: Connection reset by peer`
 
-修改我们默认的 `Dockerfile`，在 wget 之前添加以下代码
+修改我们默认的 `Dockerfile`，重新安装一下 `wget`，增加以下代码即可。
 
 ```
-&& apk add ca-certificates wget openssl \
-&& update-ca-certificates \
+&& apk add wget \
 ```
