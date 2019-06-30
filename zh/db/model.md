@@ -146,7 +146,7 @@ class User extends Model
 
 ### 数据库连接
 
-默认情况下，Hyperf 模型将使用你的应用程序配置的默认数据库连接 default。如果你想为模型指定一个不同的连接，设置 $connection 属性：当然，connection-name 作为 key，必须在 `databases.php` 配置文件中存在。
+默认情况下，Hyperf 模型将使用你的应用程序配置的默认数据库连接 `default`。如果你想为模型指定一个不同的连接，设置 `$connection` 属性：当然，`connection-name` 作为 `key`，必须在 `databases.php` 配置文件中存在。
 
 ```php
 <?php
@@ -165,7 +165,7 @@ class User extends Model
 
 ### 默认属性值
 
-如果要为模型的某些属性定义默认值，可以在模型上定义 $attributes 属性：
+如果要为模型的某些属性定义默认值，可以在模型上定义 `$attributes` 属性：
 
 ```php
 <?php
@@ -226,7 +226,7 @@ echo $user->name; // Hyperf
 
 ### 集合
 
-对于模型中的 `all` 和 `get` 方法可以查询多个结果，返回一个 `Hyperf\Database\Model\Collection` 实例。 Collection 类提供了 很多辅助函数 来处理查询结果：
+对于模型中的 `all` 和 `get` 方法可以查询多个结果，返回一个 `Hyperf\Database\Model\Collection` 实例。 `Collection` 类提供了很多辅助函数来处理查询结果：
 
 ```php
 $users = $users->reject(function ($user) {
@@ -319,7 +319,7 @@ User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 
 当用户通过 HTTP 请求传入一个意外的参数，并且该参数更改了数据库中你不需要更改的字段时。比如：恶意用户可能会通过 HTTP 请求传入 `is_admin` 参数，然后将其传给 `create` 方法，此操作能让用户将自己升级成管理员。
 
-所以，在开始之前，你应该定义好模型上的哪些属性是可以被批量赋值的。你可以通过模型上的 $fillable 属性来实现。 例如：让 `User` 模型的 name 属性可以被批量赋值：
+所以，在开始之前，你应该定义好模型上的哪些属性是可以被批量赋值的。你可以通过模型上的 `$fillable` 属性来实现。 例如：让 `User` 模型的 `name` 属性可以被批量赋值：
 
 ```php
 <?php
@@ -336,7 +336,7 @@ class User extends Model
 }
 ```
 
-一旦我们设置好了可以批量赋值的属性，就可以通过 create 方法插入新数据到数据库中了。 create 方法将返回保存的模型实例：
+一旦我们设置好了可以批量赋值的属性，就可以通过 `create` 方法插入新数据到数据库中了。 `create` 方法将返回保存的模型实例：
 
 ```php
 use App\Models\User;
@@ -371,7 +371,7 @@ class User extends Model
 
 ### 删除模型
 
-可以在模型实例上调用 delete 方法来删除实例：
+可以在模型实例上调用 `delete` 方法来删除实例：
 
 ```php
 use App\Models\User;
@@ -381,9 +381,20 @@ $user = User::query()->find(1);
 $user->delete();
 ```
 
+### 通过查询删除模型
+
+您可通过在查询上调用 `delete` 方法来删除模型数据，在这个例子中，我们将删除所有 `gender` 为 `1` 的用户。与批量更新一样，批量删除不会为删除的模型启动任何模型事件：
+
+```php
+use App\Models\User;
+
+// 注意使用 delete 方法时必须建立在某些查询条件基础之上才能安全删除数据，不存在 where 条件，会导致删除整个数据表
+User::query()->where('gender', 1)->delete(); 
+```
+
 ### 通过主键直接删除数据
 
-你可以直接使用 `destroy` 方法来删除模型，而不用先去数据库中查找。 `destroy` 方法除了接受单个主键作为参数之外，还接受多个主键，或者使用数组，集合来保存多个主键：
+在上面的例子中，在调用 `delete` 之前需要先去数据库中查找对应的模型。事实上，如果你知道了模型的主键，您可以直接通过 `destroy` 静态方法来删除模型数据，而不用先去数据库中查找。 `destroy` 方法除了接受单个主键作为参数之外，还接受多个主键，或者使用数组，集合来保存多个主键：
 
 ```php
 use App\Models\User;
@@ -392,15 +403,3 @@ User::destroy(1);
 
 User::destroy([1,2,3]);
 ```
-
-### 通过查询删除模型
-
-调用 `delete` 之前需要先去数据库中查找对应的模型，在这个例子中，我们将删除所有 `gender` 为1的用户。与批量更新一样，批量删除不会为删除的模型启动任何模型事件：
-
-
-```php
-use App\Models\User;
-
-User::query()->where('gender', 1)->delete(); //  注意使用delete方法时必须建立在某些查询条件基础之上，才能安全删除数据，无 where 条件，会导致删除整个数据表
-```
-
