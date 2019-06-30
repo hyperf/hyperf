@@ -27,7 +27,7 @@ return [
 
 ### 定义异常处理器
 
-我们可以在任意位置定义一个 `类(Class)` 并继承抽象类 ` Hyperf\ExceptionHandler\ExceptionHandler;` 并实现其中的抽象方法，如下：
+我们可以在任意位置定义一个 `类(Class)` 并继承抽象类 ` Hyperf\ExceptionHandler\ExceptionHandler` 并实现其中的抽象方法，如下：
 
 ```php
 <?php
