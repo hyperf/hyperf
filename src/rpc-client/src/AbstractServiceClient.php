@@ -32,6 +32,13 @@ use RuntimeException;
 abstract class AbstractServiceClient
 {
     /**
+     * default uri.
+     *
+     * @var string
+     */
+     const DEFAULT_URI = 'http://127.0.0.1:8500';
+    
+    /**
      * The service name of the target service.
      *
      * @var string
@@ -264,7 +271,7 @@ abstract class AbstractServiceClient
         return make(Agent::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? null,
+                    'base_uri' => $config['address'] ?? self::DEFAULT_URI,
                 ]);
             },
         ]);
