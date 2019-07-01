@@ -20,10 +20,9 @@ use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
@@ -54,6 +53,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      * @var CoreMiddleware
      */
     protected $coreMiddleware;
+
+    /**
+     * @var array
+     */
+    protected $exceptionHandlers;
 
     /**
      * @var StdoutLoggerInterface
@@ -103,12 +107,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     {
         try {
             $security = $this->container->get(Security::class);
-            $fd = $request->fd;
 
             $psr7Request = $this->initRequest($request);
             $psr7Response = $this->initResponse($response);
 
-            $this->logger->debug("WebSocket: fd[{$fd}] start a handshake request.");
+            $this->logger->debug(sprintf('WebSocket: fd[%d] start a handshake request.', $request->fd));
 
             $key = $psr7Request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
             if ($security->isInvalidSecurityKey($key)) {
@@ -121,7 +124,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            FdCollector::set($fd, $class);
+            FdCollector::set($request->fd, $class);
 
             defer(function () use ($request, $class) {
                 $instance = $this->container->get($class);
@@ -129,13 +132,17 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                     $instance->onOpen($this->server, $request);
                 }
             });
-        } catch (\Throwable $exception) {
-            $this->logger->warning($this->container->get(FormatterInterface::class)->format($exception));
-            $stream = new SwooleStream((string) $exception->getMessage());
-            $psr7Response = $psr7Response->withBody($stream);
+        } catch (\Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
+            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        } finally {
+            // Send the Response to client.
+            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+                return;
+            }
+            $psr7Response->send();
         }
-
-        $psr7Response->send();
     }
 
     public function onMessage(\Swoole\Server $server, Frame $frame): void
@@ -177,7 +184,6 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function initRequest(SwooleRequest $request): RequestInterface
     {
-        // Initialize PSR-7 Request and Response objects.
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         return $psr7Request;
     }
