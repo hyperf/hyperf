@@ -157,7 +157,7 @@ return [
     'consumers' => [
         [
             // 对应消费者类的 $serviceName
-            'name' => 'CalculatorService',
+            'name' => 'CaculatorService',
             // 这个消费者要从哪获取节点信息
             'registry' => [
                 'protocol' => 'consul',
