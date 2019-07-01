@@ -30,14 +30,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 
 abstract class AbstractServiceClient
-{
-    /**
-     * default uri.
-     *
-     * @var string
-     */
-     const DEFAULT_URI = 'http://127.0.0.1:8500';
-    
+{   
     /**
      * The service name of the target service.
      *
@@ -271,7 +264,7 @@ abstract class AbstractServiceClient
         return make(Agent::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? self::DEFAULT_URI,
+                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
                 ]);
             },
         ]);
@@ -285,7 +278,7 @@ abstract class AbstractServiceClient
         return make(Health::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? null,
+                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
                 ]);
             },
         ]);
