@@ -63,10 +63,7 @@ class IndexController
 {
     public function raw(ResponseInterface $response): Psr7ResponseInterface
     {
-        $data = [
-            'key' => 'value'
-        ];
-        return $response->raw($data);
+        return $response->raw('hello world');
     }
 }
 ```
