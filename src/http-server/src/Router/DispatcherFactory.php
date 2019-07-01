@@ -201,7 +201,7 @@ class DispatcherFactory
         if (! $prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
             $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
-            $prefix = Str::snake($handledNamespace);
+            $prefix = Str::snake($handledNamespace, '');
         }
         if ($prefix[0] !== '/') {
             $prefix = '/' . $prefix;
