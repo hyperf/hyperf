@@ -22,8 +22,6 @@ use Psr\Log\NullLogger;
 
 abstract class Client
 {
-    const DEFAULT_URI = 'http://127.0.0.1:8500';
-
     /**
      * Will execute this closure everytime when the consul client send a HTTP request,
      * and the closure should return a GuzzleHttp\ClientInterface instance.
@@ -56,13 +54,9 @@ abstract class Client
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
-            // Set the default options to the $options.
-            if (! isset($options['base_uri'])) {
-                $options['base_uri'] = self::DEFAULT_URI;
-            }
             // Create a HTTP Client by $clientFactory closure.
             $clientFactory = $this->clientFactory;
-            $client = $clientFactory($options);
+            $client = $clientFactory();
             if (! $client instanceof ClientInterface) {
                 throw new ClientException(sprintf('The client factory should create a %s instance.', ClientInterface::class));
             }
