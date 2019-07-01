@@ -23,7 +23,6 @@ class ConfigProvider
             ],
             'scan' => [
                 'paths' => [
-                    __DIR__,
                 ],
             ],
         ];

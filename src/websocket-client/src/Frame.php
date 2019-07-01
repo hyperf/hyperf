@@ -54,12 +54,12 @@ class Frame
         return $map[$this->opcode] ?? 'WEBSOCKET_BAD_OPCODE';
     }
 
-    public function getOpcode()
+    public function getOpcode(): string
     {
         return $this->opcode;
     }
 
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
