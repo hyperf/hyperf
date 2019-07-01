@@ -83,7 +83,9 @@
         "hyperf/redis": "self.version",
         "hyperf/server": "self.version",
         "hyperf/tracer": "self.version",
-        "hyperf/utils": "self.version"
+        "hyperf/utils": "self.version",
+        "hyperf/websocket-client": "self.version",
+        "hyperf/websocket-server": "self.version"
     },
     "suggest": {
     },
@@ -128,20 +130,25 @@
             "Hyperf\\Redis\\": "src/redis/src/",
             "Hyperf\\Server\\": "src/server/src/",
             "Hyperf\\Tracer\\": "src/tracer/src/",
-            "Hyperf\\Utils\\": "src/utils/src/"
+            "Hyperf\\Utils\\": "src/utils/src/",
+            "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
+            "Hyperf\\WebSocketServer\\": "src/websocket-server/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests",
-            "HyperfTest\\Consul\\": "./src/consul/tests",
-            "HyperfTest\\Di\\": "./src/di/tests",
-            "HyperfTest\\Dispatcher\\": "./src/dispatcher/test",
-            "HyperfTest\\Database\\": "./src/database/tests",
-            "HyperfTest\\DbConnection\\": "./src/db-connection/tests",
-            "HyperfTest\\Event\\": "./src/event/tests",
-            "HyperfTest\\Redis\\": "./src/redis/tests",
-            "HyperfTest\\Utils\\": "./src/utils/tests"
+            "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests/",
+            "HyperfTest\\Consul\\": "./src/consul/tests/",
+            "HyperfTest\\Di\\": "./src/di/tests/",
+            "HyperfTest\\Dispatcher\\": "./src/dispatcher/test/",
+            "HyperfTest\\Database\\": "./src/database/tests/",
+            "HyperfTest\\DbConnection\\": "./src/db-connection/tests/",
+            "HyperfTest\\Event\\": "./src/event/tests/",
+            "HyperfTest\\ModelCache\\": "./src/model-cache/tests/",
+            "HyperfTest\\Redis\\": "./src/redis/tests/",
+            "HyperfTest\\Utils\\": "./src/utils/tests/",
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
+            "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/"
         }
     },
     "config": {
@@ -178,7 +185,9 @@
                 "Hyperf\\Redis\\ConfigProvider",
                 "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\Tracer\\ConfigProvider",
-                "Hyperf\\Utils\\ConfigProvider"
+                "Hyperf\\Utils\\ConfigProvider",
+                "Hyperf\\WebSocketClient\\ConfigProvider",
+                "Hyperf\\WebSocketServer\\ConfigProvider"
             ]
         }
     },
