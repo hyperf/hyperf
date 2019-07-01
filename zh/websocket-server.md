@@ -1,4 +1,4 @@
-# WebSocket
+# WebSocket 服务
 
 Hyperf 提供了对 WebSocket Server 的封装，可基于 [hyperf/websocket-server](https://github.com/hyperf-cloud/websocket-server) 组件快速搭建一个 WebSocket 应用。
 

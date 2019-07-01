@@ -66,16 +66,17 @@
   * [ETCD 协程客户端](zh/etcd.md)
   * [AMQP](zh/amqp.md)
   * [异步队列](zh/async-queue.md)
+  * [WebSocket 服务](zh/websocket-server.md)
+  * [WebSocket 协程客户端](zh/websocket-server.md)
   * [自定义进程](zh/process.md)
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
-  * [WebSocket](zh/websocket.md)
 
-* 其他教程
+* 应用部署
 
-  * [Docker Swarm集群搭建教程](zh/tutorial/docker-swarm.md)
-  * [DaoCloud Devops搭建教程](zh/tutorial/daocloud.md)
+  * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
+  * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   
 * Awesome Hyperf
 
