@@ -63,7 +63,7 @@ class IndexController
 {
     public function raw(ResponseInterface $response): Psr7ResponseInterface
     {
-        return $response->raw('hello world');
+        return $response->raw('Hello Hyperf.');
     }
 }
 ```
