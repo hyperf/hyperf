@@ -1,16 +1,20 @@
 # WebSocket
 
-## WebSocket Server
+Hyperf 提供了对 WebSocket Server 的封装，可基于 [hyperf/websocket-server](https://github.com/hyperf-cloud/websocket-server) 组件快速搭建一个 WebSocket 应用。
 
-```
+## 安装
+
+```bash
 composer require hyperf/websocket-server
 ```
 
-### 配置 Server
+## 配置 Server
 
 修改 `config/autoload/server.php`，增加以下配置。
 
-```
+```php
+<?php
+
 'servers' => [
     [
         'name' => 'ws',
@@ -27,21 +31,24 @@ composer require hyperf/websocket-server
 ],
 ```
 
-### 配置路由
+## 配置路由
 
-暂时只支持路由模式配置，注解模式后续会提供。
+> 目前暂时只支持配置文件的模式配置路由，后续会提供注解模式。   
 
-```
+在 `config/routes.php` 文件内增加对应 `ws` 的 Server 的路由配置，这里的 `ws` 值取决于您在 `config/autoload/server.php` 内配置的 WebSocket Server 的 `name` 值。
+
+```php
+<?php
+
 Router::addServer('ws', function () {
     Router::get('/', 'App\Controller\WebSocketController');
 });
 ```
 
-### 创建对应控制器
+## 创建对应控制器
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -57,25 +64,22 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 {
     public function onMessage(Server $server, Frame $frame): void
     {
-        var_dump($frame->data);
-        $server->push($frame->fd, 'FROM1: ' . $frame->data);
+        $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
 
     public function onClose(Server $server, int $fd, int $reactorId): void
     {
         var_dump('closed');
-        $server->push($fd, 'closed');
     }
 
     public function onOpen(Server $server, Request $request): void
     {
-        var_dump('opened', $server instanceof \Swoole\WebSocket\Server);
-        $server->push($request->fd, 'opened');
+        $server->push($request->fd, 'Opened');
     }
 }
 ```
 
-接下来启动 Server
+接下来启动 Server，便能看到对应启动了一个 WebSocket Server 并监听于 9502 端口，此时您便可以通过各种 WebSocket Client 来进行连接和进行数据传输了。
 
 ```
 $ php bin/hyperf.php start
