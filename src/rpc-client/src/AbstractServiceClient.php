@@ -30,7 +30,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 
 abstract class AbstractServiceClient
-{   
+{
     /**
      * The service name of the target service.
      *
