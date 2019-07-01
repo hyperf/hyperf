@@ -20,12 +20,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
 {
     protected $columns = [];
 
-    protected $forceCasts = false;
-
-    public function __construct($columns = [], bool $forceCasts)
+    public function __construct($columns = [])
     {
         $this->columns = $columns;
-        $this->forceCasts = $forceCasts;
     }
 
     public function leaveNode(Node $node)
@@ -42,8 +39,8 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
-                    $name = $column['column_name'];
-                    $doc .= ' * @property $' . $name . PHP_EOL;
+                    [$name, $type] = $this->getProperty($column);
+                    $doc .= sprintf(' * @property %s $%s', $type, $name) . PHP_EOL;
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
@@ -67,23 +64,10 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
     {
         $items = [];
-        $exists = [];
-
-        /** @var Node\Expr\ArrayItem $item */
-        foreach ($node->default->items as $item) {
-            $exists[] = $item->key->value;
-            $items[] = $item;
-        }
-
-        if ($this->forceCasts) {
-            $items = [];
-        }
-
         foreach ($this->columns as $column) {
             $name = $column['column_name'];
-            $type = $this->formatDatabaseType($column['data_type']);
-
-            if ($type && (! in_array($name, $exists) || $this->forceCasts)) {
+            $type = $column['cast'] ?? null;
+            if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
                 $items[] = new Node\Expr\ArrayItem(
                     new Node\Scalar\String_($type),
                     new Node\Scalar\String_($name)
@@ -95,6 +79,15 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             'kind' => Node\Expr\Array_::KIND_SHORT,
         ]);
         return $node;
+    }
+
+    protected function getProperty($column): array
+    {
+        $name = $column['column_name'];
+
+        $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
+
+        return [$name, $type];
     }
 
     protected function formatDatabaseType(string $type): ?string
@@ -117,5 +110,24 @@ class ModelUpdateVistor extends NodeVisitorAbstract
             default:
                 return null;
         }
+    }
+
+    protected function formatPropertyType(string $type, ?string $cast): ?string
+    {
+        if (! isset($cast)) {
+            $cast = $this->formatDatabaseType($type) ?? 'string';
+        }
+
+        switch ($cast) {
+            case 'integer':
+                return 'int';
+            case 'date':
+            case 'datetime':
+                return '\Carbon\Carbon';
+            case 'json':
+                return 'array';
+        }
+
+        return $cast;
     }
 }

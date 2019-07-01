@@ -162,7 +162,6 @@ class DispatcherFactory
         ];
 
         foreach ($methodMetadata as $methodName => $values) {
-
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($values)) {
