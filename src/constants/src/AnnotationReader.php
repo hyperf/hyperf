@@ -25,7 +25,7 @@ class AnnotationReader
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
 
-            $result[$code] = $this->parse($docComment);
+            $result[$code] = $docComment ? $this->parse($docComment) : '';
         }
 
         return $result;
