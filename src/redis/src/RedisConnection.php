@@ -33,7 +33,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     /**
      * @var bool
      */
-    protected $dbChanged;
+    protected $dbChanged = false;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
@@ -84,6 +84,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
+        $this->setDbChanged(false);
+        
         return true;
     }
 
