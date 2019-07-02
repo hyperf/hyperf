@@ -58,7 +58,7 @@ class RedisConnectionStub extends RedisConnection
     /**
      * @return null|int
      */
-    public function getDatabase()
+    public function getDatabase(): ?int
     {
         return $this->database;
     }
