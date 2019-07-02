@@ -163,6 +163,10 @@ return [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
             ],
+            // 如果服务没有发布到consul, 则应指定RPC节点配置
+            'nodes' => [
+                ['host' => '127.0.0.1', 'port' => 9504],
+            ],
         ]
     ],
 ];
