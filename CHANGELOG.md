@@ -2,7 +2,7 @@
 
 # Fixed
 
-- [#110](https://github.com/hyperf-cloud/hyperf/pull/110) Fixed Redis::select is not work expected.
+- [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
 
 # v1.0.3 - 2019-07-02
 
