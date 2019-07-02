@@ -19,9 +19,9 @@ class Agent extends Client implements AgentInterface
         return $this->request('GET', '/v1/agent/checks');
     }
 
-    public function services(): ConsulResponse
+    public function services(array $options = []): ConsulResponse
     {
-        return $this->request('GET', '/v1/agent/services');
+        return $this->request('GET', '/v1/agent/services', $options);
     }
 
     public function members(array $options = []): ConsulResponse
