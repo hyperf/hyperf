@@ -59,10 +59,13 @@ class RedisTest extends TestCase
         $res = $redis->get('xxxx');
         $this->assertSame('db:2 name:get argument:xxxx', $res);
 
-        parallel([function () use ($redis) {
-            $res = $redis->get('xxxx');
-            $this->assertSame('db:0 name:get argument:xxxx', $res);
+        $this->assertSame(2, $redis->getDatabase());
+
+        $res = parallel([function () use ($redis) {
+            return $redis->get('xxxx');
         }]);
+
+        $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
 
     private function getRedis()
@@ -81,7 +84,7 @@ class RedisTest extends TestCase
                         'connect_timeout' => 10.0,
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
-                        'max_idle_time' => 1,
+                        'max_idle_time' => 60,
                     ],
                 ],
             ],

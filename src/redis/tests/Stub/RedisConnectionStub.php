@@ -33,22 +33,33 @@ class RedisConnectionStub extends RedisConnection
 
     public function reconnect(): bool
     {
-        $this->host = $this->config['host'] ?? 'localhost';
-        $this->port = $this->config['port'] ?? 6379;
-        $this->auth = $this->config['auth'] ?? null;
-        $this->db = $this->config['db'] ?? 0;
-        $this->timeout = $this->config['timeout'] ?? 0.0;
+        $this->host = $this->config['host'];
+        $this->port = $this->config['port'];
+        $this->auth = $this->config['auth'];
+        $this->db = $this->config['db'];
+        $this->timeout = $this->config['timeout'];
 
         return true;
-    }
-
-    public function getConnection()
-    {
-        return parent::getConnection();
     }
 
     public function select($db)
     {
         $this->db = $db;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getDatabase()
+    {
+        return $this->database;
     }
 }

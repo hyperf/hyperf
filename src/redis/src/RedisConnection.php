@@ -37,13 +37,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     ];
 
     /**
-     * @var bool
-     */
-    protected $dbChanged = false;
-
-    /**
      * Current database.
-     * @var int
+     * @var null|int
      */
     protected $database;
 
@@ -116,7 +111,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         parent::release();
     }
 
-    public function setDatabase(int $database): void
+    public function setDatabase($database): void
     {
         $this->database = $database;
     }
