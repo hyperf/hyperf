@@ -19,7 +19,6 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

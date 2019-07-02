@@ -85,7 +85,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
         $this->setDbChanged(false);
-        
+
         return true;
     }
 
@@ -99,6 +99,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         if ($this->dbChanged) {
             // Select the origin db after execute select.
             $this->select($this->config['db'] ?? 0);
+            $this->setDbChanged(false);
         }
         parent::release();
     }
