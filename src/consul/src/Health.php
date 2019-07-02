@@ -28,7 +28,8 @@ class Health extends Client implements HealthInterface
         $params = [
             'query' => $this->resolveOptions($options, ['dc']),
         ];
-
+        
+        $params = empty($params['query']) ? $options : $params;
         return $this->request('GET', '/v1/health/checks/' . $service, $params);
     }
 
