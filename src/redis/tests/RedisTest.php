@@ -33,4 +33,9 @@ class RedisTest extends TestCase
 
         $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0));
     }
+
+    public function testRedisCommand()
+    {
+
+    }
 }

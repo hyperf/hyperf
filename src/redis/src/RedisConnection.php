@@ -30,6 +30,11 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
      */
     protected $config;
 
+    /**
+     * @var bool
+     */
+    protected $dbChanged;
+
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
@@ -85,5 +90,22 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         return true;
+    }
+
+    public function release(): void
+    {
+        if ($this->dbChanged) {
+            // Select the origin db after execute select.
+            $this->select($this->config['db'] ?? 0);
+        }
+        parent::release();
+    }
+
+    /**
+     * @param bool $dbChanged
+     */
+    public function setDbChanged(bool $dbChanged): void
+    {
+        $this->dbChanged = $dbChanged;
     }
 }
