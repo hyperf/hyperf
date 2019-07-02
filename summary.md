@@ -67,7 +67,7 @@
   * [AMQP](zh/amqp.md)
   * [异步队列](zh/async-queue.md)
   * [WebSocket 服务](zh/websocket-server.md)
-  * [WebSocket 协程客户端](zh/websocket-server.md)
+  * [WebSocket 协程客户端](zh/websocket-client.md)
   * [自定义进程](zh/process.md)
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
