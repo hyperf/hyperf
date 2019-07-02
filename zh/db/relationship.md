@@ -53,12 +53,12 @@ class User extends Model
 {
     public function books()
     {
-        return $this->hasOne(Book::class, 'user_id', 'id');
+        return $this->hasMany(Book::class, 'user_id', 'id');
     }
 }
 ```
 
-记住一点，`Hyperf` 将会自动确定 `Book` 模型的外键属性。按照约定，`Hyperf` 将会使用所属模型名称的 『snake case』形式，再加上 _id 后缀作为外键字段。因此，在上面这个例子中，`Hyperf` 将假定 `User` 对应到 `Book` 模型上的外键就是 book_id。
+记住一点，`Hyperf` 将会自动确定 `Book` 模型的外键属性。按照约定，`Hyperf` 将会使用所属模型名称的 『snake case』形式，再加上 `_id` 后缀作为外键字段。因此，在上面这个例子中，`Hyperf` 将假定 `User` 对应到 `Book` 模型上的外键就是 `book_id`。
 
 一旦关系被定义好以后，就可以通过访问 `User` 模型的 `books` 属性来获取评论的集合。记住，由于 Hyperf 提供了『动态属性』 ，所以我们可以像访问模型的属性一样访问关联方法：
 
