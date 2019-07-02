@@ -138,6 +138,7 @@
     "autoload-dev": {
         "psr-4": {
             "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests/",
+            "HyperfTest\\Constants\\": "./src/constants/tests/",
             "HyperfTest\\Consul\\": "./src/consul/tests/",
             "HyperfTest\\Di\\": "./src/di/tests/",
             "HyperfTest\\Dispatcher\\": "./src/dispatcher/test/",
