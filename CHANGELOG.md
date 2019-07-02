@@ -1,4 +1,7 @@
-# v1.0.3 - TBD
+# v1.0.4 - TBD
+
+
+# v1.0.3 - 2019-07-02
 
 ## Added
 
@@ -10,10 +13,6 @@
 ## Changed
 
 - [#46](https://github.com/hyperf-cloud/hyperf/pull/46) Removed hyperf/framework requirement of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`. 
-
-## Removed
-
-- Nothing.
 
 ## Fixed
 
