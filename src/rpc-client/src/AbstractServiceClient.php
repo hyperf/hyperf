@@ -32,6 +32,13 @@ use RuntimeException;
 abstract class AbstractServiceClient
 {
     /**
+     * default base uri
+     *
+     * @var string
+     */
+    protected $baseUri = 'http://127.0.0.1:8500';
+    
+    /**
      * The service name of the target service.
      *
      * @var string
@@ -231,7 +238,10 @@ abstract class AbstractServiceClient
     protected function getNodesFromConsul(array $config): array
     {
         $agent = $this->createConsulAgent($config);
-        $services = $agent->services()->json();
+        $options = [
+            'base_uri' => $config['address'] ?? $this->baseUri,
+        ];
+        $services = $agent->services($options)->json();
         $nodes = [];
         foreach ($services as $serviceId => $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port']) || $service['Service'] !== $this->serviceName) {
@@ -244,7 +254,7 @@ abstract class AbstractServiceClient
             return $nodes;
         }
         $health = $this->createConsulHealth($config);
-        $checks = $health->checks($this->serviceName)->json();
+        $checks = $health->checks($this->serviceName, $options)->json();
         foreach ($checks ?? [] as $check) {
             if (! isset($check['Status'], $check['ServiceID'])) {
                 continue;
@@ -264,7 +274,7 @@ abstract class AbstractServiceClient
         return make(Agent::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
+                    'base_uri' => $config['address'] ?? $this->baseUri,
                 ]);
             },
         ]);
@@ -278,7 +288,7 @@ abstract class AbstractServiceClient
         return make(Health::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
+                    'base_uri' => $config['address'] ?? $this->baseUri,
                 ]);
             },
         ]);
