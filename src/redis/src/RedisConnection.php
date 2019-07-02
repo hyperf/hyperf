@@ -28,17 +28,29 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     /**
      * @var array
      */
-    protected $config;
+    protected $config = [
+        'host' => 'localhost',
+        'port' => 6379,
+        'auth' => null,
+        'db' => 0,
+        'timeout' => 0.0,
+    ];
 
     /**
      * @var bool
      */
     protected $dbChanged = false;
 
+    /**
+     * Current database.
+     * @var int
+     */
+    protected $database;
+
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
-        $this->config = $config;
+        $this->config = array_replace($this->config, $config);
 
         $this->reconnect();
     }
@@ -63,11 +75,11 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        $host = $this->config['host'] ?? 'localhost';
-        $port = $this->config['port'] ?? 6379;
-        $auth = $this->config['auth'] ?? null;
-        $db = $this->config['db'] ?? 0;
-        $timeout = $this->config['timeout'] ?? 0.0;
+        $host = $this->config['host'];
+        $port = $this->config['port'];
+        $auth = $this->config['auth'];
+        $db = $this->config['db'];
+        $timeout = $this->config['timeout'];
 
         $redis = new \Redis();
         if (! $redis->connect($host, $port, $timeout)) {
@@ -78,13 +90,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $redis->auth($auth);
         }
 
-        if ($db > 0) {
-            $redis->select($db);
+        $database = $this->database ?? $db;
+        if ($database > 0) {
+            $redis->select($database);
         }
 
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
-        $this->setDbChanged(false);
 
         return true;
     }
@@ -96,19 +108,16 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function release(): void
     {
-        if ($this->dbChanged) {
+        if ($this->database && $this->database != $this->config['db']) {
             // Select the origin db after execute select.
-            $this->select($this->config['db'] ?? 0);
-            $this->setDbChanged(false);
+            $this->select($this->config['db']);
+            $this->database = null;
         }
         parent::release();
     }
 
-    /**
-     * @param bool $dbChanged
-     */
-    public function setDbChanged(bool $dbChanged): void
+    public function setDatabase(int $database): void
     {
-        $this->dbChanged = $dbChanged;
+        $this->database = $database;
     }
 }

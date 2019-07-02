@@ -48,22 +48,9 @@ class RedisTest extends TestCase
         $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0));
     }
 
-    public function testRedisCommand()
+    public function testRedisSelect()
     {
-        $container = Mockery::mock(Container::class);
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
-            'redis' => [
-                'default' => [],
-            ],
-        ]));
-        $pool = new RedisPoolStub($container, 'default');
-        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
-
-        ApplicationContext::setContainer($container);
-
-        $factory = new PoolFactory($container);
-
-        $redis = new Redis($factory);
+        $redis = $this->getRedis();
 
         $res = $redis->set('xxxx', 'yyyy');
         $this->assertSame('db:0 name:set argument:xxxx,yyyy', $res);
@@ -76,5 +63,36 @@ class RedisTest extends TestCase
             $res = $redis->get('xxxx');
             $this->assertSame('db:0 name:get argument:xxxx', $res);
         }]);
+    }
+
+    private function getRedis()
+    {
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+            'redis' => [
+                'default' => [
+                    'host' => 'localhost',
+                    'auth' => null,
+                    'port' => 6379,
+                    'db' => 0,
+                    'pool' => [
+                        'min_connections' => 1,
+                        'max_connections' => 30,
+                        'connect_timeout' => 10.0,
+                        'wait_timeout' => 3.0,
+                        'heartbeat' => -1,
+                        'max_idle_time' => 1,
+                    ],
+                ],
+            ],
+        ]));
+        $pool = new RedisPoolStub($container, 'default');
+        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
+
+        ApplicationContext::setContainer($container);
+
+        $factory = new PoolFactory($container);
+
+        return new Redis($factory);
     }
 }
