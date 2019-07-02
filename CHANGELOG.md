@@ -18,7 +18,8 @@
 
 - [#45](https://github.com/hyperf-cloud/hyperf/pull/55) Fixed http server start failed, when the skeleton included `hyperf/websocket-server`. 
 - [#55](https://github.com/hyperf-cloud/hyperf/pull/55) Fixed the method level middleware annotation. 
-- [#88](https://github.com/hyperf-cloud/hyperf/pull/88) Fixed deep directory prefix.
+- [#73](https://github.com/hyperf-cloud/hyperf/pull/73) Fixed short name is not work for `db:model`.
+- [#88](https://github.com/hyperf-cloud/hyperf/pull/88) Fixed prefix is not right in deep directory.
 - [#101](https://github.com/hyperf-cloud/hyperf/pull/101) Fixed constants resolution failed when no message annotation exists.
 
 # v1.0.2 - 2019-06-25
