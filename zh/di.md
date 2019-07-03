@@ -97,6 +97,8 @@ class IndexController
 
 > 注意调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，Controller 默认是由 DI 创建的
 
+> 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
+
 ### 抽象对象注入
 
 基于上面的例子，从合理的角度上来说，Controller 面向的不应该直接是一个 `UserService` 类，可能更多的是一个 `UserServiceInterface` 的接口类，此时我们可以通过 `config/dependencies.php` 来绑定对象关系达到目的，我们还是通过代码来解释一下。

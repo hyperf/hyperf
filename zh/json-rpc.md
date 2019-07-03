@@ -25,12 +25,12 @@ namespace App\JsonRpc;
 use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
- * @RpcService(name="CaculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
+ * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
-class CaculatorService implements CalculatorServiceInterface
+class CalculatorService implements CalculatorServiceInterface
 {
     // 实现一个加法方法，这里简单的认为参数都是 int 类型
-    public function caculate(int $a, int $b): int
+    public function add(int $a, int $b): int
     {
         // 这里是服务方法的具体实现
         return $a + $b;
@@ -44,7 +44,7 @@ class CaculatorService implements CalculatorServiceInterface
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`，我们下一章节具体阐述这里应该怎样去处理；   
 `publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](./consul.md) 组件的相关配置；
 
-> 使用 `@RpcService` 注解需 use Hyperf\RpcServer\Annotation\RpcService; 命名空间。
+> 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
 
 ### 定义 JSON RPC Server
 
@@ -115,7 +115,7 @@ return [
 ];
 ```
 
-配置完成后，在启动 Hyperf 服务时会自动地注册到服务中心去。
+配置完成后，在启动服务时，Hyperf 会自动地将 `@RpcService` 定义了 `publishTo` 属性为 `consul` 的服务注册到服务中心去。
 
 ## 定义服务消费者
 
@@ -126,17 +126,15 @@ return [
 
 namespace App\JsonRpc;
 
-
 use Hyperf\RpcClient\AbstractServiceClient;
 
-class CaculatorService extends AbstractServiceClient implements CaculatorServiceInterface
+class CalculatorService extends AbstractServiceClient implements CaculatorServiceInterface
 {
-
     /**
      * 定义对应服务提供者的服务名称
      * @var string 
      */
-    protected $serviceName = 'CaculatorService';
+    protected $serviceName = 'CalculatorService';
     
     /**
      * 定义对应服务提供者的服务协议
@@ -159,11 +157,15 @@ return [
     'consumers' => [
         [
             // 对应消费者类的 $serviceName
-            'name' => 'CalculatorService',
-            // 这个消费者要从哪获取节点信息
+            'name' => 'CaculatorService',
+            // 这个消费者要从哪个服务中心获取节点信息，如不配置则不会从服务中心获取节点信息
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
+            ],
+            // 如果没有指定上面的 registry 配置，即为直接对指定的节点进行消费，通过下面的 nodes 参数来配置服务提供者的节点信息
+            'nodes' => [
+                ['host' => '127.0.0.1', 'port' => 9504],
             ],
         ]
     ],
@@ -171,14 +173,14 @@ return [
 ```
 
 
-这样我们便可以通过 `CaculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CaculatorServiceInterface` 和 `CaculatorService` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CaculatorServiceInterface` 和 `CalculatorService` 的关系，示例如下：
 
 ```php
 return [
     'dependencies' => [
-        App\JsonRpc\CaculatorServiceInterface::class => App\JsonRpc\CaculatorService::class,
+        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorService::class,
     ],
 ];
 ```
 
-这样便可以通过注入 `CaculatorServiceInterface` 接口来使用客户端了。
+这样便可以通过注入 `CalculatorServiceInterface` 接口来使用客户端了。
