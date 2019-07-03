@@ -16,7 +16,7 @@ interface AgentInterface
 {
     public function checks(): ConsulResponse;
 
-    public function services(): ConsulResponse;
+    public function services(array $options = []): ConsulResponse;
 
     public function members(array $options = []): ConsulResponse;
 
