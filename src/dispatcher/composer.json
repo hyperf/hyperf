@@ -55,11 +55,5 @@
     "scripts": {
         "cs-fix": "php-cs-fixer fix $1",
         "test": "phpunit --colors=always"
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://mirrors.aliyun.com/composer/"
-        }
     }
 }
