@@ -39,7 +39,7 @@ class IndexController extends Controller
         //  向websocket服务端发送消息
         $client->push("短连接的Http向Websocket服务端发送消息...");
         // 获取服务端响应的消息，服务端需要通过push向本客户端的 fd 投递消息，才能获取。
-        $res_msg=$client->recv(2);  // 接受服务端响应的数据，设置超时时间为 3s ，服务器返回的数据类型为std对象，
+        $res_msg=$client->recv(2);  // 接受服务端响应的数据，设置超时时间为 2s ，服务器返回的数据类型为std对象，
         return $res_msg->data  ;   //获取文本数据：$res_msg->data 
         
     }
