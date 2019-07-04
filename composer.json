@@ -27,7 +27,6 @@
         "google/protobuf": "^3.6.1",
         "symfony/finder": "^4.1",
         "symfony/console": "^4.2",
-        "swoft/http-message": "^1.0",
         "squizlabs/php_codesniffer": "^3.4",
         "nesbot/carbon": "^2.0",
         "vlucas/phpdotenv": "^3.1",
