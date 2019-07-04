@@ -48,6 +48,7 @@
     },
     "replace": {
         "hyperf/amqp": "self.version",
+        "hyperf/async-queue": "self.version",
         "hyperf/circuit-breaker": "self.version",
         "hyperf/cache": "self.version",
         "hyperf/command": "self.version",
@@ -77,7 +78,6 @@
         "hyperf/paginator": "self.version",
         "hyperf/pool": "self.version",
         "hyperf/process": "self.version",
-        "hyperf/async-queue": "self.version",
         "hyperf/rate-limit": "self.version",
         "hyperf/redis": "self.version",
         "hyperf/server": "self.version",
@@ -95,6 +95,7 @@
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
+            "Hyperf\\AsyncQueue\\": "src/async-queue/src/",
             "Hyperf\\CircuitBreaker\\": "src/circuit-breaker/src/",
             "Hyperf\\Cache\\": "src/cache/src/",
             "Hyperf\\Config\\": "src/config/src/",
@@ -124,7 +125,6 @@
             "Hyperf\\Paginator\\": "src/paginator/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
             "Hyperf\\Process\\": "src/process/src/",
-            "Hyperf\\AsyncQueue\\": "src/async-queue/src/",
             "Hyperf\\RateLimit\\": "src/rate-limit/src/",
             "Hyperf\\Redis\\": "src/redis/src/",
             "Hyperf\\Server\\": "src/server/src/",
@@ -136,6 +136,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\AsyncQueue\\": "./src/async-queue/tests/",
             "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests/",
             "HyperfTest\\Constants\\": "./src/constants/tests/",
             "HyperfTest\\Consul\\": "./src/consul/tests/",
@@ -162,6 +163,7 @@
         "hyperf": {
             "config": [
                 "Hyperf\\Amqp\\ConfigProvider",
+                "Hyperf\\AsyncQueue\\ConfigProvider",
                 "Hyperf\\CircuitBreaker\\ConfigProvider",
                 "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
@@ -182,7 +184,6 @@
                 "Hyperf\\Paginator\\ConfigProvider",
                 "Hyperf\\Pool\\ConfigProvider",
                 "Hyperf\\Process\\ConfigProvider",
-                "Hyperf\\AsyncQueue\\ConfigProvider",
                 "Hyperf\\RateLimit\\ConfigProvider",
                 "Hyperf\\Redis\\ConfigProvider",
                 "Hyperf\\Server\\ConfigProvider",

@@ -1,5 +1,13 @@
 # v1.0.4 - TBD
 
+## Added
+
+- Nothing
+
+# Changed
+
+- [#124](https://github.com/hyperf-cloud/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
+
 # Fixed
 
 - [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
