@@ -40,7 +40,6 @@ return [
 ];
 ```
 
-
 ## 使用注解
 
 注解一共有3种应用对象，分别是 `类`、`类方法` 和 `类属性`。
@@ -141,3 +140,11 @@ class Foo extends AbstractAnnotation
 ### 利用注解数据
 
 在没有自定义注解收集方法时，默认会将注解的元数据统一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 类内，通过该类的静态方法可以方便的获取对应的元数据用于逻辑判断或实现。
+
+## IDE 注解插件
+
+因为 `PHP` 并不是原生支持 `注解`，所以 `IDE` 不会默认增加注解支持。但我们可以添加第三方插件，来让 `IDE` 支持 `注解`。
+
+### PHPStorm
+
+我们到 `Plugins` 中搜索 `PHP Annotations`，就可以找到对应的组件 [PHP Annotations](https://github.com/Haehnchen/idea-php-annotation-plugin)。然后安装组件，重启 `PHPStorm`，就可以愉快的使用注解功能了。
