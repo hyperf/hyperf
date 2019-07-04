@@ -145,6 +145,6 @@ class Foo extends AbstractAnnotation
 
 因为 `PHP` 并不是原生支持 `注解`，所以 `IDE` 不会默认增加注解支持。但我们可以添加第三方插件，来让 `IDE` 支持 `注解`。
 
-### PHPStorm
+### PhpStorm
 
-我们到 `Plugins` 中搜索 `PHP Annotations`，就可以找到对应的组件 [PHP Annotations](https://github.com/Haehnchen/idea-php-annotation-plugin)。然后安装组件，重启 `PHPStorm`，就可以愉快的使用注解功能了。
+我们到 `Plugins` 中搜索 `PHP Annotations`，就可以找到对应的组件 [PHP Annotations](https://github.com/Haehnchen/idea-php-annotation-plugin)。然后安装组件，重启 `PhpStorm`，就可以愉快的使用注解功能了，主要提供了为注解类增加自动跳转和代码提醒支持，使用注解时自动引用注解对应的命名空间等非常便捷有用的功能。
