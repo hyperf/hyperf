@@ -20,13 +20,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\WebSocketClient\ClientFactory;
 
-class IndexController extends Controller
+class IndexController
 {
-
     /**
-     * @Inject()
-     * @var \Hyperf\WebSocketClient\ClientFactory
+     * @Inject
+     * @var ClientFactory
      */
     protected $clientFactory;
 
@@ -36,12 +36,13 @@ class IndexController extends Controller
         $host = '127.0.0.1:9502';
         // 通过 ClientFactory 创建 Client 对象，创建出来的对象为短生命周期对象
         $client = $this->clientFactory->create($host);
-        //  向websocket服务端发送消息
-        $client->push("短连接的Http向Websocket服务端发送消息...");
+        // 向 WebSocket 服务端发送消息
+        $client->push('HttpServer 中使用 WebSocket Client 发送数据。');
         // 获取服务端响应的消息，服务端需要通过push向本客户端的 fd 投递消息，才能获取。
-        $res_msg=$client->recv(2);  // 接受服务端响应的数据，设置超时时间为 2s ，服务器返回的数据类型为std对象，
-        return $res_msg->data  ;   //获取文本数据：$res_msg->data 
-        
+        // 接受服务端响应的数据，设置超时时间为 2s ，服务器返回的数据类型为std对象。
+        $msg = $client->recv(2);
+        // 获取文本数据：$res_msg->data
+        return $msg->data;
     }
 }
 ```
@@ -51,8 +52,6 @@ class IndexController extends Controller
 默认情况下，创建出来的 `Client` 对象会通过 `defer` 自动 `close` 连接，如果您希望不自动 `close`，可在创建 `Client` 对象时传递第二个参数 `$autoClose` 为 `false`：
 
 ```php
-<?php
-
 $autoClose = false;
-$clientFactory->create($host, $autoClose);
+$client = $clientFactory->create($host, $autoClose);
 ```
