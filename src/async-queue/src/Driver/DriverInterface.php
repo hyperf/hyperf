@@ -19,10 +19,11 @@ interface DriverInterface
     /**
      * Push a job to queue.
      */
-    public function push(JobInterface $job): bool;
+    public function push(JobInterface $job, int $delay = 0): bool;
 
     /**
      * Push a delay job to queue.
+     * @deprecated v1.1
      */
     public function delay(JobInterface $job, int $delay = 0): bool;
 
