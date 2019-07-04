@@ -7,6 +7,7 @@
 # Changed
 
 - [#124](https://github.com/hyperf-cloud/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
+- [#125](https://github.com/hyperf-cloud/hyperf/pull/125) Changed the default value of parameter $default of config() function to null
 
 # Fixed
 
