@@ -105,7 +105,7 @@ class DemoService
 
     public function delay()
     {
-        // 发布消息
+        // 发布延迟消息
         // 第二个参数 $delay 即为延迟的秒数
         return $this->driver->push(new ExampleJob(), 60);
     }
