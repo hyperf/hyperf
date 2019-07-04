@@ -128,7 +128,7 @@ namespace App\JsonRpc;
 
 use Hyperf\RpcClient\AbstractServiceClient;
 
-class CalculatorService extends AbstractServiceClient implements CaculatorServiceInterface
+class CalculatorService extends AbstractServiceClient implements CalculatorServiceInterface
 {
     /**
      * 定义对应服务提供者的服务名称
@@ -157,7 +157,7 @@ return [
     'consumers' => [
         [
             // 对应消费者类的 $serviceName
-            'name' => 'CaculatorService',
+            'name' => 'CalculatorService',
             // 这个消费者要从哪个服务中心获取节点信息，如不配置则不会从服务中心获取节点信息
             'registry' => [
                 'protocol' => 'consul',
@@ -173,7 +173,7 @@ return [
 ```
 
 
-这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CaculatorServiceInterface` 和 `CalculatorService` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorService` 的关系，示例如下：
 
 ```php
 return [
