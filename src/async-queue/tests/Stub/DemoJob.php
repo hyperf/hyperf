@@ -10,8 +10,20 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\AsyncQueue;
+namespace HyperfTest\AsyncQueue\Stub;
 
-class DriverStub
+use Hyperf\AsyncQueue\Job;
+
+class DemoJob extends Job
 {
+    public $id;
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
+    public function handle()
+    {
+    }
 }
