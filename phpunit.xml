@@ -10,6 +10,7 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Tests">
+            <directory suffix="Test.php">./src/async-queue/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
