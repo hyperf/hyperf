@@ -81,9 +81,13 @@ declare(strict_types=1);
 
 use Psr\Container\ContainerInterface;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class DemoService
 {
+    /**
+     * @var DriverInterface
+     */
     protected $driver;
 
     public function __construct(DriverFactory $driverFactory)
@@ -93,7 +97,15 @@ class DemoService
 
     public function publish()
     {
-        return $this->driver->push(new ExampleJon());
+        // 发布消息
+        // 这里的 ExampleJob 是直接 new 出来的，所以不能在 Job 内使用 @Inject @Value 等。
+        return $this->driver->push(new ExampleJob());
+    }
+
+    public function delay()
+    {
+        // delay 第二参数即为延迟时间
+        return $this->driver->delay(new ExampleJob(), 60);
     }
 }
 
