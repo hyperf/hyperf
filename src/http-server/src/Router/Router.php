@@ -14,7 +14,7 @@ namespace Hyperf\HttpServer\Router;
 
 /**
  * @method static addRoute($httpMethod, string $route, $handler, array $options = [])
- * @method static addGroup($prefix, callable $callback)
+ * @method static addGroup($prefix, callable $callback, array $options = [])
  * @method static get($route, $handler, array $options = [])
  * @method static post($route, $handler, array $options = [])
  * @method static put($route, $handler, array $options = [])
