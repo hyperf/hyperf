@@ -81,4 +81,22 @@ class RouteCollectorTest extends TestCase
         $this->assertSame(['PostMiddleware'], $middle['http']['/']['POST']);
         $this->assertSame(['ApiGetMiddleware', 'ApiSelfGetMiddleware'], $middle['http']['/api/']['GET']);
     }
+
+    public function testAddGroupMiddlewareFromAnotherServer()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollector($parser, $generator, 'test');
+
+        $collector->addGroup('/api', function ($collector) {
+            $collector->get('/', 'Handler::ApiGet', [
+                'middleware' => ['ApiSelfGetMiddleware'],
+            ]);
+        }, [
+            'middleware' => ['ApiGetMiddleware'],
+        ]);
+
+        $middle = MiddlewareManager::$container;
+        $this->assertSame(['ApiGetMiddleware', 'ApiSelfGetMiddleware'], $middle['test']['/api/']['GET']);
+    }
 }

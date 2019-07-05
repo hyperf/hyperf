@@ -82,7 +82,7 @@ class DispatcherFactory
 
         $parser = new Std();
         $generator = new DataGenerator();
-        return $this->routers[$serverName] = new RouteCollector($parser, $generator);
+        return $this->routers[$serverName] = new RouteCollector($parser, $generator, $serverName);
     }
 
     protected function initAnnotationRoute(array $collector): void

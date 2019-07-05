@@ -14,6 +14,10 @@
 - [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Fixed property middlewares not work in `Router::addGroup`.
 
+# Removed
+
+- [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Removed `server` property from Router options.
+
 # v1.0.3 - 2019-07-02
 
 ## Added
