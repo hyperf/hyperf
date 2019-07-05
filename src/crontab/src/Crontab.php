@@ -32,7 +32,7 @@ class Crontab
     protected $rule;
 
     /**
-     * @var null|string
+     * @var mixed
      */
     protected $command;
 
@@ -74,15 +74,12 @@ class Crontab
         return $this;
     }
 
-    public function getCommand(): ?string
+    public function getCommand()
     {
         return $this->command;
     }
 
-    /**
-     * @param null|string $command
-     */
-    public function setCommand(?string $command): Crontab
+    public function setCommand($command): Crontab
     {
         $this->command = $command;
         return $this;

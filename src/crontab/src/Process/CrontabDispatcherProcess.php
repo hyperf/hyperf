@@ -75,7 +75,6 @@ class CrontabDispatcherProcess extends AbstractProcess
     public function handle(): void
     {
         $this->event->dispatch(new CrontabDispatcherStarted());
-        // $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
         while (true) {
             $this->sleep();
             $crontabs = $this->scheduler->schedule();

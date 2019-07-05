@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab\Listener;
 
+use App\Task\Task;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
@@ -53,14 +54,8 @@ class CrontabRegisterListener implements ListenerInterface
     public function process(object $event)
     {
         $this->logger->debug('Crontabs are registered.');
-        $this->crontabManager->register((new Crontab())->setCommand('echo time();')
-            ->setName('echo-time')
-            ->setRule('*/1 * * * *'));
-        $this->crontabManager->register((new Crontab())->setCommand('echo time();')
+        $this->crontabManager->register((new Crontab())->setType('callback')->setCommand([Task::class, 'foo', []])
             ->setName('echo-time-1')
             ->setRule('*/11 * * * * *'));
-        $this->crontabManager->register((new Crontab())->setCommand('echo time();')
-            ->setName('echo-time-2')
-            ->setRule('*/2 * * * *'));
     }
 }
