@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -68,9 +68,11 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private $scanner;
 
-    public function __construct(array $source, array $scanDir, Scanner $scanner)
+    public function __construct(array $source, array $scanDir, Scanner $scanner, bool $enableCache = false)
     {
         $this->scanner = $scanner;
+        $this->enableCache = $enableCache;
+
         // Scan the specified paths and collect the ast and annotations.
         $this->scan($scanDir);
         $this->source = $this->normalizeSource($source);
@@ -279,7 +281,7 @@ class DefinitionSource implements DefinitionSourceInterface
             $defined = [];
             $annotations = AnnotationCollector::get($className . '._m', []);
             foreach ($annotations as $method => $annotation) {
-                $defined = array_replace($defined, array_keys($annotation));
+                $defined = array_merge($defined, array_keys($annotation));
             }
             return $defined;
         });

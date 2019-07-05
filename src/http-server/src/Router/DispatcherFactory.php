@@ -82,7 +82,7 @@ class DispatcherFactory
 
         $parser = new Std();
         $generator = new DataGenerator();
-        return $this->routers[$serverName] = new RouteCollector($parser, $generator);
+        return $this->routers[$serverName] = new RouteCollector($parser, $generator, $serverName);
     }
 
     protected function initAnnotationRoute(array $collector): void
@@ -106,7 +106,7 @@ class DispatcherFactory
     /**
      * Register route according to AutoController annotation.
      */
-    protected function handleAutoController(string $className, AutoController $annotation, array $middlewares, array $methodMetadata = []): void
+    protected function handleAutoController(string $className, AutoController $annotation, array $middlewares = [], array $methodMetadata = []): void
     {
         $class = ReflectionManager::reflectClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -120,22 +120,22 @@ class DispatcherFactory
             $methodName = $method->getName();
             $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
+            $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
-                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
-                $middlewares = array_merge($methodMiddlewares, $middlewares);
+                $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($methodMetadata[$methodName]));
+                $methodMiddlewares = array_unique($methodMiddlewares);
             }
-            $middlewares = array_unique($middlewares);
 
             // Register middlewares.
             foreach ($autoMethods as $autoMethod) {
-                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $middlewares);
+                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
             }
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
                 $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
                 foreach ($autoMethods as $autoMethod) {
-                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $middlewares);
+                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
                 }
             }
         }
@@ -162,6 +162,13 @@ class DispatcherFactory
         ];
 
         foreach ($methodMetadata as $methodName => $values) {
+            $methodMiddlewares = $middlewares;
+            // Handle method level middlewares.
+            if (isset($values)) {
+                $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($values));
+                $methodMiddlewares = array_unique($methodMiddlewares);
+            }
+
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
@@ -179,16 +186,9 @@ class DispatcherFactory
                         $annotation->server,
                     ]);
 
-                    // Handle method level middlewares.
-                    if (isset($methodMetadata[$methodName])) {
-                        $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
-                        $middlewares = array_merge($methodMiddlewares, $middlewares);
-                    }
-                    $middlewares = array_unique($middlewares);
-
                     // Register middlewares.
                     foreach ($mapping->methods as $mappingMethod) {
-                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $middlewares);
+                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $methodMiddlewares);
                     }
                 }
             }
@@ -199,8 +199,9 @@ class DispatcherFactory
     {
         if (! $prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
-            $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
+            $handledNamespace = str_replace('\\', '/', $handledNamespace);
             $prefix = Str::snake($handledNamespace);
+            $prefix = str_replace('/_', '/', $prefix);
         }
         if ($prefix[0] !== '/') {
             $prefix = '/' . $prefix;

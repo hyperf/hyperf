@@ -13,22 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Container;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\Event\OtherWorkerStart;
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server as SwooleServer;
 
 class WorkerStartCallback
 {
-    /**
-     * @var Container
-     */
-    private $container;
-
     /**
      * @var StdoutLoggerInterface
      */
@@ -39,9 +32,8 @@ class WorkerStartCallback
      */
     private $eventDispatcher;
 
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, EventDispatcherInterface $eventDispatcher)
+    public function __construct(StdoutLoggerInterface $logger, EventDispatcherInterface $eventDispatcher)
     {
-        $this->container = $container;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
     }

@@ -45,6 +45,9 @@ class Redis
             // Release connection.
             if (! $hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
+                    if ($name === 'select' && $db = $arguments[0]) {
+                        $connection->setDatabase((int) $db);
+                    }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
@@ -69,6 +72,7 @@ class Redis
         return in_array($methodName, [
             'multi',
             'pipeline',
+            'select',
         ]);
     }
 

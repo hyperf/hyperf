@@ -62,7 +62,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(array $routes, ServerRequestInterface $request)
+    protected function handleFound(array $routes, ServerRequestInterface $request): ResponseInterface
     {
         [$controller,] = $this->prepareHandler($routes[1]);
         if (! $this->container->has($controller)) {

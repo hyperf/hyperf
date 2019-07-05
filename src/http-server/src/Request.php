@@ -331,7 +331,7 @@ class Request implements RequestInterface
      */
     public function hasFile(string $key): bool
     {
-        if (is_array($file = $this->file($key))) {
+        if ($file = $this->file($key)) {
             return $this->isValidFile($file);
         }
         return false;

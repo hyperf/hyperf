@@ -32,8 +32,12 @@ class ApplicationFactory
         $config = $container->get(ConfigInterface::class);
         $commands = $config->get('commands', []);
         // Append commands that defined by annotation.
-        $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
-        $annotationCommands = array_keys($annotationCommands);
+        $annotationCommands = [];
+        if (class_exists(AnnotationCollector::class) && class_exists(Command::class)) {
+            $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
+            $annotationCommands = array_keys($annotationCommands);
+        }
+
         $commands = array_unique(array_merge($commands, $annotationCommands));
         $application = new Application();
         foreach ($commands as $command) {

@@ -39,8 +39,8 @@ class WebSocketExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         $this->logger->warning($this->formatter->format($throwable));
-
-        return $response;
+        $stream = new SwooleStream((string) $exception->getMessage());
+        return $response->withBody($stream);
     }
 
     public function isValid(Throwable $throwable): bool

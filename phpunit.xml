@@ -10,10 +10,15 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Tests">
+            <directory suffix="Test.php">./src/async-queue/tests</directory>
+            <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
+            <directory suffix="Test.php">./src/http-server/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
+            <directory suffix="Test.php">./src/model-cache/tests</directory>
+            <directory suffix="Test.php">./src/redis/tests</directory>
         </testsuite>
     </testsuites>
     <filter>

@@ -264,7 +264,7 @@ abstract class AbstractServiceClient
         return make(Agent::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? null,
+                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
                 ]);
             },
         ]);
@@ -278,7 +278,7 @@ abstract class AbstractServiceClient
         return make(Health::class, [
             'clientFactory' => function () use ($config) {
                 return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? null,
+                    'base_uri' => $config['address'] ?? 'http://127.0.0.1:8500',
                 ]);
             },
         ]);

@@ -26,6 +26,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
+use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,6 +34,14 @@ use Swoole\Coroutine as SwCoroutine;
 
 class Client extends Server
 {
+    /**
+     * @var array
+     */
+    public $ignoreContextPrefix = [
+        'database.connection',
+        'redis.connection',
+    ];
+
     /**
      * @var PackerInterface
      */
@@ -153,6 +162,9 @@ class Client extends Server
         $context = SwCoroutine::getContext();
 
         foreach ($context as $key => $value) {
+            if (Str::startsWith($key, $this->ignoreContextPrefix)) {
+                continue;
+            }
             $context[$key] = null;
         }
     }

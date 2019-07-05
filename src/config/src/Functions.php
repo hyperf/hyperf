@@ -14,7 +14,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
 
 if (! function_exists('config')) {
-    function config(string $key, $default)
+    function config(string $key, $default = null)
     {
         if (! ApplicationContext::hasContainer()) {
             throw new \RuntimeException('The application context lacks the container.');
