@@ -191,13 +191,11 @@ class RouteCollector
         return $this->dataGenerator->getData();
     }
 
-    protected function mergeOptions($origin, $options)
+    /**
+     * @return array
+     */
+    protected function mergeOptions(array $origin, array $options)
     {
         return array_merge_recursive($origin, $options);
-        foreach ($options['middleware'] ?? [] as $item) {
-            $origin['middleware'][] = $item;
-        }
-
-        return $origin;
     }
 }
