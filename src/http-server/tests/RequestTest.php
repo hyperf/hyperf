@@ -35,7 +35,7 @@ class RequestTest extends TestCase
     {
         $psrRequest = Mockery::mock(ServerRequestInterface::class);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
-            'file' => new UploadedFile('tmp_name', 32, 0),
+            'file' => new UploadedFile('/tmp/tmp_name', 32, 0),
         ]);
         Context::set(ServerRequestInterface::class, $psrRequest);
         $request = new Request();
