@@ -12,6 +12,7 @@
 # Fixed
 
 - [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
+- [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Fixed property middlewares not work in `Router::addGroup`.
 
 # v1.0.3 - 2019-07-02
 
