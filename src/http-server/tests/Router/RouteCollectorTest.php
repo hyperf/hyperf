@@ -16,6 +16,7 @@ use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\RouteParser\Std;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\RouteCollector;
+use HyperfTest\HttpServer\Stub\RouteCollectorStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -98,5 +99,22 @@ class RouteCollectorTest extends TestCase
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['ApiGetMiddleware', 'ApiSelfGetMiddleware'], $middle['test']['/api/']['GET']);
+    }
+
+    public function testRouterCollectorMergeOptions()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollectorStub($parser, $generator, 'test');
+
+        $origin = [
+            'middleware' => ['A', 'B'],
+        ];
+        $options = [
+            'middleware' => ['C', 'B'],
+        ];
+
+        $res = $collector->mergeOptions($origin, $options);
+        $this->assertSame(['A', 'B', 'C', 'B'], $res['middleware']);
     }
 }
