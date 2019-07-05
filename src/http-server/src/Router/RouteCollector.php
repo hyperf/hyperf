@@ -19,6 +19,11 @@ use Hyperf\HttpServer\MiddlewareManager;
 class RouteCollector
 {
     /**
+     * @var string
+     */
+    protected $server;
+
+    /**
      * @var RouteParser
      */
     protected $routeParser;
@@ -43,12 +48,14 @@ class RouteCollector
      *
      * @param RouteParser $routeParser
      * @param DataGenerator $dataGenerator
+     * @param string $server
      */
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
+    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
     {
         $this->routeParser = $routeParser;
         $this->dataGenerator = $dataGenerator;
         $this->currentGroupPrefix = '';
+        $this->server = $server;
     }
 
     /**
@@ -65,13 +72,12 @@ class RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
-        $options = array_replace($this->currentGroupOptions, $options);
-        $server = $options['server'] ?? 'http';
+        $options = $this->mergeOptions($this->currentGroupOptions, $options);
         foreach ((array) $httpMethod as $method) {
             $method = strtoupper($method);
             foreach ($routeDatas as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, $handler);
-                MiddlewareManager::addMiddlewares($server, $routeData[0], $method, $options['middleware'] ?? []);
+                MiddlewareManager::addMiddlewares($this->server, $routeData[0], $method, $options['middleware'] ?? []);
             }
         }
     }
@@ -90,7 +96,7 @@ class RouteCollector
         $currentGroupOptions = $this->currentGroupOptions;
 
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
-        $this->currentGroupOptions = array_replace($currentGroupOptions, $options);
+        $this->currentGroupOptions = $this->mergeOptions($currentGroupOptions, $options);
         $callback($this);
 
         $this->currentGroupPrefix = $previousGroupPrefix;
@@ -183,5 +189,15 @@ class RouteCollector
     public function getData()
     {
         return $this->dataGenerator->getData();
+    }
+
+    protected function mergeOptions($origin, $options)
+    {
+        return array_merge_recursive($origin, $options);
+        foreach ($options['middleware'] ?? [] as $item) {
+            $origin['middleware'][] = $item;
+        }
+
+        return $origin;
     }
 }
