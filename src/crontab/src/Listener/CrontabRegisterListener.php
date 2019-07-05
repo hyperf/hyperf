@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab\Listener;
 
-use App\Task\Task;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
 class CrontabRegisterListener implements ListenerInterface
@@ -31,10 +34,16 @@ class CrontabRegisterListener implements ListenerInterface
      */
     protected $logger;
 
-    public function __construct(CrontabManager $crontabManager, StdoutLoggerInterface $logger)
+    /**
+     * @var \Hyperf\Contract\ConfigInterface
+     */
+    private $config;
+
+    public function __construct(CrontabManager $crontabManager, StdoutLoggerInterface $logger, ConfigInterface $config)
     {
         $this->crontabManager = $crontabManager;
         $this->logger = $logger;
+        $this->config = $config;
     }
 
     /**
@@ -53,9 +62,31 @@ class CrontabRegisterListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $this->logger->debug('Crontabs are registered.');
-        $this->crontabManager->register((new Crontab())->setType('callback')->setCommand([Task::class, 'foo', []])
-            ->setName('echo-time-1')
-            ->setRule('*/11 * * * * *'));
+        $crontabs = value(function () {
+            $configCrontabs = $this->config->get('crontab.crontab', []);
+            $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
+            $crontabs = [];
+            foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
+                if ($crontab instanceof CrontabAnnotation) {
+                    $instance = new Crontab();
+                    isset($crontab->name) && $instance->setName($crontab->name);
+                    isset($crontab->type) && $instance->setType($crontab->type);
+                    isset($crontab->rule) && $instance->setRule($crontab->rule);
+                    isset($crontab->callback) && $instance->setCallback($crontab->callback);
+                    isset($crontab->memo) && $instance->setMemo($crontab->memo);
+                    $crontab = $instance;
+                }
+                if ($crontab instanceof Crontab) {
+                    $crontabs[$crontab->getName()] = $crontab;
+                }
+            }
+            return array_values($crontabs);
+        });
+        foreach ($crontabs as $crontab) {
+            if ($crontab instanceof Crontab) {
+                $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
+                $this->crontabManager->register($crontab);
+            }
+        }
     }
 }

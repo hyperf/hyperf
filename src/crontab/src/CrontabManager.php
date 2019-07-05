@@ -65,6 +65,6 @@ class CrontabManager
 
     private function isValidCrontab(Crontab $crontab): bool
     {
-        return $crontab->getName() && $crontab->getRule() && $crontab->getCommand() && $this->parser->isValid($crontab->getRule());
+        return $crontab->getName() && $crontab->getRule() && $crontab->getCallback() && $this->parser->isValid($crontab->getRule());
     }
 }

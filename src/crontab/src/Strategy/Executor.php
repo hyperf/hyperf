@@ -39,7 +39,7 @@ class Executor
         $callback = null;
         switch ($crontab->getType()) {
             case 'callback':
-                [$class, $method, $parameters] = $crontab->getCommand();
+                [$class, $method, $parameters] = $crontab->getCallback();
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
                     $callback = function () use ($class, $method, $parameters) {
                         Coroutine::create(function () use ($class, $method, $parameters) {
@@ -53,7 +53,7 @@ class Executor
                 break;
             case 'eval':
                 $callback = function () use ($crontab) {
-                    eval($crontab->getCommand());
+                    eval($crontab->getCallback());
                 };
                 break;
         }

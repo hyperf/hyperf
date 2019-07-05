@@ -32,6 +32,11 @@ class ConfigProvider
                 CrontabRegisterListener::class,
                 OnPipeMessageListener::class,
             ],
+            'scan' => [
+                'paths' => [
+                    __DIR__,
+                ],
+            ],
         ];
     }
 }

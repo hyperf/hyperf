@@ -24,7 +24,7 @@ class Crontab
     /**
      * @var string
      */
-    protected $type = 'command';
+    protected $type = 'callback';
 
     /**
      * @var null|string
@@ -34,7 +34,7 @@ class Crontab
     /**
      * @var mixed
      */
-    protected $command;
+    protected $callback;
 
     /**
      * @var null|string
@@ -74,14 +74,14 @@ class Crontab
         return $this;
     }
 
-    public function getCommand()
+    public function getCallback()
     {
-        return $this->command;
+        return $this->callback;
     }
 
-    public function setCommand($command): Crontab
+    public function setCallback($callback): Crontab
     {
-        $this->command = $command;
+        $this->callback = $callback;
         return $this;
     }
 
