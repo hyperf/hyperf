@@ -65,6 +65,7 @@ class RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
+        $options = array_replace($this->currentGroupOptions, $options);
         $server = $options['server'] ?? 'http';
         foreach ((array) $httpMethod as $method) {
             $method = strtoupper($method);
@@ -86,9 +87,14 @@ class RouteCollector
     public function addGroup($prefix, callable $callback, array $options = [])
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
+        $currentGroupOptions = $this->currentGroupOptions;
+
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
+        $this->currentGroupOptions = array_replace($currentGroupOptions, $options);
         $callback($this);
+
         $this->currentGroupPrefix = $previousGroupPrefix;
+        $this->currentGroupOptions = $currentGroupOptions;
     }
 
     /**
