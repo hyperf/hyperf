@@ -93,7 +93,7 @@ class Response extends ServerResponse implements ResponseInterface
         string $schema = 'http'
     ): PsrResponseInterface {
         $toUrl = value(function () use ($toUrl, $schema) {
-            if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, 'http://', 'https://')) {
+            if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
                 return $toUrl;
             }
             /** @var Contract\RequestInterface $request */
