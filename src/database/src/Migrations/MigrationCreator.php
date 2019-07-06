@@ -62,6 +62,10 @@ class MigrationCreator
         // various place-holders, save the file, and run the post create event.
         $stub = $this->getStub($table, $create);
 
+        if (! file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
         $this->files->put(
             $path = $this->getPath($name, $path),
             $this->populateStub($name, $stub, $table)
