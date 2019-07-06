@@ -415,8 +415,6 @@ if (! function_exists('run')) {
     /**
      * Run callable code and return true when all coroutine processes exit.
      *
-     * @since swoole 4.4.0
-     *
      * @param callable $callback
      * @return bool
      */
@@ -424,11 +422,20 @@ if (! function_exists('run')) {
     {
         if (! Coroutine::inCoroutine()) {
             \Swoole\Runtime::enableCoroutine(true);
-            $result = Swoole\Coroutine\Run($callback);
+
+            if (version_compare(swoole_version(), '4.4.0', '>=')) {
+                $result = Swoole\Coroutine\Run($callback);
+            } else {
+                go($callback);
+                Swoole\Event::wait();
+                $result = true;
+            }
+
             \Swoole\Runtime::enableCoroutine(false);
             return $result;
         }
 
-        return Swoole\Coroutine\Run($callback);
+        parallel([$callback]);
+        return true;
     }
 }
