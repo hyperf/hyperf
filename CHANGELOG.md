@@ -15,6 +15,7 @@
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Fixed property middlewares not work in `Router::addGroup`.
 - [#132](https://github.com/hyperf-cloud/hyperf/pull/132) Fixed request->hasFile does not work expected.
 - [#135](https://github.com/hyperf-cloud/hyperf/pull/135) Fixed response->redirect does not work expected.
+- [#139](https://github.com/hyperf-cloud/hyperf/pull/139) Fixed ConsulAgent baseUri will be replaced by Default BaseUri.
 
 # Removed
 
