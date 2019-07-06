@@ -74,12 +74,14 @@ class AgentTest extends TestCase
         $container->shouldReceive('get')->with(ClientFactory::class)->andReturn(new ClientFactory($container));
         $container->shouldReceive('make')->andReturnUsing(function ($name, $options) {
             if ($name === Client::class) {
-                return new Client($options);
+                return new Client($options['config']);
             }
         });
         ApplicationContext::setContainer($container);
         return new Agent(function () use ($container) {
-            return $container->get(ClientFactory::class)->create();
+            return $container->get(ClientFactory::class)->create([
+                'base_uri' => \Hyperf\Consul\Client::DEFAULT_URI,
+            ]);
         }, $container->get(StdoutLoggerInterface::class));
     }
 }
