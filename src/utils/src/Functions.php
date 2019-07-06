@@ -413,7 +413,7 @@ if (! function_exists('make')) {
 
 if (! function_exists('run')) {
     /**
-     * Run callable code and return true when all coroutine processes exit.
+     * Run callable code using coroutine hook in non coroutine environment.
      *
      * @since swoole 4.4.0
      *
@@ -422,21 +422,20 @@ if (! function_exists('run')) {
      */
     function run(callable $callback): bool
     {
-        if (! Coroutine::inCoroutine()) {
-            \Swoole\Runtime::enableCoroutine(true);
-
-            if (version_compare(swoole_version(), '4.4.0', '>=')) {
-                $result = Swoole\Coroutine\Run($callback);
-            } else {
-                go($callback);
-                $result = true;
-            }
-
-            \Swoole\Runtime::enableCoroutine(false);
-            return $result;
+        if (Coroutine::inCoroutine()) {
+            throw new RuntimeException('[Swoole\Coroutine\Run] only execute in non coroutine environment.');
         }
 
-        $callback();
-        return true;
+        \Swoole\Runtime::enableCoroutine(true);
+
+        if (version_compare(swoole_version(), '4.4.0', '>=')) {
+            $result = Swoole\Coroutine\Run($callback);
+        } else {
+            go($callback);
+            $result = true;
+        }
+
+        \Swoole\Runtime::enableCoroutine(false);
+        return $result;
     }
 }
