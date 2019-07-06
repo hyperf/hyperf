@@ -415,6 +415,8 @@ if (! function_exists('run')) {
     /**
      * Run callable code and return true when all coroutine processes exit.
      *
+     * @since swoole 4.4.0
+     *
      * @param callable $callback
      * @return bool
      */
@@ -427,7 +429,6 @@ if (! function_exists('run')) {
                 $result = Swoole\Coroutine\Run($callback);
             } else {
                 go($callback);
-                Swoole\Event::wait();
                 $result = true;
             }
 
