@@ -10,14 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Consul;
+namespace HyperfTest\Consul\Stub;
 
-use Psr\Http\Message\RequestInterface;
-
-class Utils
+class Client extends \Hyperf\Consul\Client
 {
-    public static function isHealthCheckRequest(RequestInterface $request): bool
-    {
-        return $request->getHeaderLine('user-agent') === 'Consul Health Check';
-    }
 }
