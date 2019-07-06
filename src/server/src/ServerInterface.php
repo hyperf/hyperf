@@ -29,4 +29,6 @@ interface ServerInterface
     public function init(ServerConfig $config): ServerInterface;
 
     public function start();
+
+    public function getServer(): \Swoole\Server;
 }
