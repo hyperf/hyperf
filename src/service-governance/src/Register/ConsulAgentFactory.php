@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernance\Register;
 
 use Hyperf\Consul\Agent;
+use Hyperf\Consul\Client;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Psr\Container\ContainerInterface;
 
@@ -21,10 +23,11 @@ class ConsulAgentFactory
     public function __invoke(ContainerInterface $container)
     {
         return new Agent(function () use ($container) {
-            $options = [
+            $config = $container->get(ConfigInterface::class);
+            return $container->get(ClientFactory::class)->create([
                 'timeout' => 2,
-            ];
-            return $container->get(ClientFactory::class)->create($options);
+                'base_uri' => $config->get('consul.uri', Client::DEFAULT_URI),
+            ]);
         });
     }
 }
