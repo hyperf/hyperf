@@ -29,9 +29,8 @@ class Executor
         $this->container = $container;
     }
 
-    public function execute(array $data)
+    public function execute(Crontab $crontab)
     {
-        $crontab = $data['data'] ?? null;
         if (! $crontab instanceof Crontab || ! $crontab->getExecuteTime()) {
             return;
         }

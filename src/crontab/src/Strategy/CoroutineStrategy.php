@@ -23,9 +23,8 @@ class CoroutineStrategy extends AbstractStrategy
             if ($crontab->getExecuteTime() instanceof Carbon) {
                 $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
                 $wait > 0 && \Swoole\Coroutine::sleep($wait);
-                $content = date('Y-m-d H:i:s', time()) . ' ' . $crontab->getName();
-                var_dump($content);
-                file_put_contents(BASE_PATH . '/runtime/crontabs', $content . PHP_EOL, FILE_APPEND);
+                $executor = $this->container->get(Executor::class);
+                $executor->execute($crontab);
             }
         });
     }

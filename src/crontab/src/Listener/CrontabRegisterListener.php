@@ -62,31 +62,39 @@ class CrontabRegisterListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $crontabs = value(function () {
-            $configCrontabs = $this->config->get('crontab.crontab', []);
-            $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
-            $crontabs = [];
-            foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
-                if ($crontab instanceof CrontabAnnotation) {
-                    $instance = new Crontab();
-                    isset($crontab->name) && $instance->setName($crontab->name);
-                    isset($crontab->type) && $instance->setType($crontab->type);
-                    isset($crontab->rule) && $instance->setRule($crontab->rule);
-                    isset($crontab->callback) && $instance->setCallback($crontab->callback);
-                    isset($crontab->memo) && $instance->setMemo($crontab->memo);
-                    $crontab = $instance;
-                }
-                if ($crontab instanceof Crontab) {
-                    $crontabs[$crontab->getName()] = $crontab;
-                }
-            }
-            return array_values($crontabs);
-        });
+        $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
             if ($crontab instanceof Crontab) {
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
                 $this->crontabManager->register($crontab);
             }
         }
+    }
+
+    private function parseCrontabs(): array
+    {
+        $configCrontabs = $this->config->get('crontab.crontab', []);
+        $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
+        $crontabs = [];
+        foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
+            if ($crontab instanceof CrontabAnnotation) {
+                $crontab = $this->buildCrontabByAnnotation($crontab);
+            }
+            if ($crontab instanceof Crontab) {
+                $crontabs[$crontab->getName()] = $crontab;
+            }
+        }
+        return array_values($crontabs);
+    }
+
+    private function buildCrontabByAnnotation(CrontabAnnotation $annotation): Crontab
+    {
+        $crontab = new Crontab();
+        isset($annotation->name) && $crontab->setName($annotation->name);
+        isset($annotation->type) && $crontab->setType($annotation->type);
+        isset($annotation->rule) && $crontab->setRule($annotation->rule);
+        isset($annotation->callback) && $crontab->setCallback($annotation->callback);
+        isset($annotation->memo) && $crontab->setMemo($annotation->memo);
+        return $crontab;
     }
 }

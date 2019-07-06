@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Crontab\Crontab;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
@@ -57,21 +58,13 @@ class OnPipeMessageListener implements ListenerInterface
          * @var OnPipeMessage
          */
         $data = @unserialize($event->data);
-        if (! is_array($data)
-            || ! isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
-            || $data['identifier'] !== 'crontab'
-        ) {
+        if (! $this->isValidData($data)) {
             return;
         }
         try {
             switch ($data['type']) {
                 case 'callable':
-                    $instance = $this->container->get($data['callable'][0]);
-                    $method = $data['callable'][1] ?? null;
-                    if (! $instance || ! $method || ! method_exists($instance, $method)) {
-                        return;
-                    }
-                    $instance->{$method}(['data' => $data['data'] ?? null]);
+                    $this->handleCallable($data);
                     break;
             }
         } catch (\Throwable $throwable) {
@@ -79,5 +72,23 @@ class OnPipeMessageListener implements ListenerInterface
                 $this->logger->error($throwable->getMessage());
             }
         }
+    }
+
+    private function handleCallable($data): void
+    {
+        $instance = $this->container->get($data['callable'][0]);
+        $method = $data['callable'][1] ?? null;
+        if (! $instance || ! $method || ! method_exists($instance, $method)) {
+            return;
+        }
+        $crontab = $data['data'] ?? null;
+        $crontab instanceof Crontab && $instance->{$method}($crontab);
+    }
+
+    private function isValidData($data): bool
+    {
+        return ! is_array($data)
+        || ! isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
+        || $data['identifier'] !== 'crontab';
     }
 }

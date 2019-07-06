@@ -39,39 +39,13 @@ class Parser
         if (! $this->isValid($crontabString)) {
             throw new \InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
-        if ($startTime instanceof Carbon) {
-            $startTime = $startTime->getTimestamp();
-        } else {
-            $startTime = time();
-        }
-        if (! is_numeric($startTime)) {
-            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
-        }
-        $cron = preg_split('/[\\s]+/i', trim($crontabString));
-        if (count($cron) == 6) {
-            $date = [
-                'second' => $this->parseSegment($cron[0], 0, 59),
-                'minutes' => $this->parseSegment($cron[1], 0, 59),
-                'hours' => $this->parseSegment($cron[2], 0, 23),
-                'day' => $this->parseSegment($cron[3], 1, 31),
-                'month' => $this->parseSegment($cron[4], 1, 12),
-                'week' => $this->parseSegment($cron[5], 0, 6),
-            ];
-        } else {
-            $date = [
-                'second' => [1 => 0],
-                'minutes' => $this->parseSegment($cron[0], 0, 59),
-                'hours' => $this->parseSegment($cron[1], 0, 23),
-                'day' => $this->parseSegment($cron[2], 1, 31),
-                'month' => $this->parseSegment($cron[3], 1, 12),
-                'week' => $this->parseSegment($cron[4], 0, 6),
-            ];
-        }
-        if (in_array(intval(date('i', $startTime)), $date['minutes'])
-            && in_array(intval(date('G', $startTime)), $date['hours'])
-            && in_array(intval(date('j', $startTime)), $date['day'])
-            && in_array(intval(date('w', $startTime)), $date['week'])
-            && in_array(intval(date('n', $startTime)), $date['month'])
+        $startTime = $this->parseStartTime($startTime);
+        $date = $this->parseDate($crontabString);
+        if (in_array((int)date('i', $startTime), $date['minutes'])
+            && in_array((int)date('G', $startTime), $date['hours'])
+            && in_array((int)date('j', $startTime), $date['day'])
+            && in_array((int)date('w', $startTime), $date['week'])
+            && in_array((int)date('n', $startTime), $date['month'])
         ) {
             $result = [];
             foreach ($date['second'] as $second) {
@@ -137,5 +111,46 @@ class Parser
     private function between(int $value, int $min, int $max): bool
     {
         return $value >= $min && $value <= $max;
+    }
+
+    /**
+     * @param int|Carbon|null $startTime
+     */
+    private function parseStartTime($startTime): int
+    {
+        if ($startTime instanceof Carbon) {
+            $startTime = $startTime->getTimestamp();
+        } else {
+            $startTime = time();
+        }
+        if (! is_numeric($startTime)) {
+            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
+        }
+        return (int) $startTime;
+    }
+
+    private function parseDate(string $crontabString): array
+    {
+        $cron = preg_split('/[\\s]+/i', trim($crontabString));
+        if (count($cron) == 6) {
+            $date = [
+                'second' => $this->parseSegment($cron[0], 0, 59),
+                'minutes' => $this->parseSegment($cron[1], 0, 59),
+                'hours' => $this->parseSegment($cron[2], 0, 23),
+                'day' => $this->parseSegment($cron[3], 1, 31),
+                'month' => $this->parseSegment($cron[4], 1, 12),
+                'week' => $this->parseSegment($cron[5], 0, 6),
+            ];
+        } else {
+            $date = [
+                'second' => [1 => 0],
+                'minutes' => $this->parseSegment($cron[0], 0, 59),
+                'hours' => $this->parseSegment($cron[1], 0, 23),
+                'day' => $this->parseSegment($cron[2], 1, 31),
+                'month' => $this->parseSegment($cron[3], 1, 12),
+                'week' => $this->parseSegment($cron[4], 0, 6),
+            ];
+        }
+        return $date;
     }
 }

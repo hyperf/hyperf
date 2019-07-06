@@ -15,6 +15,7 @@ namespace Hyperf\Crontab\Strategy;
 use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Server\ServerFactory;
+use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 class ProcessStrategy extends AbstractStrategy
@@ -29,9 +30,9 @@ class ProcessStrategy extends AbstractStrategy
      */
     protected $currentWorkerId = -1;
 
-    public function __construct(ServerFactory $serverFactory)
+    public function __construct(ContainerInterface $container)
     {
-        $this->serverFactory = $serverFactory;
+        $this->serverFactory = $container->get(ServerFactory::class);
     }
 
     public function dispatch(Crontab $crontab)
@@ -50,12 +51,11 @@ class ProcessStrategy extends AbstractStrategy
 
     protected function getNextWorkerId(Server $server): int
     {
-        $this->currentWorkerId++;
+        ++$this->currentWorkerId;
         $maxWorkerId = $server->setting['worker_num'] + $server->setting['task_worker_num'] - 1;
         if ($this->currentWorkerId > $maxWorkerId) {
             $this->currentWorkerId = 0;
         }
         return $this->currentWorkerId;
     }
-
 }
