@@ -436,7 +436,7 @@ if (! function_exists('run')) {
             return $result;
         }
 
-        parallel([$callback]);
+        $callback();
         return true;
     }
 }
