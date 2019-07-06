@@ -410,3 +410,25 @@ if (! function_exists('make')) {
         return new $name(...$parameters);
     }
 }
+
+if (! function_exists('run')) {
+    /**
+     * Run callable code and return true when all coroutine processes exit.
+     *
+     * @since swoole 4.4.0
+     *
+     * @param callable $callback
+     * @return bool
+     */
+    function run(callable $callback): bool
+    {
+        if (! Coroutine::inCoroutine()) {
+            \Swoole\Runtime::enableCoroutine(true);
+            $result = Swoole\Coroutine\Run($callback);
+            \Swoole\Runtime::enableCoroutine(false);
+            return $result;
+        }
+
+        return Swoole\Coroutine\Run($callback);
+    }
+}
