@@ -26,7 +26,7 @@ class ConsulAgentFactory
             $config = $container->get(ConfigInterface::class);
             return $container->get(ClientFactory::class)->create([
                 'timeout' => 2,
-                'base_uri' => $config->get('consul.uri', Client::DEFAULT_URI),
+                'base_uri' => $config->get('consul.uri', Agent::DEFAULT_URI),
             ]);
         });
     }

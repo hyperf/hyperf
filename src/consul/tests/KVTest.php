@@ -138,7 +138,7 @@ class KVTest extends TestCase
         ApplicationContext::setContainer($container);
         return new KV(function () use ($container) {
             return $container->get(ClientFactory::class)->create([
-                'base_uri' => \Hyperf\Consul\Client::DEFAULT_URI,
+                'base_uri' => KV::DEFAULT_URI,
             ]);
         }, $container->get(StdoutLoggerInterface::class));
     }

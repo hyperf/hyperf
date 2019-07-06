@@ -80,7 +80,7 @@ class AgentTest extends TestCase
         ApplicationContext::setContainer($container);
         return new Agent(function () use ($container) {
             return $container->get(ClientFactory::class)->create([
-                'base_uri' => \Hyperf\Consul\Client::DEFAULT_URI,
+                'base_uri' => Agent::DEFAULT_URI,
             ]);
         }, $container->get(StdoutLoggerInterface::class));
     }
