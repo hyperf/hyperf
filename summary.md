@@ -84,5 +84,6 @@
   
 * 组件开发指南
 
-  * 创建 Composer 组件
+  * [指南前言](zh/component-guide/intro.md)
+  * [创建新的组件](zh/component-guide/create.md)
   * Hyperf 框架流程介入
