@@ -41,6 +41,11 @@ abstract class Pool implements PoolInterface
      */
     protected $currentConnections = 0;
 
+    /**
+     * @var Frequency
+     */
+    protected $freq;
+
     public function __construct(ContainerInterface $container, array $config = [])
     {
         $this->container = $container;
@@ -51,7 +56,15 @@ abstract class Pool implements PoolInterface
 
     public function get(): ConnectionInterface
     {
-        return $this->getConnection();
+        $connection = $this->getConnection();
+        if ($this->freq instanceof Frequency) {
+            $this->freq->hit();
+            if ($this->freq->isLowFreq()) {
+                $this->flush();
+            }
+        }
+
+        return $connection;
     }
 
     public function release(ConnectionInterface $connection): void
@@ -66,6 +79,10 @@ abstract class Pool implements PoolInterface
         if ($num > 0) {
             while ($conn = $this->channel->pop($this->option->getWaitTimeout())) {
                 $conn->close();
+                --$this->currentConnections;
+                if ($this->currentConnections <= $this->option->getMinConnections()) {
+                    break;
+                }
             }
         }
     }

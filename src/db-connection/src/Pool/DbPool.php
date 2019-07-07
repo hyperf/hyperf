@@ -15,6 +15,7 @@ namespace Hyperf\DbConnection\Pool;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DbConnection\Connection;
+use Hyperf\DbConnection\Frequency;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
@@ -39,6 +40,7 @@ class DbPool extends Pool
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
 
+        $this->freq = make(Frequency::class);
         parent::__construct($container, $options);
     }
 

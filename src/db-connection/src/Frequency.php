@@ -12,19 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
-use Hyperf\Contract\FreqInterface;
+use Hyperf\Pool\Frequency as PoolFrequency;
 
-class Frequency implements FreqInterface
+class Frequency extends PoolFrequency
 {
     protected $hits = [];
 
-    protected $time;
+    protected $time = 10;
+
+    protected $lowFreq = 5;
 
     protected $beginTime;
 
-    public function __construct($time = 10)
+    public function __construct()
     {
-        $this->time = $time;
         $this->beginTime = time();
     }
 
@@ -51,6 +52,14 @@ class Frequency implements FreqInterface
         }
 
         return floatval($hits / $count);
+    }
+
+    public function isLowFreq(): bool
+    {
+        if ($this->freq() < $this->lowFreq) {
+            return true;
+        }
+        return false;
     }
 
     protected function flush(): void
