@@ -108,6 +108,8 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function close(): bool
     {
+        unset($this->connection);
+
         return true;
     }
 
