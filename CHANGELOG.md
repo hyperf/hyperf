@@ -2,7 +2,7 @@
 
 ## Added
 
-- Nothing
+- [#140](https://github.com/hyperf-cloud/hyperf/pull/140) Support Swoole v4.4.0.
 
 # Changed
 
