@@ -10,14 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Pool;
+namespace Hyperf\Contract;
 
-use Hyperf\Contract\FrequencyInterface;
-
-abstract class Frequency implements FrequencyInterface
+interface FrequencyInterface
 {
     /**
-     * Is it low frequency.
+     * Number of hit per time.
      */
-    abstract public function isLowFrequency(): bool;
+    public function hit(int $number = 1): bool;
+
+    /**
+     * Hits per second.
+     */
+    public function frequency(): float;
 }

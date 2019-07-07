@@ -20,7 +20,7 @@ class Frequency extends PoolFrequency
 
     protected $time = 10;
 
-    protected $lowFreq = 5;
+    protected $lowFrequency = 5;
 
     protected $beginTime;
 
@@ -40,7 +40,7 @@ class Frequency extends PoolFrequency
         return true;
     }
 
-    public function freq(): float
+    public function frequency(): float
     {
         $this->flush();
 
@@ -54,9 +54,9 @@ class Frequency extends PoolFrequency
         return floatval($hits / $count);
     }
 
-    public function isLowFreq(): bool
+    public function isLowFrequency(): bool
     {
-        if ($this->freq() < $this->lowFreq) {
+        if ($this->frequency() < $this->lowFrequency) {
             return true;
         }
         return false;

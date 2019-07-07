@@ -10,17 +10,19 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace HyperfTest\DbConnection\Stubs;
 
-interface FreqInterface
+use Hyperf\DbConnection\Frequency;
+
+class FrequencyStub extends Frequency
 {
-    /**
-     * Number of hit per time.
-     */
-    public function hit(int $number = 1): bool;
+    protected $time = 2;
 
     /**
-     * Hits per second.
+     * @return array
      */
-    public function freq(): float;
+    public function getHits(): array
+    {
+        return $this->hits;
+    }
 }

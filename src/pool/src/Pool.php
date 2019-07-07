@@ -44,7 +44,7 @@ abstract class Pool implements PoolInterface
     /**
      * @var Frequency
      */
-    protected $freq;
+    protected $frequency;
 
     public function __construct(ContainerInterface $container, array $config = [])
     {
@@ -57,9 +57,9 @@ abstract class Pool implements PoolInterface
     public function get(): ConnectionInterface
     {
         $connection = $this->getConnection();
-        if ($this->freq instanceof Frequency) {
-            $this->freq->hit();
-            if ($this->freq->isLowFreq()) {
+        if ($this->frequency instanceof Frequency) {
+            $this->frequency->hit();
+            if ($this->frequency->isLowFrequency()) {
                 $this->flush();
             }
         }

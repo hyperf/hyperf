@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection;
 
 use Hyperf\DbConnection\Frequency;
+use HyperfTest\DbConnection\Stubs\FrequencyStub;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,9 +30,9 @@ class FrequencyTest extends TestCase
         $freq->hit();
         $freq->hit(2);
 
-        $this->assertSame(5.0, $freq->freq());
+        $this->assertSame(5.0, $freq->frequency());
 
-        $freq = new Frequency(2);
+        $freq = new FrequencyStub();
         $freq->hit(3);
         sleep(1);
         $freq->hit(4);
@@ -39,6 +40,8 @@ class FrequencyTest extends TestCase
         $freq->hit(5);
         sleep(1);
         $freq->hit(9);
-        $this->assertSame(6.0, $freq->freq());
+
+        $this->assertSame(3, count($freq->getHits()));
+        $this->assertSame(6.0, $freq->frequency());
     }
 }
