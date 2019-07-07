@@ -55,48 +55,6 @@ php bin/hyperf.php start
 
 接下来，就可以在 `/tmp/skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
 
-## Hyperf后台启动方式
-1.简单方式
-```php
-#首先进入项目根目录，特别说明：如果你的系统安装有多个php版本，请注意甄别项目站点对应的php可执行文件路径
-nohup php  ./bin/hyperf.php  start  &
-```
-2.supervisor方式（以centos为例）
-```php
-#2.1 安装supervisor
-yum install epel-release  #如果此前安装过，此步骤跳过
-yum install -y supervisor  
-
-#2.2 创建一个配置文件
-cp   /etc/supervisord.conf     /etc/etc/supervisord.d/supervisord.conf
-
-#2.3 编辑刚才新复制的配置文件
-vim /etc/etc/supervisord.d/supervisord.conf 
-
-#2.4 文件结尾添加以下内容，保存
-[program:hyperf_test1]  # hyperf_test1为项目设置一个名称
-command=php  /home/wwwroot/www.hyperf.com/backend/bin/hyperf.php  start  # 启动hyperf的命令
-user=root
-autostart=true
-autorestart=true
-startsecs = 5
-startretries = 3
-stderr_logfile=/home/wwwroot/www.hyperf.com/err.log
-stdout_logfile=/home/wwwroot/www.hyperf.com/out.log  
-
-#2.5 启动
-supervisord -c /etc/supervisord.d/supervisord.conf
-
-#2.6 使用supervisor管理本项目
-supervisorctl stop hyperf_test1  
-supervisorctl start hyperf_test1
-supervisorctl restart hyperf_test1
-
-#2.7 使用supervisor查看项目进程启动至今的运行状态
-supervisorctl  status
-```
-
-
 ## 存在兼容性的扩展
 
 由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，所以在与不少扩展都仍存在兼容性的问题。   
