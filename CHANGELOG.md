@@ -7,7 +7,7 @@
 # Changed
 
 - [#124](https://github.com/hyperf-cloud/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
-- [#125](https://github.com/hyperf-cloud/hyperf/pull/125) Changed the default value of parameter $default of config() function to null
+- [#125](https://github.com/hyperf-cloud/hyperf/pull/125) Changed the default value of parameter $default of config() function to null.
 
 # Fixed
 
@@ -16,6 +16,7 @@
 - [#132](https://github.com/hyperf-cloud/hyperf/pull/132) Fixed request->hasFile does not work expected.
 - [#135](https://github.com/hyperf-cloud/hyperf/pull/135) Fixed response->redirect does not work expected.
 - [#139](https://github.com/hyperf-cloud/hyperf/pull/139) Fixed the BaseUri of ConsulAgent will be replaced by default BaseUri.
+- [#148](https://github.com/hyperf-cloud/hyperf/pull/148) Fixed cannot generate the migration when migrates directory does not exist.
 
 # Removed
 
