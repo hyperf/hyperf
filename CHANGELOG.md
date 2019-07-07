@@ -16,6 +16,7 @@
 - [#132](https://github.com/hyperf-cloud/hyperf/pull/132) Fixed request->hasFile does not work expected.
 - [#135](https://github.com/hyperf-cloud/hyperf/pull/135) Fixed response->redirect does not work expected.
 - [#139](https://github.com/hyperf-cloud/hyperf/pull/139) Fixed the BaseUri of ConsulAgent will be replaced by default BaseUri.
+- [#152](https://github.com/hyperf-cloud/hyperf/pull/152) Fixed db connection will not be closed when a low use frequency.
 
 # Removed
 
