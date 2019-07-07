@@ -77,7 +77,7 @@
 
   * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
-  * [Supervisor部署](zh/tutorial/supervisor.md)
+  * [Supervisor 部署](zh/tutorial/supervisor.md)
   
 * Awesome Hyperf
 
