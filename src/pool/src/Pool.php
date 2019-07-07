@@ -77,12 +77,9 @@ abstract class Pool implements PoolInterface
         $num = $this->getConnectionsInChannel();
 
         if ($num > 0) {
-            while ($conn = $this->channel->pop($this->option->getWaitTimeout())) {
+            while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop($this->option->getWaitTimeout())) {
                 $conn->close();
                 --$this->currentConnections;
-                if ($this->currentConnections <= $this->option->getMinConnections()) {
-                    break;
-                }
             }
         }
     }
