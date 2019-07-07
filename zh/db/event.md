@@ -127,7 +127,6 @@ class User extends Model
 
     public function saving(Saving $event)
     {
-        $this->getAttributes() ;  //  可以获取creating  created  updating  updated  deleting  deleted事件之后的相关记录，格式为：array
         $this->setCreatedAt('2019-01-01');
     }
 }
