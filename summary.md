@@ -1,7 +1,8 @@
 * 前言
 
-  * [介绍](zh/README.md)
-  * [交流](zh/communication.md)
+  * [项目介绍](zh/README.md)
+  * [线上交流](zh/communication.md)
+  * [捐献及赞助](zh/donate.md)
 
 * 快速入门
 
