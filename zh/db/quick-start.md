@@ -147,11 +147,13 @@ return [
 
 `sticky` 是一个 可选值，它可用于立即读取在当前请求周期内已写入数据库的记录。若 `sticky` 选项被启用，并且当前请求周期内执行过 「写」 操作，那么任何 「读」 操作都将使用 「写」 连接。这样可确保同一个请求周期内写入的数据可以被立即读取到，从而避免主从延迟导致数据不一致的问题。不过是否启用它，取决于应用程序的需求。
 
-## 执行原生SQL查询
+## 执行原生 SQL 语句
 
 配置好数据库后，便可以使用 `Hyperf\DbConnection\Db` 进行查询。
 
-###  query查询类(Select、属性为 READS SQL DATA 的存储过程、函数)
+### Query 查询类
+
+这里主要包括 `Select`、属性为 `READS SQL DATA` 的存储过程、函数等查询语句。   
 
 `select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
 
@@ -168,26 +170,25 @@ foreach($users as $user){
 
 ```
 
-###  execute执行类(insert、update、delete，属性为 MODIFIES SQL DATA 的存储过程、)
+### Execute 执行类
 
-`select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
+这里主要包括 `Insert`、`Update`、`Delete`，属性为 `MODIFIES SQL DATA` 的存储过程等执行语句。
 
 ```php
 <?php
 
 use Hyperf\DbConnection\Db;
 
-$inserted = Db::insert('insert into user (id, name) values (?, ?)', [1, 'Hyperf']); // 返回是否成功 bool
+$inserted = Db::insert('INSERT INTO user (id, name) VALUES (?, ?)', [1, 'Hyperf']); // 返回是否成功 bool
 
-$affected = Db::update('update user set name = ? where id = ?', ['John', 1]); // 返回受影响的行数 int
+$affected = Db::update('UPDATE user set name = ? WHERE id = ?', ['John', 1]); // 返回受影响的行数 int
 
-$result = Db::statement(" CALL pro_test(?,'?') ",[1,'your words']);  // 返回 bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
+$affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // 返回受影响的行数 int
 
-return $result ;  // 执行成功返回1，否则返回 0
+$result = Db::statement("CALL pro_test(?, '?')", [1, 'your words']);  // 返回 bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
 ```
 
-
-### 自动数据库事务
+### 自动管理数据库事务
 
 你可以使用 `Db` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
 
@@ -203,7 +204,7 @@ Db::transaction(function () {
 
 ```
 
-### 手动数据库使用事务
+### 手动管理数据库事务
 
 如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `Db` 的 `beginTransaction`, `commit`, `rollBack`:
 
@@ -220,13 +221,3 @@ try{
     Db::rollBack();
 }
 ```
-
-### 原生sql还提供了以下静态函数，供不同的需求调用  
-```sql
-use Hyperf\Dbconnection\Db;
-
-Db::insert("sql语句",[参数1，参数2，..])  // 返回：bool
-Db::update("sql语句",[参数1，参数2，..])  // 返回：int
-Db::delete("sql语句",[参数1，参数2，..])  // 返回：int
-```
-

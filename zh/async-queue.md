@@ -1,6 +1,6 @@
 # 异步队列
 
-异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种异步处理和异步延时处理的能力。
+异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种 `异步处理` 和 `异步延时处理` 的能力，并不能严格地保证消息的持久化和支持 `ACK 应答机制`。
 
 ## 安装
 
@@ -10,7 +10,9 @@ composer require hyperf/async-queue
 
 ## 配置
 
-暂时只支持 `Redis Driver`。
+配置文件位于 `config/autoload/async_queue.php`，如文件不存在可自行创建。
+
+> 暂时只支持 `Redis Driver` 驱动。
 
 |     配置      |  类型  |                   默认值                    |        备注        |
 |:-------------:|:------:|:-------------------------------------------:|:------------------:|
@@ -74,16 +76,19 @@ class ExampleJob extends Job
 发布消息
 
 ```php
-
 <?php
 
 declare(strict_types=1);
 
 use Psr\Container\ContainerInterface;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class DemoService
 {
+    /**
+     * @var DriverInterface
+     */
     protected $driver;
 
     public function __construct(DriverFactory $driverFactory)
@@ -93,7 +98,16 @@ class DemoService
 
     public function publish()
     {
-        return $this->driver->push(new ExampleJon());
+        // 发布消息
+        // 这里的 ExampleJob 是直接实例化出来的，所以不能在 Job 内使用 @Inject @Value 等注解及注解所对应功能的其它使用方式
+        return $this->driver->push(new ExampleJob());
+    }
+
+    public function delay()
+    {
+        // 发布延迟消息
+        // 第二个参数 $delay 即为延迟的秒数
+        return $this->driver->push(new ExampleJob(), 60);
     }
 }
 

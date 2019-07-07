@@ -38,8 +38,13 @@ return [
             'heartbeat' => 0,
         ],
     ],
+    'pool2' => [
+        ...
+    ]
 ];
 ```
+
+可在 `producer` 或者 `consumer` 的 `__construct` 函数中, 设置不同 `pool`.
 
 ## 投递消息
 
@@ -71,6 +76,9 @@ class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
     {
+        // 设置不同 pool
+        $this->poolName = 'pool2';
+
         $user = User::where('id', $id)->first();
         $this->payload = [
             'id' => $id,

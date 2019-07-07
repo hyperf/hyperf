@@ -41,8 +41,8 @@ docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
 chmod u+x composer.phar
 mv composer.phar /usr/local/bin/composer
-# 将 Composer 镜像设置为 Laravel China 镜像，加速国内下载速度
-composer config -g repo.packagist composer https://packagist.laravel-china.org
+# 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
 # 通过 Compose 安装 hyperf/hyperf-skeleton 项目
 composer create-project hyperf/hyperf-skeleton

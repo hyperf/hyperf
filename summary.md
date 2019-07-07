@@ -1,7 +1,8 @@
 * 前言
 
-  * [介绍](zh/README.md)
-  * [交流](zh/communication.md)
+  * [项目介绍](zh/README.md)
+  * [线上交流](zh/communication.md)
+  * [捐献及赞助](zh/donate.md)
 
 * 快速入门
 
@@ -85,5 +86,6 @@
   
 * 组件开发指南
 
-  * 创建 Composer 组件
+  * [指南前言](zh/component-guide/intro.md)
+  * [创建新的组件](zh/component-guide/create.md)
   * Hyperf 框架流程介入
