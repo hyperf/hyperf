@@ -415,18 +415,18 @@ if (! function_exists('run')) {
     /**
      * Run callable code using coroutine hook in non coroutine environment.
      *
-     * @since swoole 4.4.0
-     *
      * @param callable $callback
+     * @param int $flags
      * @return bool
+     * @since swoole 4.4.0
      */
-    function run(callable $callback): bool
+    function run(callable $callback, $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('[Swoole\Coroutine\Run] only execute in non coroutine environment.');
         }
 
-        \Swoole\Runtime::enableCoroutine(true);
+        \Swoole\Runtime::enableCoroutine(true, $flags);
 
         if (version_compare(swoole_version(), '4.4.0', '>=')) {
             $result = Swoole\Coroutine\Run($callback);
