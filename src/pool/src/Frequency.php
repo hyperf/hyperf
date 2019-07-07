@@ -17,7 +17,7 @@ use Hyperf\Contract\FrequencyInterface;
 abstract class Frequency implements FrequencyInterface
 {
     /**
-     * Is it low frequency.
+     * Is it low frequency ?
      */
     abstract public function isLowFrequency(): bool;
 }
