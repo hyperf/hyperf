@@ -10,4 +10,4 @@
 
 由于微信群无法直接加入，故可先加下方二维码好友，并声明目的，再拉您入群。
 
-![wechat](./imgs/wechat.jpg)
+![wechat](./imgs/wechat.jpg ':size=375')
