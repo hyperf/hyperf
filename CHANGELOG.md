@@ -20,6 +20,7 @@
 - [#148](https://github.com/hyperf-cloud/hyperf/pull/148) Fixed cannot generate the migration when migrates directory does not exist.
 - [#152](https://github.com/hyperf-cloud/hyperf/pull/152) Fixed db connection will not be closed when a low use frequency.
 - [#169](https://github.com/hyperf-cloud/hyperf/pull/169) Fixed array parse failed when handle http request.
+- [#170](https://github.com/hyperf-cloud/hyperf/pull/170) Fixed websocket server interrupt when request a not exist route.
 
 # Removed
 
