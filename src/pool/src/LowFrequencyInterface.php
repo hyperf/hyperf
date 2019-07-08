@@ -14,10 +14,7 @@ namespace Hyperf\Pool;
 
 use Hyperf\Contract\FrequencyInterface;
 
-abstract class Frequency implements FrequencyInterface
+interface LowFrequencyInterface extends FrequencyInterface
 {
-    /**
-     * Is it low frequency ?
-     */
-    abstract public function isLowFrequency(): bool;
+    public function isLowFrequency(): bool;
 }

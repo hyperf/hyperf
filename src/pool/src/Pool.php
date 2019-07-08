@@ -42,7 +42,7 @@ abstract class Pool implements PoolInterface
     protected $currentConnections = 0;
 
     /**
-     * @var Frequency
+     * @var LowFrequencyInterface
      */
     protected $frequency;
 
@@ -57,7 +57,7 @@ abstract class Pool implements PoolInterface
     public function get(): ConnectionInterface
     {
         $connection = $this->getConnection();
-        if ($this->frequency instanceof Frequency) {
+        if ($this->frequency instanceof LowFrequencyInterface) {
             $this->frequency->hit();
             if ($this->frequency->isLowFrequency()) {
                 $this->flush();
