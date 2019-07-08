@@ -9,7 +9,7 @@
 
 ## 如何适配 Hyperf ?
 
-我们为您提供了一份 [Hyperf 组件开发指南](./component-guide/intro.md)，以帮助您开发 Hyperf 组件或适配 Hyperf 框架。
+我们为您提供了一份 [Hyperf 组件开发指南](zh/component-guide/intro.md)，以帮助您开发 Hyperf 组件或适配 Hyperf 框架。
 
 # 组件列表
 
