@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
+use Hyperf\Constants\ConstantsCollector;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use PHPUnit\Framework\TestCase;
 
@@ -22,19 +23,36 @@ use PHPUnit\Framework\TestCase;
  */
 class AnnotationReaderTest extends TestCase
 {
-    public function testGetAnnotations()
+    protected function setUp()
     {
         $reader = new AnnotationReader();
 
         $ref = new \ReflectionClass(ErrorCodeStub::class);
         $classConstants = $ref->getReflectionConstants();
 
-        $res = $reader->getAnnotations($classConstants);
+        $data = $reader->getAnnotations($classConstants);
+        ConstantsCollector::set(ErrorCodeStub::class, $data);
+    }
 
-        $this->assertSame('Server Error!', $res[ErrorCodeStub::SERVER_ERROR]['message']);
-        $this->assertSame('SHOW ECHO', $res[ErrorCodeStub::SHOW_ECHO]['message']);
-        $this->assertSame('ECHO', $res[ErrorCodeStub::SHOW_ECHO]['echo']);
+    public function testGetAnnotations()
+    {
+        $data = ConstantsCollector::get(ErrorCodeStub::class);
 
-        $this->assertArrayNotHasKey(ErrorCodeStub::NO_MESSAGE, $res);
+        $this->assertSame('Server Error!', $data[ErrorCodeStub::SERVER_ERROR]['message']);
+        $this->assertSame('SHOW ECHO', $data[ErrorCodeStub::SHOW_ECHO]['message']);
+        $this->assertSame('ECHO', $data[ErrorCodeStub::SHOW_ECHO]['echo']);
+
+        $this->assertArrayNotHasKey(ErrorCodeStub::NO_MESSAGE, $data);
+    }
+
+    public function testGetMessageWithArguments()
+    {
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID);
+
+        $this->assertSame('Params[%s] is invalid.', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, 'user_id');
+
+        $this->assertSame('Params[user_id] is invalid.', $res);
     }
 }

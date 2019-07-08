@@ -31,6 +31,14 @@ abstract class AbstractConstants
         $name = strtolower(substr($name, 3));
         $class = get_called_class();
 
-        return ConstantsCollector::getValue($class, $code, $name);
+        $message = ConstantsCollector::getValue($class, $code, $name);
+
+        array_shift($arguments);
+
+        if (count($arguments) > 0) {
+            return sprintf($message, ...$arguments);
+        }
+
+        return $message;
     }
 }
