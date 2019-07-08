@@ -3,6 +3,7 @@
 ## Added
 
 - [#140](https://github.com/hyperf-cloud/hyperf/pull/140) Support Swoole v4.4.0.
+- [#163](https://github.com/hyperf-cloud/hyperf/pull/163) Added custom arguments support to AbstractConstants::__callStatic in `hyperf/constants`.
 
 # Changed
 
