@@ -70,10 +70,7 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
 
     public function isLowFrequency(): bool
     {
-        if ($this->frequency() < $this->lowFrequency) {
-            return true;
-        }
-        return false;
+        return $this->frequency() < $this->lowFrequency;
     }
 
     protected function flush(): void
