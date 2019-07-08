@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
 use Psr\Container\ContainerInterface;
@@ -57,8 +58,11 @@ abstract class Pool implements PoolInterface
     public function get(): ConnectionInterface
     {
         $connection = $this->getConnection();
-        if ($this->frequency instanceof LowFrequencyInterface) {
+        if ($this->frequency instanceof FrequencyInterface) {
             $this->frequency->hit();
+        }
+
+        if ($this->frequency instanceof LowFrequencyInterface) {
             if ($this->frequency->isLowFrequency()) {
                 $this->flush();
             }

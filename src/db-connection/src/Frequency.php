@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Pool\LowFrequencyInterface;
 
-class Frequency implements LowFrequencyInterface
+class Frequency implements FrequencyInterface, LowFrequencyInterface
 {
     /**
      * @var array

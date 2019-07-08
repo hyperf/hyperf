@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Pool;
 
-use Hyperf\Contract\FrequencyInterface;
-
-interface LowFrequencyInterface extends FrequencyInterface
+interface LowFrequencyInterface
 {
     public function isLowFrequency(): bool;
 }
