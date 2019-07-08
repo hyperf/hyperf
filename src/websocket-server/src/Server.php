@@ -124,14 +124,16 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            FdCollector::set($request->fd, $class);
+            if (is_string($class)) {
+                FdCollector::set($request->fd, $class);
 
-            defer(function () use ($request, $class) {
-                $instance = $this->container->get($class);
-                if ($instance instanceof OnOpenInterface) {
-                    $instance->onOpen($this->server, $request);
-                }
-            });
+                defer(function () use ($request, $class) {
+                    $instance = $this->container->get($class);
+                    if ($instance instanceof OnOpenInterface) {
+                        $instance->onOpen($this->server, $request);
+                    }
+                });
+            }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);

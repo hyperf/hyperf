@@ -39,7 +39,7 @@ class Security
         ];
     }
 
-    public function sign(string $key): string 
+    public function sign(string $key): string
     {
         return base64_encode(sha1(trim($key) . self::KEY, true));
     }
