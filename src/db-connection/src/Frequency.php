@@ -16,12 +16,25 @@ use Hyperf\Pool\Frequency as PoolFrequency;
 
 class Frequency extends PoolFrequency
 {
+    /**
+     * @var array
+     */
     protected $hits = [];
 
+    /**
+     * How much time do you want to calculate the frequency ?
+     * @var int
+     */
     protected $time = 10;
 
+    /**
+     * @var int
+     */
     protected $lowFrequency = 5;
 
+    /**
+     * @var int
+     */
     protected $beginTime;
 
     public function __construct()
