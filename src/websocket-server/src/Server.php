@@ -124,7 +124,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            if (is_string($class)) {
+            if (!empty($class)) {
                 FdCollector::set($request->fd, $class);
 
                 defer(function () use ($request, $class) {
