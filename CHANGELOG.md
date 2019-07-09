@@ -1,3 +1,9 @@
+# v1.0.5 - TBD
+
+## Fixed
+
+- [#176](https://github.com/hyperf-cloud/hyperf/pull/176) Fixed TypeError: Return value of LengthAwarePaginator::nextPageUrl() must be of the type string or null, none returned.
+
 # v1.0.4 - 2019-07-08
 
 ## Added
