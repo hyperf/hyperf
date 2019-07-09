@@ -23,12 +23,20 @@ class LengthAwarePaginatorTest extends TestCase
 {
     public function testNextPageUrl()
     {
-        $paginator = new LengthAwarePaginator([1, 2, 3, 4, 5, 6], 6, 2);
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2);
 
         $this->assertSame('/?page=2', $paginator->nextPageUrl());
 
-        $paginator = new LengthAwarePaginator([1, 2, 3, 4, 5, 6], 6, 2, 3);
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2, 5);
 
         $this->assertSame(null, $paginator->nextPageUrl());
+    }
+
+    public function testFirstItem()
+    {
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2, 2);
+
+        $this->assertSame(3, $paginator->firstItem());
+        $this->assertSame(4, $paginator->lastItem());
     }
 }
