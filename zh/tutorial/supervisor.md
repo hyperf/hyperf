@@ -31,8 +31,8 @@ user=root
 autostart=true
 # 进程退出后自动重启进程
 autorestart=true
-# 重试间隔秒数
-startsecs=5
+# 使用supervisor命令执行重启（restart）时，stop和start之间间隔的秒数
+startsecs=1
 # 重试次数
 startretries=3
 # stderr 日志输出位置
