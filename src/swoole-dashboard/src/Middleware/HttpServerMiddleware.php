@@ -33,16 +33,20 @@ class HttpServerMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $path = $request->getUri()->getPath();
-        $ip = swoole_get_local_ip();
+        if (class_exists(StatsCenter::class)) {
+            $path = $request->getUri()->getPath();
+            $ip = swoole_get_local_ip();
 
-        $tick = StatsCenter::beforeExecRpc($path, $this->name, $ip);
-        try {
+            $tick = StatsCenter::beforeExecRpc($path, $this->name, $ip);
+            try {
+                $response = $handler->handle($request);
+                StatsCenter::afterExecRpc($tick, true, $response->getStatusCode());
+            } catch (\Throwable $exception) {
+                StatsCenter::afterExecRpc($tick, false, $exception->getCode());
+                throw $exception;
+            }
+        } else {
             $response = $handler->handle($request);
-            StatsCenter::afterExecRpc($tick, true, $response->getStatusCode());
-        } catch (\Throwable $exception) {
-            StatsCenter::afterExecRpc($tick, false, $exception->getCode());
-            throw $exception;
         }
 
         return $response;
