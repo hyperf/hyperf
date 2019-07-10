@@ -35,7 +35,7 @@ class HttpServerMiddleware implements MiddlewareInterface
     {
         if (class_exists(StatsCenter::class)) {
             $path = $request->getUri()->getPath();
-            $ip = swoole_get_local_ip();
+            $ip = current(swoole_get_local_ip());
 
             $tick = StatsCenter::beforeExecRpc($path, $this->name, $ip);
             try {
