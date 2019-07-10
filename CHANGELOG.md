@@ -1,5 +1,9 @@
 # v1.0.5 - TBD
 
+## Added
+
+- [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
+
 ## Fixed
 
 - [#176](https://github.com/hyperf-cloud/hyperf/pull/176) Fixed TypeError: Return value of LengthAwarePaginator::nextPageUrl() must be of the type string or null, none returned.
