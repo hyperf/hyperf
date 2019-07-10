@@ -29,4 +29,9 @@ class Foo
         $this->string = $string;
         $this->int = $int;
     }
+
+    public function getBar(int $id, string $bar = 'testBar', array $ext = [], string $constants = BASE_PATH)
+    {
+        return [$id, $bar, $ext];
+    }
 }

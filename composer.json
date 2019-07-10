@@ -155,6 +155,7 @@
             "HyperfTest\\HttpServer\\": "./src/http-server/tests/",
             "HyperfTest\\Logger\\": "./src/logger/tests/",
             "HyperfTest\\ModelCache\\": "./src/model-cache/tests/",
+            "HyperfTest\\Paginator\\": "./src/paginator/tests/",
             "HyperfTest\\Redis\\": "./src/redis/tests/",
             "HyperfTest\\SwooleDashboard\\": "./src/swoole-dashboard/tests/",
             "HyperfTest\\Utils\\": "./src/utils/tests/",
