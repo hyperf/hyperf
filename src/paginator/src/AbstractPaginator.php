@@ -208,7 +208,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Get the number of the first item in the slice.
      */
-    public function firstItem(): int
+    public function firstItem(): ?int
     {
         return count($this->items) > 0 ? ($this->currentPage - 1) * $this->perPage + 1 : null;
     }
@@ -216,7 +216,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Get the number of the last item in the slice.
      */
-    public function lastItem(): int
+    public function lastItem(): ?int
     {
         return count($this->items) > 0 ? $this->firstItem() + $this->count() - 1 : null;
     }

@@ -197,17 +197,11 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'float':
-                        return (float) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'bool':
-                        return (bool) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'string':
-                        return (string) $arguments[$definition['name']] ?? null;
-                        break;
+                    case 'array':
+                        return $this->getValue($definition, $arguments);
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
                             throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
@@ -221,5 +215,36 @@ class CoreMiddleware implements MiddlewareInterface
         }
 
         return $injections;
+    }
+
+    protected function getValue($definition, $arguments)
+    {
+        if (isset($arguments[$definition['name']])) {
+            $value = $arguments[$definition['name']];
+            switch ($definition['type']) {
+                case 'int':
+                    return (int) $value;
+                case 'string':
+                    return (string) $value;
+                case 'float':
+                    return (float) $value;
+                case 'array':
+                    return (array) $value;
+                case 'bool':
+                    return (bool) $value;
+                default:
+                    return $value;
+            }
+        }
+
+        if (isset($definition['defaultValue'])) {
+            return $definition['defaultValue'];
+        }
+
+        if (isset($definition['allowsNull'])) {
+            return null;
+        }
+
+        throw new \RuntimeException('Invalid method definition detected.');
     }
 }

@@ -38,20 +38,18 @@ class MethodDefinitionCollector extends MetadataCollector
                 case 'int':
                 case 'float':
                 case 'string':
-                    $definitions[] = [
-                        'type' => $type,
-                        'name' => $parameter->getName(),
-                        'ref' => '',
-                        'allowsNull' => $parameter->allowsNull(),
-                    ];
-                    break;
+                case 'array':
                 case 'bool':
-                    $definitions[] = [
+                    $definition = [
                         'type' => $type,
                         'name' => $parameter->getName(),
                         'ref' => '',
                         'allowsNull' => $parameter->allowsNull(),
                     ];
+                    if ($parameter->isDefaultValueAvailable()) {
+                        $definition['defaultValue'] = $parameter->getDefaultValue();
+                    }
+                    $definitions[] = $definition;
                     break;
                 default:
                     // Object

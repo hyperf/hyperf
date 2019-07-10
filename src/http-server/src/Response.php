@@ -70,7 +70,7 @@ class Response extends ServerResponse implements ResponseInterface
     {
         $data = $this->toJson($data);
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'application/json')
+            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
             ->withBody(new SwooleStream($data));
     }
 
@@ -95,7 +95,7 @@ class Response extends ServerResponse implements ResponseInterface
     public function raw($data): PsrResponseInterface
     {
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'text/plain')
+            ->withAddedHeader('content-type', 'text/plain; charset=utf-8')
             ->withBody(new SwooleStream((string) $data));
     }
 
