@@ -91,7 +91,7 @@ Hyperf 会假设每个数据表都有一个名为 id 的主键列。你可以定
 
 ### 时间戳
 
-默认情况下，Hyperf 预期你的数据表中存在 created_at 和 updated_at 。如果你不想让 Hyperf 自动管理这两个列， 请将模型中的 $timestamps 属性设置为 false：
+默认情况下，Hyperf 预期你的数据表中存在 `created_at` 和 `updated_at` 。如果你不想让 Hyperf 自动管理这两个列， 请将模型中的 `$timestamps` 属性设置为 `false`：
 
 ```php
 <?php
@@ -108,7 +108,7 @@ class User extends Model
 }
 ```
 
-如果需要自定义时间戳的格式，在你的模型中设置 $dateFormat 属性。这个属性决定日期属性在数据库的存储方式，以及模型序列化为数组或者 JSON 的格式：
+如果需要自定义时间戳的格式，在你的模型中设置 `$dateFormat` 属性。这个属性决定日期属性在数据库的存储方式，以及模型序列化为数组或者 JSON 的格式：
 
 ```php
 <?php
@@ -125,7 +125,9 @@ class User extends Model
 }
 ```
 
-如果你需要自定义存储时间戳的字段名，可以在模型中设置 CREATED_AT 和 UPDATED_AT 常量的值来实现：
+如果您需要不希望保持 `datetime` 格式的储存，或者希望对时间做进一步的处理，您可以通过在模型内重写 `fromDateTime($value)` 方法实现。   
+
+如果你需要自定义存储时间戳的字段名，可以在模型中设置 `CREATED_AT` 和 `UPDATED_AT` 常量的值来实现，其中一个为 `null`，则表明不希望 ORM 处理该字段：
 
 ```php
 <?php
