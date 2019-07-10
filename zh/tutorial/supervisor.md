@@ -31,7 +31,7 @@ user=root
 autostart=true
 # 进程退出后自动重启进程
 autorestart=true
-# 使用supervisor命令执行重启（restart）时，stop和start之间间隔的秒数
+# 进程持续运行多久才认为是启动成功
 startsecs=1
 # 重试次数
 startretries=3
