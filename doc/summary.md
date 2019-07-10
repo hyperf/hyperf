@@ -73,6 +73,7 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
+  * [Swoole Dashboard](zh/swoole-dashboard.md)
 
 * 应用部署
 
