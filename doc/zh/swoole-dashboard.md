@@ -98,8 +98,7 @@ WORKDIR /opt/www
 
 RUN composer install --no-dev \
     && composer dump-autoload -o \
-    && php /opt/www/bin/hyperf.php di:init-proxy \
-    && cp -rf .env.example .env
+    && php /opt/www/bin/hyperf.php di:init-proxy
 
 EXPOSE 9501
 
