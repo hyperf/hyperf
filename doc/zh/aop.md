@@ -61,3 +61,11 @@ class FooAspect extends AbstractAspect
 每个 `切面(Aspect)` 必须定义 `@Aspect` 注解或在 `config/autoload/aspects.php` 内配置均可发挥作用。
 
 > 使用 `@Aspect` 注解时需 `use Hyperf\Di\Annotation\Aspect;` 命名空间；  
+
+## 代理类缓存
+
+所有被 AOP 影响的类，都会在 `./runtime/container/proxy/` 文件夹内生成对应的 `代理类缓存`，服务启动时，如果类所对应的代理类缓存存在，则不会重新生成直接使用缓存，即时 `Aspect` 的切入范围发生了改变。不存在时，则会自动重新生成新的代理类缓存。   
+
+在部署生成环境时，我们可能会希望 Hyperf 提前将所有代理类提前生成，而不是使用时动态的生成，可以通过 `php bin/hyperf.php di:init-proxy` 命令来生成所有代理类，该命令会忽视现有的代理类缓存，全部重新生成。   
+
+基于以上，我们可以将生成代理类的命令和启动服务的命令结合起来，`php bin/hyperf.php di:init-proxy && php bin/hyperf.php start` 来达到自动重新生成所有代理类缓存然后启动服务的目的。
