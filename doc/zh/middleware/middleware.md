@@ -224,3 +224,15 @@ class FooMiddleware implements MiddlewareInterface
 
 我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 方法级别中间件 -> 类级别中间件`。
 
+## 更改请求和响应对象
+
+首先，在协程上下文内是有存储最原始的 PSR-7 `请求对象` 和 `响应对象` 的，且根据 PSR-7 对相关对象所要求的 `不可变性(immutable)`，也就意味着我们在调用 `$response = $response->with***()` 所调用得到的 `$response`，并非为改写原对象，而是一个 `Clone` 出来的新对象，也就意味着我们储存在协程上下文内的 `请求对象` 和 `响应对象` 是不会改变的，那么当我们在中间件内的某些逻辑改变了 `请求对象` 或 `响应对象`，而且我们希望对后续的 *非传递性的* 代码再获取改变后的 `请求对象` 或 `响应对象`，那么我们便可以在改变对象后，将新的对象设置到上下文中，如代码所示：
+
+```php
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+// $request 和 $response 为修改后的对象
+\Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
+\Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+```
