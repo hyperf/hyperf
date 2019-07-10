@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\SwooleDashboard\Middleware;
 
-use Psr\Container\ContainerInterface;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -22,22 +22,21 @@ use StatsCenter;
 class HttpServerMiddleware implements MiddlewareInterface
 {
     /**
-     * @var ContainerInterface
+     * @var string
      */
-    protected $container;
+    protected $name;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ConfigInterface $config)
     {
-        $this->container = $container;
+        $this->name = $config->get('app_name', 'hyperf-skeleton');
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
         $ip = swoole_get_local_ip();
-        $name = APP_NAME;
 
-        $tick = StatsCenter::beforeExecRpc($path, $name, $ip);
+        $tick = StatsCenter::beforeExecRpc($path, $this->name, $ip);
         try {
             $response = $handler->handle($request);
             StatsCenter::afterExecRpc($tick, true, $response->getStatusCode());
