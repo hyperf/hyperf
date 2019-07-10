@@ -52,12 +52,12 @@ interface PaginatorInterface
     /**
      * Get the "index" of the first item being paginated.
      */
-    public function firstItem(): int;
+    public function firstItem(): ?int;
 
     /**
      * Get the "index" of the last item being paginated.
      */
-    public function lastItem(): int;
+    public function lastItem(): ?int;
 
     /**
      * Determine how many items are being shown per page.
