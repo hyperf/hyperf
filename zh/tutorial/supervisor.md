@@ -32,7 +32,7 @@ autostart=true
 # 进程退出后自动重启进程
 autorestart=true
 # 进程持续运行多久才认为是启动成功
-startsecs=1
+startsecs=5
 # 重试次数
 startretries=3
 # stderr 日志输出位置
