@@ -58,7 +58,8 @@ class CoroutineHandler
         if (! empty($settings)) {
             $client->set($settings);
         }
-        $client->execute($path);
+        $this->execute($client, $path);
+
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
             return \GuzzleHttp\Promise\rejection_for($ex);
@@ -67,6 +68,11 @@ class CoroutineHandler
         $response = $this->getResponse($client);
 
         return new FulfilledPromise($response);
+    }
+
+    protected function execute(Client $client, $path)
+    {
+        $client->execute($path);
     }
 
     protected function initHeaders(Client $client, RequestInterface $request, $options)

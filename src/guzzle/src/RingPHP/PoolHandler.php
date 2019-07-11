@@ -68,7 +68,7 @@ class PoolHandler extends CoroutineHandler
             }
 
             $btime = microtime(true);
-            $client->execute($path);
+            $this->execute($client, $path);
 
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
