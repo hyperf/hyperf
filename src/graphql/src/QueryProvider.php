@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\GraphQL;
 
-use Hyperf\GraphQL\Annotation\GraphQLCollector;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\GraphQL\Annotation\Mutation;
 use Hyperf\GraphQL\Annotation\Query;
 use Psr\Container\ContainerInterface;
@@ -50,7 +50,8 @@ class QueryProvider implements QueryProviderInterface
     public function getQueries(): array
     {
         $queryList = [];
-        $classes = GraphQLCollector::getClassByAnnotation(Query::class);
+        $classes = AnnotationCollector::getMethodByAnnotation(Query::class);
+        $classes = array_unique(array_column($classes, 'class'));
         foreach ($classes as $className) {
             $fieldsBuilder = $this->fieldsBuilderFactory->buildFieldsBuilder($this->recursiveTypeMapper);
             $queryList = array_merge($queryList, $fieldsBuilder->getQueries($this->container->get($className)));
@@ -64,7 +65,8 @@ class QueryProvider implements QueryProviderInterface
     public function getMutations(): array
     {
         $mutationList = [];
-        $classes = GraphQLCollector::getClassByAnnotation(Mutation::class);
+        $classes = AnnotationCollector::getMethodByAnnotation(Mutation::class);
+        $classes = array_unique(array_column($classes, 'class'));
         foreach ($classes as $className) {
             $fieldsBuilder = $this->fieldsBuilderFactory->buildFieldsBuilder($this->recursiveTypeMapper);
             $mutationList = array_merge($mutationList, $fieldsBuilder->getMutations($this->container->get($className)));

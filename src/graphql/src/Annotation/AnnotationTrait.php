@@ -30,13 +30,11 @@ trait AnnotationTrait
 
     public function collectClass(string $className): void
     {
-        GraphQLCollector::collectClass(static::class, $className);
         AnnotationCollector::collectClass($className, static::class, $this);
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
-        GraphQLCollector::collectMethod(static::class, $className, $target);
         AnnotationCollector::collectMethod($className, $target, static::class, $this);
     }
 

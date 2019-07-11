@@ -14,7 +14,7 @@ namespace Hyperf\GraphQL;
 
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\OutputType;
-use Hyperf\GraphQL\Annotation\GraphQLCollector;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\GraphQL\Annotation\Type;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -571,8 +571,8 @@ class TypeMapper implements TypeMapperInterface
     {
         if ($this->classes === null) {
             $this->classes = [];
-            $classes = GraphQLCollector::getClass(Type::class);
-            foreach ($classes as $className) {
+            $classes = AnnotationCollector::getClassByAnnotation(Type::class);
+            foreach (array_keys($classes) as $className) {
                 if (! \class_exists($className)) {
                     continue;
                 }
