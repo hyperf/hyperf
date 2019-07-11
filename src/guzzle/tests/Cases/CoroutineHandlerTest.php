@@ -108,6 +108,24 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
     }
 
+    public function testProxy()
+    {
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => 'http://user:pass@127.0.0.1:8081',
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertSame('127.0.0.1', $setting['http_proxy_host']);
+        $this->assertSame(8081, $setting['http_proxy_port']);
+        $this->assertSame('user', $setting['http_proxy_user']);
+        $this->assertSame('pass', $setting['http_proxy_password']);
+    }
+
     public function testUserInfo()
     {
         $url = 'https://username:password@api.tb.swoft.lmx0536.cn';

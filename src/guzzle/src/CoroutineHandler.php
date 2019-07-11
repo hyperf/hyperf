@@ -15,6 +15,7 @@ namespace Hyperf\Guzzle;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client;
@@ -127,6 +128,18 @@ class CoroutineHandler
         // 超时
         if (isset($options['timeout']) && $options['timeout'] > 0) {
             $settings['timeout'] = $options['timeout'];
+        }
+
+        // Proxy
+        if (isset($options['proxy'])) {
+            $uri = new Uri($options['proxy']);
+            $settings['http_proxy_host'] = $uri->getHost();
+            $settings['http_proxy_port'] = $uri->getPort();
+            if ($uri->getUserInfo()) {
+                [$user, $password] = explode(':', $uri->getUserInfo());
+                $settings['http_proxy_user'] = $user;
+                $settings['http_proxy_password'] = $password;
+            }
         }
 
         return $settings;
