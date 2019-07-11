@@ -208,4 +208,9 @@ class Server implements ServerInterface
             },
         ];
     }
+
+    public function getServer(): \Swoole\Server
+    {
+        return $this->server;
+    }
 }
