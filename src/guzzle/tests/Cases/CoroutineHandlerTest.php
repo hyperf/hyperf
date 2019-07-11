@@ -15,11 +15,11 @@ namespace HyperfTest\Guzzle\Cases;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
 use Hyperf\Guzzle\CoroutineHandler;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine;
 
 /**
  * @internal
@@ -29,28 +29,26 @@ class CoroutineHandlerTest extends TestCase
 {
     public function testCreatesCurlErrors()
     {
-        if (Coroutine::getuid() > 0) {
-            $handler = new CoroutineHandler();
-            $request = new Request('GET', 'http://localhost:123');
-            try {
-                $handler($request, ['timeout' => 0.001, 'connect_timeout' => 0.001])->wait();
-            } catch (\Exception $ex) {
-                $this->assertInstanceOf(ConnectException::class, $ex);
-                $this->assertEquals(0, strpos($ex->getMessage(), 'Connection timed out errCode='));
-            }
+        $handler = new CoroutineHandler();
+        $request = new Request('GET', 'http://localhost:123');
+        try {
+            $handler($request, ['timeout' => 0.001, 'connect_timeout' => 0.001])->wait();
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf(ConnectException::class, $ex);
+            $this->assertEquals(0, strpos($ex->getMessage(), 'Connection timed out errCode='));
         }
-        $this->assertTrue(true);
     }
 
     public function testReusesHandles()
     {
-        if (Coroutine::getuid() > 0) {
-            $a = new CoroutineHandler();
-            $request = new Request('GET', 'https://api.github.com/');
-            $a($request, []);
-            $a($request, []);
-        }
-        $this->assertTrue(true);
+        $a = new CoroutineHandler();
+        $request = new Request('GET', 'https://api.github.com/users/limingxinleo');
+        $r1 = $a($request, []);
+        $request = new Request('GET', 'https://api.github.com/users/huangzhhui');
+        $r2 = $a($request, []);
+
+        $this->assertInstanceOf(PromiseInterface::class, $r1);
+        $this->assertInstanceOf(PromiseInterface::class, $r2);
     }
 
     public function testDoesSleep()
@@ -66,21 +64,17 @@ class CoroutineHandlerTest extends TestCase
 
     public function testCreatesErrorsWithContext()
     {
-        if (Coroutine::getuid() > 0) {
-            $handler = new CoroutineHandler();
-            $request = new Request('GET', 'http://localhost:123');
-            $called = false;
-            $p = $handler($request, ['timeout' => 0.001])
-                ->otherwise(function (ConnectException $e) use (&$called) {
-                    $called = true;
-                    $this->assertArrayHasKey('errCode', $e->getHandlerContext());
-                    $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
-                });
-            $p->wait();
-            $this->assertTrue($called);
-        }
-
-        $this->assertTrue(true);
+        $handler = new CoroutineHandler();
+        $request = new Request('GET', 'http://localhost:123');
+        $called = false;
+        $p = $handler($request, ['timeout' => 0.001])
+            ->otherwise(function (ConnectException $e) use (&$called) {
+                $called = true;
+                $this->assertArrayHasKey('errCode', $e->getHandlerContext());
+                $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
+            });
+        $p->wait();
+        $this->assertTrue($called);
     }
 
     public function testGuzzleClient()
@@ -106,6 +100,16 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame(8080, $res['port']);
         $this->assertSame(false, $res['ssl']);
         $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
+
+        $client = new Client([
+            'base_uri' => 'http://api.github.com',
+            'timeout' => 5,
+            'handler' => HandlerStack::create(new CoroutineHandler()),
+        ]);
+
+        $response = $client->get('/')->getBody()->getContents();
+
+        $this->assertNotEmpty($response);
     }
 
     public function testProxy()
@@ -128,17 +132,15 @@ class CoroutineHandlerTest extends TestCase
 
     public function testUserInfo()
     {
-        $url = 'https://username:password@api.tb.swoft.lmx0536.cn';
-        $handler = new CoroutineHandler();
+        $url = 'https://username:password@127.0.0.1:8080';
+        $handler = new CoroutineHandlerStub();
         $request = new Request('GET', $url . '/echo');
 
         $res = $handler($request, ['timeout' => 5])->wait();
         $content = $res->getBody()->getContents();
         $json = json_decode($content, true);
 
-        $this->assertEquals(0, $json['code']);
-        $json = $json['data'];
-        $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['authorization'][0]);
+        $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
     }
 
     protected function getHandler($options = [])
