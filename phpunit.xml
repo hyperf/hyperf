@@ -18,6 +18,7 @@
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
+            <directory suffix="Test.php">./src/guzzle/tests</directory>
             <directory suffix="Test.php">./src/http-server/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
