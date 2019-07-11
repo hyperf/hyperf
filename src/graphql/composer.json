@@ -1,0 +1,35 @@
+{
+    "name": "hyperf/graphql",
+    "description": "A GraphQL component for hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "GraphQL"
+    ],
+    "require": {
+        "php": ">=7.2",
+        "thecodingmachine/graphqlite": "^3.0",
+        "hyperf/contract": "^1.0",
+        "hyperf/di": "^1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15",
+        "phpunit/phpunit": "^7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\GraphQL\\": "src/"
+        }
+    },
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer"
+        }
+    }
+}
