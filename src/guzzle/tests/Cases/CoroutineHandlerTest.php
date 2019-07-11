@@ -14,8 +14,10 @@ namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use Hyperf\Guzzle\CoroutineHandler;
+use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 
@@ -25,8 +27,6 @@ use Swoole\Coroutine;
  */
 class CoroutineHandlerTest extends TestCase
 {
-    const URL = 'https://api.tb.swoft.lmx0536.cn';
-
     public function testExample()
     {
         $this->assertTrue(true);
@@ -51,7 +51,7 @@ class CoroutineHandlerTest extends TestCase
     {
         if (Coroutine::getuid() > 0) {
             $a = new CoroutineHandler();
-            $request = new Request('GET', static::URL);
+            $request = new Request('GET', 'https://api.github.com/');
             $a($request, []);
             $a($request, []);
         }
@@ -60,14 +60,13 @@ class CoroutineHandlerTest extends TestCase
 
     public function testDoesSleep()
     {
-        if (Coroutine::getuid() > 0) {
-            $a = new CoroutineHandler();
-            $request = new Request('GET', static::URL);
-            $s = microtime(true);
-            $a($request, ['delay' => 1, 'timeout' => 5])->wait();
-            $this->assertGreaterThan(0.001, microtime(true) - $s);
-        }
-        $this->assertTrue(true);
+        $a = new CoroutineHandlerStub();
+        $request = new Request('GET', 'https://api.github.com/');
+        $resposne = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
+
+        $json = json_decode($resposne->getBody()->getContents(), true);
+
+        $this->assertSame(5, $json['setting']['timeout']);
     }
 
     public function testCreatesErrorsWithContext()
@@ -91,28 +90,27 @@ class CoroutineHandlerTest extends TestCase
 
     public function testGuzzleClient()
     {
-        if (Coroutine::getuid() > 0) {
-            $client = new Client([
-                'base_uri' => static::URL,
-            ]);
-            $res = $client->get('/echo', [
-                'timeout' => 10,
-                'headers' => [
-                    'X-TOKEN' => md5('1234'),
-                ],
-                'json' => [
-                    'id' => 1,
-                ],
-            ])->getBody()->getContents();
-            $res = \GuzzleHttp\json_decode($res, true);
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+        ]);
 
-            $this->assertEquals(0, $res['code']);
-            $res = $res['data'];
-            $this->assertEquals(md5('1234'), $res['headers']['x-token'][0]);
-            $this->assertEquals(1, $res['json']['id']);
-        }
+        $res = $client->get('/echo', [
+            'timeout' => 10,
+            'headers' => [
+                'X-TOKEN' => md5('1234'),
+            ],
+            'json' => [
+                'id' => 1,
+            ],
+        ])->getBody()->getContents();
 
-        $this->assertTrue(true);
+        $res = \GuzzleHttp\json_decode($res, true);
+
+        $this->assertSame('127.0.0.1', $res['host']);
+        $this->assertSame(8080, $res['port']);
+        $this->assertSame(false, $res['ssl']);
+        $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
     }
 
     public function testUserInfo()
