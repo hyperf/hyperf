@@ -15,6 +15,8 @@ namespace HyperfTest\HttpServer;
 use Hyperf\HttpServer\Response;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Contracts\Xmlable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -52,4 +54,79 @@ class ResponseTest extends TestCase
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('http://www.baidu.com', $res->getHeaderLine('Location'));
     }
+
+    public function testToXml()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $reflectionClass = new \ReflectionClass(Response::class);
+        $reflectionMethod = $reflectionClass->getMethod('toXml');
+        $reflectionMethod->setAccessible(true);
+
+        $expected = '<?xml version="1.0" encoding="utf-8"?>
+<root><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue><karray><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue></karray></root>';
+
+        // Array
+        $this->assertSame($expected, $reflectionMethod->invoke($response, [
+            'kstring' => 'string',
+            'kint1' => 1,
+            'kint0' => 0,
+            'kfloat' => 0.12345,
+            'kfalse' => false,
+            'ktrue' => true,
+            'karray' => [
+                'kstring' => 'string',
+                'kint1' => 1,
+                'kint0' => 0,
+                'kfloat' => 0.12345,
+                'kfalse' => false,
+                'ktrue' => true,
+            ],
+        ]));
+
+        // Arrayable
+        $arrayable = new class() implements Arrayable {
+            public function toArray(): array
+            {
+                return [
+                    'kstring' => 'string',
+                    'kint1' => 1,
+                    'kint0' => 0,
+                    'kfloat' => 0.12345,
+                    'kfalse' => false,
+                    'ktrue' => true,
+                    'karray' => [
+                        'kstring' => 'string',
+                        'kint1' => 1,
+                        'kint0' => 0,
+                        'kfloat' => 0.12345,
+                        'kfalse' => false,
+                        'ktrue' => true,
+                    ],
+                ];
+            }
+        };
+        $this->assertSame($expected, $reflectionMethod->invoke($response, $arrayable));
+
+        // Xmlable
+        $xmlable = new class($expected) implements Xmlable {
+            private $result;
+            public function __construct($result)
+            {
+                $this->result = $result;
+            }
+
+            public function __toString(): string
+            {
+                return $this->result;
+            }
+        };
+        $this->assertSame($expected, $reflectionMethod->invoke($response, $xmlable));
+    }
+
 }
