@@ -76,7 +76,7 @@ if (! function_exists('retry')) {
         try {
             return $callback();
         } catch (\Throwable $e) {
-            if (--$times <= 0) {
+            if (--$times < 0) {
                 throw $e;
             }
             if ($sleep) {
