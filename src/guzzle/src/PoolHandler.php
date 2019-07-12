@@ -71,7 +71,7 @@ class PoolHandler extends CoroutineHandler
             if (! empty($settings)) {
                 $client->set($settings);
             }
-            $client->execute($path);
+            $this->execute($client, $path);
 
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {

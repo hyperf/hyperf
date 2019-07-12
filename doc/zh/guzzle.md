@@ -37,6 +37,32 @@ class Foo {
 }
 ```
 
+## 使用Swoole配置
+
+有时候我们想直接修改 `Swoole` 配置，所以我们也提供了相关配置项，不过这项配置在 `Curl Guzzle 客户端` 中是无法生效的，所以谨慎使用。
+
+> 这项配置会替换原来的配置，比如以下 timeout 会被 10 替换。
+
+```php
+<?php
+use GuzzleHttp\Client;
+use Hyperf\Guzzle\CoroutineHandler;
+use GuzzleHttp\HandlerStack;
+
+$client = new Client([
+    'base_uri' => 'http://127.0.0.1:8080',
+    'handler' => HandlerStack::create(new CoroutineHandler()),
+    'timeout' => 5,
+    'swoole' => [
+        'timeout' => 10,
+        'socket_buffer_size' => 1024 * 1024 * 2,
+    ],
+]);
+
+$response = $client->get('/');
+
+```
+
 ## 连接池
 
 Hyperf 除了实现了 `Hyperf\Guzzle\CoroutineHandler` 外，还基于 `Hyperf\Pool\SimplePool` 实现了 `Hyperf\Guzzle\PoolHandler`。
