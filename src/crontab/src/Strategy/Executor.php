@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -24,9 +26,19 @@ class Executor
      */
     protected $container;
 
+    /**
+     * @var null|\Hyperf\Crontab\LoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        if ($container->has(LoggerInterface::class)) {
+            $this->logger = $container->get(LoggerInterface::class);
+        } elseif ($container->has(StdoutLoggerInterface::class)) {
+            $this->logger = $container->get(StdoutLoggerInterface::class);
+        }
     }
 
     public function execute(Crontab $crontab)
@@ -38,12 +50,30 @@ class Executor
         $callback = null;
         switch ($crontab->getType()) {
             case 'callback':
-                [$class, $method, $parameters] = $crontab->getCallback();
+                [$class, $method] = $crontab->getCallback();
+                $parameters = $crontab->getCallback()[2] ?? null;
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
-                    $callback = function () use ($class, $method, $parameters) {
-                        Coroutine::create(function () use ($class, $method, $parameters) {
-                            $instance = make($class);
-                            $instance->{$method}(...$parameters);
+                    $callback = function () use ($class, $method, $parameters, $crontab) {
+                        Coroutine::create(function () use ($class, $method, $parameters, $crontab) {
+                            try {
+                                $result = true;
+                                $instance = make($class);
+                                if ($parameters && is_array($parameters)) {
+                                    $instance->{$method}(...$parameters);
+                                } else {
+                                    $instance->{$method}();
+                                }
+                            } catch (\Throwable $throwable) {
+                                $result = false;
+                            } finally {
+                                if ($this->logger) {
+                                    if ($result) {
+                                        $this->logger->info(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                                    } else {
+                                        $this->logger->error(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                                    }
+                                }
+                            }
                         });
                     };
                 }

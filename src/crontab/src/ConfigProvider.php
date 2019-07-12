@@ -16,7 +16,6 @@ use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Listener\OnPipeMessageListener;
 use Hyperf\Crontab\Strategy\CoroutineStrategy;
 use Hyperf\Crontab\Strategy\ProcessStrategy;
-use Hyperf\Crontab\Strategy\TaskWorkerStrategy;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 
 class ConfigProvider

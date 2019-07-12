@@ -41,11 +41,11 @@ class Parser
         }
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
-        if (in_array((int)date('i', $startTime), $date['minutes'])
-            && in_array((int)date('G', $startTime), $date['hours'])
-            && in_array((int)date('j', $startTime), $date['day'])
-            && in_array((int)date('w', $startTime), $date['week'])
-            && in_array((int)date('n', $startTime), $date['month'])
+        if (in_array((int) date('i', $startTime), $date['minutes'])
+            && in_array((int) date('G', $startTime), $date['hours'])
+            && in_array((int) date('j', $startTime), $date['day'])
+            && in_array((int) date('w', $startTime), $date['week'])
+            && in_array((int) date('n', $startTime), $date['month'])
         ) {
             $result = [];
             foreach ($date['second'] as $second) {
@@ -114,7 +114,7 @@ class Parser
     }
 
     /**
-     * @param int|Carbon|null $startTime
+     * @param null|Carbon|int $startTime
      */
     private function parseStartTime($startTime): int
     {

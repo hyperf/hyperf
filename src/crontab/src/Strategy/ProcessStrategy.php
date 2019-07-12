@@ -42,7 +42,7 @@ class ProcessStrategy extends AbstractStrategy
             $workerId = $this->getNextWorkerId($server);
             $server->sendMessage(serialize([
                 'identifier' => 'crontab',
-                'type' => 'callable',
+                'type' => 'callback',
                 'callable' => [Executor::class, 'execute'],
                 'data' => $crontab,
             ]), $workerId);
