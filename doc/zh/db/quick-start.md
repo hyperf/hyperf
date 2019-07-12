@@ -147,6 +147,122 @@ return [
 
 `sticky` 是一个 可选值，它可用于立即读取在当前请求周期内已写入数据库的记录。若 `sticky` 选项被启用，并且当前请求周期内执行过 「写」 操作，那么任何 「读」 操作都将使用 「写」 连接。这样可确保同一个请求周期内写入的数据可以被立即读取到，从而避免主从延迟导致数据不一致的问题。不过是否启用它，取决于应用程序的需求。
 
+### 多库配置
+
+多库配置如下。
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+        ],
+    ],
+    'test'=>[
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST2', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+        ],
+    ],
+];
+
+```
+使用时，只需要规定 `connection` 为 `test`，就可以使用 `test` 中的配置，如下。
+
+```php
+<?php
+
+use Hyperf\DbConnection\Db;
+// default
+Db::select('SELECT * FROM user;');
+Db::connection('default')->select('SELECT * FROM user;');
+
+// test
+Db::connection('test')->select('SELECT * FROM user;');
+```
+
+模型中修改 `connection` 字段，即可使用对应配置，例如一下 `Model` 使用 `test` 配置。
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
+namespace App\Model;
+
+/**
+ * @property int $id
+ * @property string $mobile
+ * @property string $realname
+ */
+class User extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user';
+
+    /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection = 'test';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'mobile', 'realname'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = ['id' => 'integer'];
+}
+
+```
+
 ## 执行原生 SQL 语句
 
 配置好数据库后，便可以使用 `Hyperf\DbConnection\Db` 进行查询。
