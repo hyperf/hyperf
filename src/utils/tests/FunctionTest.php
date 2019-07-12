@@ -59,6 +59,22 @@ class FunctionTest extends TestCase
                 throw new RetryException('Retry Test');
             });
         } finally {
+            $this->assertSame(3, $result);
+        }
+    }
+
+    /**
+     * @expectedException \HyperfTest\Utils\Exception\RetryException
+     */
+    public function testOneTimesRetry()
+    {
+        $result = 0;
+        try {
+            retry(1, function () use (&$result) {
+                ++$result;
+                throw new RetryException('Retry Test');
+            });
+        } finally {
             $this->assertSame(2, $result);
         }
     }
