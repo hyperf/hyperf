@@ -63,7 +63,7 @@ class OnPipeMessageListener implements ListenerInterface
         }
         try {
             switch ($data['type']) {
-                case 'callable':
+                case 'callback':
                     $this->handleCallable($data);
                     break;
             }
@@ -87,8 +87,8 @@ class OnPipeMessageListener implements ListenerInterface
 
     private function isValidData($data): bool
     {
-        return ! is_array($data)
-        || ! isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
-        || $data['identifier'] !== 'crontab';
+        return is_array($data)
+        && isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
+        && $data['identifier'] === 'crontab';
     }
 }
