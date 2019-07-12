@@ -6,7 +6,7 @@
 
 # Changed
 
-- [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Optimized retry() function: Make the $times parameter more predictable
+- [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
 
 ## Fixed
 
