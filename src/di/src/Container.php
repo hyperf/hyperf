@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Di\Definition\DefinitionInterface;
+use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
@@ -131,6 +132,10 @@ class Container implements ContainerInterface
         $definition = $this->getDefinition($name);
         if ($definition === null) {
             return false;
+        }
+
+        if ($definition instanceof ObjectDefinition) {
+            return $definition->isInstantiable();
         }
 
         return true;
