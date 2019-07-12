@@ -88,7 +88,7 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: 不知道为啥，这个扔进来就400
+        // TODO: Unknown reason, it will cause 400 some time.
         unset($headers['Content-Length']);
         $client->setHeaders($headers);
     }
@@ -142,7 +142,8 @@ class CoroutineHandler
             }
         }
 
-        if (isset($options['swoole'])) {
+        // Swoole Setting
+        if (isset($options['swoole']) && is_array($options['swoole'])) {
             $settings = array_replace($settings, $options['swoole']);
         }
 
