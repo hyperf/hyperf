@@ -405,3 +405,24 @@ User::destroy(1);
 
 User::destroy([1,2,3]);
 ```
+
+### 软删除
+
+除了真实删除数据库记录，`Hyperf` 也可以「软删除」模型。软删除的模型并不是真的从数据库中删除了。事实上，是在模型上设置了 `deleted_at` 属性并将其值写入数据库。如果 `deleted_at` 值非空，代表这个模型已被软删除。如果要开启模型软删除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
+
+> `SoftDeletes` trait 会自动将 `deleted_at` 属性转换成 `DateTime / Carbon` 实例
+
+```php
+<?php
+
+namespace App;
+
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\SoftDeletes;
+
+class Flight extends Model
+{
+    use SoftDeletes;
+}
+
+```
