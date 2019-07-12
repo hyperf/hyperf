@@ -109,8 +109,6 @@ class CoroutineHandlerTest extends TestCase
 
         $response = $client->get('/api/v2/pokemon')->getBody()->getContents();
 
-        var_dump($response);
-
         $this->assertNotEmpty($response);
     }
 
