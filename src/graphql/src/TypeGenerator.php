@@ -93,28 +93,6 @@ class TypeGenerator
         }
 
         return TypeAnnotatedObjectType::createFromAnnotatedClass($typeName, $typeField->getClass(), $annotatedObject, $this->fieldsBuilderFactory, $recursiveTypeMapper);
-        /*return new ObjectType([
-            'name' => $typeName,
-            'fields' => function() use ($annotatedObject, $recursiveTypeMapper, $typeField) {
-                $parentClass = get_parent_class($typeField->getClass());
-                $parentType = null;
-                if ($parentClass !== false) {
-                    if ($recursiveTypeMapper->canMapClassToType($parentClass)) {
-                        $parentType = $recursiveTypeMapper->mapClassToType($parentClass, null);
-                    }
-                }
-
-                $fieldProvider = $this->controllerQueryProviderFactory->buildFieldsBuilder($recursiveTypeMapper);
-                $fields = $fieldProvider->getFields($annotatedObject);
-                if ($parentType !== null) {
-                    $fields = $parentType->getFields() + $fields;
-                }
-                return $fields;
-            },
-            'interfaces' => function() use ($typeField, $recursiveTypeMapper) {
-                return $recursiveTypeMapper->findInterfaces($typeField->getClass());
-            }
-        ]);*/
     }
 
     /**
@@ -132,57 +110,9 @@ class TypeGenerator
             throw MissingAnnotationException::missingExtendTypeException();
         }
 
-        //$typeName = $this->namingStrategy->getOutputTypeName($refTypeClass->getName(), $extendTypeAnnotation);
-        $typeName = $type->name;
-
-        /*if ($this->typeRegistry->hasType($typeName)) {
-            throw new GraphQLException(sprintf('Tried to extend GraphQL type "%s" that is already stored in the type registry.', $typeName));
-        }
-
-        if (!$type instanceof MutableObjectType) {
-            throw new \RuntimeException('TEMP EXCEPTION');
-        }*/
-
         $type->addFields(function () use ($annotatedObject, $recursiveTypeMapper) {
-            /*$parentClass = get_parent_class($extendTypeAnnotation->getClass());
-            $parentType = null;
-            if ($parentClass !== false) {
-                if ($recursiveTypeMapper->canMapClassToType($parentClass)) {
-                    $parentType = $recursiveTypeMapper->mapClassToType($parentClass, null);
-                }
-            }*/
-
             $fieldProvider = $this->fieldsBuilderFactory->buildFieldsBuilder($recursiveTypeMapper);
             return $fieldProvider->getFields($annotatedObject);
-            /*if ($parentType !== null) {
-                $fields = $parentType->getFields() + $fields;
-            }*/
         });
-
-//        return new ObjectType([
-//            'name' => $typeName,
-//            'fields' => function() use ($annotatedObject, $recursiveTypeMapper, $type) {
-//                /*$parentClass = get_parent_class($extendTypeAnnotation->getClass());
-//                $parentType = null;
-//                if ($parentClass !== false) {
-//                    if ($recursiveTypeMapper->canMapClassToType($parentClass)) {
-//                        $parentType = $recursiveTypeMapper->mapClassToType($parentClass, null);
-//                    }
-//                }*/
-//
-//                $fieldProvider = $this->fieldsBuilderFactory->buildFieldsBuilder($recursiveTypeMapper);
-//                $fields = $fieldProvider->getFields($annotatedObject);
-//                /*if ($parentType !== null) {
-//                    $fields = $parentType->getFields() + $fields;
-//                }*/
-//
-//                $fields = $type->getFields() + $fields;
-//
-//                return $fields;
-//            },
-//            'interfaces' => function() use ($type) {
-//                return $type->getInterfaces();
-//            }
-//        ]);
     }
 }

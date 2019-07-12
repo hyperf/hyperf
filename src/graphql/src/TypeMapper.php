@@ -600,10 +600,6 @@ class TypeMapper implements TypeMapperInterface
 
             if ($type !== null) {
                 if (isset($this->mapClassToTypeArray[$type->getClass()])) {
-                    /*if ($this->mapClassToTypeArray[$type->getClass()] === $className) {
-                        // Already mapped. Let's continue
-                        continue;
-                    }*/
                     throw DuplicateMappingException::createForType($type->getClass(), $this->mapClassToTypeArray[$type->getClass()], $className);
                 }
                 $this->storeTypeInCache($className, $type, $refClass->getFileName());
