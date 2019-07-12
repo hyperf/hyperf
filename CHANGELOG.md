@@ -4,6 +4,10 @@
 
 - [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
 
+# Changed
+
+- [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Optimized retry() function: Make the $times parameter more predictable
+
 ## Fixed
 
 - [#176](https://github.com/hyperf-cloud/hyperf/pull/176) Fixed TypeError: Return value of LengthAwarePaginator::nextPageUrl() must be of the type string or null, none returned.
