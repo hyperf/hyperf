@@ -42,9 +42,9 @@ class CoroutineHandlerTest extends TestCase
     public function testReusesHandles()
     {
         $a = new CoroutineHandler();
-        $request = new Request('GET', 'https://api.github.com/users/limingxinleo');
+        $request = new Request('GET', 'https://pokeapi.co/api/v2/pokemon/');
         $r1 = $a($request, []);
-        $request = new Request('GET', 'https://api.github.com/users/huangzhhui');
+        $request = new Request('GET', 'https://pokeapi.co/api/v2/pokemon/');
         $r2 = $a($request, []);
 
         $this->assertInstanceOf(PromiseInterface::class, $r1);
@@ -54,7 +54,7 @@ class CoroutineHandlerTest extends TestCase
     public function testDoesSleep()
     {
         $a = new CoroutineHandlerStub();
-        $request = new Request('GET', 'https://api.github.com/');
+        $request = new Request('GET', 'https://pokeapi.co/api/v2/pokemon/');
         $resposne = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
 
         $json = json_decode($resposne->getBody()->getContents(), true);
@@ -102,12 +102,14 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
 
         $client = new Client([
-            'base_uri' => 'http://api.github.com',
+            'base_uri' => 'https://pokeapi.co',
             'timeout' => 5,
             'handler' => HandlerStack::create(new CoroutineHandler()),
         ]);
 
-        $response = $client->get('/')->getBody()->getContents();
+        $response = $client->get('/api/v2/pokemon')->getBody()->getContents();
+
+        var_dump($response);
 
         $this->assertNotEmpty($response);
     }
