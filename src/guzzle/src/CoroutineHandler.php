@@ -15,6 +15,7 @@ namespace Hyperf\Guzzle;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client;
@@ -58,7 +59,8 @@ class CoroutineHandler
         if (! empty($settings)) {
             $client->set($settings);
         }
-        $client->execute($path);
+        $this->execute($client, $path);
+
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
             return \GuzzleHttp\Promise\rejection_for($ex);
@@ -67,6 +69,11 @@ class CoroutineHandler
         $response = $this->getResponse($client);
 
         return new FulfilledPromise($response);
+    }
+
+    protected function execute(Client $client, $path)
+    {
+        $client->execute($path);
     }
 
     protected function initHeaders(Client $client, RequestInterface $request, $options)
@@ -81,7 +88,7 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: 不知道为啥，这个扔进来就400
+        // TODO: Unknown reason, it will cause 400 some time.
         unset($headers['Content-Length']);
         $client->setHeaders($headers);
     }
@@ -121,6 +128,23 @@ class CoroutineHandler
         // 超时
         if (isset($options['timeout']) && $options['timeout'] > 0) {
             $settings['timeout'] = $options['timeout'];
+        }
+
+        // Proxy
+        if (isset($options['proxy'])) {
+            $uri = new Uri($options['proxy']);
+            $settings['http_proxy_host'] = $uri->getHost();
+            $settings['http_proxy_port'] = $uri->getPort();
+            if ($uri->getUserInfo()) {
+                [$user, $password] = explode(':', $uri->getUserInfo());
+                $settings['http_proxy_user'] = $user;
+                $settings['http_proxy_password'] = $password;
+            }
+        }
+
+        // Swoole Setting
+        if (isset($options['swoole']) && is_array($options['swoole'])) {
+            $settings = array_replace($settings, $options['swoole']);
         }
 
         return $settings;

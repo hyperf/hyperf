@@ -18,10 +18,12 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\DbConnection\ConnectionResolver;
+use Hyperf\DbConnection\Frequency;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
+use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -34,10 +36,10 @@ class ContainerStub
         $container = Mockery::mock(ContainerInterface::class);
 
         $factory = new PoolFactory($container);
-        $container->shouldReceive('get')->once()->with(PoolFactory::class)->andReturn($factory);
+        $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->once()->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
 
         $config = new Config([
             StdoutLoggerInterface::class => [
@@ -73,19 +75,21 @@ class ContainerStub
                 ],
             ],
         ]);
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn($config);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
 
         $logger = new StdoutLogger($config);
-        $container->shouldReceive('get')->once()->with(StdoutLoggerInterface::class)->andReturn($logger);
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger);
 
         $connectionFactory = new ConnectionFactory($container);
-        $container->shouldReceive('get')->once()->with(ConnectionFactory::class)->andReturn($connectionFactory);
+        $container->shouldReceive('get')->with(ConnectionFactory::class)->andReturn($connectionFactory);
 
         $eventDispatcher = new EventDispatcher(new ListenerProvider(), $logger);
-        $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn($eventDispatcher);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($eventDispatcher);
 
-        $container->shouldReceive('get')->once()->with('db.connector.mysql')->andReturn(new MySqlConnector());
+        $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('make')->with(Frequency::class)->andReturn(new Frequency());
+        ApplicationContext::setContainer($container);
 
         return $container;
     }

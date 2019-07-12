@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\Constants\Stub;
 
-class ErrorCodeStub
+use Hyperf\Constants\AbstractConstants;
+
+class ErrorCodeStub extends AbstractConstants
 {
     /**
      * @Message("Server Error!")
@@ -26,4 +28,9 @@ class ErrorCodeStub
     const SHOW_ECHO = 501;
 
     const NO_MESSAGE = 502;
+
+    /**
+     * @Message("Params[%s] is invalid.")
+     */
+    const PARAMS_INVALID = 503;
 }

@@ -72,15 +72,13 @@ if (! function_exists('retry')) {
      */
     function retry($times, callable $callback, $sleep = 0)
     {
-        --$times;
         beginning:
         try {
             return $callback();
         } catch (\Throwable $e) {
-            if ($times <= 0) {
+            if (--$times < 0) {
                 throw $e;
             }
-            --$times;
             if ($sleep) {
                 usleep($sleep * 1000);
             }
@@ -408,5 +406,29 @@ if (! function_exists('make')) {
         }
         $parameters = array_values($parameters);
         return new $name(...$parameters);
+    }
+}
+
+if (! function_exists('run')) {
+    /**
+     * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     */
+    function run(callable $callback, $flags = SWOOLE_HOOK_ALL): bool
+    {
+        if (Coroutine::inCoroutine()) {
+            throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
+        }
+
+        \Swoole\Runtime::enableCoroutine(true, $flags);
+
+        if (version_compare(swoole_version(), '4.4.0', '>=')) {
+            $result = \Swoole\Coroutine\Run($callback);
+        } else {
+            go($callback);
+            $result = true;
+        }
+
+        \Swoole\Runtime::enableCoroutine(false);
+        return $result;
     }
 }

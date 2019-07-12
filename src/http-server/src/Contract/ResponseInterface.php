@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 interface ResponseInterface
@@ -24,6 +25,14 @@ interface ResponseInterface
      * @param array|Arrayable|Jsonable $data
      */
     public function json($data): PsrResponseInterface;
+
+    /**
+     * Format data to XML and return data with Content-Type:application/xml header.
+     *
+     * @param array|Arrayable|Xmlable $data
+     * @param string $root The name of the root node.
+     */
+    public function xml($data, string $root = 'root'): PsrResponseInterface;
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.

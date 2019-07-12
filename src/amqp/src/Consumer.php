@@ -92,7 +92,7 @@ class Consumer extends Builder
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
         if (! $message instanceof ConsumerMessageInterface) {
-            throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
+            throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
         }
 
         if (! $channel) {

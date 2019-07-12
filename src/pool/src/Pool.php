@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
 use Psr\Container\ContainerInterface;
@@ -41,6 +42,11 @@ abstract class Pool implements PoolInterface
      */
     protected $currentConnections = 0;
 
+    /**
+     * @var LowFrequencyInterface
+     */
+    protected $frequency;
+
     public function __construct(ContainerInterface $container, array $config = [])
     {
         $this->container = $container;
@@ -51,7 +57,18 @@ abstract class Pool implements PoolInterface
 
     public function get(): ConnectionInterface
     {
-        return $this->getConnection();
+        $connection = $this->getConnection();
+        if ($this->frequency instanceof FrequencyInterface) {
+            $this->frequency->hit();
+        }
+
+        if ($this->frequency instanceof LowFrequencyInterface) {
+            if ($this->frequency->isLowFrequency()) {
+                $this->flush();
+            }
+        }
+
+        return $connection;
     }
 
     public function release(ConnectionInterface $connection): void
@@ -64,8 +81,9 @@ abstract class Pool implements PoolInterface
         $num = $this->getConnectionsInChannel();
 
         if ($num > 0) {
-            while ($conn = $this->channel->pop($this->option->getWaitTimeout())) {
+            while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop($this->option->getWaitTimeout())) {
                 $conn->close();
+                --$this->currentConnections;
             }
         }
     }
