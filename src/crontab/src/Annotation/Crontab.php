@@ -39,7 +39,7 @@ class Crontab extends AbstractAnnotation
     public $rule;
 
     /**
-     * @var string|array
+     * @var array|string
      */
     public $callback;
 
@@ -68,7 +68,7 @@ class Crontab extends AbstractAnnotation
             $hasInvokeMagicMethod = false;
             foreach ($reflectionMethods as $reflectionMethod) {
                 if (! Str::startsWith($reflectionMethod->getName(), ['__'])) {
-                    $availableMethodCount++;
+                    ++$availableMethodCount;
                     ! $firstAvailableMethod && $firstAvailableMethod = $reflectionMethod;
                 } elseif ($reflectionMethod->getName() === '__invoke') {
                     $hasInvokeMagicMethod = true;
