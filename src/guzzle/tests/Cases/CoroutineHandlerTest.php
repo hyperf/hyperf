@@ -112,6 +112,24 @@ class CoroutineHandlerTest extends TestCase
         $this->assertNotEmpty($response);
     }
 
+    public function testSwooleSetting()
+    {
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'timeout' => 5,
+            'swoole' => [
+                'timeout' => 10,
+                'socket_buffer_size' => 1024 * 1024 * 2,
+            ],
+        ]);
+
+        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $this->assertSame(10, $data['setting']['timeout']);
+        $this->assertSame(1024 * 1024 * 2, $data['setting']['socket_buffer_size']);
+    }
+
     public function testProxy()
     {
         $client = new Client([

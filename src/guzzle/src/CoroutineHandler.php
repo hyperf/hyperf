@@ -142,6 +142,10 @@ class CoroutineHandler
             }
         }
 
+        if (isset($options['swoole'])) {
+            $settings = array_replace($settings, $options['swoole']);
+        }
+
         return $settings;
     }
 
