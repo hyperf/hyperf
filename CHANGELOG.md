@@ -7,6 +7,7 @@
 # Changed
 
 - [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
+- [#200](https://github.com/hyperf-cloud/hyperf/pull/200) Keep tests out of other people's production.
 
 ## Fixed
 
