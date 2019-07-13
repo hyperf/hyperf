@@ -44,7 +44,7 @@ mv composer.phar /usr/local/bin/composer
 # 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
-# 通过 Compose 安装 hyperf/hyperf-skeleton 项目
+# 通过 Composer 安装 hyperf/hyperf-skeleton 项目
 composer create-project hyperf/hyperf-skeleton
 
 # 进入安装好的 Hyperf 项目目录
