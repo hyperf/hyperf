@@ -87,6 +87,7 @@
         "hyperf/swoole-dashboard": "self.version",
         "hyperf/tracer": "self.version",
         "hyperf/utils": "self.version",
+        "hyperf/view": "self.version",
         "hyperf/websocket-client": "self.version",
         "hyperf/websocket-server": "self.version"
     },
@@ -137,6 +138,7 @@
             "Hyperf\\SwooleDashboard\\": "src/swoole-dashboard/src/",
             "Hyperf\\Tracer\\": "src/tracer/src/",
             "Hyperf\\Utils\\": "src/utils/src/",
+            "Hyperf\\View\\": "src/view/src/",
             "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
             "Hyperf\\WebSocketServer\\": "src/websocket-server/src/"
         }
@@ -160,6 +162,7 @@
             "HyperfTest\\Redis\\": "./src/redis/tests/",
             "HyperfTest\\SwooleDashboard\\": "./src/swoole-dashboard/tests/",
             "HyperfTest\\Utils\\": "./src/utils/tests/",
+            "HyperfTest\\View\\": "./src/view/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
             "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/"
         }
@@ -199,6 +202,7 @@
                 "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\Tracer\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider",
+                "Hyperf\\View\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"
             ]
