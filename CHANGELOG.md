@@ -7,6 +7,7 @@
 # Changed
 
 - [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
+- [#199](https://github.com/hyperf-cloud/hyperf/pull/199) Retry produce again when amqp message first produce failed.
 
 ## Fixed
 
