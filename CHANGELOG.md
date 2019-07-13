@@ -7,6 +7,7 @@
 # Changed
 
 - [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
+- [#198](https://github.com/hyperf-cloud/hyperf/pull/198) Optimized `has()` method of `Hyperf\Di\Container`, if pass a un-instantiable object (like an interface) to `$container->has($interface)`, the method result is `false` now.
 - [#199](https://github.com/hyperf-cloud/hyperf/pull/199) Re-produce one times when the amqp message produce failure.
 - [#200](https://github.com/hyperf-cloud/hyperf/pull/200) Make tests directory out of production package.
 
