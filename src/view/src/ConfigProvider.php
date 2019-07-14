@@ -26,6 +26,14 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of view.',
+                    'source' => __DIR__ . '/../publish/view.php',
+                    'destination' => BASE_PATH . '/config/autoload/view.php',
+                ],
+            ],
         ];
     }
 }
