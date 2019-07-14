@@ -31,7 +31,10 @@ class ChannelFactory
     {
         $channel = $this->get($taskId);
 
-        return $channel->pop($timeout);
+        $result = $channel->pop($timeout);
+        unset($this->channels[$taskId]);
+
+        return $result;
     }
 
     public function has(int $taskId)
