@@ -3,6 +3,7 @@
 ## Added
 
 - [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
+- [#202](https://github.com/hyperf-cloud/hyperf/pull/202) Added trace message when throw a uncaptured exception in function `go`.
 
 ## Fixed
 
