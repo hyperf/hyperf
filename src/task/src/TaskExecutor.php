@@ -27,6 +27,11 @@ class TaskExecutor
      */
     protected $factory;
 
+    /**
+     * @var bool
+     */
+    protected $isTaskEnvironment = false;
+
     public function __construct(ChannelFactory $factory)
     {
         $this->factory = $factory;
@@ -45,5 +50,21 @@ class TaskExecutor
         }
 
         return $this->factory->pop($taskId);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTaskEnvironment(): bool
+    {
+        return $this->isTaskEnvironment;
+    }
+
+    /**
+     * @param bool $isTaskEnvironment
+     */
+    public function setIsTaskEnvironment(bool $isTaskEnvironment): void
+    {
+        $this->isTaskEnvironment = $isTaskEnvironment;
     }
 }

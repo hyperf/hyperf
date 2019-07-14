@@ -16,6 +16,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnTask;
 use Hyperf\Task\Task;
+use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -42,22 +43,26 @@ class TaskHandleListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($event instanceof OnTask) {
-            $data = $event->task->data;
-            if ($data instanceof Task) {
-                if (is_array($data->callback)) {
-                    [$class, $method] = $data->callback;
-                    if ($this->container->has($class)) {
-                        $obj = $this->container->get($class);
-                        $result = $obj->{$method}(...$data->arguments);
-                        $event->setResult($result);
-                        return;
-                    }
-                }
-
-                $result = call($data->callback, $data->arguments);
-                $event->setResult($result);
+        if ($event instanceof OnTask && $data = $event->task->data) {
+            if (! $data instanceof Task) {
+                return;
             }
+
+            $executor = $this->container->get(TaskExecutor::class);
+            $executor->setIsTaskEnvironment(true);
+
+            if (is_array($data->callback)) {
+                [$class, $method] = $data->callback;
+                if ($this->container->has($class)) {
+                    $obj = $this->container->get($class);
+                    $result = $obj->{$method}(...$data->arguments);
+                    $event->setResult($result);
+                    return;
+                }
+            }
+
+            $result = call($data->callback, $data->arguments);
+            $event->setResult($result);
         }
     }
 }

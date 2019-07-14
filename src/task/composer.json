@@ -13,7 +13,10 @@
     "require": {
         "php": ">=7.2",
         "hyperf/contract": "~1.0.0",
+        "hyperf/event": "~1.0.0",
+        "hyperf/framework": "~1.0.0",
         "hyperf/utils": "~1.0.0",
+        "limingxinleo/redis-collection": "^1.2",
         "psr/container": "^1.0",
         "psr/log": "^1.0"
     },
@@ -24,6 +27,7 @@
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
+        "hyperf/di": "Required to use annotation."
     },
     "autoload": {
         "files": [

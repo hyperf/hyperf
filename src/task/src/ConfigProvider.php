@@ -26,14 +26,6 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
-            'publish' => [
-                [
-                    'id' => 'config',
-                    'description' => 'The config of task.',
-                    'source' => __DIR__ . '/../publish/task.php',
-                    'destination' => BASE_PATH . '/config/autoload/task.php',
-                ],
-            ],
         ];
     }
 }

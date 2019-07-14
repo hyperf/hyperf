@@ -10,6 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-return [
-    'timeout' => 10,
-];
+namespace Hyperf\Task\Annotation;
+
+use Hyperf\Di\Annotation\AbstractAnnotation;
+
+/**
+ * @Annotation
+ * @Target({"CLASS", "METHOD"})
+ */
+class Task extends AbstractAnnotation
+{
+    public $workerId = -1;
+
+    public $timeout = 10;
+}
