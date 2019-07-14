@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Event\OnTask;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -24,16 +25,37 @@ class TaskCallback
      */
     protected $dispatcher;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var bool
+     */
+    protected $taskEnableCoroutine = false;
+
+    public function __construct(ConfigInterface $config, EventDispatcherInterface $eventDispatcher)
     {
         $this->dispatcher = $eventDispatcher;
+        $this->taskEnableCoroutine = $config->get('server.settings.task_enable_coroutine', false);
     }
 
-    public function onTask(Server $serv, Task $task)
+    public function onTask(Server $serv, ...$arguments)
     {
+        if ($this->taskEnableCoroutine) {
+            $task = $arguments[0];
+        } else {
+            [$taskId, $srcWorkerId, $data] = $arguments;
+            $task = new Task();
+            $task->id = $taskId;
+            $task->worker_id = $srcWorkerId;
+            $task->data = $data;
+        }
+
         $event = $this->dispatcher->dispatch(new OnTask($serv, $task));
+
         if ($event instanceof OnTask && ! is_null($event->result)) {
-            $task->finish($event->result);
+            if ($this->taskEnableCoroutine) {
+                $task->finish($event->result);
+            } else {
+                $serv->finish($event->result);
+            }
         }
     }
 }
