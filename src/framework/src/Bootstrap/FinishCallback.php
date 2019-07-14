@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use Hyperf\Framework\Event\OnTask;
+use Hyperf\Framework\Event\OnFinish;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
-use Swoole\Server\Task;
 
-class TaskCallback
+class FinishCallback
 {
     /**
      * @var EventDispatcherInterface
@@ -29,11 +28,8 @@ class TaskCallback
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function onTask(Server $serv, Task $task)
+    public function onFinish(Server $serv, int $taskId, $data)
     {
-        $event = $this->dispatcher->dispatch(new OnTask($serv, $task));
-        if ($event instanceof OnTask && ! is_null($event->result)) {
-            $task->finish($event->result);
-        }
+        $this->dispatcher->dispatch(new OnFinish($serv, $taskId, $data));
     }
 }

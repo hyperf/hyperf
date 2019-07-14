@@ -14,6 +14,7 @@ namespace Hyperf\Framework\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 use Swoole\Server;
+use Swoole\Server\Task;
 
 class OnTask implements StoppableEventInterface
 {
@@ -23,31 +24,19 @@ class OnTask implements StoppableEventInterface
     public $server;
 
     /**
-     * @var int
+     * @var Task
      */
-    public $taskId;
-
-    /**
-     * @var int
-     */
-    public $srcWorkerId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
+    public $task;
 
     /**
      * @var mixed
      */
     public $result;
 
-    public function __construct(Server $server, int $taskId, int $srcWorkerId, mixed $data)
+    public function __construct(Server $server, Task $task)
     {
         $this->server = $server;
-        $this->taskId = $taskId;
-        $this->srcWorkerId = $srcWorkerId;
-        $this->data = $data;
+        $this->task = $task;
     }
 
     /**

@@ -80,6 +80,11 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
+    public function getServer(): SwooleServer
+    {
+        return $this->server;
+    }
+
     protected function initServers(ServerConfig $config)
     {
         $servers = $this->sortServers($config->getServers());
@@ -207,10 +212,5 @@ class Server implements ServerInterface
                 printf('Worker %d started.' . PHP_EOL, $workerId);
             },
         ];
-    }
-
-    public function getServer(): \Swoole\Server
-    {
-        return $this->server;
     }
 }

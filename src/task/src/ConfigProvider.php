@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Task;
+namespace Hyperf\Task;
 
 class ConfigProvider
 {
@@ -24,6 +24,14 @@ class ConfigProvider
             'scan' => [
                 'paths' => [
                     __DIR__,
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of task.',
+                    'source' => __DIR__ . '/../publish/task.php',
+                    'destination' => BASE_PATH . '/config/autoload/task.php',
                 ],
             ],
         ];
