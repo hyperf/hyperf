@@ -66,7 +66,7 @@ class Render
             case Mode::TASK:
             default:
                 $executor = $this->container->get(TaskExecutor::class);
-                $result = $executor->execute(new Task([$this->engine, 'render'], [$path, $data, $this->config]));
+                $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
         }
 
         return $result;
