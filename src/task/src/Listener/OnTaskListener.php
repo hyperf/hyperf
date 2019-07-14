@@ -22,7 +22,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @Listener
  */
-class TaskHandleListener implements ListenerInterface
+class OnTaskListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface

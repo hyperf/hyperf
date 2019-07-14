@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @Listener
  */
-class TaskFinishListener implements ListenerInterface
+class OnFinishListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
