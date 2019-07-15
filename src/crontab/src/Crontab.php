@@ -51,9 +51,6 @@ class Crontab
         return $this->name;
     }
 
-    /**
-     * @param null|string $name
-     */
     public function setName(?string $name): Crontab
     {
         $this->name = $name;
@@ -65,9 +62,6 @@ class Crontab
         return $this->rule;
     }
 
-    /**
-     * @param null|string $rule
-     */
     public function setRule(?string $rule): Crontab
     {
         $this->rule = $rule;
@@ -90,9 +84,6 @@ class Crontab
         return $this->memo;
     }
 
-    /**
-     * @param null|string $memo
-     */
     public function setMemo(?string $memo): Crontab
     {
         $this->memo = $memo;
