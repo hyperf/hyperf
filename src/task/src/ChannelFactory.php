@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Task;
 
+use Hyperf\Task\Exception\TaskExecuteTimeoutException;
 use Swoole\Coroutine\Channel;
 
 class ChannelFactory
 {
     protected $channels = [];
 
-    public function get(int $taskId)
+    public function get(int $taskId): ?Channel
     {
         if ($this->has($taskId)) {
             return $this->channels[$taskId];
@@ -32,13 +33,35 @@ class ChannelFactory
         $channel = $this->get($taskId);
 
         $result = $channel->pop($timeout);
-        unset($this->channels[$taskId]);
+        if (! $result instanceof TaskData) {
+            $this->channels[$taskId] = null;
+            throw new TaskExecuteTimeoutException(sprintf('Task [%d] execute timeout.', $taskId));
+        }
 
-        return $result;
+        // Removed channel from factory.
+        $this->remove($taskId);
+        return $result->data;
+    }
+
+    public function push(int $taskId, $data)
+    {
+        $channel = $this->get($taskId);
+
+        if ($channel instanceof Channel) {
+            $channel->push(new TaskData($taskId, $data));
+        } else {
+            // Task execute timeout, discard data and remove it from factory.
+            $this->remove($taskId);
+        }
     }
 
     public function has(int $taskId)
     {
-        return isset($this->channels[$taskId]) && $this->channels[$taskId] instanceof Channel;
+        return array_key_exists($taskId, $this->channels);
+    }
+
+    public function remove(int $taskId)
+    {
+        unset($this->channels[$taskId]);
     }
 }

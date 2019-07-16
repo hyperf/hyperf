@@ -42,14 +42,14 @@ class TaskExecutor
         $this->server = $server;
     }
 
-    public function execute(Task $task)
+    public function execute(Task $task, float $timeout = 10)
     {
         $taskId = $this->server->task($task);
         if ($taskId === false) {
             throw new TaskExecuteException('Task execute failed.');
         }
 
-        return $this->factory->pop($taskId);
+        return $this->factory->pop($taskId, $timeout);
     }
 
     /**

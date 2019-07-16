@@ -43,9 +43,8 @@ class OnFinishListener implements ListenerInterface
     public function process(object $event)
     {
         if ($event instanceof OnFinish) {
-            $channel = $this->container->get(ChannelFactory::class)->get($event->taskId);
-
-            $channel->push($event->data);
+            $factory = $this->container->get(ChannelFactory::class);
+            $factory->push($event->taskId, $event->data);
         }
     }
 }
