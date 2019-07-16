@@ -6,7 +6,7 @@
 - [#202](https://github.com/hyperf-cloud/hyperf/pull/202) Added trace message when throw a uncaptured exception in function `go`.
 - [#138](https://github.com/hyperf-cloud/hyperf/pull/138) [#197](https://github.com/hyperf-cloud/hyperf/pull/197) Added crontab component.
 
-# Changed
+## Changed
 
 - [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
 - [#198](https://github.com/hyperf-cloud/hyperf/pull/198) Optimized `has()` method of `Hyperf\Di\Container`, if pass a un-instantiable object (like an interface) to `$container->has($interface)`, the method result is `false` now.
@@ -27,12 +27,12 @@
 - [#140](https://github.com/hyperf-cloud/hyperf/pull/140) Support Swoole v4.4.0.
 - [#163](https://github.com/hyperf-cloud/hyperf/pull/163) Added custom arguments support to AbstractConstants::__callStatic in `hyperf/constants`.
 
-# Changed
+## Changed
 
 - [#124](https://github.com/hyperf-cloud/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
 - [#125](https://github.com/hyperf-cloud/hyperf/pull/125) Changed the default value of parameter $default of config() function to null.
 
-# Fixed
+## Fixed
 
 - [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Fixed property middlewares not work in `Router::addGroup`.
@@ -44,7 +44,7 @@
 - [#169](https://github.com/hyperf-cloud/hyperf/pull/169) Fixed array parse failed when handle http request.
 - [#170](https://github.com/hyperf-cloud/hyperf/pull/170) Fixed websocket server interrupt when request a not exist route.
 
-# Removed
+## Removed
 
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Removed `server` property from Router options.
 
