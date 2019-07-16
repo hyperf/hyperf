@@ -63,7 +63,7 @@ supervisorctl stop hyperf
 # 查看所有被管理项目运行状态
 supervisorctl status
 
-# 添加新的应用，热刷新配置文件
+# 添加新的应用，刷新配置文件（所有守护进程会被重新启动加载最新配置）
 supervisorctl update
 # 重新启动配置中的所有程序
 supervisorctl reload
