@@ -23,9 +23,9 @@ cp /etc/supervisord.conf /etc/supervisord.d/supervisord.conf
 ```ini
 # 新建一个应用并设置一个名称，这里设置为 hyperf
 [program:hyperf]
-#设置命令在指定的目录内执行
-directory =  /var/www/hyperf/
-# 这里为您要管理的项目的启动命令，对应您的项目的真实路径
+# 设置命令在指定的目录内执行
+directory=/var/www/hyperf/
+# 这里为您要管理的项目的启动命令
 command=php ./bin/hyperf.php start
 # 以哪个用户来运行该进程
 user=root
@@ -33,7 +33,7 @@ user=root
 autostart=true
 # 进程退出后自动重启进程
 autorestart=true
-# 执行supervisorctl  satrt命令之前的缓冲秒数
+# 进程持续运行多久才认为是启动成功
 startsecs=1
 # 重试次数
 startretries=3
@@ -62,9 +62,8 @@ supervisorctl restart hyperf
 supervisorctl stop hyperf  
 # 查看所有被管理项目运行状态
 supervisorctl status
-
-# 添加新的应用，刷新配置文件（所有守护进程会被重新启动加载最新配置）
+# 重新加载配置文件
 supervisorctl update
-# 重新启动配置中的所有程序
+# 重新启动所有程序
 supervisorctl reload
 ```
