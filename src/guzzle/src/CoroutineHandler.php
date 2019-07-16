@@ -142,6 +142,10 @@ class CoroutineHandler
             }
         }
 
+        // SSL KEY
+        isset($options['ssl_key']) && $settings['ssl_key_file'] = $options['ssl_key'];
+        isset($options['cert']) && $settings['ssl_cert_file'] = $options['cert'];
+
         // Swoole Setting
         if (isset($options['swoole']) && is_array($options['swoole'])) {
             $settings = array_replace($settings, $options['swoole']);

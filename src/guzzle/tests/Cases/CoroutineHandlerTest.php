@@ -148,6 +148,33 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame('pass', $setting['http_proxy_password']);
     }
 
+    public function testSslKeyAndCert()
+    {
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'timeout' => 5,
+            'cert' => 'apiclient_cert.pem',
+            'ssl_key' => 'apiclient_key.pem',
+        ]);
+
+        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $this->assertSame('apiclient_cert.pem', $data['setting']['ssl_cert_file']);
+        $this->assertSame('apiclient_key.pem', $data['setting']['ssl_key_file']);
+
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'timeout' => 5,
+        ]);
+
+        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $this->assertArrayNotHasKey('ssl_cert_file', $data['setting']);
+        $this->assertArrayNotHasKey('ssl_key_file', $data['setting']);
+    }
+
     public function testUserInfo()
     {
         $url = 'https://username:password@127.0.0.1:8080';
