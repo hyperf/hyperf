@@ -4,6 +4,7 @@
 
 - [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
 - [#202](https://github.com/hyperf-cloud/hyperf/pull/202) Added trace message when throw a uncaptured exception in function `go`.
+- [#138](https://github.com/hyperf-cloud/hyperf/pull/138) [#197](https://github.com/hyperf-cloud/hyperf/pull/197) Added crontab component.
 
 # Changed
 
