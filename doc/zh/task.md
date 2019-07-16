@@ -46,7 +46,7 @@ return [
         'socket_buffer_size' => 2 * 1024 * 1024,
         // Task setting
         'task_worker_num' => 4,
-        'task_enable_coroutine' => false, // 因为 Task 主要处理无法协程化的方法，所以这里可以设为 false。
+        'task_enable_coroutine' => false, // 因为 `Task` 主要处理 无法协程化的方法，所以这里推荐设为 `false`。
     ],
     'callbacks' => [
         SwooleEvent::ON_BEFORE_START => [Hyperf\Framework\Bootstrap\ServerStartCallback::class, 'beforeStart'],
@@ -93,7 +93,7 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], Coroutine::id()
 ```
 ### 使用注解
 
-通过直接投递时，并不是特别直观，这里我们实现了对应的注解，并通过 AOP 重写了方法调用。当在 Worker 进程时，自动投递到 Task 进程，并协程等待 数据返回。
+通过直接投递时，并不是特别直观，这里我们实现了对应的注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
 
 ```php
 <?php
