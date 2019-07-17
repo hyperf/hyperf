@@ -39,8 +39,8 @@ php /opt/www/bin/hyperf.php start
 swoole-tracker.ini
 
 ```bash
-[swoole_tracker]
-extension=/opt/swoole_tracker.so
+[swoole_plus]
+extension=/opt/swoole_plus.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
@@ -97,7 +97,7 @@ WORKDIR /opt/www/.build
 # 这里的地址，以客户端中显示的为准
 RUN ./deploy_env.sh www.swoole-cloud.com \
     && chmod 755 entrypoint.sh \
-    && cp swoole_tracker72.so /opt/swoole_tracker.so \
+    && cp swoole_plus72.so /opt/swoole_plus.so \
     && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
     && php -m
 
@@ -117,7 +117,7 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 首先安装一下对应组件
 
 ```bash
-composer require hyperf/swoole-dashboard dev-master
+composer require hyperf/swoole-enterprise dev-master
 ```
 
 然后将以下 `Middleware` 写到 `middleware.php` 中。
@@ -127,7 +127,7 @@ composer require hyperf/swoole-dashboard dev-master
 
 return [
     'http' => [
-        Hyperf\SwooleDashboard\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
     ],
 ];
 
