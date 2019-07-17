@@ -75,7 +75,7 @@
   * [限流器](zh/rate-limit.md)
   * [Swoole Enterprise](zh/swoole-enterprise.md)
   * [定时任务](zh/crontab.md)
-  * [Task](zh/task.md)
+  * [Task 机制](zh/task.md)
 
 * 应用部署
 
