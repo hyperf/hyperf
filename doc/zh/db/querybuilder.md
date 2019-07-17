@@ -65,6 +65,30 @@ class FetchModeListener implements ListenerInterface
 }
 ```
 
+### 获取一行的值
+
+如果想获取一行的值, 则可以使用 `first` 方法
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$row = Db::table('user')->first(); // sql 会自动加上 limit 1
+var_dump($row);
+```
+
+### 获取单个值
+
+如果想获取单个值, 则可以使用 `value` 方法
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$id = Db::table('user')->value('id');
+var_dump($id);
+```
+
 ### 获取一列的值
 
 如果你想获取包含单列值的集合，则可以使用 `pluck` 方法。在下面的例子中，我们将获取角色表中标题的集合：
@@ -189,6 +213,15 @@ $users = $query->addSelect('age')->get();
 use Hyperf\DbConnection\Db;
 
 $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->groupBy('gender')->get();
+```
+
+### 强制索引
+
+数据库出现的慢查问题, 90% 以上是索引不对, 其中有部分查询是因为数据库服务器的 `查询优化器` 没有使用最佳索引, 这时候就需要使用强制强制索引:
+
+```php
+Db::table(Db::raw(sprintf("{$table} FORCE INDEX({$index})");
+
 ```
 
 ### 原生方法
