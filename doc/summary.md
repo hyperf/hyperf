@@ -74,7 +74,7 @@
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
   * [Swoole Enterprise](zh/swoole-enterprise.md)
-  * [计划任务](zh/crontab.md)
+  * [定时任务](zh/crontab.md)
   * [Task](zh/task.md)
 
 * 应用部署
