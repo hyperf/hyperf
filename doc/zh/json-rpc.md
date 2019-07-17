@@ -8,6 +8,20 @@ JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使
 composer require hyperf/json-rpc
 ```
 
+该组件只是 JSON RPC 的协议处理的组件，通常来说，您仍需配合 [hyperf/rpc-server](https://github.com/hyperf-cloud/rpc-server) 或 [hyperf/rpc-client](https://github.com/hyperf-cloud/rpc-client) 来满足 服务端 和 客户端的场景，如同时使用则都需要安装：   
+
+要使用 JSON RPC 服务端：
+
+```bash
+composer require hyperf/rpc-server
+```
+
+要使用 JSON RPC 客户端：
+
+```bash
+composer require hyperf/rpc-client
+```
+
 # 使用
 
 服务有两种角色，一种是 `服务提供者(ServiceProvider)`，即为其它服务提供服务的服务，另一种是 `服务消费者(ServiceConsumer)`，即依赖其它服务的服务，一个服务既可能是 `服务提供者(ServiceProvider)`，同时又是 `服务消费者(ServiceConsumer)`。而两者直接可以通过 `服务契约` 来定义和约束接口的调用，在 Hyperf 里，可直接理解为就是一个 `接口类(Interface)`，通常来说这个接口类会同时出现在提供者和消费者下。
