@@ -117,7 +117,7 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 首先安装一下对应组件
 
 ```bash
-composer require hyperf/swoole-dashboard dev-master
+composer require hyperf/swoole-enterprise dev-master
 ```
 
 然后将以下 `Middleware` 写到 `middleware.php` 中。
@@ -127,7 +127,7 @@ composer require hyperf/swoole-dashboard dev-master
 
 return [
     'http' => [
-        Hyperf\SwooleDashboard\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
     ],
 ];
 

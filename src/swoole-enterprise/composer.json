@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/swoole-dashboard",
+    "name": "hyperf/swoole-enterprise",
     "description": "A swoole dashboard library for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "swoole-dashboard"
+        "swoole-enterprise"
     ],
     "support": {
     },
@@ -31,7 +31,7 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\SwooleDashboard\\": "src"
+            "Hyperf\\SwooleEnterprise\\": "src"
         }
     },
     "autoload-dev": {
@@ -46,7 +46,7 @@
             "dev-master": "1.0-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\SwooleDashboard\\ConfigProvider"
+            "config": "Hyperf\\SwooleEnterprise\\ConfigProvider"
         }
     },
     "bin": [
