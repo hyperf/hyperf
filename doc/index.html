@@ -8,6 +8,11 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <style>
+    .app-name-link img {
+      width: 16%;
+    }
+  </style>
 </head>
 
 <body>
@@ -24,10 +29,15 @@
       fallbackLanguages: ['zh', 'en'],
       mergeNavbar: true,
       themeColor: '#3F51B5',
+      logo: '/logo.png',
       auto2top: true,
+      autoHeader: false,
       subMaxLevel: 4,
       search: {
         depth: 6
+      },
+      alias: {
+        '/summary.md': './zh/summary.md'
       },
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf-cloud/hyperf/tree/master/doc/')
