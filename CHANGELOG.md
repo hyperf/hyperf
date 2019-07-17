@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
+- [#185](https://github.com/hyperf-cloud/hyperf/pull/185) [#224](https://github.com/hyperf-cloud/hyperf/pull/224) Added support for xml format of response.
 
 # Changed
 
