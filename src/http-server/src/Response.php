@@ -81,7 +81,7 @@ class Response extends ServerResponse implements ResponseInterface
      */
     public function xml($data, string $root = 'root'): PsrResponseInterface
     {
-        $data = $this->toXml($data, $root);
+        $data = $this->toXml($data, null, $root);
         return $this->getResponse()
             ->withAddedHeader('content-type', 'application/xml; charset=utf-8')
             ->withBody(new SwooleStream($data));
