@@ -1,12 +1,19 @@
-# Swoole Dashboard
+# Swoole Enterprise
 
-[dashboard](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品、更专一、更专业。
+[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一款企业级应用解决方案，更专一、更专业。
 
 - 时刻掌握应用架构模型
+> 自动发现应用依赖拓扑结构和展示，时刻掌握应用的架构模型
 - 分布式跨应用链路追踪
-- 完善的系统监控
-- 零成本接入
+> 支持无侵入的分布式跨应用链路追踪，让每个请求一目了然，全面支持协程/非协程环境，数据实时可视化
 - 全面分析报告服务状况
+> 各种维度统计服务上报的调用信息， 比如总流量、平均耗时、超时率等，并全面分析报告服务状况
+- 拥有强大的调试工具链
+> 系统支持远程调试，可远程开启检测内存泄漏、阻塞检测和代码性能分析
+- 完善的系统监控
+> 支持完善的系统监控，零成本部署，监控机器的CPU、内存、网络、磁盘等资源，可以很方便的集成到现有报警系统
+- 零成本接入系统
+> Swoole Enterprise系统客户端脚本一键部署，服务端可在Docker环境中运行，简单快捷
 
 ## 安装
 
@@ -29,15 +36,15 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-swoole-tracker.ini
+swoole-plus.ini
 
 ```bash
-[swoole_tracker]
-extension=/opt/swoole_tracker.so
+[swoole_plus]
+extension=/opt/swoole_plus.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
-# 手动埋点时再添加
+# 支持远程调试；需要手动埋点时再添加
 apm.enable_xhprof=1    #开启性能分析功能 默认0 即为关闭模式
 apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭
 ```
@@ -90,8 +97,8 @@ WORKDIR /opt/www/.build
 # 这里的地址，以客户端中显示的为准
 RUN ./deploy_env.sh www.swoole-cloud.com \
     && chmod 755 entrypoint.sh \
-    && cp swoole_tracker72.so /opt/swoole_tracker.so \
-    && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
+    && cp swoole_plus72.so /opt/swoole_plus.so \
+    && cp swoole-plus.ini /etc/php7/conf.d/swoole-plus.ini \
     && php -m
 
 WORKDIR /opt/www
@@ -110,7 +117,7 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 首先安装一下对应组件
 
 ```bash
-composer require hyperf/swoole-dashboard dev-master
+composer require hyperf/swoole-enterprise dev-master
 ```
 
 然后将以下 `Middleware` 写到 `middleware.php` 中。
@@ -120,7 +127,7 @@ composer require hyperf/swoole-dashboard dev-master
 
 return [
     'http' => [
-        Hyperf\SwooleDashboard\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
     ],
 ];
 

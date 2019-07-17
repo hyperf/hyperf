@@ -225,4 +225,36 @@ return [
 - 默认配置了名为 `default` 的 `Handler`, 并包含了此 `Handler` 及其 `Formatter` 的信息
 - 获取 `Logger` 时, 如果没有指定 `Handler`, 底层会自动把 `default` 这一 `Handler` 绑定到 `Logger` 上
 - dev(开发)环境: 日志使用 `php://stdout` 输出到 `标准输出(stdout)`, 并且 `Formatter` 中设置 `allowInlineLineBreaks`, 方便查看多行日志
-- 非 dev 环境: 日志使用 `JsonFormatter`, 会被格式为 json, 方便投递到第三方日志服务
+- 非 dev 环境: 日志使用 `JsonFormatter`, 会被格式为 `json`, 方便投递到第三方日志服务
+
+### 日志文件按日期轮转
+
+如果您希望日志文件可以按照日期轮转，可以通过 `Mongolog` 已经提供了的 `Monolog\Handler\RotatingFileHandler` 来实现，配置如下：
+
+修改 `config/autoload/logger.php` 配置文件，将 `Handler` 改为 `Monolog\Handler\RotatingFileHandler::class`，并将 `stream` 字段改为 `filename` 即可。
+
+```php
+<?php
+
+return [
+    'default' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Monolog\Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+];
+```
+
+如果您希望再进行更细粒度的日志切割，也可通过继承 `Monolog\Handler\RotatingFileHandler` 类并重新实现 `rotate()` 方法实现。

@@ -18,15 +18,17 @@ use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="crontab-dispatcher")
- */
 class CrontabDispatcherProcess extends AbstractProcess
 {
+
+    /**
+     * @var string
+     */
+    public $name = 'crontab-dispatcher';
+
     /**
      * @var Server
      */

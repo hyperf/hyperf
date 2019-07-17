@@ -1,11 +1,15 @@
-# v1.0.5 - TBD
+# v1.0.6 - TBD
+
+
+# v1.0.5 - 2019-07-07
 
 ## Added
 
-- [#185](https://github.com/hyperf-cloud/hyperf/pull/185) Added support for xml format of response.
+- [#185](https://github.com/hyperf-cloud/hyperf/pull/185) [#224](https://github.com/hyperf-cloud/hyperf/pull/224) Added support for xml format of response.
 - [#202](https://github.com/hyperf-cloud/hyperf/pull/202) Added trace message when throw a uncaptured exception in function `go`.
+- [#138](https://github.com/hyperf-cloud/hyperf/pull/138) [#197](https://github.com/hyperf-cloud/hyperf/pull/197) Added crontab component.
 
-# Changed
+## Changed
 
 - [#195](https://github.com/hyperf-cloud/hyperf/pull/195) Changed the behavior of parameter `$times` of `retry()` function, means the retry times of the callable function.
 - [#198](https://github.com/hyperf-cloud/hyperf/pull/198) Optimized `has()` method of `Hyperf\Di\Container`, if pass a un-instantiable object (like an interface) to `$container->has($interface)`, the method result is `false` now.
@@ -16,6 +20,8 @@
 
 - [#176](https://github.com/hyperf-cloud/hyperf/pull/176) Fixed TypeError: Return value of LengthAwarePaginator::nextPageUrl() must be of the type string or null, none returned.
 - [#188](https://github.com/hyperf-cloud/hyperf/pull/188) Fixed proxy of guzzle client does not work expected.
+- [#211](https://github.com/hyperf-cloud/hyperf/pull/211) Fixed rpc client will be replaced by the latest one. 
+- [#212](https://github.com/hyperf-cloud/hyperf/pull/212) Fixed config `ssl_key` and `cert` of guzzle client does not work expected.
 
 # v1.0.4 - 2019-07-08
 
@@ -24,12 +30,12 @@
 - [#140](https://github.com/hyperf-cloud/hyperf/pull/140) Support Swoole v4.4.0.
 - [#163](https://github.com/hyperf-cloud/hyperf/pull/163) Added custom arguments support to AbstractConstants::__callStatic in `hyperf/constants`.
 
-# Changed
+## Changed
 
 - [#124](https://github.com/hyperf-cloud/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
 - [#125](https://github.com/hyperf-cloud/hyperf/pull/125) Changed the default value of parameter $default of config() function to null.
 
-# Fixed
+## Fixed
 
 - [#110](https://github.com/hyperf-cloud/hyperf/pull/110) [#111](https://github.com/hyperf-cloud/hyperf/pull/111) Fixed Redis::select is not work expected.
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Fixed property middlewares not work in `Router::addGroup`.
@@ -41,7 +47,7 @@
 - [#169](https://github.com/hyperf-cloud/hyperf/pull/169) Fixed array parse failed when handle http request.
 - [#170](https://github.com/hyperf-cloud/hyperf/pull/170) Fixed websocket server interrupt when request a not exist route.
 
-# Removed
+## Removed
 
 - [#131](https://github.com/hyperf-cloud/hyperf/pull/131) Removed `server` property from Router options.
 

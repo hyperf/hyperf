@@ -16,6 +16,7 @@
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
             <directory suffix="Test.php">./src/di/tests</directory>
+            <directory suffix="Test.php">./src/dispatcher/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/guzzle/tests</directory>
@@ -24,6 +25,8 @@
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
+            <directory suffix="Test.php">./src/task/tests</directory>
+            <directory suffix="Test.php">./src/websocket-client/tests</directory>
         </testsuite>
     </testsuites>
     <filter>

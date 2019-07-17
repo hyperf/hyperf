@@ -57,4 +57,17 @@ class AnnotationCollector extends MetadataCollector
     {
         return static::get($class . '._m.' . $method);
     }
+
+    public static function getMethodByAnnotation(string $annotation): array
+    {
+        $result = [];
+        foreach (static::$container as $class => $metadata) {
+            foreach ($metadata['_m'] ?? [] as $method => $_metadata) {
+                if ($value = $_metadata[$annotation] ?? null) {
+                    $result[] = ['class' => $class, 'method' => $method, 'annotation' => $value];
+                }
+            }
+        }
+        return $result;
+    }
 }

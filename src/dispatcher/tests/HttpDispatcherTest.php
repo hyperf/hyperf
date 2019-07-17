@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Dispatcher;
 
-use App\Middleware\TestMiddleware;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Utils\Context;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
+use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
