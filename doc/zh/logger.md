@@ -227,9 +227,9 @@ return [
 - dev(开发)环境: 日志使用 `php://stdout` 输出到 `标准输出(stdout)`, 并且 `Formatter` 中设置 `allowInlineLineBreaks`, 方便查看多行日志
 - 非 dev 环境: 日志使用 `JsonFormatter`, 会被格式为 json, 方便投递到第三方日志服务
 
-### 日志文件按日期翻转
+### 日志文件按日期轮转
 
-有小伙伴认为一个日志文件，后面会越来越大，非常不友好。希望日志文件可以按照日期翻转。这里其实 `Mongolog` 已经提供了对应的 `Handler`，配置如下。
+有小伙伴认为一个日志文件，后面会越来越大，非常不友好。希望日志文件可以按照日期轮转。这里其实 `Mongolog` 已经提供了对应的 `Handler`，配置如下。
 
 修改我们的 `logger.php` 配置文件，将默认的 `Handler` 改为 `Monolog\Handler\RotatingFileHandler::class`，并将 `stream` 字段改为 `filename` 即可。
 
