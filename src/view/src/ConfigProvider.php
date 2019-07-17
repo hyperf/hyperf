@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\WebSocketClient;
+namespace Hyperf\View;
 
 class ConfigProvider
 {
@@ -24,6 +24,14 @@ class ConfigProvider
             'scan' => [
                 'paths' => [
                     __DIR__,
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of view.',
+                    'source' => __DIR__ . '/../publish/view.php',
+                    'destination' => BASE_PATH . '/config/autoload/view.php',
                 ],
             ],
         ];
