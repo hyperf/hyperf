@@ -148,7 +148,7 @@
             "HyperfTest\\Constants\\": "./src/constants/tests/",
             "HyperfTest\\Consul\\": "./src/consul/tests/",
             "HyperfTest\\Di\\": "./src/di/tests/",
-            "HyperfTest\\Dispatcher\\": "./src/dispatcher/test/",
+            "HyperfTest\\Dispatcher\\": "./src/dispatcher/tests/",
             "HyperfTest\\Database\\": "./src/database/tests/",
             "HyperfTest\\DbConnection\\": "./src/db-connection/tests/",
             "HyperfTest\\Event\\": "./src/event/tests/",

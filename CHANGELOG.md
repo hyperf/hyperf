@@ -1,8 +1,5 @@
 # v1.0.6 - TBD
 
-## Changed
-
-- [#220](https://github.com/hyperf-cloud/hyperf/pull/220) Renamed swoole-dashboard into swoole-enterprise.
 
 # v1.0.5 - 2019-07-07
 
