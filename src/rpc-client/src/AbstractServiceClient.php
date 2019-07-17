@@ -98,7 +98,7 @@ abstract class AbstractServiceClient
         $this->dataFormatter = $this->createDataFormatter();
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
         $transporter = $this->createTransporter()->setLoadBalancer($loadBalancer);
-        $this->client = $this->container->get(Client::class)
+        $this->client = make(Client::class)
             ->setPacker($this->createPacker())
             ->setTransporter($transporter);
     }
@@ -139,7 +139,7 @@ abstract class AbstractServiceClient
             throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $transporter));
         }
         /* @var TransporterInterface $instance */
-        return $this->container->get($transporter);
+        return make($transporter);
     }
 
     protected function createPacker(): PackerInterface

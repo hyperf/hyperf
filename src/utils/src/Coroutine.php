@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
@@ -63,7 +64,13 @@ class Coroutine
                     if ($container->has(StdoutLoggerInterface::class)) {
                         /* @var LoggerInterface $logger */
                         $logger = $container->get(StdoutLoggerInterface::class);
-                        $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                        /* @var FormatterInterface $formmater */
+                        if ($container->has(FormatterInterface::class)) {
+                            $formmater = $container->get(FormatterInterface::class);
+                            $logger->warning($formmater->format($throwable));
+                        } else {
+                            $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                        }
                     }
                 }
             }
