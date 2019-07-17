@@ -17,6 +17,8 @@
 
 ## 安装
 
+### 安装扩展
+
 注册完账户后，进入[控制台](https://www.swoole-cloud.com/dashboard/catdemo/)，并申请试用，下载对应客户端。
 
 相关文档，请移步 [试用文档](https://www.yuque.com/swoole-wiki/try) 或 [详细文档](https://www.yuque.com/swoole-wiki/dam5n7) 
@@ -112,15 +114,15 @@ EXPOSE 9501
 ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 ```
 
-## 使用
-
-首先安装一下对应组件
+### 安装组件
 
 ```bash
 composer require hyperf/swoole-enterprise dev-master
 ```
 
-然后将以下 `Middleware` 写到 `middleware.php` 中。
+## 使用
+
+在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware` 中间件即可，如下：
 
 ```php
 <?php
@@ -130,6 +132,5 @@ return [
         Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
     ],
 ];
-
 ```
 

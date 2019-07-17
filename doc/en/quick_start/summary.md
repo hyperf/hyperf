@@ -1,2 +1,0 @@
-- [overview](en/quick_start/overview.md)
-- [install](en/quick_start/install.md)
