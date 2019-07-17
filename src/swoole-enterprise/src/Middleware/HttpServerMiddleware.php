@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\SwooleDashboard\Middleware;
+namespace Hyperf\SwooleEnterprise\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
 use Psr\Http\Message\ResponseInterface;

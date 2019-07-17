@@ -43,7 +43,7 @@ git clone git@github.com:hyperf-cloud/hyperf.git
         "hyperf": {
             "type": "path",
             "url": "../hyperf/src/*"
-        }
+        },
         "packagist": {
             "type": "composer",
             "url": "https://mirrors.aliyun.com/composer"

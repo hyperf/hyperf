@@ -36,7 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Dispatcher\\": "test"
+            "HyperfTest\\Dispatcher\\": "tests"
         }
     },
     "config": {

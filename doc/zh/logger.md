@@ -121,9 +121,9 @@ $log->alert('czl');
 
 - 首先, 实例化一个 `Logger`, 取个名字, 名字对应的就是 `channel`
 - 可以为 `Logger` 绑定多个 `Handler`, `Logger` 打日志, 交由 `Handler` 来处理
-- `Handler` 可以指定需要处理那些 **日志级别** 的日志, 比如 `Logger::WARNING`, 只处理日志级别 `>=Logger::WARNING` 的日志
+- `Handler` 可以指定需要处理哪些 **日志级别** 的日志, 比如 `Logger::WARNING`, 只处理日志级别 `>=Logger::WARNING` 的日志
 - 谁来格式化日志? `Formatter`, 设置好 Formatter 并绑定到相应的 `Handler` 上
-- 日志包含那些部分: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
+- 日志包含哪些部分: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
 - 区分一下日志中添加的额外信息 `context` 和 `extra`: `context` 由用户打日志时额外指定, 更加灵活; `extra` 由绑定到 `Logger` 上的 `Processor` 固定添加, 比较适合收集一些 **常见信息**
 
 ## 更多用法
@@ -138,34 +138,16 @@ namespace App;
 use Hyperf\Logger\Logger;
 use Hyperf\Utils\ApplicationContext;
 
-/**
- * @method static Logger get($name)
- * @method static void log($level, $message, array $context = array())
- * @method static void emergency($message, array $context = array())
- * @method static void alert($message, array $context = array())
- * @method static void critical($message, array $context = array())
- * @method static void error($message, array $context = array())
- * @method static void warning($message, array $context = array())
- * @method static void notice($message, array $context = array())
- * @method static void info($message, array $context = array())
- * @method static void debug($message, array $context = array())
- */
 class Log
 {
-    public static function __callStatic($name, $arguments)
+    public static function get(string $name = 'app')
     {
-        $container = ApplicationContext::getContainer();
-        $factory = $container->get(\Hyperf\Logger\LoggerFactory::class);
-        if ($name === 'get') {
-            return $factory->get(...$arguments);
-        }
-        $log = $factory->get('default');
-        $log->$name(...$arguments);
+        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
     }
 }
 ```
 
-默认使用 `default` 的 `Channel` 来记录日志，您也可以通过使用 `Log::get($name)` 方法获得不同 `Channel` 的 `Logger`, 强大的 `容器(Container)` 帮您解决了这一切
+默认使用 `Channel` 名为 `app` 来记录日志，您也可以通过使用 `Log::get($name)` 方法获得不同 `Channel` 的 `Logger`, 强大的 `容器(Container)` 帮您解决了这一切
 
 ### stdout 日志
 
