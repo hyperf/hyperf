@@ -229,7 +229,7 @@ return [
 
 ### 日志文件按日期轮转
 
-如果您希望日志文件可以按照日期轮转，可以通过 `Mongolog` 已经提供了 `Monolog\Handler\RotatingFileHandler` 实现，配置如下：
+如果您希望日志文件可以按照日期轮转，可以通过 `Mongolog` 已经提供了的 `Monolog\Handler\RotatingFileHandler` 来实现，配置如下：
 
 修改 `config/autoload/logger.php` 配置文件，将 `Handler` 改为 `Monolog\Handler\RotatingFileHandler::class`，并将 `stream` 字段改为 `filename` 即可。
 
