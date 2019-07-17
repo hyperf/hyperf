@@ -1,6 +1,6 @@
 # Swoole Enterprise
 
-[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一款企业级应用解决方案、更专一、更专业。
+[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一款企业级应用解决方案，更专一、更专业。
 
 - 时刻掌握应用架构模型
 > 自动发现应用依赖拓扑结构和展示，时刻掌握应用的架构模型
@@ -36,15 +36,15 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-swoole-tracker.ini
+swoole-plus.ini
 
 ```bash
-[swoole_tracker]
-extension=/opt/swoole_tracker.so
+[swoole_plus]
+extension=/opt/swoole_plus.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
-# 手动埋点时再添加
+# 支持远程调试；需要手动埋点时再添加
 apm.enable_xhprof=1    #开启性能分析功能 默认0 即为关闭模式
 apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭
 ```
@@ -97,8 +97,8 @@ WORKDIR /opt/www/.build
 # 这里的地址，以客户端中显示的为准
 RUN ./deploy_env.sh www.swoole-cloud.com \
     && chmod 755 entrypoint.sh \
-    && cp swoole_tracker72.so /opt/swoole_tracker.so \
-    && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
+    && cp swoole_plus72.so /opt/swoole_plus.so \
+    && cp swoole-plus.ini /etc/php7/conf.d/swoole-plus.ini \
     && php -m
 
 WORKDIR /opt/www
@@ -117,7 +117,7 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 首先安装一下对应组件
 
 ```bash
-composer require hyperf/swoole-dashboard dev-master
+composer require hyperf/swoole-enterprise dev-master
 ```
 
 然后将以下 `Middleware` 写到 `middleware.php` 中。
@@ -127,7 +127,7 @@ composer require hyperf/swoole-dashboard dev-master
 
 return [
     'http' => [
-        Hyperf\SwooleDashboard\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
     ],
 ];
 
