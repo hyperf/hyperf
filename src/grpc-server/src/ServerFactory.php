@@ -12,9 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcServer;
 
-use Hyperf\HttpServer\ServerFactory as HttpServerFactory;
+use Psr\Container\ContainerInterface;
 
-class ServerFactory extends HttpServerFactory
+/**
+ * @deprecated v1.1
+ */
+class ServerFactory
 {
-    protected $coreMiddleware = CoreMiddleware::class;
+    public function __invoke(ContainerInterface $container): Server
+    {
+        return new Server($container);
+    }
 }

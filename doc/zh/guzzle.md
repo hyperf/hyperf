@@ -74,6 +74,7 @@ Hyperf 除了实现了 `Hyperf\Guzzle\CoroutineHandler` 外，还基于 `Hyperf\
 ### 使用
 
 ```php
+<?php
 use GuzzleHttp\Client;
 use Hyperf\Utils\Coroutine;
 use GuzzleHttp\HandlerStack;
