@@ -33,6 +33,8 @@ return [
 ];
 ```
 
+> 如果使用 `Task` 模式，请移步 [Task](zh/task.md)。
+
 ## 使用
 
 以下以 `BladeEngine` 为例，首先在对应的目录里创建视图文件 `index.blade.php`。
