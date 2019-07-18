@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcServer\Exception\Handler;
 
-use Google\Protobuf\Internal\Message;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
@@ -33,6 +32,9 @@ class GrpcExceptionHandler extends ExceptionHandler
      */
     protected $logger;
 
+    /**
+     * @var FormatterInterface
+     */
     protected $formatter;
 
     public function __construct(ContainerInterface $container)
