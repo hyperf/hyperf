@@ -34,6 +34,7 @@
   * [分页器](zh/paginator.md)
   * [命令行](zh/command.md)
   * [自动化测试](zh/testing.md)
+  * [视图](zh/view.md)
   
 * 数据库模型
 
