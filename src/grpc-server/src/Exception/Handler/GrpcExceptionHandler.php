@@ -16,17 +16,11 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Server\Exception\ServerException;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class GrpcExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var StdoutLoggerInterface
      */
@@ -37,11 +31,10 @@ class GrpcExceptionHandler extends ExceptionHandler
      */
     protected $formatter;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
     {
-        $this->container = $container;
-        $this->logger = $container->get(StdoutLoggerInterface::class);
-        $this->formatter = $container->get(FormatterInterface::class);
+        $this->logger = $logger;
+        $this->formatter = $formatter;
     }
 
     public function handle(Throwable $throwable, ResponseInterface $response)
