@@ -24,7 +24,19 @@ php bin/hyperf.php
   gen:job            Create a new job class
   gen:listener       Create a new listener class
   gen:middleware     Create a new middleware class
+  gen:migration      
   gen:process        Create a new process class
+ migrate
+  migrate:fresh      
+  migrate:install    
+  migrate:refresh    
+  migrate:reset      
+  migrate:rollback   
+  migrate:status     
+ queue
+  queue:flush        Delete all message from failed queue.
+  queue:info         Delete all message from failed queue.
+  queue:reload       Reload all failed message into waiting queue.
  vendor
   vendor:publish     Publish any publishable configs from vendor packages.
 ```x
