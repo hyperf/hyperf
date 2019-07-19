@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigAliyunAcm\Process;
 
 use Hyperf\ConfigAliyunAcm\ClientInterface;
+use Hyperf\ConfigAliyunAcm\PipleMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -75,7 +76,7 @@ class ConfigFetcherProcess extends AbstractProcess
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($diff, $workerId);
+                    $this->server->sendMessage(new PipleMessage($diff), $workerId);
                 }
             }
             sleep($this->config->get('aliyun_acm.interval', 5));
