@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigAliyunAcm\Listener;
 
 use Hyperf\ConfigAliyunAcm\ClientInterface;
-use Hyperf\ConfigAliyunAcm\PipleMessage;
+use Hyperf\ConfigAliyunAcm\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
@@ -63,7 +63,7 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipleMessage) {
+        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
             foreach ($event->data->data ?? [] as $key => $value) {
                 $this->config->set($key, $value);
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));

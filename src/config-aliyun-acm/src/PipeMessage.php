@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigAliyunAcm;
 
-class PipleMessage
+class PipeMessage
 {
     /**
      * @var array
