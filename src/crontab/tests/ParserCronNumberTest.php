@@ -35,7 +35,7 @@ class ParserCronNumberTest extends TestCase
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59);
         $expected = [];
-        for ($i = 0; $i < 60; $i++) {
+        for ($i = 0; $i < 60; ++$i) {
             $expected[] = $i;
         }
         $this->assertSame($expected, $result);
@@ -61,7 +61,7 @@ class ParserCronNumberTest extends TestCase
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59, 12);
         $expected = [];
-        for ($i = 12; $i < 60; $i++) {
+        for ($i = 12; $i < 60; ++$i) {
             $expected[] = $i;
         }
         $this->assertSame($expected, $result);

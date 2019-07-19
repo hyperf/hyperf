@@ -23,7 +23,6 @@ use Swoole\Server;
 
 class CrontabDispatcherProcess extends AbstractProcess
 {
-
     /**
      * @var string
      */

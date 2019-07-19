@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
@@ -40,7 +41,7 @@ class ProcessStrategy extends AbstractStrategy
         $server = $this->serverFactory->getServer()->getServer();
         if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
             $workerId = $this->getNextWorkerId($server);
-            $server->sendMessage(serialize([
+            $server->sendMessage(new PipeMessage([
                 'identifier' => 'crontab',
                 'type' => 'callback',
                 'callable' => [Executor::class, 'execute'],

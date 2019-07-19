@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\PipeMessage;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
@@ -54,22 +55,21 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        /**
-         * @var OnPipeMessage
-         */
-        $data = @unserialize($event->data);
-        if (! $this->isValidData($data)) {
-            return;
-        }
-        try {
-            switch ($data['type']) {
-                case 'callback':
-                    $this->handleCallable($data);
-                    break;
+        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+            $data = $event->data->data;
+            if (! $this->isValidData($data)) {
+                return;
             }
-        } catch (\Throwable $throwable) {
-            if ($this->logger) {
-                $this->logger->error($throwable->getMessage());
+            try {
+                switch ($data['type']) {
+                    case 'callback':
+                        $this->handleCallable($data);
+                        break;
+                }
+            } catch (\Throwable $throwable) {
+                if ($this->logger) {
+                    $this->logger->error($throwable->getMessage());
+                }
             }
         }
     }
@@ -88,7 +88,7 @@ class OnPipeMessageListener implements ListenerInterface
     private function isValidData($data): bool
     {
         return is_array($data)
-        && isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
-        && $data['identifier'] === 'crontab';
+            && isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
+            && $data['identifier'] === 'crontab';
     }
 }
