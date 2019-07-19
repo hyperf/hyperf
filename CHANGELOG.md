@@ -1,5 +1,8 @@
 # v1.0.6 - TBD
 
+## Fixed
+
+- [#240](https://github.com/hyperf-cloud/hyperf/pull/240) Fixed OnPipeMessage event will be dispatch by another listener.
 
 # v1.0.5 - 2019-07-07
 
