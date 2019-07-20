@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\PipeMessage;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
@@ -54,41 +55,31 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        /**
-         * @var OnPipeMessage
-         */
-        $data = @unserialize($event->data);
-        if (! $this->isValidData($data)) {
-            return;
-        }
-        try {
-            switch ($data['type']) {
-                case 'callback':
-                    $this->handleCallable($data);
-                    break;
-            }
-        } catch (\Throwable $throwable) {
-            if ($this->logger) {
-                $this->logger->error($throwable->getMessage());
+        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+            /** @var PipeMessage $data */
+            $data = $event->data;
+            try {
+                switch ($data->type) {
+                    case 'callback':
+                        $this->handleCallable($data);
+                        break;
+                }
+            } catch (\Throwable $throwable) {
+                if ($this->logger) {
+                    $this->logger->error($throwable->getMessage());
+                }
             }
         }
     }
 
     private function handleCallable($data): void
     {
-        $instance = $this->container->get($data['callable'][0]);
-        $method = $data['callable'][1] ?? null;
+        $instance = $this->container->get($data->callable[0]);
+        $method = $data->callable[1] ?? null;
         if (! $instance || ! $method || ! method_exists($instance, $method)) {
             return;
         }
-        $crontab = $data['data'] ?? null;
+        $crontab = $data->data ?? null;
         $crontab instanceof Crontab && $instance->{$method}($crontab);
-    }
-
-    private function isValidData($data): bool
-    {
-        return is_array($data)
-        && isset($data['identifier'], $data['type'], $data['callable'], $data['data'])
-        && $data['identifier'] === 'crontab';
     }
 }

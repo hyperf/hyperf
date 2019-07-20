@@ -15,6 +15,7 @@ namespace Hyperf\Task\Listener;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnTask;
+use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
@@ -56,13 +57,18 @@ class OnTaskListener implements ListenerInterface
                 if ($this->container->has($class)) {
                     $obj = $this->container->get($class);
                     $result = $obj->{$method}(...$data->arguments);
-                    $event->setResult($result);
+                    $this->setResult($event, $result);
                     return;
                 }
             }
 
             $result = call($data->callback, $data->arguments);
-            $event->setResult($result);
+            $this->setResult($event, $result);
         }
+    }
+
+    protected function setResult(OnTask $event, $result)
+    {
+        $event->setResult(new Finish($result));
     }
 }

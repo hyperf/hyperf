@@ -10,29 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Framework\Event;
+namespace Hyperf\Task;
 
-class OnPipeMessage
+class Finish
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $fromWorkerId;
-
     /**
      * @var mixed
      */
     public $data;
 
-    public function __construct(\Swoole\Server $server, int $fromWorkerId, $data)
+    public function __construct($data)
     {
-        $this->server = $server;
-        $this->fromWorkerId = $fromWorkerId;
         $this->data = $data;
     }
 }
