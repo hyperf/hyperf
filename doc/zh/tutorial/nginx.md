@@ -59,7 +59,7 @@ server
         listen 20182 ;
         server_name websocket.la5.com ;
 location    /   {
-    # websocket 必须头参数
+    # websocket 必须的头参数
     proxy_http_version 1.1;
     proxy_set_header Upgrade websocket;
     proxy_set_header Connection "Upgrade";
@@ -69,7 +69,7 @@ location    /   {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;
     
-    # 客户端与服务端无任何交互，60s在自动断开连接，根据实际业务场景设置
+    # 客户端与服务端无任何交互，60s后自动断开连接，根据实际业务场景设置
     proxy_read_timeout  60s ;
     
     # 最后，执行代理访问真实服务器
