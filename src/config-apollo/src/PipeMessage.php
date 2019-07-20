@@ -17,10 +17,35 @@ class PipeMessage
     /**
      * @var array
      */
-    public $data;
+    public $configurations;
+
+    /**
+     * @var string
+     */
+    public $releaseKey;
+
+    /**
+     * @var string
+     */
+    public $namespace;
 
     public function __construct($data)
     {
-        $this->data = $data;
+        if (isset($data['configurations'], $data['releaseKey'], $data['namespace'])) {
+            $this->configurations = $data['configurations'];
+            $this->releaseKey = $data['releaseKey'];
+            $this->namespace = $data['namespace'];
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        if (! $this->configurations || ! $this->releaseKey || ! $this->namespace) {
+            return false;
+        }
+        return true;
     }
 }

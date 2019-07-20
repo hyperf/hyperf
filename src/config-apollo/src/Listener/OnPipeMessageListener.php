@@ -66,25 +66,23 @@ class OnPipeMessageListener implements ListenerInterface
     public function process(object $event)
     {
         if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
-            $data = $event->data->data;
+            /** @var PipeMessage $data */
+            $data = $event->data;
 
-            /* @var OnPipeMessage $event */
-            if (! isset($data['configurations'], $data['releaseKey'], $data['namespace'])) {
+            if (! $data->isValid()) {
                 return;
             }
-            if (! $data['configurations'] || ! $data['releaseKey'] || ! $data['namespace']) {
-                return;
-            }
+
             $option = $this->client->getOption();
             if (! $option instanceof Option) {
                 return;
             }
-            $cacheKey = $option->buildCacheKey($data['namespace']);
+            $cacheKey = $option->buildCacheKey($data->namespace);
             $cachedKey = ReleaseKey::get($cacheKey);
-            if ($cachedKey && $cachedKey === $data['releaseKey']) {
+            if ($cachedKey && $cachedKey === $data->releaseKey) {
                 return;
             }
-            foreach ($data['configurations'] ?? [] as $key => $value) {
+            foreach ($data->configurations ?? [] as $key => $value) {
                 $this->config->set($key, $value);
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
