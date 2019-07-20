@@ -94,7 +94,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 ->withBody(new SwooleStream($body));
 
             $response->getSwooleResponse()->trailer('grpc-status', '0');
-            $response->getSwooleResponse()->tariler('grpc-message', '');
+            $response->getSwooleResponse()->trailer('grpc-message', '');
 
             return $response;
         }
