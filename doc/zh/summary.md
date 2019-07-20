@@ -83,7 +83,7 @@
   * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
-  
+  * [Nginx 代理Http和Websocket](zh/tutorial/nginx.md)
 * Awesome Hyperf
 
   * [协程组件库](zh/awesome-components.md)
