@@ -41,12 +41,11 @@ class ProcessStrategy extends AbstractStrategy
         $server = $this->serverFactory->getServer()->getServer();
         if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
             $workerId = $this->getNextWorkerId($server);
-            $server->sendMessage(new PipeMessage([
-                'identifier' => 'crontab',
-                'type' => 'callback',
-                'callable' => [Executor::class, 'execute'],
-                'data' => $crontab,
-            ]), $workerId);
+            $server->sendMessage(new PipeMessage(
+                'callback',
+                [Executor::class, 'execute'],
+                $crontab
+            ), $workerId);
         }
     }
 
