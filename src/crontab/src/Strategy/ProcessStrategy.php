@@ -12,43 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab\Strategy;
 
-use Carbon\Carbon;
-use Hyperf\Crontab\Crontab;
-use Hyperf\Crontab\PipeMessage;
-use Hyperf\Server\ServerFactory;
-use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-class ProcessStrategy extends AbstractStrategy
+class ProcessStrategy extends WorkerStrategy
 {
-    /**
-     * @var ServerFactory
-     */
-    protected $serverFactory;
-
-    /**
-     * @var int
-     */
-    protected $currentWorkerId = -1;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->serverFactory = $container->get(ServerFactory::class);
-    }
-
-    public function dispatch(Crontab $crontab)
-    {
-        $server = $this->serverFactory->getServer()->getServer();
-        if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
-            $workerId = $this->getNextWorkerId($server);
-            $server->sendMessage(new PipeMessage(
-                'callback',
-                [Executor::class, 'execute'],
-                $crontab
-            ), $workerId);
-        }
-    }
-
     protected function getNextWorkerId(Server $server): int
     {
         ++$this->currentWorkerId;
