@@ -20,7 +20,13 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Task extends AbstractAnnotation
 {
+    /**
+     * @var int
+     */
     public $workerId = -1;
 
+    /**
+     * @var int
+     */
     public $timeout = 10;
 }

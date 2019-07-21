@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Task\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnTask;
 use Hyperf\Task\Finish;
@@ -20,9 +19,6 @@ use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class OnTaskListener implements ListenerInterface
 {
     /**
