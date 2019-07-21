@@ -80,6 +80,13 @@ Please enter the executor: docker-ssh, shell, docker+machine, docker-ssh+machine
 shell
 ```
 
+### 修改 gitlab-runner 并发执行个数
+
+```
+$ vim /etc/gitlab-runner/config.toml
+concurrent = 5
+```
+
 ## 初始化 Swarm 集群
 
 登录另外一台机器，初始化集群
