@@ -2,7 +2,11 @@
 
 ## Added
 
-- [245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
+- [#245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
+
+## Changed
+
+- [#247](https://github.com/hyperf-cloud/hyperf/pull/247) Use Use `WorkerStrategy` as the default crontab strategy.
 
 ## Fixed
 
