@@ -12,6 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Task\Exception;
 
-class TaskExecuteTimeoutException extends \RuntimeException
+class TaskExecuteTimeoutException extends TaskException
 {
 }
