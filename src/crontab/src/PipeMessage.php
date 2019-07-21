@@ -20,22 +20,16 @@ class PipeMessage
     public $type;
 
     /**
-     * @var callable
+     * @var callable|array
      */
     public $callable;
 
     /**
-     * @var array
+     * @var \Hyperf\Crontab\Crontab
      */
     public $data;
 
-    /**
-     * PipeMessage constructor.
-     * @param $type
-     * @param $callable
-     * @param array $data
-     */
-    public function __construct($type, $callable, array $data)
+    public function __construct(string $type, $callable, Crontab $data)
     {
         $this->type = $type;
         $this->callable = $callable;
