@@ -1,5 +1,9 @@
 # v1.0.6 - TBD
 
+## Added
+
+- [245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
+
 ## Fixed
 
 - [#235](https://github.com/hyperf-cloud/hyperf/pull/235) Added default exception handler for `grpc-server` and optimized code.
