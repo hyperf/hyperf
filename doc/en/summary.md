@@ -8,7 +8,7 @@
 
   * [Installation](en/quick-start/install.md)
   * [Quick Start](en/quick-start/overview.md)
-  * [Questions](en/quick-start/questions.md)
+  * [FAQ](en/quick-start/questions.md)
   * [Notice for use](en/quick-start/important.md)
   
 * Core Architecture
