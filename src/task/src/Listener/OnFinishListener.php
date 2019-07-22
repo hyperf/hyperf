@@ -12,16 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Task\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnFinish;
 use Hyperf\Task\ChannelFactory;
 use Hyperf\Task\Finish;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class OnFinishListener implements ListenerInterface
 {
     /**

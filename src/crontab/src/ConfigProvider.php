@@ -14,8 +14,8 @@ namespace Hyperf\Crontab;
 
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Listener\OnPipeMessageListener;
-use Hyperf\Crontab\Strategy\ProcessStrategy;
 use Hyperf\Crontab\Strategy\StrategyInterface;
+use Hyperf\Crontab\Strategy\WorkerStrategy;
 
 class ConfigProvider
 {
@@ -23,7 +23,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                StrategyInterface::class => ProcessStrategy::class,
+                StrategyInterface::class => WorkerStrategy::class,
             ],
             'listeners' => [
                 CrontabRegisterListener::class,

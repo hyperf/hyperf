@@ -38,7 +38,7 @@ class TaskExecutor
         $this->factory = $factory;
     }
 
-    public function setServer(Server $server)
+    public function setServer(Server $server): void
     {
         $this->server = $server;
         if (! isset($server->setting['task_worker_num']) || $server->setting['task_worker_num'] <= 0) {
@@ -56,17 +56,11 @@ class TaskExecutor
         return $this->factory->pop($taskId, $timeout);
     }
 
-    /**
-     * @return bool
-     */
     public function isTaskEnvironment(): bool
     {
         return $this->isTaskEnvironment;
     }
 
-    /**
-     * @param bool $isTaskEnvironment
-     */
     public function setIsTaskEnvironment(bool $isTaskEnvironment): void
     {
         $this->isTaskEnvironment = $isTaskEnvironment;

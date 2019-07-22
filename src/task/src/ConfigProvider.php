@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Task;
 
+use Hyperf\Task\Listener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -20,6 +22,11 @@ class ConfigProvider
             'dependencies' => [
             ],
             'commands' => [
+            ],
+            'listeners' => [
+                Listener\InitServerListener::class,
+                Listener\OnFinishListener::class,
+                Listener\OnTaskListener::class,
             ],
             'scan' => [
                 'paths' => [

@@ -14,8 +14,14 @@ namespace Hyperf\Task;
 
 class Task
 {
+    /**
+     * @var callable|array
+     */
     public $callback;
 
+    /**
+     * @var array
+     */
     public $arguments;
 
     public function __construct($callback, array $arguments = [])

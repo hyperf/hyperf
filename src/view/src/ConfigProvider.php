@@ -18,6 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
+                RenderInterface::class => Render::class,
             ],
             'commands' => [
             ],
