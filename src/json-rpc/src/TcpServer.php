@@ -18,7 +18,6 @@ use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,6 +36,11 @@ class TcpServer extends Server
      */
     protected $packer;
 
+    /**
+     * @var \Hyperf\JsonRpc\ResponseBuilder
+     */
+    protected $responseBuilder;
+
     public function __construct(
         string $serverName,
         string $coreHandler,
@@ -47,8 +51,13 @@ class TcpServer extends Server
     ) {
         parent::__construct($serverName, $coreHandler, $container, $dispatcher, $logger);
         $this->protocolManager = $protocolManager;
-        $packerClass = $this->protocolManager->getPacker('jsonrpc');
+        $protocolName = 'jsonrpc';
+        $packerClass = $this->protocolManager->getPacker($protocolName);
         $this->packer = $this->container->get($packerClass);
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $container->get($this->protocolManager->getDataFormatter($protocolName)),
+            'packer' => $this->packer,
+        ]);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
@@ -62,10 +71,7 @@ class TcpServer extends Server
         $class = $this->protocolManager->getPacker('jsonrpc');
         $packer = $this->container->get($class);
         $data = $this->packer->unpack($data);
-        if (isset($data['jsonrpc'])) {
-            return $this->buildJsonRpcRequest($fd, $fromId, $data);
-        }
-        throw new InvalidArgumentException('Doesn\'t match JSON RPC protocol.');
+        return $this->buildJsonRpcRequest($fd, $fromId, $data);
     }
 
     protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)
@@ -80,9 +86,14 @@ class TcpServer extends Server
         [$type, $port] = ServerManager::get($this->serverName);
 
         $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
-        return (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
+        $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
             ->withAttribute('fromId', $fromId)
             ->withAttribute('data', $data)
-            ->withParsedBody($data['params']);
+            ->withAttribute('request_id', $data['id'] ?? null)
+            ->withParsedBody($data['params'] ?? '');
+        if (! isset($data['jsonrpc'])) {
+            return $this->responseBuilder->buildErrorResponse($request, -32600);
+        }
+        return $request;
     }
 }
