@@ -16,6 +16,7 @@ use Hyperf\Consul\Agent;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
@@ -44,7 +45,7 @@ abstract class AbstractServiceClient
      *
      * @var string
      */
-    protected $protocol = 'jsonrpc';
+    protected $protocol = 'jsonrpc-http';
 
     /**
      * The load balancer of the client, this name of the load balancer
@@ -89,6 +90,11 @@ abstract class AbstractServiceClient
      */
     protected $config;
 
+    /**
+     * @var null|\Hyperf\Contract\IdGeneratorInterface
+     */
+    protected $idGenerator;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -101,13 +107,24 @@ abstract class AbstractServiceClient
         $this->client = make(Client::class)
             ->setPacker($this->createPacker())
             ->setTransporter($transporter);
+        if ($container->has(IdGeneratorInterface::class)) {
+            $this->idGenerator = $container->get(IdGeneratorInterface::class);
+        }
     }
 
-    protected function __request(string $method, array $params)
+    protected function __request(string $method, array $params, ?string $id = null)
     {
-        $response = $this->client->send($this->__generateData($method, $params));
-        if (is_array($response) && isset($response['result'])) {
-            return $response['result'];
+        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
+            $id = $this->idGenerator->generate();
+        }
+        $response = $this->client->send($this->__generateData($method, $params, $id));
+        if (is_array($response)) {
+            if (isset($response['result'])) {
+                return $response['result'];
+            }
+            if (isset($response['error'])) {
+                return $response['error'];
+            }
         }
         throw new RuntimeException('Invalid response.');
     }
@@ -120,9 +137,9 @@ abstract class AbstractServiceClient
         return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
-    protected function __generateData(string $methodName, array $params)
+    protected function __generateData(string $methodName, array $params, ?string $id)
     {
-        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params]);
+        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
