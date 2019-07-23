@@ -12,7 +12,6 @@
 
 - [#235](https://github.com/hyperf-cloud/hyperf/pull/235) Added default exception handler for `grpc-server` and optimized code.
 - [#240](https://github.com/hyperf-cloud/hyperf/pull/240) Fixed OnPipeMessage event will be dispatch by another listener.
-- [#252](https://github.com/hyperf-cloud/hyperf/pull/252) Fixed view render not implement interface.
 
 # v1.0.5 - 2019-07-07
 
