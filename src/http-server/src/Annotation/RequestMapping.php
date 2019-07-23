@@ -48,7 +48,11 @@ class RequestMapping extends Mapping
                 // Explode a string to a array
                 $this->methods = explode(',', Str::upper(str_replace(' ', '', $value['methods'])));
             } else {
-                $this->methods = $value['methods'];
+                $methods = [];
+                foreach ($value['methods'] as $method) {
+                    $methods[] = Str::upper(str_replace(' ', '', $method));
+                }
+                $this->methods = $methods;
             }
         }
     }
