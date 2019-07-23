@@ -68,6 +68,7 @@ class HttpServer extends Server
             if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
                 $this->responseBuilder->buildErrorResponse($request, -32700);
             }
+            // @TODO Optimize the error handling of encode.
             $content = $this->packer->unpack($psr7Request->getBody()->getContents());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
                 $this->responseBuilder->buildErrorResponse($request, -32600);
@@ -75,13 +76,14 @@ class HttpServer extends Server
         }
         $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
             ->withParsedBody($content['params'] ?? null)
-            ->withAttribute('data', $content ?? []);
+            ->withAttribute('data', $content ?? [])
+            ->withAttribute('request_id', $content['id'] ?? null);
         Context::set(ServerRequestInterface::class, $psr7Request);
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
     }
 
-    protected function isHealthCheck(RequestInterface $request)
+    protected function isHealthCheck(RequestInterface $request): bool
     {
         return $request->getHeaderLine('user-agent') === 'Consul Health Check';
     }
