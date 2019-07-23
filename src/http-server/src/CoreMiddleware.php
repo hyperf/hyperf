@@ -146,15 +146,18 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|string $response
+     * @param array|string|Jsonable|Arrayable $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
         if (is_string($response)) {
-            return $this->response()->withBody(new SwooleStream($response));
+            return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
 
-        if (is_array($response)) {
+        if (is_array($response) || $response instanceof Arrayable) {
+            if ($response instanceof Arrayable) {
+                $response = $response->toArray();
+            }
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
@@ -166,7 +169,7 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream((string) $response));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
     }
 
     /**
