@@ -3,7 +3,7 @@
 ## Added
 
 - [#245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
-- [#254](https://github.com/hyperf-cloud/hyperf/pull/254) Added support for array value of `RequestMapping::$methods`, `@RequestMapping(methods={"GET"})` and `@RequestMapping(methods={RequestMapping::GET})` is available now.
+- [#254](https://github.com/hyperf-cloud/hyperf/pull/254) Added support for array value of `RequestMapping::$methods`, `@RequestMapping(methods={"GET"})` and `@RequestMapping(methods={RequestMapping::GET})` are available now.
 
 ## Changed
 
