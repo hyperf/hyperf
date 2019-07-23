@@ -222,6 +222,14 @@ class RegisterServiceListener implements ListenerInterface
 
     private function getInternalIp(): string
     {
-        return gethostbyname(gethostname());
+        $ips = swoole_get_local_ip();
+        if (is_array($ips)) {
+            return current($ips);
+        }
+        $ip = gethostbyname(gethostname());
+        if (is_string($ip)) {
+            return $ip;
+        }
+        throw new \RuntimeException('Can not get the internal IP.');
     }
 }
