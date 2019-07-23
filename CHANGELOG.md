@@ -5,10 +5,12 @@
 - [#245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
 - [#254](https://github.com/hyperf-cloud/hyperf/pull/254) Added support for array value of `RequestMapping::$methods`, `@RequestMapping(methods={"GET"})` and `@RequestMapping(methods={RequestMapping::GET})` are available now.
 - [#255](https://github.com/hyperf-cloud/hyperf/pull/255) Transfer `Hyperf\Utils\Contracts\Arrayable` result of Request to Response automatically, and added `text/plain` content-type header for string Response.
+- [#256](https://github.com/hyperf-cloud/hyperf/pull/256) If `Hyperf\Contract\IdGeneratorInterface` exist, the `json-rpc` client will generate a Request ID via IdGenerator automatically, and stored in Request attibute. Also added support for service register and health checks of `jsonrpc` TCP protocol.
 
 ## Changed
 
 - [#247](https://github.com/hyperf-cloud/hyperf/pull/247) Use Use `WorkerStrategy` as the default crontab strategy.
+- [#256](https://github.com/hyperf-cloud/hyperf/pull/256) Optimized error handling of json-rpc, and will response a standard json-rpc error object when the rpc method does not exist.
 
 ## Fixed
 
