@@ -150,6 +150,7 @@
     "autoload-dev": {
         "psr-4": {
             "HyperfTest\\AsyncQueue\\": "./src/async-queue/tests/",
+            "HyperfTest\\Cache\\": "./src/cache/tests/",
             "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests/",
             "HyperfTest\\Constants\\": "./src/constants/tests/",
             "HyperfTest\\Consul\\": "./src/consul/tests/",
@@ -182,8 +183,8 @@
             "config": [
                 "Hyperf\\Amqp\\ConfigProvider",
                 "Hyperf\\AsyncQueue\\ConfigProvider",
-                "Hyperf\\CircuitBreaker\\ConfigProvider",
                 "Hyperf\\Cache\\ConfigProvider",
+                "Hyperf\\CircuitBreaker\\ConfigProvider",
                 "Hyperf\\Config\\ConfigProvider",
                 "Hyperf\\ConfigApollo\\ConfigProvider",
                 "Hyperf\\Devtool\\ConfigProvider",
