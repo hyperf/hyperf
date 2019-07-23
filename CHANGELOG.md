@@ -2,6 +2,8 @@
 
 ## Added
 
+- [#203](https://github.com/hyperf-cloud/hyperf/pull/203) [#236](https://github.com/hyperf-cloud/hyperf/pull/236) [#247](https://github.com/hyperf-cloud/hyperf/pull/247) [#252](https://github.com/hyperf-cloud/hyperf/pull/252) Added View component, support for Blade engine and Smarty engine. 
+- [#203](https://github.com/hyperf-cloud/hyperf/pull/203) Added support for Swoole Task mechanism.
 - [#245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
 - [#254](https://github.com/hyperf-cloud/hyperf/pull/254) Added support for array value of `RequestMapping::$methods`, `@RequestMapping(methods={"GET"})` and `@RequestMapping(methods={RequestMapping::GET})` are available now.
 - [#255](https://github.com/hyperf-cloud/hyperf/pull/255) Transfer `Hyperf\Utils\Contracts\Arrayable` result of Request to Response automatically, and added `text/plain` content-type header for string Response.
@@ -9,14 +11,14 @@
 
 ## Changed
 
-- [#247](https://github.com/hyperf-cloud/hyperf/pull/247) Use Use `WorkerStrategy` as the default crontab strategy.
-- [#256](https://github.com/hyperf-cloud/hyperf/pull/256) Optimized error handling of json-rpc, and will response a standard json-rpc error object when the rpc method does not exist.
+- [#247](https://github.com/hyperf-cloud/hyperf/pull/247) Use `WorkerStrategy` as the default crontab strategy.
+- [#256](https://github.com/hyperf-cloud/hyperf/pull/256) Optimized error handling of json-rpc, server will response a standard json-rpc error object when the rpc method does not exist.
 
 ## Fixed
 
 - [#235](https://github.com/hyperf-cloud/hyperf/pull/235) Added default exception handler for `grpc-server` and optimized code.
 - [#240](https://github.com/hyperf-cloud/hyperf/pull/240) Fixed OnPipeMessage event will be dispatch by another listener.
-- [#257](https://github.com/hyperf-cloud/hyperf/pull/257) Fixed cannot get the internal ip in some special environment.
+- [#257](https://github.com/hyperf-cloud/hyperf/pull/257) Fixed cannot get the Internal IP in some special environment.
 
 # v1.0.5 - 2019-07-07
 
