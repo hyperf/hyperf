@@ -16,6 +16,7 @@
 
 - [#235](https://github.com/hyperf-cloud/hyperf/pull/235) Added default exception handler for `grpc-server` and optimized code.
 - [#240](https://github.com/hyperf-cloud/hyperf/pull/240) Fixed OnPipeMessage event will be dispatch by another listener.
+- [#257](https://github.com/hyperf-cloud/hyperf/pull/257) Fixed cannot get the internal ip in some special environment.
 
 # v1.0.5 - 2019-07-07
 
