@@ -19,7 +19,7 @@ server {
     server_name proxy.hyperf.io;
 
     location / {
-        # 将客户端的 Host 和头域信息一并转发到对应节点  
+        # 将客户端的 Host 和 IP 信息一并转发到对应节点  
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
