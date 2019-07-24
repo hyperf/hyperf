@@ -139,7 +139,7 @@ class Connection extends BaseConnection implements ConnectionInterface
             $class = AMQPSwooleConnection::class;
         }
 
-        $this->lastHeartbeatTime = 0;
+        $this->lastHeartbeatTime = microtime(true);
         return new $class($this->config['host'] ?? 'localhost', $this->config['port'] ?? 5672, $this->config['user'] ?? 'guest', $this->config['password'] ?? 'guest', $this->config['vhost'] ?? '/', $this->params->isInsist(), $this->params->getLoginMethod(), $this->params->getLoginResponse(), $this->params->getLocale(), $this->params->getConnectionTimeout(), $this->params->getReadWriteTimeout(), $this->params->getContext(), $this->params->isKeepalive(), $this->params->getHeartbeat());
     }
 
@@ -149,13 +149,8 @@ class Connection extends BaseConnection implements ConnectionInterface
             return false;
         }
 
-        $lastHeartbeatTime = $this->lastHeartbeatTime;
-        $currentTime = microtime(true);
-
-        if ($lastHeartbeatTime && $lastHeartbeatTime > 0) {
-            if ($currentTime - $lastHeartbeatTime > $this->params->getHeartbeat()) {
-                return true;
-            }
+        if (microtime(true) - $this->lastHeartbeatTime > $this->params->getHeartbeat()) {
+            return true;
         }
 
         return false;
