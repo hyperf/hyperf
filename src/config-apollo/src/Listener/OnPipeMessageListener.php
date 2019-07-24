@@ -86,7 +86,7 @@ class OnPipeMessageListener implements ListenerInterface
                 $this->config->set($key, $value);
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
-            ReleaseKey::set($cacheKey, $data['releaseKey']);
+            ReleaseKey::set($cacheKey, $data->releaseKey);
         }
     }
 }
