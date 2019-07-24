@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer\Stub;
 
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\CoreMiddleware;
+use Psr\Http\Message\ResponseInterface;
 
 class CoreMiddlewareStub extends CoreMiddleware
 {
@@ -20,4 +22,10 @@ class CoreMiddlewareStub extends CoreMiddleware
     {
         return parent::parseParameters($controller, $action, $arguments);
     }
+
+    protected function response(): ResponseInterface
+    {
+        return new Response();
+    }
+
 }

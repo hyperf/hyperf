@@ -20,7 +20,7 @@ use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\EngineNotFindException;
 use Psr\Container\ContainerInterface;
 
-class Render
+class Render implements RenderInterface
 {
     /**
      * @var ContainerInterface

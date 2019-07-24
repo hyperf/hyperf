@@ -37,6 +37,11 @@ class HttpServer extends Server
      */
     protected $packer;
 
+    /**
+     * @var \Hyperf\JsonRpc\ResponseBuilder
+     */
+    protected $responseBuilder;
+
     public function __construct(
         string $serverName,
         string $coreHandler,
@@ -46,8 +51,13 @@ class HttpServer extends Server
     ) {
         parent::__construct($serverName, $coreHandler, $container, $dispatcher);
         $this->protocolManager = $protocolManager;
-        $packerClass = $this->protocolManager->getPacker('jsonrpc-http');
+        $protocolName = 'jsonrpc-http';
+        $packerClass = $this->protocolManager->getPacker($protocolName);
         $this->packer = $this->container->get($packerClass);
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $container->get($this->protocolManager->getDataFormatter($protocolName)),
+            'packer' => $this->packer,
+        ]);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
@@ -56,22 +66,24 @@ class HttpServer extends Server
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         if (! $this->isHealthCheck($psr7Request)) {
             if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
-                throw new InvalidArgumentException('Invalid Json RPC request.');
+                $this->responseBuilder->buildErrorResponse($request, -32700);
             }
+            // @TODO Optimize the error handling of encode.
             $content = $this->packer->unpack($psr7Request->getBody()->getContents());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
-                throw new InvalidArgumentException('Invalid Json RPC request.');
+                $this->responseBuilder->buildErrorResponse($request, -32600);
             }
         }
         $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
             ->withParsedBody($content['params'] ?? null)
-            ->withAttribute('data', $content ?? []);
+            ->withAttribute('data', $content ?? [])
+            ->withAttribute('request_id', $content['id'] ?? null);
         Context::set(ServerRequestInterface::class, $psr7Request);
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
     }
 
-    protected function isHealthCheck(RequestInterface $request)
+    protected function isHealthCheck(RequestInterface $request): bool
     {
         return $request->getHeaderLine('user-agent') === 'Consul Health Check';
     }

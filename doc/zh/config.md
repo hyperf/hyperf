@@ -1,6 +1,6 @@
 # 配置
 
-当您使用的是 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目创建的项目时，或基于 [hyperf-cloud/installer](https://github.com/hyperf-cloud/installer) 创建的项目，Hyperf 的所有配置文件均处于根目录下的 `config` 文件夹内，每个选项都有说明，您可以随时查看并熟悉有哪些选项可以使用。
+当您使用的是 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目创建的项目时，Hyperf 的所有配置文件均处于根目录下的 `config` 文件夹内，每个选项都有说明，您可以随时查看并熟悉有哪些选项可以使用。
 
 # 安装
 

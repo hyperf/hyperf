@@ -39,7 +39,7 @@ class Client
         $packer = $this->getPacker();
         $packedData = $packer->pack($data);
         $response = $this->getTransporter()->send($packedData);
-        return $packer->unpack($response);
+        return $packer->unpack((string) $response);
     }
 
     public function getPacker(): PackerInterface

@@ -184,3 +184,51 @@ public function updateUserBook(int $id)
 }
 ```
 
+## 缓存驱动
+
+### Redis驱动
+
+`Hyperf\Cache\Driver\RedisDriver` 会把缓存数据存放到 `Redis` 中，需要用户配置相应的 `Redis配置`。此方式为默认方式。
+
+### 协程内存驱动
+
+> 本驱动乃Beta版本，请谨慎使用。
+
+如果您需要将数据缓存到 `Context` 中，可以尝试此驱动。例如以下应用场景 `Demo::get` 会在多个地方调用多次，但是又不想每次都到 `Redis` 中进行查询。
+
+```php
+<?php
+use Hyperf\Cache\Annotation\Cacheable;
+
+class Demo {
+    
+    public function get($userId, $id)
+    {
+        return $this->getArray($userId)[$id] ?? 0;
+    }
+
+    /**
+     * @Cacheable(prefix="test", group="co")
+     * @param int $userId
+     * @return array
+     */
+    public function getArray($userId)
+    {
+        return $this->redis->hGetAll($userId);
+    }
+}
+```
+
+对应配置如下：
+
+```php
+<?php
+
+return [
+    'co' => [
+        'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
+        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+    ],
+];
+```
+

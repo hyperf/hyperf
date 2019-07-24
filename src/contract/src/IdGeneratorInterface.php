@@ -10,13 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Rpc\Contract;
+namespace Hyperf\Contract;
 
-interface DataFormatterInterface
+interface IdGeneratorInterface
 {
-    public function formatRequest($data);
-
-    public function formatResponse($data);
-
-    public function formatErrorResponse($data);
+    public function generate(): string;
 }

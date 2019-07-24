@@ -39,6 +39,7 @@ namespace App\JsonRpc;
 use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
+ * 注意，如希望通过服务中心来管理服务，需在注解内增加 publishTo 属性
  * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
 class CalculatorService implements CalculatorServiceInterface
@@ -131,11 +132,11 @@ return [
 
 配置完成后，在启动服务时，Hyperf 会自动地将 `@RpcService` 定义了 `publishTo` 属性为 `consul` 的服务注册到服务中心去。
 
-> 目前仅支持 `jsonrpc-http` 协议发布到服务中心去，其它协议的健康检查尚未实现
+> 目前仅支持 `jsonrpc` 和 `jsonrpc-http` 协议发布到服务中心去，其它协议尚未实现服务注册
 
 ## 定义服务消费者
 
-一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要定义一个类及相关属性即可。（v1.1会提供动态代理实现的客户端，使之更加简单便捷）
+一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要定义一个类及相关属性即可。（后续版本迭代会提供动态代理实现的客户端，使之更加简单便捷）
 
 ```php
 <?php
@@ -144,7 +145,7 @@ namespace App\JsonRpc;
 
 use Hyperf\RpcClient\AbstractServiceClient;
 
-class CalculatorService extends AbstractServiceClient implements CalculatorServiceInterface
+class CalculatorServiceConsumer extends AbstractServiceClient implements CalculatorServiceInterface
 {
     /**
      * 定义对应服务提供者的服务名称
@@ -189,12 +190,12 @@ return [
 ```
 
 
-这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorService` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
 
 ```php
 return [
     'dependencies' => [
-        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorService::class,
+        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
     ],
 ];
 ```

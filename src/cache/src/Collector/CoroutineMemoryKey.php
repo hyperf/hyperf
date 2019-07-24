@@ -10,13 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Rpc\Contract;
+namespace Hyperf\Cache\Collector;
 
-interface DataFormatterInterface
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Traits\StaticInstance;
+
+class CoroutineMemoryKey extends Collection
 {
-    public function formatRequest($data);
-
-    public function formatResponse($data);
-
-    public function formatErrorResponse($data);
+    use StaticInstance;
 }
