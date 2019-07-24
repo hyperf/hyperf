@@ -35,6 +35,7 @@ return [
 ];
 
 ```
+
 ## 使用
 
 Task 组件提供了 `主动方法投递` 和 `注解投递` 两种使用方法。
@@ -66,6 +67,7 @@ $exec = $container->get(TaskExecutor::class);
 $result = $exec->execute(new Task([MethodTask::class, 'handle'], Coroutine::id()));
 
 ```
+
 ### 使用注解
 
 通过 `主动方法投递` 时，并不是特别直观，这里我们实现了对应的 `@Task` 注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
@@ -110,4 +112,88 @@ Swoole 暂时没有协程化的函数列表
 - pdo_ori
 - pdo_odbc
 - pdo_firebird
+
+### MongoDB
+
+> 因为 `MongoDB` 没有办法被 `hook`，所以我们可以通过 `Task` 来调用，下面就简单介绍一下如何通过注解方式调用 `MongoDB`。
+
+以下我们实现两个方法 `insert` 和 `query`，其中需要注意的是 `manager` 方法不能使用 `Task`，
+因为 `Task` 会在对应的 `Task进程` 中处理，然后将数据从 `Task进程` 返回到 `Worker进程` 。
+所以 `Task方法` 的入参和出参最好不要携带任何 `IO`，比如返回一个实例化后的 `Redis` 等等。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Task;
+
+use Hyperf\Task\Annotation\Task;
+use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\Manager;
+use MongoDB\Driver\Query;
+use MongoDB\Driver\WriteConcern;
+
+class MongoTask
+{
+    /**
+     * @var Manager
+     */
+    public $manager;
+
+    /**
+     * @Task
+     * @param string $namespace
+     * @param array $document
+     */
+    public function insert($namespace, $document)
+    {
+        $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
+        $bulk = new BulkWrite();
+        $bulk->insert($document);
+
+        $result = $this->manager()->executeBulkWrite($namespace, $bulk, $writeConcern);
+        return $result->getUpsertedCount();
+    }
+
+    /**
+     * @Task
+     * @param string $namespace
+     * @param array $filter
+     * @param array $options
+     */
+    public function query($namespace, $filter = [], $options = [])
+    {
+        $query = new Query($filter, $options);
+        $cursor = $this->manager()->executeQuery($namespace, $query);
+        return $cursor->toArray();
+    }
+
+    protected function manager()
+    {
+        if ($this->manager instanceof Manager) {
+            return $this->manager;
+        }
+        $uri = 'mongodb://127.0.0.1:27017';
+        return $this->manager = new Manager($uri, []);
+    }
+}
+
+```
+
+使用如下
+
+```php
+<?php
+use App\Task\MongoTask;
+use Hyperf\Utils\ApplicationContext;
+
+$client = ApplicationContext::getContainer()->get(MongoTask::class);
+$client->insert('hyperf.test', ['id' => rand(0, 99999999)]);
+
+$result = $client->query('hyperf.test', [], [
+    'sort' => ['id' => -1],
+    'limit' => 5,
+]);
+```
 
