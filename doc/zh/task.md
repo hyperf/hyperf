@@ -115,10 +115,11 @@ Swoole 暂时没有协程化的函数列表
 
 ### MongoDB
 
-因为 `MongoDB` 没有办法被 `hook`，所以我们可以通过 `Task` 来调用，下面就简单介绍一下如何通过注解方便使用。
+> 因为 `MongoDB` 没有办法被 `hook`，所以我们可以通过 `Task` 来调用，下面就简单介绍一下如何通过注解方式调用 `MongoDB`。
 
 以下我们实现两个方法 `insert` 和 `query`，其中需要注意的是 `manager` 方法不能使用 `Task`，
-因为 `Task` 会在对应的 `Task进程` 中处理，所以从 `Task进程` 返回到 `Worker进程` 的数据最好是不涉及任何 `IO` 的数据。
+因为 `Task` 会在对应的 `Task进程` 中处理，然后将数据从 `Task进程` 返回到 `Worker进程` 。
+所以 `Task方法` 的入参和出参最好不要携带任何 `IO`，比如返回一个实例化后的 `Redis` 等等。
 
 ```php
 <?php
@@ -142,8 +143,8 @@ class MongoTask
 
     /**
      * @Task
-     * @param mixed $namespace
-     * @param mixed $document
+     * @param string $namespace
+     * @param array $document
      */
     public function insert($namespace, $document)
     {
@@ -157,9 +158,9 @@ class MongoTask
 
     /**
      * @Task
-     * @param mixed $namespace
-     * @param mixed $filter
-     * @param mixed $options
+     * @param string $namespace
+     * @param array $filter
+     * @param array $options
      */
     public function query($namespace, $filter = [], $options = [])
     {
