@@ -1,4 +1,4 @@
-# v1.0.6 - TBD
+# v1.0.6 - 2019-07-24
 
 ## Added
 
@@ -21,7 +21,7 @@
 - [#240](https://github.com/hyperf-cloud/hyperf/pull/240) Fixed OnPipeMessage event will be dispatch by another listener.
 - [#257](https://github.com/hyperf-cloud/hyperf/pull/257) Fixed cannot get the Internal IP in some special environment.
 
-# v1.0.5 - 2019-07-07
+# v1.0.5 - 2019-07-17
 
 ## Added
 
