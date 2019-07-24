@@ -5,6 +5,7 @@
 - [#203](https://github.com/hyperf-cloud/hyperf/pull/203) [#236](https://github.com/hyperf-cloud/hyperf/pull/236) [#247](https://github.com/hyperf-cloud/hyperf/pull/247) [#252](https://github.com/hyperf-cloud/hyperf/pull/252) Added View component, support for Blade engine and Smarty engine. 
 - [#203](https://github.com/hyperf-cloud/hyperf/pull/203) Added support for Swoole Task mechanism.
 - [#245](https://github.com/hyperf-cloud/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
+- [#251](https://github.com/hyperf-cloud/hyperf/pull/251) Added coroutine memory driver for cache.
 - [#254](https://github.com/hyperf-cloud/hyperf/pull/254) Added support for array value of `RequestMapping::$methods`, `@RequestMapping(methods={"GET"})` and `@RequestMapping(methods={RequestMapping::GET})` are available now.
 - [#255](https://github.com/hyperf-cloud/hyperf/pull/255) Transfer `Hyperf\Utils\Contracts\Arrayable` result of Request to Response automatically, and added `text/plain` content-type header for string Response.
 - [#256](https://github.com/hyperf-cloud/hyperf/pull/256) If `Hyperf\Contract\IdGeneratorInterface` exist, the `json-rpc` client will generate a Request ID via IdGenerator automatically, and stored in Request attibute. Also added support for service register and health checks of `jsonrpc` TCP protocol.
