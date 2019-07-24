@@ -39,7 +39,7 @@ return [
 
 ### 消费消息
 
-组件已经提供了默认子进程，只需要将子进程配置到 `processes.php` 中即可。
+组件已经提供了默认子进程，只需要将它配置到 `processes.php` 中即可。
 
 ```php
 <?php
@@ -65,9 +65,18 @@ use Hyperf\AsyncQueue\Job;
 
 class ExampleJob extends Job
 {
+    protected $params ;
+
+    function __construct($P_params)
+    {
+        // 可接受外部参数
+        $this->params=$P_params ;
+
+    }
     public function handle()
     {
-        var_dump('hello world');
+        // 根据参数处理业务
+        var_dump($this->params);
     }
 }
 
@@ -80,7 +89,6 @@ class ExampleJob extends Job
 
 declare(strict_types=1);
 
-use Psr\Container\ContainerInterface;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
 
@@ -96,18 +104,53 @@ class DemoService
         $this->driver = $driverFactory->get('default');
     }
 
-    public function publish()
+    public function publish($P_params)
     {
         // 发布消息
         // 这里的 ExampleJob 是直接实例化出来的，所以不能在 Job 内使用 @Inject @Value 等注解及注解所对应功能的其它使用方式
-        return $this->driver->push(new ExampleJob());
+        return $this->driver->push(new ExampleJob($P_params));
     }
 
-    public function delay()
+    public function delay($P_params)
     {
         // 发布延迟消息
         // 第二个参数 $delay 即为延迟的秒数
-        return $this->driver->push(new ExampleJob(), 60);
+        return $this->driver->push(new ExampleJob($P_params), 60);
+    }
+}
+
+```
+
+### 动态添加
+
+根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Foo;
+
+use App\Controller\Controller;
+use App\Service\DemoService ;
+
+class FooController extends Controller
+{
+    protected $DemoService ;
+
+    function __construct(DemoService $DemoService)
+    {
+        $this->DemoService=$DemoService ;
+
+    }
+    // 动态添加异步任务到队列，添加后会立即执行。
+    function  asyncJobs(){
+        
+        $demo_params=array(
+            'group@hyperf.io', 'https://doc.hyperf.io', 'https://www.hyperf.io'
+        );
+       $this->DemoService->publish($demo_params);
     }
 }
 
