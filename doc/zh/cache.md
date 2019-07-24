@@ -194,7 +194,7 @@ public function updateUserBook(int $id)
 
 > 本驱动乃Beta版本，请谨慎使用。
 
-如果您需要将数据缓存到 `Context` 中，可以尝试次驱动。例如以下应用场景：
+如果您需要将数据缓存到 `Context` 中，可以尝试次驱动。例如以下应用场景 `Demo::get` 会在多个地方调用多次，但是又不想每次都到 `Redis` 中进行查询。
 
 ```php
 <?php
