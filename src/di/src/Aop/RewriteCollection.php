@@ -14,48 +14,110 @@ namespace Hyperf\Di\Aop;
 
 class RewriteCollection
 {
-    protected $rewriteOnlyMethods = [];
+    const LEVEL_CLASS = 1;
 
-    protected $rewriteAllMethods = false;
+    const LEVEL_METHOD = 2;
 
-    public function __construct(bool $rewriteAllMethods)
+    /**
+     * Which methods can be rewrite.
+     * @var array
+     */
+    protected $methods = [];
+
+    /**
+     * Rewrite level.
+     * @var int
+     */
+    protected $level = self::LEVEL_METHOD;
+
+    /**
+     * @var string
+     */
+    protected $class;
+
+    /**
+     * @var array
+     */
+    protected $shouldNotRewriteMethods = [
+        '__construct',
+    ];
+
+    public function __construct(string $class)
     {
-        $this->rewriteAllMethods = $rewriteAllMethods;
+        $this->class = $class;
+    }
+
+    public function has(string $aspect, ?string $method = null)
+    {
+        if ($method === null) {
+            return isset($this->methods[$aspect]);
+        }
+
+        return isset($this->methods[$aspect][$method]);
+    }
+
+    /**
+     * @param array|string $methods
+     */
+    public function add(string $aspect, $methods): self
+    {
+        if (is_string($methods)) {
+            $methods = [$methods];
+        }
+
+        $this->methods[$aspect] = array_unique(array_merge($this->methods[$aspect] ?? [], $methods ?? []));
+        return $this;
+    }
+
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function shouldRewrite(string $method): bool
+    {
+        if ($this->level === self::LEVEL_CLASS) {
+            if (in_array($method, $this->shouldNotRewriteMethods)) {
+                return false;
+            }
+            return true;
+        }
+
+        $methods = array_merge(...$this->methods);
+
+        return in_array($method, $methods);
     }
 
     /**
      * @return array
      */
-    public function getRewriteOnlyMethods(): array
+    public function getMethods(): array
     {
-        return $this->rewriteOnlyMethods;
+        return $this->methods;
     }
 
     /**
-     * @param array $rewriteOnlyMethods
-     * @return RewriteCollection
+     * @return int
      */
-    public function setRewriteOnlyMethods(array $rewriteOnlyMethods): RewriteCollection
+    public function getLevel(): int
     {
-        $this->rewriteOnlyMethods = $rewriteOnlyMethods;
-        return $this;
+        return $this->level;
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isRewriteAllMethods(): bool
+    public function getClass(): string
     {
-        return $this->rewriteAllMethods;
+        return $this->class;
     }
 
     /**
-     * @param bool $rewriteAllMethods
-     * @return RewriteCollection
+     * @return array
      */
-    public function setRewriteAllMethods(bool $rewriteAllMethods): RewriteCollection
+    public function getShouldNotRewriteMethods(): array
     {
-        $this->rewriteAllMethods = $rewriteAllMethods;
-        return $this;
+        return $this->shouldNotRewriteMethods;
     }
 }

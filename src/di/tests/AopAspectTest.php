@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Aspect;
+use Hyperf\Di\Aop\RewriteCollection;
 use HyperfTest\Di\Stub\AspectCollector;
 use PHPUnit\Framework\TestCase;
 
@@ -38,8 +39,8 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertArrayHasKey($aspect, $res);
-        $this->assertEquals(['test1', 'test2'], $res[$aspect]);
+        $this->assertArrayHasKey($aspect, $res->getMethods());
+        $this->assertEquals(['test1', 'test2'], $res->getMethods()[$aspect]);
     }
 
     public function testParseOneMethod()
@@ -52,8 +53,8 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertArrayHasKey($aspect, $res);
-        $this->assertEquals(['test1'], $res[$aspect]);
+        $this->assertArrayHasKey($aspect, $res->getMethods());
+        $this->assertEquals(['test1'], $res->getMethods()[$aspect]);
     }
 
     public function testParseClass()
@@ -65,8 +66,6 @@ class AopAspectTest extends TestCase
         ], []);
 
         $res = Aspect::parse('Demo');
-
-        $this->assertArrayHasKey($aspect, $res);
-        $this->assertEquals([], $res[$aspect]);
+        $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
     }
 }
