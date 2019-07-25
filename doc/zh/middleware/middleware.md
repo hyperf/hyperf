@@ -141,7 +141,6 @@ class IndexController
 {
     
     /**
-     * @AutoController()
      * @Middlewares({
      *     @Middleware(BarMiddleware::class)
      * })
