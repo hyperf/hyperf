@@ -50,6 +50,26 @@ return [
 
 ```
 
+当然，您也可以将以下 `Process` 添加到自己的项目中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process(name="async-queue")
+ */
+class AsyncQueueConsumer extends ConsumerProcess
+{
+}
+```
+
 ### 发布消息
 
 首先我们定义一个消息，如下
@@ -59,23 +79,23 @@ return [
 
 declare(strict_types=1);
 
-namespace App\Jobs;
+namespace App\Job;
 
 use Hyperf\AsyncQueue\Job;
 
 class ExampleJob extends Job
 {
-    protected $params ;
+    public $params;
 
-    function __construct($params)
+    public function __construct($params)
     {
-        // 可接受外部参数
-        $this->params=$params ;
-
+        // 这里最好是普通数据，不要使用携带 IO 的对象，比如 PDO 对象
+        $this->params = $params;
     }
+
     public function handle()
     {
-        // 根据参数处理业务
+        // 根据参数处理具体逻辑
         var_dump($this->params);
     }
 }
@@ -89,10 +109,13 @@ class ExampleJob extends Job
 
 declare(strict_types=1);
 
+namespace App\Service;
+
+use App\Job\ExampleJob;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
 
-class DemoService
+class QueueService
 {
     /**
      * @var DriverInterface
@@ -104,18 +127,17 @@ class DemoService
         $this->driver = $driverFactory->get('default');
     }
 
-    public function publish($params)
+    /**
+     * 投递消息.
+     * @param $params 数据
+     * @param int $delay 延时时间 单位秒
+     * @return bool
+     */
+    public function push($params, $delay = 0)
     {
-        // 发布消息
-        // 这里的 ExampleJob 是直接实例化出来的，所以不能在 Job 内使用 @Inject @Value 等注解及注解所对应功能的其它使用方式
-        return $this->driver->push(new ExampleJob($params));
-    }
-
-    public function delay($params)
-    {
-        // 发布延迟消息
-        // 第二个参数 $delay 即为延迟的秒数
-        return $this->driver->push(new ExampleJob($params), 60);
+        // 这里的 `ExampleJob` 会被序列化存到 Redis 中，所以内部变量最好只传入普通数据
+        // 同理，如果内部使用了注解 @Value 会把对应对象一起序列化，导致消息体变大。
+        return $this->driver->push(new ExampleJob($params), $delay);
     }
 }
 
@@ -130,27 +152,32 @@ class DemoService
 
 declare(strict_types=1);
 
-namespace App\Controller\Foo;
+namespace App\Controller;
 
-use App\Controller\Controller;
-use App\Service\DemoService ;
+use App\Service\QueueService;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
 
-class FooController extends Controller
+/**
+ * @AutoController
+ */
+class QueueController extends Controller
 {
-    protected $DemoService ;
+    /**
+     * @Inject
+     * @var QueueService
+     */
+    protected $service;
 
-    function __construct(DemoService $DemoService)
+    public function index()
     {
-        $this->DemoService=$DemoService ;
+        $this->service->push([
+            'group@hyperf.io',
+            'https://doc.hyperf.io',
+            'https://www.hyperf.io',
+        ]);
 
-    }
-    // 动态添加异步任务到队列，添加后会立即执行。
-    function  asyncJobs(){
-        
-        $params=array(
-            'group@hyperf.io', 'https://doc.hyperf.io', 'https://www.hyperf.io'
-        );
-       $this->DemoService->publish($params);
+        return 'success';
     }
 }
 
