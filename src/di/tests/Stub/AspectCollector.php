@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Di\Stub;
 
-interface FooInterface
+class AspectCollector extends \Hyperf\Di\Annotation\AspectCollector
 {
+    public static function clear()
+    {
+        self::$container = [];
+        self::$aspectRules = [];
+    }
 }

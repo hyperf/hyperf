@@ -77,10 +77,9 @@ class Aspect
         foreach ($aspects ?? [] as $aspect) {
             $rules = AspectCollector::getRule($aspect);
             foreach ($rules['classes'] ?? [] as $rule) {
-                [$isMatch, $classes] = static::isMatchClassRule($class, $rule);
+                [$isMatch, $method] = static::isMatchClassRule($class, $rule);
                 if ($isMatch) {
-                    $matched[$aspect] = $classes;
-                    break;
+                    $matched[$aspect][] = $method;
                 }
             }
         }
@@ -103,15 +102,15 @@ class Aspect
             [$rule, $method] = explode('::', $rule);
         }
         if (strpos($rule, '*') === false && $rule === $class) {
-            return [true, isset($method) && $method ? [$method] : []];
+            return [true, $method ?? null];
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
         $pattern = "/^{$preg}$/";
 
         if (preg_match($pattern, $class)) {
-            return [true, []];
+            return [true, null];
         }
 
-        return [false, []];
+        return [false, null];
     }
 }
