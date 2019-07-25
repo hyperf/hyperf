@@ -67,10 +67,10 @@ class ExampleJob extends Job
 {
     protected $params ;
 
-    function __construct($P_params)
+    function __construct($params)
     {
         // 可接受外部参数
-        $this->params=$P_params ;
+        $this->params=$params ;
 
     }
     public function handle()
@@ -104,18 +104,18 @@ class DemoService
         $this->driver = $driverFactory->get('default');
     }
 
-    public function publish($P_params)
+    public function publish($params)
     {
         // 发布消息
         // 这里的 ExampleJob 是直接实例化出来的，所以不能在 Job 内使用 @Inject @Value 等注解及注解所对应功能的其它使用方式
-        return $this->driver->push(new ExampleJob($P_params));
+        return $this->driver->push(new ExampleJob($params));
     }
 
-    public function delay($P_params)
+    public function delay($params)
     {
         // 发布延迟消息
         // 第二个参数 $delay 即为延迟的秒数
-        return $this->driver->push(new ExampleJob($P_params), 60);
+        return $this->driver->push(new ExampleJob($params), 60);
     }
 }
 
@@ -147,10 +147,10 @@ class FooController extends Controller
     // 动态添加异步任务到队列，添加后会立即执行。
     function  asyncJobs(){
         
-        $demo_params=array(
+        $params=array(
             'group@hyperf.io', 'https://doc.hyperf.io', 'https://www.hyperf.io'
         );
-       $this->DemoService->publish($demo_params);
+       $this->DemoService->publish($params);
     }
 }
 
