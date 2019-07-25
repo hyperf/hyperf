@@ -61,11 +61,7 @@ class RewriteCollection
      */
     public function add(string $aspect, $methods): self
     {
-        if (is_string($methods)) {
-            $methods = [$methods];
-        }
-
-        $this->methods[$aspect] = array_unique(array_merge($this->methods[$aspect] ?? [], $methods ?? []));
+        $this->methods[$aspect] = array_unique(array_merge($this->methods[$aspect] ?? [], (array) $methods));
         return $this;
     }
 
