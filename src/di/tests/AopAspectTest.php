@@ -67,5 +67,6 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
         $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
+        $this->assertFalse($res->shouldRewrite('__construct'));
     }
 }
