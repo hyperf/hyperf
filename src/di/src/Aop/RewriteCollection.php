@@ -47,21 +47,16 @@ class RewriteCollection
         $this->class = $class;
     }
 
-    public function has(string $aspect, ?string $method = null)
-    {
-        if ($method === null) {
-            return isset($this->methods[$aspect]);
-        }
-
-        return isset($this->methods[$aspect][$method]);
-    }
-
     /**
      * @param array|string $methods
      */
-    public function add(string $aspect, $methods): self
+    public function add($methods): self
     {
-        $this->methods[$aspect] = array_unique(array_merge($this->methods[$aspect] ?? [], (array) $methods));
+        $methods = (array) $methods;
+        foreach ($methods as $method) {
+            $this->methods[] = $method;
+        }
+
         return $this;
     }
 
@@ -80,9 +75,7 @@ class RewriteCollection
             return true;
         }
 
-        $methods = array_merge(...$this->methods);
-
-        return in_array($method, $methods);
+        return in_array($method, $this->methods);
     }
 
     /**

@@ -39,8 +39,7 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertArrayHasKey($aspect, $res->getMethods());
-        $this->assertEquals(['test1', 'test2'], $res->getMethods()[$aspect]);
+        $this->assertEquals(['test1', 'test2'], $res->getMethods());
     }
 
     public function testParseOneMethod()
@@ -53,8 +52,7 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertArrayHasKey($aspect, $res->getMethods());
-        $this->assertEquals(['test1'], $res->getMethods()[$aspect]);
+        $this->assertEquals(['test1'], $res->getMethods());
     }
 
     public function testParseClass()

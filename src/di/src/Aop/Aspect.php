@@ -59,7 +59,7 @@ class Aspect
                     return $matched->setLevel(RewriteCollection::LEVEL_CLASS);
                 }
                 if (isset($methodMapping[$rule])) {
-                    $matched->add($aspect, $methodMapping[$rule]);
+                    $matched->add($methodMapping[$rule]);
                 }
             }
         }
@@ -77,7 +77,7 @@ class Aspect
                     if ($method === null) {
                         return $matched->setLevel(RewriteCollection::LEVEL_CLASS);
                     }
-                    $matched->add($aspect, $method);
+                    $matched->add($method);
                 }
             }
         }
