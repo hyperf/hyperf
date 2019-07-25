@@ -14,7 +14,9 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Aspect;
 use Hyperf\Di\Aop\RewriteCollection;
+use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
+use HyperfTest\Di\Stub\DemoAnnotation;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,6 +28,7 @@ class AopAspectTest extends TestCase
     protected function tearDown()
     {
         AspectCollector::clear();
+        AnnotationCollector::clear();
     }
 
     public function testParseMoreThanOneMethods()
@@ -66,5 +69,39 @@ class AopAspectTest extends TestCase
         $res = Aspect::parse('Demo');
         $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
         $this->assertFalse($res->shouldRewrite('__construct'));
+    }
+
+    public function testParseClassAnnotations()
+    {
+        $aspect = 'App\Aspect\DebugAspect';
+        $annotation = DemoAnnotation::class;
+        $id = uniqid();
+
+        AnnotationCollector::collectClass('Demo', $annotation, new DemoAnnotation($id));
+        AspectCollector::setAround($aspect, [], [$annotation]);
+
+        $res = Aspect::parse('Demo');
+
+        $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
+        $this->assertFalse($res->shouldRewrite('__construct'));
+    }
+
+    public function testParseMethodAnnotations()
+    {
+        $aspect = 'App\Aspect\DebugAspect';
+        $annotation = DemoAnnotation::class;
+        $id = uniqid();
+
+        AnnotationCollector::collectMethod('Demo', 'test1', $annotation, new DemoAnnotation($id));
+        AnnotationCollector::collectMethod('Demo', 'test2', $annotation, new DemoAnnotation($id));
+        AspectCollector::setAround($aspect, [], [$annotation]);
+
+        $res = Aspect::parse('Demo');
+
+        $this->assertSame(RewriteCollection::LEVEL_METHOD, $res->getLevel());
+        $this->assertFalse($res->shouldRewrite('__construct'));
+        $this->assertTrue($res->shouldRewrite('test1'));
+        $this->assertTrue($res->shouldRewrite('test2'));
+        $this->assertFalse($res->shouldRewrite('test3'));
     }
 }
