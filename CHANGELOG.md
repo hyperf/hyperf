@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#266](https://github.com/hyperf-cloud/hyperf/pull/266) Fixed timeout when produce a amqp message.
+- [#273](https://github.com/hyperf-cloud/hyperf/pull/273) Fixed all services have been registered to Consul will be deleted by the last register action. 
 
 # v1.0.6 - 2019-07-24
 
