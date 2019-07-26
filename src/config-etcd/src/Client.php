@@ -12,10 +12,40 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigEtcd;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Etcd\KVInterface;
+
 class Client implements ClientInterface
 {
+    /**
+     * @var KVInterface
+     */
+    protected $client;
+
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    public function __construct(KVInterface $client, ConfigInterface $config)
+    {
+        $this->client = $client;
+        $this->config = $config;
+    }
+
     public function pull(): array
     {
-        // TODO: Implement pull() method.
+        $namespaces = $this->config->get('etcd.namespaces');
+        $kvs = [];
+        foreach ($namespaces as $namespace) {
+            $res = $this->client->fetchByPrefix($namespace);
+            if (isset($res['kvs'])) {
+                foreach ($res['kvs'] as $kv) {
+                    $kvs[$kv['key']] = $kv;
+                }
+            }
+        }
+
+        return $kvs;
     }
 }

@@ -18,5 +18,7 @@ interface KVInterface
 
     public function get($key, array $options = []);
 
+    public function fetchByPrefix($prefix);
+
     public function delete($key, array $options = []);
 }

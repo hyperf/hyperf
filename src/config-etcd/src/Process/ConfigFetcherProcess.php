@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigEtcd\Process;
 
 use Hyperf\ConfigEtcd\ClientInterface;
+use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -20,7 +21,7 @@ use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 /**
- * @Process(name="apollo-config-fetcher")
+ * @Process(name="etcd-config-fetcher")
  */
 class ConfigFetcherProcess extends AbstractProcess
 {
@@ -39,6 +40,11 @@ class ConfigFetcherProcess extends AbstractProcess
      */
     private $config;
 
+    /**
+     * @var array
+     */
+    private $cacheConfig;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
@@ -54,10 +60,27 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('apollo.enable', false);
+        return $this->config->get('etcd.enable', false);
     }
 
     public function handle(): void
     {
+        while (true) {
+            $config = $this->client->pull();
+            if ($config !== $this->cacheConfig) {
+                if ($this->cacheConfig !== null) {
+                    $diff = array_diff($this->cacheConfig ?? [], $config);
+                } else {
+                    $diff = $config;
+                }
+                $this->cacheConfig = $config;
+                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
+                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
+                    $this->server->sendMessage(new PipeMessage($diff), $workerId);
+                }
+            }
+
+            sleep($this->config->get('aliyun_acm.interval', 5));
+        }
     }
 }

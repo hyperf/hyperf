@@ -28,6 +28,21 @@ class KV extends Client implements KVInterface
         return $this->client()->get($key, $options);
     }
 
+    public function fetchByPrefix($prefix)
+    {
+        $prefix = trim($prefix);
+        if (!$prefix) {
+            return [];
+        }
+        $lastIndex = strlen($prefix) - 1;
+        $lastChar = $prefix[$lastIndex];
+        $nextAsciiCode = ord($lastChar) + 1;
+        $rangeEnd = $prefix;
+        $rangeEnd[$lastIndex] = chr($nextAsciiCode);
+
+        return $this->client()->get($prefix, ['range_end' => $rangeEnd]);
+    }
+
     public function delete($key, array $options = [])
     {
         return $this->client()->del($key, $options);
