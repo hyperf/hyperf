@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\Utils\Coroutine;
@@ -25,14 +26,24 @@ abstract class Client
     protected $baseUri;
 
     /**
+     * @var string
+     */
+    protected $version;
+
+    /**
      * @var array
      */
     protected $options = [];
 
-    public function __construct(string $baseUri, array $options)
+    protected $client;
+
+    public function __construct(ConfigInterface $config)
     {
-        $this->baseUri = $baseUri;
-        $this->options = $options;
+        $uri = $config->get('etcd.uri', 'http://127.0.0.1:2379');
+        $version = $config->get('etcd.version', 'v3beta');
+
+        $this->options = $config->get('etcd.options', []);
+        $this->baseUri = sprintf('%s/%s/', $uri, $version);
     }
 
     protected function getDefaultHandler()

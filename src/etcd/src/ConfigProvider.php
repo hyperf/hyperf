@@ -18,6 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
+                KVInterface::class => KVFactory::class,
             ],
             'commands' => [
             ],
