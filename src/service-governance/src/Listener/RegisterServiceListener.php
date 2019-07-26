@@ -74,9 +74,6 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        foreach ($this->consulAgent->services()->json() as $service) {
-            $this->consulAgent->deregisterService($service['ID']);
-        }
         $services = $this->serviceManager->all();
         $servers = $this->getServers();
         foreach ($services as $serviceName => $paths) {
