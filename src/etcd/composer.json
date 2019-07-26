@@ -21,14 +21,17 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.3",
-        "hyperf/utils": "~1.0.0",
-        "linkorb/etcd-php": "^1.6"
+        "hyperf/utils": "~1.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
         "hyperf/testing": "1.0.*",
         "phpstan/phpstan": "^0.10.5",
         "swoft/swoole-ide-helper": "dev-master"
+    },
+    "suggest": {
+        "start-point/etcd-php": "Etcd v3 client.",
+        "linkorb/etcd-php": "Etcd v2 client."
     },
     "config": {
         "sort-packages": true

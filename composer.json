@@ -20,7 +20,6 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3",
-        "linkorb/etcd-php": "^1.6",
         "monolog/monolog": "^1.24",
         "nesbot/carbon": "^2.0",
         "nikic/fast-route": "^1.3",
