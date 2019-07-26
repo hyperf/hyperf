@@ -29,9 +29,9 @@ interface MessageInterface
 
     public function getExchange(): string;
 
-    public function setRoutingKey(string $routingKey);
+    public function setRoutingKey($routingKey);
 
-    public function getRoutingKey(): string;
+    public function getRoutingKey();
 
     public function getExchangeBuilder(): ExchangeBuilder;
 

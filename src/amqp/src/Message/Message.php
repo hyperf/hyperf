@@ -70,13 +70,13 @@ abstract class Message implements MessageInterface
         return $this->exchange;
     }
 
-    public function setRoutingKey(string $routingKey): self
+    public function setRoutingKey($routingKey): self
     {
         $this->routingKey = $routingKey;
         return $this;
     }
 
-    public function getRoutingKey(): string
+    public function getRoutingKey()
     {
         return $this->routingKey;
     }
