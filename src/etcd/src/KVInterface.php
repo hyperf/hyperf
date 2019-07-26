@@ -17,4 +17,6 @@ interface KVInterface
     public function put($key, $value, array $options = []);
 
     public function get($key, array $options = []);
+
+    public function delete($key, array $options = []);
 }

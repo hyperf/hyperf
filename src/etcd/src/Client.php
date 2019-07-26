@@ -46,7 +46,7 @@ abstract class Client
             ]);
         }
 
-        // 默认的重试Middleware
+        // Retry Middleware
         $retry = make(RetryMiddleware::class, [
             'retries' => 1,
             'delay' => 10,

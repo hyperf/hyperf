@@ -20,12 +20,17 @@ class KV extends Client implements KVInterface
 {
     public function put($key, $value, array $options = [])
     {
-        // TODO: Implement put() method.
+        return $this->client()->put($key, $value, $options);
     }
 
     public function get($key, array $options = [])
     {
         return $this->client()->get($key, $options);
+    }
+
+    public function delete($key, array $options = [])
+    {
+        return $this->client()->del($key, $options);
     }
 
     protected function client(): EtcdClient
