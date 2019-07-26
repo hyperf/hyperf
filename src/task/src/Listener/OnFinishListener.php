@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Task\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnFinish;
 use Hyperf\Task\ChannelFactory;
+use Hyperf\Task\Finish;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class OnFinishListener implements ListenerInterface
 {
     /**
@@ -42,9 +39,9 @@ class OnFinishListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($event instanceof OnFinish) {
+        if ($event instanceof OnFinish && $event->data instanceof Finish) {
             $factory = $this->container->get(ChannelFactory::class);
-            $factory->push($event->taskId, $event->data);
+            $factory->push($event->taskId, $event->data->data);
         }
     }
 }

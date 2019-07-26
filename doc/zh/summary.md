@@ -34,6 +34,7 @@
   * [分页器](zh/paginator.md)
   * [命令行](zh/command.md)
   * [自动化测试](zh/testing.md)
+  * [视图](zh/view.md)
   
 * 数据库模型
 
@@ -82,7 +83,7 @@
   * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
-  
+  * [Nginx 反向代理](zh/tutorial/nginx.md)
 * Awesome Hyperf
 
   * [协程组件库](zh/awesome-components.md)

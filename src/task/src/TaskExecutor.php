@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Task;
 
+use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
 use Swoole\Server;
 
@@ -37,9 +38,12 @@ class TaskExecutor
         $this->factory = $factory;
     }
 
-    public function setServer(Server $server)
+    public function setServer(Server $server): void
     {
         $this->server = $server;
+        if (! isset($server->setting['task_worker_num']) || $server->setting['task_worker_num'] <= 0) {
+            throw new TaskException('Missing Task Worker processes, please set server.settings.task_worker_num before use task.');
+        }
     }
 
     public function execute(Task $task, float $timeout = 10)
@@ -52,17 +56,11 @@ class TaskExecutor
         return $this->factory->pop($taskId, $timeout);
     }
 
-    /**
-     * @return bool
-     */
     public function isTaskEnvironment(): bool
     {
         return $this->isTaskEnvironment;
     }
 
-    /**
-     * @param bool $isTaskEnvironment
-     */
     public function setIsTaskEnvironment(bool $isTaskEnvironment): void
     {
         $this->isTaskEnvironment = $isTaskEnvironment;

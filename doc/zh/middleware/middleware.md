@@ -1,6 +1,6 @@
 # 中间件
 
-这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf-cloud/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15]() 实现。
+这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf-cloud/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
 
 ## 原理
 
@@ -141,7 +141,6 @@ class IndexController
 {
     
     /**
-     * @AutoController()
      * @Middlewares({
      *     @Middleware(BarMiddleware::class)
      * })
@@ -235,4 +234,59 @@ use Psr\Http\Message\ServerRequestInterface;
 // $request 和 $response 为修改后的对象
 \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
 \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+```
+
+## 常用中间件
+
+### 跨域中间件
+
+如果您需要在框架中解决跨域，则可以按照您的需求实现以下中间件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\Utils\Context;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class CorsMiddleware implements MiddlewareInterface
+{
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $response = Context::get(ResponseInterface::class);
+        $response = $response->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            // Headers 可以根据实际情况进行改写。
+            ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization');
+
+        Context::set(ResponseInterface::class, $response);
+
+        if ($request->getMethod() == 'OPTIONS') {
+            return $response;
+        }
+
+        return $handler->handle($request);
+    }
+}
+
+```
+
+实际上，跨域配置也可以直接挂在 `Nginx` 上。
+
+```
+location / {
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+    add_header Access-Control-Allow-Headers 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization';
+
+    if ($request_method = 'OPTIONS') {
+        return 204;
+    }
+}
 ```

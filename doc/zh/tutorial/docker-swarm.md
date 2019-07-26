@@ -1,4 +1,4 @@
-# Docker Swarm集群搭建教程
+# Docker Swarm 集群搭建
 
 现阶段，Docker容器技术已经相当成熟，就算是中小型公司也可以基于 Gitlab、Aliyun镜像服务、Docker Swarm 轻松搭建自己的 Docker集群服务。
 
@@ -78,6 +78,13 @@ Please enter the gitlab-ci tags for this runner (comma separated):
 builder
 Please enter the executor: docker-ssh, shell, docker+machine, docker-ssh+machine, docker, parallels, ssh, virtualbox, kubernetes:
 shell
+```
+
+### 修改 gitlab-runner 并发执行个数
+
+```
+$ vim /etc/gitlab-runner/config.toml
+concurrent = 5
 ```
 
 ## 初始化 Swarm 集群

@@ -1,6 +1,6 @@
 # Swoole Enterprise
 
-[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一款企业级应用解决方案，更专一、更专业。
+[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一整套企业级`PHP`和`Swoole`分析调试工具，更专一、更专业。
 
 - 时刻掌握应用架构模型
 > 自动发现应用依赖拓扑结构和展示，时刻掌握应用的架构模型
@@ -9,11 +9,11 @@
 - 全面分析报告服务状况
 > 各种维度统计服务上报的调用信息， 比如总流量、平均耗时、超时率等，并全面分析报告服务状况
 - 拥有强大的调试工具链
-> 系统支持远程调试，可远程开启检测内存泄漏、阻塞检测和代码性能分析
+> 本系统支持远程调试，可在系统后台远程开启检测内存泄漏、阻塞检测和代码性能分析
 - 完善的系统监控
 > 支持完善的系统监控，零成本部署，监控机器的CPU、内存、网络、磁盘等资源，可以很方便的集成到现有报警系统
 - 零成本接入系统
-> Swoole Enterprise系统客户端脚本一键部署，服务端可在Docker环境中运行，简单快捷
+> 本系统的客户端提供脚本可一键部署，服务端可在Docker环境中运行，简单快捷
 
 ## 安装
 
@@ -25,9 +25,9 @@
 
 > 具体文档地址，以从控制台下载的对应客户端中展示的为准。
 
-将客户端中的所有文件以及以下两个文件复制到项目目录 `.build` 中，
+将客户端中的所有文件以及以下两个文件复制到项目目录 `.build` 中
 
-entrypoint.sh
+1. `entrypoint.sh`
 
 ```bash
 #!/usr/bin/env bash
@@ -38,7 +38,7 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-swoole-plus.ini
+2. `swoole-plus.ini`
 
 ```bash
 [swoole_plus]
@@ -47,8 +47,7 @@ apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
 # 支持远程调试；需要手动埋点时再添加
-apm.enable_xhprof=1    #开启性能分析功能 默认0 即为关闭模式
-apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭
+apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭状态
 ```
 
 然后将下面的 `Dockerfile` 复制到项目根目录中。

@@ -12,15 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Task\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class InitServerListener implements ListenerInterface
 {
     /**

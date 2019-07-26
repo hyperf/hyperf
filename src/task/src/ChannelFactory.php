@@ -43,7 +43,7 @@ class ChannelFactory
         return $result->data;
     }
 
-    public function push(int $taskId, $data)
+    public function push(int $taskId, $data): void
     {
         $channel = $this->get($taskId);
 
@@ -55,12 +55,12 @@ class ChannelFactory
         }
     }
 
-    public function has(int $taskId)
+    public function has(int $taskId): bool
     {
         return array_key_exists($taskId, $this->channels);
     }
 
-    public function remove(int $taskId)
+    public function remove(int $taskId): void
     {
         unset($this->channels[$taskId]);
     }

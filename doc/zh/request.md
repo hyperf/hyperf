@@ -179,8 +179,8 @@ $name = $request->query();
 $name = $request->input('user.name');
 // 存在则返回，不存在则返回默认值 Hyperf
 $name = $request->input('user.name', 'Hyperf');
-// 不传递参数则以数组形式返回所有 Json 数据
-$name = $request->input();
+// 以数组形式返回所有 Json 数据
+$name = $request->all();
 ```
 
 ### 确定是否存在输入值

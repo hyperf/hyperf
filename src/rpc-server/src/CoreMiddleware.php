@@ -32,11 +32,6 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         $this->dispatcher = $factory->getDispatcher($serverName);
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        return parent::process($request, $handler);
-    }
-
     protected function handleFound(array $routes, ServerRequestInterface $request)
     {
         if ($routes[1] instanceof Closure) {

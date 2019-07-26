@@ -20,6 +20,21 @@ use Hyperf\Utils\Str;
  */
 class RequestMapping extends Mapping
 {
+
+    public const GET = 'GET';
+
+    public const POST = 'POST';
+
+    public const PUT = 'PUT';
+
+    public const PATCH = 'PATCH';
+
+    public const DELETE = 'DELETE';
+
+    public const HEADER = 'HEADER';
+
+    public const OPTIONS = 'OPTIONS';
+
     /**
      * @var array
      */
@@ -29,8 +44,16 @@ class RequestMapping extends Mapping
     {
         parent::__construct($value);
         if (isset($value['methods'])) {
-            // Explode a string to a array
-            $this->methods = explode(',', Str::upper(str_replace(' ', '', $value['methods'])));
+            if (is_string($value['methods'])) {
+                // Explode a string to a array
+                $this->methods = explode(',', Str::upper(str_replace(' ', '', $value['methods'])));
+            } else {
+                $methods = [];
+                foreach ($value['methods'] as $method) {
+                    $methods[] = Str::upper(str_replace(' ', '', $method));
+                }
+                $this->methods = $methods;
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\EngineNotFindException;
 use Psr\Container\ContainerInterface;
 
-class Render
+class Render implements RenderInterface
 {
     /**
      * @var ContainerInterface
@@ -46,7 +46,7 @@ class Render
     {
         $engine = $config->get('view.engine', SmartyEngine::class);
         if (! $container->has($engine)) {
-            throw new EngineNotFindException("{$engine} is not find.");
+            throw new EngineNotFindException("{$engine} engine is not found.");
         }
 
         $this->engine = $engine;
@@ -55,7 +55,7 @@ class Render
         $this->container = $container;
     }
 
-    public function view($template, $data)
+    public function render(string $template, array $data)
     {
         switch ($this->mode) {
             case Mode::SYNC:

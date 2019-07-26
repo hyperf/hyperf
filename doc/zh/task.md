@@ -1,11 +1,10 @@
 # Task
 
-现阶段 `Swoole` 暂时没有 `hook` 所有的函数，所以有些函数仍然会导致 `协程阻塞`。
-所以我们仍需要 `Task` 组件，使用 `Task` 进程处理可能会导致协程阻塞的逻辑。
+现阶段 `Swoole` 暂时没有办法 `hook` 所有的阻塞函数，也就意味着有些函数仍然会导致 `进程阻塞`，从而影响协程的调度，此时我们可以通过使用 `Task` 组件来模拟协程处理，从而达到不阻塞进程调用阻塞函数的目的，本质上是仍是是多进程运行阻塞函数，所以性能上会明显地不如原生协程，具体取决于 `Task Worker` 的数量。
 
 ## 安装
 
-```
+```bash
 composer require hyperf/task
 ```
 
@@ -18,53 +17,30 @@ composer require hyperf/task
 
 declare(strict_types=1);
 
-use Hyperf\Server\Server;
 use Hyperf\Server\SwooleEvent;
 
 return [
-    'mode' => SWOOLE_BASE,
-    'servers' => [
-        [
-            'name' => 'http',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 9501,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
-            ],
-        ],
-    ],
+    // 这里省略了其它不相关的配置项
     'settings' => [
-        'enable_coroutine' => true,
-        'worker_num' => 2,
-        'pid_file' => BASE_PATH . '/runtime/hyperf.pid',
-        'open_tcp_nodelay' => true,
-        'max_coroutine' => 100000,
-        'open_http2_protocol' => true,
-        'max_request' => 100000,
-        'socket_buffer_size' => 2 * 1024 * 1024,
-        // Task setting
-        'task_worker_num' => 4,
-        'task_enable_coroutine' => false, // 因为 `Task` 主要处理 无法协程化的方法，所以这里推荐设为 `false`。
+        // Task Worker 数量，根据您的服务器配置而配置适当的数量
+        'task_worker_num' => 8,
+        // 因为 `Task` 主要处理无法协程化的方法，所以这里推荐设为 `false`，避免协程下出现数据混淆的情况
+        'task_enable_coroutine' => false,
     ],
     'callbacks' => [
-        SwooleEvent::ON_BEFORE_START => [Hyperf\Framework\Bootstrap\ServerStartCallback::class, 'beforeStart'],
-        SwooleEvent::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
-        SwooleEvent::ON_PIPE_MESSAGE => [Hyperf\Framework\Bootstrap\PipeMessageCallback::class, 'onPipeMessage'],
-        // Task setting
+        // Task callbacks
         SwooleEvent::ON_TASK => [Hyperf\Framework\Bootstrap\TaskCallback::class, 'onTask'],
         SwooleEvent::ON_FINISH => [Hyperf\Framework\Bootstrap\FinishCallback::class, 'onFinish'],
     ],
 ];
 
 ```
+
 ## 使用
 
-Task 组件提供了两种使用方法。
+Task 组件提供了 `主动方法投递` 和 `注解投递` 两种使用方法。
 
-### 主动投递
-
+### 主动方法投递
 
 ```php
 <?php
@@ -80,7 +56,7 @@ class MethodTask
     {
         return [
             'worker.cid' => $cid,
-            // task_enable_coroutine=false 时返回 -1，反之 返回对应的协程 ID
+            // task_enable_coroutine 为 false 时返回 -1，反之 返回对应的协程 ID
             'task.cid' => Coroutine::id(),
         ];
     }
@@ -91,9 +67,10 @@ $exec = $container->get(TaskExecutor::class);
 $result = $exec->execute(new Task([MethodTask::class, 'handle'], Coroutine::id()));
 
 ```
+
 ### 使用注解
 
-通过直接投递时，并不是特别直观，这里我们实现了对应的注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
+通过 `主动方法投递` 时，并不是特别直观，这里我们实现了对应的 `@Task` 注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
 
 ```php
 <?php
@@ -102,7 +79,7 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
-class MethodTask
+class AnnotationTask
 {
     /**
      * @Task
@@ -118,21 +95,105 @@ class MethodTask
 }
 
 $container = ApplicationContext::getContainer();
-/** @var MethodTask $task */
-$task = $container->get(MethodTask::class);
+$task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
-
 ```
+
+> 使用 `@Task` 注解时需 `use Hyperf\Task\Annotation\Task;`
 
 ## 附录
 
-暂时没有协程化的函数列表
+Swoole 暂时没有协程化的函数列表
 
-- mysql：底层使用libmysqlclient
-- curl：底层使用libcurl （即不能使用CURL驱动的Guzzle）
-- mongo：底层使用mongo-c-client
+- mysql：底层使用 libmysqlclient
+- curl：底层使用 libcurl（即不能使用CURL驱动的Guzzle）
+- mongo：底层使用 mongo-c-client
 - pdo_pgsql
 - pdo_ori
 - pdo_odbc
 - pdo_firebird
+
+### MongoDB
+
+> 因为 `MongoDB` 没有办法被 `hook`，所以我们可以通过 `Task` 来调用，下面就简单介绍一下如何通过注解方式调用 `MongoDB`。
+
+以下我们实现两个方法 `insert` 和 `query`，其中需要注意的是 `manager` 方法不能使用 `Task`，
+因为 `Task` 会在对应的 `Task进程` 中处理，然后将数据从 `Task进程` 返回到 `Worker进程` 。
+所以 `Task方法` 的入参和出参最好不要携带任何 `IO`，比如返回一个实例化后的 `Redis` 等等。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Task;
+
+use Hyperf\Task\Annotation\Task;
+use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\Manager;
+use MongoDB\Driver\Query;
+use MongoDB\Driver\WriteConcern;
+
+class MongoTask
+{
+    /**
+     * @var Manager
+     */
+    public $manager;
+
+    /**
+     * @Task
+     * @param string $namespace
+     * @param array $document
+     */
+    public function insert($namespace, $document)
+    {
+        $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
+        $bulk = new BulkWrite();
+        $bulk->insert($document);
+
+        $result = $this->manager()->executeBulkWrite($namespace, $bulk, $writeConcern);
+        return $result->getUpsertedCount();
+    }
+
+    /**
+     * @Task
+     * @param string $namespace
+     * @param array $filter
+     * @param array $options
+     */
+    public function query($namespace, $filter = [], $options = [])
+    {
+        $query = new Query($filter, $options);
+        $cursor = $this->manager()->executeQuery($namespace, $query);
+        return $cursor->toArray();
+    }
+
+    protected function manager()
+    {
+        if ($this->manager instanceof Manager) {
+            return $this->manager;
+        }
+        $uri = 'mongodb://127.0.0.1:27017';
+        return $this->manager = new Manager($uri, []);
+    }
+}
+
+```
+
+使用如下
+
+```php
+<?php
+use App\Task\MongoTask;
+use Hyperf\Utils\ApplicationContext;
+
+$client = ApplicationContext::getContainer()->get(MongoTask::class);
+$client->insert('hyperf.test', ['id' => rand(0, 99999999)]);
+
+$result = $client->query('hyperf.test', [], [
+    'sort' => ['id' => -1],
+    'limit' => 5,
+]);
+```
 

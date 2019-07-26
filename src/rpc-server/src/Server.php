@@ -118,9 +118,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             if (! $response || ! $response instanceof ResponseInterface) {
                 $response = $this->transferToResponse($response);
             }
-            if (! $response) {
-                $this->logger->debug(sprintf('No content to response at fd[%d]', $fd));
-            } else {
+            if ($response) {
                 $server->send($fd, (string) $response);
             }
         }

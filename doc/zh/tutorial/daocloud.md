@@ -1,4 +1,4 @@
-# DaoCloud Devops搭建教程
+# DaoCloud Devops 搭建
 
 作为个人开发者，使用自建 `Gitlab` 和 `Docker Swarm 集群` 显然成本是无法接受的。这里介绍一个 `Devops` 服务 `DaoCloud`。
 
@@ -11,6 +11,7 @@
 大家只需要关注 `项目`，`应用` 和 `集群管理` 三个切页即可。
 
 ### 创建项目
+
 首先我们需要在 `项目` 里新建一个项目。DaoCloud 支持多种镜像仓库，这个可以按需选择。
 
 这里我以 [hyperf-demo](https://github.com/limingxinleo/hyperf-demo) 仓库为例配置。当创建成功后，在对应 `Github仓库` 的 `WebHooks` 下面就会有对应的url。
@@ -24,7 +25,6 @@
 然后我们到 `集群管理` 中，创建一个 `集群`，然后添加 `主机`。
 
 这里就不详述了，按照上面的步骤一步一步来就行。
-
 
 ### 创建应用
 

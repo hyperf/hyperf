@@ -70,7 +70,7 @@ class Executor
                                     if ($result) {
                                         $this->logger->info(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                                     } else {
-                                        $this->logger->error(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                                        $this->logger->error(sprintf('Crontab task [%s] execute failure at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                                     }
                                 }
                             }

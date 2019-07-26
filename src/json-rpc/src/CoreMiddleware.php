@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\HttpMessage\Stream\SwooleStream;
+use Closure;
 use Hyperf\Rpc\ProtocolManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -38,6 +38,11 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
      */
     protected $packer;
 
+    /**
+     * @var \Hyperf\JsonRpc\ResponseBuilder
+     */
+    protected $responseBuilder;
+
     public function __construct(ContainerInterface $container, string $serverName)
     {
         parent::__construct($container, $serverName);
@@ -45,18 +50,41 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         $protocolName = 'jsonrpc';
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $this->dataFormatter,
+            'packer' => $this->packer,
+        ]);
+    }
+
+    protected function handleFound(array $routes, ServerRequestInterface $request)
+    {
+        if ($routes[1] instanceof Closure) {
+            $response = call($routes[1]);
+        } else {
+            [$controller, $action] = $this->prepareHandler($routes[1]);
+            $controllerInstance = $this->container->get($controller);
+            if (! method_exists($controller, $action)) {
+                // Route found, but the handler does not exist.
+                return $this->responseBuilder->buildErrorResponse($request, -32603);
+            }
+            $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            $response = $controllerInstance->{$action}(...$parameters);
+        }
+        return $response;
+    }
+
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        return $this->responseBuilder->buildErrorResponse($request, -32601);
+    }
+
+    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    {
+        return $this->handleNotFound($request);
     }
 
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
-        return $this->response()
-            ->withAddedHeader('content-type', 'application/json')
-            ->withBody(new SwooleStream($this->format($response, $request)));
-    }
-
-    protected function format($response, ServerRequestInterface $request): string
-    {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
-        return $this->packer->pack($response);
+        return $this->responseBuilder->buildResponse($request, $response);
     }
 }
