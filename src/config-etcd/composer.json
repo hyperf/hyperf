@@ -1,28 +1,29 @@
 {
-    "name": "hyperf/etcd",
+    "name": "hyperf/config-etcd",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "php",
         "hyperf",
-        "etcd"
+        "etcd",
+        "config"
     ],
-    "description": "Etcd Client for Hyperf.",
+    "description": "Etcd Config Center for Hyperf.",
     "autoload": {
         "psr-4": {
-            "Hyperf\\Etcd\\": "src/"
+            "Hyperf\\ConfigEtcd\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Etcd\\": "tests/"
+            "HyperfTest\\ConfigEtcd\\": "tests/"
         }
     },
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.3",
         "hyperf/utils": "~1.0.0",
-        "linkorb/etcd-php": "^1.6"
+        "hyperf/etcd": "~1.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
@@ -43,7 +44,7 @@
             "dev-master": "1.0-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\Etcd\\ConfigProvider"
+            "config": "Hyperf\\ConfigEtcd\\ConfigProvider"
         }
     }
 }
