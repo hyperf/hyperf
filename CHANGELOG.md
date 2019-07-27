@@ -1,11 +1,14 @@
 # v1.0.8 - TBD
 
+# Fixed
+
+- [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
+
 # v1.0.7 - 2019-07-26
 
 ## Fixed
 
 - [#266](https://github.com/hyperf-cloud/hyperf/pull/266) Fixed timeout when produce a amqp message.
-- [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes.
 
 # v1.0.6 - 2019-07-24
 
