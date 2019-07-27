@@ -25,6 +25,12 @@ class RewriteCollection
     protected $methods = [];
 
     /**
+     * Method pattern.
+     * @var array
+     */
+    protected $pattern = [];
+
+    /**
      * Rewrite level.
      * @var int
      */
@@ -54,7 +60,12 @@ class RewriteCollection
     {
         $methods = (array) $methods;
         foreach ($methods as $method) {
-            $this->methods[] = $method;
+            if (strpos($method, '*') === false) {
+                $this->methods[] = $method;
+            } else {
+                $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $method);
+                $this->pattern[] = "/^{$preg}$/";
+            }
         }
 
         return $this;
@@ -75,7 +86,17 @@ class RewriteCollection
             return true;
         }
 
-        return in_array($method, $this->methods);
+        if (in_array($method, $this->methods)) {
+            return true;
+        }
+
+        foreach ($this->pattern as $pattern) {
+            if (preg_match($pattern, $method)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

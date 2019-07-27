@@ -56,6 +56,7 @@ class AopAspectTest extends TestCase
         $res = Aspect::parse('Demo');
 
         $this->assertEquals(['test1'], $res->getMethods());
+        $this->assertTrue($res->shouldRewrite('test1'));
     }
 
     public function testParseClass()
@@ -69,6 +70,7 @@ class AopAspectTest extends TestCase
         $res = Aspect::parse('Demo');
         $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
         $this->assertFalse($res->shouldRewrite('__construct'));
+        $this->assertTrue($res->shouldRewrite('test'));
     }
 
     public function testParseClassAnnotations()
@@ -103,5 +105,33 @@ class AopAspectTest extends TestCase
         $this->assertTrue($res->shouldRewrite('test1'));
         $this->assertTrue($res->shouldRewrite('test2'));
         $this->assertFalse($res->shouldRewrite('test3'));
+    }
+
+    public function testMatchClassPreg()
+    {
+        $aspect = 'App\Aspect\DebugAspect';
+
+        AspectCollector::setAround($aspect, [
+            'Demo*',
+        ], []);
+
+        $res = Aspect::parse('Demo');
+        $this->assertTrue($res->shouldRewrite('test1'));
+
+        $res = Aspect::parse('DemoUser');
+        $this->assertTrue($res->shouldRewrite('test1'));
+    }
+
+    public function testMatchMethodPreg()
+    {
+        $aspect = 'App\Aspect\DebugAspect';
+
+        AspectCollector::setAround($aspect, [
+            'Demo::test*',
+        ], []);
+
+        $res = Aspect::parse('Demo');
+        $this->assertTrue($res->shouldRewrite('test1'));
+        $this->assertFalse($res->shouldRewrite('no'));
     }
 }
