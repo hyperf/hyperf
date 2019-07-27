@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 
 return [
+    # Etcd Client
     'uri' => 'http://127.0.0.1:2379',
     'version' => 'v3beta',
     'options' => [
@@ -19,6 +20,7 @@ return [
 
     # Etcd Config Center
     'enable' => false,
+    'packer' => Hyperf\Utils\Packer\JsonPacker::class,
     'namespaces' => [
         'application',
     ],

@@ -27,6 +27,14 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for etcd.',
+                    'source' => __DIR__ . '/../publish/etcd.php',
+                    'destination' => BASE_PATH . '/config/autoload/etcd.php',
+                ],
+            ],
         ];
     }
 }
