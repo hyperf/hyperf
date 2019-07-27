@@ -24,12 +24,12 @@ class MessageTest extends TestCase
     public function testMultiRoutingKey()
     {
         $consumer = new DemoConsumer();
-        $this->assertSame('hyperf1,hyperf2', $consumer->getRoutingKey());
+        $this->assertSame(['hyperf1', 'hyperf2'], $consumer->getRoutingKey());
 
         $consumer->setRoutingKey('route1');
         $this->assertSame('route1', $consumer->getRoutingKey());
 
         $consumer->setRoutingKey(['route1', 'route2']);
-        $this->assertSame('route1,route2', $consumer->getRoutingKey());
+        $this->assertSame(['route1', 'route2'], $consumer->getRoutingKey());
     }
 }
