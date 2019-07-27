@@ -86,7 +86,7 @@ class Aspect
     /**
      * @return array [isMatch, $matchedMethods]
      */
-    private static function isMatchClassRule(string $class, string $rule): array
+    public static function isMatchClassRule(string $class, string $rule): array
     {
         /*
          * e.g. Foo/Bar
@@ -103,7 +103,7 @@ class Aspect
             return [true, $method];
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^{$preg}$/";
+        $pattern = "#^{$preg}$#";
 
         if (preg_match($pattern, $class)) {
             return [true, null];

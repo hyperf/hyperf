@@ -56,7 +56,7 @@ trait ProxyTrait
 
     private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $aspects = self::parseAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
+        $aspects = self::getAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $aspects = array_unique(array_replace($aspects, $annotationAspects));
         if (empty($aspects)) {
@@ -77,30 +77,15 @@ trait ProxyTrait
             });
     }
 
-    private static function parseAspects(string $className, string $method): array
+    private static function getAspects(string $className, string $method): array
     {
         $aspects = AspectCollector::get('classes', []);
         $matchedAspect = [];
         foreach ($aspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                if ($rule === $className) {
+                if (Aspect::isMatchClassRule($className, $rule)) {
                     $matchedAspect[] = $aspect;
                     break;
-                }
-                if (strpos($rule, '::') !== false) {
-                    [$expectedClass, $expectedMethod] = explode('::', $rule);
-                    if ($expectedClass === $className && $expectedMethod === $method) {
-                        $matchedAspect[] = $aspect;
-                        break;
-                    }
-                }
-                if (strpos($rule, '*') !== false) {
-                    $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-                    $pattern = "/^{$preg}$/";
-                    if (preg_match($pattern, $className)) {
-                        $matchedAspect[] = $aspect;
-                        break;
-                    }
                 }
             }
         }
