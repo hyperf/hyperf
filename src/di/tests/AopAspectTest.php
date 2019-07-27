@@ -134,4 +134,40 @@ class AopAspectTest extends TestCase
         $this->assertTrue($res->shouldRewrite('test1'));
         $this->assertFalse($res->shouldRewrite('no'));
     }
+
+    public function testIsMatchClassRule()
+    {
+        /*
+         * e.g. Foo/Bar
+         * e.g. Foo/B*
+         * e.g. F*o/Bar
+         * e.g. F*o/Ba*
+         * e.g. Foo/Bar::method
+         * e.g. Foo/Bar::met*
+         */
+        $rule = 'Foo/Bar';
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
+
+        $rule = 'Foo/B*';
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
+
+        $rule = 'F*/Bar';
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
+
+        $rule = 'F*/Ba*';
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
+
+        $rule = 'Foo/Bar::method';
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
+
+        // @TODO Make it works.
+        $rule = 'Foo/Bar::metho*';
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
+    }
 }
