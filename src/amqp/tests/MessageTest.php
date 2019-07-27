@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Amqp;
 
 use HyperfTest\Amqp\Stub\DemoConsumer;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,6 +22,11 @@ use PHPUnit\Framework\TestCase;
  */
 class MessageTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testMultiRoutingKey()
     {
         $consumer = new DemoConsumer();
