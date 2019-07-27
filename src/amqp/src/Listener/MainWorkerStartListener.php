@@ -81,7 +81,7 @@ class MainWorkerStartListener implements ListenerInterface
                     $producer->declare($instance);
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
-                        $routingKey = join(',', $routingKey);
+                        $routingKey = implode(',', $routingKey);
                     }
                     $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $routingKey));
                 } catch (AMQPProtocolChannelException $e) {
