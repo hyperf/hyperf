@@ -149,6 +149,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Amqp\\": "./src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "./src/async-queue/tests/",
             "HyperfTest\\Cache\\": "./src/cache/tests/",
             "HyperfTest\\ConfigApollo\\": "./src/config-apollo/tests/",

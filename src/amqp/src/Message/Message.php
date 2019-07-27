@@ -33,7 +33,7 @@ abstract class Message implements MessageInterface
     protected $type = Type::TOPIC;
 
     /**
-     * @var string
+     * @var array|string
      */
     protected $routingKey = '';
 
@@ -76,9 +76,13 @@ abstract class Message implements MessageInterface
         return $this;
     }
 
-    public function getRoutingKey()
+    public function getRoutingKey(): string
     {
-        return $this->routingKey;
+        if (is_array($this->routingKey)) {
+            return join(',', $this->routingKey);
+        }
+
+        return (string) $this->routingKey;
     }
 
     public function getPoolName(): string

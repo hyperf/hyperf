@@ -52,13 +52,9 @@ class Consumer extends Builder
 
         $this->declare($consumerMessage, $channel);
 
-        $routingKey = $consumerMessage->getRoutingKey();
-        if (is_array($routingKey)) {
-            $routingKey = join(',', $routingKey);
-        }
         $channel->basic_consume(
             $consumerMessage->getQueue(),
-            $routingKey,
+            $consumerMessage->getRoutingKey(),
             false,
             false,
             false,
@@ -112,13 +108,11 @@ class Consumer extends Builder
 
         $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $routingKey = $message->getRoutingKey();
-        if (is_array($routingKey)) {
-            foreach ($routingKey as $v) {
+        $routineKeys = explode(',', $message->getRoutingKey());
+        foreach ($routineKeys as $v) {
+            if (! empty($v)) {
                 $channel->queue_bind($message->getQueue(), $message->getExchange(), $v);
             }
-        } else {
-            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
         }
     }
 }
