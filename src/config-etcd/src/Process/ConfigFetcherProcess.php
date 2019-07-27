@@ -69,15 +69,10 @@ class ConfigFetcherProcess extends AbstractProcess
         while (true) {
             $config = $this->client->pull();
             if ($config !== $this->cacheConfig) {
-                if ($this->cacheConfig !== null) {
-                    $diff = array_diff($this->cacheConfig ?? [], $config);
-                } else {
-                    $diff = $config;
-                }
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($this->format($diff)), $workerId);
+                    $this->server->sendMessage(new PipeMessage($this->format($config)), $workerId);
                 }
             }
 
@@ -88,10 +83,10 @@ class ConfigFetcherProcess extends AbstractProcess
     /**
      * Format kv configurations.
      */
-    protected function format(array $diff): array
+    protected function format(array $config): array
     {
         $result = [];
-        foreach ($diff as $value) {
+        foreach ($config as $value) {
             $result[] = new KV($value);
         }
 
