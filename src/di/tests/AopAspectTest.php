@@ -107,7 +107,7 @@ class AopAspectTest extends TestCase
         $this->assertFalse($res->shouldRewrite('test3'));
     }
 
-    public function testMatchClassPreg()
+    public function testMatchClassPattern()
     {
         $aspect = 'App\Aspect\DebugAspect';
 
@@ -122,7 +122,7 @@ class AopAspectTest extends TestCase
         $this->assertTrue($res->shouldRewrite('test1'));
     }
 
-    public function testMatchMethodPreg()
+    public function testMatchMethodPattern()
     {
         $aspect = 'App\Aspect\DebugAspect';
 
