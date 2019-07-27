@@ -14,9 +14,9 @@ namespace Hyperf\Di\Aop;
 
 class RewriteCollection
 {
-    const LEVEL_CLASS = 1;
+    const CLASS_LEVEL = 1;
 
-    const LEVEL_METHOD = 2;
+    const METHOD_LEVEL = 2;
 
     /**
      * Which methods can be rewrite.
@@ -34,7 +34,7 @@ class RewriteCollection
      * Rewrite level.
      * @var int
      */
-    protected $level = self::LEVEL_METHOD;
+    protected $level = self::METHOD_LEVEL;
 
     /**
      * @var string
@@ -71,15 +71,9 @@ class RewriteCollection
         return $this;
     }
 
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
-        return $this;
-    }
-
     public function shouldRewrite(string $method): bool
     {
-        if ($this->level === self::LEVEL_CLASS) {
+        if ($this->level === self::CLASS_LEVEL) {
             if (in_array($method, $this->shouldNotRewriteMethods)) {
                 return false;
             }
@@ -99,32 +93,29 @@ class RewriteCollection
         return false;
     }
 
-    /**
-     * @return array
-     */
-    public function getMethods(): array
+    public function setLevel(int $level): self
     {
-        return $this->methods;
+        $this->level = $level;
+        return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLevel(): int
     {
         return $this->level;
     }
 
-    /**
-     * @return string
-     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
     public function getClass(): string
     {
         return $this->class;
     }
 
     /**
-     * @return array
+     * Return the methods that should not rewrite.
      */
     public function getShouldNotRewriteMethods(): array
     {
