@@ -85,3 +85,61 @@ class ViewController
 ```
 Hello, Hyperf. You are using blade template now.
 ```
+
+## 视图渲染引擎
+
+官方暂时支持 Blade 和 Smarty 两种模板。
+
+### Blade模板
+
+```
+composer require duncan3dc/blade
+```
+
+### Smarty模板
+
+```
+composer require smarty/smarty
+```
+
+### 接入其他模板
+
+创建对应的 `TemplateEngine`，并实现 `Hyperf\View\Engine\EngineInterface` 接口。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Engine;
+
+use duncan3dc\Laravel\BladeInstance;
+
+class TemplateEngine implements EngineInterface
+{
+    public function render($template, $data, $config): string
+    {
+        $blade = new BladeInstance($config['view_path'], $config['cache_path']);
+
+        return $blade->render($template, $data);
+    }
+}
+
+```
+
+然后修改配置
+
+```php
+<?php
+
+use App\Engine\TemplateEngine;
+
+return [
+    'engine' => TemplateEngine::class,
+    'mode' => Mode::TASK,
+    'config' => [
+        'view_path' => BASE_PATH . '/storage/view/',
+        'cache_path' => BASE_PATH . '/runtime/view/',
+    ],
+];
+```
