@@ -14,4 +14,17 @@ namespace Hyperf\ConfigEtcd;
 
 class PipeMessage
 {
+    /**
+     * @var array
+     */
+    public $configurations;
+
+    /**
+     * PipeMessage constructor.
+     * @param array $configurations
+     */
+    public function __construct(array $configurations)
+    {
+        $this->configurations = $configurations;
+    }
 }

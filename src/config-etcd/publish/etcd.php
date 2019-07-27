@@ -20,6 +20,7 @@ return [
 
     # Etcd Config Center
     'enable' => false,
+    'packer' => Hyperf\Utils\Packer\JsonPacker::class,
     'namespaces' => [
         'application',
     ],

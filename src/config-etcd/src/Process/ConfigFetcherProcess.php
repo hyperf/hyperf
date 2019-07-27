@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigEtcd\Process;
 
 use Hyperf\ConfigEtcd\ClientInterface;
+use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
@@ -76,11 +77,24 @@ class ConfigFetcherProcess extends AbstractProcess
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($diff), $workerId);
+                    $this->server->sendMessage(new PipeMessage($this->format($diff)), $workerId);
                 }
             }
 
-            sleep($this->config->get('aliyun_acm.interval', 5));
+            sleep($this->config->get('etcd.interval', 5));
         }
+    }
+
+    /**
+     * Format kv configurations.
+     */
+    protected function format(array $diff): array
+    {
+        $result = [];
+        foreach ($diff as $value) {
+            $result[] = new KV($value);
+        }
+
+        return $result;
     }
 }

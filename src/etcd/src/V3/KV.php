@@ -31,7 +31,7 @@ class KV extends Client implements KVInterface
     public function fetchByPrefix($prefix)
     {
         $prefix = trim($prefix);
-        if (!$prefix) {
+        if (! $prefix) {
             return [];
         }
         $lastIndex = strlen($prefix) - 1;
