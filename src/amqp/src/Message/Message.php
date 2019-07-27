@@ -37,14 +37,6 @@ abstract class Message implements MessageInterface
      */
     protected $routingKey = '';
 
-    // $passive = false,
-    // $durable = false,
-    // $auto_delete = true,
-    // $internal = false,
-    // $nowait = false,
-    // $arguments = array(),
-    // $ticket = null
-
     public function setType(string $type): self
     {
         if (! in_array($type, Type::all())) {
@@ -76,13 +68,9 @@ abstract class Message implements MessageInterface
         return $this;
     }
 
-    public function getRoutingKey(): string
+    public function getRoutingKey()
     {
-        if (is_array($this->routingKey)) {
-            return join(',', $this->routingKey);
-        }
-
-        return (string) $this->routingKey;
+        return $this->routingKey;
     }
 
     public function getPoolName(): string

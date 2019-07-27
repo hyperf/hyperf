@@ -31,17 +31,9 @@ interface MessageInterface
 
     public function setRoutingKey($routingKey);
 
-    public function getRoutingKey(): string;
+    public function getRoutingKey();
 
     public function getExchangeBuilder(): ExchangeBuilder;
-
-    // $passive = false,
-    // $durable = false,
-    // $auto_delete = true,
-    // $internal = false,
-    // $nowait = false,
-    // $arguments = array(),
-    // $ticket = null
 
     /**
      * Serialize the message body to a string.

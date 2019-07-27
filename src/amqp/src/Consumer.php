@@ -54,7 +54,7 @@ class Consumer extends Builder
 
         $channel->basic_consume(
             $consumerMessage->getQueue(),
-            $consumerMessage->getRoutingKey(),
+            $consumerMessage->getConsumerTag(),
             false,
             false,
             false,
@@ -108,11 +108,9 @@ class Consumer extends Builder
 
         $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $routineKeys = explode(',', $message->getRoutingKey());
-        foreach ($routineKeys as $v) {
-            if (! empty($v)) {
-                $channel->queue_bind($message->getQueue(), $message->getExchange(), $v);
-            }
+        $routineKeys = (array) $message->getRoutingKey();
+        foreach ($routineKeys as $routingKey) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
         }
     }
 }
