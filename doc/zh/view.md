@@ -88,7 +88,7 @@ Hello, Hyperf. You are using blade template now.
 
 ## 视图渲染引擎
 
-官方暂时支持 Blade 和 Smarty 两种模板。
+官方暂时支持 `Blade` 和 `Smarty` 两种模板。
 
 ### Blade模板
 
