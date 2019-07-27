@@ -68,7 +68,7 @@ class AopAspectTest extends TestCase
         ], []);
 
         $res = Aspect::parse('Demo');
-        $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
+        $this->assertSame(RewriteCollection::CLASS_LEVEL, $res->getLevel());
         $this->assertFalse($res->shouldRewrite('__construct'));
         $this->assertTrue($res->shouldRewrite('test'));
     }
@@ -84,7 +84,7 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertSame(RewriteCollection::LEVEL_CLASS, $res->getLevel());
+        $this->assertSame(RewriteCollection::CLASS_LEVEL, $res->getLevel());
         $this->assertFalse($res->shouldRewrite('__construct'));
     }
 
@@ -100,7 +100,7 @@ class AopAspectTest extends TestCase
 
         $res = Aspect::parse('Demo');
 
-        $this->assertSame(RewriteCollection::LEVEL_METHOD, $res->getLevel());
+        $this->assertSame(RewriteCollection::METHOD_LEVEL, $res->getLevel());
         $this->assertFalse($res->shouldRewrite('__construct'));
         $this->assertTrue($res->shouldRewrite('test1'));
         $this->assertTrue($res->shouldRewrite('test2'));
