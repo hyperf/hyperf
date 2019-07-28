@@ -60,12 +60,22 @@ class Aspect
 
         if ($method == null) {
             if (strpos($ruleClass, '*') === false) {
+                /*
+                 * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar [return] true,ruleMethod
+                 * Match [rule] Foo/Bar [target] Foo/Bar [return] true,null
+                 * Match [rule] FooBar::rule*Method [target] Foo/Bar [return] true,rule*Method
+                 */
                 if ($ruleClass === $class) {
                     return [true, $ruleMethod];
                 }
 
                 return [false, null];
             }
+
+            /**
+             * Match [rule] Foo*Bar::ruleMethod [target] Foo/Bar [return] true,ruleMethod
+             * Match [rule] Foo*Bar [target] Foo/Bar [return] true,null.
+             */
             $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $ruleClass);
             $pattern = "#^{$preg}$#";
 
@@ -76,7 +86,11 @@ class Aspect
             return [false, null];
         }
 
-        if (strpos($ruleClass, '*') === false) {
+        if (strpos($rule, '*') === false) {
+            /*
+             * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
+             * Match [rule] Foo/Bar [target] Foo/Bar::ruleMethod [return] false,null
+             */
             if ($ruleClass === $class && $ruleMethod === $method) {
                 return [true, $ruleMethod];
             }
@@ -84,10 +98,25 @@ class Aspect
             return [false, null];
         }
 
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "#^{$preg}$#";
-        if (preg_match($pattern, $target)) {
-            return [true, $method];
+        /*
+         * Match [rule] Foo*Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
+         * Match [rule] FooBar::rule*Method [target] Foo/Bar::ruleMethod [return] true,rule*Method
+         */
+        if ($ruleMethod) {
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+            $pattern = "#^{$preg}$#";
+            if (preg_match($pattern, $target)) {
+                return [true, $method];
+            }
+        } else {
+            /**
+             * Match [rule] Foo*Bar [target] Foo/Bar::ruleMethod [return] true,null.
+             */
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+            $pattern = "#^{$preg}$#";
+            if (preg_match($pattern, $class)) {
+                return [true, $method];
+            }
         }
 
         return [false, null];
