@@ -147,6 +147,7 @@ class AopAspectTest extends TestCase
          */
         $rule = 'Foo/Bar';
         $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar::method', $rule));
         $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
 
         $rule = 'Foo/B*';
@@ -159,27 +160,22 @@ class AopAspectTest extends TestCase
 
         $rule = 'F*/Ba*';
         $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar::method', $rule));
         $this->assertSame([true, null], Aspect::isMatchClassRule('Foo/Bar/Baz', $rule));
 
         $rule = 'Foo/Bar::method';
         $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar::method', $rule));
         $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
 
         $rule = 'Foo/Bar::metho*';
         $this->assertSame([true, 'metho*'], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar::method', $rule));
         $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
     }
 
     public function testIsMatch()
     {
-        /*
-         * e.g. Foo/Bar
-         * e.g. Foo/B*
-         * e.g. F*o/Bar
-         * e.g. F*o/Ba*
-         * e.g. Foo/Bar::method
-         * e.g. Foo/Bar::met*
-         */
         $rule = 'Foo/Bar';
         $this->assertTrue(Aspect::isMatch('Foo/Bar', 'test', $rule));
         $this->assertFalse(Aspect::isMatch('Foo/Bar/Baz', 'test', $rule));

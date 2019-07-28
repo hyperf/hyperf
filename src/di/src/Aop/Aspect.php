@@ -91,8 +91,8 @@ class Aspect
              * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
              * Match [rule] Foo/Bar [target] Foo/Bar::ruleMethod [return] false,null
              */
-            if ($ruleClass === $class && $ruleMethod === $method) {
-                return [true, $ruleMethod];
+            if ($ruleClass === $class && ($ruleMethod === null || $ruleMethod === $method)) {
+                return [true, $method];
             }
 
             return [false, null];
@@ -124,28 +124,9 @@ class Aspect
 
     public static function isMatch(string $class, string $method, string $rule): bool
     {
-        [$isMatch, $matchMethod] = self::isMatchClassRule($class, $rule);
+        [$isMatch,] = self::isMatchClassRule($class . '::' . $method, $rule);
 
-        if (! $isMatch) {
-            return false;
-        }
-
-        if ($matchMethod === null) {
-            return true;
-        }
-
-        if (strpos($matchMethod, '*') === false) {
-            return $matchMethod === $method;
-        }
-
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $matchMethod);
-        $pattern = "#^{$preg}$#";
-
-        if (preg_match($pattern, $method)) {
-            return true;
-        }
-
-        return false;
+        return $isMatch;
     }
 
     private static function parseAnnotations(array $collection, string $class, RewriteCollection $rewriteCollection)
