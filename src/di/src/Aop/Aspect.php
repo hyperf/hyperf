@@ -34,6 +34,61 @@ class Aspect
         return $rewriteCollection;
     }
 
+    /**
+     * @return array [isMatch, $matchedMethods]
+     */
+    public static function isMatchClassRule(string $class, string $rule): array
+    {
+        /*
+         * e.g. Foo/Bar
+         * e.g. Foo/B*
+         * e.g. F*o/Bar
+         * e.g. Foo/Bar::method
+         * e.g. Foo/Bar::met*
+         */
+        $method = null;
+        if (strpos($rule, '::') !== false) {
+            [$rule, $method] = explode('::', $rule);
+        }
+        if (strpos($rule, '*') === false && $rule === $class) {
+            return [true, $method];
+        }
+        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+        $pattern = "#^{$preg}$#";
+
+        if (preg_match($pattern, $class)) {
+            return [true, null];
+        }
+
+        return [false, null];
+    }
+
+    public static function isMatch(string $class, string $method, string $rule): bool
+    {
+        [$isMatch, $matchMethod] = self::isMatchClassRule($class, $rule);
+
+        if (! $isMatch) {
+            return false;
+        }
+
+        if ($matchMethod === null) {
+            return true;
+        }
+
+        if (strpos($matchMethod, '*') === false) {
+            return $matchMethod === $method;
+        }
+
+        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $matchMethod);
+        $pattern = "#^{$preg}$#";
+
+        if (preg_match($pattern, $method)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private static function parseAnnotations(array $collection, string $class, RewriteCollection $rewriteCollection)
     {
         // Get the annotations of class and method.
@@ -81,34 +136,5 @@ class Aspect
                 }
             }
         }
-    }
-
-    /**
-     * @return array [isMatch, $matchedMethods]
-     */
-    public static function isMatchClassRule(string $class, string $rule): array
-    {
-        /*
-         * e.g. Foo/Bar
-         * e.g. Foo/B*
-         * e.g. F*o/Bar
-         * e.g. Foo/Bar::method
-         * e.g. Foo/Bar::met*
-         */
-        $method = null;
-        if (strpos($rule, '::') !== false) {
-            [$rule, $method] = explode('::', $rule);
-        }
-        if (strpos($rule, '*') === false && $rule === $class) {
-            return [true, $method];
-        }
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "#^{$preg}$#";
-
-        if (preg_match($pattern, $class)) {
-            return [true, null];
-        }
-
-        return [false, null];
     }
 }

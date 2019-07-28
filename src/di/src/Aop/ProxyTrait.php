@@ -83,7 +83,7 @@ trait ProxyTrait
         $matchedAspect = [];
         foreach ($aspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                if (Aspect::isMatchClassRule($className, $rule)) {
+                if (Aspect::isMatch($className, $method, $rule)) {
                     $matchedAspect[] = $aspect;
                     break;
                 }

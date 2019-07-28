@@ -165,9 +165,46 @@ class AopAspectTest extends TestCase
         $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar', $rule));
         $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
 
-        // @TODO Make it works.
         $rule = 'Foo/Bar::metho*';
-        $this->assertSame([true, 'method'], Aspect::isMatchClassRule('Foo/Bar', $rule));
+        $this->assertSame([true, 'metho*'], Aspect::isMatchClassRule('Foo/Bar', $rule));
         $this->assertSame([false, null], Aspect::isMatchClassRule('Foo/Bar/Baz::method', $rule));
+    }
+
+    public function testIsMatch()
+    {
+        /*
+         * e.g. Foo/Bar
+         * e.g. Foo/B*
+         * e.g. F*o/Bar
+         * e.g. F*o/Ba*
+         * e.g. Foo/Bar::method
+         * e.g. Foo/Bar::met*
+         */
+        $rule = 'Foo/Bar';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', 'test', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar/Baz', 'test', $rule));
+
+        $rule = 'Foo/B*';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', 'test', $rule));
+        $this->assertTrue(Aspect::isMatch('Foo/Bar/Baz', '*', $rule));
+
+        $rule = 'F*/Bar';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', '*', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar/Baz', '*', $rule));
+
+        $rule = 'F*/Ba*';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', '*', $rule));
+        $this->assertTrue(Aspect::isMatch('Foo/Bar/Baz', '*', $rule));
+
+        $rule = 'Foo/Bar::method';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', 'method', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar', 'test', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar/Baz', 'method', $rule));
+
+        $rule = 'Foo/Bar::metho*';
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', 'method', $rule));
+        $this->assertTrue(Aspect::isMatch('Foo/Bar', 'method2', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar/Baz', 'method', $rule));
+        $this->assertFalse(Aspect::isMatch('Foo/Bar', 'test', $rule));
     }
 }
