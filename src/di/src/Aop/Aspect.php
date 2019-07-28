@@ -37,7 +37,7 @@ class Aspect
     /**
      * @return array [isMatch, $matchedMethods]
      */
-    public static function isMatchClassRule(string $class, string $rule): array
+    public static function isMatchClassRule(string $target, string $rule): array
     {
         /*
          * e.g. Foo/Bar
@@ -46,18 +46,48 @@ class Aspect
          * e.g. Foo/Bar::method
          * e.g. Foo/Bar::met*
          */
+        $ruleMethod = null;
+        $ruleClass = $rule;
         $method = null;
+        $class = $target;
+
         if (strpos($rule, '::') !== false) {
-            [$rule, $method] = explode('::', $rule);
+            [$ruleClass, $ruleMethod] = explode('::', $rule);
         }
-        if (strpos($rule, '*') === false && $rule === $class) {
-            return [true, $method];
+        if (strpos($target, '::') !== false) {
+            [$class, $method] = explode('::', $target);
         }
+
+        if ($method == null) {
+            if (strpos($ruleClass, '*') === false) {
+                if ($ruleClass === $class) {
+                    return [true, $ruleMethod];
+                }
+
+                return [false, null];
+            }
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $ruleClass);
+            $pattern = "#^{$preg}$#";
+
+            if (preg_match($pattern, $class)) {
+                return [true, $ruleMethod];
+            }
+
+            return [false, null];
+        }
+
+        if (strpos($ruleClass, '*') === false) {
+            if ($ruleClass === $class && $ruleMethod === $method) {
+                return [true, $ruleMethod];
+            }
+
+            return [false, null];
+        }
+
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
         $pattern = "#^{$preg}$#";
-
-        if (preg_match($pattern, $class)) {
-            return [true, null];
+        if (preg_match($pattern, $target)) {
+            return [true, $method];
         }
 
         return [false, null];
