@@ -1,8 +1,16 @@
-# v1.0.7 - TBD
+# v1.0.8 - TBD
+
+# Added
+
+- [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
+
+# v1.0.7 - 2019-07-26
 
 ## Fixed
 
 - [#266](https://github.com/hyperf-cloud/hyperf/pull/266) Fixed timeout when produce a amqp message.
+- [#273](https://github.com/hyperf-cloud/hyperf/pull/273) Fixed all services have been registered to Consul will be deleted by the last register action. 
+- [#274](https://github.com/hyperf-cloud/hyperf/pull/274) Fixed the content type of view response.
 
 # v1.0.6 - 2019-07-24
 
