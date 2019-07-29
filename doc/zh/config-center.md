@@ -83,6 +83,60 @@ return [
 ];
 ```
 
+## 接入 Etcd 配置中心
+
+- 安装 `Etcd客户端`
+
+```
+composer require hyperf/etcd
+```
+
+因为 `Etcd` 分为 `v2` 和 `v3` 版本，所以根据需要选择安装
+
+```
+# Etcd v3 http client.
+composer require start-point/etcd-php
+# Etcd v2 http client.
+composer require linkorb/etcd-php
+```
+
+- 添加 `Etcd客户端` 配置文件 `etcd.php`
+
+```php
+<?php
+return [
+    'uri' => 'http://192.168.1.200:2379',
+    'version' => 'v3beta',
+    'options' => [
+        'timeout' => 10,
+    ],
+];
+```
+
+- 安装 `Etcd配置中心`
+
+```
+composer require hyperf/config-etcd
+```
+
+- 添加 `Etcd配置中心` 配置文件 `config_etcd.php`
+
+> mapping 为 `Etcd` 与 `Config` 的映射关系。映射中不存在的 `key`，则不会被同步到 `Config` 中。
+
+```php
+<?php
+return [
+    'enable' => true,
+    'namespaces' => [
+        '/test',
+    ],
+    'mapping' => [
+        '/test/test' => 'etcd.test.test',
+    ],
+    'interval' => 5,
+];
+```
+
 ## 配置更新的作用范围
 
 在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   

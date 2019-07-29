@@ -9,7 +9,7 @@ composer require hyperf/elasticsearch
 ```
 ## 使用
 
-### 创建客户端
+### 使用 `ClientBuilderFactory` 创建客户端
 
 ```php
 <?php
@@ -23,3 +23,28 @@ $client = $builder->setHosts(['http://127.0.0.1:9200'])->build();
 
 $info = $client->info();
 ```
+
+### 自行创建客户端
+
+```php
+<?php
+
+use Elasticsearch\ClientBuilder;
+use Hyperf\Guzzle\RingPHP\PoolHandler;
+use Swoole\Coroutine;
+
+$builder = ClientBuilder::create();
+if (Coroutine::getCid() > 0) {
+    $handler = make(PoolHandler::class, [
+        'option' => [
+            'max_connections' => 50,
+        ],
+    ]);
+    $builder->setHandler($handler);
+}
+
+$client = $builder->setHosts(['http://127.0.0.1:9200'])->build();
+
+$info = $client->info();
+```
+

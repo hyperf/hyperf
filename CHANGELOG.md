@@ -1,5 +1,16 @@
 # v1.0.8 - TBD
 
+# Added
+
+- [#276](https://github.com/hyperf-cloud/hyperf/pull/276) Amqp consumer support multi routing_key.
+- [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
+
+# Fixed
+
+- [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
+- [#285](https://github.com/hyperf-cloud/hyperf/pull/285) Fixed anonymous class should not rewrite in proxy class.
+- [#286](https://github.com/hyperf-cloud/hyperf/pull/286) Fixed not auto rollback when forgotten to commit or rollback in multi transactions.
+
 # v1.0.7 - 2019-07-26
 
 ## Fixed
