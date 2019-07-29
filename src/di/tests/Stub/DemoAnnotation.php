@@ -12,6 +12,14 @@ declare(strict_types=1);
 
 namespace HyperfTest\Di\Stub;
 
-interface FooInterface
+use Hyperf\Di\Annotation\AbstractAnnotation;
+
+class DemoAnnotation extends AbstractAnnotation
 {
+    public $id;
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
 }

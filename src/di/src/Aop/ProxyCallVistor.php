@@ -278,31 +278,9 @@ class ProxyCallVistor extends NodeVisitorAbstract
         if (! $node->name) {
             return false;
         }
-        $shouldNotRewriteMethods = [
-            '__construct',
-        ];
-        $aspects = Aspect::parse($this->classname);
-        $rewriteOnly = [];
-        foreach ($aspects as $aspect => $methods) {
-            if ($methods) {
-                $rewriteOnly[] = $methods;
-            }
-        }
 
-        /**
-         * If $rewriteOnly is an empty array, that means all methods should rewrite,
-         * If $rewriteOnly is not empty, then rewrite the methods in $rewriteOnly only, keep other methods as original.
-         */
-        if ($rewriteOnly) {
-            $rewriteOnly = array_merge(...$rewriteOnly);
-            if (in_array($node->name->toString(), $rewriteOnly)) {
-                return true;
-            }
-            return false;
-        }
-        if ($node->name && in_array($node->name->toString(), $shouldNotRewriteMethods)) {
-            return false;
-        }
-        return true;
+        $rewriteCollection = Aspect::parse($this->classname);
+
+        return $rewriteCollection->shouldRewrite($node->name->toString());
     }
 }

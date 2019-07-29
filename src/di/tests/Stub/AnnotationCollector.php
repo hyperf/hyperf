@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Di\Stub;
 
-interface FooInterface
+class AnnotationCollector extends \Hyperf\Di\Annotation\AnnotationCollector
 {
+    public static function clear()
+    {
+        self::$container = [];
+    }
 }

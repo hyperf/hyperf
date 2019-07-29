@@ -24,6 +24,13 @@ use Symfony\Component\Finder\SplFileInfo;
 class InitProxyCommand extends Command
 {
     /**
+     * Execution in a coroutine environment.
+     *
+     * @var bool
+     */
+    protected $coroutine = true;
+
+    /**
      * @var ContainerInterface
      */
     private $container;

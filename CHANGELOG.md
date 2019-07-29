@@ -5,6 +5,10 @@
 - [#276](https://github.com/hyperf-cloud/hyperf/pull/276) Amqp consumer support multi routing_key.
 - [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
 
+# Fixed
+
+- [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
+
 # v1.0.7 - 2019-07-26
 
 ## Fixed
