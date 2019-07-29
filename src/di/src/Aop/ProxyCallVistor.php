@@ -92,7 +92,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                             $usedNamespace[] = $classUse->name->toCodeString();
                         }
                         break;
-                    case $class instanceof Class_ && !$class->isAnonymous():
+                    case $class instanceof Class_ && ! $class->isAnonymous():
                         $this->class = $class->name;
                         if ($class->extends) {
                             $this->extends = $class->extends;
@@ -124,7 +124,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
                 break;
-            case $node instanceof Class_ && !$node->isAnonymous():
+            case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
                 array_unshift($stmts, $this->buildProxyCallTraitUseStatement());
