@@ -2,6 +2,7 @@
 
 # Added
 
+- [#276](https://github.com/hyperf-cloud/hyperf/pull/276) Amqp consumer support multi routing_key.
 - [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
 
 # v1.0.7 - 2019-07-26
