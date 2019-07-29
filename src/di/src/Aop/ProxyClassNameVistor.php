@@ -34,7 +34,7 @@ class ProxyClassNameVistor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         // Rewirte the class name and extends the original class.
-        if ($node instanceof Node\Stmt\Class_) {
+        if ($node instanceof Node\Stmt\Class_ && !$node->isAnonymous()) {
             $node->extends = $node->name;
             $node->name = new Node\Identifier($this->proxyClassName);
             return $node;
