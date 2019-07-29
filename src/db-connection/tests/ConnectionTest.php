@@ -52,4 +52,25 @@ class ConnectionTest extends TestCase
         $pdo = $connection->getPdo();
         $this->assertInstanceOf(PDOStub::class, $pdo);
     }
+
+    public function testConnectionRollback()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $resolver = $container->get(ConnectionResolver::class);
+
+        /** @var \Hyperf\Database\Connection $connection */
+        $connection = $resolver->connection();
+
+        $connection->beginTransaction();
+        $this->assertSame(1, $connection->transactionLevel());
+        $connection->rollBack();
+        $this->assertSame(0, $connection->transactionLevel());
+
+        $connection->beginTransaction();
+        $connection->beginTransaction();
+        $this->assertSame(2, $connection->transactionLevel());
+        $connection->rollBack(0);
+        $this->assertSame(0, $connection->transactionLevel());
+    }
 }
