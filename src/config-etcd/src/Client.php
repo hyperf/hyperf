@@ -35,7 +35,7 @@ class Client implements ClientInterface
 
     public function pull(): array
     {
-        $namespaces = $this->config->get('etcd.namespaces');
+        $namespaces = $this->config->get('config_etcd.namespaces');
         $kvs = [];
         foreach ($namespaces as $namespace) {
             $res = $this->client->fetchByPrefix($namespace);

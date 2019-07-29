@@ -60,8 +60,8 @@ class OnPipeMessageListener implements ListenerInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->client = $container->get(ClientInterface::class);
 
-        $this->mapping = $this->config->get('etcd.mapping', []);
-        $this->packer = $container->get($this->config->get('etcd.packer', JsonPacker::class));
+        $this->mapping = $this->config->get('config_etcd.mapping', []);
+        $this->packer = $container->get($this->config->get('config_etcd.packer', JsonPacker::class));
     }
 
     /**

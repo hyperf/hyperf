@@ -17,14 +17,4 @@ return [
     'options' => [
         'timeout' => 10,
     ],
-
-    # Etcd Config Center
-    'enable' => false,
-    'packer' => Hyperf\Utils\Packer\JsonPacker::class,
-    'namespaces' => [
-        'application',
-    ],
-    'mapping' => [
-    ],
-    'interval' => 5,
 ];

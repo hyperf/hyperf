@@ -61,7 +61,7 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('etcd.enable', false);
+        return $this->config->get('config_etcd.enable', false);
     }
 
     public function handle(): void
@@ -76,7 +76,7 @@ class ConfigFetcherProcess extends AbstractProcess
                 }
             }
 
-            sleep($this->config->get('etcd.interval', 5));
+            sleep($this->config->get('config_etcd.interval', 5));
         }
     }
 
