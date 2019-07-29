@@ -1,5 +1,10 @@
 # v1.0.8 - TBD
 
+# Added
+
+- [#276](https://github.com/hyperf-cloud/hyperf/pull/276) Amqp consumer support multi routing_key.
+- [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
+
 # Fixed
 
 - [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
@@ -9,6 +14,8 @@
 ## Fixed
 
 - [#266](https://github.com/hyperf-cloud/hyperf/pull/266) Fixed timeout when produce a amqp message.
+- [#273](https://github.com/hyperf-cloud/hyperf/pull/273) Fixed all services have been registered to Consul will be deleted by the last register action. 
+- [#274](https://github.com/hyperf-cloud/hyperf/pull/274) Fixed the content type of view response.
 
 # v1.0.6 - 2019-07-24
 
