@@ -81,32 +81,27 @@ use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
 
-function default_guzzle_handler(): HandlerStack
-{
-    $handler = null;
-    if (Coroutine::inCoroutine()) {
-        $handler = make(PoolHandler::class, [
-            'option' => [
-                'max_connections' => 50,
-            ],
-        ]);
-    }
-
-    // 默认的重试Middleware
-    $retry = make(RetryMiddleware::class, [
-        'retries' => 1,
-        'delay' => 10,
+$handler = null;
+if (Coroutine::inCoroutine()) {
+    $handler = make(PoolHandler::class, [
+        'option' => [
+            'max_connections' => 50,
+        ],
     ]);
-
-    $stack = HandlerStack::create($handler);
-    $stack->push($retry->getMiddleware(), 'retry');
-
-    return $stack;
 }
+
+// 默认的重试Middleware
+$retry = make(RetryMiddleware::class, [
+    'retries' => 1,
+    'delay' => 10,
+]);
+
+$stack = HandlerStack::create($handler);
+$stack->push($retry->getMiddleware(), 'retry');
 
 $client = make(Client::class, [
     'config' => [
-        'handler' => default_guzzle_handler(),
+        'handler' => $stack,
     ],
 ]);
 ```
