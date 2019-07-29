@@ -44,6 +44,8 @@ $cache = $container->get(Psr\SimpleCache\CacheInterface::class);
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
 例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 9000 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
 
+> 注解基于 `hyperf/di` 切面编程，所以只有在 `Container` 中获取到的对象实例才有效，直接 `new` 出来的对象无法使用 `缓存注解`。
+
 ```php
 <?php
 
