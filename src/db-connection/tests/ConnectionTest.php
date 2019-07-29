@@ -72,5 +72,14 @@ class ConnectionTest extends TestCase
         $this->assertSame(2, $connection->transactionLevel());
         $connection->rollBack(0);
         $this->assertSame(0, $connection->transactionLevel());
+
+        $connection->beginTransaction();
+        $connection->beginTransaction();
+        $connection->beginTransaction();
+        $this->assertSame(3, $connection->transactionLevel());
+        $connection->rollBack();
+        $this->assertSame(2, $connection->transactionLevel());
+        $connection->rollBack(0);
+        $this->assertSame(0, $connection->transactionLevel());
     }
 }
