@@ -79,7 +79,7 @@ We also provide a variety of quick and convenient `Mapping annotations`, such as
 > Using `@PostMapping` annotation should `use Hyperf\HttpServer\Annotation\PostMapping;` namespace；   
 > Using `@PutMapping` annotation should `use Hyperf\HttpServer\Annotation\PutMapping;` namespace；   
 > Using `@PatchMapping` annotation should `use Hyperf\HttpServer\Annotation\PatchMapping;` namespace；   
-> 使用 `@DeleteMapping` annotation should `use Hyperf\HttpServer\Annotation\DeleteMapping;` namespace；  
+> Using `@DeleteMapping` annotation should `use Hyperf\HttpServer\Annotation\DeleteMapping;` namespace；  
 
 ```php
 <?php
