@@ -1,5 +1,9 @@
 # v1.0.8 - TBD
 
+# Added
+
+- [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
+
 # v1.0.7 - 2019-07-26
 
 ## Fixed
