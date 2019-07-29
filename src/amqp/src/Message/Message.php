@@ -33,17 +33,9 @@ abstract class Message implements MessageInterface
     protected $type = Type::TOPIC;
 
     /**
-     * @var string
+     * @var array|string
      */
     protected $routingKey = '';
-
-    // $passive = false,
-    // $durable = false,
-    // $auto_delete = true,
-    // $internal = false,
-    // $nowait = false,
-    // $arguments = array(),
-    // $ticket = null
 
     public function setType(string $type): self
     {
@@ -70,13 +62,13 @@ abstract class Message implements MessageInterface
         return $this->exchange;
     }
 
-    public function setRoutingKey(string $routingKey): self
+    public function setRoutingKey($routingKey): self
     {
         $this->routingKey = $routingKey;
         return $this;
     }
 
-    public function getRoutingKey(): string
+    public function getRoutingKey()
     {
         return $this->routingKey;
     }
