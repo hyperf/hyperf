@@ -88,7 +88,7 @@ class RegisterServiceListener implements ListenerInterface
                         [$address, $port] = $servers[$service['server']];
                         switch ($service['publishTo']) {
                             case 'consul':
-                                $this->publishToConsul($address, (int)$port, $service, $serviceName, $path);
+                                $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
                                 break;
                         }
                     }
