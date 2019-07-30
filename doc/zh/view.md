@@ -47,19 +47,17 @@ return [
 
 ### 配置静态资源
 
-如果您希望 `Swoole` 来管理静态自选，请在 `config/autoload/server.php` 配置中 增加以下配置。
+如果您希望 `Swoole` 来管理静态资源，请在 `config/autoload/server.php` 配置中增加以下配置。
 
 ```
 return [
-    ...
     'settings' => [
         ...
-        // View
+        // 静态资源
         'document_root' => BASE_PATH . '/public',
         'static_handler_locations' => ['/'],
         'enable_static_handler' => true,
     ],
-    ...
 ];
 
 ```
