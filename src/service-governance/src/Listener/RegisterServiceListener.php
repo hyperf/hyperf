@@ -94,7 +94,7 @@ class RegisterServiceListener implements ListenerInterface
                         } else {
                             $nextId = $this->generateId($this->getLastServiceId($serviceName));
                         }
-                        $response = $this->consulAgent->registerService([
+                        $requestBody = [
                             'Name' => $serviceName,
                             'ID' => $nextId,
                             'Address' => $address,
@@ -102,12 +102,22 @@ class RegisterServiceListener implements ListenerInterface
                             'Meta' => [
                                 'Protocol' => $service['protocol'],
                             ],
-                            'Check' => [
+                        ];
+                        if ($service['protocol'] === 'jsonrpc-http') {
+                            $requestBody['Check'] = [
                                 'DeregisterCriticalServiceAfter' => '90m',
                                 'HTTP' => "http://{$address}:{$port}/",
                                 'Interval' => '1s',
-                            ],
-                        ]);
+                            ];
+                        }
+                        if ($service['protocol'] === 'jsonrpc') {
+                            $requestBody['Check'] = [
+                                'DeregisterCriticalServiceAfter' => '90m',
+                                'TCP' => "{$address}:{$port}",
+                                'Interval' => '1s',
+                            ];
+                        }
+                        $response = $this->consulAgent->registerService($requestBody);
                         if ($response->getStatusCode() === 200) {
                             $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
                         } else {
@@ -209,6 +219,14 @@ class RegisterServiceListener implements ListenerInterface
 
     private function getInternalIp(): string
     {
-        return gethostbyname(gethostname());
+        $ips = swoole_get_local_ip();
+        if (is_array($ips)) {
+            return current($ips);
+        }
+        $ip = gethostbyname(gethostname());
+        if (is_string($ip)) {
+            return $ip;
+        }
+        throw new \RuntimeException('Can not get the internal IP.');
     }
 }

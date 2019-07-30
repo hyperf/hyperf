@@ -14,17 +14,15 @@ namespace Hyperf\AsyncQueue\Command;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @Command
  */
-class ReloadFailedMessageCommand extends SymfonyCommand
+class ReloadFailedMessageCommand extends HyperfCommand
 {
     /**
      * @var ContainerInterface
@@ -37,17 +35,17 @@ class ReloadFailedMessageCommand extends SymfonyCommand
         parent::__construct('queue:reload');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function handle()
     {
-        $name = $input->getArgument('name');
-        $queue = $input->getOption('queue');
+        $name = $this->input->getArgument('name');
+        $queue = $this->input->getOption('queue');
 
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($name);
 
         $num = $driver->reload($queue);
 
-        $output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
+        $this->output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
     }
 
     protected function configure()

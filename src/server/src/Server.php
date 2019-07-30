@@ -80,6 +80,11 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
+    public function getServer(): SwooleServer
+    {
+        return $this->server;
+    }
+
     protected function initServers(ServerConfig $config)
     {
         $servers = $this->sortServers($config->getServers());

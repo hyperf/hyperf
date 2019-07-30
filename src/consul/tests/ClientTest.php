@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Consul;
 
-use Hyperf\Consul\Client;
+use HyperfTest\Consul\Stub\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;

@@ -47,6 +47,17 @@ class FunctionTest extends TestCase
         $this->assertSame('hyperf', $result);
     }
 
+    public function testDateGetIntegerKey()
+    {
+        $data = [1, 2, 3];
+        $result = data_get($data, 0);
+        $this->assertSame(1, $result);
+
+        $data = ['a' => [1, 2, 3], 4];
+        $result = data_get($data, 0);
+        $this->assertSame(4, $result);
+    }
+
     /**
      * @expectedException \HyperfTest\Utils\Exception\RetryException
      */
@@ -55,6 +66,22 @@ class FunctionTest extends TestCase
         $result = 0;
         try {
             retry(2, function () use (&$result) {
+                ++$result;
+                throw new RetryException('Retry Test');
+            });
+        } finally {
+            $this->assertSame(3, $result);
+        }
+    }
+
+    /**
+     * @expectedException \HyperfTest\Utils\Exception\RetryException
+     */
+    public function testOneTimesRetry()
+    {
+        $result = 0;
+        try {
+            retry(1, function () use (&$result) {
                 ++$result;
                 throw new RetryException('Retry Test');
             });

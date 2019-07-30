@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -20,21 +20,116 @@ class Aspect
     /**
      * Parse the aspects that point at the class.
      */
-    public static function parse(string $class): array
+    public static function parse(string $class): RewriteCollection
     {
-        $matched = [];
+        $rewriteCollection = new RewriteCollection($class);
         $container = AspectCollector::list();
         foreach ($container as $type => $collection) {
             if ($type === 'classes') {
-                static::parseClasses($collection, $class, $matched);
+                static::parseClasses($collection, $class, $rewriteCollection);
             } elseif ($type === 'annotations') {
-                static::parseAnnotations($collection, $class, $matched);
+                static::parseAnnotations($collection, $class, $rewriteCollection);
             }
         }
-        return $matched;
+        return $rewriteCollection;
     }
 
-    private static function parseAnnotations(array $collection, string $class, array &$matched)
+    /**
+     * @return array [isMatch, $matchedMethods]
+     */
+    public static function isMatchClassRule(string $target, string $rule): array
+    {
+        /*
+         * e.g. Foo/Bar
+         * e.g. Foo/B*
+         * e.g. F*o/Bar
+         * e.g. Foo/Bar::method
+         * e.g. Foo/Bar::met*
+         */
+        $ruleMethod = null;
+        $ruleClass = $rule;
+        $method = null;
+        $class = $target;
+
+        if (strpos($rule, '::') !== false) {
+            [$ruleClass, $ruleMethod] = explode('::', $rule);
+        }
+        if (strpos($target, '::') !== false) {
+            [$class, $method] = explode('::', $target);
+        }
+
+        if ($method == null) {
+            if (strpos($ruleClass, '*') === false) {
+                /*
+                 * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar [return] true,ruleMethod
+                 * Match [rule] Foo/Bar [target] Foo/Bar [return] true,null
+                 * Match [rule] FooBar::rule*Method [target] Foo/Bar [return] true,rule*Method
+                 */
+                if ($ruleClass === $class) {
+                    return [true, $ruleMethod];
+                }
+
+                return [false, null];
+            }
+
+            /**
+             * Match [rule] Foo*Bar::ruleMethod [target] Foo/Bar [return] true,ruleMethod
+             * Match [rule] Foo*Bar [target] Foo/Bar [return] true,null.
+             */
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $ruleClass);
+            $pattern = "#^{$preg}$#";
+
+            if (preg_match($pattern, $class)) {
+                return [true, $ruleMethod];
+            }
+
+            return [false, null];
+        }
+
+        if (strpos($rule, '*') === false) {
+            /*
+             * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
+             * Match [rule] Foo/Bar [target] Foo/Bar::ruleMethod [return] false,null
+             */
+            if ($ruleClass === $class && ($ruleMethod === null || $ruleMethod === $method)) {
+                return [true, $method];
+            }
+
+            return [false, null];
+        }
+
+        /*
+         * Match [rule] Foo*Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
+         * Match [rule] FooBar::rule*Method [target] Foo/Bar::ruleMethod [return] true,rule*Method
+         */
+        if ($ruleMethod) {
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+            $pattern = "#^{$preg}$#";
+            if (preg_match($pattern, $target)) {
+                return [true, $method];
+            }
+        } else {
+            /**
+             * Match [rule] Foo*Bar [target] Foo/Bar::ruleMethod [return] true,null.
+             */
+            $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+            $pattern = "#^{$preg}$#";
+            if (preg_match($pattern, $class)) {
+                return [true, $method];
+            }
+        }
+
+        return [false, null];
+    }
+
+    public static function isMatch(string $class, string $method, string $rule): bool
+    {
+        [$isMatch,] = self::isMatchClassRule($class . '::' . $method, $rule);
+
+        return $isMatch;
+    }
+
+    private static function parseAnnotations(array $collection, string $class, RewriteCollection $rewriteCollection)
     {
         // Get the annotations of class and method.
         $annotations = AnnotationCollector::get($class);
@@ -56,62 +151,30 @@ class Aspect
             foreach ($rules['annotations'] ?? [] as $rule) {
                 // If exist class level annotation, then all methods should rewrite, so return an empty array directly.
                 if (isset($classMapping[$rule])) {
-                    $matched = [];
-                    return $matched;
+                    return $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
                 }
                 if (isset($methodMapping[$rule])) {
-                    if (isset($matched[$aspect])) {
-                        $matched[$aspect] = array_unique(array_merge($matched[$aspect], $methodMapping[$rule]));
-                    } else {
-                        $matched[$aspect] = $methodMapping[$rule];
-                    }
+                    $rewriteCollection->add($methodMapping[$rule]);
                 }
             }
         }
-        return $matched;
+        return $rewriteCollection;
     }
 
-    private static function parseClasses(array $collection, string $class, array &$matched)
+    private static function parseClasses(array $collection, string $class, RewriteCollection $rewriteCollection)
     {
         $aspects = array_keys($collection);
         foreach ($aspects ?? [] as $aspect) {
             $rules = AspectCollector::getRule($aspect);
             foreach ($rules['classes'] ?? [] as $rule) {
-                [$isMatch, $classes] = static::isMatchClassRule($class, $rule);
+                [$isMatch, $method] = static::isMatchClassRule($class, $rule);
                 if ($isMatch) {
-                    $matched[$aspect] = $classes;
-                    break;
+                    if ($method === null) {
+                        return $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
+                    }
+                    $rewriteCollection->add($method);
                 }
             }
         }
-    }
-
-    /**
-     * @return array [isMatch, $matchedMethods]
-     */
-    private static function isMatchClassRule(string $class, string $rule): array
-    {
-        /*
-         * e.g. Foo/Bar
-         * e.g. Foo/B*
-         * e.g. F*o/Bar
-         * e.g. Foo/Bar::method1
-         * e.g. Foo/Bar::met* [WIP]
-         */
-        if (strpos($rule, '::') !== false) {
-            // @TODO Allow * for method rule.
-            [$rule, $method] = explode('::', $rule);
-        }
-        if (strpos($rule, '*') === false && $rule === $class) {
-            return [true, isset($method) && $method ? [$method] : []];
-        }
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^{$preg}$/";
-
-        if (preg_match($pattern, $class)) {
-            return [true, []];
-        }
-
-        return [false, []];
     }
 }

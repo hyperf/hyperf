@@ -22,10 +22,12 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use SimpleXMLElement;
 use Swoole\Http\Response as SwooleResponse;
 use function get_class;
 
@@ -68,7 +70,20 @@ class Response extends ServerResponse implements ResponseInterface
     {
         $data = $this->toJson($data);
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'application/json')
+            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
+            ->withBody(new SwooleStream($data));
+    }
+
+    /**
+     * Format data to XML and return data with Content-Type:application/xml header.
+     *
+     * @param array|Arrayable|Xmlable $data
+     */
+    public function xml($data, string $root = 'root'): PsrResponseInterface
+    {
+        $data = $this->toXml($data, null, $root);
+        return $this->getResponse()
+            ->withAddedHeader('content-type', 'application/xml; charset=utf-8')
             ->withBody(new SwooleStream($data));
     }
 
@@ -80,7 +95,7 @@ class Response extends ServerResponse implements ResponseInterface
     public function raw($data): PsrResponseInterface
     {
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'text/plain')
+            ->withAddedHeader('content-type', 'text/plain; charset=utf-8')
             ->withBody(new SwooleStream((string) $data));
     }
 
@@ -93,7 +108,7 @@ class Response extends ServerResponse implements ResponseInterface
         string $schema = 'http'
     ): PsrResponseInterface {
         $toUrl = value(function () use ($toUrl, $schema) {
-            if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, 'http://', 'https://')) {
+            if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
                 return $toUrl;
             }
             /** @var Contract\RequestInterface $request */
@@ -359,6 +374,41 @@ class Response extends ServerResponse implements ResponseInterface
         }
 
         throw new HttpException('Error encoding response data to JSON.');
+    }
+
+    /**
+     * @param array|Arrayable|Xmlable $data
+     * @param null|mixed $parentNode
+     * @param mixed $root
+     * @throws HttpException when the data encoding error
+     */
+    protected function toXml($data, $parentNode = null, $root = 'root')
+    {
+        if ($data instanceof Xmlable) {
+            return (string) $data;
+        }
+        if ($data instanceof Arrayable) {
+            $data = $data->toArray();
+        } else {
+            $data = (array) $data;
+        }
+        if ($parentNode === null) {
+            $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?>' . "<{$root}></{$root}>");
+        } else {
+            $xml = $parentNode;
+        }
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $this->toXml($value, $xml->addChild($key));
+            } else {
+                if (is_numeric($key)) {
+                    $xml->addChild('item' . $key, (string) $value);
+                } else {
+                    $xml->addChild($key, (string) $value);
+                }
+            }
+        }
+        return trim($xml->asXML());
     }
 
     /**

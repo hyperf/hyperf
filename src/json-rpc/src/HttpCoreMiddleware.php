@@ -28,6 +28,10 @@ class HttpCoreMiddleware extends CoreMiddleware
         $protocolName = 'jsonrpc-http';
         $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
         $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $this->dataFormatter,
+            'packer' => $this->packer,
+        ]);
     }
 
     protected function handleNotFound(ServerRequestInterface $request)

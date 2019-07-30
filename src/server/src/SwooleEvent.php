@@ -75,6 +75,16 @@ class SwooleEvent
     const ON_CLOSE = 'close';
 
     /**
+     * Swoole onTask event.
+     */
+    const ON_TASK = 'task';
+
+    /**
+     * Swoole onFinish event.
+     */
+    const ON_FINISH = 'finish';
+
+    /**
      * Before server start, it's not a swoole event.
      */
     const ON_BEFORE_START = 'beforeStart';

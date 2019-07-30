@@ -54,7 +54,7 @@ class Consumer extends Builder
 
         $channel->basic_consume(
             $consumerMessage->getQueue(),
-            $consumerMessage->getRoutingKey(),
+            $consumerMessage->getConsumerTag(),
             false,
             false,
             false,
@@ -92,7 +92,7 @@ class Consumer extends Builder
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
         if (! $message instanceof ConsumerMessageInterface) {
-            throw new MessageException('Message must instanceof ' . ConsumerInterface::class);
+            throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
         }
 
         if (! $channel) {
@@ -108,6 +108,9 @@ class Consumer extends Builder
 
         $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $channel->queue_bind($message->getQueue(), $message->getExchange(), $message->getRoutingKey());
+        $routineKeys = (array) $message->getRoutingKey();
+        foreach ($routineKeys as $routingKey) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
     }
 }

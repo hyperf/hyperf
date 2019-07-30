@@ -24,6 +24,11 @@ abstract class ProducerMessage extends Message implements ProducerMessageInterfa
     protected $payload = '';
 
     /**
+     * @var string
+     */
+    protected $routingKey = '';
+
+    /**
      * @var array
      */
     protected $properties

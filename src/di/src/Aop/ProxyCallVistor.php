@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -92,7 +92,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                             $usedNamespace[] = $classUse->name->toCodeString();
                         }
                         break;
-                    case $class instanceof Class_:
+                    case $class instanceof Class_ && ! $class->isAnonymous():
                         $this->class = $class->name;
                         if ($class->extends) {
                             $this->extends = $class->extends;
@@ -124,7 +124,7 @@ class ProxyCallVistor extends NodeVisitorAbstract
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
                 break;
-            case $node instanceof Class_:
+            case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
                 array_unshift($stmts, $this->buildProxyCallTraitUseStatement());
@@ -278,31 +278,9 @@ class ProxyCallVistor extends NodeVisitorAbstract
         if (! $node->name) {
             return false;
         }
-        $shouldNotRewriteMethods = [
-            '__construct',
-        ];
-        $aspects = Aspect::parse($this->classname);
-        $rewriteOnly = [];
-        foreach ($aspects as $aspect => $methods) {
-            if ($methods) {
-                $rewriteOnly[] = $methods;
-            }
-        }
 
-        /**
-         * If $rewriteOnly is an empty array, that means all methods should rewrite,
-         * If $rewriteOnly is not empty, then rewrite the methods in $rewriteOnly only, keep other methods as original.
-         */
-        if ($rewriteOnly) {
-            $rewriteOnly = array_merge(...$rewriteOnly);
-            if (in_array($node->name->toString(), $rewriteOnly)) {
-                return true;
-            }
-            return false;
-        }
-        if ($node->name && in_array($node->name->toString(), $shouldNotRewriteMethods)) {
-            return false;
-        }
-        return true;
+        $rewriteCollection = Aspect::parse($this->classname);
+
+        return $rewriteCollection->shouldRewrite($node->name->toString());
     }
 }

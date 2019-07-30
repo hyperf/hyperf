@@ -20,6 +20,13 @@ class Producer extends Builder
 {
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
+        return retry(1, function () use ($producerMessage, $confirm, $timeout) {
+            return $this->produceMessage($producerMessage, $confirm, $timeout);
+        });
+    }
+
+    private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5)
+    {
         $result = false;
 
         $this->injectMessageProperty($producerMessage);
@@ -56,8 +63,10 @@ class Producer extends Builder
         if (class_exists(AnnotationCollector::class)) {
             /** @var \Hyperf\Amqp\Annotation\Producer $annotation */
             $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
-            $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
-            $annotation->exchange && $producerMessage->setExchange($annotation->exchange);
+            if ($annotation) {
+                $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
+                $annotation->exchange && $producerMessage->setExchange($annotation->exchange);
+            }
         }
     }
 }

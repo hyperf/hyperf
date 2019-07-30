@@ -24,18 +24,16 @@ class StringHelper
         if ($value !== null) {
             if ($matches = StringHelper::parse($value)) {
                 foreach ($matches as $search) {
-                    $k = str_replace('#{', '', $search);
-                    $k = str_replace('}', '', $k);
+                    $k = str_replace(['#{', '}'], '', $search);
 
                     $value = Str::replaceFirst($search, (string) data_get($arguments, $k), $value);
                 }
             }
-            $key = $prefix . ':' . $value;
         } else {
-            $key = $prefix . ':' . implode(':', $arguments);
+            $value = implode(':', $arguments);
         }
 
-        return $key;
+        return $prefix . ':' . $value;
     }
 
     /**

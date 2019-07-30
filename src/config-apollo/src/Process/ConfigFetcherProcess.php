@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo\Process;
 
 use Hyperf\ConfigApollo\ClientInterface;
+use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -64,7 +65,7 @@ class ConfigFetcherProcess extends AbstractProcess
             if (isset($configs['configurations'], $configs['releaseKey'])) {
                 $configs['namespace'] = $namespace;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($configs, $workerId);
+                    $this->server->sendMessage(new PipeMessage($configs), $workerId);
                 }
             }
         };

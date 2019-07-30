@@ -146,15 +146,18 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|string $response
+     * @param array|Arrayable|Jsonable|string $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
         if (is_string($response)) {
-            return $this->response()->withBody(new SwooleStream($response));
+            return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
 
-        if (is_array($response)) {
+        if (is_array($response) || $response instanceof Arrayable) {
+            if ($response instanceof Arrayable) {
+                $response = $response->toArray();
+            }
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
@@ -166,7 +169,7 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream((string) $response));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
     }
 
     /**
@@ -197,17 +200,11 @@ class CoreMiddleware implements MiddlewareInterface
             $injections[] = value(function () use ($definition, $arguments) {
                 switch ($definition['type']) {
                     case 'int':
-                        return (int) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'float':
-                        return (float) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'bool':
-                        return (bool) $arguments[$definition['name']] ?? null;
-                        break;
                     case 'string':
-                        return (string) $arguments[$definition['name']] ?? null;
-                        break;
+                    case 'array':
+                        return $this->getValue($definition, $arguments);
                     case 'object':
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
                             throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
@@ -221,5 +218,36 @@ class CoreMiddleware implements MiddlewareInterface
         }
 
         return $injections;
+    }
+
+    protected function getValue($definition, $arguments)
+    {
+        if (isset($arguments[$definition['name']])) {
+            $value = $arguments[$definition['name']];
+            switch ($definition['type']) {
+                case 'int':
+                    return (int) $value;
+                case 'string':
+                    return (string) $value;
+                case 'float':
+                    return (float) $value;
+                case 'array':
+                    return (array) $value;
+                case 'bool':
+                    return (bool) $value;
+                default:
+                    return $value;
+            }
+        }
+
+        if (isset($definition['defaultValue'])) {
+            return $definition['defaultValue'];
+        }
+
+        if (isset($definition['allowsNull'])) {
+            return null;
+        }
+
+        throw new \RuntimeException('Invalid method definition detected.');
     }
 }

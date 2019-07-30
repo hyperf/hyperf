@@ -108,13 +108,15 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function close(): bool
     {
+        unset($this->connection);
+
         return true;
     }
 
     public function release(): void
     {
         if ($this->isTransaction()) {
-            $this->rollBack();
+            $this->rollBack(0);
             $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
         }
         parent::release();

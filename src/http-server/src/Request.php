@@ -150,7 +150,10 @@ class Request implements RequestInterface
      */
     public function header(string $key, $default = null)
     {
-        return $this->getHeaderLine($key) ?? $default;
+        if (! $this->hasHeader($key)) {
+            return $default;
+        }
+        return $this->getHeaderLine($key);
     }
 
     /**
@@ -331,7 +334,7 @@ class Request implements RequestInterface
      */
     public function hasFile(string $key): bool
     {
-        if (is_array($file = $this->file($key))) {
+        if ($file = $this->file($key)) {
             return $this->isValidFile($file);
         }
         return false;

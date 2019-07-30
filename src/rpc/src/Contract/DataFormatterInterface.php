@@ -17,4 +17,6 @@ interface DataFormatterInterface
     public function formatRequest($data);
 
     public function formatResponse($data);
+
+    public function formatErrorResponse($data);
 }

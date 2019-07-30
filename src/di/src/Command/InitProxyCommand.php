@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -12,19 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Command;
 
+use Hyperf\Command\Command;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {
+    /**
+     * Execution in a coroutine environment.
+     *
+     * @var bool
+     */
+    protected $coroutine = true;
+
     /**
      * @var ContainerInterface
      */
@@ -42,7 +47,7 @@ class InitProxyCommand extends Command
         $this->scanner = $scanner;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function handle()
     {
         $scanDirs = $this->getScanDir();
 
@@ -71,7 +76,7 @@ class InitProxyCommand extends Command
             }
         }
 
-        $output->writeln('<info>Proxy class create success.</info>');
+        $this->output->writeln('<info>Proxy class create success.</info>');
     }
 
     protected function clearRuntime($paths)

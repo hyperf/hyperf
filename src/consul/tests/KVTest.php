@@ -47,7 +47,7 @@ class KVTest extends TestCase
         $this->assertInstanceOf(ConsulResponse::class, $response);
 
         $json = $response->json();
-        $this->assertSame($value, base64_decode($json[0]['Value']));
+        $this->assertSame("\"{$value}\"", base64_decode($json[0]['Value']));
     }
 
     public function testSetGetWithRawOption()
@@ -59,7 +59,7 @@ class KVTest extends TestCase
         $this->assertInstanceOf(ConsulResponse::class, $response);
 
         $body = (string) $response->getBody();
-        $this->assertSame($value, $body);
+        $this->assertSame("\"{$value}\"", $body);
     }
 
     public function testSetGetWithFlagsOption()
@@ -132,12 +132,14 @@ class KVTest extends TestCase
         $container->shouldReceive('get')->with(ClientFactory::class)->andReturn(new ClientFactory($container));
         $container->shouldReceive('make')->andReturnUsing(function ($name, $options) {
             if ($name === Client::class) {
-                return new Client($options);
+                return new Client($options['config']);
             }
         });
         ApplicationContext::setContainer($container);
         return new KV(function () use ($container) {
-            return $container->get(ClientFactory::class)->create();
+            return $container->get(ClientFactory::class)->create([
+                'base_uri' => KV::DEFAULT_URI,
+            ]);
         }, $container->get(StdoutLoggerInterface::class));
     }
 }

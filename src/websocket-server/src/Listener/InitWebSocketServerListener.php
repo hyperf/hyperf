@@ -45,9 +45,10 @@ class InitWebSocketServerListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event->server instanceof \Swoole\WebSocket\Server) {
-            $server = $this->container->get(Server::class);
-            $server->setServer($event->server);
+        if (! $this->container->has(Server::class)) {
+            return;
         }
+        $server = $this->container->get(Server::class);
+        $event->server instanceof \Swoole\WebSocket\Server && $server->setServer($event->server);
     }
 }

@@ -25,7 +25,7 @@ class OnPipeMessage
     public $fromWorkerId;
 
     /**
-     * @var array|mixed|string
+     * @var mixed
      */
     public $data;
 

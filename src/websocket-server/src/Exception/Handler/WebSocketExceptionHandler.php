@@ -15,6 +15,7 @@ namespace Hyperf\WebSocketServer\Exception\Handler;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -39,8 +40,8 @@ class WebSocketExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         $this->logger->warning($this->formatter->format($throwable));
-
-        return $response;
+        $stream = new SwooleStream((string) $exception->getMessage());
+        return $response->withBody($stream);
     }
 
     public function isValid(Throwable $throwable): bool

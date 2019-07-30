@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
@@ -54,7 +54,7 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 
-    protected function bindMainProperty(string $key, array $value)
+    protected function bindMainProperty(string $key, ?array $value)
     {
         if (isset($value['value'])) {
             $this->{$key} = $value['value'];
