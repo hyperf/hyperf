@@ -45,6 +45,25 @@ return [
 
 > 若使用 `Sync` 模式渲染视图时，请确保相关引擎是协程安全的，否则会出现数据混淆的问题，建议使用更加数据安全的 `Task` 模式。
 
+### 配置静态资源
+
+如果您希望 `Swoole` 来管理静态自选，请在 `config/autoload/server.php` 配置中 增加以下配置。
+
+```
+return [
+    ...
+    'settings' => [
+        ...
+        // View
+        'document_root' => BASE_PATH . '/public',
+        'static_handler_locations' => ['/'],
+        'enable_static_handler' => true,
+    ],
+    ...
+];
+
+```
+
 ## 使用
 
 以下以 `BladeEngine` 为例，首先在对应的目录里创建视图文件 `index.blade.php`。
