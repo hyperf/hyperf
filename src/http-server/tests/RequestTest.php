@@ -48,12 +48,16 @@ class RequestTest extends TestCase
     public function testRequestHeaderDefaultValue()
     {
         $psrRequest = Mockery::mock(ServerRequestInterface::class);
-        $psrRequest->shouldReceive('hasHeader')->andReturn(false);
+        $psrRequest->shouldReceive('hasHeader')->with('Version')->andReturn(false);
+        $psrRequest->shouldReceive('hasHeader')->with('Hyperf-Version')->andReturn(true);
+        $psrRequest->shouldReceive('getHeaderLine')->with('Hyperf-Version')->andReturn('v1.0');
         Context::set(ServerRequestInterface::class, $psrRequest);
 
         $psrRequest = new Request();
         $res = $psrRequest->header('Version', 'v1');
-
         $this->assertSame('v1', $res);
+
+        $res = $psrRequest->header('Hyperf-Version', 'v0');
+        $this->assertSame('v1.0', $res);
     }
 }
