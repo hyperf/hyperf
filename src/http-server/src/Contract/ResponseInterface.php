@@ -30,7 +30,7 @@ interface ResponseInterface
      * Format data to XML and return data with Content-Type:application/xml header.
      *
      * @param array|Arrayable|Xmlable $data
-     * @param string $root The name of the root node.
+     * @param string $root the name of the root node
      */
     public function xml($data, string $root = 'root'): PsrResponseInterface;
 

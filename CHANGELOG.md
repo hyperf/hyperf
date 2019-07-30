@@ -10,7 +10,7 @@
 - [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
 - [#285](https://github.com/hyperf-cloud/hyperf/pull/285) Fixed anonymous class should not rewrite in proxy class.
 - [#286](https://github.com/hyperf-cloud/hyperf/pull/286) Fixed not auto rollback when forgotten to commit or rollback in multi transactions.
-
+- [#292](https://github.com/hyperf-cloud/hyperf/pull/292) Fixed `$default` is not work in method `Request::header`.
 # v1.0.7 - 2019-07-26
 
 ## Fixed

@@ -116,6 +116,7 @@ class ResponseTest extends TestCase
         // Xmlable
         $xmlable = new class($expected) implements Xmlable {
             private $result;
+
             public function __construct($result)
             {
                 $this->result = $result;
@@ -128,5 +129,4 @@ class ResponseTest extends TestCase
         };
         $this->assertSame($expected, $reflectionMethod->invoke($response, $xmlable));
     }
-
 }
