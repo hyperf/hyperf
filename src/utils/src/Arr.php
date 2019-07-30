@@ -225,9 +225,10 @@ class Arr
      * Get an item from an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param null|mixed $default
+     * @param null|int|string $key
+     * @param mixed $default
      */
-    public static function get($array, $key, $default = null)
+    public static function get($array, $key = null, $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
@@ -238,7 +239,7 @@ class Arr
         if (static::exists($array, $key)) {
             return $array[$key];
         }
-        if (strpos($key, '.') === false) {
+        if (! is_string($key) || strpos($key, '.') === false) {
             return $array[$key] ?? value($default);
         }
         foreach (explode('.', $key) as $segment) {
