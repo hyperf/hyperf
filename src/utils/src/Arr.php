@@ -227,7 +227,7 @@ class Arr
      * @param array|\ArrayAccess $array
      * @param null|mixed $default
      */
-    public static function get($array, string $key, $default = null)
+    public static function get($array, $key, $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
