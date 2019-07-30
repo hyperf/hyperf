@@ -1,14 +1,26 @@
 <?php
 
-namespace HyperfTest\HttpServer;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
+namespace HyperfTest\HttpServer;
 
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class MappingAnnotationTest extends TestCase
 {
-
     public function testRequestMapping()
     {
         $mapping = new RequestMapping([]);
@@ -37,7 +49,7 @@ class MappingAnnotationTest extends TestCase
     {
         $mapping = new RequestMapping([
             'methods' => [
-                'GET', 'POST ', 'put'
+                'GET', 'POST ', 'put',
             ],
             'path' => $path = '/foo',
         ]);

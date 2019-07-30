@@ -44,4 +44,16 @@ class RequestTest extends TestCase
         $this->assertFalse($request->hasFile('file2'));
         $this->assertInstanceOf(UploadedFile::class, $request->file('file'));
     }
+
+    public function testRequestHeaderDefaultValue()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('hasHeader')->andReturn(false);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $psrRequest = new Request();
+        $res = $psrRequest->header('Version', 'v1');
+
+        $this->assertSame('v1', $res);
+    }
 }
