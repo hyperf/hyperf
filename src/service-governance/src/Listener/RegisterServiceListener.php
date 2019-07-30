@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ServiceGovernance\Listener;
 
+use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
@@ -74,58 +75,76 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $services = $this->serviceManager->all();
-        $servers = $this->getServers();
-        foreach ($services as $serviceName => $paths) {
-            foreach ($paths as $path => $service) {
-                if (! isset($service['publishTo'], $service['server'])) {
-                    continue;
-                }
-                switch ($service['publishTo']) {
-                    case 'consul':
+        $continue = true;
+        while ($continue) {
+            try {
+                $services = $this->serviceManager->all();
+                $servers = $this->getServers();
+                foreach ($services as $serviceName => $paths) {
+                    foreach ($paths as $path => $service) {
+                        if (! isset($service['publishTo'], $service['server'])) {
+                            continue;
+                        }
                         [$address, $port] = $servers[$service['server']];
-                        $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
-                        if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
-                            $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
-                            return;
+                        switch ($service['publishTo']) {
+                            case 'consul':
+                                $this->publishToConsul($address, $port, $service, $serviceName, $path);
+                                break;
                         }
-                        if (isset($service['id']) && $service['id']) {
-                            $nextId = $service['id'];
-                        } else {
-                            $nextId = $this->generateId($this->getLastServiceId($serviceName));
-                        }
-                        $requestBody = [
-                            'Name' => $serviceName,
-                            'ID' => $nextId,
-                            'Address' => $address,
-                            'Port' => $port,
-                            'Meta' => [
-                                'Protocol' => $service['protocol'],
-                            ],
-                        ];
-                        if ($service['protocol'] === 'jsonrpc-http') {
-                            $requestBody['Check'] = [
-                                'DeregisterCriticalServiceAfter' => '90m',
-                                'HTTP' => "http://{$address}:{$port}/",
-                                'Interval' => '1s',
-                            ];
-                        }
-                        if ($service['protocol'] === 'jsonrpc') {
-                            $requestBody['Check'] = [
-                                'DeregisterCriticalServiceAfter' => '90m',
-                                'TCP' => "{$address}:{$port}",
-                                'Interval' => '1s',
-                            ];
-                        }
-                        $response = $this->consulAgent->registerService($requestBody);
-                        if ($response->getStatusCode() === 200) {
-                            $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
-                        } else {
-                            $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
-                        }
-                        break;
+                    }
+                }
+                $continue = false;
+            } catch (ServerException $throwable) {
+                if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
+                    $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
+                    sleep(10);
+                } else {
+                    throw $throwable;
                 }
             }
+        }
+    }
+
+    private function publishToConsul($address, $port, $service, $serviceName, $path)
+    {
+        $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
+        if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
+            $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
+            return;
+        }
+        if (isset($service['id']) && $service['id']) {
+            $nextId = $service['id'];
+        } else {
+            $nextId = $this->generateId($this->getLastServiceId($serviceName));
+        }
+        $requestBody = [
+            'Name' => $serviceName,
+            'ID' => $nextId,
+            'Address' => $address,
+            'Port' => $port,
+            'Meta' => [
+                'Protocol' => $service['protocol'],
+            ],
+        ];
+        if ($service['protocol'] === 'jsonrpc-http') {
+            $requestBody['Check'] = [
+                'DeregisterCriticalServiceAfter' => '90m',
+                'HTTP' => "http://{$address}:{$port}/",
+                'Interval' => '1s',
+            ];
+        }
+        if ($service['protocol'] === 'jsonrpc') {
+            $requestBody['Check'] = [
+                'DeregisterCriticalServiceAfter' => '90m',
+                'TCP' => "{$address}:{$port}",
+                'Interval' => '1s',
+            ];
+        }
+        $response = $this->consulAgent->registerService($requestBody);
+        if ($response->getStatusCode() === 200) {
+            $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
+        } else {
+            $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
         }
     }
 
