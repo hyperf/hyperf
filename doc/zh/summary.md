@@ -77,6 +77,7 @@
   * [Swoole Enterprise](zh/swoole-enterprise.md)
   * [定时任务](zh/crontab.md)
   * [Task 机制](zh/task.md)
+  * [枚举类](zh/constants.md)
 
 * 应用部署
 
