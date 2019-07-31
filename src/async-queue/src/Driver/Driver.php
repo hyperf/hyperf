@@ -60,23 +60,25 @@ abstract class Driver implements DriverInterface
                 continue;
             }
 
-            try {
-                if ($message instanceof MessageInterface) {
-                    $this->event && $this->event->dispatch(new BeforeHandle($message));
-                    $message->job()->handle();
-                    $this->event && $this->event->dispatch(new AfterHandle($message));
-                }
+            parallel([function () use ($message, $data) {
+                try {
+                    if ($message instanceof MessageInterface) {
+                        $this->event && $this->event->dispatch(new BeforeHandle($message));
+                        $message->job()->handle();
+                        $this->event && $this->event->dispatch(new AfterHandle($message));
+                    }
 
-                $this->ack($data);
-            } catch (\Throwable $ex) {
-                if ($message->attempts() && $this->remove($data)) {
-                    $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
-                    $this->retry($message);
-                } else {
-                    $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
-                    $this->fail($data);
+                    $this->ack($data);
+                } catch (\Throwable $ex) {
+                    if ($message->attempts() && $this->remove($data)) {
+                        $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
+                        $this->retry($message);
+                    } else {
+                        $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
+                        $this->fail($data);
+                    }
                 }
-            }
+            }]);
         }
     }
 
