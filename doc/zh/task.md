@@ -64,7 +64,7 @@ class MethodTask
 
 $container = ApplicationContext::getContainer();
 $exec = $container->get(TaskExecutor::class);
-$result = $exec->execute(new Task([MethodTask::class, 'handle'], Coroutine::id()));
+$result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id()]));
 
 ```
 
