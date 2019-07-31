@@ -390,9 +390,14 @@ class Arr
     /**
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
-     * @param mixed $value
+     *
+     * @param array|\ArrayAccess $array
+     * @param null|int|string    $key
+     * @param mixed              $value
+     * @return array
+     *
      */
-    public static function set(array &$array, string $key, $value): array
+    public static function set(array &$array, $key, $value): array
     {
         if (is_null($key)) {
             return $array = $value;
