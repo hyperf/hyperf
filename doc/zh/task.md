@@ -52,7 +52,7 @@ use Hyperf\Task\Task;
 
 class MethodTask
 {
-    public function handle($cid)
+    public static function handle($cid)
     {
         return [
             'worker.cid' => $cid,
