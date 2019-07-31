@@ -16,7 +16,9 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Traits\CoroutineProxy;
 use Psr\Http\Message\ServerRequestInterface;
 use Zipkin\Propagation\Map;
+use Zipkin\Propagation\Propagation;
 use Zipkin\Span;
+use Zipkin\Tracer;
 use Zipkin\TracingBuilder;
 use const Zipkin\Kind\SERVER;
 
@@ -65,10 +67,8 @@ class Tracing implements \Zipkin\Tracing
 
     /**
      * All tracing commands start with a {@link Span}. Use a tracer to create spans.
-     *
-     * @return \Zipkin\Tracer
      */
-    public function getTracer()
+    public function getTracer(): Tracer
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
@@ -76,10 +76,8 @@ class Tracing implements \Zipkin\Tracing
     /**
      * When a trace leaves the process, it needs to be propagated, usually via headers. This utility
      * is used to inject or extract a trace context from remote requests.
-     *
-     * @return \Zipkin\Propagation\Propagation
      */
-    public function getPropagation()
+    public function getPropagation(): Propagation
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
@@ -88,10 +86,9 @@ class Tracing implements \Zipkin\Tracing
      * When true, no recording is done and nothing is reported to zipkin. However, trace context is
      * still injected into outgoing requests.
      *
-     * @return bool
      * @see Span#isNoop()
      */
-    public function isNoop()
+    public function isNoop(): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }

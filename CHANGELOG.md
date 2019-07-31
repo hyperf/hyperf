@@ -10,7 +10,7 @@
 ## Changed
 
 - [#297](https://github.com/hyperf-cloud/hyperf/pull/297) If register service failed, then sleep 10s and re-register, also hided the useless exception message when register service failed.
-- [#298](https://github.com/hyperf-cloud/hyperf/pull/298) Adapted openzipkin/zipkin v1.3.3+
+- [#298](https://github.com/hyperf-cloud/hyperf/pull/298) [#301](https://github.com/hyperf-cloud/hyperf/pull/301) Adapted openzipkin/zipkin v1.3.3+
 
 ## Fixed
 
