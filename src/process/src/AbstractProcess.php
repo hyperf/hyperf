@@ -80,6 +80,8 @@ abstract class AbstractProcess implements ProcessInterface
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
+
+            ProcessCollector::add($this->name, $process);
         }
     }
 }
