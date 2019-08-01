@@ -57,6 +57,11 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $event;
 
+    /**
+     * @var SwooleProcess
+     */
+    protected $process;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -76,6 +81,7 @@ abstract class AbstractProcess implements ProcessInterface
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                $this->process = $process;
                 $this->handle();
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
