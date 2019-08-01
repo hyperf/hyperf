@@ -392,15 +392,18 @@ class Arr
      * If no key is given to the method, the entire array will be replaced.
      *
      * @param array|\ArrayAccess $array
-     * @param null|int|string    $key
-     * @param mixed              $value
+     * @param null|int|string $key
+     * @param mixed $value
      * @return array
-     *
      */
     public static function set(array &$array, $key, $value): array
     {
         if (is_null($key)) {
             return $array = $value;
+        }
+        if (! is_string($key)) {
+            $array[$key] = $value;
+            return $array;
         }
         $keys = explode('.', $key);
         while (count($keys) > 1) {

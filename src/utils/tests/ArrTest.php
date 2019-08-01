@@ -39,4 +39,25 @@ class ArrTest extends TestCase
         $object->id = 1;
         $this->assertSame(null, Arr::get($object, 'id'));
     }
+
+    public function testArrSet()
+    {
+        $data = ['id' => 1, 'name' => 'Hyperf'];
+        Arr::set($data, 'id', 2);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf'], $data);
+        Arr::set($data, 'gendar', 2);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2], $data);
+        Arr::set($data, 'book.0', 'Hello Hyperf');
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2, 'book' => ['Hello Hyperf']], $data);
+        Arr::set($data, 'rel.id', 2);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2, 'book' => ['Hello Hyperf'], 'rel' => ['id' => 2]], $data);
+        Arr::set($data, null, [1, 2, 3]);
+        $this->assertSame([1, 2, 3], $data);
+
+        $data = [1, 2, 3, 4];
+        Arr::set($data, 0, 2);
+        $this->assertSame([2, 2, 3, 4], $data);
+        Arr::set($data, 4, 2);
+        $this->assertSame([2, 2, 3, 4, 2], $data);
+    }
 }

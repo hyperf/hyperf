@@ -1,5 +1,9 @@
 # v1.0.9 - TBD
 
+## Fixed
+
+- [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
+
 # v1.0.8 - 2019-07-31
 
 ## Added
