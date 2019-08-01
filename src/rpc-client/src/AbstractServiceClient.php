@@ -61,7 +61,7 @@ abstract class AbstractServiceClient
     protected $client;
 
     /**
-     * @var ContainerInterfaces
+     * @var ContainerInterface
      */
     protected $container;
 

@@ -12,9 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Serializer\Serializer;
 
 class ConfigProvider
 {
@@ -26,6 +31,9 @@ class ConfigProvider
                 RequestInterface::class => Request::class,
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
+                NormalizerInterface::class => class_exists(Serializer::class)
+                    ? SymfonyNormalizer::class : SimpleNormalizer::class,
+                Serializer::class => SerializerFactory::class,
             ],
             'commands' => [
             ],

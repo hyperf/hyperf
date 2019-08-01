@@ -15,21 +15,20 @@ namespace Hyperf\RpcServer;
 use Closure;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\RpcServer\Router\DispatcherFactory;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * {@inheritdoc}
  */
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
-    public function __construct(ContainerInterface $container, string $serverName)
+    /**
+     * {@inheritdoc}
+     */
+    protected function createDispatcher(string $serverName)
     {
-        $this->container = $container;
-        $factory = $container->get(DispatcherFactory::class);
-        $this->dispatcher = $factory->getDispatcher($serverName);
+        $factory = $this->container->get(DispatcherFactory::class);
+        return $factory->getDispatcher($serverName);
     }
 
     protected function handleFound(array $routes, ServerRequestInterface $request)

@@ -43,13 +43,17 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
      */
     protected $responseBuilder;
 
+    /**
+     * @var string
+     */
+    protected $protocol = 'jsonrpc';
+
     public function __construct(ContainerInterface $container, string $serverName)
     {
         parent::__construct($container, $serverName);
         $this->protocolManager = $container->get(ProtocolManager::class);
-        $protocolName = 'jsonrpc';
-        $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
-        $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
+        $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($this->protocol));
+        $this->packer = $container->get($this->protocolManager->getPacker($this->protocol));
         $this->responseBuilder = make(ResponseBuilder::class, [
             'dataFormatter' => $this->dataFormatter,
             'packer' => $this->packer,
@@ -68,7 +72,11 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                 return $this->responseBuilder->buildErrorResponse($request, -32603);
             }
             $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
-            $response = $controllerInstance->{$action}(...$parameters);
+            try {
+                $response = $controllerInstance->{$action}(...$parameters);
+            } catch (\Exception $e) {
+                return $this->responseBuilder->buildErrorResponse($request, 0, $e);
+            }
         }
         return $response;
     }
