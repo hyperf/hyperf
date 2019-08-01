@@ -12,21 +12,21 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigEtcd\Listener;
 
+use Hyperf\ConfigEtcd\ClientInterface;
 use Hyperf\ConfigEtcd\KV;
-use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
  */
-class OnPipeMessageListener implements ListenerInterface
+class BeforeWorkerStartListener implements ListenerInterface
 {
     /**
      * @var ConfigInterface
@@ -44,6 +44,11 @@ class OnPipeMessageListener implements ListenerInterface
     private $mapping;
 
     /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
      * @var PackerInterface
      */
     private $packer;
@@ -52,33 +57,24 @@ class OnPipeMessageListener implements ListenerInterface
     {
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->client = $container->get(ClientInterface::class);
 
         $this->mapping = $this->config->get('config_etcd.mapping', []);
         $this->packer = $container->get($this->config->get('config_etcd.packer', JsonPacker::class));
     }
 
-    /**
-     * @return string[] returns the events that you want to listen
-     */
     public function listen(): array
     {
         return [
-            OnPipeMessage::class,
+            BeforeWorkerStart::class,
         ];
     }
 
-    /**
-     * Handle the Event when the event is triggered, all listeners will
-     * complete before the event is returned to the EventDispatcher.
-     */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
-            /** @var PipeMessage $data */
-            $data = $event->data;
-
-            /** @var KV $kv */
-            foreach ($data->configurations ?? [] as $kv) {
+        if ($config = $this->client->pull()) {
+            $configurations = $this->format($config);
+            foreach ($configurations as $kv) {
                 $key = $this->mapping[$kv->key] ?? null;
                 if (is_string($key)) {
                     $this->config->set($key, $this->packer->unpack($kv->value));
@@ -86,5 +82,18 @@ class OnPipeMessageListener implements ListenerInterface
                 }
             }
         }
+    }
+
+    /**
+     * Format kv configurations.
+     */
+    protected function format(array $config): array
+    {
+        $result = [];
+        foreach ($config as $value) {
+            $result[] = new KV($value);
+        }
+
+        return $result;
     }
 }
