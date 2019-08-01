@@ -32,6 +32,11 @@ class Foo
 
     public function getBar(?int $id, string $bar = 'testBar', array $ext = [], string $constants = BASE_PATH)
     {
-        return [$id, $bar, $ext];
+        return [$id, $bar, $ext, $constants];
+    }
+
+    public function getFoo($id)
+    {
+        return [$id];
     }
 }

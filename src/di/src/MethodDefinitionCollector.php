@@ -101,14 +101,14 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
             return static::get($key);
         }
         $returnType = ReflectionManager::reflectClass($class)->getMethod($method)->getReturnType();
-        $type = $this->createType('', $returnType, $returnType->allowsNull());
+        $type = $this->createType('', $returnType, $returnType ? $returnType->allowsNull() : true);
         static::set($key, $type);
         return $type;
     }
 
-    private function createType($name, \ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
+    private function createType($name, ?\ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
     {
-        return new ReflectionType($type->getName(), $allowsNull, [
+        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
             'defaultValueAvailable' => $hasDefault,
             'defaultValue' => $defaultValue,
             'name' => $name,
