@@ -17,7 +17,7 @@ abstract class Job implements JobInterface
     /**
      * @var int
      */
-    protected $maxAttempts = 1;
+    protected $maxAttempts = 0;
 
     public function getMaxAttempts(): int
     {
