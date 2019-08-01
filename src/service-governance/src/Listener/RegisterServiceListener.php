@@ -93,6 +93,7 @@ class RegisterServiceListener implements ListenerInterface
                         }
                     }
                 }
+                $continue = false;
             } catch (ServerException $throwable) {
                 if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
                     $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
