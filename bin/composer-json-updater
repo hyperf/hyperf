@@ -14,28 +14,29 @@ $files = \Symfony\Component\Finder\Finder::create()
     ->files();
 
 $require = [];
-$requireDev = [];
+$autoload = [];
+$autoloadDev = [];
 $configProviders = [];
 foreach ($files as $file) {
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
 
     foreach (isset($composerJson['autoload']['psr-4']) ? $composerJson['autoload']['psr-4'] : [] as $ns => $dir) {
-        $require[$ns] = "src/$component/" . trim($dir, '/').'/';
+        $autoload[$ns] = "src/$component/" . trim($dir, '/').'/';
     }
     foreach (isset($composerJson['autoload-dev']['psr-4']) ? $composerJson['autoload-dev']['psr-4'] : [] as $ns => $dir) {
-        $requireDev[$ns] = "src/$component/" . trim($dir, '/').'/';
+        $autoloadDev[$ns] = "src/$component/" . trim($dir, '/').'/';
     }
     if (isset($composerJson['extra']['hyperf']['config'])) {
         $configProviders = array_merge($configProviders, (array)$composerJson['extra']['hyperf']['config']);
     }
 }
-ksort($require);
-ksort($requireDev);
+ksort($autoload);
+ksort($autoloadDev);
 sort($configProviders);
 $json = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
-$json->autoload->{'psr-4'} = $require;
-$json->{'autoload-dev'}->{'psr-4'} = $requireDev;
+$json->autoload->{'psr-4'} = $autoload;
+$json->{'autoload-dev'}->{'psr-4'} = $autoloadDev;
 $json->extra->hyperf->config = $configProviders;
 file_put_contents(__DIR__ . '/../composer.json',
     json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));

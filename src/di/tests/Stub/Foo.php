@@ -30,7 +30,7 @@ class Foo
         $this->int = $int;
     }
 
-    public function getBar(int $id, string $bar = 'testBar', array $ext = [], string $constants = BASE_PATH)
+    public function getBar(?int $id, string $bar = 'testBar', array $ext = [], string $constants = BASE_PATH)
     {
         return [$id, $bar, $ext];
     }

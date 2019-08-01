@@ -12,32 +12,25 @@ declare(strict_types=1);
 
 namespace HyperfTest\Di;
 
-use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Di\DocMethodDefinitionCollector;
 use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
+use kuiper\docReader\DocReader;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class MethodDefinitionTest extends TestCase
+class DocMethodDefinitionTest extends TestCase
 {
-    public function testGetOrParse()
-    {
-        $definitions = MethodDefinitionCollector::getOrParse(Foo::class, 'getBar');
-        $this->assertSame(4, count($definitions));
-
-        $this->assertArrayNotHasKey('defaultValue', $definitions[0]);
-        $this->assertArrayHasKey('defaultValue', $definitions[1]);
-    }
-
     public function testGetParameters()
     {
-        $collector = new MethodDefinitionCollector();
+        $collector = new DocMethodDefinitionCollector(new DocReader());
         /** @var ReflectionType[] $definitions */
         $definitions = $collector->getParameters(Foo::class, 'getBar');
         $this->assertEquals(4, count($definitions));
+        $this->assertEquals('?int', $definitions[0]->getName());
         $this->assertFalse($definitions[0]->getMeta('defaultValueAvailable'));
         $this->assertTrue($definitions[1]->getMeta('defaultValueAvailable'));
     }
