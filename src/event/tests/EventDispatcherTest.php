@@ -20,8 +20,10 @@ use Hyperf\Event\EventDispatcherFactory;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
 use HyperfTest\Event\Event\Alpha;
+use HyperfTest\Event\Event\PriorityEvent;
 use HyperfTest\Event\Listener\AlphaListener;
 use HyperfTest\Event\Listener\BetaListener;
+use HyperfTest\Event\Listener\PriorityListener;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -88,5 +90,22 @@ class EventDispatcherTest extends TestCase
         $listenerProvider->on(Alpha::class, [new AlphaListener(), 'process']);
         $dispatcher = new EventDispatcher($listenerProvider, $logger);
         $dispatcher->dispatch(new Alpha());
+    }
+
+    public function testListenersWithPriority()
+    {
+        PriorityEvent::$result = [];
+        $listenerProvider = new ListenerProvider();
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(1), 'process'], 1);
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(2), 'process'], 3);
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(3), 'process'], 2);
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(4), 'process'], 0);
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(5), 'process'], 99);
+        $listenerProvider->on(PriorityEvent::class, [new PriorityListener(6), 'process'], -99);
+
+        $dispatcher = new EventDispatcher($listenerProvider);
+        $dispatcher->dispatch(new PriorityEvent());
+
+        $this->assertSame([5, 2, 3, 1, 4, 6], PriorityEvent::$result);
     }
 }
