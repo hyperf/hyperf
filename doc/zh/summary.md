@@ -77,6 +77,7 @@
   * [Swoole Enterprise](zh/swoole-enterprise.md)
   * [定时任务](zh/crontab.md)
   * [Task 机制](zh/task.md)
+  * [枚举类](zh/constants.md)
 
 * 应用部署
 
@@ -84,6 +85,7 @@
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
   * [Nginx 反向代理](zh/tutorial/nginx.md)
+  
 * Awesome Hyperf
 
   * [协程组件库](zh/awesome-components.md)

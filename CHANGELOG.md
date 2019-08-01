@@ -1,11 +1,18 @@
-# v1.0.8 - TBD
+# v1.0.9 - TBD
 
-# Added
+# v1.0.8 - 2019-07-31
+
+## Added
 
 - [#276](https://github.com/hyperf-cloud/hyperf/pull/276) Amqp consumer support multi routing_key.
 - [#277](https://github.com/hyperf-cloud/hyperf/pull/277) Added etcd client and etcd config center.
 
-# Fixed
+## Changed
+
+- [#297](https://github.com/hyperf-cloud/hyperf/pull/297) If register service failed, then sleep 10s and re-register, also hided the useless exception message when register service failed.
+- [#298](https://github.com/hyperf-cloud/hyperf/pull/298) [#301](https://github.com/hyperf-cloud/hyperf/pull/301) Adapted openzipkin/zipkin v1.3.3+
+
+## Fixed
 
 - [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
 - [#285](https://github.com/hyperf-cloud/hyperf/pull/285) Fixed anonymous class should not rewrite in proxy class.
