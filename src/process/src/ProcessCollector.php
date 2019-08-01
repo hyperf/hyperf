@@ -30,6 +30,10 @@ class ProcessCollector
 
     public static function all(): array
     {
-        return array_merge(...static::$processes);
+        $result = [];
+        foreach (static::$processes as $name => $processes) {
+            $result = array_merge($result, $processes);
+        }
+        return $result;
     }
 }
