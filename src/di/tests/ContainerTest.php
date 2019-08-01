@@ -32,4 +32,14 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has(NotExistClass::class));
         $this->assertTrue($container->has(Foo::class));
     }
+
+    public function testClosure()
+    {
+        $container = new Container(new DefinitionSource([
+            'Foo' => function () {
+                return 'bar';
+            },
+        ], [], new Scanner()));
+        $this->assertEquals('bar', $container->get('Foo'));
+    }
 }

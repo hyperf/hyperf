@@ -144,7 +144,8 @@ class DefinitionSource implements DefinitionSourceInterface
                 } else {
                     $definitions[$identifier] = $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
                 }
-            } elseif (is_array($definition) && is_callable($definition)) {
+            } elseif (is_array($definition) && is_callable($definition)
+                || $definition instanceof \Closure) {
                 $definitions[$identifier] = new FactoryDefinition($identifier, $definition, []);
             }
         }
