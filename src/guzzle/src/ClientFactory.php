@@ -14,8 +14,8 @@ namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine;
 
 class ClientFactory
 {
@@ -32,7 +32,7 @@ class ClientFactory
     public function create(array $options = []): Client
     {
         $stack = null;
-        if (Coroutine::getCid() > 0) {
+        if (Coroutine::inCoroutine()) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
 
