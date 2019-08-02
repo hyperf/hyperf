@@ -94,7 +94,9 @@ abstract class AbstractProcess implements ProcessInterface
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
-            ProcessCollector::add($this->name, $process);
+            if ($this->enableCoroutine) {
+                ProcessCollector::add($this->name, $process);
+            }
         }
     }
 
@@ -105,7 +107,9 @@ abstract class AbstractProcess implements ProcessInterface
     {
         Event::add($this->process->pipe, function ($pipe) {
             try {
-                $recv = $this->process->read();
+                /** @var \Swoole\Coroutine\Socket $sock */
+                $sock = $this->process->exportSocket();
+                $recv = $sock->recv();
                 if ($this->event && $data = unserialize($recv)) {
                     $this->event->dispatch(new PipeMessage($data));
                 }

@@ -14,6 +14,9 @@ namespace Hyperf\Process;
 
 use Swoole\Process;
 
+/**
+ * Only collect coroutine process.
+ */
 class ProcessCollector
 {
     protected static $processes = [];

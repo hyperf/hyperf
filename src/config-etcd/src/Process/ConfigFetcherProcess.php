@@ -82,7 +82,9 @@ class ConfigFetcherProcess extends AbstractProcess
                 $processes = ProcessCollector::all();
                 /** @var \Swoole\Process $process */
                 foreach ($processes as $process) {
-                    $process->write($string);
+                    /** @var \Swoole\Coroutine\Socket $sock */
+                    $sock = $this->process->exportSocket();
+                    $sock->send($string);
                 }
             }
 
