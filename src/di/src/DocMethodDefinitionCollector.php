@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use kuiper\docReader\DocReaderInterface;
+use kuiper\reflection\ReflectionTypeInterface;
 
 class DocMethodDefinitionCollector extends MetadataCollector implements MethodDefinitionCollectorInterface
 {
@@ -67,15 +68,7 @@ class DocMethodDefinitionCollector extends MetadataCollector implements MethodDe
         return $type;
     }
 
-    /**
-     * @param string $name
-     * @param \kuiper\reflection\ReflectionTypeInterface $type
-     * @param bool $allowsNull
-     * @param bool $hasDefault
-     * @param mixed $defaultValue
-     * @return ReflectionType
-     */
-    private function createType($name, $type, $allowsNull, $hasDefault = false, $defaultValue = null)
+    private function createType(string $name, ReflectionTypeInterface $type, bool $allowsNull, bool $hasDefault = false, $defaultValue = null): ReflectionType
     {
         return new ReflectionType((string) $type, $allowsNull, [
             'defaultValueAvailable' => $hasDefault,
