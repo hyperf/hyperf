@@ -175,7 +175,7 @@
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
-            "HyperfTest\\Guzzle\\": "src/guzzle/test/",
+            "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
