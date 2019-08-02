@@ -42,7 +42,6 @@ class SymfonySerializerTest extends TestCase
             'int' => 10,
             'string' => null,
         ]], Foo::class . '[]');
-        // var_export($ret);
         $this->assertInstanceOf(Foo::class, $ret[0]);
         $this->assertEquals(10, $ret[0]->int);
     }
@@ -52,7 +51,6 @@ class SymfonySerializerTest extends TestCase
         $serializer = $this->createSerializer();
         $e = new \InvalidArgumentException('invalid param value foo');
         $ret = $serializer->normalize($e);
-        // var_export($ret);
         $obj = $serializer->denormalize($ret, \InvalidArgumentException::class);
         $this->assertInstanceOf(\InvalidArgumentException::class, $obj);
         $this->assertEquals($e->getMessage(), $obj->getMessage());
