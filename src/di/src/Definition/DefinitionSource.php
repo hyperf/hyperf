@@ -142,7 +142,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 $definitions[$identifier] = $def;
             }
         }
-        return array_filter($definitions);
+        return $definitions;
     }
 
     /**
