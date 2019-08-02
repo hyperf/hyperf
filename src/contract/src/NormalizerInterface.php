@@ -16,6 +16,7 @@ interface NormalizerInterface
 {
     /**
      * Normalizes an object into a set of arrays/scalars.
+     *
      * @param mixed $object
      * @return array|bool|float|int|string
      */
