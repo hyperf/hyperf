@@ -20,13 +20,28 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class CacheEvict extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
     public $prefix;
 
+    /**
+     * @var string
+     */
     public $value;
 
+    /**
+     * @var bool
+     */
     public $all = false;
 
+    /**
+     * @var string
+     */
     public $group = 'default';
 
+    /**
+     * @var bool
+     */
     public $collect = false;
 }
