@@ -96,6 +96,9 @@ class DefinitionSource implements DefinitionSourceInterface
         return $this->source;
     }
 
+    /**
+     * @param array|string|callable $definition
+     */
     public function addDefinition(string $name, $definition): self
     {
         $this->source[$name] = $this->normalizeDefinition($name, $definition);
