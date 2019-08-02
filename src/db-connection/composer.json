@@ -31,11 +31,12 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\DbConnection\\": "src"
+            "Hyperf\\DbConnection\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\DbConnection\\": "tests/"
         }
     },
     "config": {

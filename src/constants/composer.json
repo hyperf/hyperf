@@ -26,11 +26,12 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\Constants\\": "src"
+            "Hyperf\\Constants\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Constants\\": "tests/"
         }
     },
     "config": {

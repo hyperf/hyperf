@@ -36,6 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Redis\\": "tests/"
         }
     },
     "config": {

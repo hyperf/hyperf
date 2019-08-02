@@ -23,6 +23,7 @@
         "hyperf/framework": "~1.0.0"
     },
     "require-dev": {
+        "kuiper/doc-reader": "^0.4",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",

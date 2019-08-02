@@ -37,11 +37,12 @@
         "files": [
         ],
         "psr-4": {
-            "Hyperf\\HttpServer\\": "src"
+            "Hyperf\\HttpServer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\HttpServer\\": "tests/"
         }
     },
     "config": {
