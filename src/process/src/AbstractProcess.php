@@ -107,9 +107,12 @@ abstract class AbstractProcess implements ProcessInterface
     {
         Event::add($this->process->pipe, function ($pipe) {
             try {
+                // TODO: Socket is not work for expected.
                 /** @var \Swoole\Coroutine\Socket $sock */
-                $sock = $this->process->exportSocket();
-                $recv = $sock->recv();
+                // $sock = $this->process->exportSocket();
+                // $recv = $sock->recv();
+
+                $recv = $this->process->read();
                 if ($this->event && $data = unserialize($recv)) {
                     $this->event->dispatch(new PipeMessage($data));
                 }
