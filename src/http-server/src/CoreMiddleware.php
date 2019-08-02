@@ -106,11 +106,7 @@ class CoreMiddleware implements MiddlewareInterface
         return $this->normalizer;
     }
 
-    /**
-     * @param string $serverName
-     * @return Dispatcher
-     */
-    protected function createDispatcher(string $serverName)
+    protected function createDispatcher(string $serverName): Dispatcher
     {
         $factory = $this->container->get(DispatcherFactory::class);
         return $factory->getDispatcher($serverName);
