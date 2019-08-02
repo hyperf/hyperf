@@ -105,22 +105,21 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected function listen()
     {
-        Event::add($this->process->pipe, function ($pipe) {
-            try {
-                // TODO: Socket is not work for expected.
-                /** @var \Swoole\Coroutine\Socket $sock */
-                // $sock = $this->process->exportSocket();
-                // $recv = $sock->recv();
-
-                $recv = $this->process->read();
-                if ($this->event && $data = unserialize($recv)) {
-                    $this->event->dispatch(new PipeMessage($data));
-                }
-            } catch (\Throwable $exception) {
-                if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
-                    $logger = $this->container->get(StdoutLoggerInterface::class);
-                    $formatter = $this->container->get(FormatterInterface::class);
-                    $logger->error($formatter->format($exception));
+        go(function () {
+            while (true) {
+                try {
+                    /** @var \Swoole\Coroutine\Socket $sock */
+                    $sock = $this->process->exportSocket();
+                    $recv = $sock->recv();
+                    if ($this->event && $data = unserialize($recv)) {
+                        $this->event->dispatch(new PipeMessage($data));
+                    }
+                } catch (\Throwable $exception) {
+                    if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
+                        $logger = $this->container->get(StdoutLoggerInterface::class);
+                        $formatter = $this->container->get(FormatterInterface::class);
+                        $logger->error($formatter->format($exception));
+                    }
                 }
             }
         });
