@@ -18,6 +18,7 @@ use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -71,8 +72,17 @@ class ConfigFetcherProcess extends AbstractProcess
             if ($config !== $this->cacheConfig) {
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
+                $pipeMessage = new PipeMessage($this->format($config));
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($this->format($config)), $workerId);
+                    $this->server->sendMessage($pipeMessage, $workerId);
+                }
+
+                $string = serialize($pipeMessage);
+
+                $processes = ProcessCollector::all();
+                /** @var \Swoole\Process $process */
+                foreach ($processes as $process) {
+                    $process->write($string);
                 }
             }
 

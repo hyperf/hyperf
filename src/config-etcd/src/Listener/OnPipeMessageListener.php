@@ -20,6 +20,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
@@ -64,6 +65,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipMessage::class,
         ];
     }
 
@@ -73,7 +75,7 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;
 
