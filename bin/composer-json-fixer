@@ -33,13 +33,16 @@ foreach ($files as $file) {
         $configProviders = array_merge($configProviders, (array)$composerJson['extra']['hyperf']['config']);
     }
 }
+
 ksort($autoload);
 ksort($autoloadDev);
 sort($configProviders);
+
 $json = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
 $json->autoload->{'psr-4'} = $autoload;
 $json->{'autoload-dev'}->{'psr-4'} = $autoloadDev;
 $json->extra->hyperf->config = $configProviders;
+
 file_put_contents(
     __DIR__ . '/../composer.json',
     json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
