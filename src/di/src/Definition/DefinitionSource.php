@@ -32,7 +32,6 @@ use function filemtime;
 use function fopen;
 use function implode;
 use function interface_exists;
-use function is_array;
 use function is_callable;
 use function is_dir;
 use function is_readable;
@@ -138,7 +137,10 @@ class DefinitionSource implements DefinitionSourceInterface
     {
         $definitions = [];
         foreach ($source as $identifier => $definition) {
-            $definitions[$identifier] = $this->normalizeDefinition($identifier, $definition);
+            $def = $this->normalizeDefinition($identifier, $definition);
+            if (! is_null($def)) {
+                $definitions[$identifier] = $def;
+            }
         }
         return array_filter($definitions);
     }
@@ -157,8 +159,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
             return $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
         }
-        if (is_array($definition) && is_callable($definition)
-            || $definition instanceof \Closure) {
+        if (is_callable($definition)) {
             return new FactoryDefinition($identifier, $definition, []);
         }
         return null;
