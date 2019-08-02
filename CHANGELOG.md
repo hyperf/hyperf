@@ -3,6 +3,7 @@
 ## Added
 
 - [#317](https://github.com/hyperf-cloud/hyperf/pull/317) Added composer-json-fixer and Optimized composer.json. @[wenbinye](https://github.com/wenbinye)
+- [#320](https://github.com/hyperf-cloud/hyperf/pull/320) Support closure as factory definition.
 
 ## Fixed
 
