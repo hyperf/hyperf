@@ -35,10 +35,8 @@
         "hyperf/command": "Required to use Command annotation."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Framework\\": "src"
+            "Hyperf\\Framework\\": "src/"
         }
     },
     "autoload-dev": {

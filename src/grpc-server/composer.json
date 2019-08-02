@@ -28,10 +28,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\GrpcServer\\": "src"
+            "Hyperf\\GrpcServer\\": "src/"
         }
     },
     "autoload-dev": {

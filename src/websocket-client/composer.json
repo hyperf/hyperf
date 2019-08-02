@@ -28,14 +28,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\WebSocketClient\\": "src"
+            "Hyperf\\WebSocketClient\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\WebSocketClient\\": "tests/"
         }
     },
     "config": {
