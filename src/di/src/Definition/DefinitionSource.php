@@ -137,21 +137,18 @@ class DefinitionSource implements DefinitionSourceInterface
     {
         $definitions = [];
         foreach ($source as $identifier => $definition) {
-            $def = $this->normalizeDefinition($identifier, $definition);
-            if (! is_null($def)) {
-                $definitions[$identifier] = $def;
+            $normalizedDefinition = $this->normalizeDefinition($identifier, $definition);
+            if (! is_null($normalizedDefinition)) {
+                $definitions[$identifier] = $normalizedDefinition;
             }
         }
         return $definitions;
     }
 
     /**
-     * @param $definition
-     * @param $identifier
-     * @param array $definitions
-     * @return DefinitionInterface
+     * @param array|string|callable $definitions
      */
-    private function normalizeDefinition($identifier, $definition): ?DefinitionInterface
+    private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
         if (is_string($definition) && class_exists($definition)) {
             if (method_exists($definition, '__invoke')) {
