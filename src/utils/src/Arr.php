@@ -225,9 +225,10 @@ class Arr
      * Get an item from an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param null|mixed $default
+     * @param null|int|string $key
+     * @param mixed $default
      */
-    public static function get($array, string $key, $default = null)
+    public static function get($array, $key = null, $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
@@ -238,7 +239,7 @@ class Arr
         if (static::exists($array, $key)) {
             return $array[$key];
         }
-        if (strpos($key, '.') === false) {
+        if (! is_string($key) || strpos($key, '.') === false) {
             return $array[$key] ?? value($default);
         }
         foreach (explode('.', $key) as $segment) {
@@ -389,12 +390,20 @@ class Arr
     /**
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
+     *
+     * @param array|\ArrayAccess $array
+     * @param null|int|string $key
      * @param mixed $value
+     * @return array
      */
-    public static function set(array &$array, string $key, $value): array
+    public static function set(array &$array, $key, $value): array
     {
         if (is_null($key)) {
             return $array = $value;
+        }
+        if (! is_string($key)) {
+            $array[$key] = $value;
+            return $array;
         }
         $keys = explode('.', $key);
         while (count($keys) > 1) {

@@ -1,4 +1,12 @@
-# v1.0.8 - TBD
+# v1.0.9 - TBD
+
+## Fixed
+
+- [#300](https://github.com/hyperf-cloud/hyperf/pull/300) Let message queues run in sub-coroutines. Fixed async queue attempts twice to handle message, but only once actually.
+- [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
+- [#312](https://github.com/hyperf-cloud/hyperf/pull/312) Fixed amqp process collect listener will be handled later than the process boot listener.
+
+# v1.0.8 - 2019-07-31
 
 ## Added
 
@@ -15,6 +23,8 @@
 - [#271](https://github.com/hyperf-cloud/hyperf/pull/271) Fixed aop only rewrite the first method in classes and method patten is not work.
 - [#285](https://github.com/hyperf-cloud/hyperf/pull/285) Fixed anonymous class should not rewrite in proxy class.
 - [#286](https://github.com/hyperf-cloud/hyperf/pull/286) Fixed not auto rollback when forgotten to commit or rollback in multi transactions.
+- [#292](https://github.com/hyperf-cloud/hyperf/pull/292) Fixed `$default` is not work in method `Request::header`.
+- [#293](https://github.com/hyperf-cloud/hyperf/pull/293) Fixed `$key` of method `Arr::get` not support `int` and `null`.
 
 # v1.0.7 - 2019-07-26
 

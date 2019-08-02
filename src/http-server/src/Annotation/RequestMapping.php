@@ -20,7 +20,6 @@ use Hyperf\Utils\Str;
  */
 class RequestMapping extends Mapping
 {
-
     public const GET = 'GET';
 
     public const POST = 'POST';
