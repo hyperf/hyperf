@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Utils;
+namespace HyperfTest\Utils\Codec;
 
-use Hyperf\Utils\Base62;
+use Hyperf\Utils\Codec\Base62;
 use PHPUnit\Framework\TestCase;
 
 /**

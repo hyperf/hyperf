@@ -13,10 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Utils\Base62;
+use Hyperf\Utils\Codec\Base62;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {
+    /**
+     * @var string
+     */
+    private $node;
+
     public function generate(): string
     {
         return $this->getNode() . Base62::encode(intval(microtime(true) * 1000));
@@ -44,14 +49,11 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      */
     public function getNode()
     {
-        static $node = null;
-
-        if ($node !== null) {
-            return $node;
+        if ($this->node) {
+            $str = $this->getMacAddress() ?: $this->getIfconfig() ?: $this->randomBytes();
+            $this->node = Base62::encode(hexdec($str));
         }
-
-        $str = $this->getMacAddress() ?: $this->getIfconfig() ?: $this->randomBytes();
-        return Base62::encode(hexdec($str));
+        return $this->node;
     }
 
     protected function randomBytes()
@@ -68,7 +70,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      * Returns the network interface configuration for the system.
      *
      * @codeCoverageIgnore
-     * @return false|string
+     * @return string
      */
     protected function getIfconfig()
     {
@@ -98,18 +100,18 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
         if (preg_match_all($pattern, $output, $matches)) {
             return str_replace([':', '-'], '', $matches[1][0]);
         }
-        return false;
+        return '';
     }
 
     /**
      * Returns mac address from the first system interface via the sysfs interface.
      *
-     * @return false|string
+     * @return string
      */
     protected function getMacAddress()
     {
         if (strtoupper(php_uname('s')) !== 'LINUX') {
-            return false;
+            return '';
         }
         foreach (glob('/sys/class/net/*/address', GLOB_NOSORT) as $addressPath) {
             $mac = trim(file_get_contents($addressPath));
@@ -121,6 +123,6 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
             }
         }
 
-        return false;
+        return '';
     }
 }
