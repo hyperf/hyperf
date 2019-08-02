@@ -1,5 +1,9 @@
 # v1.0.9 - TBD
 
+## Added
+
+- [#317](https://github.com/hyperf-cloud/hyperf/pull/317) Added composer-json-fixer and Optimized composer.json. @[wenbinye](https://github.com/wenbinye)
+
 ## Fixed
 
 - [#300](https://github.com/hyperf-cloud/hyperf/pull/300) Let message queues run in sub-coroutines. Fixed async queue attempts twice to handle message, but only once actually.

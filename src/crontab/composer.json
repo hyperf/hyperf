@@ -23,10 +23,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Crontab\\": "src"
+            "Hyperf\\Crontab\\": "src/"
         }
     },
     "autoload-dev": {

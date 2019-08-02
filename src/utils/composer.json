@@ -30,12 +30,12 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Hyperf\\Utils\\": "src"
+            "Hyperf\\Utils\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Utils\\": "tests"
+            "HyperfTest\\Utils\\": "tests/"
         }
     },
     "config": {

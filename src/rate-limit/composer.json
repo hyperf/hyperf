@@ -34,8 +34,6 @@
         "hyperf/redis": "Required to use RedisStorage."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\RateLimit\\": "src/"
         }

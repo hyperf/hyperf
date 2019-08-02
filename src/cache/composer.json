@@ -29,14 +29,13 @@
         "hyperf/event": "Use listener to delete annotation cache."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Cache\\": "src"
+            "Hyperf\\Cache\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Cache\\": "tests/"
         }
     },
     "config": {

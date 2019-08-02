@@ -26,10 +26,8 @@
         "hyperf/di": "Required to use annotatioins."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Event\\": "src"
+            "Hyperf\\Event\\": "src/"
         }
     },
     "autoload-dev": {

@@ -29,14 +29,13 @@
         "hyperf/di": "Required to use annotation."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\Task\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Task\\": "tests/"
         }
     },
     "config": {
