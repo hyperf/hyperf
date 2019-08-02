@@ -36,7 +36,7 @@ class Message implements MessageInterface
 
     public function attempts(): bool
     {
-        if ($this->job->getMaxAttempts() > ++$this->attempts) {
+        if ($this->job->getMaxAttempts() > $this->attempts++) {
             return true;
         }
         return false;

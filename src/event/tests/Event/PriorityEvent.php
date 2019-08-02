@@ -10,17 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\AsyncQueue;
+namespace HyperfTest\Event\Event;
 
-abstract class Job implements JobInterface
+class PriorityEvent
 {
-    /**
-     * @var int
-     */
-    protected $maxAttempts = 0;
-
-    public function getMaxAttempts(): int
-    {
-        return $this->maxAttempts;
-    }
+    public static $result = [];
 }

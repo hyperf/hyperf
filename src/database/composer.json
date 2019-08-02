@@ -28,10 +28,8 @@
         "nikic/php-parser": "Required to use ModelCommand (^4.1)."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Database\\": "src"
+            "Hyperf\\Database\\": "src/"
         }
     },
     "autoload-dev": {

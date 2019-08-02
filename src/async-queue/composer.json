@@ -29,14 +29,13 @@
         "hyperf/process": "Auto register the consumer process for server."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\AsyncQueue\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\AsyncQueue\\": "tests/"
         }
     },
     "config": {

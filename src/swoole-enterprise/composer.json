@@ -28,10 +28,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\SwooleEnterprise\\": "src"
+            "Hyperf\\SwooleEnterprise\\": "src/"
         }
     },
     "autoload-dev": {

@@ -36,12 +36,12 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Hyperf\\Di\\": "src"
+            "Hyperf\\Di\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Di\\": "tests"
+            "HyperfTest\\Di\\": "tests/"
         }
     },
     "config": {
