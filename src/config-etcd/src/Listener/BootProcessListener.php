@@ -20,13 +20,14 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
+use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
  */
-class BeforeWorkerStartListener implements ListenerInterface
+class BootProcessListener implements ListenerInterface
 {
     /**
      * @var ConfigInterface
@@ -67,6 +68,7 @@ class BeforeWorkerStartListener implements ListenerInterface
     {
         return [
             BeforeWorkerStart::class,
+            BeforeProcessHandle::class,
         ];
     }
 
