@@ -28,14 +28,13 @@
         "hyperf/di": "Create the RedisPool via dependency injection."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\Redis\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Redis\\": "tests/"
         }
     },
     "config": {

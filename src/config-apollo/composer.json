@@ -32,10 +32,8 @@
         "hyperf/process": "Use hyperf process to run ConfigFetcherProcess."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\ConfigApollo\\": "src"
+            "Hyperf\\ConfigApollo\\": "src/"
         }
     },
     "autoload-dev": {

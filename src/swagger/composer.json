@@ -24,10 +24,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Swagger\\": "src"
+            "Hyperf\\Swagger\\": "src/"
         }
     },
     "autoload-dev": {

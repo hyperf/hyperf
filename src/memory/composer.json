@@ -22,10 +22,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Memory\\": "src"
+            "Hyperf\\Memory\\": "src/"
         }
     },
     "autoload-dev": {
