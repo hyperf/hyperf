@@ -184,6 +184,7 @@
             "HyperfTest\\Pool\\": "src/pool/tests/",
             "HyperfTest\\Process\\": "src/process/tests/",
             "HyperfTest\\Redis\\": "src/redis/tests/",
+            "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
