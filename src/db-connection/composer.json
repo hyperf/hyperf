@@ -34,7 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\DbConnection\\": "src/"
+            "HyperfTest\\DbConnection\\": "tests/"
         }
     },
     "config": {
