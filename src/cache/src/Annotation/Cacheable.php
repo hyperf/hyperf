@@ -26,6 +26,9 @@ class Cacheable extends AbstractAnnotation
 
     public $value;
 
+    /**
+     * @var int
+     */
     public $ttl;
 
     public $listener;
