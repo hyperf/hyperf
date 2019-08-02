@@ -97,9 +97,9 @@ class DefinitionSource implements DefinitionSourceInterface
         return $this->source;
     }
 
-    public function addDefinition(string $name, array $definition): self
+    public function addDefinition(string $name, $definition): self
     {
-        $this->source[$name] = $definition;
+        $this->source[$name] = $this->normalizeDefinition($name, $definition);
         return $this;
     }
 
@@ -138,17 +138,30 @@ class DefinitionSource implements DefinitionSourceInterface
     {
         $definitions = [];
         foreach ($source as $identifier => $definition) {
-            if (is_string($definition) && class_exists($definition)) {
-                if (method_exists($definition, '__invoke')) {
-                    $definitions[$identifier] = new FactoryDefinition($identifier, $definition, []);
-                } else {
-                    $definitions[$identifier] = $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
-                }
-            } elseif (is_array($definition) && is_callable($definition)) {
-                $definitions[$identifier] = new FactoryDefinition($identifier, $definition, []);
-            }
+            $definitions[$identifier] = $this->normalizeDefinition($identifier, $definition);
         }
-        return $definitions;
+        return array_filter($definitions);
+    }
+
+    /**
+     * @param $definition
+     * @param $identifier
+     * @param array $definitions
+     * @return DefinitionInterface
+     */
+    private function normalizeDefinition($identifier, $definition): ?DefinitionInterface
+    {
+        if (is_string($definition) && class_exists($definition)) {
+            if (method_exists($definition, '__invoke')) {
+                return new FactoryDefinition($identifier, $definition, []);
+            }
+            return $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
+        }
+        if (is_array($definition) && is_callable($definition)
+            || $definition instanceof \Closure) {
+            return new FactoryDefinition($identifier, $definition, []);
+        }
+        return null;
     }
 
     private function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
