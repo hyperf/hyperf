@@ -27,10 +27,8 @@
         "hyperf/framework": "Required to use RegisterServiceListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\ServiceGovernance\\": "src"
+            "Hyperf\\ServiceGovernance\\": "src/"
         }
     },
     "autoload-dev": {

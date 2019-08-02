@@ -23,10 +23,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\GrpcClient\\": "src"
+            "Hyperf\\GrpcClient\\": "src/"
         }
     },
     "autoload-dev": {

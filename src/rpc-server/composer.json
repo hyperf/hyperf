@@ -26,10 +26,8 @@
         "hyperf/di": "Required to use annotations."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\RpcServer\\": "src"
+            "Hyperf\\RpcServer\\": "src/"
         }
     },
     "autoload-dev": {

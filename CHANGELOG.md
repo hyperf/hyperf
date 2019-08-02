@@ -1,10 +1,16 @@
 # v1.0.9 - TBD
 
+## Added
+
+- [#317](https://github.com/hyperf-cloud/hyperf/pull/317) Added composer-json-fixer and Optimized composer.json. @[wenbinye](https://github.com/wenbinye)
+
 ## Fixed
 
 - [#300](https://github.com/hyperf-cloud/hyperf/pull/300) Let message queues run in sub-coroutines. Fixed async queue attempts twice to handle message, but only once actually.
 - [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
+- [#312](https://github.com/hyperf-cloud/hyperf/pull/312) Fixed amqp process collect listener will be handled later than the process boot listener.
 - [#315](https://github.com/hyperf-cloud/hyperf/pull/315) Fixed config etcd center not work after worker restart or in user process.
+- [#318](https://github.com/hyperf-cloud/hyperf/pull/318) Fixed service will register to service center ceaselessly.
 
 # v1.0.8 - 2019-07-31
 

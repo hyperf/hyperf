@@ -26,14 +26,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Logger\\": "src"
+            "Hyperf\\Logger\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Logger\\": "tests/"
         }
     },
     "config": {

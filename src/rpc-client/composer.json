@@ -31,10 +31,8 @@
         "hyperf/pool": "Required to use connection pool."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\RpcClient\\": "src"
+            "Hyperf\\RpcClient\\": "src/"
         }
     },
     "autoload-dev": {

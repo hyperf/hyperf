@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Guzzle\\": "test/"
+            "HyperfTest\\Guzzle\\": "tests/"
         }
     },
     "require": {

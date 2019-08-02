@@ -19,7 +19,8 @@ use Hyperf\Framework\Event\BeforeMainServerStart;
 use Psr\Container\ContainerInterface;
 
 /**
- * @Listener
+ * Must handle the event before `Hyperf\Process\Listener\BootProcessListener`.
+ * @Listener(priority=99)
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
