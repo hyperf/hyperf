@@ -47,16 +47,16 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      *
      * @return string System node ID as a hexadecimal string
      */
-    public function getNode()
+    public function getNode(): string
     {
-        if ($this->node) {
+        if (! $this->node) {
             $str = $this->getMacAddress() ?: $this->getIfconfig() ?: $this->randomBytes();
             $this->node = Base62::encode(hexdec($str));
         }
         return $this->node;
     }
 
-    protected function randomBytes()
+    protected function randomBytes(): string
     {
         $node = hexdec(bin2hex(random_bytes(6)));
 
@@ -70,9 +70,8 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      * Returns the network interface configuration for the system.
      *
      * @codeCoverageIgnore
-     * @return string
      */
-    protected function getIfconfig()
+    protected function getIfconfig(): string
     {
         if (strpos(strtolower(ini_get('disable_functions')), 'passthru') !== false) {
             return '';
@@ -105,10 +104,8 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
 
     /**
      * Returns mac address from the first system interface via the sysfs interface.
-     *
-     * @return string
      */
-    protected function getMacAddress()
+    protected function getMacAddress(): string
     {
         if (strtoupper(php_uname('s')) !== 'LINUX') {
             return '';
