@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernance\Register;
 
 use Hyperf\Consul\Agent;
-use Hyperf\Consul\Client;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Psr\Container\ContainerInterface;

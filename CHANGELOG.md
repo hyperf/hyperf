@@ -1,5 +1,9 @@
 # v1.0.10 - TBD
 
+## Fixed
+
+- [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
+
 # v1.0.9 - 2019-08-03
 
 ## Added
