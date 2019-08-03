@@ -44,8 +44,6 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
 
     /**
      * Returns the system node ID.
-     *
-     * @return string System node ID as a hexadecimal string
      */
     public function getNode(): string
     {
