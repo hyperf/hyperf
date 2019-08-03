@@ -28,7 +28,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
     }
 
     /**
-     * Retrieves the node mac address and request time from id.
+     * Retrieves the node mac address and request time from ID.
      */
     public function decode(string $id): array
     {
@@ -58,7 +58,10 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
     {
         $node = hexdec(bin2hex(random_bytes(6)));
 
-        // Set the multicast bit; see RFC 4122, section 4.5.
+        /**
+         * Set the multicast bit
+         * @see https://tools.ietf.org/html/rfc4122#section-4.5
+         */
         $node = $node | 0x010000000000;
 
         return str_pad(dechex($node), 12, '0', STR_PAD_LEFT);
@@ -110,10 +113,12 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
         }
         foreach (glob('/sys/class/net/*/address', GLOB_NOSORT) as $addressPath) {
             $mac = trim(file_get_contents($addressPath));
-            if (// localhost adapter
+            if (
+                // Localhost adapter
                 $mac !== '00:00:00:00:00:00' &&
-                // must match  mac adress
-                preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)) {
+                // Must match MAC address
+                preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)
+            ) {
                 return str_replace(':', '', $mac);
             }
         }
