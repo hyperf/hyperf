@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Rpc;
+namespace HyperfTest\Rpc\IdGenerator;
 
-use Hyperf\Rpc\NodeRequestIdGenerator;
+use Hyperf\Rpc\IdGenerator\NodeRequestIdGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Rpc;
+namespace Hyperf\Rpc\IdGenerator;
 
 use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Utils\Codec\Base62;
