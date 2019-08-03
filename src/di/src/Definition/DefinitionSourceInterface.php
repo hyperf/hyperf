@@ -30,9 +30,10 @@ interface DefinitionSourceInterface
     public function getDefinitions(): array;
 
     /**
+     * @param mixed $definition
      * @return $this
      */
-    public function addDefinition(string $name, array $definition);
+    public function addDefinition(string $name, $definition);
 
     public function clearDefinitions(): void;
 }

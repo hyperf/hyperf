@@ -3,6 +3,7 @@
 ## Added
 
 - [#317](https://github.com/hyperf-cloud/hyperf/pull/317) Added composer-json-fixer and Optimized composer.json. @[wenbinye](https://github.com/wenbinye)
+- [#320](https://github.com/hyperf-cloud/hyperf/pull/320) DI added support for closure definition.
 
 ## Fixed
 
@@ -10,6 +11,10 @@
 - [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
 - [#312](https://github.com/hyperf-cloud/hyperf/pull/312) Fixed amqp process collect listener will be handled later than the process boot listener.
 - [#318](https://github.com/hyperf-cloud/hyperf/pull/318) Fixed service will register to service center ceaselessly.
+
+## Changed
+
+- [#323](https://github.com/hyperf-cloud/hyperf/pull/323) Force convert type of `$ttl` in annotation `Cacheable` and `CachePut` into int.
 
 # v1.0.8 - 2019-07-31
 
