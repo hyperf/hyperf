@@ -32,7 +32,7 @@ use Psr\Container\ContainerInterface;
  */
 class RegisterServiceListenerTest extends TestCase
 {
-    public function testProcess()
+    public function testRegisterOnceForTheSameService()
     {
         $container = $this->createContainer();
         $serviceDefinition = null;
@@ -67,11 +67,6 @@ class RegisterServiceListenerTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(ConsulAgent::class)
-//            ->andReturn(new Agent(function ($options) {
-//                return new Client($options + [
-//                        'base_uri' => Agent::DEFAULT_URI
-//                    ]);
-//            }));
             ->andReturn($mockAgent = Mockery::mock(ConsulAgent::class));
         $mockAgent->shouldReceive('services')
             ->andReturn(new ConsulResponse(new Response(200, ['content-type' => 'application/json'], '{}')));
