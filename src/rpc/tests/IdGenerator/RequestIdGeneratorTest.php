@@ -25,6 +25,6 @@ class RequestIdGeneratorTest extends TestCase
     {
         $generator = new RequestIdGenerator();
         $id = $generator->generate();
-        $this->assertSame(9, strlen($id));
+        $this->assertRegExp('/^\d{2,}$/', $id);
     }
 }
