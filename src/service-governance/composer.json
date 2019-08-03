@@ -33,6 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\ServiceGovernance\\": "tests/"
         }
     },
     "config": {

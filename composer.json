@@ -189,6 +189,7 @@
             "HyperfTest\\Process\\": "src/process/tests/",
             "HyperfTest\\Redis\\": "src/redis/tests/",
             "HyperfTest\\RpcClient\\": "src/rpc-client/tests/",
+            "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"

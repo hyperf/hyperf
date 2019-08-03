@@ -55,6 +55,11 @@ class RegisterServiceListener implements ListenerInterface
             'component' => 'service-governance',
         ];
 
+    /**
+     * @var array
+     */
+    private $registeredServices;
+
     public function __construct(ContainerInterface $container)
     {
         $this->consulAgent = $container->get(ConsulAgent::class);
@@ -75,6 +80,7 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        $this->registeredServices = [];
         $continue = true;
         while ($continue) {
             try {
@@ -142,6 +148,7 @@ class RegisterServiceListener implements ListenerInterface
         }
         $response = $this->consulAgent->registerService($requestBody);
         if ($response->getStatusCode() === 200) {
+            $this->registeredServices[$serviceName][$service['protocol']][$address][$port] = true;
             $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
         } else {
             $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
@@ -183,6 +190,9 @@ class RegisterServiceListener implements ListenerInterface
 
     private function isRegistered(string $name, string $address, int $port, string $protocol): bool
     {
+        if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
+            return true;
+        }
         $response = $this->consulAgent->services();
         if ($response->getStatusCode() !== 200) {
             $this->logger->warning(sprintf('Service %s register to the consul failed.', $name), $this->defaultLoggerContext);
@@ -202,6 +212,7 @@ class RegisterServiceListener implements ListenerInterface
                 $service['Meta']['Protocol'],
             ]);
             if ($currentTag === $tag) {
+                $this->registeredServices[$name][$protocol][$address][$port] = true;
                 return true;
             }
         }
