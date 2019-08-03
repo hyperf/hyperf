@@ -49,6 +49,9 @@ class SymfonyNormalizer implements NormalizerInterface
         if (TypeUtils::isComposite($type)) {
             throw new \BadMethodCallException('Cannot denormalize composite type');
         }
+        if (TypeUtils::isUnknown($type)) {
+            return $data;
+        }
         return $this->serializer->denormalize($data, $type->getName());
     }
 }
