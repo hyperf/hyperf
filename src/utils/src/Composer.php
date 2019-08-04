@@ -80,8 +80,8 @@ class Composer
     {
         if (! self::$json) {
             $path = BASE_PATH . '/composer.json';
-            if (! file_exists($path) && ! is_readable($path)) {
-                throw new \RuntimeException('composer.json not found');
+            if (! is_readable($path)) {
+                throw new \RuntimeException('composer.json is not readable.');
             }
             self::$json = collect(json_decode(file_get_contents($path), true));
         }
@@ -91,7 +91,7 @@ class Composer
     public static function discoverLockFile(): string
     {
         $path = '';
-        if (file_exists(BASE_PATH . '/composer.lock') && is_readable(BASE_PATH . '/composer.lock')) {
+        if (is_readable(BASE_PATH . '/composer.lock')) {
             $path = BASE_PATH . '/composer.lock';
         }
         return $path;
