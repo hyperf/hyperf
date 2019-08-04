@@ -1,5 +1,9 @@
 # v1.0.10 - TBD
 
+## Added
+
+- [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
+
 ## Fixed
 
 - [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
