@@ -220,10 +220,12 @@ class CoreMiddleware implements MiddlewareInterface
         foreach ($definitions ?? [] as $pos => $definition) {
             $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
             if ($value === null) {
-                if ($definition->allowsNull()) {
-                    $injections[] = null;
-                } elseif ($definition->getMeta('defaultValueAvailable')) {
+                if ($definition->getMeta('defaultValueAvailable')) {
                     $injections[] = $definition->getMeta('defaultValue');
+                } elseif ($definition->allowsNull()) {
+                    $injections[] = null;
+                } elseif ($this->container->has($definition->getName())) {
+                    $injections[] = $this->container->get($definition->getName());
                 } else {
                     throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
                         . "of {$controller}::{$action} should not be null");

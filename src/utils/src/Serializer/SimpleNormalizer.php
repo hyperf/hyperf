@@ -23,9 +23,6 @@ class SimpleNormalizer implements NormalizerInterface
 
     public function denormalize($data, $class)
     {
-        if ($class[0] == '?') {
-            $class = substr($class, 1);
-        }
         switch ($class) {
             case 'int':
                 return (int) $data;

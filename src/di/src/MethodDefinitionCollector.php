@@ -66,9 +66,6 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
         return $definitions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameters(string $class, string $method): array
     {
         $key = $class . '::' . $method . '@params';
@@ -91,9 +88,6 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
         return $definitions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnType(string $class, string $method): ReflectionType
     {
         $key = $class . '::' . $method . '@return';
