@@ -62,54 +62,6 @@ return [
 
 ```
 
-## 使用
-
-以下以 `BladeEngine` 为例，首先在对应的目录里创建视图文件 `index.blade.php`。
-
-```blade
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hyperf</title>
-</head>
-<body>
-Hello, {{ $name }}. You are using blade template now.
-</body>
-</html>
-```
-
-控制器中获取 `Hyperf\View\Render` 示例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Controller;
-
-use Hyperf\HttpServer\Annotation\AutoController;
-use Hyperf\View\RenderInterface;
-
-/**
- * @AutoController
- */
-class ViewController
-{
-    public function index(RenderInterface $render)
-    {
-        return $render->render('index', ['name' => 'Hyperf']);
-    }
-}
-
-```
-
-访问对应的 URL，即可获得如下所示的视图页面：
-
-```
-Hello, Hyperf. You are using blade template now.
-```
-
 ## 视图渲染引擎
 
 官方目前支持 `Blade` 和 `Smarty` 两种模板，默认安装 [hyperf/view](https://github.com/hyperf-cloud/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
@@ -167,3 +119,52 @@ return [
     ],
 ];
 ```
+
+## 使用
+
+以下以 `BladeEngine` 为例，首先在对应的目录里创建视图文件 `index.blade.php`。
+
+```blade
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperf</title>
+</head>
+<body>
+Hello, {{ $name }}. You are using blade template now.
+</body>
+</html>
+```
+
+控制器中获取 `Hyperf\View\Render` 示例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\View\RenderInterface;
+
+/**
+ * @AutoController
+ */
+class ViewController
+{
+    public function index(RenderInterface $render)
+    {
+        return $render->render('index', ['name' => 'Hyperf']);
+    }
+}
+
+```
+
+访问对应的 URL，即可获得如下所示的视图页面：
+
+```
+Hello, Hyperf. You are using blade template now.
+```
+

@@ -59,9 +59,9 @@ Swoole 协程也是对异步回调的一种解决方案，在 `PHP` 语言下，
 
 协程内代码的阻塞会导致协程调度器无法切换到另一个协程继续执行代码，所以我们绝不能在协程内存在阻塞代码，假设我们启动了 `4` 个 `Worker` 来处理 `HTTP` 请求（通常启动的 `Worker` 数量与 `CPU` 核心数一致或 `2` 倍），如果代码中存在阻塞，暂且理论的认为每个请求都会阻塞`1` 秒，那么系统的 `QPS` 也将退化为 `4/s`，这无疑就是退化成了与 `PHP-FPM` 类似的情况，所以我们绝对不能在协程中存在阻塞代码。   
 
-那么到底哪些是阻塞代码呢？我们可以简单的认为绝大多数你所熟知的非 `Swoole` 提供的异步函数的 `MySQL`、`Redis`、`Memcache`、`MongoDB`、`HTTP`、`Socket`等客户端，文件操作、`sleep/usleep` 等均为阻塞函数，这几乎涵盖了所有日常操作，那么要如何解决呢？`Swoole` 提供了 `MySQL`、`PostgreSQL`、`Redis`、`HTTP`、`Socket` 的协程客户端可以使用，同时 `Swoole 4.1` 之后提供了一键协程化的方法 `\Swoole\Coroutine::enableCoroutine()`，只需在使用协程前运行这一行代码，`Swoole` 会将 所有使用 `php_stream` 进行 `socket` 操作均变成协程调度的异步 `I/O`，可以理解为除了 `curl` 绝大部分原生的操作都可以适用，关于此部分可查阅 [Swoole 文档](https://wiki.swoole.com/wiki/page/965.html) 获得更具体的信息。  
+那么到底哪些是阻塞代码呢？我们可以简单的认为绝大多数你所熟知的非 `Swoole` 提供的异步函数的 `MySQL`、`Redis`、`Memcache`、`MongoDB`、`HTTP`、`Socket`等客户端，文件操作、`sleep/usleep` 等均为阻塞函数，这几乎涵盖了所有日常操作，那么要如何解决呢？`Swoole` 提供了 `MySQL`、`PostgreSQL`、`Redis`、`HTTP`、`Socket` 的协程客户端可以使用，同时 `Swoole 4.1` 之后提供了一键协程化的方法 `\Swoole\Runtime::enableCoroutine()`，只需在使用协程前运行这一行代码，`Swoole` 会将 所有使用 `php_stream` 进行 `socket` 操作均变成协程调度的异步 `I/O`，可以理解为除了 `curl` 绝大部分原生的操作都可以适用，关于此部分可查阅 [Swoole 文档](https://wiki.swoole.com/wiki/page/965.html) 获得更具体的信息。  
 
-在 `Hyperf` 中我们已经为您处理好了这一切，您只需关注 `\Swoole\Coroutine::enableCoroutine()` 仍无法协程化的阻塞代码即可。
+在 `Hyperf` 中我们已经为您处理好了这一切，您只需关注 `\Swoole\Runtime::enableCoroutine()` 仍无法协程化的阻塞代码即可。
 
 ### 不能通过全局变量储存状态
 
