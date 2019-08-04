@@ -99,7 +99,6 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $this->assertArraySubset([
             'message' => 'Expected non-zero value of divider',
             'code' => 0,
-            'file' => '/mnt/home/ywb/src/php/hyperf/src/json-rpc/tests/Stub/CalculatorService.php',
         ], $ret['error']['data']['attributes']);
     }
 
