@@ -15,6 +15,7 @@ namespace Hyperf\Devtool\Generator;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -117,7 +118,8 @@ abstract class GeneratorCommand extends Command
      */
     protected function getPath($name)
     {
-        return BASE_PATH . '/' . str_replace('\\', '/', lcfirst($name)) . '.php';
+        $project = new Project();
+        return BASE_PATH . '/' . $project->pathFor($name);
     }
 
     /**
