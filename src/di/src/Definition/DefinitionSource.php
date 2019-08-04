@@ -216,6 +216,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths): bool
     {
+        if (empty($paths)) {
+            return true;
+        }
         $pathsHash = md5(implode(',', $paths));
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');

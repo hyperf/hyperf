@@ -5,6 +5,10 @@
 - [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Added custom object support for controller parameters in http-server.
 - [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
 
+## Changed
+
+- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden DI scan message when paths is empty.
+
 ## Fixed
 
 - [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
