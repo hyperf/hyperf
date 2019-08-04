@@ -25,7 +25,9 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "symfony/var-dumper": "Required to use the dd function (^4.1)."
+        "symfony/var-dumper": "Required to use the dd function (^4.1).",
+        "symfony/serializer": "Required to use SymfonyNormalizer (^4.3)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^4.3)"
     },
     "autoload": {
         "files": [

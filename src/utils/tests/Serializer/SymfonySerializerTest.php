@@ -33,6 +33,9 @@ class SymfonySerializerTest extends TestCase
             'int' => 10,
             'string' => null,
         ]], $ret);
+
+        $ret = $serializer->normalize([1, '2']);
+        $this->assertEquals([1, '2'], $ret);
     }
 
     public function testDenormalize()
@@ -44,6 +47,12 @@ class SymfonySerializerTest extends TestCase
         ]], Foo::class . '[]');
         $this->assertInstanceOf(Foo::class, $ret[0]);
         $this->assertEquals(10, $ret[0]->int);
+
+        $ret = $serializer->denormalize('1', 'int');
+        $this->assertSame(1, $ret);
+
+        $ret = $serializer->denormalize(['1', 2, '03'], 'int[]');
+        $this->assertSame([1, 2, 3], $ret);
     }
 
     public function testException()
