@@ -21,10 +21,6 @@ class NormalizeDataFormatter extends DataFormatter
      */
     private $normalizer;
 
-    /**
-     * NormalizeDataFormatter constructor.
-     * @param NormalizerInterface $normalizer
-     */
     public function __construct(NormalizerInterface $normalizer)
     {
         $this->normalizer = $normalizer;
