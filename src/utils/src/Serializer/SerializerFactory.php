@@ -24,6 +24,7 @@ class SerializerFactory
             new ExceptionNormalizer(),
             new ObjectNormalizer(),
             new ArrayDenormalizer(),
+            new ScalarNormalizer(),
         ]);
     }
 }
