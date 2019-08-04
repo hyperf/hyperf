@@ -14,8 +14,6 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Command\InitProxyCommand;
 use Hyperf\Di\Listener\BootApplicationListener;
-use kuiper\docReader\DocReader;
-use kuiper\docReader\DocReaderInterface;
 
 class ConfigProvider
 {
@@ -23,9 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                DocReaderInterface::class => DocReader::class,
-                MethodDefinitionCollectorInterface::class => class_exists(DocReader::class)
-                    ? DocMethodDefinitionCollector::class : MethodDefinitionCollector::class,
+                MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
             ],
             'commands' => [
                 InitProxyCommand::class,

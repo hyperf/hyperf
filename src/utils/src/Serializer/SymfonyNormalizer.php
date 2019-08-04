@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Utils\Serializer;
 
 use Hyperf\Contract\NormalizerInterface;
-use kuiper\reflection\TypeUtils;
 use Symfony\Component\Serializer\Serializer;
 
 class SymfonyNormalizer implements NormalizerInterface
@@ -28,27 +27,13 @@ class SymfonyNormalizer implements NormalizerInterface
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function normalize($object)
     {
         return $this->serializer->normalize($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function denormalize($data, $class)
     {
-        $type = TypeUtils::parse($class);
-        if (TypeUtils::isPrimitive($type)
-            || (TypeUtils::isArray($type) && TypeUtils::isPrimitive($type->getValueType()))) {
-            return TypeUtils::sanitize($type, $data);
-        }
-        if (TypeUtils::isComposite($type)) {
-            throw new \BadMethodCallException('Cannot denormalize composite type');
-        }
-        return $this->serializer->denormalize($data, $type->getName());
+        return $this->serializer->denormalize($data, $class);
     }
 }

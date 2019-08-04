@@ -38,6 +38,7 @@ class MethodDefinitionTest extends TestCase
         /** @var ReflectionType[] $definitions */
         $definitions = $collector->getParameters(Foo::class, 'getBar');
         $this->assertEquals(4, count($definitions));
+        $this->assertEquals('int', $definitions[0]->getName());
         $this->assertFalse($definitions[0]->getMeta('defaultValueAvailable'));
         $this->assertTrue($definitions[1]->getMeta('defaultValueAvailable'));
     }

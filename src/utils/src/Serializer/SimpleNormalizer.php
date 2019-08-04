@@ -16,17 +16,11 @@ use Hyperf\Contract\NormalizerInterface;
 
 class SimpleNormalizer implements NormalizerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function normalize($object)
     {
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function denormalize($data, $class)
     {
         if ($class[0] == '?') {
