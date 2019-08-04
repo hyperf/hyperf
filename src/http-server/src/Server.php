@@ -81,7 +81,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $this->coreMiddleware = $this->createCoreMiddleware($serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware();
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -125,10 +125,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $this;
     }
 
-    protected function createCoreMiddleware(string $serverName): MiddlewareInterface
+    protected function createCoreMiddleware(): MiddlewareInterface
     {
         $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $serverName);
+        return new $coreHandler($this->container, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

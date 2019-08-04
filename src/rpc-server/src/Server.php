@@ -96,7 +96,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $this->coreMiddleware = $this->createCoreMiddleware($serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware();
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -139,10 +139,10 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
-    protected function createCoreMiddleware(string $serverName): MiddlewareInterface
+    protected function createCoreMiddleware(): MiddlewareInterface
     {
         $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $serverName);
+        return new $coreHandler($this->container, $this->protocol, $this->serverName);
     }
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;

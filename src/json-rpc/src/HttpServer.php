@@ -59,10 +59,10 @@ class HttpServer extends Server
         ]);
     }
 
-    protected function createCoreMiddleware(string $serverName): MiddlewareInterface
+    protected function createCoreMiddleware(): MiddlewareInterface
     {
         $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $serverName);
+        return new $coreHandler($this->container, $this->protocol, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
