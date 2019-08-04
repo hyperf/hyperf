@@ -15,12 +15,14 @@ namespace Hyperf\Utils\Serializer;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use function get_class;
+use function is_scalar;
 
 class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
 {
     public function hasCacheableSupportsMethod(): bool
     {
-        return \get_class($this) === __CLASS__;
+        return get_class($this) === __CLASS__;
     }
 
     public function denormalize($data, $class, $format = null, array $context = [])
