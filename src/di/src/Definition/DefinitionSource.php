@@ -97,7 +97,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @param array|string|callable $definition
+     * @param array|callable|string $definition
      */
     public function addDefinition(string $name, $definition): self
     {
@@ -149,7 +149,8 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @param array|string|callable $definitions
+     * @param array|callable|string $definitions
+     * @param mixed $definition
      */
     private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {

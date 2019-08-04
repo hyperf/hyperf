@@ -44,7 +44,9 @@
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",
         "phpunit/phpunit": "^7.0.0",
-        "swoft/swoole-ide-helper": "^4.3"
+        "swoft/swoole-ide-helper": "^4.3",
+        "symfony/property-access": "^4.3",
+        "symfony/serializer": "^4.3"
     },
     "replace": {
         "hyperf/amqp": "self.version",
@@ -238,6 +240,7 @@
                 "Hyperf\\SwooleEnterprise\\ConfigProvider",
                 "Hyperf\\Task\\ConfigProvider",
                 "Hyperf\\Tracer\\ConfigProvider",
+                "Hyperf\\Utils\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
 use PHPUnit\Framework\TestCase;
 
@@ -29,5 +30,33 @@ class MethodDefinitionTest extends TestCase
 
         $this->assertArrayNotHasKey('defaultValue', $definitions[0]);
         $this->assertArrayHasKey('defaultValue', $definitions[1]);
+    }
+
+    public function testGetParameters()
+    {
+        $collector = new MethodDefinitionCollector();
+        /** @var ReflectionType[] $definitions */
+        $definitions = $collector->getParameters(Foo::class, 'getBar');
+        $this->assertEquals(4, count($definitions));
+        $this->assertEquals('int', $definitions[0]->getName());
+        $this->assertFalse($definitions[0]->getMeta('defaultValueAvailable'));
+        $this->assertTrue($definitions[1]->getMeta('defaultValueAvailable'));
+    }
+
+    public function testGetParameterOfNoType()
+    {
+        $collector = new MethodDefinitionCollector();
+        /** @var ReflectionType[] $definitions */
+        $definitions = $collector->getParameters(Foo::class, 'getFoo');
+        $this->assertEquals(1, count($definitions));
+        $this->assertEquals('mixed', $definitions[0]->getName());
+    }
+
+    public function testGetReturnType()
+    {
+        $collector = new MethodDefinitionCollector();
+        /** @var ReflectionType[] $definitions */
+        $type = $collector->getReturnType(Foo::class, 'getBar');
+        $this->assertEquals('mixed', $type->getName());
     }
 }
