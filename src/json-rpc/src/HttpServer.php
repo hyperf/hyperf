@@ -16,7 +16,6 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Server;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -64,14 +63,15 @@ class HttpServer extends Server
     {
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         if (! $this->isHealthCheck($psr7Request)) {
             if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
-                $this->responseBuilder->buildErrorResponse($request, -32700);
+                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, -32700);
             }
             // @TODO Optimize the error handling of encode.
             $content = $this->packer->unpack($psr7Request->getBody()->getContents());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
-                $this->responseBuilder->buildErrorResponse($request, -32600);
+                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, -32600);
             }
         }
         $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
@@ -79,7 +79,7 @@ class HttpServer extends Server
             ->withAttribute('data', $content ?? [])
             ->withAttribute('request_id', $content['id'] ?? null);
         Context::set(ServerRequestInterface::class, $psr7Request);
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        Context::set(ResponseInterface::class, $psr7Response);
         return [$psr7Request, $psr7Response];
     }
 

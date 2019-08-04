@@ -14,7 +14,11 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
 use Hyperf\JsonRpc\Listener\RegisterServiceListener;
+use Hyperf\Rpc\Contract\PackerInterface;
+use Hyperf\Rpc\Contract\PathGeneratorInterface;
+use Hyperf\Rpc\PathGenerator;
 use Hyperf\ServiceGovernance\ServiceManager;
+use Hyperf\Utils\Packer\JsonPacker;
 
 class ConfigProvider
 {
@@ -22,8 +26,11 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
+                PackerInterface::class => JsonPacker::class,
+                PathGeneratorInterface::class => PathGenerator::class,
                 TcpServer::class => TcpServerFactory::class,
                 HttpServer::class => HttpServerFactory::class,
+                DataFormatter::class => DataFormatterFactory::class,
             ],
             'commands' => [
             ],
