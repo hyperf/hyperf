@@ -46,6 +46,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
             'string',
             'float',
             'bool',
+            'mixed',
         ]);
     }
 

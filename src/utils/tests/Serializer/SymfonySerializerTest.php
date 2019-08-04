@@ -53,6 +53,12 @@ class SymfonySerializerTest extends TestCase
 
         $ret = $serializer->denormalize(['1', 2, '03'], 'int[]');
         $this->assertSame([1, 2, 3], $ret);
+
+        $ret = $serializer->denormalize('1', 'mixed');
+        $this->assertSame('1', $ret);
+
+        $ret = $serializer->denormalize(['1', 2, '03'], 'mixed[]');
+        $this->assertSame(['1', 2, '03'], $ret);
     }
 
     public function testException()
