@@ -179,6 +179,7 @@
             "HyperfTest\\Event\\": "src/event/tests/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
+            "HyperfTest\\JsonRpc\\": "src/json-rpc/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
             "HyperfTest\\ModelCache\\": "src/model-cache/tests/",

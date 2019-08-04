@@ -15,7 +15,9 @@ namespace Hyperf\RpcServer;
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Rpc\Protocol;
 use Hyperf\RpcServer\Router\DispatcherFactory;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -24,11 +26,24 @@ use Psr\Http\Message\ServerRequestInterface;
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
     /**
+     * @var Protocol
+     */
+    protected $protocol;
+
+    public function __construct(ContainerInterface $container, Protocol $protocol, string $serverName)
+    {
+        $this->protocol = $protocol;
+        parent::__construct($container, $serverName);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createDispatcher(string $serverName): Dispatcher
     {
-        $factory = $this->container->get(DispatcherFactory::class);
+        $factory = make(DispatcherFactory::class, [
+            'pathGenerator' => $this->protocol->getPathGenerator(),
+        ]);
         return $factory->getDispatcher($serverName);
     }
 

@@ -19,11 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpCoreMiddleware extends CoreMiddleware
 {
-    /**
-     * @var string
-     */
-    protected $protocol = 'jsonrpc-http';
-
     protected function handleNotFound(ServerRequestInterface $request)
     {
         // @TODO Allow more health check conditions.

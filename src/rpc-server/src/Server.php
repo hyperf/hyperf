@@ -19,6 +19,7 @@ use Hyperf\Contract\OnReceiveInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -67,6 +68,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected $serverName;
 
     /**
+     * @var Protocol
+     */
+    protected $protocol;
+
+    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -75,12 +81,14 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         string $serverName,
         string $coreHandler,
         ContainerInterface $container,
+        Protocol $protocol,
         $dispatcher,
         LoggerInterface $logger
     ) {
         $this->serverName = $serverName;
         $this->coreHandler = $coreHandler;
         $this->container = $container;
+        $this->protocol = $protocol;
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
     }
@@ -88,8 +96,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $coreHandler = $this->coreHandler;
-        $this->coreMiddleware = new $coreHandler($this->container, $serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -130,6 +137,12 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         /* @var \Swoole\Server\Port */
         [$type, $port] = ServerManager::get($this->serverName);
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
+    }
+
+    protected function createCoreMiddleware(string $serverName): MiddlewareInterface
+    {
+        $coreHandler = $this->coreHandler;
+        return new $coreHandler($this->container, $this->protocol, $serverName);
     }
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;

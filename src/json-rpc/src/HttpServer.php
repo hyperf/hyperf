@@ -15,21 +15,23 @@ namespace Hyperf\JsonRpc;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Server;
+use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 
 class HttpServer extends Server
 {
     /**
-     * @var ProtocolManager
+     * @var Protocol
      */
-    protected $protocolManager;
+    protected $protocol;
 
     /**
      * @var \Hyperf\Rpc\Contract\PackerInterface
@@ -49,14 +51,18 @@ class HttpServer extends Server
         ProtocolManager $protocolManager
     ) {
         parent::__construct($serverName, $coreHandler, $container, $dispatcher);
-        $this->protocolManager = $protocolManager;
-        $protocolName = 'jsonrpc-http';
-        $packerClass = $this->protocolManager->getPacker($protocolName);
-        $this->packer = $this->container->get($packerClass);
+        $this->protocol = new Protocol($container, $protocolManager, 'jsonrpc-http');
+        $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
-            'dataFormatter' => $container->get($this->protocolManager->getDataFormatter($protocolName)),
+            'dataFormatter' => $this->protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
+    }
+
+    protected function createCoreMiddleware(string $serverName): MiddlewareInterface
+    {
+        $coreHandler = $this->coreHandler;
+        return new $coreHandler($this->container, $this->protocol, $serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

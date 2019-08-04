@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
@@ -27,19 +29,14 @@ use Swoole\Server as SwooleServer;
 class TcpServer extends Server
 {
     /**
-     * @var ProtocolManager
-     */
-    protected $protocolManager;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
-     */
-    protected $packer;
-
-    /**
      * @var \Hyperf\JsonRpc\ResponseBuilder
      */
     protected $responseBuilder;
+
+    /**
+     * @var PackerInterface
+     */
+    protected $packer;
 
     public function __construct(
         string $serverName,
@@ -49,13 +46,11 @@ class TcpServer extends Server
         LoggerInterface $logger,
         ProtocolManager $protocolManager
     ) {
-        parent::__construct($serverName, $coreHandler, $container, $dispatcher, $logger);
-        $this->protocolManager = $protocolManager;
-        $protocolName = 'jsonrpc';
-        $packerClass = $this->protocolManager->getPacker($protocolName);
-        $this->packer = $this->container->get($packerClass);
+        $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
+        parent::__construct($serverName, $coreHandler, $container, $protocol, $dispatcher, $logger);
+        $this->packer = $protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
-            'dataFormatter' => $container->get($this->protocolManager->getDataFormatter($protocolName)),
+            'dataFormatter' => $protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
     }
@@ -68,10 +63,7 @@ class TcpServer extends Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        $class = $this->protocolManager->getPacker('jsonrpc');
-        $packer = $this->container->get($class);
-        $data = $this->packer->unpack($data);
-        return $this->buildJsonRpcRequest($fd, $fromId, $data);
+        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data));
     }
 
     protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)

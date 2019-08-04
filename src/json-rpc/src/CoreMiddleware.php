@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Closure;
-use Hyperf\Rpc\ProtocolManager;
+use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,39 +24,16 @@ use Psr\Http\Message\ServerRequestInterface;
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
     /**
-     * @var \Hyperf\Rpc\ProtocolManager
-     */
-    protected $protocolManager;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
-     */
-    protected $packer;
-
-    /**
      * @var \Hyperf\JsonRpc\ResponseBuilder
      */
     protected $responseBuilder;
 
-    /**
-     * @var string
-     */
-    protected $protocol = 'jsonrpc';
-
-    public function __construct(ContainerInterface $container, string $serverName)
+    public function __construct(ContainerInterface $container, Protocol $protocol, string $serverName)
     {
-        parent::__construct($container, $serverName);
-        $this->protocolManager = $container->get(ProtocolManager::class);
-        $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($this->protocol));
-        $this->packer = $container->get($this->protocolManager->getPacker($this->protocol));
+        parent::__construct($container, $protocol, $serverName);
         $this->responseBuilder = make(ResponseBuilder::class, [
-            'dataFormatter' => $this->dataFormatter,
-            'packer' => $this->packer,
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
         ]);
     }
 
