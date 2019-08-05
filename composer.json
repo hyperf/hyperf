@@ -10,6 +10,7 @@
     "support": {},
     "require": {
         "php": ">=7.2",
+        "ext-json": "*",
         "bandwidth-throttle/token-bucket": "^2.0",
         "doctrine/annotations": "^1.6",
         "doctrine/inflector": "^1.3",

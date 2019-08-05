@@ -22,6 +22,11 @@ class Composer
     private static $content;
 
     /**
+     * @var Collection
+     */
+    private static $json;
+
+    /**
      * @var array
      */
     private static $extra = [];
@@ -71,10 +76,22 @@ class Composer
         return self::$content;
     }
 
+    public static function getJsonContent(): Collection
+    {
+        if (! self::$json) {
+            $path = BASE_PATH . '/composer.json';
+            if (! is_readable($path)) {
+                throw new \RuntimeException('composer.json is not readable.');
+            }
+            self::$json = collect(json_decode(file_get_contents($path), true));
+        }
+        return self::$json;
+    }
+
     public static function discoverLockFile(): string
     {
         $path = '';
-        if (file_exists(BASE_PATH . '/composer.lock') && is_readable(BASE_PATH . '/composer.lock')) {
+        if (is_readable(BASE_PATH . '/composer.lock')) {
             $path = BASE_PATH . '/composer.lock';
         }
         return $path;
