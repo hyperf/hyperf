@@ -14,6 +14,7 @@
 
 - [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
 - [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`.
+- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Function Redis::delete() is deprecated.
 
 # v1.0.9 - 2019-08-03
 
