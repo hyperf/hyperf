@@ -18,7 +18,7 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
-use Hyperf\Rpc\PathGenerator;
+use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
 

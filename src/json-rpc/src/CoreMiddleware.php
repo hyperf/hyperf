@@ -52,7 +52,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
             } catch (\Exception $e) {
-                return $this->responseBuilder->buildErrorResponse($request, 0, $e);
+                return $this->responseBuilder->buildErrorResponse($request, -32603, $e);
             }
         }
         return $response;

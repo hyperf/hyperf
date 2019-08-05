@@ -25,9 +25,9 @@ use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\JsonRpc\CoreMiddleware;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
+use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
-use Hyperf\Rpc\PathGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
@@ -89,8 +89,8 @@ class CoreMiddlewareTest extends TestCase
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('error', $ret);
         $this->assertArraySubset([
-            'code' => 0,
-            'message' => 'Expected non-zero value of divider',
+            'code' => -32603,
+            'message' => 'Internal error.',
         ], $ret['error']);
     }
 
