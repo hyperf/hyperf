@@ -69,7 +69,7 @@ class ConfigFetcherProcess extends AbstractProcess
             $config = $this->client->pull();
             if ($config !== $this->cacheConfig) {
                 if ($this->cacheConfig !== null) {
-                    $diff = array_diff($this->cacheConfig ?? [], $config);
+                    $diff = array_diff($config, $this->cacheConfig ?? []);
                 } else {
                     $diff = $config;
                 }
