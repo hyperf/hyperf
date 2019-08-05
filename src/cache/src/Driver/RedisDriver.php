@@ -61,7 +61,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function delete($key)
     {
-        return (bool) $this->redis->delete($this->getCacheKey($key));
+        return (bool) $this->redis->del($this->getCacheKey($key));
     }
 
     public function clear()
@@ -113,7 +113,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
             return $this->getCacheKey($key);
         }, $keys);
 
-        return $this->redis->delete(...$cacheKeys);
+        return $this->redis->del(...$cacheKeys);
     }
 
     public function has($key)
@@ -126,7 +126,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         $iterator = null;
         $key = $prefix . '*';
         while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
-            $this->redis->delete(...$keys);
+            $this->redis->del(...$keys);
         }
 
         return true;
