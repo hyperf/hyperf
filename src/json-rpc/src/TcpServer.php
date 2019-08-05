@@ -84,7 +84,7 @@ class TcpServer extends Server
             ->withAttribute('request_id', $data['id'] ?? null)
             ->withParsedBody($data['params'] ?? '');
         if (! isset($data['jsonrpc'])) {
-            return $this->responseBuilder->buildErrorResponse($request, -32600);
+            return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_REQUEST);
         }
         return $request;
     }

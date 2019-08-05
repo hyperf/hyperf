@@ -89,8 +89,8 @@ class CoreMiddlewareTest extends TestCase
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('error', $ret);
         $this->assertArraySubset([
-            'code' => -32603,
-            'message' => 'Internal error.',
+            'code' => ResponseBuilder::SERVER_ERROR,
+            'message' => 'Expected non-zero value of divider',
         ], $ret['error']);
     }
 

@@ -46,13 +46,13 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.
-                return $this->responseBuilder->buildErrorResponse($request, -32603);
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INTERNAL_ERROR);
             }
             $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
             } catch (\Exception $e) {
-                return $this->responseBuilder->buildErrorResponse($request, -32603, $e);
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $e);
             }
         }
         return $response;
@@ -60,7 +60,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        return $this->responseBuilder->buildErrorResponse($request, -32601);
+        return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::METHOD_NOT_FOUND);
     }
 
     protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)

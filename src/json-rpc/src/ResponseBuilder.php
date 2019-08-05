@@ -21,6 +21,18 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResponseBuilder
 {
+    const SERVER_ERROR = -32000;
+
+    const INVALID_REQUEST = -32600;
+
+    const METHOD_NOT_FOUND = -32601;
+
+    const INVALID_PARAMS = -32602;
+
+    const INTERNAL_ERROR = -32603;
+
+    const PARSE_ERROR = -32700;
+
     /**
      * @var \Hyperf\Rpc\Contract\DataFormatterInterface
      */
@@ -67,11 +79,11 @@ class ResponseBuilder
     protected function error(int $code, ?string $message = null): array
     {
         $mapping = [
-            -32700 => 'Parse error.',
-            -32600 => 'Invalid request.',
-            -32601 => 'Method not found.',
-            -32602 => 'Invalid params.',
-            -32603 => 'Internal error.',
+            self::PARSE_ERROR => 'Parse error.',
+            self::INVALID_REQUEST => 'Invalid request.',
+            self::METHOD_NOT_FOUND => 'Method not found.',
+            self::INVALID_PARAMS => 'Invalid params.',
+            self::INTERNAL_ERROR => 'Internal error.',
         ];
         if (isset($mapping[$code])) {
             return [$code, $mapping[$code]];

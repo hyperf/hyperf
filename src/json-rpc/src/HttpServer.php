@@ -72,12 +72,12 @@ class HttpServer extends Server
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         if (! $this->isHealthCheck($psr7Request)) {
             if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
-                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, -32700);
+                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
             }
             // @TODO Optimize the error handling of encode.
             $content = $this->packer->unpack($psr7Request->getBody()->getContents());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
-                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, -32600);
+                $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }
         }
         $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
