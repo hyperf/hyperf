@@ -17,13 +17,17 @@
     },
     "require-dev": {
         "symfony/var-dumper": "^4.1",
+        "symfony/property-access": "^4.3",
+        "symfony/serializer": "^4.3",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "symfony/var-dumper": "Required to use the dd function (^4.1)."
+        "symfony/var-dumper": "Required to use the dd function (^4.1).",
+        "symfony/serializer": "Required to use SymfonyNormalizer (^4.3)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^4.3)"
     },
     "autoload": {
         "files": [
@@ -42,6 +46,9 @@
         "sort-packages": true
     },
     "extra": {
+        "hyperf": {
+            "config": "Hyperf\\Utils\\ConfigProvider"
+        },
         "branch-alias": {
             "dev-master": "1.0-dev"
         }

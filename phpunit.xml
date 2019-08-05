@@ -23,12 +23,15 @@
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/guzzle/tests</directory>
             <directory suffix="Test.php">./src/http-server/tests</directory>
+            <directory suffix="Test.php">./src/rpc/tests</directory>
+            <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
+            <directory suffix="Test.php">./src/utils/tests</directory>
         </testsuite>
     </testsuites>
     <filter>
