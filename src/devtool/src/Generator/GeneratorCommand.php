@@ -119,7 +119,7 @@ abstract class GeneratorCommand extends Command
     protected function getPath($name)
     {
         $project = new Project();
-        return BASE_PATH . '/' . $project->pathFor($name);
+        return BASE_PATH . '/' . $project->path($name);
     }
 
     /**

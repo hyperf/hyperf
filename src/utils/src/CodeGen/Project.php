@@ -20,7 +20,7 @@ use Hyperf\Utils\Str;
  */
 class Project
 {
-    public function namespaceFor(string $path): string
+    public function namespace(string $path): string
     {
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         if ($ext !== '') {
@@ -36,12 +36,12 @@ class Project
         throw new \RuntimeException("Invalid project path: {$path}");
     }
 
-    public function classNameFor(string $path): string
+    public function className(string $path): string
     {
-        return $this->namespaceFor($path);
+        return $this->namespace($path);
     }
 
-    public function pathFor(string $name, $extension = '.php'): string
+    public function path(string $name, $extension = '.php'): string
     {
         if (Str::endsWith($name, '\\')) {
             $extension = '';

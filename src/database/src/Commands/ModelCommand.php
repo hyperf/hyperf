@@ -142,8 +142,8 @@ class ModelCommand extends Command
         $columns = $builder->getColumnTypeListing($table);
 
         $project = new Project();
-        $class = $project->namespaceFor($option->getPath()) . Str::studly($table);
-        $path = BASE_PATH . '/' . $project->pathFor($class);
+        $class = $project->namespace($option->getPath()) . Str::studly($table);
+        $path = BASE_PATH . '/' . $project->path($class);
 
         if (! file_exists($path)) {
             $dir = dirname($path);
