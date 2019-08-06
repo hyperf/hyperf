@@ -353,6 +353,8 @@ trait MessageTrait
             }
 
             $value = $this->trimHeaderValues($value);
+            $header = (string) $header;
+
             $normalized = strtolower($header);
             if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
