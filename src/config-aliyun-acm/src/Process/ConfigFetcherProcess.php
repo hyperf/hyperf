@@ -68,15 +68,10 @@ class ConfigFetcherProcess extends AbstractProcess
         while (true) {
             $config = $this->client->pull();
             if ($config !== $this->cacheConfig) {
-                if ($this->cacheConfig !== null) {
-                    $diff = array_diff($config, $this->cacheConfig ?? []);
-                } else {
-                    $diff = $config;
-                }
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($diff), $workerId);
+                    $this->server->sendMessage(new PipeMessage($config), $workerId);
                 }
             }
             sleep($this->config->get('aliyun_acm.interval', 5));
