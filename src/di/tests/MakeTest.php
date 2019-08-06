@@ -16,6 +16,8 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Di\Stub\Bar;
+use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
 use PHPUnit\Framework\TestCase;
 
@@ -56,5 +58,22 @@ class MakeTest extends TestCase
         $this->assertInstanceOf(Foo::class, $foo = make(Foo::class, [1 => 123, 'string' => '123']));
         $this->assertSame('123', $foo->string);
         $this->assertSame(123, $foo->int);
+    }
+
+    public function testMakeDependenceParameters()
+    {
+        $id = uniqid();
+        $this->assertInstanceOf(Bar::class, $bar = make(Bar::class, ['id' => $id]));
+        $this->assertSame($id, $bar->id);
+        $this->assertInstanceOf(Demo::class, $bar->demo);
+        $this->assertSame(1, $bar->demo->getId());
+        $this->assertNull($bar->name);
+
+        $id = uniqid();
+        $this->assertInstanceOf(Bar::class, $bar = make(Bar::class, [$id, 2 => 'Hyperf']));
+        $this->assertSame($id, $bar->id);
+        $this->assertInstanceOf(Demo::class, $bar->demo);
+        $this->assertSame(1, $bar->demo->getId());
+        $this->assertSame('Hyperf', $bar->name);
     }
 }
