@@ -14,6 +14,7 @@ return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+//        'store' => BASE_PATH . '/runtime/caches',    //  for FileSystemDriver
         'prefix' => 'c:',
     ],
 ];
