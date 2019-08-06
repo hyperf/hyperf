@@ -40,10 +40,7 @@ class ProviderConfig
             foreach ($providers ?? [] as $provider) {
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                     $providerConfig = (new $provider())();
-                    $config = array_merge_recursive($config, $providerConfig);
-                    if (isset($providerConfig['dependencies'])) {
-                        $config['dependencies'] = array_merge($config['dependencies'], $providerConfig['dependencies']);
-                    }
+                    $config = static::merge($config, $providerConfig);
                 }
             }
 
@@ -53,7 +50,18 @@ class ProviderConfig
         return static::$privoderConfigs;
     }
 
-    public function clear(): void
+    public static function merge(...$arrays)
+    {
+        $result = array_merge_recursive(...$arrays);
+        if (isset($result['dependencies'])) {
+            $dependencies = array_column($arrays, 'dependencies');
+            $result['dependencies'] = array_merge(...$dependencies);
+        }
+
+        return $result;
+    }
+
+    public static function clear(): void
     {
         static::$privoderConfigs = [];
     }

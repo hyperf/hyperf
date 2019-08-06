@@ -168,6 +168,7 @@
             "HyperfTest\\ConfigAliyunAcm\\": "src/config-aliyun-acm/tests/",
             "HyperfTest\\ConfigApollo\\": "src/config-apollo/tests/",
             "HyperfTest\\ConfigEtcd\\": "src/config-etcd/tests/",
+            "HyperfTest\\Config\\": "src/config/tests/",
             "HyperfTest\\Constants\\": "src/constants/tests/",
             "HyperfTest\\Consul\\": "src/consul/tests/",
             "HyperfTest\\Crontab\\": "src/crontab/tests/",
