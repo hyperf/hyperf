@@ -70,7 +70,7 @@ class RegisterServiceListener implements ListenerInterface
                             $consumer['name'],
                             $consumer['protocol'] ?? 'jsonrpc-http',
                             Arr::only($consumer, ['load_balancer'])
-                    );
+                        );
                     }
                 );
             }

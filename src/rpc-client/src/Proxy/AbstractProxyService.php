@@ -24,6 +24,11 @@ abstract class AbstractProxyService
 
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol, array $options = [])
     {
-        $this->client = new ServiceClient($container, $serviceName, $protocol, $options);
+        $this->client = make(ServiceClient::class, [
+            'container' => $container,
+            'serviceName' => $serviceName,
+            'protocol' => $protocol,
+            'options' => $options,
+        ]);
     }
 }
