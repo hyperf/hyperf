@@ -35,7 +35,7 @@ class ProxyFactory
         if (self::has($serviceClass)) {
             return (string) self::get($serviceClass);
         }
-        $dir = BASE_PATH . '/runtime/rpc-client/proxy/';
+        $dir = BASE_PATH . '/runtime/container/proxy/';
         if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }

@@ -18,7 +18,6 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\RpcClient\ProxyFactory;
 use Hyperf\Utils\Arr;
-use ProxyManager\Factory\RemoteObjectFactory;
 use Psr\Container\ContainerInterface;
 
 class RegisterServiceListener implements ListenerInterface
@@ -49,7 +48,7 @@ class RegisterServiceListener implements ListenerInterface
     {
         /** @var Container $container */
         $container = $this->container;
-        if ($container instanceof Container && class_exists(RemoteObjectFactory::class)) {
+        if ($container instanceof Container) {
             $consumers = $container->get(ConfigInterface::class)->get('services.consumers', []);
             $serviceFactory = $container->get(ProxyFactory::class);
             $definitions = $container->getDefinitionSource();
@@ -67,10 +66,10 @@ class RegisterServiceListener implements ListenerInterface
                         $proxyClass = $serviceFactory->createProxy($serviceClass);
 
                         return new $proxyClass(
-                        $container,
-                        $consumer['name'],
-                        $consumer['protocol'] ?? 'jsonrpc-http',
-                        Arr::only($consumer, ['load_balancer'])
+                            $container,
+                            $consumer['name'],
+                            $consumer['protocol'] ?? 'jsonrpc-http',
+                            Arr::only($consumer, ['load_balancer'])
                     );
                     }
                 );
