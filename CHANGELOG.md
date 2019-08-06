@@ -5,9 +5,16 @@
 - [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Added custom object support for controller parameters in http-server.
 - [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
 
+## Changed
+
+- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden DI scan message when paths is empty.
+- [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Support convert path and namespace from composer psr-4 autoload rules.
+
 ## Fixed
 
 - [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
+- [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`.
+- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Function Redis::delete() is deprecated.
 
 # v1.0.9 - 2019-08-03
 

@@ -18,6 +18,7 @@ use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -140,10 +141,10 @@ class ModelCommand extends Command
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $builder->getColumnTypeListing($table);
 
-        $class = $option->getPath() . '/' . Str::studly($table);
-        $path = BASE_PATH . '/' . $class . '.php';
+        $project = new Project();
+        $class = $project->namespace($option->getPath()) . Str::studly($table);
+        $path = BASE_PATH . '/' . $project->path($class);
 
-        $class = str_replace('/', '\\', Str::ucfirst($class));
         if (! file_exists($path)) {
             $dir = dirname($path);
             if (! is_dir($dir)) {
