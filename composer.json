@@ -179,6 +179,7 @@
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
+            "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
             "HyperfTest\\JsonRpc\\": "src/json-rpc/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",

@@ -17,6 +17,7 @@
 - [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`.
 - [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Function Redis::delete() is deprecated.
 - [#334](https://github.com/hyperf-cloud/hyperf/pull/334) Fixed configuration of aliyun acm is not work expected.
+- [#337](https://github.com/hyperf-cloud/hyperf/pull/337) Fixed 500 response when key of header is not string.
 
 # v1.0.9 - 2019-08-03
 
