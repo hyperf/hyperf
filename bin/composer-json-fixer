@@ -17,12 +17,16 @@ $files = Finder::create()
 
 $require = [];
 $autoload = [];
+$autoloadFiles = [];
 $autoloadDev = [];
 $configProviders = [];
 foreach ($files as $file) {
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
 
+    foreach (isset($composerJson['autoload']['files']) ? $composerJson['autoload']['files'] : [] as $file) {
+        $autoloadFiles[] = "src/{$component}/". preg_replace('#^./#', '', $file);
+    }
     foreach (isset($composerJson['autoload']['psr-4']) ? $composerJson['autoload']['psr-4'] : [] as $ns => $dir) {
         $autoload[$ns] = "src/{$component}/" . trim($dir, '/') . '/';
     }
@@ -35,10 +39,12 @@ foreach ($files as $file) {
 }
 
 ksort($autoload);
+sort($autoloadFiles);
 ksort($autoloadDev);
 sort($configProviders);
 
 $json = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
+$json->autoload->files = $autoloadFiles;
 $json->autoload->{'psr-4'} = $autoload;
 $json->{'autoload-dev'}->{'psr-4'} = $autoloadDev;
 $json->extra->hyperf->config = $configProviders;
