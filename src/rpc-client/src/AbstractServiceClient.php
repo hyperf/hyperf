@@ -17,14 +17,11 @@ use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Contract\PackerInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
-use Hyperf\Rpc\Contract\DataFormatterInterface;
-use Hyperf\Rpc\Contract\PathGeneratorInterface;
-use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -45,7 +42,7 @@ abstract class AbstractServiceClient
      *
      * @var string
      */
-    protected $protocol = 'jsonrpc-http';
+    protected $protocolName = 'jsonrpc-http';
 
     /**
      * The load balancer of the client, this name of the load balancer
@@ -56,12 +53,17 @@ abstract class AbstractServiceClient
     protected $loadBalancer = 'random';
 
     /**
+     * @var Protocol
+     */
+    protected $protocol;
+
+    /**
      * @var \Hyperf\RpcClient\Client
      */
     protected $client;
 
     /**
-     * @var ContainerInterfaces
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -69,26 +71,6 @@ abstract class AbstractServiceClient
      * @var \Hyperf\LoadBalancer\LoadBalancerManager
      */
     protected $loadBalancerManager;
-
-    /**
-     * @var \Hyperf\Rpc\ProtocolManager
-     */
-    protected $protocolManager;
-
-    /**
-     * @var PathGeneratorInterface
-     */
-    protected $pathGenerator;
-
-    /**
-     * @var DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    protected $config;
 
     /**
      * @var null|\Hyperf\Contract\IdGeneratorInterface
@@ -99,13 +81,11 @@ abstract class AbstractServiceClient
     {
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
-        $this->protocolManager = $container->get(ProtocolManager::class);
-        $this->pathGenerator = $this->createPathGenerator();
-        $this->dataFormatter = $this->createDataFormatter();
+        $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocolName);
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
-        $transporter = $this->createTransporter()->setLoadBalancer($loadBalancer);
+        $transporter = $this->protocol->getTransporter()->setLoadBalancer($loadBalancer);
         $this->client = make(Client::class)
-            ->setPacker($this->createPacker())
+            ->setPacker($this->protocol->getPacker())
             ->setTransporter($transporter);
         if ($container->has(IdGeneratorInterface::class)) {
             $this->idGenerator = $container->get(IdGeneratorInterface::class);
@@ -134,12 +114,12 @@ abstract class AbstractServiceClient
         if (! $this->serviceName) {
             throw new InvalidArgumentException('Parameter $serviceName missing.');
         }
-        return $this->pathGenerator->generate($this->serviceName, $methodName);
+        return $this->protocol->getPathGenerator()->generate($this->serviceName, $methodName);
     }
 
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
-        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+        return $this->protocol->getDataFormatter()->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
@@ -147,46 +127,6 @@ abstract class AbstractServiceClient
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
         $refresh && $loadBalancer->refresh($refresh);
         return $loadBalancer;
-    }
-
-    protected function createTransporter(): TransporterInterface
-    {
-        $transporter = $this->protocolManager->getTransporter($this->protocol);
-        if (! class_exists($transporter)) {
-            throw new InvalidArgumentException(sprintf('Transporter %s is not exists.', $transporter));
-        }
-        /* @var TransporterInterface $instance */
-        return make($transporter);
-    }
-
-    protected function createPacker(): PackerInterface
-    {
-        $packer = $this->protocolManager->getPacker($this->protocol);
-        if (! class_exists($packer)) {
-            throw new InvalidArgumentException(sprintf('Packer %s is not exists.', $packer));
-        }
-        /* @var PackerInterface $packer */
-        return $this->container->get($packer);
-    }
-
-    protected function createPathGenerator(): PathGeneratorInterface
-    {
-        $pathGenerator = $this->protocolManager->getPathGenerator($this->protocol);
-        if (! class_exists($pathGenerator)) {
-            throw new InvalidArgumentException(sprintf('Path Generator %s is not exists.', $pathGenerator));
-        }
-        /* @var PathGeneratorInterface $pathGenerator */
-        return $this->container->get($pathGenerator);
-    }
-
-    protected function createDataFormatter(): DataFormatterInterface
-    {
-        $dataFormatter = $this->protocolManager->getDataFormatter($this->protocol);
-        if (! class_exists($dataFormatter)) {
-            throw new InvalidArgumentException(sprintf('Data Formatter %s is not exists.', $dataFormatter));
-        }
-        /* @var DataFormatterInterface $dataFormatter */
-        return $this->container->get($dataFormatter);
     }
 
     /**

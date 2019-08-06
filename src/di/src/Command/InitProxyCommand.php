@@ -16,6 +16,7 @@ use Hyperf\Command\Command;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
+use Hyperf\RpcClient\ProxyFactory;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Finder\Finder;
@@ -49,32 +50,8 @@ class InitProxyCommand extends Command
 
     public function handle()
     {
-        $scanDirs = $this->getScanDir();
-
-        $runtime = BASE_PATH . '/runtime/container/proxy/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
-
-        $classCollection = $this->scanner->scan($scanDirs);
-
-        foreach ($classCollection as $item) {
-            try {
-                $this->container->get($item);
-            } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
-            }
-        }
-
-        if ($this->container instanceof Container) {
-            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
-                try {
-                    $this->container->get($key);
-                } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
-                }
-            }
-        }
+        $this->createAopProxies();
+        $this->createRpcClientProxies();
 
         $this->output->writeln('<info>Proxy class create success.</info>');
     }
@@ -110,5 +87,60 @@ class InitProxyCommand extends Command
         }
 
         return $scanDirs;
+    }
+
+    private function createAopProxies()
+    {
+        $scanDirs = $this->getScanDir();
+
+        $runtime = BASE_PATH . '/runtime/container/proxy/';
+        if (is_dir($runtime)) {
+            $this->clearRuntime($runtime);
+        }
+
+        $classCollection = $this->scanner->scan($scanDirs);
+
+        foreach ($classCollection as $item) {
+            try {
+                $this->container->get($item);
+            } catch (\Throwable $ex) {
+                // Entry cannot be resoleved.
+            }
+        }
+
+        if ($this->container instanceof Container) {
+            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
+                try {
+                    $this->container->get($key);
+                } catch (\Throwable $ex) {
+                    // Entry cannot be resoleved.
+                }
+            }
+        }
+    }
+
+    private function createRpcClientProxies()
+    {
+        $runtime = BASE_PATH . '/runtime/rpc-client/proxy/';
+        if (is_dir($runtime)) {
+            $this->clearRuntime($runtime);
+        }
+
+        $file = BASE_PATH . '/config/autoload/services.php';
+        if (! file_exists($file)) {
+            return;
+        }
+        $services = include $file;
+        $serviceFactory = new ProxyFactory();
+        foreach ($services['consumers'] ?? [] as $consumer) {
+            if (empty($consumer['name'])) {
+                continue;
+            }
+            $serviceClass = $consumer['service'] ?? $consumer['name'];
+            if (! interface_exists($serviceClass)) {
+                continue;
+            }
+            $serviceFactory->createProxy($serviceClass);
+        }
     }
 }
