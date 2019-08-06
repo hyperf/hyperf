@@ -18,9 +18,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * {@inheritdoc}
- */
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
     /**
