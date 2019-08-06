@@ -34,7 +34,7 @@ class ProviderConfig
      */
     public static function load(): array
     {
-        if (!static::$privoderConfigs) {
+        if (! static::$privoderConfigs) {
             $providers = Composer::getMergedExtra('hyperf')['config'];
             $providerConfigs = [];
             foreach ($providers ?? [] as $provider) {

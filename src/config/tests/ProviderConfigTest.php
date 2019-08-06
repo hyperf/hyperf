@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\Config;
 
 use Hyperf\Config\ProviderConfig;
-use Hyperf\Utils\Composer;
 use PHPUnit\Framework\TestCase;
 
 /**
