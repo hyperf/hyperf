@@ -41,6 +41,9 @@ class ProviderConfig
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                     $providerConfig = (new $provider())();
                     $config = array_merge_recursive($config, $providerConfig);
+                    if (isset($providerConfig['dependencies'])) {
+                        $config['dependencies'] = array_merge($config['dependencies'], $providerConfig['dependencies']);
+                    }
                 }
             }
 
