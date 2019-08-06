@@ -34,8 +34,6 @@ use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorProxyServiceClient;
 use HyperfTest\JsonRpc\Stub\CalculatorServiceInterface;
 use HyperfTest\JsonRpc\Stub\IntegerValue;
-use kuiper\docReader\DocReader;
-use kuiper\docReader\DocReaderInterface;
 use Mockery\MockInterface;
 use Monolog\Handler\StreamHandler;
 use PHPUnit\Framework\TestCase;
@@ -114,7 +112,6 @@ class RpcServiceClientTest extends TestCase
         $container = new Container(new DefinitionSource([
             NormalizerInterface::class => SymfonyNormalizer::class,
             Serializer::class => SerializerFactory::class,
-            DocReaderInterface::class => DocReader::class,
             DataFormatter::class => NormalizeDataFormatter::class,
             MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
             StdoutLoggerInterface::class => function () {
