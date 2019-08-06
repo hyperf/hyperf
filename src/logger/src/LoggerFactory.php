@@ -73,7 +73,7 @@ class LoggerFactory
         $handlerConstructor = $config['handler']['constructor'];
 
         /** @var HandlerInterface $handler */
-        $handler = make($handlerClass, $handlerConstructor);
+        $handler = make($handlerClass, $this->normalizeParameters($handlerConstructor));
 
         $formatterClass = $config['formatter']['class'];
         $formatterConstructor = $config['formatter']['constructor'];
@@ -84,5 +84,18 @@ class LoggerFactory
         $handler->setFormatter($formatter);
 
         return $handler;
+    }
+
+    private function normalizeParameters(array $parameters): array
+    {
+        if (isset($parameters['level']) && is_string($parameters['level'])) {
+            $name = '\\Monolog\\Logger::' . strtoupper($parameters['level']);
+            if (defined($name)) {
+                $parameters['level'] = constant($name);
+            } else {
+                throw new \InvalidArgumentException("Unknown logger level '{$parameters['level']}'");
+            }
+        }
+        return $parameters;
     }
 }

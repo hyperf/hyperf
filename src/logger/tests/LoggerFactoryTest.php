@@ -53,6 +53,34 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
+    public function testLoggerLevelOfStringValue()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+            'logger' => [
+                'default' => [
+                    'handler' => [
+                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'constructor' => [
+                            'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                            'level' => 'info',
+                        ],
+                    ],
+                    'formatter' => [
+                        'class' => \Monolog\Formatter\LineFormatter::class,
+                        'constructor' => [],
+                    ],
+                ],
+            ],
+        ]));
+        ApplicationContext::setContainer($container);
+        $factory = new LoggerFactory($container);
+        /** @var Logger $logger */
+        $logger = $factory->get('app');
+        $handler = $logger->getHandlers()[0];
+        $this->assertEquals(Logger::INFO, $handler->getLevel());
+    }
+
     private function mockContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
