@@ -34,18 +34,17 @@ class ProviderConfig
      */
     public static function load(): array
     {
-        if (! static::$privoderConfigs) {
-            $config = [];
+        if (!static::$privoderConfigs) {
             $providers = Composer::getMergedExtra('hyperf')['config'];
+            $providerConfigs = [];
             foreach ($providers ?? [] as $provider) {
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
-                    $providerConfig = (new $provider())();
-                    $config = static::merge($config, $providerConfig);
+                    $providerConfigs[] = (new $provider())();
                 }
             }
 
-            static::$privoderConfigs = $config;
-            unset($config, $providerConfig);
+            static::$privoderConfigs = static::merge(...$providerConfigs);
+            unset($providerConfigs);
         }
         return static::$privoderConfigs;
     }
