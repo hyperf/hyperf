@@ -59,7 +59,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
         $node = hexdec(bin2hex(random_bytes(6)));
 
         /**
-         * Set the multicast bit
+         * Set the multicast bit.
          * @see https://tools.ietf.org/html/rfc4122#section-4.5
          */
         $node = $node | 0x010000000000;

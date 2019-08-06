@@ -59,7 +59,7 @@ class TraceMiddeware implements MiddlewareInterface
     {
         $uri = $request->getUri();
         $span = $this->tracing->span('request', SERVER);
-        $span->tag('coroutine.id', Coroutine::id());
+        $span->tag('coroutine.id', (string) Coroutine::id());
         $span->tag('request.path', (string) $uri);
         $span->tag('request.method', $request->getMethod());
         foreach ($request->getHeaders() as $key => $value) {
