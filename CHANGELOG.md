@@ -9,6 +9,7 @@
 
 - [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden DI scan message when paths is empty.
 - [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Support convert path and namespace from composer psr-4 autoload rules.
+- [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized rpc-server and json-rpc component. 
 
 ## Fixed
 

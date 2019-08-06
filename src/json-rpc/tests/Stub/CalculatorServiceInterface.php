@@ -10,8 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\JsonRpc;
+namespace HyperfTest\JsonRpc\Stub;
 
-class PathGenerator extends \Hyperf\Rpc\PathGenerator\PathGenerator
+interface CalculatorServiceInterface
 {
+    public function add(int $a, int $b);
+
+    public function sum(IntegerValue $a, IntegerValue $b): IntegerValue;
+
+    public function divide($value, $divider);
 }
