@@ -51,18 +51,15 @@ class ServiceClient extends AbstractServiceClient
                 $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
                 return $this->normalizer->denormalize($response['result'], $type->getName());
             }
-            if (isset($response['error'])) {
-                $error = $response['error'];
-                if (isset($error['code'])) {
-                    if (isset($error['data']['class'], $error['data']['attributes'])) {
-                        $data = $error['data'];
-                        $e = $this->normalizer->denormalize($data['attributes'] ?? [], $data['class']);
-                        if ($e instanceof \Exception) {
-                            throw $e;
-                        }
+            if ($error = $response['error'] ?? null && isset($error['code'])) {
+                if (isset($error['data']['class'], $error['data']['attributes'])) {
+                    $data = $error['data'];
+                    $e = $this->normalizer->denormalize($data['attributes'] ?? [], $data['class']);
+                    if ($e instanceof \Exception) {
+                        throw $e;
                     }
-                    throw new RequestException($error['message'] ?? '', $error['code']);
                 }
+                throw new RequestException($error['message'] ?? '', $error['code']);
             }
         }
         throw new RequestException('Invalid response.');
