@@ -149,7 +149,7 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
 
     public function clearPrefix(string $prefix): bool
     {
-        $files = glob($this->storePath . $prefix . '*');
+        $files = glob($this->storePath . $prefix . DIRECTORY_SEPARATOR . '*');
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
