@@ -217,7 +217,7 @@ class Filesystem
      */
     public function link(string $target, string $link)
     {
-        if (! self::windowsOs()) {
+        if (! $this->windowsOs()) {
             return symlink($target, $link);
         }
 
