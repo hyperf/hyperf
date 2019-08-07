@@ -12,15 +12,17 @@ declare(strict_types=1);
 
 namespace HyperfTest\Config\Stub;
 
-class ProviderConfig extends \Hyperf\Config\ProviderConfig
+class FooConfigProvider
 {
-    public static function loadProviders(array $providers): array
+    public function __invoke()
     {
-        return parent::loadProviders($providers);
-    }
-
-    public static function merge(...$arrays): array
-    {
-        return parent::merge(...$arrays);
+        return [
+            'dependencies' => [
+                'Foo' => function () {
+                    return new Foo(1);
+                },
+                'Foo2' => [Foo::class, 'make'],
+            ],
+        ];
     }
 }

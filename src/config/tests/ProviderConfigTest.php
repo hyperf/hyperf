@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Config;
 
+use Hyperf\Utils\Arr;
+use HyperfTest\Config\Stub\FooConfigProvider;
 use HyperfTest\Config\Stub\ProviderConfig;
 use PHPUnit\Framework\TestCase;
 
@@ -86,5 +88,37 @@ class ProviderConfigTest extends TestCase
 
         $result = ProviderConfig::merge($c1, $c2);
         $this->assertSame(['L1', null], $result['listeners']);
+    }
+
+    public function testProviderConfigLoadProviders()
+    {
+        $config = json_decode(file_get_contents(BASE_PATH . '/composer.json'), true);
+
+        $providers = $config['extra']['hyperf']['config'];
+
+        $res = ProviderConfig::loadProviders($providers);
+
+        $dependencies = $res['dependencies'];
+        $commands = $res['commands'];
+        $scanPaths = $res['scan']['paths'];
+        $publish = $res['publish'];
+        $listeners = $res['listeners'];
+
+        $this->assertFalse(Arr::isAssoc($commands));
+        $this->assertFalse(Arr::isAssoc($scanPaths));
+        $this->assertFalse(Arr::isAssoc($listeners));
+        $this->assertFalse(Arr::isAssoc($publish));
+        $this->assertTrue(Arr::isAssoc($dependencies));
+    }
+
+    public function testProviderConfigLoadProvidersHasCallable()
+    {
+        $res = ProviderConfig::loadProviders([
+            FooConfigProvider::class,
+        ]);
+
+        foreach ($res['dependencies'] as $dependency) {
+            $this->assertIsCallable($dependency);
+        }
     }
 }
