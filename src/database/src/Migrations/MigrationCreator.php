@@ -113,7 +113,7 @@ class MigrationCreator
     /**
      * Get the migration stub file.
      */
-    protected function getStub(string $table, bool $create): string
+    protected function getStub(?string $table, bool $create): string
     {
         if (is_null($table)) {
             return $this->files->get($this->stubPath() . '/blank.stub');
@@ -130,7 +130,7 @@ class MigrationCreator
     /**
      * Populate the place-holders in the migration stub.
      */
-    protected function populateStub(string $name, string $stub, string $table): string
+    protected function populateStub(string $name, string $stub, ?string $table): string
     {
         $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
 
@@ -163,7 +163,7 @@ class MigrationCreator
     /**
      * Fire the registered post create hooks.
      */
-    protected function firePostCreateHooks(string $table)
+    protected function firePostCreateHooks(?string $table)
     {
         foreach ($this->postCreate as $callback) {
             call_user_func($callback, $table);
