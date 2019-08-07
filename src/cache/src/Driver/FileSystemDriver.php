@@ -17,7 +17,7 @@ use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
-class FileSystemDriver extends Driver implements KeyCollectorInterface
+class FileSystemDriver extends Driver
 {
     /**
      * @var string
@@ -134,7 +134,7 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
         }
 
         foreach ($keys as $index => $key) {
-            return $this->delete($key);
+            $this->delete($key);
         }
 
         return true;
@@ -157,29 +157,6 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
             unlink($file);
         }
 
-        return true;
-    }
-
-    public function addKey(string $collector, string $key): bool
-    {
-        return true;
-    }
-
-    public function keys(string $collector): array
-    {
-        $globPattern = $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $collector;
-        $files = glob($globPattern . '*');
-
-        $results = [];
-        foreach ($files as $index => $file) {
-            $results[] = str_replace($this->storePath . DIRECTORY_SEPARATOR, '', $files);
-        }
-
-        return $results;
-    }
-
-    public function delKey(string $collector, ...$key): bool
-    {
         return true;
     }
 }

@@ -80,6 +80,21 @@ class FileSystemDriverTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testDelete()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $driver->set('xxx', 'yyy');
+        $driver->set('xxx2', 'yyy');
+        $driver->set('xxx3', 'yyy');
+
+        $driver->deleteMultiple(['xxx', 'xxx2']);
+
+        $this->assertNull($driver->get('xxx'));
+        $this->assertNotNull($driver->get('xxx3'));
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
