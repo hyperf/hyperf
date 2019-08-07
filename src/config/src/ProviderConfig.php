@@ -35,7 +35,7 @@ class ProviderConfig
     public static function load(): array
     {
         if (! static::$privoderConfigs) {
-            $providers = Composer::getMergedExtra('hyperf')['config'];
+            $providers = Composer::getMergedExtra('hyperf')['config'] ?? [];
             $providerConfigs = [];
             foreach ($providers ?? [] as $provider) {
                 if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
@@ -49,7 +49,12 @@ class ProviderConfig
         return static::$privoderConfigs;
     }
 
-    public static function merge(...$arrays)
+    public static function clear(): void
+    {
+        static::$privoderConfigs = [];
+    }
+
+    protected static function merge(...$arrays): array
     {
         $result = array_merge_recursive(...$arrays);
         if (isset($result['dependencies'])) {
@@ -58,10 +63,5 @@ class ProviderConfig
         }
 
         return $result;
-    }
-
-    public static function clear(): void
-    {
-        static::$privoderConfigs = [];
     }
 }
