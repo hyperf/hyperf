@@ -62,7 +62,7 @@ class Protocol
         if (! $this->container->has($transporter)) {
             throw new \InvalidArgumentException("Transporter {$transporter} for {$this->name} does not exist");
         }
-        return $this->container->get($transporter);
+        return make($transporter);
     }
 
     public function getPathGenerator(): PathGeneratorInterface
