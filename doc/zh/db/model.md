@@ -52,17 +52,18 @@ class User extends Model
 }
 ```
 
-## 模型参数
+## 模型成员变量
 
-|    参数    |  类型  | 默认值  |         备注         |
-|:----------:|:------:|:-------:|:--------------------:|
-| connection | string | default |      数据库连接      |
-|   table    | string |   无    |      数据表名称      |
-| primaryKey | string |   id    |       模型主键       |
-|  keyType   | string |   int   |       主键类型       |
-|  fillable  | array  |   []    | 允许被批量复制的属性 |
-|   casts    | string |   无    |    数据格式化配置    |
-| timestamps |  bool  |  true   |  是否自动维护时间戳  |
+|     参数     |  类型  | 默认值  |         备注         |
+|:------------:|:------:|:-------:|:--------------------:|
+|  connection  | string | default |      数据库连接      |
+|    table     | string |   无    |      数据表名称      |
+|  primaryKey  | string |   id    |       模型主键       |
+|   keyType    | string |   int   |       主键类型       |
+|   fillable   | array  |   []    | 允许被批量复制的属性 |
+|    casts     | string |   无    |    数据格式化配置    |
+|  timestamps  |  bool  |  true   |  是否自动维护时间戳  |
+| incrementing |  bool  |  true   |     是否自增主键     |
 
 ### 数据表名称
 
