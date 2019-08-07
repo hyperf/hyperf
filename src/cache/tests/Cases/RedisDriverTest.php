@@ -13,10 +13,16 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\CacheManager;
-use Hyperf\Cache\Driver\FileSystemDriver;
+use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Pool\Channel;
+use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Pool\PoolFactory;
+use Hyperf\Redis\Pool\RedisPool;
+use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use HyperfTest\Cache\Stub\Foo;
@@ -27,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class FileSystemDriverTest extends TestCase
+class RedisDriverTest extends TestCase
 {
     protected function tearDown()
     {
@@ -68,16 +74,13 @@ class FileSystemDriverTest extends TestCase
         $container = $this->getContainer();
         $driver = $container->get(CacheManager::class)->getDriver();
 
-        $driver->set('xxx', 'yyy', 0.5);
+        $driver->set('xxx', 'yyy', 1);
         [$bool, $result] = $driver->fetch('xxx');
         $this->assertTrue($bool);
         $this->assertSame('yyy', $result);
 
-        sleep(1);
-
-        [$bool, $result] = $driver->fetch('xxx');
-        $this->assertFalse($bool);
-        $this->assertNull($result);
+        $redis = $container->get(\Redis::class);
+        $this->assertSame(1, $redis->ttl('c:xxx'));
     }
 
     public function testDelete()
@@ -101,21 +104,52 @@ class FileSystemDriverTest extends TestCase
         $config = new Config([
             'cache' => [
                 'default' => [
-                    'driver' => FileSystemDriver::class,
+                    'driver' => RedisDriver::class,
                     'packer' => PhpSerializerPacker::class,
                     'prefix' => 'c:',
+                ],
+            ],
+            'redis' => [
+                'default' => [
+                    'host' => 'localhost',
+                    'auth' => '910123',
+                    'port' => 6379,
+                    'db' => 0,
+                    'timeout' => 0.0,
+                    'reserved' => null,
+                    'retry_interval' => 0,
+                    'pool' => [
+                        'min_connections' => 1,
+                        'max_connections' => 10,
+                        'connect_timeout' => 10.0,
+                        'wait_timeout' => 3.0,
+                        'heartbeat' => -1,
+                        'max_idle_time' => 60,
+                    ],
                 ],
             ],
         ]);
 
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         $logger->shouldReceive(Mockery::any())->andReturn(null);
-
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(CacheManager::class)->andReturn(new CacheManager($config, $logger));
-        $container->shouldReceive('make')->with(FileSystemDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new FileSystemDriver($container, $args['config']);
+        $container->shouldReceive('make')->with(RedisDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
+            return new RedisDriver($container, $args['config']);
         });
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
+        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
+            return new RedisPool($container, $args['name']);
+        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new PoolOption(...array_values($args));
+        });
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Channel($args['size']);
+        });
+
+        $poolFactory = new PoolFactory($container);
+        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis($poolFactory));
 
         ApplicationContext::setContainer($container);
 
