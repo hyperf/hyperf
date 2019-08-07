@@ -18,7 +18,7 @@
 |:----------------------------------------------:|:-----------------------------------------------:|
 | Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
 |       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
-|       Hyperf\Di\Aop\ProxyCallVistor       |       Hyperf\Di\Aop\ProxyCallVisitor       |
+|         Hyperf\Di\Aop\ProxyCallVistor          |         Hyperf\Di\Aop\ProxyCallVisitor          |
 
 ## Fixed
 
