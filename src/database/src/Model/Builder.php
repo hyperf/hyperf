@@ -753,7 +753,7 @@ class Builder
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contract\PaginatorInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
