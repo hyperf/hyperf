@@ -17,7 +17,7 @@ use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Response as ServerResponse;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -357,7 +357,7 @@ class Response extends ServerResponse implements ResponseInterface
 
     /**
      * @param array|Arrayable|Jsonable $data
-     * @throws HttpException when the data encoding error
+     * @throws EncodingException when the data encoding error
      */
     protected function toJson($data): string
     {
@@ -373,14 +373,14 @@ class Response extends ServerResponse implements ResponseInterface
             return json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
         }
 
-        throw new HttpException('Error encoding response data to JSON.');
+        throw new EncodingException('Error encoding response data to JSON.');
     }
 
     /**
      * @param array|Arrayable|Xmlable $data
      * @param null|mixed $parentNode
      * @param mixed $root
-     * @throws HttpException when the data encoding error
+     * @throws EncodingException when the data encoding error
      */
     protected function toXml($data, $parentNode = null, $root = 'root')
     {
