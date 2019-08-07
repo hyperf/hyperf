@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
+use Hyperf\Cache\Collector\FileStorage;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -36,71 +37,59 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
 
     public function getCacheKey(string $key)
     {
-        $cachePrefix = $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $key;
-
-        return [$cachePrefix . '.tmp', $cachePrefix . '.ttl'];
+        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $key . 'cache';
     }
 
     public function get($key, $default = null)
     {
-        [$contentFile, $ttlFile] = $this->getCacheKey($key);
-        if (! file_exists($contentFile)) {
+        $file = $this->getCacheKey($key);
+        if (! file_exists($file)) {
             return $default;
         }
-        if (file_exists($ttlFile)) {
-            if (time() < (int) file_get_contents($ttlFile)) {
-                return $default;
-            }
+
+        /** @var FileStorage $obj */
+        $obj = $this->packer->unpack(file_get_contents($file));
+        if ($obj->isExpired()) {
+            return $default;
         }
 
-        $cacheContent = file_get_contents($contentFile);
-
-        return $this->packer->unpack($cacheContent);
+        return $obj->getData();
     }
 
     public function fetch(string $key, $default = null): array
     {
-        [$contentFile, $ttlFile] = $this->getCacheKey($key);
-        if (! file_exists($contentFile)) {
+        $file = $this->getCacheKey($key);
+        if (! file_exists($file)) {
             return [false, $default];
         }
-        if (file_exists($ttlFile)) {
-            if (time() < (int) file_get_contents($ttlFile)) {
-                return [false, $default];
-            }
+
+        /** @var FileStorage $obj */
+        $obj = $this->packer->unpack(file_get_contents($file));
+        if ($obj->isExpired()) {
+            return [false, $default];
         }
 
-        $cacheContent = file_get_contents($contentFile);
-
-        return [true, $this->packer->unpack($cacheContent)];
+        return [true, $obj->getData()];
     }
 
     public function set($key, $value, $ttl = null)
     {
-        $res = $this->packer->pack($value);
-        [$contentFile, $ttlFile] = $this->getCacheKey($key);
-        $result = file_put_contents($contentFile, $res, FILE_BINARY);
-        if (! $result) {
-            return boolval($result);
-        }
-        if ($ttl > 0) {
-            file_put_contents($ttlFile, time() + (int) $ttl, FILE_BINARY);
-        }
+        $file = $this->getCacheKey($key);
+        $content = $this->packer->pack(new FileStorage($value, $ttl));
 
-        return $result;
+        $result = file_put_contents($file, $content, FILE_BINARY);
+
+        return (bool) $result;
     }
 
     public function delete($key)
     {
-        [$contentFile, $ttlFile] = $this->getCacheKey($key);
-        if (file_exists($contentFile)) {
-            if (! is_writable($contentFile)) {
+        $file = $this->getCacheKey($key);
+        if (file_exists($file)) {
+            if (! is_writable($file)) {
                 return false;
             }
-            unlink($contentFile);
-        }
-        if (file_exists($ttlFile)) {
-            unlink($ttlFile);
+            unlink($file);
         }
 
         return true;
@@ -119,7 +108,7 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
 
         $result = [];
         foreach ($keys as $i => $key) {
-            $result[$key] = $this->get($key);
+            $result[$key] = $this->get($key, $default);
         }
 
         return $result;
@@ -131,9 +120,8 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
             throw new InvalidArgumentException('The values is invalid!');
         }
 
-        $cacheKeys = [];
         foreach ($values as $key => $value) {
-            $cacheKeys[$this->prefix . $key] = $this->set($key, $value, $ttl);
+            $this->set($key, $value, $ttl);
         }
 
         return true;
@@ -154,9 +142,9 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
 
     public function has($key)
     {
-        [$contentFile, $ttlFile] = $this->getCacheKey($key);
+        $file = $this->getCacheKey($key);
 
-        return file_exists($contentFile);
+        return file_exists($file);
     }
 
     public function clearPrefix(string $prefix): bool
