@@ -510,6 +510,7 @@ class Connection implements ConnectionInterface
      */
     public function listen(Closure $callback)
     {
+        // FIXME: Dynamic register query event.
         if (isset($this->events)) {
             $this->events->listen(Events\QueryExecuted::class, $callback);
         }
