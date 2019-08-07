@@ -14,7 +14,6 @@ namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
-use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 
 class FileSystemDriver extends Driver implements KeyCollectorInterface
@@ -27,10 +26,6 @@ class FileSystemDriver extends Driver implements KeyCollectorInterface
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
-        $storePath = $container->get(ConfigInterface::class)->get('cache.default.store');
-        if (! empty($storePath)) {
-            $this->storePath = rtrim($storePath, DIRECTORY_SEPARATOR);
-        }
         if (! file_exists($this->storePath)) {
             $results = mkdir($this->storePath, 0777, true);
             if (! $results) {
