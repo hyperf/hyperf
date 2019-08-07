@@ -118,7 +118,7 @@ class ProviderConfigTest extends TestCase
         ]);
 
         foreach ($res['dependencies'] as $dependency) {
-            $this->assertIsCallable($dependency);
+            $this->assertTrue(is_string($dependency) || is_callable($dependency));
         }
     }
 }

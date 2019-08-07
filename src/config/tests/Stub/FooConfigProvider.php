@@ -22,6 +22,7 @@ class FooConfigProvider
                     return new Foo(1);
                 },
                 'Foo2' => [Foo::class, 'make'],
+                'Foo3' => Foo::class,
             ],
         ];
     }
