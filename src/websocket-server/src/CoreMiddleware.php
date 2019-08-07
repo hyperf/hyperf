@@ -15,6 +15,7 @@ namespace Hyperf\WebSocketServer;
 use FastRoute\Dispatcher;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

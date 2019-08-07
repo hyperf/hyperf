@@ -414,7 +414,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param array|\Hyperf\Contracts\Support\Arrayable $ids
+     * @param array|Arrayable $ids
      * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */

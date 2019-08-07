@@ -22,7 +22,7 @@ class MigrationCreator
     /**
      * The filesystem instance.
      *
-     * @var \Hyperf\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
@@ -36,7 +36,7 @@ class MigrationCreator
     /**
      * Create a new migration creator instance.
      *
-     * @param \Hyperf\Filesystem\Filesystem $files
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -102,7 +102,7 @@ class MigrationCreator
     /**
      * Get the filesystem instance.
      *
-     * @return \Hyperf\Filesystem\Filesystem
+     * @return Filesystem
      */
     public function getFilesystem()
     {
