@@ -25,7 +25,7 @@ class ProviderConfig
     /**
      * @var array
      */
-    private static $privoderConfigs = [];
+    private static $providerConfigs = [];
 
     /**
      * Load and merge all provider configs from components.
@@ -34,7 +34,7 @@ class ProviderConfig
      */
     public static function load(): array
     {
-        if (! static::$privoderConfigs) {
+        if (! static::$providerConfigs) {
             $config = [];
             $providers = Composer::getMergedExtra('hyperf')['config'];
             foreach ($providers ?? [] as $provider) {
@@ -44,14 +44,14 @@ class ProviderConfig
                 }
             }
 
-            static::$privoderConfigs = $config;
+            static::$providerConfigs = $config;
             unset($config, $providerConfig);
         }
-        return static::$privoderConfigs;
+        return static::$providerConfigs;
     }
 
     public function clear(): void
     {
-        static::$privoderConfigs = [];
+        static::$providerConfigs = [];
     }
 }
