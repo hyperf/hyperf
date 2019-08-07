@@ -73,9 +73,6 @@ class ServiceClient extends AbstractServiceClient
         return $this->__request($method, $params);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setOptions(array $options): void
     {
         if (isset($options['load_balancer'])) {
