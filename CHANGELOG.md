@@ -4,7 +4,7 @@
 
 - [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Added custom object support for controller parameters in http-server.
 - [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
-- [#346](https://github.com/hyperf-cloud/hyperf/pull/346) Added filesystem driver for `hyperf/cache`.
+- [#346](https://github.com/hyperf-cloud/hyperf/pull/346) [#348](https://github.com/hyperf-cloud/hyperf/pull/348) Added filesystem driver for `hyperf/cache`.
 
 ## Changed
 
