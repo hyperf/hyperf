@@ -16,6 +16,7 @@ use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\RpcClient\Exception\RequestException;
+use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class ServiceClient extends AbstractServiceClient
@@ -46,22 +47,30 @@ class ServiceClient extends AbstractServiceClient
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
-        if (is_array($response)) {
-            if (isset($response['result'])) {
-                $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
-                return $this->normalizer->denormalize($response['result'], $type->getName());
-            }
-            if ($error = $response['error'] ?? null && isset($error['code'])) {
-                if (isset($error['data']['class'], $error['data']['attributes'])) {
-                    $data = $error['data'];
-                    $e = $this->normalizer->denormalize($data['attributes'] ?? [], $data['class']);
-                    if ($e instanceof \Exception) {
-                        throw $e;
-                    }
-                }
-                throw new RequestException($error['message'] ?? '', $error['code']);
-            }
+        if (! is_array($response)) {
+            throw new RequestException('Invalid response.');
         }
+
+        if (isset($response['result'])) {
+            $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
+            return $this->normalizer->denormalize($response['result'], $type->getName());
+        }
+
+        if ($code = $response['error']['code'] ?? null) {
+            $error = $response['error'];
+            // Denormalize exception.
+            $class = Arr::get($error, 'data.class');
+            $attributes = Arr::get($error, 'data.attributes', []);
+            if (isset($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
+                if ($e instanceof \Exception) {
+                    throw $e;
+                }
+            }
+
+            // Throw RequestException when denormalize exception failed.
+            throw new RequestException($error['message'] ?? '', $error['code']);
+        }
+
         throw new RequestException('Invalid response.');
     }
 
