@@ -335,7 +335,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\ExceptionInterface $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

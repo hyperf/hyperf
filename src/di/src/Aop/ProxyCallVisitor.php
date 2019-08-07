@@ -32,7 +32,7 @@ use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
 
-class ProxyCallVistor extends NodeVisitorAbstract
+class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
      * Determine if the class used proxy trait.

@@ -14,7 +14,7 @@ namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
+use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\MySqlBuilder;
@@ -158,7 +158,7 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $visitor = make(ModelUpdateVistor::class, ['columns' => $columns]);
+        $visitor = make(ModelUpdateVisitor::class, ['columns' => $columns]);
         $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
