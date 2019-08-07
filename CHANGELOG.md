@@ -14,7 +14,7 @@
 - [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized rpc-server and json-rpc component. 
 - [#349](https://github.com/hyperf-cloud/hyperf/pull/349) Renamed the class name below, fixed the typo.
 
-|                     原类名                     |                  修改后的类名                   |
+|                     原类名                      |                  修改后的类名                     |
 |:----------------------------------------------:|:-----------------------------------------------:|
 | Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
 |       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
