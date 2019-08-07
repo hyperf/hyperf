@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
-use Hyperf\RpcClient\Listener\RegisterServiceListener;
+use Hyperf\RpcClient\Listener\AddConsumerDefinitionListener;
 
 class ConfigProvider
 {
@@ -24,7 +24,7 @@ class ConfigProvider
             'commands' => [
             ],
             'listeners' => [
-                RegisterServiceListener::class,
+                AddConsumerDefinitionListener::class,
             ],
             'scan' => [
                 'paths' => [

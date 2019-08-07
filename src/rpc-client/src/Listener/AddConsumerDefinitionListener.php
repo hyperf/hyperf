@@ -20,7 +20,7 @@ use Hyperf\RpcClient\ProxyFactory;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
-class RegisterServiceListener implements ListenerInterface
+class AddConsumerDefinitionListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -40,7 +40,7 @@ class RegisterServiceListener implements ListenerInterface
     }
 
     /**
-     * Automatic create proxy service from services.consumers.
+     * Automatic create proxy service definitions from services.consumers.
      *
      * @param BootApplication $event
      */

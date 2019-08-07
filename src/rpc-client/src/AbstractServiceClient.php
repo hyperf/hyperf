@@ -21,6 +21,8 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use InvalidArgumentException;
@@ -42,7 +44,7 @@ abstract class AbstractServiceClient
      *
      * @var string
      */
-    protected $protocolName = 'jsonrpc-http';
+    protected $protocol = 'jsonrpc-http';
 
     /**
      * The load balancer of the client, this name of the load balancer
@@ -51,11 +53,6 @@ abstract class AbstractServiceClient
      * @var string
      */
     protected $loadBalancer = 'random';
-
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
 
     /**
      * @var \Hyperf\RpcClient\Client
@@ -77,19 +74,31 @@ abstract class AbstractServiceClient
      */
     protected $idGenerator;
 
+    /**
+     * @var PathGeneratorInterface
+     */
+    protected $pathGenerator;
+
+    /**
+     * @var DataFormatterInterface
+     */
+    protected $dataFormatter;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
-        $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocolName);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol);
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
-        $transporter = $this->protocol->getTransporter()->setLoadBalancer($loadBalancer);
+        $transporter = $protocol->getTransporter()->setLoadBalancer($loadBalancer);
         $this->client = make(Client::class)
-            ->setPacker($this->protocol->getPacker())
+            ->setPacker($protocol->getPacker())
             ->setTransporter($transporter);
         if ($container->has(IdGeneratorInterface::class)) {
             $this->idGenerator = $container->get(IdGeneratorInterface::class);
         }
+        $this->pathGenerator = $protocol->getPathGenerator();
+        $this->dataFormatter = $protocol->getDataFormatter();
     }
 
     protected function __request(string $method, array $params, ?string $id = null)
@@ -114,12 +123,12 @@ abstract class AbstractServiceClient
         if (! $this->serviceName) {
             throw new InvalidArgumentException('Parameter $serviceName missing.');
         }
-        return $this->protocol->getPathGenerator()->generate($this->serviceName, $methodName);
+        return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
-        return $this->protocol->getDataFormatter()->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface

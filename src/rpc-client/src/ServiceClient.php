@@ -33,7 +33,7 @@ class ServiceClient extends AbstractServiceClient
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol = 'jsonrpc-http', array $options = [])
     {
         $this->serviceName = $serviceName;
-        $this->protocolName = $protocol;
+        $this->protocol = $protocol;
         $this->setOptions($options);
         parent::__construct($container);
         $this->normalizer = $container->get(NormalizerInterface::class);
