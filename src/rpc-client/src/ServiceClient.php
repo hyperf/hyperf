@@ -61,7 +61,7 @@ class ServiceClient extends AbstractServiceClient
             // Denormalize exception.
             $class = Arr::get($error, 'data.class');
             $attributes = Arr::get($error, 'data.attributes', []);
-            if (isset($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
+            if (isset($class) && class_exists($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
                 if ($e instanceof \Exception) {
                     throw $e;
                 }
