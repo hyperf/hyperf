@@ -210,6 +210,7 @@ class GrpcClient
     public function openStream(string $path, string $data = null, string $method = 'POST'): int
     {
         $request = new Request();
+        $request->headers['content-type'] = 'application/grpc';
         $request->method = $method;
         $request->path = $path;
         if ($data) {

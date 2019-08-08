@@ -22,6 +22,7 @@ use Swoole\Http2\Request;
 /**
  * @method int send(Request $request)
  * @method mixed recv(int $streamId, float $timeout = null)
+ * @method close($yield = false): bool
  */
 class BaseClient
 {
@@ -83,6 +84,7 @@ class BaseClient
         $deserialize
     ) {
         $request = new Request();
+        $request->headers['content-type'] = 'application/grpc';
         $request->method = 'POST';
         $request->path = $method;
         $request->data = Parser::serializeMessage($argument);
@@ -109,7 +111,7 @@ class BaseClient
         $deserialize
     ): ClientStreamingCall {
         $call = new ClientStreamingCall();
-        $call->setClient($this)
+        $call->setClient($this->grpcClient)
             ->setMethod($method)
             ->setDeserialize($deserialize);
 
@@ -131,7 +133,7 @@ class BaseClient
         $deserialize
     ): BidiStreamingCall {
         $call = new BidiStreamingCall();
-        $call->setClient($this)
+        $call->setClient($this->grpcClient)
             ->setMethod($method)
             ->setDeserialize($deserialize);
 
