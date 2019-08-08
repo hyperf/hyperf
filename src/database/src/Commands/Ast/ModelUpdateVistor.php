@@ -52,7 +52,7 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name']));
+            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name'] ?? $column['COLUMN_NAME']));
         }
 
         $node->default = new Node\Expr\Array_($items, [
@@ -65,9 +65,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $name = $column['column_name'];
+            $name = $column['column_name'] ?? $column['COLUMN_NAME'];
             $type = $column['cast'] ?? null;
-            if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
+            if ($type || $type = $this->formatDatabaseType($column['data_type'] ?? $column['DATA_TYPE'])) {
                 $items[] = new Node\Expr\ArrayItem(
                     new Node\Scalar\String_($type),
                     new Node\Scalar\String_($name)
@@ -83,9 +83,9 @@ class ModelUpdateVistor extends NodeVisitorAbstract
 
     protected function getProperty($column): array
     {
-        $name = $column['column_name'];
+        $name = $column['column_name'] ?? $column['COLUMN_NAME'];
 
-        $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
+        $type = $this->formatPropertyType($column['data_type'] ?? $column['DATA_TYPE'], $column['cast'] ?? null);
 
         return [$name, $type];
     }
