@@ -84,6 +84,8 @@ abstract class AbstractProcess implements ProcessInterface
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
+                cli_set_process_title($this->name . '#' . $i);
+
                 $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
                 $this->process = $process;

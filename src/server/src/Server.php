@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Server;
 
+use function foo\func;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
@@ -208,6 +209,12 @@ class Server implements ServerInterface
     protected function defaultCallbacks()
     {
         return [
+            SwooleEvent::ON_START => function (SwooleServer $server) {
+                cli_set_process_title('Master');
+            },
+            SwooleEvent::ON_MANAGER_START => function (SwooleServer $server) {
+                cli_set_process_title('Manager');
+            },
             SwooleEvent::ON_WORKER_START => function (SwooleServer $server, int $workerId) {
                 printf('Worker %d started.' . PHP_EOL, $workerId);
             },

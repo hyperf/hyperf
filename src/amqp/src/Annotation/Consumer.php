@@ -36,6 +36,11 @@ class Consumer extends AbstractAnnotation
     public $queue = '';
 
     /**
+     * @var string
+     */
+    public $name = '';
+
+    /**
      * @var int
      */
     public $nums = 1;

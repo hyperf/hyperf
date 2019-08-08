@@ -52,8 +52,10 @@ class WorkerStartCallback
         }
 
         if ($server->taskworker) {
+            cli_set_process_title('TaskWorker#' . $workerId);
             $this->logger->info("TaskWorker#{$workerId} started.");
         } else {
+            cli_set_process_title('Worker#' . $workerId);
             $this->logger->info("Worker#{$workerId} started.");
         }
 
