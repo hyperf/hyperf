@@ -847,7 +847,7 @@ class Builder
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Contracts\Support\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @param bool $not
      * @return $this
@@ -873,7 +873,7 @@ class Builder
      * Add a "where not in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Contracts\Support\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @return $this
      */

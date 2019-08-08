@@ -97,7 +97,7 @@ class RedisHandler implements HandlerInterface
 
     public function delete($key)
     {
-        return (bool) $this->redis->delete($key);
+        return (bool) $this->redis->del($key);
     }
 
     public function clear()
@@ -136,7 +136,7 @@ class RedisHandler implements HandlerInterface
 
     public function deleteMultiple($keys)
     {
-        return $this->redis->delete(...$keys) > 0;
+        return $this->redis->del(...$keys) > 0;
     }
 
     public function has($key)

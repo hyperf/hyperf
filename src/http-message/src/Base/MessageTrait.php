@@ -335,7 +335,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\ExceptionInterface $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -353,6 +353,8 @@ trait MessageTrait
             }
 
             $value = $this->trimHeaderValues($value);
+            $header = (string) $header;
+
             $normalized = strtolower($header);
             if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
@@ -378,7 +380,7 @@ trait MessageTrait
     private function trimHeaderValues(array $values)
     {
         return array_map(function ($value) {
-            return trim($value, " \t");
+            return trim((string) $value, " \t");
         }, $values);
     }
 }

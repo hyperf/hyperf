@@ -22,9 +22,9 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
-use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
@@ -33,7 +33,7 @@ class DispatcherFactory
     protected $routes = [BASE_PATH . '/config/services.php'];
 
     /**
-     * @var \FastRoute\RouteCollector[]
+     * @var RouteCollector[]
      */
     private $routers = [];
 
@@ -47,9 +47,15 @@ class DispatcherFactory
      */
     private $eventDispatcher;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var PathGeneratorInterface
+     */
+    private $pathGenerator;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->pathGenerator = $pathGenerator;
         $this->initAnnotationRoute(AnnotationCollector::list());
         $this->initConfigRoute();
     }
@@ -104,14 +110,14 @@ class DispatcherFactory
         array $methodMetadata,
         array $middlewares = []
     ): void {
-        $prefix = $this->getServicePrefix($className, $annotation->name);
+        $prefix = $annotation->name ?: $className;
         $router = $this->getRouter($annotation->server);
 
         $publicMethods = ReflectionManager::reflectClass($className)->getMethods(ReflectionMethod::IS_PUBLIC);
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
-            $path = $prefix . '/' . $methodName;
+            $path = $this->pathGenerator->generate($prefix, $methodName);
             $router->addRoute($path, [
                 $className,
                 $methodName,
@@ -130,20 +136,6 @@ class DispatcherFactory
             // Trigger the AfterPathRegister event.
             $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));
         }
-    }
-
-    private function getServicePrefix(string $className, string $prefix): string
-    {
-        if (! $prefix) {
-            $handledNamespace = explode('\\', $className);
-            $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
-            $handledNamespace = Str::replaceLast('Service', '', $handledNamespace);
-            $prefix = Str::snake($handledNamespace);
-        }
-        if ($prefix[0] !== '/') {
-            $prefix = '/' . $prefix;
-        }
-        return $prefix;
     }
 
     private function handleMiddleware(array $metadata): array

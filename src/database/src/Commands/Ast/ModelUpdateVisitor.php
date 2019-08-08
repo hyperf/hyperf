@@ -16,7 +16,7 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class ModelUpdateVistor extends NodeVisitorAbstract
+class ModelUpdateVisitor extends NodeVisitorAbstract
 {
     protected $columns = [];
 

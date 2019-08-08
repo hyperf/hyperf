@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Traits;
 
+use Hyperf\Utils\Context;
+
 trait CoroutineProxy
 {
     public function __call($name, $arguments)

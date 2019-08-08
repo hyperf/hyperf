@@ -32,7 +32,8 @@ class ParallelTest extends TestCase
             });
         }
         $result = $parallel->wait();
-        $this->assertSame([2, 3, 4], $result);
+        $id = $result[0];
+        $this->assertSame([$id, $id + 1, $id + 2], $result);
 
         // Array
         $parallel = new Parallel();
@@ -40,7 +41,8 @@ class ParallelTest extends TestCase
             $parallel->add([$this, 'returnCoId']);
         }
         $result = $parallel->wait();
-        $this->assertSame([5, 6, 7], $result);
+        $id = $result[0];
+        $this->assertSame([$id, $id + 1, $id + 2], $result);
     }
 
     public function returnCoId()

@@ -33,7 +33,7 @@ class Container implements ContainerInterface
     /**
      * Map of definitions that are already fetched (local cache).
      *
-     * @var (Definition|null)[]
+     * @var (DefinitionInterface|null)[]
      */
     private $fetchedDefinitions = [];
 

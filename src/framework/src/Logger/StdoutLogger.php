@@ -28,7 +28,7 @@ use function str_replace;
 class StdoutLogger implements StdoutLoggerInterface
 {
     /**
-     * @var \Hyperf\Contracts\ConfigInterface
+     * @var \Hyperf\Contract\ConfigInterface
      */
     private $config;
 

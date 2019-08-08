@@ -336,7 +336,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     }
 
     /**
-     * @throws \Hyperf\Exception\RuntimeException if is moved or not ok
+     * @throws \RuntimeException if is moved or not ok
      */
     private function validateActive()
     {

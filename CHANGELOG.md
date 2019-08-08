@@ -1,4 +1,36 @@
-# v1.0.9 - TBD
+# v1.0.10 - TBD
+
+## Added
+
+- [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Added custom object support for controller parameters in http-server.
+- [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
+- [#336](https://github.com/hyperf-cloud/hyperf/pull/336) Added Proxy RPC Client.
+- [#346](https://github.com/hyperf-cloud/hyperf/pull/346) [#348](https://github.com/hyperf-cloud/hyperf/pull/348) Added filesystem driver for `hyperf/cache`.
+
+## Changed
+
+- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden DI scan message when paths is empty.
+- [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Support convert path and namespace from composer psr-4 autoload rules.
+- [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized rpc-server and json-rpc component. 
+- [#349](https://github.com/hyperf-cloud/hyperf/pull/349) Renamed the class name below, fixed the typo.
+
+|                     原类名                      |                  修改后的类名                     |
+|:----------------------------------------------:|:-----------------------------------------------:|
+| Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
+|       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
+|         Hyperf\Di\Aop\ProxyCallVistor          |         Hyperf\Di\Aop\ProxyCallVisitor          |
+
+## Fixed
+
+- [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
+- [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`.
+- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Function Redis::delete() is deprecated.
+- [#334](https://github.com/hyperf-cloud/hyperf/pull/334) Fixed configuration of aliyun acm is not work expected.
+- [#337](https://github.com/hyperf-cloud/hyperf/pull/337) Fixed 500 response when key of header is not string.
+- [#338](https://github.com/hyperf-cloud/hyperf/pull/338) Fixed `ProviderConfig::load` will convert array when dependencies has the same key.
+- [#340](https://github.com/hyperf-cloud/hyperf/pull/340) Fixed function `make` not support index-based array as parameters.
+
+# v1.0.9 - 2019-08-03
 
 ## Added
 
@@ -10,6 +42,7 @@
 - [#300](https://github.com/hyperf-cloud/hyperf/pull/300) Let message queues run in sub-coroutines. Fixed async queue attempts twice to handle message, but only once actually.
 - [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
 - [#312](https://github.com/hyperf-cloud/hyperf/pull/312) Fixed amqp process collect listener will be handled later than the process boot listener.
+- [#315](https://github.com/hyperf-cloud/hyperf/pull/315) Fixed config etcd center not work after worker restart or in user process.
 - [#318](https://github.com/hyperf-cloud/hyperf/pull/318) Fixed service will register to service center ceaselessly.
 
 ## Changed

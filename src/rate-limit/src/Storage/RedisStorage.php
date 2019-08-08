@@ -70,7 +70,7 @@ class RedisStorage implements Storage, GlobalScope
     public function remove()
     {
         try {
-            if (! $this->redis->delete($this->key)) {
+            if (! $this->redis->del($this->key)) {
                 throw new StorageException('Failed to delete key');
             }
         } catch (InvalidArgumentException $e) {
