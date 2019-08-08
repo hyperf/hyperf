@@ -30,10 +30,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\WebSocketServer\\": "src"
+            "Hyperf\\WebSocketServer\\": "src/"
         }
     },
     "autoload-dev": {

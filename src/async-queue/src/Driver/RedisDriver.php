@@ -62,13 +62,21 @@ class RedisDriver extends Driver
         $this->channel = make(ChannelConfig::class, ['channel' => $channel]);
     }
 
-    public function push(JobInterface $job): bool
+    public function push(JobInterface $job, int $delay = 0): bool
     {
         $message = new Message($job);
         $data = $this->packer->pack($message);
-        return (bool) $this->redis->lPush($this->channel->getWaiting(), $data);
+
+        if ($delay === 0) {
+            return (bool) $this->redis->lPush($this->channel->getWaiting(), $data);
+        }
+
+        return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
     }
 
+    /**
+     * @deprecated v1.1
+     */
     public function delay(JobInterface $job, int $delay = 0): bool
     {
         if ($delay === 0) {
@@ -147,7 +155,7 @@ class RedisDriver extends Driver
             $channel = $this->channel->get($queue);
         }
 
-        return (bool) $this->redis->delete($channel);
+        return (bool) $this->redis->del($channel);
     }
 
     public function info(): array

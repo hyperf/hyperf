@@ -21,10 +21,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Contract\\": "src"
+            "Hyperf\\Contract\\": "src/"
         }
     },
     "autoload-dev": {

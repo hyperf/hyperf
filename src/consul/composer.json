@@ -24,10 +24,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Consul\\": "src"
+            "Hyperf\\Consul\\": "src/"
         }
     },
     "autoload-dev": {

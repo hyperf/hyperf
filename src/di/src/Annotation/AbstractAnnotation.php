@@ -54,7 +54,7 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 
-    protected function bindMainProperty(string $key, array $value)
+    protected function bindMainProperty(string $key, ?array $value)
     {
         if (isset($value['value'])) {
             $this->{$key} = $value['value'];

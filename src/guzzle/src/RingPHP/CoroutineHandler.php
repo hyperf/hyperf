@@ -63,7 +63,7 @@ class CoroutineHandler
         }
 
         $btime = microtime(true);
-        $client->execute($path);
+        $this->execute($client, $path);
 
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
@@ -76,6 +76,11 @@ class CoroutineHandler
         }
 
         return $this->getResponse($client, $btime, $effectiveUrl);
+    }
+
+    protected function execute(Client $client, $path)
+    {
+        $client->execute($path);
     }
 
     protected function getSettings($options): array

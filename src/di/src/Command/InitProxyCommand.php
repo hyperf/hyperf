@@ -12,19 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Command;
 
+use Hyperf\Command\Command;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {
+    /**
+     * Execution in a coroutine environment.
+     *
+     * @var bool
+     */
+    protected $coroutine = true;
+
     /**
      * @var ContainerInterface
      */
@@ -42,36 +47,11 @@ class InitProxyCommand extends Command
         $this->scanner = $scanner;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function handle()
     {
-        $scanDirs = $this->getScanDir();
+        $this->createAopProxies();
 
-        $runtime = BASE_PATH . '/runtime/container/proxy/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
-
-        $classCollection = $this->scanner->scan($scanDirs);
-
-        foreach ($classCollection as $item) {
-            try {
-                $this->container->get($item);
-            } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
-            }
-        }
-
-        if ($this->container instanceof Container) {
-            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
-                try {
-                    $this->container->get($key);
-                } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
-                }
-            }
-        }
-
-        $output->writeln('<info>Proxy class create success.</info>');
+        $this->output->writeln('<info>Proxy class create success.</info>');
     }
 
     protected function clearRuntime($paths)
@@ -105,5 +85,35 @@ class InitProxyCommand extends Command
         }
 
         return $scanDirs;
+    }
+
+    private function createAopProxies()
+    {
+        $scanDirs = $this->getScanDir();
+
+        $runtime = BASE_PATH . '/runtime/container/proxy/';
+        if (is_dir($runtime)) {
+            $this->clearRuntime($runtime);
+        }
+
+        $classCollection = $this->scanner->scan($scanDirs);
+
+        foreach ($classCollection as $item) {
+            try {
+                $this->container->get($item);
+            } catch (\Throwable $ex) {
+                // Entry cannot be resoleved.
+            }
+        }
+
+        if ($this->container instanceof Container) {
+            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
+                try {
+                    $this->container->get($key);
+                } catch (\Throwable $ex) {
+                    // Entry cannot be resoleved.
+                }
+            }
+        }
     }
 }

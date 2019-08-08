@@ -14,16 +14,14 @@ namespace Hyperf\AsyncQueue\Command;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @Command
  */
-class InfoCommand extends SymfonyCommand
+class InfoCommand extends HyperfCommand
 {
     /**
      * @var ContainerInterface
@@ -36,15 +34,15 @@ class InfoCommand extends SymfonyCommand
         parent::__construct('queue:info');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function handle()
     {
-        $name = $input->getArgument('name');
+        $name = $this->input->getArgument('name');
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($name);
 
         $info = $driver->info();
         foreach ($info as $key => $count) {
-            $output->writeln(sprintf('<fg=green>%s count is %d.</>', $key, $count));
+            $this->output->writeln(sprintf('<fg=green>%s count is %d.</>', $key, $count));
         }
     }
 

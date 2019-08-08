@@ -35,14 +35,13 @@
         "hyperf/event": "Declare queue and start consumers automatically."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Amqp\\": "src"
+            "Hyperf\\Amqp\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Amqp\\": "tests/"
         }
     },
     "config": {

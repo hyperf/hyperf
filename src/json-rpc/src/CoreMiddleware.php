@@ -12,51 +12,61 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Rpc\ProtocolManager;
+use Closure;
+use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * {@inheritdoc}
- */
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
     /**
-     * @var \Hyperf\Rpc\ProtocolManager
+     * @var \Hyperf\JsonRpc\ResponseBuilder
      */
-    protected $protocolManager;
+    protected $responseBuilder;
 
-    /**
-     * @var \Hyperf\Rpc\Contract\DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(ContainerInterface $container, string $serverName)
+    public function __construct(ContainerInterface $container, Protocol $protocol, string $serverName)
     {
-        parent::__construct($container, $serverName);
-        $this->protocolManager = $container->get(ProtocolManager::class);
-        $protocolName = 'jsonrpc';
-        $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
-        $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
+        parent::__construct($container, $protocol, $serverName);
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+    }
+
+    protected function handleFound(array $routes, ServerRequestInterface $request)
+    {
+        if ($routes[1] instanceof Closure) {
+            $response = call($routes[1]);
+        } else {
+            [$controller, $action] = $this->prepareHandler($routes[1]);
+            $controllerInstance = $this->container->get($controller);
+            if (! method_exists($controller, $action)) {
+                // Route found, but the handler does not exist.
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INTERNAL_ERROR);
+            }
+            $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            try {
+                $response = $controllerInstance->{$action}(...$parameters);
+            } catch (\Exception $e) {
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $e);
+            }
+        }
+        return $response;
+    }
+
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::METHOD_NOT_FOUND);
+    }
+
+    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    {
+        return $this->handleNotFound($request);
     }
 
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
-        return $this->response()
-            ->withAddedHeader('content-type', 'application/json')
-            ->withBody(new SwooleStream($this->format($response, $request)));
-    }
-
-    protected function format($response, ServerRequestInterface $request): string
-    {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
-        return $this->packer->pack($response);
+        return $this->responseBuilder->buildResponse($request, $response);
     }
 }

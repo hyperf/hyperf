@@ -31,10 +31,8 @@
         "hyperf/event": "Dump the info after server start."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Server\\": "src"
+            "Hyperf\\Server\\": "src/"
         }
     },
     "autoload-dev": {

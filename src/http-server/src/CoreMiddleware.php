@@ -14,7 +14,8 @@ namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
-use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
@@ -44,11 +45,22 @@ class CoreMiddleware implements MiddlewareInterface
      */
     protected $container;
 
+    /**
+     * @var MethodDefinitionCollectorInterface
+     */
+    private $methodDefinitionCollector;
+
+    /**
+     * @var NormalizerInterface
+     */
+    private $normalizer;
+
     public function __construct(ContainerInterface $container, string $serverName)
     {
         $this->container = $container;
-        $factory = $container->get(DispatcherFactory::class);
-        $this->dispatcher = $factory->getDispatcher($serverName);
+        $this->dispatcher = $this->createDispatcher($serverName);
+        $this->normalizer = $this->container->get(NormalizerInterface::class);
+        $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
     }
 
     /**
@@ -82,6 +94,22 @@ class CoreMiddleware implements MiddlewareInterface
             $response = $this->transferToResponse($response, $request);
         }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    public function getMethodDefinitionCollector(): MethodDefinitionCollectorInterface
+    {
+        return $this->methodDefinitionCollector;
+    }
+
+    public function getNormalizer(): NormalizerInterface
+    {
+        return $this->normalizer;
+    }
+
+    protected function createDispatcher(string $serverName): Dispatcher
+    {
+        $factory = $this->container->get(DispatcherFactory::class);
+        return $factory->getDispatcher($serverName);
     }
 
     /**
@@ -146,15 +174,18 @@ class CoreMiddleware implements MiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|string $response
+     * @param array|Arrayable|Jsonable|string $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
         if (is_string($response)) {
-            return $this->response()->withBody(new SwooleStream($response));
+            return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
 
-        if (is_array($response)) {
+        if (is_array($response) || $response instanceof Arrayable) {
+            if ($response instanceof Arrayable) {
+                $response = $response->toArray();
+            }
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
                 ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
@@ -166,7 +197,7 @@ class CoreMiddleware implements MiddlewareInterface
                 ->withBody(new SwooleStream((string) $response));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
     }
 
     /**
@@ -185,39 +216,23 @@ class CoreMiddleware implements MiddlewareInterface
     protected function parseParameters(string $controller, string $action, array $arguments): array
     {
         $injections = [];
-        $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
-        foreach ($definitions ?? [] as $definition) {
-            if (! is_array($definition)) {
-                throw new \RuntimeException('Invalid method definition.');
-            }
-            if (! isset($definition['type']) || ! isset($definition['name'])) {
-                $injections[] = null;
-                continue;
-            }
-            $injections[] = value(function () use ($definition, $arguments) {
-                switch ($definition['type']) {
-                    case 'int':
-                        return (int) $arguments[$definition['name']] ?? null;
-                        break;
-                    case 'float':
-                        return (float) $arguments[$definition['name']] ?? null;
-                        break;
-                    case 'bool':
-                        return (bool) $arguments[$definition['name']] ?? null;
-                        break;
-                    case 'string':
-                        return (string) $arguments[$definition['name']] ?? null;
-                        break;
-                    case 'object':
-                        if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
-                            throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
-                        }
-                        return $this->container->get($definition['ref']);
-                        break;
-                    default:
-                        throw new \RuntimeException('Invalid method definition detected.');
+        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
+        foreach ($definitions ?? [] as $pos => $definition) {
+            $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
+            if ($value === null) {
+                if ($definition->getMeta('defaultValueAvailable')) {
+                    $injections[] = $definition->getMeta('defaultValue');
+                } elseif ($definition->allowsNull()) {
+                    $injections[] = null;
+                } elseif ($this->container->has($definition->getName())) {
+                    $injections[] = $this->container->get($definition->getName());
+                } else {
+                    throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
+                        . "of {$controller}::{$action} should not be null");
                 }
-            });
+            } else {
+                $injections[] = $this->getNormalizer()->denormalize($value, $definition->getName());
+            }
         }
 
         return $injections;

@@ -1,3 +1,7 @@
+branches:
+  only:
+    - master
+
 language: php
 
 sudo: required
@@ -5,17 +9,17 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.3.5"
+      env: SW_VERSION="4.3.6"
     - php: 7.2
-      env: SW_VERSION="4.4.0-beta"
+      env: SW_VERSION="4.4.3"
     - php: 7.3
-      env: SW_VERSION="4.3.5"
+      env: SW_VERSION="4.3.6"
     - php: 7.3
-      env: SW_VERSION="4.4.0-beta"
+      env: SW_VERSION="4.4.3"
     - php: master
-      env: SW_VERSION="4.3.5"
+      env: SW_VERSION="4.3.6"
     - php: master
-      env: SW_VERSION="4.4.0-beta"
+      env: SW_VERSION="4.4.3"
 
   allow_failures:
     - php: master
@@ -37,6 +41,7 @@ install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - phpenv config-add .travis/ci.ini
   - bash .travis/setup.mysql.sh
+  - docker run -d --name dev-consul -e CONSUL_BIND_INTERFACE=eth0 -p 8500:8500 consul
 
 before_script:
   - cd $TRAVIS_BUILD_DIR

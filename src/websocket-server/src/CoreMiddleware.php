@@ -15,6 +15,7 @@ namespace Hyperf\WebSocketServer;
 use FastRoute\Dispatcher;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,9 +31,12 @@ class CoreMiddleware extends HttpCoreMiddleware
     {
         /** @var ResponseInterface $response */
         $uri = $request->getUri();
-
         /**
          * @var array
+         *            Returns array with one of the following formats:
+         *            [self::NOT_FOUND]
+         *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
+         *            [self::FOUND, $handler, ['varName' => 'value', ...]]
          */
         $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
 
@@ -59,7 +63,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(array $routes, ServerRequestInterface $request)
+    protected function handleFound(array $routes, ServerRequestInterface $request): ResponseInterface
     {
         [$controller,] = $this->prepareHandler($routes[1]);
         if (! $this->container->has($controller)) {

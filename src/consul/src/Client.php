@@ -56,10 +56,6 @@ abstract class Client
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
-            // Set the default options to the $options.
-            if (! isset($options['base_uri'])) {
-                $options['base_uri'] = self::DEFAULT_URI;
-            }
             // Create a HTTP Client by $clientFactory closure.
             $clientFactory = $this->clientFactory;
             $client = $clientFactory($options);

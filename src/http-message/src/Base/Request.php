@@ -239,11 +239,11 @@ class Request implements RequestInterface
             $host .= ':' . $port;
         }
 
+        $header = 'host';
         if ($this->hasHeader('host')) {
-            $header = $this->getHeaderLine('host');
+            $host = $this->getHeaderLine('host');
         } else {
-            $header = 'Host';
-            $this->headerNames['host'] = 'Host';
+            $this->headerNames['host'] = 'host';
         }
         // Ensure Host is the first header.
         $this->headers = [$header => [$host]] + $this->headers;

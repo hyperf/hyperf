@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Rpc\ProtocolManager;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -21,15 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpCoreMiddleware extends CoreMiddleware
 {
-    public function __construct(ContainerInterface $container, string $serverName)
-    {
-        parent::__construct($container, $serverName);
-        $this->protocolManager = $container->get(ProtocolManager::class);
-        $protocolName = 'jsonrpc-http';
-        $this->dataFormatter = $container->get($this->protocolManager->getDataFormatter($protocolName));
-        $this->packer = $container->get($this->protocolManager->getPacker($protocolName));
-    }
-
     protected function handleNotFound(ServerRequestInterface $request)
     {
         // @TODO Allow more health check conditions.

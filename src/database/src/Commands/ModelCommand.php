@@ -14,10 +14,11 @@ namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Database\Commands\Ast\ModelUpdateVistor;
+use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -140,10 +141,10 @@ class ModelCommand extends Command
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $builder->getColumnTypeListing($table);
 
-        $class = $option->getPath() . '/' . Str::studly($table);
-        $path = BASE_PATH . '/' . $class . '.php';
+        $project = new Project();
+        $class = $project->namespace($option->getPath()) . Str::studly($table);
+        $path = BASE_PATH . '/' . $project->path($class);
 
-        $class = str_replace('/', '\\', Str::ucfirst($class));
         if (! file_exists($path)) {
             $dir = dirname($path);
             if (! is_dir($dir)) {
@@ -157,7 +158,7 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $visitor = make(ModelUpdateVistor::class, ['columns' => $columns]);
+        $visitor = make(ModelUpdateVisitor::class, ['columns' => $columns]);
         $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);

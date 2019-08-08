@@ -28,15 +28,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Dispatcher\\": "src"
+            "Hyperf\\Dispatcher\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Dispatcher\\": "test"
+            "HyperfTest\\Dispatcher\\": "tests/"
         }
     },
     "config": {
@@ -55,11 +53,5 @@
     "scripts": {
         "cs-fix": "php-cs-fixer fix $1",
         "test": "phpunit --colors=always"
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.laravel-china.org"
-        }
     }
 }

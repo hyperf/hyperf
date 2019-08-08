@@ -27,10 +27,8 @@
         "hyperf/di": "Required to use annotations."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\CircuitBreaker\\": "src"
+            "Hyperf\\CircuitBreaker\\": "src/"
         }
     },
     "autoload-dev": {

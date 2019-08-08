@@ -82,7 +82,7 @@ class DispatcherFactory
 
         $parser = new Std();
         $generator = new DataGenerator();
-        return $this->routers[$serverName] = new RouteCollector($parser, $generator);
+        return $this->routers[$serverName] = new RouteCollector($parser, $generator, $serverName);
     }
 
     protected function initAnnotationRoute(array $collector): void
@@ -162,7 +162,6 @@ class DispatcherFactory
         ];
 
         foreach ($methodMetadata as $methodName => $values) {
-
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($values)) {
@@ -200,8 +199,9 @@ class DispatcherFactory
     {
         if (! $prefix) {
             $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
-            $handledNamespace = Str::replaceArray('\\', ['/'], $handledNamespace);
+            $handledNamespace = str_replace('\\', '/', $handledNamespace);
             $prefix = Str::snake($handledNamespace);
+            $prefix = str_replace('/_', '/', $prefix);
         }
         if ($prefix[0] !== '/') {
             $prefix = '/' . $prefix;

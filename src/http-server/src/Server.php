@@ -81,8 +81,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $coreHandler = $this->coreHandler;
-        $this->coreMiddleware = new $coreHandler($this->container, $serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware();
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -105,7 +104,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+            if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
             $psr7Response->send();
@@ -124,6 +123,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         return $this;
+    }
+
+    protected function createCoreMiddleware(): MiddlewareInterface
+    {
+        $coreHandler = $this->coreHandler;
+        return new $coreHandler($this->container, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

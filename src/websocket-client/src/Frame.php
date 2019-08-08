@@ -16,13 +16,19 @@ use Swoole\WebSocket\Frame as SwFrame;
 
 class Frame
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $finish = true;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $opcode;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $data;
 
     public function __construct(SwFrame $frame)
@@ -37,7 +43,7 @@ class Frame
         return $this->data;
     }
 
-    public function getOpcodeDefinition()
+    public function getOpcodeDefinition(): string
     {
         static $map = [
             1 => 'WEBSOCKET_OPCODE_TEXT',
@@ -48,12 +54,12 @@ class Frame
         return $map[$this->opcode] ?? 'WEBSOCKET_BAD_OPCODE';
     }
 
-    public function getOpcode()
+    public function getOpcode(): string
     {
         return $this->opcode;
     }
 
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }

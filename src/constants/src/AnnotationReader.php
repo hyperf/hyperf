@@ -24,14 +24,15 @@ class AnnotationReader
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
-
-            $result[$code] = $this->parse($docComment);
+            if ($docComment) {
+                $result[$code] = $this->parse($docComment);
+            }
         }
 
         return $result;
     }
 
-    protected function parse($doc)
+    protected function parse(string $doc)
     {
         $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
         if (preg_match_all($pattern, $doc, $result)) {

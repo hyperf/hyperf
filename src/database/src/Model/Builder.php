@@ -414,7 +414,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param array|\Hyperf\Contracts\Support\Arrayable $ids
+     * @param array|Arrayable $ids
      * @param array $columns
      * @return \Hyperf\Database\Model\Collection
      */
@@ -753,7 +753,7 @@ class Builder
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contract\PaginatorInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {

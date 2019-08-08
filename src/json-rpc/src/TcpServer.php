@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,12 +29,12 @@ use Swoole\Server as SwooleServer;
 class TcpServer extends Server
 {
     /**
-     * @var ProtocolManager
+     * @var \Hyperf\JsonRpc\ResponseBuilder
      */
-    protected $protocolManager;
+    protected $responseBuilder;
 
     /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
+     * @var PackerInterface
      */
     protected $packer;
 
@@ -45,10 +46,13 @@ class TcpServer extends Server
         LoggerInterface $logger,
         ProtocolManager $protocolManager
     ) {
-        parent::__construct($serverName, $coreHandler, $container, $dispatcher, $logger);
-        $this->protocolManager = $protocolManager;
-        $packerClass = $this->protocolManager->getPacker('jsonrpc');
-        $this->packer = $this->container->get($packerClass);
+        $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
+        parent::__construct($serverName, $coreHandler, $container, $protocol, $dispatcher, $logger);
+        $this->packer = $protocol->getPacker();
+        $this->responseBuilder = make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $this->packer,
+        ]);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
@@ -59,13 +63,7 @@ class TcpServer extends Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        $class = $this->protocolManager->getPacker('jsonrpc');
-        $packer = $this->container->get($class);
-        $data = $this->packer->unpack($data);
-        if (isset($data['jsonrpc'])) {
-            return $this->buildJsonRpcRequest($fd, $fromId, $data);
-        }
-        throw new InvalidArgumentException('Doesn\'t match JSON RPC protocol.');
+        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data));
     }
 
     protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)
@@ -80,9 +78,14 @@ class TcpServer extends Server
         [$type, $port] = ServerManager::get($this->serverName);
 
         $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
-        return (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
+        $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
             ->withAttribute('fromId', $fromId)
             ->withAttribute('data', $data)
-            ->withParsedBody($data['params']);
+            ->withAttribute('request_id', $data['id'] ?? null)
+            ->withParsedBody($data['params'] ?? '');
+        if (! isset($data['jsonrpc'])) {
+            return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_REQUEST);
+        }
+        return $request;
     }
 }

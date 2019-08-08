@@ -1,0 +1,50 @@
+{
+    "name": "hyperf/config-etcd",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "etcd",
+        "config"
+    ],
+    "description": "Etcd Config Center for Hyperf.",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ConfigEtcd\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ConfigEtcd\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.3",
+        "hyperf/utils": "~1.0.0",
+        "hyperf/etcd": "~1.0.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "hyperf/testing": "1.0.*",
+        "phpstan/phpstan": "^0.10.5",
+        "swoft/swoole-ide-helper": "dev-master"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ConfigEtcd\\ConfigProvider"
+        }
+    }
+}

@@ -32,7 +32,6 @@ use function filemtime;
 use function fopen;
 use function implode;
 use function interface_exists;
-use function is_array;
 use function is_callable;
 use function is_dir;
 use function is_readable;
@@ -97,9 +96,12 @@ class DefinitionSource implements DefinitionSourceInterface
         return $this->source;
     }
 
-    public function addDefinition(string $name, array $definition): self
+    /**
+     * @param array|callable|string $definition
+     */
+    public function addDefinition(string $name, $definition): self
     {
-        $this->source[$name] = $definition;
+        $this->source[$name] = $this->normalizeDefinition($name, $definition);
         return $this;
     }
 
@@ -138,17 +140,30 @@ class DefinitionSource implements DefinitionSourceInterface
     {
         $definitions = [];
         foreach ($source as $identifier => $definition) {
-            if (is_string($definition) && class_exists($definition)) {
-                if (method_exists($definition, '__invoke')) {
-                    $definitions[$identifier] = new FactoryDefinition($identifier, $definition, []);
-                } else {
-                    $definitions[$identifier] = $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
-                }
-            } elseif (is_array($definition) && is_callable($definition)) {
-                $definitions[$identifier] = new FactoryDefinition($identifier, $definition, []);
+            $normalizedDefinition = $this->normalizeDefinition($identifier, $definition);
+            if (! is_null($normalizedDefinition)) {
+                $definitions[$identifier] = $normalizedDefinition;
             }
         }
         return $definitions;
+    }
+
+    /**
+     * @param array|callable|string $definitions
+     * @param mixed $definition
+     */
+    private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
+    {
+        if (is_string($definition) && class_exists($definition)) {
+            if (method_exists($definition, '__invoke')) {
+                return new FactoryDefinition($identifier, $definition, []);
+            }
+            return $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
+        }
+        if (is_callable($definition)) {
+            return new FactoryDefinition($identifier, $definition, []);
+        }
+        return null;
     }
 
     private function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
@@ -201,6 +216,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths): bool
     {
+        if (empty($paths)) {
+            return true;
+        }
         $pathsHash = md5(implode(',', $paths));
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
