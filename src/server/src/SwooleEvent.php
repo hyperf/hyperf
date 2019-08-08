@@ -85,22 +85,22 @@ class SwooleEvent
     const ON_FINISH = 'finish';
 
     /**
-     * Swoole onShutdown event
+     * Swoole onShutdown event.
      */
     const ON_SHUTDOWN = 'shutdown';
 
     /**
-     * Swoole onPacket event
+     * Swoole onPacket event.
      */
     const ON_PACKET = 'packet';
 
     /**
-     * Swoole onManagerStart event
+     * Swoole onManagerStart event.
      */
     const ON_MANAGER_START = 'managerStart';
 
     /**
-     * Swoole onManagerStop event
+     * Swoole onManagerStop event.
      */
     const ON_MANAGER_STOP = 'managerStop';
 
