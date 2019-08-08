@@ -52,14 +52,17 @@ class Message implements MessageInterface, Serializable
             $this->job = $this->job->generate();
         }
 
-        return serialize($this->job);
+        return serialize([$this->job, $this->attempts]);
     }
 
     public function unserialize($serialized)
     {
-        $this->job = unserialize($serialized);
-        if ($this->job instanceof CodeDegenerateInterface) {
-            $this->job = $this->job->degenerate();
+        [$job, $attempts] = unserialize($serialized);
+        if ($job instanceof CodeDegenerateInterface) {
+            $job = $job->degenerate();
         }
+
+        $this->job = $job;
+        $this->attempts = $attempts;
     }
 }
