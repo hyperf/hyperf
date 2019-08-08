@@ -44,17 +44,17 @@ class InitProcessTitleListener implements ListenerInterface
     public function process(object $event)
     {
         if ($event instanceof OnStart) {
-            @swoole_set_process_name('Master');
+            cli_set_process_title('Master');
         } elseif ($event instanceof OnManagerStart) {
-            @swoole_set_process_name('Manager');
+            cli_set_process_title('Manager');
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
-                @swoole_set_process_name('TaskWorker#' . $event->workerId);
+                cli_set_process_title('TaskWorker.' . $event->workerId);
             } else {
-                @swoole_set_process_name('Worker#' . $event->workerId);
+                cli_set_process_title('Worker.' . $event->workerId);
             }
         } elseif ($event instanceof BeforeProcessHandle) {
-            @swoole_set_process_name($event->process->name . '#' . $event->index);
+            cli_set_process_title($event->process->name . '.' . $event->index);
         }
     }
 }
