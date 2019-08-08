@@ -1842,15 +1842,35 @@ class ModelTest extends TestCase
 
         /** @var User $user */
         $user = User::find(1);
-        $serialized = serialize($user);
-        $this->assertSame(978, strlen($serialized));
+        $s1 = serialize($user);
 
         $meta = $user->generate();
-        $serialized = serialize($meta);
-        $this->assertSame(107, strlen($serialized));
+        $s2 = serialize($meta);
+        $this->assertLessThan($s2, $s1);
 
         $user2 = $meta->degenerate();
         $this->assertEquals($user, $user2);
+    }
+
+    public function testCollectionGenerate()
+    {
+        $this->getContainer();
+
+        /** @var User $user */
+        $users = User::findMany([1, 2]);
+        $s1 = serialize($users);
+        $meta = $users->generate();
+        $s2 = serialize($meta);
+
+        $this->assertLessThan($s2, $s1);
+
+        $users2 = $meta->degenerate();
+        $this->assertEquals($users, $users2);
+
+        $users = User::findMany([]);
+        $meta = $users->generate();
+        $users2 = $meta->degenerate();
+        $this->assertEquals($users, $users2);
     }
 
     protected function getContainer()

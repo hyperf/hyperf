@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
+use Hyperf\Contract\CodeDegenerateInterface;
+use Hyperf\Contract\CodeGenerateInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 
-class Collection extends BaseCollection
+class Collection extends BaseCollection implements CodeGenerateInterface
 {
     /**
      * Find a model in the collection by key.
@@ -456,6 +458,25 @@ class Collection extends BaseCollection
     public function pad(int $size, $value): BaseCollection
     {
         return $this->toBase()->pad($size, $value);
+    }
+
+    public function generate(): CodeDegenerateInterface
+    {
+        if ($this->isEmpty()) {
+            return new CollectionMeta(null);
+        }
+
+        $class = get_class($this->first());
+
+        $this->each(function ($model) use ($class) {
+            if (get_class($model) !== $class) {
+                throw new \RuntimeException('Collections with multiple model types is not supported.');
+            }
+        });
+
+        $keys = array_keys($this->getDictionary());
+
+        return new CollectionMeta($class, $keys);
     }
 
     /**
