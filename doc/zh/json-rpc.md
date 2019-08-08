@@ -136,7 +136,7 @@ return [
 
 ## 定义服务消费者
 
-一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要定义一个类及相关属性即可。（后续版本迭代会提供动态代理实现的客户端，使之更加简单便捷）
+一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要定义一个类及相关属性即可。
 
 ```php
 <?php
@@ -201,3 +201,34 @@ return [
 ```
 
 这样便可以通过注入 `CalculatorServiceInterface` 接口来使用客户端了。
+
+### 自动创建代理客户端类
+
+当服务提供者通过接口类实现服务，在服务消费端可以通过动态代理自动创建客户端类。
+
+只需要在配置文件中加入配置项 `service` 即可：
+
+```php
+<?php
+return [
+    'consumers' => [
+        [
+            // 服务接口名，可选，默认值等于 name
+            'service' => App\JsonRpc\CalculatorServiceInterface::class,
+            // 对应容器对象ID，可选，默认值等于 service
+            'id' => App\JsonRpc\CalculatorServiceInterface::class,
+            // 服务提供者的服务协议，可选，默认值为 jsonrpc-http
+            'protocol' => 'jsonrpc-http',
+            // 负载均衡算法，可选，默认值为 random
+            'load_balancer' => 'random',
+            // 其他配置与之前例子相同
+            ...
+        ]
+    ],
+];
+```
+
+在应用启动时会自动创建代理客户端类对象，并在容器中使用配置项 `id` 值（如果未设置，会使用配置项 `service` 值代替）添加绑定关系，这样就和手写客户端类一样通过注入 `CalculatorServiceInterface` 接口来使用客户端。
+
+> 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
+
