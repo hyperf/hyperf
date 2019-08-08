@@ -180,7 +180,6 @@ class ModelCommand extends Command
                 $casts[$date] = 'datetime';
             }
         }
-//        var_dump($columns);
         foreach ($columns as $key => $value) {
             $columns[$key]['cast'] = $casts[$value['column_name'] ?? $value['COLUMN_NAME']] ?? null;
         }
