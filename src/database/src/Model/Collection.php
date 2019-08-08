@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
-use LogicException;
 
 class Collection extends BaseCollection
 {
@@ -458,78 +456,6 @@ class Collection extends BaseCollection
     public function pad(int $size, $value): BaseCollection
     {
         return $this->toBase()->pad($size, $value);
-    }
-
-    /**
-     * Get the type of the entities being queued.
-     *
-     * @throws \LogicException
-     * @return null|string
-     */
-    public function getQueueableClass()
-    {
-        if ($this->isEmpty()) {
-            return;
-        }
-
-        $class = get_class($this->first());
-
-        $this->each(function ($model) use ($class) {
-            if (get_class($model) !== $class) {
-                throw new LogicException('Queueing collections with multiple model types is not supported.');
-            }
-        });
-
-        return $class;
-    }
-
-    /**
-     * Get the identifiers for all of the entities.
-     *
-     * @return array
-     */
-    public function getQueueableIds()
-    {
-        if ($this->isEmpty()) {
-            return [];
-        }
-
-        return $this->first() instanceof Pivot
-            ? $this->map->getQueueableId()->all()
-            : $this->modelKeys();
-    }
-
-    /**
-     * Get the relationships of the entities being queued.
-     *
-     * @return array
-     */
-    public function getQueueableRelations()
-    {
-        return $this->isNotEmpty() ? $this->first()->getQueueableRelations() : [];
-    }
-
-    /**
-     * Get the connection of the entities being queued.
-     *
-     * @throws \LogicException
-     * @return null|string
-     */
-    public function getQueueableConnection()
-    {
-        if ($this->isEmpty()) {
-            return;
-        }
-
-        $connection = $this->first()->getConnectionName();
-
-        $this->each(function ($model) use ($connection) {
-            if ($model->getConnectionName() !== $connection) {
-                throw new LogicException('Queueing collections with multiple model connections is not supported.');
-            }
-        });
-
-        return $connection;
     }
 
     /**

@@ -14,7 +14,6 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
-use Hyperf\Contracts\Queue\QueueableCollection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -1030,52 +1029,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function getKey()
     {
         return $this->getAttribute($this->getKeyName());
-    }
-
-    /**
-     * Get the queueable identity for the entity.
-     */
-    public function getQueueableId()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Get the queueable relationships for the entity.
-     *
-     * @return array
-     */
-    public function getQueueableRelations()
-    {
-        $relations = [];
-
-        foreach ($this->getRelations() as $key => $relation) {
-            if (method_exists($this, $key)) {
-                $relations[] = $key;
-            }
-
-            if ($relation instanceof QueueableCollection) {
-                foreach ($relation->getQueueableRelations() as $collectionValue) {
-                    $relations[] = $key . '.' . $collectionValue;
-                }
-            }
-
-            if ($relation instanceof QueueableEntity) {
-                foreach ($relation->getQueueableRelations() as $entityKey => $entityValue) {
-                    $relations[] = $key . '.' . $entityValue;
-                }
-            }
-        }
-
-        return array_unique($relations);
-    }
-
-    /**
-     * Get the queueable connection for the entity.
-     */
-    public function getQueueableConnection()
-    {
-        return $this->getConnectionName();
     }
 
     /**
