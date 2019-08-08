@@ -214,21 +214,20 @@ return [
     'consumers' => [
         [
             // 服务接口名，可选，默认值等于 name
-            'service' => App\JsonRpc\CalculatorServiceInterface::class,
+            'service' => \App\JsonRpc\CalculatorServiceInterface::class,
             // 对应容器对象ID，可选，默认值等于 service
-            'id' => App\JsonRpc\CalculatorServiceInterface::class,
+            'id' => \App\JsonRpc\CalculatorServiceInterface::class,
             // 服务提供者的服务协议，可选，默认值为 jsonrpc-http
             'protocol' => 'jsonrpc-http',
             // 负载均衡算法，可选，默认值为 random
             'load_balancer' => 'random',
-            // 其他配置与之前例子相同
-            ...
+            // 此处省略其它配置
         ]
     ],
 ];
 ```
 
-在应用启动时会自动创建代理客户端类对象，并在容器中使用配置项 `id` 值（如果未设置，会使用配置项 `service` 值代替）添加绑定关系，这样就和手写客户端类一样通过注入 `CalculatorServiceInterface` 接口来使用客户端。
+在应用启动时会自动创建客户端类的代理对象，并在容器中使用配置项 `id` 的值（如果未设置，会使用配置项 `service` 值代替）来添加绑定关系，这样就和手工编写的客户端类一样，通过注入 `CalculatorServiceInterface` 接口来直接使用客户端。
 
 > 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
 
