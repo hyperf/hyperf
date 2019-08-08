@@ -38,7 +38,7 @@ class Consumer extends AbstractAnnotation
     /**
      * @var string
      */
-    public $name = '';
+    public $name = 'Consumer';
 
     /**
      * @var int
