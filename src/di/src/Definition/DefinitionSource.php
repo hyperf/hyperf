@@ -231,7 +231,7 @@ class DefinitionSource implements DefinitionSourceInterface
         $this->printLn('Scanning ...');
         $this->scanner->scan($paths);
         $this->printLn('Scan completed.');
-        if (!$this->enableCache) {
+        if (! $this->enableCache) {
             return true;
         }
         // enableCache: set cache
