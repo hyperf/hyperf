@@ -104,13 +104,13 @@ Router::addServer('grpc', function () {
 `HiController.php` 文件中的 `sayHello` 方法:
 
 ```php
-public function sayHello(HiUser $user)
-    {
-        $message = new HiReply();
-        $message->setMessage("Hello World");
-        $message->setUser($user);
-        return $message;
-    }
+public function sayHello(HiUser $user) 
+{
+    $message = new HiReply();
+    $message->setMessage("Hello World");
+    $message->setUser($user);
+    return $message;
+}
 
 ```
 
