@@ -19,7 +19,10 @@ use DateTimeInterface;
 use Exception;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
+use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Model\Booted;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
@@ -30,6 +33,7 @@ use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\InteractsWithTime;
@@ -55,8 +59,10 @@ use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\User;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use ReflectionClass;
 use stdClass;
@@ -1828,6 +1834,52 @@ class ModelTest extends TestCase
         });
 
         $this->assertTrue($called);
+    }
+
+    public function testModelGenerate()
+    {
+        $this->getContainer();
+
+        /** @var User $user */
+        $user = User::find(1);
+        $serialized = serialize($user);
+        $this->assertSame(978, strlen($serialized));
+
+        $meta = $user->generate();
+        $serialized = serialize($meta);
+        $this->assertSame(107, strlen($serialized));
+
+        $user2 = $meta->degenerate();
+        $this->assertEquals($user, $user2);
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
+        $connector = new ConnectionFactory($container);
+
+        $dbConfig = [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => 'hyperf',
+            'username' => 'root',
+            'password' => '910123',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+        ];
+
+        $connection = $connector->make($dbConfig);
+
+        $resolver = new ConnectionResolver(['default' => $connection]);
+
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
+
+        ApplicationContext::setContainer($container);
+
+        return $container;
     }
 
     protected function addMockConnection($model)
