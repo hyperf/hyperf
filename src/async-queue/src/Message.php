@@ -12,7 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-class Message implements MessageInterface
+use Hyperf\Contract\CodeDegenerateInterface;
+use Hyperf\Contract\CodeGenerateInterface;
+use Serializable;
+
+class Message implements MessageInterface, Serializable
 {
     /**
      * @var JobInterface
@@ -40,5 +44,22 @@ class Message implements MessageInterface
             return true;
         }
         return false;
+    }
+
+    public function serialize()
+    {
+        if ($this->job instanceof CodeGenerateInterface) {
+            $this->job = $this->job->generate();
+        }
+
+        return serialize($this->job);
+    }
+
+    public function unserialize($serialized)
+    {
+        $this->job = unserialize($serialized);
+        if ($this->job instanceof CodeDegenerateInterface) {
+            $this->job = $this->job->degenerate();
+        }
     }
 }

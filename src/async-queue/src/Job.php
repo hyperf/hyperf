@@ -32,8 +32,13 @@ abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerat
      */
     public function degenerate(): CodeGenerateInterface
     {
-        foreach ($this as $key) {
+        foreach ($this as $key => $value) {
+            if ($value instanceof CodeDegenerateInterface) {
+                $this->{$key} = $value->degenerate();
+            }
         }
+
+        return $this;
     }
 
     /**
@@ -41,5 +46,12 @@ abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerat
      */
     public function generate(): CodeDegenerateInterface
     {
+        foreach ($this as $key => $value) {
+            if ($value instanceof CodeGenerateInterface) {
+                $this->{$key} = $value->generate();
+            }
+        }
+
+        return $this;
     }
 }

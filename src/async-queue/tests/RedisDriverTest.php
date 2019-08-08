@@ -39,12 +39,8 @@ class RedisDriverTest extends TestCase
 
     public function testDriverPush()
     {
-        $packer = new PhpSerializerPacker();
-        $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->once()->with(PhpSerializerPacker::class)->andReturn($packer);
-        $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
-        $container->shouldReceive('get')->once()->with(\Redis::class)->andReturn(new Redis());
-
+        $container = $this->getContainer();
+        $packer = $container->get(PhpSerializerPacker::class);
         $driver = new RedisDriver($container, [
             'channel' => 'test',
         ]);
@@ -83,5 +79,42 @@ class RedisDriverTest extends TestCase
 
         $model2 = $meta->degenerate();
         $this->assertEquals($model, $model2);
+    }
+
+    public function testAsyncQueueJobGenerate()
+    {
+        $container = $this->getContainer();
+        $packer = $container->get(PhpSerializerPacker::class);
+        $driver = new RedisDriver($container, [
+            'channel' => 'test',
+        ]);
+
+        $id = uniqid();
+        $content = Str::random(1000);
+        $model = new DemoModel(1, 'Hyperf', 1, $content);
+        $driver->push(new DemoJob($id, $model));
+
+        $serialized = (string) Context::get('test.async-queue.lpush.value');
+        $this->assertSame(218, strlen($serialized));
+
+        /** @var Message $class */
+        $class = $packer->unpack($serialized);
+
+        $this->assertSame($id, $class->job()->id);
+        $this->assertEquals($model, $class->job()->model);
+
+        $key = Context::get('test.async-queue.lpush.key');
+        $this->assertSame('test:waiting', $key);
+    }
+
+    protected function getContainer()
+    {
+        $packer = new PhpSerializerPacker();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn($packer);
+        $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
+        $container->shouldReceive('get')->once()->with(\Redis::class)->andReturn(new Redis());
+
+        return $container;
     }
 }
