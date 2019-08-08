@@ -20,6 +20,8 @@
 |       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
 |         Hyperf\Di\Aop\ProxyCallVistor          |         Hyperf\Di\Aop\ProxyCallVisitor          |
 
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when publish a job with `CodeGenerateInterface` param, it can be auto generate a small one.
+
 ## Fixed
 
 - [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
