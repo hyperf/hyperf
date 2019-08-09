@@ -10,6 +10,7 @@
 
 ## Changed
 
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when push a job with `CodeGenerateInterface` param, it can be auto generate a small one.
 - [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Write `annotations.cache` to file only enableCache.
 
 # v1.0.10 - 2019-08-09
@@ -34,8 +35,6 @@
 | Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
 |       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
 |         Hyperf\Di\Aop\ProxyCallVistor          |         Hyperf\Di\Aop\ProxyCallVisitor          |
-
-- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when push a job with `CodeGenerateInterface` param, it can be auto generate a small one.
 
 ## Fixed
 
