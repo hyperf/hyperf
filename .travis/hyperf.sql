@@ -13,9 +13,9 @@ CREATE TABLE `book` (
 
 INSERT INTO `book` (`id`, `user_id`, `title`, `created_at`, `updated_at`)
 VALUES
-	(1,1,'Hyperf开发指南','2018-01-01 00:00:00','2018-01-01 00:00:00'),
-	(2,1,'Hyperf文档','2018-01-02 00:00:00','2018-01-02 00:00:00'),
-	(3,2,'Hyperf组件开发指南','2018-01-02 00:00:00','2018-01-02 00:00:00');
+	(1,1,'Hyperf Guide','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(2,1,'Hyperf Guide 2019','2018-01-02 00:00:00','2018-01-02 00:00:00'),
+	(3,2,'Hyperf Component Guide','2018-01-02 00:00:00','2018-01-02 00:00:00');
 
 DROP TABLE IF EXISTS `role`;
 
@@ -29,14 +29,14 @@ CREATE TABLE `role` (
 
 INSERT INTO `role` (`id`, `name`, `created_at`, `updated_at`)
 VALUES
-	(1,'作者','2018-01-01 00:00:00','2018-01-01 00:00:00');
+	(1,'author','2018-01-01 00:00:00','2018-01-01 00:00:00');
 
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '姓名',
-  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '性别 1未知1男2女',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT 'user name',
+  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '1unknow 1boy 2girl',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
