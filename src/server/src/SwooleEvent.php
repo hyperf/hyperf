@@ -85,6 +85,26 @@ class SwooleEvent
     const ON_FINISH = 'finish';
 
     /**
+     * Swoole onShutdown event.
+     */
+    const ON_SHUTDOWN = 'shutdown';
+
+    /**
+     * Swoole onPacket event.
+     */
+    const ON_PACKET = 'packet';
+
+    /**
+     * Swoole onManagerStart event.
+     */
+    const ON_MANAGER_START = 'managerStart';
+
+    /**
+     * Swoole onManagerStop event.
+     */
+    const ON_MANAGER_STOP = 'managerStop';
+
+    /**
      * Before server start, it's not a swoole event.
      */
     const ON_BEFORE_START = 'beforeStart';

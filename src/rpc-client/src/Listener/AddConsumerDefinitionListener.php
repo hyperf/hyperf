@@ -61,7 +61,7 @@ class AddConsumerDefinitionListener implements ListenerInterface
                     continue;
                 }
                 $definitions->addDefinition(
-                    $consumer['id'] ?? $consumer['name'],
+                    $consumer['id'] ?? $serviceClass,
                     function (ContainerInterface $container) use ($serviceFactory, $consumer, $serviceClass) {
                         $proxyClass = $serviceFactory->createProxy($serviceClass);
 
