@@ -29,7 +29,8 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
             if ($ex instanceof \Exception) {
                 return $ex;
             }
-            // 兼容错误数据
+
+            // Retry handle it if the exception not instanceof \Exception.
             $data = $ex;
         }
         if (is_array($data) && isset($data['message'], $data['code'])) {
