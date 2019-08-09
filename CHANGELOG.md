@@ -8,6 +8,10 @@
 
 - [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` not work in mysql 8.
 
+## Changed
+
+- [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Write `annotations.cache` to file only enableCache.
+
 # v1.0.10 - 2019-08-09
 
 ## Added
