@@ -1,5 +1,9 @@
 # v1.0.11 - TBD
 
+## Added
+
+- [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added InitProcessTitleListener, and `onStart`, `onManagerStart` events.
+
 ## Fixed
 
 # v1.0.10 - 2019-08-09
