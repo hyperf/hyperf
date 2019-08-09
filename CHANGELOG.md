@@ -1,6 +1,18 @@
 # v1.0.11 - TBD
 
+## Added
+
+- [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added InitProcessTitleListener, and `onStart`, `onManagerStart` events.
+
 ## Fixed
+
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` not work in mysql 8.
+
+## Changed
+
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when push a job with `CodeGenerateInterface` param, it can be auto generate a small one.
+- [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Write `annotations.cache` to file only enableCache.
+- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) Added generate support for Collection and Model.
 
 # v1.0.10 - 2019-08-09
 

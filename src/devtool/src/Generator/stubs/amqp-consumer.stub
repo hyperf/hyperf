@@ -9,7 +9,7 @@ use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 
 /**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
+ * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", name ="%CLASS%", nums=1)
  */
 class %CLASS% extends ConsumerMessage
 {
