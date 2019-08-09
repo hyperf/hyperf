@@ -76,7 +76,7 @@ class StatusCommand extends BaseCommand
      *
      * @param array $ran
      * @param array $batches
-     * @return \Hyperf\Support\Collection
+     * @return \Hyperf\Utils\Collection
      */
     protected function getStatusFor(array $ran, array $batches)
     {
