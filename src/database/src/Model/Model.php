@@ -14,7 +14,8 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
-use Hyperf\Contracts\Queue\QueueableCollection;
+use Hyperf\Contract\CodeDegenerateInterface;
+use Hyperf\Contract\CodeGenerateInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -27,7 +28,7 @@ use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
+abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CodeGenerateInterface
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
@@ -1033,52 +1034,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Get the queueable identity for the entity.
-     */
-    public function getQueueableId()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Get the queueable relationships for the entity.
-     *
-     * @return array
-     */
-    public function getQueueableRelations()
-    {
-        $relations = [];
-
-        foreach ($this->getRelations() as $key => $relation) {
-            if (method_exists($this, $key)) {
-                $relations[] = $key;
-            }
-
-            if ($relation instanceof QueueableCollection) {
-                foreach ($relation->getQueueableRelations() as $collectionValue) {
-                    $relations[] = $key . '.' . $collectionValue;
-                }
-            }
-
-            if ($relation instanceof QueueableEntity) {
-                foreach ($relation->getQueueableRelations() as $entityKey => $entityValue) {
-                    $relations[] = $key . '.' . $entityValue;
-                }
-            }
-        }
-
-        return array_unique($relations);
-    }
-
-    /**
-     * Get the queueable connection for the entity.
-     */
-    public function getQueueableConnection()
-    {
-        return $this->getConnectionName();
-    }
-
-    /**
      * Get the value of the model's route key.
      */
     public function getRouteKey()
@@ -1177,6 +1132,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function offsetUnset($offset)
     {
         unset($this->attributes[$offset], $this->relations[$offset]);
+    }
+
+    public function generate(): CodeDegenerateInterface
+    {
+        $key = $this->getKey();
+        $class = get_class($this);
+
+        return new ModelMeta($class, $key);
     }
 
     /**
