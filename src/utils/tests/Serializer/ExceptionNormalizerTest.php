@@ -30,6 +30,7 @@ class ExceptionNormalizerTest extends TestCase
         $ret = $normalizer->denormalize($result, \InvalidArgumentException::class);
         $this->assertInstanceOf(\InvalidArgumentException::class, $ret);
         $this->assertEquals($ret->getMessage(), $ex->getMessage());
+        $this->assertEquals($ret, $ex);
     }
 
     public function testSerializableException()
@@ -40,5 +41,6 @@ class ExceptionNormalizerTest extends TestCase
         $ret = $normalizer->denormalize($result, SerializableException::class);
         $this->assertInstanceOf(SerializableException::class, $ret);
         $this->assertEquals($ret->getMessage(), $ex->getMessage());
+        $this->assertEquals($ret, $ex);
     }
 }
