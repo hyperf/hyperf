@@ -12,16 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Server\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\OnManagerStart;
 use Hyperf\Framework\Event\OnStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
-/**
- * @Listener
- */
 class InitProcessTitleListener implements ListenerInterface
 {
     public function listen(): array
@@ -44,17 +40,17 @@ class InitProcessTitleListener implements ListenerInterface
     public function process(object $event)
     {
         if ($event instanceof OnStart) {
-            cli_set_process_title('Master');
+            @cli_set_process_title('Master');
         } elseif ($event instanceof OnManagerStart) {
-            cli_set_process_title('Manager');
+            @cli_set_process_title('Manager');
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
-                cli_set_process_title('TaskWorker.' . $event->workerId);
+                @cli_set_process_title('TaskWorker.' . $event->workerId);
             } else {
-                cli_set_process_title('Worker.' . $event->workerId);
+                @cli_set_process_title('Worker.' . $event->workerId);
             }
         } elseif ($event instanceof BeforeProcessHandle) {
-            cli_set_process_title($event->process->name . '.' . $event->index);
+            @cli_set_process_title($event->process->name . '.' . $event->index);
         }
     }
 }
