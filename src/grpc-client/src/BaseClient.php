@@ -17,7 +17,6 @@ use Hyperf\Grpc\Parser;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
-use Swoole\Http2\Request;
 
 /**
  * @method int send(Request $request)
@@ -84,7 +83,6 @@ class BaseClient
         $deserialize
     ) {
         $request = new Request();
-        $request->headers['content-type'] = 'application/grpc';
         $request->method = 'POST';
         $request->path = $method;
         $request->data = Parser::serializeMessage($argument);
