@@ -169,4 +169,4 @@ class HiClient extends BaseClient
 
 ## 写在后面
 
-如果你是 gRPC 的重度使用者, 欢迎关注 hyperf 的后续开发者工具, 可以根据 .proto 文件生成全套 gRCP 代码.
+如果你是 gRPC 的重度使用者, 欢迎关注 hyperf 的后续开发者工具, 可以根据 .proto 文件生成全套 gRPC 代码.
