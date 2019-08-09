@@ -39,7 +39,7 @@ use function get_class;
  * @method ServerResponse setSwooleResponse(SwooleResponse $swooleResponse)
  * @method void buildSwooleResponse(SwooleResponse $swooleResponse, ServerResponse $response)
  */
-class Response extends ServerResponse implements ResponseInterface
+class Response implements ResponseInterface
 {
     use Macroable;
 
