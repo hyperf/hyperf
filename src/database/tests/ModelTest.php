@@ -1850,6 +1850,11 @@ class ModelTest extends TestCase
 
         $user2 = $meta->degenerate();
         $this->assertEquals($user, $user2);
+
+        $user = new User();
+        $meta = $user->generate();
+        $user2 = $meta->degenerate();
+        $this->assertEquals($user, $user2);
     }
 
     public function testCollectionGenerate()

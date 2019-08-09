@@ -38,6 +38,9 @@ class ModelMeta implements CodeDegenerateInterface
 
     public function degenerate(): CodeGenerateInterface
     {
+        if (is_null($this->key)) {
+            return new $this->class();
+        }
         return $this->class::find($this->key);
     }
 }
