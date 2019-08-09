@@ -1,20 +1,31 @@
-# v1.0.10 - TBD
+# v1.0.11 - TBD
 
 ## Added
 
-- [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Added custom object support for controller parameters in http-server.
+- [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added InitProcessTitleListener, and `onStart`, `onManagerStart` events.
+
+## Fixed
+
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` not work in mysql 8.
+
+# v1.0.10 - 2019-08-09
+
+## Added
+
+- [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Adding custom object types of array support for the Controller/RequestHandler parameter of HTTP Server, especially for JSON RPC HTTP Server, now you can get support for auto-deserialization of objects by defining `@var Object[]` on the method.
 - [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
-- [#336](https://github.com/hyperf-cloud/hyperf/pull/336) Added Proxy RPC Client.
+- [#336](https://github.com/hyperf-cloud/hyperf/pull/336) Added Dynamic Proxy RPC Client.
 - [#346](https://github.com/hyperf-cloud/hyperf/pull/346) [#348](https://github.com/hyperf-cloud/hyperf/pull/348) Added filesystem driver for `hyperf/cache`.
 
 ## Changed
 
-- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden DI scan message when paths is empty.
-- [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Support convert path and namespace from composer psr-4 autoload rules.
-- [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized rpc-server and json-rpc component. 
+- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden the scan message of DI when $paths is empty.
+- [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Added support for user defined project path according to the rules defined by composer.json's psr-4 autoload.
+- [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized exception handler of rpc-server and json-rpc component. 
+- [#340](https://github.com/hyperf-cloud/hyperf/pull/340) Added support for `make` function accept index-based array as parameters.
 - [#349](https://github.com/hyperf-cloud/hyperf/pull/349) Renamed the class name below, fixed the typo.
 
-|                     原类名                      |                  修改后的类名                     |
+|                     Before                      |                  After                     |
 |:----------------------------------------------:|:-----------------------------------------------:|
 | Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
 |       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
@@ -22,14 +33,12 @@
 
 ## Fixed
 
-- [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed consul service check the same service registration status more than one times.
-- [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`.
-- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Function Redis::delete() is deprecated.
-- [#334](https://github.com/hyperf-cloud/hyperf/pull/334) Fixed configuration of aliyun acm is not work expected.
-- [#337](https://github.com/hyperf-cloud/hyperf/pull/337) Fixed 500 response when key of header is not string.
-- [#338](https://github.com/hyperf-cloud/hyperf/pull/338) Fixed `ProviderConfig::load` will convert array when dependencies has the same key.
-- [#340](https://github.com/hyperf-cloud/hyperf/pull/340) Fixed function `make` not support index-based array as parameters.
-- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` not work in mysql 8.
+- [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed check the service registration status via consul services more than one times.
+- [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`, only appears in openzipkin/zipkin v1.3.3+.
+- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Redis::delete() method has been removed in redis 5.0+.
+- [#334](https://github.com/hyperf-cloud/hyperf/pull/334) Fixed the configuration fetch from aliyun acm is not work expected in some case.
+- [#337](https://github.com/hyperf-cloud/hyperf/pull/337) Fixed the server will return 500 Response when the key of header is not a string.
+- [#338](https://github.com/hyperf-cloud/hyperf/pull/338) Fixed the problem of `ProviderConfig::load` will convert a string to a array when the dependencies has the same key in deep merging.
 
 # v1.0.9 - 2019-08-03
 

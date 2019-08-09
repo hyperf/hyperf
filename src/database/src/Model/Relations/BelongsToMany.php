@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -538,14 +539,8 @@ class BelongsToMany extends Relation
 
     /**
      * Get a paginator for the "select" statement.
-     *
-     * @param int $perPage
-     * @param array $columns
-     * @param string $pageName
-     * @param null|int $page
-     * @return \Hyperf\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $this->query->addSelect($this->shouldSelect($columns));
 
@@ -561,7 +556,7 @@ class BelongsToMany extends Relation
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contracts\Pagination\Paginator
+     * @return \Hyperf\Contract\PaginatorInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
