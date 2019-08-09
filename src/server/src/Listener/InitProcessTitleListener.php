@@ -22,19 +22,12 @@ class InitProcessTitleListener implements ListenerInterface
 {
     public function listen(): array
     {
-        $events = [
+        return [
             OnStart::class,
             OnManagerStart::class,
             AfterWorkerStart::class,
             BeforeProcessHandle::class,
         ];
-
-        return array_filter(array_map(function ($event) {
-            if (class_exists($event)) {
-                return $event;
-            }
-            return null;
-        }, $events));
     }
 
     public function process(object $event)
