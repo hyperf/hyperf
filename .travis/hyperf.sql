@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT 'user name',
-  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '1unknow 1boy 2girl',
+  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '1unknow 1male 2female',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
