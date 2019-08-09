@@ -25,7 +25,13 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if (is_string($data)) {
-            return unserialize($data);
+            $ex = unserialize($data);
+            if ($ex instanceof \Exception) {
+                return $ex;
+            }
+
+            // Retry handle it if the exception not instanceof \Exception.
+            $data = $ex;
         }
         if (is_array($data) && isset($data['message'], $data['code'])) {
             try {
@@ -70,7 +76,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function normalize($object, $format = null, array $context = [])
     {
         if ($object instanceof \Serializable) {
-            return $object->serialize();
+            return serialize($object);
         }
         /* @var \Exception $object */
         return [
