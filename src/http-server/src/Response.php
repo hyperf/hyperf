@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Server\Response as ServerResponse;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
@@ -28,18 +26,9 @@ use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
-use Swoole\Http\Response as SwooleResponse;
 use function get_class;
 
-/**
- * @method void send()
- * @method ServerResponse withContent(string $content)
- * @method ServerResponse withCookie(Cookie $cookie)
- * @method null|SwooleResponse getSwooleResponse()
- * @method ServerResponse setSwooleResponse(SwooleResponse $swooleResponse)
- * @method void buildSwooleResponse(SwooleResponse $swooleResponse, ServerResponse $response)
- */
-class Response implements ResponseInterface
+class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
