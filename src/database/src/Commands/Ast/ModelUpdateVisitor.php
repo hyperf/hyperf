@@ -107,6 +107,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case 'bool':
             case 'boolean':
                 return 'boolean';
+            case 'json':
+                return 'json';
             default:
                 return null;
         }
