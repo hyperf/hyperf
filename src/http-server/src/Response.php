@@ -130,7 +130,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withProtocolVersion($version)
     {
@@ -225,7 +225,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
      * @throws \InvalidArgumentException for invalid header names or values
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withHeader($name, $value)
     {
@@ -244,7 +244,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
      * @throws \InvalidArgumentException for invalid header names or values
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
@@ -259,7 +259,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * the named header.
      *
      * @param string $name case-insensitive header field name to remove
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withoutHeader($name)
     {
@@ -285,7 +285,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param StreamInterface $body body
      * @throws \InvalidArgumentException when the body is not valid
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
@@ -320,7 +320,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
      * @throws \InvalidArgumentException for invalid status code arguments
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
