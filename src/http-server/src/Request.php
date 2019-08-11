@@ -610,4 +610,33 @@ class Request implements RequestInterface
     {
         return Context::get(ServerRequestInterface::class);
     }
+
+    /**
+     * Get the client IP addresses.
+     *
+     * @return array
+     */
+    public function getClientIps(): array
+    {
+        $result = $ips = [];
+        $xff = $this->header("x-forwarded-for",null);
+        if ($xff){
+            $ips = explode(",",$xff);
+        }
+        $ips[] = $this->server("remote_addr");
+        foreach ($ips as &$ip) {
+            $result[] = trim($ip);
+        }
+        return $ips;
+    }
+
+    /**
+     * Get the client IP addresses.
+     *
+     * @return string
+     */
+    public function getClientIp(): string
+    {
+        return $this->getClientIps()[0] ?? "0.0.0.0";
+    }
 }

@@ -166,4 +166,18 @@ interface RequestInterface extends ServerRequestInterface
      * Determine if the uploaded data contains a file.
      */
     public function hasFile(string $key): bool;
+
+    /**
+     * Get the client IP addresses.
+     *
+     * @return array
+     */
+    public function getClientIps(): array;
+
+    /**
+     * Get the client IP address.
+     *
+     * @return string
+     */
+    public function getClientIp(): string;
 }
