@@ -29,7 +29,7 @@ class MiddlewareManager
     {
         $method = strtoupper($method);
         foreach ($middlewares as $middleware) {
-            static::$container[$server][static::handlePath($path)][$method][] = $middleware;
+            static::$container[$server][static::handlePath($path)][$method][] = $middlewares;
         }
     }
 
