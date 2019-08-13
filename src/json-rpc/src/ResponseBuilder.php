@@ -63,7 +63,7 @@ class ResponseBuilder
             ->withBody($body);
     }
 
-    public function saveResponse(ResponseInterface $response): ResponseInterface
+    public function persistToContext(ResponseInterface $response): ResponseInterface
     {
         return Context::set(ResponseInterface::class, $response);
     }
