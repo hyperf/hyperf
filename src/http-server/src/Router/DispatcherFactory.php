@@ -129,13 +129,13 @@ class DispatcherFactory
 
             // Register middlewares.
             foreach ($autoMethods as $autoMethod) {
-                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
+                MiddlewareManager::addMiddlewares($annotation->server, MiddlewareManager::handlePath($path), $autoMethod, $methodMiddlewares);
             }
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
                 $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
                 foreach ($autoMethods as $autoMethod) {
-                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
+                    MiddlewareManager::addMiddlewares($annotation->server, MiddlewareManager::handlePath($path), $autoMethod, $methodMiddlewares);
                 }
             }
         }
@@ -188,7 +188,7 @@ class DispatcherFactory
 
                     // Register middlewares.
                     foreach ($mapping->methods as $mappingMethod) {
-                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $methodMiddlewares);
+                        MiddlewareManager::addMiddlewares($annotation->server, MiddlewareManager::handlePath($path), $mappingMethod, $methodMiddlewares);
                     }
                 }
             }

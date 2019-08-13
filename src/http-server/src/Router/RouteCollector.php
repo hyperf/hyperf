@@ -75,7 +75,8 @@ class RouteCollector
             $method = strtoupper($method);
             foreach ($routeDatas as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, $handler);
-                MiddlewareManager::addMiddlewares($this->server, $routeData, $method, $options['middleware'] ?? []);
+
+                MiddlewareManager::addMiddlewares($this->server, MiddlewareManager::handlePath($routeData), $method, $options['middleware'] ?? []);
             }
         }
     }

@@ -69,7 +69,7 @@ class RouteCollector
         foreach ($routeDatas as $routeData) {
             // Use 'GET' method for RPC.
             $this->dataGenerator->addRoute('POST', $routeData, $handler);
-            MiddlewareManager::addMiddlewares($server, $routeData, 'GET', $options['middleware'] ?? []);
+            MiddlewareManager::addMiddlewares($server, MiddlewareManager::handlePath($routeData), 'GET', $options['middleware'] ?? []);
         }
     }
 
