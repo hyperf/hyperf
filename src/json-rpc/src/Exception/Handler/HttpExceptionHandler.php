@@ -21,8 +21,14 @@ use Throwable;
 
 class HttpExceptionHandler extends ExceptionHandler
 {
+    /**
+     * @var StdoutLoggerInterface
+     */
     protected $logger;
 
+    /**
+     * @var FormatterInterface
+     */
     protected $formatter;
 
     public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
