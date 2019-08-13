@@ -20,6 +20,7 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3",
+        "jean85/pretty-package-versions": "^1.2",
         "monolog/monolog": "^1.24",
         "nesbot/carbon": "^2.0",
         "nikic/fast-route": "^1.3",
@@ -180,6 +181,7 @@
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
+            "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
@@ -195,7 +197,9 @@
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
-            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
+            "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata",
+            "Grpc\\": "src/grpc-client/tests/Grpc"
         }
     },
     "config": {
