@@ -6,8 +6,9 @@
 
 ## Fixed
 
-- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` not work in mysql 8.
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in MySQL 8.
 - [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed exception which instanceof serializable normalize and denormalize failed.
+- [#384](https://github.com/hyperf-cloud/hyperf/pull/384) Fixed the `ExceptionHandler` that user defined does not works, because the framework has handled the exception automatically.
 
 ## Changed
 

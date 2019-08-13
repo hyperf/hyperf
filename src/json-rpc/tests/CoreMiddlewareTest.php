@@ -19,11 +19,13 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\JsonRpc\CoreMiddleware;
 use Hyperf\JsonRpc\DataFormatter;
+use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\JsonRpc\ResponseBuilder;
@@ -84,7 +86,45 @@ class CoreMiddlewareTest extends TestCase
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
 
-        $response = $middleware->process($request, $handler);
+        try {
+            $response = $middleware->process($request, $handler);
+        } catch (\Throwable $exception) {
+            $response = Context::get(ResponseInterface::class);
+        }
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $ret = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('error', $ret);
+        $this->assertArraySubset([
+            'code' => ResponseBuilder::SERVER_ERROR,
+            'message' => 'Expected non-zero value of divider',
+        ], $ret['error']);
+    }
+
+    public function testDefaultExceptionHandler()
+    {
+        $container = $this->createContainer();
+        $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
+        $router->addRoute('/CalculatorService/divide', [
+            CalculatorService::class, 'divide',
+        ]);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
+        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $request = (new Request('POST', new Uri('/CalculatorService/divide')))
+            ->withParsedBody([3, 0]);
+        Context::set(ResponseInterface::class, new Response());
+
+        try {
+            $response = $middleware->process($request, $handler);
+        } catch (\Throwable $exception) {
+            $logger = \Mockery::mock(StdoutLoggerInterface::class);
+            $logger->shouldReceive('warning')->andReturn(null);
+            $formatter = new DefaultFormatter();
+            $handler = new HttpExceptionHandler($logger, $formatter);
+            $response = $handler->handle($exception, Context::get(ResponseInterface::class));
+        }
+
         $this->assertEquals(200, $response->getStatusCode());
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('error', $ret);

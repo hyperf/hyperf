@@ -63,6 +63,11 @@ class ResponseBuilder
             ->withBody($body);
     }
 
+    public function persistToContext(ResponseInterface $response): ResponseInterface
+    {
+        return Context::set(ResponseInterface::class, $response);
+    }
+
     protected function formatResponse($response, ServerRequestInterface $request): string
     {
         $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
