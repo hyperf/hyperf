@@ -139,7 +139,7 @@ class ModelCommand extends Command
     {
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
-        $columns = $builder->getColumnTypeListing($table);
+        $columns = $this->formatColumns($builder->getColumnTypeListing($table));
 
         $project = new Project();
         $class = $project->namespace($option->getPath()) . Str::studly($table);
@@ -165,6 +165,16 @@ class ModelCommand extends Command
 
         file_put_contents($path, $code);
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
+    }
+
+    /**
+     * Format column's key to lower case.
+     */
+    protected function formatColumns(array $columns): array
+    {
+        return array_map(function ($item) {
+            return array_change_key_case($item, CASE_LOWER);
+        }, $columns);
     }
 
     protected function getColumns($className, $columns, $forceCasts): array

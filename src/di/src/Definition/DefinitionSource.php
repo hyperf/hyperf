@@ -230,6 +230,11 @@ class DefinitionSource implements DefinitionSourceInterface
         }
         $this->printLn('Scanning ...');
         $this->scanner->scan($paths);
+        $this->printLn('Scan completed.');
+        if (! $this->enableCache) {
+            return true;
+        }
+        // enableCache: set cache
         if (! file_exists($this->cachePath)) {
             $exploded = explode('/', $this->cachePath);
             unset($exploded[count($exploded) - 1]);
@@ -240,7 +245,6 @@ class DefinitionSource implements DefinitionSourceInterface
         }
         $data = implode(PHP_EOL, [$pathsHash, AnnotationCollector::serialize(), AspectCollector::serialize()]);
         file_put_contents($this->cachePath, $data);
-        $this->printLn('Scan completed.');
         return true;
     }
 
