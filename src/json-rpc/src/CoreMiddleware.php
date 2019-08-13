@@ -48,8 +48,11 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
             $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (\Exception $e) {
-                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $e);
+            } catch (\Exception $exception) {
+                $response = $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $exception);
+                $this->responseBuilder->saveResponse($response);
+
+                throw $exception;
             }
         }
         return $response;

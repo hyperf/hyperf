@@ -15,6 +15,7 @@ namespace Hyperf\JsonRpc;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Server;
+use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Context;
@@ -57,6 +58,13 @@ class HttpServer extends Server
             'dataFormatter' => $this->protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
+    }
+
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
     }
 
     protected function createCoreMiddleware(): MiddlewareInterface
