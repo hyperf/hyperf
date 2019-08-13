@@ -21,7 +21,7 @@ use InvalidArgumentException;
 /**
  * @method int send(Request $request)
  * @method mixed recv(int $streamId, float $timeout = null)
- * @method close($yield = false): bool
+ * @method bool close($yield = false)
  */
 class BaseClient
 {
