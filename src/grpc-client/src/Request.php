@@ -12,14 +12,39 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcClient;
 
+use Google\Protobuf\Internal\Message;
+use Hyperf\Grpc\Parser;
+use Jean85\PrettyVersions;
 use Swoole\Http2\Request as BaseRequest;
 
 class Request extends BaseRequest
 {
-    const CONTENT_TYPE = 'application/grpc';
+    private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
-    public function __construct()
+    public function __construct(string $method, Message $argument, $headers = [])
     {
-        $this->headers['content-type'] = self::CONTENT_TYPE;
+        $this->method = 'POST';
+        $this->headers = array_replace($this->getDefaultHeaders(), $headers);
+        $this->path = $method;
+        $this->data = Parser::serializeMessage($argument);
+    }
+
+    public function getDefaultHeaders(): array
+    {
+        return [
+            'content-type' => self::DEFAULT_CONTENT_TYPE,
+            'user-agent' => $this->buildDefaultUserAgent(),
+        ];
+    }
+
+    private function buildDefaultUserAgent(): string
+    {
+        $userAgent = 'grpc-php-hyperf/1.0';
+        $grpcClientVersion = PrettyVersions::getVersion('hyperf/grpc-client')->getPrettyVersion();
+        if ($grpcClientVersion) {
+            $explodedVersions = explode('@', $grpcClientVersion);
+            $userAgent .= ' (hyperf-grpc-client/' . $explodedVersions[0] . ')';
+        }
+        return $userAgent;
     }
 }
