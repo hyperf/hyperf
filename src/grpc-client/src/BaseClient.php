@@ -17,11 +17,11 @@ use Hyperf\Grpc\Parser;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
-use Swoole\Http2\Request;
 
 /**
  * @method int send(Request $request)
  * @method mixed recv(int $streamId, float $timeout = null)
+ * @method bool close($yield = false)
  */
 class BaseClient
 {
@@ -34,7 +34,7 @@ class BaseClient
     {
         if (! empty($options['client'])) {
             if (! ($options['client'] instanceof GrpcClient)) {
-                throw new InvalidArgumentException('parameter use must be instanceof Hyperf\GrpcClient\GrpcClient');
+                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->setClient($options['client']);
         } else {
@@ -82,13 +82,7 @@ class BaseClient
         Message $argument,
         $deserialize
     ) {
-        $request = new Request();
-        $request->method = 'POST';
-        $request->path = $method;
-        $request->data = Parser::serializeMessage($argument);
-
-        $streamId = $this->send($request);
-
+        $streamId = $this->send($this->buildRequest($method, $argument));
         return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
 
@@ -109,7 +103,7 @@ class BaseClient
         $deserialize
     ): ClientStreamingCall {
         $call = new ClientStreamingCall();
-        $call->setClient($this)
+        $call->setClient($this->grpcClient)
             ->setMethod($method)
             ->setDeserialize($deserialize);
 
@@ -131,10 +125,15 @@ class BaseClient
         $deserialize
     ): BidiStreamingCall {
         $call = new BidiStreamingCall();
-        $call->setClient($this)
+        $call->setClient($this->grpcClient)
             ->setMethod($method)
             ->setDeserialize($deserialize);
 
         return $call;
+    }
+
+    protected function buildRequest(string $method, Message $argument): \Swoole\Http2\Request
+    {
+        return new Request($method, $argument);
     }
 }

@@ -9,6 +9,7 @@
 - [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in MySQL 8.
 - [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed exception which instanceof serializable normalize and denormalize failed.
 - [#384](https://github.com/hyperf-cloud/hyperf/pull/384) Fixed the `ExceptionHandler` that user defined does not works, because the framework has handled the exception automatically.
+- [#370](https://github.com/hyperf-cloud/hyperf/pull/370) Fixed set the error type client to `Hyperf\GrpcClient\BaseClient`, and added default content-type `application/grpc+proto` to the Request object, also allows the grpc client that user-defined to override the `buildRequest()` method to create a new Request object.
 
 ## Changed
 
