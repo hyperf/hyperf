@@ -1861,20 +1861,20 @@ class ModelTest extends TestCase
     {
         $this->getContainer();
 
-        /** @var User $user */
+        /** @var Collection $users */
         $users = User::findMany([1, 2]);
         $s1 = serialize($users);
-        $meta = $users->generate();
+        $meta = $users->compress();
         $s2 = serialize($meta);
 
         $this->assertLessThan($s2, $s1);
 
-        $users2 = $meta->degenerate();
+        $users2 = $meta->uncompress();
         $this->assertEquals($users, $users2);
 
         $users = User::findMany([]);
-        $meta = $users->generate();
-        $users2 = $meta->degenerate();
+        $meta = $users->compress();
+        $users2 = $meta->uncompress();
         $this->assertEquals($users, $users2);
     }
 
