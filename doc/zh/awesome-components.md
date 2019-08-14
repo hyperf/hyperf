@@ -75,3 +75,11 @@
 - [hyperf/service-gevernance](https://github.com/hyperf-cloud/service-gevernance) Hyperf 官方提供的服务治理组件
 - [hyperf/tracer](https://github.com/hyperf-cloud/tracer) Hyperf 官方提供的 OpenTracing 分布式调用链追踪组件
 - [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) Hyperf 官方提供的服务熔断组件
+
+## 验证器
+
+- [chunhei2008/hyperf-validation](https://github.com/chunhei2008/hyperf-validation) 基于Laravel Validation移植的验证组件
+
+## 本地化
+
+- [chunhei2008/hyperf-translation](https://github.com/chunhei2008/hyperf-translation) 基于Laravel Translation移植的本地化组件

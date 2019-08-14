@@ -74,3 +74,10 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 - [hyperf/tracer](https://github.com/hyperf-cloud/tracer) OpenTracing component provided by Hyperf officially
 - [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) service circuit breaker component provided by Hyperf officially
 
+## Validation
+
+- [chunhei2008/hyperf-validation](https://github.com/chunhei2008/hyperf-validation) Validation component for Hyperf,It's base on the Laravel Validation
+
+## Localization
+
+- [chunhei2008/hyperf-translation](https://github.com/chunhei2008/hyperf-translation) Translation component for Hyperf,It's base on the Laravel Translation
