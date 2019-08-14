@@ -46,19 +46,19 @@ class GeneratorTest extends TestCase
 
         $id = $generator->generate($meta);
 
-        $this->assertEquals($meta, $generator->degenerate($id)->setTimeInterval(null));
+        $this->assertEquals($meta, $generator->degenerate($id)->setTimestamp(0));
     }
 
     public function testDegenerateMaxId()
     {
-        $generator = new Snowflake(new RandomMetaGenerator());
+        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
         $meta = $generator->degenerate(PHP_INT_MAX);
-        $days = intval($meta->timeInterval / (3600 * 24));
+        $days = intval(($meta->timestamp) / (3600 * 24 * 1000));
         $this->assertSame(3181, $days);
 
-        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND);
+        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
         $meta = $generator->degenerate(PHP_INT_MAX);
-        $years = intval($meta->timeInterval / (3600 * 24 * 365));
+        $years = intval($meta->timestamp / (3600 * 24 * 365));
         $this->assertSame(8716, $years);
     }
 }

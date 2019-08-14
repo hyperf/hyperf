@@ -57,13 +57,12 @@ class Snowflake implements IdGeneratorInterface
         $dataCenterId = $id >> $this->getDataCenterShift();
         $machineId = $id >> $this->getMachineIdShift();
 
-        $interval = $this->level == self::LEVEL_SECOND ? $timestamp : intval($timestamp / 1000);
         return (new Meta(
             $timestamp << Meta::BUSINESS_ID_BITS ^ $businessId,
             $businessId << Meta::DATA_CENTER_ID_BITS ^ $dataCenterId,
             $dataCenterId << Meta::MACHINE_ID_BITS ^ $machineId,
             $machineId << Meta::SEQUENCE_BITS ^ $id
-        ))->setTimeInterval($interval);
+        ))->setTimestamp($timestamp + $this->beginSecond);
     }
 
     protected function getTimestampShift()

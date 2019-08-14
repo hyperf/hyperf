@@ -47,9 +47,9 @@ class Meta
     public $sequence;
 
     /**
-     * @var int seconds
+     * @var int seconds or millisecond
      */
-    public $timeInterval;
+    public $timestamp = 0;
 
     public function __construct(int $businessId, int $dataCenterId, int $machineId, int $sequence)
     {
@@ -73,16 +73,12 @@ class Meta
     }
 
     /**
-     * @return int
+     * @param int $timestamp
+     * @return Meta
      */
-    public function getTimestamp(): int
+    public function setTimestamp(int $timestamp): self
     {
-        return $this->timestamp;
-    }
-
-    public function setTimeInterval(?int $timeInterval): self
-    {
-        $this->timeInterval = $timeInterval;
+        $this->timestamp = $timestamp;
         return $this;
     }
 
