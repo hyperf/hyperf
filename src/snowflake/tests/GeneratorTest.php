@@ -40,13 +40,15 @@ class GeneratorTest extends TestCase
 
     public function testGenerateAndDegenerate()
     {
-        $generator = new Snowflake(new RandomMetaGenerator());
+        $metaGenerator = new RandomMetaGenerator();
+        $generator = new Snowflake($metaGenerator);
 
-        $meta = new Meta(0, 0, 0, 1);
-
+        $meta = $metaGenerator->generate();
         $id = $generator->generate($meta);
-
         $this->assertEquals($meta, $generator->degenerate($id)->setTimestamp(0));
+
+        $id = $generator->generate();
+        $this->assertEquals($meta->sequence + 1, $generator->degenerate($id)->sequence);
     }
 
     public function testDegenerateMaxId()
