@@ -20,17 +20,17 @@
     },
     "require": {
         "php": ">=7.0",
-        "hyperf/guzzle": "~1.0.0",
+        "hyperf/guzzle": "~1.1.0",
         "elasticsearch/elasticsearch": "^6.1"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "~1.0.0",
+        "swoft/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         }
     },
     "scripts": {
