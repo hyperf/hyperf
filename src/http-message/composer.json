@@ -14,7 +14,7 @@
         "zendframework/zend-mime": "^2.7"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "~1.0.0",
+        "swoft/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "^5.7"
     },
     "autoload": {
