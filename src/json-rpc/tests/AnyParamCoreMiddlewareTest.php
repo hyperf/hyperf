@@ -92,6 +92,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
 
+        [$request] = $middleware->dispatch($request);
         try {
             $response = $middleware->process($request, $handler);
         } catch (\Throwable $exception) {
