@@ -13,9 +13,9 @@
 
 ## Changed
 
-- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Optimized aysnc-queue when push a job with `CompressInterface` param, it can be auto generate a small one.
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Optimized aysnc-queue when push a job with `CompressInterface` param, it can be auto comporess a small one.
 - [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Only write the annotation cache file when `$enableCache` is `true`.
-- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Added generate support for Collection and Model.
+- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Added compression ability for `Collection` and `Model`, it can be compressed to a small one.
 
 # v1.0.10 - 2019-08-09
 
