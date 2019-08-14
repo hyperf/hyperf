@@ -97,7 +97,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
              * @var ServerRequestInterface $psr7Request
              * @var Dispatched $dispatched
              */
-            [$psr7Request, $dispatched] = $this->parse($psr7Request);
+            [$psr7Request, $dispatched] = $this->coreMiddleware->dispatch($psr7Request);
             $middlewares = $this->middlewares;
             if ($dispatched->isFind()) {
                 $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
@@ -136,18 +136,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $factory = $this->container->get(DispatcherFactory::class);
         return $factory->getDispatcher($serverName);
-    }
-
-    protected function parse(ServerRequestInterface $request): array
-    {
-        $uri = $request->getUri();
-
-        $routes = $this->routerDispatcher->dispatch($request->getMethod(), $uri->getPath());
-
-        $dispatched = new Dispatched($routes);
-        $request = $request->withAttribute(Dispatched::class, $dispatched);
-
-        return [$request, $dispatched];
     }
 
     protected function getDefaultExceptionHandler(): array

@@ -24,6 +24,7 @@ use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\JsonRpc\CoreMiddleware;
 use Hyperf\JsonRpc\DataFormatter;
+use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\NormalizeDataFormatter;
 use Hyperf\JsonRpc\PathGenerator;
@@ -31,6 +32,7 @@ use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -65,6 +67,8 @@ class AnyParamCoreMiddlewareTest extends TestCase
                 ['value' => 1],
                 ['value' => 2],
             ]);
+
+        [$request] = $middleware->dispatch($request);
         Context::set(ResponseInterface::class, new Response());
 
         $response = $middleware->process($request, $handler);
@@ -119,6 +123,12 @@ class AnyParamCoreMiddlewareTest extends TestCase
                         'path-generator' => PathGenerator::class,
                         'data-formatter' => DataFormatter::class,
                     ],
+                    'jsonrpc-http' => [
+                        'packer' => JsonPacker::class,
+                        'transporter' => JsonRpcHttpTransporter::class,
+                        'path-generator' => PathGenerator::class,
+                        'data-formatter' => DataFormatter::class,
+                    ],
                 ],
             ]));
         $container->shouldReceive('has')->andReturn(true);
@@ -146,6 +156,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->andReturnUsing(function ($class, $args) {
                 return new ResponseBuilder(...array_values($args));
             });
+        $container->shouldReceive('get')->with(RequestDispatcher::class)->andReturn(new RequestDispatcher($container));
 
         ApplicationContext::setContainer($container);
         return $container;

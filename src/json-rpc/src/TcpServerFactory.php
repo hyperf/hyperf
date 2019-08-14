@@ -14,18 +14,14 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\RpcServer\RequestDispatcher;
 use Psr\Container\ContainerInterface;
 
 class TcpServerFactory
 {
-    protected $coreMiddleware = CoreMiddleware::class;
-
     public function __invoke(ContainerInterface $container): TcpServer
     {
-        $dispatcher = $container->get(RequestDispatcher::class);
         $logger = $container->get(StdoutLoggerInterface::class);
         $protocolManager = $container->get(ProtocolManager::class);
-        return new TcpServer('jsonrpc', $this->coreMiddleware, $container, $dispatcher, $logger, $protocolManager);
+        return new TcpServer($container, $protocolManager, $logger);
     }
 }

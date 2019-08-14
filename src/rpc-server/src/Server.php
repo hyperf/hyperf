@@ -38,11 +38,6 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected $middlewares;
 
     /**
-     * @var string
-     */
-    protected $coreHandler;
-
-    /**
      * @var MiddlewareInterface
      */
     protected $coreMiddleware;
@@ -78,15 +73,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected $logger;
 
     public function __construct(
-        string $serverName,
-        string $coreHandler,
         ContainerInterface $container,
         Protocol $protocol,
-        $dispatcher,
+        DispatcherInterface $dispatcher,
         LoggerInterface $logger
     ) {
-        $this->serverName = $serverName;
-        $this->coreHandler = $coreHandler;
         $this->container = $container;
         $this->protocol = $protocol;
         $this->dispatcher = $dispatcher;
@@ -139,11 +130,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
-    {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $this->serverName);
-    }
+    abstract protected function createCoreMiddleware(): MiddlewareInterface;
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;
 

@@ -66,6 +66,18 @@ class CoreMiddleware implements MiddlewareInterface
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
     }
 
+    public function dispatch(ServerRequestInterface $request): array
+    {
+        $uri = $request->getUri();
+
+        $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
+
+        $dispatched = new Dispatched($routes);
+        $request = $request->withAttribute(Dispatched::class, $dispatched);
+
+        return [$request, $dispatched];
+    }
+
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.

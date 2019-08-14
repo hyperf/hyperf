@@ -18,11 +18,13 @@ use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
@@ -39,20 +41,25 @@ class TcpServer extends Server
     protected $packer;
 
     public function __construct(
-        string $serverName,
-        string $coreHandler,
         ContainerInterface $container,
-        $dispatcher,
-        LoggerInterface $logger,
-        ProtocolManager $protocolManager
+        ProtocolManager $protocolManager,
+        LoggerInterface $logger
     ) {
+        $dispatcher = $container->get(RequestDispatcher::class);
         $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
-        parent::__construct($serverName, $coreHandler, $container, $protocol, $dispatcher, $logger);
+
+        parent::__construct($container, $protocol, $dispatcher, $logger);
+
         $this->packer = $protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
             'dataFormatter' => $protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
+    }
+
+    protected function createCoreMiddleware(): MiddlewareInterface
+    {
+        return new CoreMiddleware($this->container, $this->protocol, $this->serverName);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
