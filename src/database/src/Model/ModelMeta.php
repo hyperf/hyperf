@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 
-class ModelMeta implements CodeDegenerateInterface
+class ModelMeta implements UnCompressInterface
 {
     /**
      * @var string
@@ -36,7 +36,7 @@ class ModelMeta implements CodeDegenerateInterface
         $this->key = $key;
     }
 
-    public function degenerate(): CodeGenerateInterface
+    public function uncompress(): CompressInterface
     {
         if (is_null($this->key)) {
             return new $this->class();

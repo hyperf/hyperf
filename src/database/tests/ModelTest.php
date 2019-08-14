@@ -1844,16 +1844,16 @@ class ModelTest extends TestCase
         $user = User::find(1);
         $s1 = serialize($user);
 
-        $meta = $user->generate();
+        $meta = $user->compress();
         $s2 = serialize($meta);
         $this->assertLessThan($s2, $s1);
 
-        $user2 = $meta->degenerate();
+        $user2 = $meta->uncompress();
         $this->assertEquals($user, $user2);
 
         $user = new User();
-        $meta = $user->generate();
-        $user2 = $meta->degenerate();
+        $meta = $user->compress();
+        $user2 = $meta->uncompress();
         $this->assertEquals($user, $user2);
     }
 
