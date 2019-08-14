@@ -151,6 +151,7 @@
             "Hyperf\\Rpc\\": "src/rpc/src/",
             "Hyperf\\Server\\": "src/server/src/",
             "Hyperf\\ServiceGovernance\\": "src/service-governance/src/",
+            "Hyperf\\Snowflake\\": "src/snowflake/src/",
             "Hyperf\\Swagger\\": "src/swagger/src/",
             "Hyperf\\SwooleEnterprise\\": "src/swoole-enterprise/src/",
             "Hyperf\\Task\\": "src/task/src/",
@@ -181,7 +182,9 @@
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
+            "HyperfTest\\GPBMetadata\\": "src/grpc-client/tests/GPBMetadata/",
             "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
+            "HyperfTest\\Grpc\\": "src/grpc-client/tests/Grpc/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
@@ -196,11 +199,10 @@
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
+            "HyperfTest\\Snowflake\\": "src/snowflake/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
-            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
-            "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata",
-            "Grpc\\": "src/grpc-client/tests/Grpc"
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
     },
     "config": {
@@ -246,6 +248,7 @@
                 "Hyperf\\RpcServer\\ConfigProvider",
                 "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\ServiceGovernance\\ConfigProvider",
+                "Hyperf\\Snowflake\\ConfigProvider",
                 "Hyperf\\Swagger\\ConfigProvider",
                 "Hyperf\\SwooleEnterprise\\ConfigProvider",
                 "Hyperf\\Task\\ConfigProvider",
