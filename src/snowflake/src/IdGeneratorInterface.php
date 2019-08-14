@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
-interface IdGeneratorInterface
+interface IdGeneratorInterface extends \Hyperf\Contract\IdGeneratorInterface
 {
     const LEVEL_SECOND = 1;
 
