@@ -24,6 +24,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -118,7 +119,17 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
             }
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            /**
+             * @var array
+             * @var ServerRequestInterface $psr7Request
+             * @var Dispatched $dispatched
+             */
+            [$psr7Request, $dispatched] = $this->coreMiddleware->dispatch($psr7Request);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFind()) {
+                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registedMiddlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
