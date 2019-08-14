@@ -18,11 +18,11 @@ class RandomMetaGenerator implements MetaGeneratorInterface
 
     public function generate(): Meta
     {
-        $businessId = rand(1, 15);
-        $dataCenterId = rand(1, 4);
-        $machineId = rand(1, 128);
-        $sequence = ($this->sequence++) % 4096 + 1;
+        $businessId = rand(0, 15);
+        $dataCenterId = rand(0, 3);
+        $machineId = rand(0, 127);
+        $sequence = ($this->sequence++) % 4096;
 
-        return new Meta(1399943202863, $businessId, $dataCenterId, $machineId, $sequence);
+        return new Meta(15657528167, $businessId, $dataCenterId, $machineId, $sequence);
     }
 }

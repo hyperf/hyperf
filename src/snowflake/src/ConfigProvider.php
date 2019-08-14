@@ -18,7 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                IdGeneratorInterface::class => SnowFlake::class,
+                IdGeneratorInterface::class => Snowflake::class,
                 MetaGeneratorInterface::class => RandomMetaGenerator::class,
             ],
             'commands' => [

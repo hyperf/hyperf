@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
-class SnowFlake implements IdGeneratorInterface
+class Snowflake implements IdGeneratorInterface
 {
     /**
      * @var MetaGeneratorInterface
@@ -23,6 +23,11 @@ class SnowFlake implements IdGeneratorInterface
      * @var int
      */
     protected $level;
+
+    /**
+     * @var int
+     */
+    protected $beginSecond;
 
     public function __construct(MetaGeneratorInterface $metaGenerator, int $level = self::LEVEL_MILLISECOND)
     {
@@ -36,7 +41,7 @@ class SnowFlake implements IdGeneratorInterface
 
         $timestamp = $this->getTimestamp();
 
-        $t = ($timestamp - $meta->beginTimeStamp) << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS + Meta::BUSINESS_ID_BITS);
+        $t = ($timestamp - $this->getBeginTimestamp($meta)) << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS + Meta::BUSINESS_ID_BITS);
         $b = $meta->businessId << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS);
         $dc = $meta->dataCenterId << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS);
         $worker = $meta->machineId << Meta::SEQUENCE_BITS;
@@ -50,6 +55,19 @@ class SnowFlake implements IdGeneratorInterface
             return time();
         }
         return intval(microtime(true) * 1000);
+    }
+
+    protected function getBeginTimestamp(Meta $meta)
+    {
+        if (is_int($this->beginSecond)) {
+            return $this->beginSecond;
+        }
+
+        if ($this->level == self::LEVEL_SECOND) {
+            return $meta->beginSecond;
+        }
+
+        return $this->beginSecond = intval($meta->beginSecond * 1000);
     }
 
     protected function meta(?Meta $meta = null): Meta

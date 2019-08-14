@@ -29,44 +29,44 @@ class Meta
     /**
      * @var int
      */
-    public $beginTimeStamp;
+    public $beginSecond;
 
     /**
-     * @var int [1, 15]
+     * @var int [0, 15]
      */
     public $businessId;
 
     /**
-     * @var int [1, 4]
+     * @var int [0, 3]
      */
     public $dataCenterId;
 
     /**
-     * @var int [1, 128]
+     * @var int [0, 127]
      */
     public $machineId;
 
     /**
-     * @var int [1, 4096]
+     * @var int [0, 4095]
      */
     public $sequence;
 
-    public function __construct(int $beginTimeStamp, int $businessId, int $dataCenterId, int $machineId, int $sequence)
+    public function __construct(int $beginSecond, int $businessId, int $dataCenterId, int $machineId, int $sequence)
     {
-        if ($businessId <= 0 || $businessId > $this->maxBusinessId()) {
+        if ($businessId < 0 || $businessId > $this->maxBusinessId()) {
             throw new SnowflakeException('Business Id can\'t be greater than 15 or less than 0');
         }
-        if ($dataCenterId <= 0 || $dataCenterId > $this->maxDataCenterId()) {
+        if ($dataCenterId < 0 || $dataCenterId > $this->maxDataCenterId()) {
             throw new SnowflakeException('DataCenter Id can\'t be greater than 4 or less than 0');
         }
-        if ($machineId <= 0 || $machineId > $this->maxMachineId()) {
+        if ($machineId < 0 || $machineId > $this->maxMachineId()) {
             throw new SnowflakeException('Machine Id can\'t be greater than 128 or less than 0');
         }
-        if ($sequence <= 0 || $sequence > $this->maxSequence()) {
+        if ($sequence < 0 || $sequence > $this->maxSequence()) {
             throw new SnowflakeException('Sequence can\'t be greater than 4096 or less than 0');
         }
 
-        $this->beginTimeStamp = $beginTimeStamp;
+        $this->beginSecond = $beginSecond;
         $this->businessId = $businessId;
         $this->dataCenterId = $dataCenterId;
         $this->machineId = $machineId;
