@@ -13,7 +13,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/guzzle": "~1.0.0"
+        "hyperf/guzzle": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

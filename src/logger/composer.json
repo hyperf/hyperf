@@ -13,8 +13,8 @@
         "php": ">=7.2",
         "psr/log": "^1.0",
         "psr/container": "^1.0",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
         "monolog/monolog": "^1.24"
     },
     "require-dev": {

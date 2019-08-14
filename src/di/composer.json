@@ -19,8 +19,8 @@
         "symfony/finder": "^4.1",
         "php-di/phpdoc-reader": "^2.0.1",
         "doctrine/instantiator": "^1.0",
-        "hyperf/event": "~1.0.0",
-        "hyperf/framework": "~1.0.0"
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

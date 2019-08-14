@@ -20,7 +20,7 @@
     },
     "require": {
         "php": ">=7.0",
-        "hyperf/guzzle": "~1.0.0",
+        "hyperf/guzzle": "~1.1.0",
         "elasticsearch/elasticsearch": "^6.1"
     },
     "require-dev": {

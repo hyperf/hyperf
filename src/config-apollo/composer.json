@@ -15,14 +15,14 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
-        "hyperf/config": "~1.0.0",
-        "hyperf/event": "~1.0.0",
-        "hyperf/framework": "~1.0.0",
-        "hyperf/process": "~1.0.0",
+        "hyperf/config": "~1.1.0",
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
+        "hyperf/process": "~1.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",

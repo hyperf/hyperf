@@ -15,9 +15,9 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/rpc": "~1.0.0",
-        "hyperf/load-balancer": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/rpc": "~1.1.0",
+        "hyperf/load-balancer": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
