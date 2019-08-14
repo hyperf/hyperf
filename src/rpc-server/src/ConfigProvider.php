@@ -12,17 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcServer;
 
-use Hyperf\Rpc\Contract\PackerInterface;
-use Hyperf\Utils\Packer\JsonPacker;
-
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dependencies' => [
-                Server::class => ServerFactory::class,
-                PackerInterface::class => JsonPacker::class,
             ],
             'commands' => [
             ],

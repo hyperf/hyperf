@@ -31,9 +31,6 @@ class Builder
         return $this->passive;
     }
 
-    /**
-     * @return ExchangeDeclareBuilder
-     */
     public function setPassive(bool $passive): self
     {
         $this->passive = $passive;
@@ -45,9 +42,6 @@ class Builder
         return $this->durable;
     }
 
-    /**
-     * @return ExchangeDeclareBuilder
-     */
     public function setDurable(bool $durable): self
     {
         $this->durable = $durable;
@@ -59,9 +53,6 @@ class Builder
         return $this->autoDelete;
     }
 
-    /**
-     * @return ExchangeDeclareBuilder
-     */
     public function setAutoDelete(bool $autoDelete): self
     {
         $this->autoDelete = $autoDelete;
@@ -73,9 +64,6 @@ class Builder
         return $this->nowait;
     }
 
-    /**
-     * @return ExchangeDeclareBuilder
-     */
     public function setNowait(bool $nowait): self
     {
         $this->nowait = $nowait;
@@ -87,9 +75,6 @@ class Builder
         return $this->arguments;
     }
 
-    /**
-     * @return ExchangeDeclareBuilder
-     */
     public function setArguments(array $arguments): self
     {
         $this->arguments = $arguments;
@@ -101,10 +86,6 @@ class Builder
         return $this->ticket;
     }
 
-    /**
-     * @param mixed $ticket
-     * @return ExchangeDeclareBuilder
-     */
     public function setTicket($ticket): self
     {
         $this->ticket = $ticket;

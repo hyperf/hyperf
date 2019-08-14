@@ -117,17 +117,29 @@ return [
 ];
 ```
 
+##### Worker 进程执行策略
+
+策略类：`Hyperf\Crontab\Strategy\WorkerStrategy`   
+
+默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `Worker` 进程中，由各个 `Worker` 进程以协程来实际运行执行任务。
+
+##### TaskWorker 进程执行策略
+
+策略类：`Hyperf\Crontab\Strategy\TaskWorkerStrategy`   
+
+默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `TaskWorker` 进程中，由各个 `TaskWorker` 进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
+
 ##### 多进程执行策略
 
 策略类：`Hyperf\Crontab\Strategy\ProcessStrategy`   
 
-默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `Worker` 进程中，由各个 `Worker` 进程以协程来实际运行执行任务。
+此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `Worker` 进程和 `TaskWorker` 进程中，由各个进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
 
 ##### 协程执行策略
 
 策略类：`Hyperf\Crontab\Strategy\CoroutineStrategy`   
 
-默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并在进程内为每个执行任务创建一个协程来运行。
+此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并在进程内为每个执行任务创建一个协程来运行。
 
 ## 运行定时任务
 

@@ -12,12 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Rpc\Contract\PathGeneratorInterface;
-
-class PathGenerator implements PathGeneratorInterface
+class PathGenerator extends \Hyperf\Rpc\PathGenerator\PathGenerator
 {
-    public function generate(string $service, string $method): string
-    {
-        return '/' . $service . '/' . $method;
-    }
 }

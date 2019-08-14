@@ -55,9 +55,9 @@ php bin/hyperf.php start
 
 接下来，就可以在 `/tmp/skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
 
-## 存在兼容性的扩展
+## 存在兼容性问题的扩展
 
-由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，所以在与不少扩展都仍存在兼容性的问题。   
+由于 Hyperf 基于 Swoole 协程实现，而 Swoole 4 带来的协程功能是 PHP 前所未有的，所以与不少扩展都仍存在兼容性的问题。   
 以下扩展（包括但不限于）都会造成一定的兼容性问题，不能与之共用或共存：
 
 - xhprof

@@ -18,9 +18,14 @@ class DemoJob extends Job
 {
     public $id;
 
-    public function __construct($id)
+    public $model;
+
+    protected $maxAttempts = 1;
+
+    public function __construct($id, $model = null)
     {
         $this->id = $id;
+        $this->model = $model;
     }
 
     public function handle()

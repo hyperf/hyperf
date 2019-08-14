@@ -53,7 +53,7 @@ grpc
     └── HiUser.php
 ```
 
-- 配置 composer.json, 使用 `grpc/` 下代码的自动加载. 如果 proto 文件中使用不同的 `package` 设置, 或者使用了不同的目录, 进行相应调整即可
+- 配置 composer.json, 使用 `grpc/` 下代码的自动加载. 如果 proto 文件中使用不同的 `package` 设置, 或者使用了不同的目录, 进行相应调整即可，添加之后执行 `composer dump-autoload` 使自动加载生效
 
 ```json
 "autoload": {
@@ -99,6 +99,19 @@ Router::addServer('grpc', function () {
         Router::post('/sayHello', 'App\Controller\HiController@sayHello');
     });
 });
+```
+
+`HiController.php` 文件中的 `sayHello` 方法:
+
+```php
+public function sayHello(HiUser $user) 
+{
+    $message = new HiReply();
+    $message->setMessage("Hello World");
+    $message->setUser($user);
+    return $message;
+}
+
 ```
 
 .proto 文件中的定义和 gRPC server 路由的对应关系: `/{package}.{service}/{rpc}`
@@ -156,4 +169,4 @@ class HiClient extends BaseClient
 
 ## 写在后面
 
-如果你是 gRPC 的重度使用者, 欢迎关注 hyperf 的后续开发者工具, 可以根据 .proto 文件生成全套 gRCP 代码.
+如果你是 gRPC 的重度使用者, 欢迎关注 hyperf 的后续开发者工具, 可以根据 .proto 文件生成全套 gRPC 代码.

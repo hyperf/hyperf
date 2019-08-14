@@ -445,7 +445,7 @@ class Uri implements UriInterface
      * A value of null will set the query string key without a value, e.g. "key"
      * instead of "key=value".
      *
-     * @param uriInterface $uri URI to use as a base
+     * @param UriInterface $uri URI to use as a base
      * @param string $key key to set
      * @param null|string $value Value to set
      * @return UriInterface

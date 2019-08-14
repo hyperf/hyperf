@@ -97,7 +97,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @param array|string|callable $definition
+     * @param array|callable|string $definition
      */
     public function addDefinition(string $name, $definition): self
     {
@@ -149,7 +149,8 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @param array|string|callable $definitions
+     * @param array|callable|string $definitions
+     * @param mixed $definition
      */
     private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
@@ -215,6 +216,9 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths): bool
     {
+        if (empty($paths)) {
+            return true;
+        }
         $pathsHash = md5(implode(',', $paths));
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
@@ -226,6 +230,11 @@ class DefinitionSource implements DefinitionSourceInterface
         }
         $this->printLn('Scanning ...');
         $this->scanner->scan($paths);
+        $this->printLn('Scan completed.');
+        if (! $this->enableCache) {
+            return true;
+        }
+        // enableCache: set cache
         if (! file_exists($this->cachePath)) {
             $exploded = explode('/', $this->cachePath);
             unset($exploded[count($exploded) - 1]);
@@ -236,7 +245,6 @@ class DefinitionSource implements DefinitionSourceInterface
         }
         $data = implode(PHP_EOL, [$pathsHash, AnnotationCollector::serialize(), AspectCollector::serialize()]);
         file_put_contents($this->cachePath, $data);
-        $this->printLn('Scan completed.');
         return true;
     }
 

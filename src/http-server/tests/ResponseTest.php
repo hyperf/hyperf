@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer;
 
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Response;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -128,5 +129,48 @@ class ResponseTest extends TestCase
             }
         };
         $this->assertSame($expected, $reflectionMethod->invoke($response, $xmlable));
+    }
+
+    public function testToJson()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $json = $response->json([
+            'kstring' => 'string',
+            'kint1' => 1,
+            'kint0' => 0,
+            'kfloat' => 0.12345,
+            'kfalse' => false,
+            'ktrue' => true,
+            'karray' => [
+                'kstring' => 'string',
+                'kint1' => 1,
+                'kint0' => 0,
+                'kfloat' => 0.12345,
+                'kfalse' => false,
+                'ktrue' => true,
+            ],
+        ]);
+
+        $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', $json->getBody()->getContents());
+    }
+
+    public function testPsrResponse()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $response = $response->withBody(new SwooleStream('xxx'));
+
+        $this->assertInstanceOf(PsrResponseInterface::class, $response);
     }
 }

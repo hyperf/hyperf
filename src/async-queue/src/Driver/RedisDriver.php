@@ -155,7 +155,7 @@ class RedisDriver extends Driver
             $channel = $this->channel->get($queue);
         }
 
-        return (bool) $this->redis->delete($channel);
+        return (bool) $this->redis->del($channel);
     }
 
     public function info(): array

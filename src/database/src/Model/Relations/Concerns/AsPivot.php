@@ -180,10 +180,8 @@ trait AsPivot
 
     /**
      * Get the name of the "created at" column.
-     *
-     * @return string
      */
-    public function getCreatedAtColumn()
+    public function getCreatedAtColumn(): ?string
     {
         return $this->pivotParent
             ? $this->pivotParent->getCreatedAtColumn()
@@ -192,32 +190,12 @@ trait AsPivot
 
     /**
      * Get the name of the "updated at" column.
-     *
-     * @return string
      */
-    public function getUpdatedAtColumn()
+    public function getUpdatedAtColumn(): ?string
     {
         return $this->pivotParent
             ? $this->pivotParent->getUpdatedAtColumn()
             : parent::getUpdatedAtColumn();
-    }
-
-    /**
-     * Get the queueable identity for the entity.
-     */
-    public function getQueueableId()
-    {
-        if (isset($this->attributes[$this->getKeyName()])) {
-            return $this->getKey();
-        }
-
-        return sprintf(
-            '%s:%s:%s:%s',
-            $this->foreignKey,
-            $this->getAttribute($this->foreignKey),
-            $this->relatedKey,
-            $this->getAttribute($this->relatedKey)
-        );
     }
 
     /**

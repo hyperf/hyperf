@@ -11,15 +11,15 @@ matrix:
     - php: 7.2
       env: SW_VERSION="4.3.6"
     - php: 7.2
-      env: SW_VERSION="4.4.2"
+      env: SW_VERSION="4.4.3"
     - php: 7.3
       env: SW_VERSION="4.3.6"
     - php: 7.3
-      env: SW_VERSION="4.4.2"
+      env: SW_VERSION="4.4.3"
     - php: master
       env: SW_VERSION="4.3.6"
     - php: master
-      env: SW_VERSION="4.4.2"
+      env: SW_VERSION="4.4.3"
 
   allow_failures:
     - php: master

@@ -16,7 +16,6 @@ use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
-use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Query\Builder;
@@ -103,7 +102,7 @@ class Connection implements ConnectionInterface
     /**
      * The event dispatcher instance.
      *
-     * @var \Hyperf\Contracts\Events\Dispatcher
+     * @var EventDispatcherInterface
      */
     protected $events;
 
@@ -511,6 +510,7 @@ class Connection implements ConnectionInterface
      */
     public function listen(Closure $callback)
     {
+        // FIXME: Dynamic register query event.
         if (isset($this->events)) {
             $this->events->listen(Events\QueryExecuted::class, $callback);
         }

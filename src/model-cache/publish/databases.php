@@ -29,7 +29,7 @@ return [
             'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
         ],
         'cache' => [
-            'handler' => \Hyperf\DbConnection\Cache\Handler\RedisHandler::class,
+            'handler' => \Hyperf\ModelCache\Handler\RedisHandler::class,
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'pool' => 'default',

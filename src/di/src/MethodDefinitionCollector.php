@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-class MethodDefinitionCollector extends MetadataCollector
+class MethodDefinitionCollector extends MetadataCollector implements MethodDefinitionCollectorInterface
 {
     /**
      * @var array
@@ -64,5 +64,48 @@ class MethodDefinitionCollector extends MetadataCollector
         }
         static::set($key, $definitions);
         return $definitions;
+    }
+
+    public function getParameters(string $class, string $method): array
+    {
+        $key = $class . '::' . $method . '@params';
+        if (static::has($key)) {
+            return static::get($key);
+        }
+        $parameters = ReflectionManager::reflectClass($class)->getMethod($method)->getParameters();
+        $definitions = [];
+        foreach ($parameters as $parameter) {
+            $definitions[] = $this->createType(
+                $parameter->getName(),
+                $parameter->getType(),
+                $parameter->allowsNull(),
+                $parameter->isDefaultValueAvailable(),
+                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
+            );
+        }
+
+        static::set($key, $definitions);
+        return $definitions;
+    }
+
+    public function getReturnType(string $class, string $method): ReflectionType
+    {
+        $key = $class . '::' . $method . '@return';
+        if (static::has($key)) {
+            return static::get($key);
+        }
+        $returnType = ReflectionManager::reflectClass($class)->getMethod($method)->getReturnType();
+        $type = $this->createType('', $returnType, $returnType ? $returnType->allowsNull() : true);
+        static::set($key, $type);
+        return $type;
+    }
+
+    private function createType($name, ?\ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
+    {
+        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
+            'defaultValueAvailable' => $hasDefault,
+            'defaultValue' => $defaultValue,
+            'name' => $name,
+        ]);
     }
 }

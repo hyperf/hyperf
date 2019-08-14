@@ -15,7 +15,7 @@ namespace Hyperf\Di\Aop;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class ProxyClassNameVistor extends NodeVisitorAbstract
+class ProxyClassNameVisitor extends NodeVisitorAbstract
 {
     /**
      * @var string

@@ -25,10 +25,8 @@ trait HasTimestamps
 
     /**
      * Update the model's update timestamp.
-     *
-     * @return bool
      */
-    public function touch()
+    public function touch(): bool
     {
         if (! $this->usesTimestamps()) {
             return false;
@@ -68,7 +66,7 @@ trait HasTimestamps
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \Hyperf\Utils\Carbon
+     * @return Carbon
      */
     public function freshTimestamp()
     {
@@ -77,40 +75,32 @@ trait HasTimestamps
 
     /**
      * Get a fresh timestamp for the model.
-     *
-     * @return string
      */
-    public function freshTimestampString()
+    public function freshTimestampString(): ?string
     {
         return $this->fromDateTime($this->freshTimestamp());
     }
 
     /**
      * Determine if the model uses timestamps.
-     *
-     * @return bool
      */
-    public function usesTimestamps()
+    public function usesTimestamps(): bool
     {
         return $this->timestamps;
     }
 
     /**
      * Get the name of the "created at" column.
-     *
-     * @return string
      */
-    public function getCreatedAtColumn()
+    public function getCreatedAtColumn(): ?string
     {
         return static::CREATED_AT;
     }
 
     /**
      * Get the name of the "updated at" column.
-     *
-     * @return string
      */
-    public function getUpdatedAtColumn()
+    public function getUpdatedAtColumn(): ?string
     {
         return static::UPDATED_AT;
     }

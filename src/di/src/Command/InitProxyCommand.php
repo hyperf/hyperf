@@ -49,32 +49,7 @@ class InitProxyCommand extends Command
 
     public function handle()
     {
-        $scanDirs = $this->getScanDir();
-
-        $runtime = BASE_PATH . '/runtime/container/proxy/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
-
-        $classCollection = $this->scanner->scan($scanDirs);
-
-        foreach ($classCollection as $item) {
-            try {
-                $this->container->get($item);
-            } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
-            }
-        }
-
-        if ($this->container instanceof Container) {
-            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
-                try {
-                    $this->container->get($key);
-                } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
-                }
-            }
-        }
+        $this->createAopProxies();
 
         $this->output->writeln('<info>Proxy class create success.</info>');
     }
@@ -110,5 +85,35 @@ class InitProxyCommand extends Command
         }
 
         return $scanDirs;
+    }
+
+    private function createAopProxies()
+    {
+        $scanDirs = $this->getScanDir();
+
+        $runtime = BASE_PATH . '/runtime/container/proxy/';
+        if (is_dir($runtime)) {
+            $this->clearRuntime($runtime);
+        }
+
+        $classCollection = $this->scanner->scan($scanDirs);
+
+        foreach ($classCollection as $item) {
+            try {
+                $this->container->get($item);
+            } catch (\Throwable $ex) {
+                // Entry cannot be resoleved.
+            }
+        }
+
+        if ($this->container instanceof Container) {
+            foreach ($this->container->getDefinitionSource()->getDefinitions() as $key => $definition) {
+                try {
+                    $this->container->get($key);
+                } catch (\Throwable $ex) {
+                    // Entry cannot be resoleved.
+                }
+            }
+        }
     }
 }

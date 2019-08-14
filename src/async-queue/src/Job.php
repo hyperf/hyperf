@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-abstract class Job implements JobInterface
+use Hyperf\Contract\CodeDegenerateInterface;
+use Hyperf\Contract\CodeGenerateInterface;
+
+abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerateInterface
 {
     /**
      * @var int
@@ -22,5 +25,33 @@ abstract class Job implements JobInterface
     public function getMaxAttempts(): int
     {
         return $this->maxAttempts;
+    }
+
+    /**
+     * @return JobInterface
+     */
+    public function degenerate(): CodeGenerateInterface
+    {
+        foreach ($this as $key => $value) {
+            if ($value instanceof CodeDegenerateInterface) {
+                $this->{$key} = $value->degenerate();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return JobInterface
+     */
+    public function generate(): CodeDegenerateInterface
+    {
+        foreach ($this as $key => $value) {
+            if ($value instanceof CodeGenerateInterface) {
+                $this->{$key} = $value->generate();
+            }
+        }
+
+        return $this;
     }
 }
