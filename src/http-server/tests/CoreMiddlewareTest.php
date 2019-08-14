@@ -15,8 +15,12 @@ namespace HyperfTest\HttpServer;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\HttpMessage\Server\Request;
+use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\CoreMiddleware;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
@@ -97,6 +101,44 @@ class CoreMiddlewareTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('This is a string', $response->getBody()->getContents());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
+    }
+
+    public function testDispatch()
+    {
+        $container = $this->getContainer();
+
+        $router = $container->get(DispatcherFactory::class)->getRouter('http');
+        $router->addRoute('GET', '/user', 'UserController::index');
+        $router->addRoute('GET', '/user/{id:\d+}', 'UserController::info');
+
+        $middleware = new CoreMiddleware($container, 'http');
+
+        $request = new Request('GET', new Uri('/user'));
+        [$request, $dispatched] = $middleware->dispatch($request);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertInstanceOf(Handler::class, $dispatched->handler);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertSame('/user', $dispatched->handler->route);
+        $this->assertSame('UserController::index', $dispatched->handler->callback);
+        $this->assertTrue($dispatched->isFind());
+
+        $request = new Request('GET', new Uri('/user/123'));
+        [$request, $dispatched] = $middleware->dispatch($request);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertInstanceOf(Handler::class, $dispatched->handler);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertSame('/user/{id:\d+}', $dispatched->handler->route);
+        $this->assertSame('UserController::info', $dispatched->handler->callback);
+        $this->assertTrue($dispatched->isFind());
+
+        $request = new Request('GET', new Uri('/users'));
+        [$request, $dispatched] = $middleware->dispatch($request);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertFalse($dispatched->isFind());
     }
 
     protected function getContainer()
