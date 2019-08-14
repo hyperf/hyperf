@@ -21,7 +21,9 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -90,9 +92,17 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         try {
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
-            $psr7Request = $this->parse($psr7Request);
-
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            /**
+             * @var array
+             * @var ServerRequestInterface $psr7Request
+             * @var Dispatched $dispatched
+             */
+            [$psr7Request, $dispatched] = $this->parse($psr7Request);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFind()) {
+                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registedMiddlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
@@ -128,13 +138,16 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $factory->getDispatcher($serverName);
     }
 
-    protected function parse(ServerRequestInterface $request): ServerRequestInterface
+    protected function parse(ServerRequestInterface $request): array
     {
         $uri = $request->getUri();
 
         $routes = $this->routerDispatcher->dispatch($request->getMethod(), $uri->getPath());
 
-        return $request->withAttribute('routes', $routes);
+        $dispatched = new Dispatched($routes);
+        $request = $request->withAttribute(Dispatched::class, $dispatched);
+
+        return [$request, $dispatched];
     }
 
     protected function getDefaultExceptionHandler(): array

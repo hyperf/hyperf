@@ -17,7 +17,10 @@ use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\Handler;
+use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -69,25 +72,22 @@ class CoreMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var ResponseInterface $response */
-        $uri = $request->getUri();
-        /**
-         * @var array
-         *            Returns array with one of the following formats:
-         *            [self::NOT_FOUND]
-         *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
-         *            [self::FOUND, $handler, ['varName' => 'value', ...]]
-         */
-        $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
-        switch ($routes[0]) {
+        /** @var Dispatched $dispatched */
+        $dispatched = $request->getAttribute(Dispatched::class);
+
+        if (! $dispatched instanceof Dispatched) {
+            throw new ServerException('Dispatch failed.');
+        }
+
+        switch ($dispatched->status) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->handleNotFound($request);
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->handleMethodNotAllowed($routes, $request);
+                $response = $this->handleMethodNotAllowed($dispatched->params, $request);
                 break;
             case Dispatcher::FOUND:
-                $response = $this->handleFound($routes, $request);
+                $response = $this->handleFound($dispatched, $request);
                 break;
         }
         if (! $response instanceof ResponseInterface) {
@@ -117,18 +117,18 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(array $routes, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
     {
-        if ($routes[1] instanceof Closure) {
-            $response = call($routes[1]);
+        if ($dispatched->handler->callback instanceof Closure) {
+            $response = call($dispatched->handler->callback);
         } else {
-            [$controller, $action] = $this->prepareHandler($routes[1]);
+            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.
                 return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
             }
-            $parameters = $this->parseParameters($controller, $action, $routes[2]);
+            $parameters = $this->parseParameters($controller, $action, $dispatched->params);
             $response = $controllerInstance->{$action}(...$parameters);
         }
         return $response;
@@ -149,9 +149,9 @@ class CoreMiddleware implements MiddlewareInterface
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $routes[1]));
+        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $methods));
     }
 
     /**
