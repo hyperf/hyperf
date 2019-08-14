@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\AsyncQueue\Stub;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Utils\Context;
 
-class DemoModelMeta implements CodeDegenerateInterface
+class DemoModelMeta implements UnCompressInterface
 {
     public $id;
 
@@ -25,7 +25,7 @@ class DemoModelMeta implements CodeDegenerateInterface
         $this->id = $id;
     }
 
-    public function degenerate(): CodeGenerateInterface
+    public function uncompress(): CompressInterface
     {
         $data = Context::get('test.async-queue.demo.model.' . $this->id);
 

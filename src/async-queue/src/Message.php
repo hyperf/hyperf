@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 use Serializable;
 
 class Message implements MessageInterface, Serializable
@@ -48,8 +48,8 @@ class Message implements MessageInterface, Serializable
 
     public function serialize()
     {
-        if ($this->job instanceof CodeGenerateInterface) {
-            $this->job = $this->job->generate();
+        if ($this->job instanceof CompressInterface) {
+            $this->job = $this->job->compress();
         }
 
         return serialize([$this->job, $this->attempts]);
@@ -58,8 +58,8 @@ class Message implements MessageInterface, Serializable
     public function unserialize($serialized)
     {
         [$job, $attempts] = unserialize($serialized);
-        if ($job instanceof CodeDegenerateInterface) {
-            $job = $job->degenerate();
+        if ($job instanceof UnCompressInterface) {
+            $job = $job->uncompress();
         }
 
         $this->job = $job;

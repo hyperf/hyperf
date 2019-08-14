@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-interface CodeDegenerateInterface
+interface CompressInterface
 {
-    public function degenerate(): CodeGenerateInterface;
+    public function compress(): UnCompressInterface;
 }
