@@ -59,6 +59,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $dispatcher;
 
     /**
+     * @var Dispatcher
+     */
+    protected $routerDispatcher;
+
+    /**
      * @var string
      */
     protected $serverName;
@@ -73,6 +78,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         $this->coreMiddleware = $this->createCoreMiddleware();
+        $this->routerDispatcher = $this->createDispatcher($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -83,6 +89,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         try {
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
+
+            $psr7Request = $this->parse($psr7Request);
 
             $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
 
@@ -120,8 +128,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $factory->getDispatcher($serverName);
     }
 
-    protected function parse(): array
+    protected function parse(ServerRequestInterface $request): ServerRequestInterface
     {
+        $uri = $request->getUri();
+
+        $routes = $this->routerDispatcher->dispatch($request->getMethod(), $uri->getPath());
+
+        return $request->withAttribute('routes', $routes);
     }
 
     protected function getDefaultExceptionHandler(): array
