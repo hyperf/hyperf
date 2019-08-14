@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Snowflake;
 
+use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\RandomMetaGenerator;
 use Hyperf\Snowflake\Snowflake;
 use PHPUnit\Framework\TestCase;
@@ -26,5 +27,14 @@ class GeneratorTest extends TestCase
     {
         $generator = new Snowflake(new RandomMetaGenerator());
         $this->assertTrue(is_int($generator->generate()));
+    }
+
+    public function testDegenerate()
+    {
+        $generator = new Snowflake(new RandomMetaGenerator());
+
+        $id = $generator->generate();
+
+        $this->assertInstanceOf(Meta::class, $generator->degenerate($id));
     }
 }

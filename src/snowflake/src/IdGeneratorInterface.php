@@ -19,4 +19,6 @@ interface IdGeneratorInterface
     const LEVEL_MILLISECOND = 2;
 
     public function generate(?Meta $meta = null): int;
+
+    public function degenerate(int $id): Meta;
 }

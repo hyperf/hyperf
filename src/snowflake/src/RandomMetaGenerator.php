@@ -23,6 +23,6 @@ class RandomMetaGenerator implements MetaGeneratorInterface
         $machineId = rand(0, 127);
         $sequence = ($this->sequence++) % 4096;
 
-        return new Meta(15657528167, $businessId, $dataCenterId, $machineId, $sequence);
+        return new Meta($businessId, $dataCenterId, $machineId, $sequence);
     }
 }

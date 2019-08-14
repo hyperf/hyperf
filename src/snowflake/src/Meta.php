@@ -27,11 +27,6 @@ class Meta
     const MACHINE_ID_BITS = 7;
 
     /**
-     * @var int
-     */
-    public $beginSecond;
-
-    /**
      * @var int [0, 15]
      */
     public $businessId;
@@ -51,7 +46,7 @@ class Meta
      */
     public $sequence;
 
-    public function __construct(int $beginSecond, int $businessId, int $dataCenterId, int $machineId, int $sequence)
+    public function __construct(int $businessId, int $dataCenterId, int $machineId, int $sequence)
     {
         if ($businessId < 0 || $businessId > $this->maxBusinessId()) {
             throw new SnowflakeException('Business Id can\'t be greater than 15 or less than 0');
@@ -66,29 +61,28 @@ class Meta
             throw new SnowflakeException('Sequence can\'t be greater than 4096 or less than 0');
         }
 
-        $this->beginSecond = $beginSecond;
         $this->businessId = $businessId;
         $this->dataCenterId = $dataCenterId;
         $this->machineId = $machineId;
         $this->sequence = $sequence;
     }
 
-    private function maxMachineId()
+    protected function maxMachineId()
     {
         return -1 ^ (-1 << self::MACHINE_ID_BITS);
     }
 
-    private function maxDataCenterId()
+    protected function maxDataCenterId()
     {
         return -1 ^ (-1 << self::DATA_CENTER_ID_BITS);
     }
 
-    private function maxBusinessId()
+    protected function maxBusinessId()
     {
         return -1 ^ (-1 << self::BUSINESS_ID_BITS);
     }
 
-    private function maxSequence()
+    protected function maxSequence()
     {
         return -1 ^ (-1 << self::SEQUENCE_BITS);
     }

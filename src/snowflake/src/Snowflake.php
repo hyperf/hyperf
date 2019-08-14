@@ -29,10 +29,11 @@ class Snowflake implements IdGeneratorInterface
      */
     protected $beginSecond;
 
-    public function __construct(MetaGeneratorInterface $metaGenerator, int $level = self::LEVEL_MILLISECOND)
+    public function __construct(MetaGeneratorInterface $metaGenerator, int $level = self::LEVEL_MILLISECOND, int $beginSecond = 1565712000)
     {
         $this->metaGenerator = $metaGenerator;
         $this->level = $level;
+        $this->beginSecond = $level == self::LEVEL_SECOND ? $beginSecond : $beginSecond * 1000;
     }
 
     public function generate(?Meta $meta = null): int
@@ -41,12 +42,52 @@ class Snowflake implements IdGeneratorInterface
 
         $timestamp = $this->getTimestamp();
 
-        $t = ($timestamp - $this->getBeginTimestamp($meta)) << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS + Meta::BUSINESS_ID_BITS);
-        $b = $meta->businessId << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS);
-        $dc = $meta->dataCenterId << (Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS);
-        $worker = $meta->machineId << Meta::SEQUENCE_BITS;
+        $timestamp = ($timestamp - $this->beginSecond) << $this->getTimestampShift();
+        $businessId = $meta->businessId << $this->getBusinessIdShift();
+        $dataCenterId = $meta->dataCenterId << $this->getDataCenterShift();
+        $machineId = $meta->machineId << $this->getMachineIdShift();
 
-        return $t | $b | $dc | $worker | $meta->sequence;
+        return $timestamp | $businessId | $dataCenterId | $machineId | $meta->sequence;
+    }
+
+    public function degenerate(int $id): Meta
+    {
+        $timestamp = $id >> $this->getTimestampShift();
+        $businessId = $id >> $this->getBusinessIdShift();
+        $dataCenterId = $id >> $this->getDataCenterShift();
+        $machineId = $id >> $this->getMachineIdShift();
+
+        return new Meta(
+            $timestamp << Meta::BUSINESS_ID_BITS ^ $businessId,
+            $businessId << Meta::DATA_CENTER_ID_BITS ^ $dataCenterId,
+            $dataCenterId << Meta::MACHINE_ID_BITS ^ $machineId,
+            $machineId << Meta::SEQUENCE_BITS ^ $id
+        );
+    }
+
+    protected function getTimestampShift()
+    {
+        return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS + Meta::BUSINESS_ID_BITS;
+    }
+
+    protected function getBusinessIdShift()
+    {
+        return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS;
+    }
+
+    protected function getDataCenterShift()
+    {
+        return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS;
+    }
+
+    protected function getMachineIdShift()
+    {
+        return Meta::SEQUENCE_BITS;
+    }
+
+    protected function getMaxNumber(int $shift)
+    {
+        return -1 ^ (-1 << $shift);
     }
 
     protected function getTimestamp(): int
@@ -55,19 +96,6 @@ class Snowflake implements IdGeneratorInterface
             return time();
         }
         return intval(microtime(true) * 1000);
-    }
-
-    protected function getBeginTimestamp(Meta $meta)
-    {
-        if (is_int($this->beginSecond)) {
-            return $this->beginSecond;
-        }
-
-        if ($this->level == self::LEVEL_SECOND) {
-            return $meta->beginSecond;
-        }
-
-        return $this->beginSecond = intval($meta->beginSecond * 1000);
     }
 
     protected function meta(?Meta $meta = null): Meta
