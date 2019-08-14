@@ -18,6 +18,7 @@ use Hyperf\HttpServer\Server;
 use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -44,14 +45,10 @@ class HttpServer extends Server
      */
     protected $responseBuilder;
 
-    public function __construct(
-        string $serverName,
-        string $coreHandler,
-        ContainerInterface $container,
-        $dispatcher,
-        ProtocolManager $protocolManager
-    ) {
-        parent::__construct($serverName, $coreHandler, $container, $dispatcher);
+    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager)
+    {
+        $this->container = $container;
+        $this->dispatcher = $container->get(RequestDispatcher::class);
         $this->protocol = new Protocol($container, $protocolManager, 'jsonrpc-http');
         $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
@@ -69,8 +66,7 @@ class HttpServer extends Server
 
     protected function createCoreMiddleware(): MiddlewareInterface
     {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $this->serverName);
+        return new HttpCoreMiddleware($this->container, $this->protocol, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

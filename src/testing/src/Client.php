@@ -13,13 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\Arr;
@@ -49,7 +47,7 @@ class Client extends Server
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct('http', CoreMiddleware::class, $container, $container->get(HttpDispatcher::class));
+        parent::__construct($container);
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);

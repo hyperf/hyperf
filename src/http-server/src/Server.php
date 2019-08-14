@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer;
 
+use FastRoute\Dispatcher;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
@@ -20,6 +21,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -35,11 +37,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      * @var array
      */
     protected $middlewares;
-
-    /**
-     * @var string
-     */
-    protected $coreHandler;
 
     /**
      * @var MiddlewareInterface
@@ -66,16 +63,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected $serverName;
 
-    public function __construct(
-        string $serverName,
-        string $coreHandler,
-        ContainerInterface $container,
-        $dispatcher
-    ) {
-        $this->serverName = $serverName;
-        $this->coreHandler = $coreHandler;
+    public function __construct(ContainerInterface $container)
+    {
         $this->container = $container;
-        $this->dispatcher = $dispatcher;
+        $this->dispatcher = $container->get(HttpDispatcher::class);
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -123,6 +114,16 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $this;
     }
 
+    protected function createDispatcher(string $serverName): Dispatcher
+    {
+        $factory = $this->container->get(DispatcherFactory::class);
+        return $factory->getDispatcher($serverName);
+    }
+
+    protected function parse(): array
+    {
+    }
+
     protected function getDefaultExceptionHandler(): array
     {
         return [
@@ -132,8 +133,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     protected function createCoreMiddleware(): MiddlewareInterface
     {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->serverName);
+        return new CoreMiddleware($this->container, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
