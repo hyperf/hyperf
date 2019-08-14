@@ -18,6 +18,8 @@
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
+        "psr/container": "Required to use SnowflakeFactory.",
+        "hyperf/config": "Required to read snowflake config."
     },
     "autoload": {
         "psr-4": {

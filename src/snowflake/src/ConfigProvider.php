@@ -18,7 +18,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                IdGeneratorInterface::class => Snowflake::class,
+                IdGeneratorInterface::class => SnowflakeFactory::class,
                 MetaGeneratorInterface::class => RandomMetaGenerator::class,
             ],
             'commands' => [
@@ -28,6 +28,14 @@ class ConfigProvider
             'scan' => [
                 'paths' => [
                     __DIR__,
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of snowflake.',
+                    'source' => __DIR__ . '/../publish/snowflake.php',
+                    'destination' => BASE_PATH . '/config/autoload/snowflake.php',
                 ],
             ],
         ];
