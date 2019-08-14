@@ -165,6 +165,8 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata/",
+            "Grpc\\": "src/grpc-client/tests/Grpc/",
             "HyperfTest\\Amqp\\": "src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
@@ -182,9 +184,7 @@
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
-            "HyperfTest\\GPBMetadata\\": "src/grpc-client/tests/GPBMetadata/",
             "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
-            "HyperfTest\\Grpc\\": "src/grpc-client/tests/Grpc/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
