@@ -46,6 +46,11 @@ class Meta
      */
     public $sequence;
 
+    /**
+     * @var int seconds
+     */
+    public $timeInterval;
+
     public function __construct(int $businessId, int $dataCenterId, int $machineId, int $sequence)
     {
         if ($businessId < 0 || $businessId > $this->maxBusinessId()) {
@@ -65,6 +70,20 @@ class Meta
         $this->dataCenterId = $dataCenterId;
         $this->machineId = $machineId;
         $this->sequence = $sequence;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimestamp(): int
+    {
+        return $this->timestamp;
+    }
+
+    public function setTimeInterval(?int $timeInterval): self
+    {
+        $this->timeInterval = $timeInterval;
+        return $this;
     }
 
     protected function maxMachineId()

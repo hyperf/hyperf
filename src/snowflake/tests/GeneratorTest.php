@@ -23,18 +23,42 @@ use PHPUnit\Framework\TestCase;
  */
 class GeneratorTest extends TestCase
 {
-    public function testGenerate()
+    public function testGenerateReturnInt()
     {
         $generator = new Snowflake(new RandomMetaGenerator());
         $this->assertTrue(is_int($generator->generate()));
     }
 
-    public function testDegenerate()
+    public function testDegenerateInstanceofMeta()
     {
         $generator = new Snowflake(new RandomMetaGenerator());
 
         $id = $generator->generate();
 
         $this->assertInstanceOf(Meta::class, $generator->degenerate($id));
+    }
+
+    public function testGenerateAndDegenerate()
+    {
+        $generator = new Snowflake(new RandomMetaGenerator());
+
+        $meta = new Meta(0, 0, 0, 1);
+
+        $id = $generator->generate($meta);
+
+        $this->assertEquals($meta, $generator->degenerate($id)->setTimeInterval(null));
+    }
+
+    public function testDegenerateMaxId()
+    {
+        $generator = new Snowflake(new RandomMetaGenerator());
+        $meta = $generator->degenerate(PHP_INT_MAX);
+        $days = intval($meta->timeInterval / (3600 * 24));
+        $this->assertSame(3181, $days);
+
+        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND);
+        $meta = $generator->degenerate(PHP_INT_MAX);
+        $years = intval($meta->timeInterval / (3600 * 24 * 365));
+        $this->assertSame(8716, $years);
     }
 }

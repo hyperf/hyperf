@@ -29,7 +29,7 @@ class Snowflake implements IdGeneratorInterface
      */
     protected $beginSecond;
 
-    public function __construct(MetaGeneratorInterface $metaGenerator, int $level = self::LEVEL_MILLISECOND, int $beginSecond = 1565712000)
+    public function __construct(MetaGeneratorInterface $metaGenerator, int $level = self::LEVEL_MILLISECOND, int $beginSecond = self::DEFAULT_SECOND)
     {
         $this->metaGenerator = $metaGenerator;
         $this->level = $level;
@@ -57,12 +57,13 @@ class Snowflake implements IdGeneratorInterface
         $dataCenterId = $id >> $this->getDataCenterShift();
         $machineId = $id >> $this->getMachineIdShift();
 
-        return new Meta(
+        $interval = $this->level == self::LEVEL_SECOND ? $timestamp : intval($timestamp / 1000);
+        return (new Meta(
             $timestamp << Meta::BUSINESS_ID_BITS ^ $businessId,
             $businessId << Meta::DATA_CENTER_ID_BITS ^ $dataCenterId,
             $dataCenterId << Meta::MACHINE_ID_BITS ^ $machineId,
             $machineId << Meta::SEQUENCE_BITS ^ $id
-        );
+        ))->setTimeInterval($interval);
     }
 
     protected function getTimestampShift()
@@ -83,11 +84,6 @@ class Snowflake implements IdGeneratorInterface
     protected function getMachineIdShift()
     {
         return Meta::SEQUENCE_BITS;
-    }
-
-    protected function getMaxNumber(int $shift)
-    {
-        return -1 ^ (-1 << $shift);
     }
 
     protected function getTimestamp(): int
