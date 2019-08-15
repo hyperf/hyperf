@@ -109,7 +109,7 @@ namespace App\Controller;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
-use Swoft\Http\Message\Cookie\Cookie;
+use Hyperf\HttpMessage\Cookie\Cookie;
 
 class IndexController
 {

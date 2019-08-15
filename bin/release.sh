@@ -9,7 +9,7 @@ then
 fi
 
 NOW=$(date +%s)
-CURRENT_BRANCH="1.1"
+CURRENT_BRANCH="master"
 VERSION=$1
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 

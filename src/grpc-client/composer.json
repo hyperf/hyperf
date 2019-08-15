@@ -31,8 +31,8 @@
     "autoload-dev": {
         "psr-4": {
             "HyperfTest\\GrpcClient\\": "tests/",
-            "HyperfTest\\GPBMetadata\\": "tests/GPBMetadata",
-            "HyperfTest\\Grpc\\": "tests/Grpc"
+            "GPBMetadata\\": "tests/GPBMetadata",
+            "Grpc\\": "tests/Grpc"
         }
     },
     "config": {
