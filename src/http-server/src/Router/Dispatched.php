@@ -54,8 +54,8 @@ class Dispatched
         }
     }
 
-    public function isFind()
+    public function isFound(): bool
     {
-        return $this->status == Dispatcher::FOUND;
+        return $this->status === Dispatcher::FOUND;
     }
 }

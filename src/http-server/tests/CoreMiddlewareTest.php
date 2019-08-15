@@ -121,7 +121,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
         $this->assertSame('/user', $dispatched->handler->route);
         $this->assertSame('UserController::index', $dispatched->handler->callback);
-        $this->assertTrue($dispatched->isFind());
+        $this->assertTrue($dispatched->isFound());
 
         $request = new Request('GET', new Uri('/user/123'));
         [$request, $dispatched] = $middleware->dispatch($request);
@@ -131,14 +131,14 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
         $this->assertSame('/user/{id:\d+}', $dispatched->handler->route);
         $this->assertSame('UserController::info', $dispatched->handler->callback);
-        $this->assertTrue($dispatched->isFind());
+        $this->assertTrue($dispatched->isFound());
 
         $request = new Request('GET', new Uri('/users'));
         [$request, $dispatched] = $middleware->dispatch($request);
         $this->assertInstanceOf(Request::class, $request);
         $this->assertInstanceOf(Dispatched::class, $dispatched);
         $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
-        $this->assertFalse($dispatched->isFind());
+        $this->assertFalse($dispatched->isFound());
     }
 
     protected function getContainer()
