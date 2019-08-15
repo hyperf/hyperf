@@ -58,6 +58,6 @@ class AnnotationJob extends Job
             }
             $params[$key] = $value;
         }
-        $class->{$this->method}(...$this->params);
+        $class->{$this->method}(...$params);
     }
 }
