@@ -34,8 +34,8 @@ composer create-project hyperf/hyperf-skeleton
 假设您的本机环境并不能达到 Hyperf 的环境要求，或对于环境配置不是那么熟悉，那么您可以通过以下方法来运行及开发 Hyperf 项目：
 
 ```
-# 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /tmp/skeleton 目录
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+# 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /Users/yourname/skeleton 目录
+docker run -v /Users/yourname/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
 
 # 镜像容器运行后，在容器内安装 Composer
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
@@ -53,7 +53,7 @@ cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-接下来，就可以在 `/tmp/skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
+接下来，就可以在 `/Users/yourname/skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
 
 ## 存在兼容性的扩展
 
