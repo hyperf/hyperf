@@ -37,6 +37,7 @@
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/console": "^4.2",
         "symfony/finder": "^4.1",
+        "symfony/http-foundation": "^4.3",
         "vlucas/phpdotenv": "^3.1"
     },
     "require-dev": {
@@ -46,7 +47,7 @@
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",
         "phpunit/phpunit": "^7.0.0",
-        "swoft/swoole-ide-helper": "dev-master",
+        "swoft/swoole-ide-helper": "v4.4.0",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3"
     },

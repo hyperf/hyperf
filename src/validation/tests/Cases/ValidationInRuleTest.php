@@ -5,7 +5,7 @@ namespace HyperfTest\Validation\Cases;
 use PHPUnit\Framework\TestCase;
 use Hyperf\Validation\Rule;
 use Hyperf\Validation\Rules\In;
-use Hyperf\Validation\Tests\Cases\fixtures\Values;
+use HyperfTest\Validation\Cases\fixtures\Values;
 
 
 

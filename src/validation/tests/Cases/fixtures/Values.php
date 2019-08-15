@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyperf\Validation\Tests\Cases\fixtures;
+namespace HyperfTest\Validation\Cases\fixtures;
 
 use Hyperf\Utils\Contracts\Arrayable;
 
