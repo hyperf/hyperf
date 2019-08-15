@@ -20,7 +20,13 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class AsyncQueueMessage extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
     public $pool = 'default';
 
+    /**
+     * @var int
+     */
     public $delay = 0;
 }
