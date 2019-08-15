@@ -72,12 +72,12 @@ class RedisDriverTest extends TestCase
         $s1 = serialize($model);
         $this->assertSame(1128, strlen($s1));
 
-        $meta = $model->generate();
+        $meta = $model->compress();
         $s2 = serialize($meta);
         $this->assertSame(65, strlen($s2));
         $this->assertInstanceOf(DemoModelMeta::class, $meta);
 
-        $model2 = $meta->degenerate();
+        $model2 = $meta->uncompress();
         $this->assertEquals($model, $model2);
     }
 

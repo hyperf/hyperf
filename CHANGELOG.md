@@ -1,21 +1,24 @@
-# v1.0.11 - TBD
+# v1.0.12 - TBD
+
+# v1.0.11 - 2019-08-15
 
 ## Added
 
 - [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added `Hyperf\Server\Listener\InitProcessTitleListener` to init th process name, also added `Hyperf\Framework\Event\OnStart` and `Hyperf\Framework\Event\OnManagerStart` events.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) Added Snowflake component.
 
 ## Fixed
 
-- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in MySQL 8.
-- [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed exception which instanceof serializable normalize and denormalize failed.
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in `MySQL 8`.
+- [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed the exception which implemented `\Serializable`, call `serialize()` and `unserialize()` functions failed.
 - [#384](https://github.com/hyperf-cloud/hyperf/pull/384) Fixed the `ExceptionHandler` that user defined does not works, because the framework has handled the exception automatically.
 - [#370](https://github.com/hyperf-cloud/hyperf/pull/370) Fixed set the error type client to `Hyperf\GrpcClient\BaseClient`, and added default content-type `application/grpc+proto` to the Request object, also allows the grpc client that user-defined to override the `buildRequest()` method to create a new Request object.
 
 ## Changed
 
-- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when push a job with `CodeGenerateInterface` param, it can be auto generate a small one.
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Optimized aysnc-queue when push a job that implemented `Hyperf\Contract\CompressInterface`, will compress the job to a small object automatically.
 - [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Only write the annotation cache file when `$enableCache` is `true`.
-- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) Added generate support for Collection and Model.
+- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Added compression ability for `Collection` and `Model`, if the object implemented `Hyperf\Contract\CompressInterface`, then the object could compress to a small one by call `compress` method.
 
 # v1.0.10 - 2019-08-09
 

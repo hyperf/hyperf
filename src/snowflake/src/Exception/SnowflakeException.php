@@ -10,9 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace Hyperf\Snowflake\Exception;
 
-interface CodeGenerateInterface
+use RuntimeException;
+
+class SnowflakeException extends RuntimeException
 {
-    public function generate(): CodeDegenerateInterface;
 }

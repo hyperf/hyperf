@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+use Hyperf\Snowflake\IdGeneratorInterface;
 
-interface CodeDegenerateInterface
-{
-    public function degenerate(): CodeGenerateInterface;
-}
+return [
+    'level' => IdGeneratorInterface::LEVEL_MILLISECOND,
+    'begin_second' => IdGeneratorInterface::DEFAULT_SECOND,
+];

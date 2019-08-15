@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-interface IdGeneratorInterface
+interface UnCompressInterface
 {
-    public function generate();
+    public function uncompress(): CompressInterface;
 }
