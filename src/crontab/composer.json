@@ -23,10 +23,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Crontab\\": "src"
+            "Hyperf\\Crontab\\": "src/"
         }
     },
     "autoload-dev": {
@@ -39,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Crontab\\ConfigProvider"

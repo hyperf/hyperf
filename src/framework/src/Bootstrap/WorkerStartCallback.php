@@ -51,7 +51,11 @@ class WorkerStartCallback
             $this->eventDispatcher->dispatch(new OtherWorkerStart($server, $workerId));
         }
 
-        $this->logger->info("Worker#{$workerId} started.");
+        if ($server->taskworker) {
+            $this->logger->info("TaskWorker#{$workerId} started.");
+        } else {
+            $this->logger->info("Worker#{$workerId} started.");
+        }
 
         $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
     }

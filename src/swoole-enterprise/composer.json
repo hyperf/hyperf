@@ -13,8 +13,8 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.3",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
         "psr/container": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^1.0"
@@ -28,10 +28,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\SwooleEnterprise\\": "src"
+            "Hyperf\\SwooleEnterprise\\": "src/"
         }
     },
     "autoload-dev": {
@@ -43,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\SwooleEnterprise\\ConfigProvider"

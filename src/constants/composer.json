@@ -11,8 +11,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/di": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -23,14 +23,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Constants\\": "src"
+            "Hyperf\\Constants\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Constants\\": "tests/"
         }
     },
     "config": {
@@ -38,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
         }

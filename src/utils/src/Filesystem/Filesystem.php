@@ -217,7 +217,7 @@ class Filesystem
      */
     public function link(string $target, string $link)
     {
-        if (! windows_os()) {
+        if (! $this->windowsOs()) {
             return symlink($target, $link);
         }
 
@@ -502,5 +502,13 @@ class Filesystem
     public function cleanDirectory(string $directory): bool
     {
         return $this->deleteDirectory($directory, true);
+    }
+
+    /**
+     * Detect whether it's Windows.
+     */
+    public function windowsOs(): bool
+    {
+        return stripos(PHP_OS, 'win') === 0;
     }
 }

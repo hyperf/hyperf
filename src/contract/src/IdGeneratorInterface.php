@@ -14,5 +14,5 @@ namespace Hyperf\Contract;
 
 interface IdGeneratorInterface
 {
-    public function generate(): string;
+    public function generate();
 }

@@ -14,7 +14,7 @@
         "php": ">=7.2",
         "psr/container": "^1.0",
         "psr/simple-cache": "^1.0",
-        "hyperf/utils": "~1.0.0",
+        "hyperf/utils": "~1.1.0",
         "bandwidth-throttle/token-bucket": "^2.0"
     },
     "require-dev": {
@@ -22,10 +22,10 @@
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/di": "~1.0.0",
-        "hyperf/http-server": "~1.0.0",
-        "hyperf/redis": "~1.0.0"
+        "hyperf/contract": "~1.1.0",
+        "hyperf/di": "~1.1.0",
+        "hyperf/http-server": "~1.1.0",
+        "hyperf/redis": "~1.1.0"
     },
     "suggest": {
         "hyperf/contract": "Required to use annotations.",
@@ -34,8 +34,6 @@
         "hyperf/redis": "Required to use RedisStorage."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\RateLimit\\": "src/"
         }
@@ -49,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\RateLimit\\ConfigProvider"

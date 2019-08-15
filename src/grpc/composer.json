@@ -24,10 +24,8 @@
         "ext-protobuf": "For better performance, install the protobuf C extension."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Grpc\\": "src"
+            "Hyperf\\Grpc\\": "src/"
         }
     },
     "autoload-dev": {
@@ -39,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
         }

@@ -12,10 +12,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~1.0.0",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/di": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/command": "~1.1.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/di": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -26,10 +26,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Devtool\\": "src"
+            "Hyperf\\Devtool\\": "src/"
         }
     },
     "autoload-dev": {
@@ -41,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Devtool\\ConfigProvider"

@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Server\Response as ServerResponse;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\HttpServer\Exception\HttpException;
+use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -28,18 +26,9 @@ use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
-use Swoole\Http\Response as SwooleResponse;
 use function get_class;
 
-/**
- * @method void send()
- * @method ServerResponse withContent(string $content)
- * @method ServerResponse withCookie(Cookie $cookie)
- * @method null|SwooleResponse getSwooleResponse()
- * @method ServerResponse setSwooleResponse(SwooleResponse $swooleResponse)
- * @method void buildSwooleResponse(SwooleResponse $swooleResponse, ServerResponse $response)
- */
-class Response extends ServerResponse implements ResponseInterface
+class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
@@ -141,7 +130,7 @@ class Response extends ServerResponse implements ResponseInterface
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withProtocolVersion($version)
     {
@@ -236,7 +225,7 @@ class Response extends ServerResponse implements ResponseInterface
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
      * @throws \InvalidArgumentException for invalid header names or values
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withHeader($name, $value)
     {
@@ -255,7 +244,7 @@ class Response extends ServerResponse implements ResponseInterface
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
      * @throws \InvalidArgumentException for invalid header names or values
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
@@ -270,7 +259,7 @@ class Response extends ServerResponse implements ResponseInterface
      * the named header.
      *
      * @param string $name case-insensitive header field name to remove
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withoutHeader($name)
     {
@@ -296,7 +285,7 @@ class Response extends ServerResponse implements ResponseInterface
      *
      * @param StreamInterface $body body
      * @throws \InvalidArgumentException when the body is not valid
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
@@ -331,7 +320,7 @@ class Response extends ServerResponse implements ResponseInterface
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
      * @throws \InvalidArgumentException for invalid status code arguments
-     * @return static
+     * @return PsrResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -357,7 +346,7 @@ class Response extends ServerResponse implements ResponseInterface
 
     /**
      * @param array|Arrayable|Jsonable $data
-     * @throws HttpException when the data encoding error
+     * @throws EncodingException when the data encoding error
      */
     protected function toJson($data): string
     {
@@ -373,14 +362,14 @@ class Response extends ServerResponse implements ResponseInterface
             return json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
         }
 
-        throw new HttpException('Error encoding response data to JSON.');
+        throw new EncodingException('Error encoding response data to JSON.');
     }
 
     /**
      * @param array|Arrayable|Xmlable $data
      * @param null|mixed $parentNode
      * @param mixed $root
-     * @throws HttpException when the data encoding error
+     * @throws EncodingException when the data encoding error
      */
     protected function toXml($data, $parentNode = null, $root = 'root')
     {

@@ -31,7 +31,7 @@ class HttpClientFactory implements ClientFactory
     /**
      * @return callable
      */
-    public function build(array $options)
+    public function build(array $options): callable
     {
         return function ($payload) use ($options) {
             $url = $options['endpoint_url'];

@@ -16,6 +16,7 @@ use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
@@ -54,7 +55,7 @@ class Consumer extends Builder
 
         $channel->basic_consume(
             $consumerMessage->getQueue(),
-            $consumerMessage->getRoutingKey(),
+            $consumerMessage->getConsumerTag(),
             false,
             false,
             false,
@@ -64,19 +65,30 @@ class Consumer extends Builder
                 /** @var AMQPChannel $channel */
                 $channel = $message->delivery_info['channel'];
                 $deliveryTag = $message->delivery_info['delivery_tag'];
-                try {
-                    $result = $consumerMessage->consume($data);
-                    if ($result === Result::ACK) {
-                        $this->logger->debug($deliveryTag . ' acked.');
-                        return $channel->basic_ack($deliveryTag);
+                [$result] = parallel([function () use ($consumerMessage, $data) {
+                    try {
+                        return $consumerMessage->consume($data);
+                    } catch (Throwable $exception) {
+                        if ($this->container->has(FormatterInterface::class)) {
+                            $formatter = $this->container->get(FormatterInterface::class);
+                            $this->logger->error($formatter->format($exception));
+                        } else {
+                            $this->logger->error($exception->getMessage());
+                        }
+
+                        return Result::DROP;
                     }
-                    if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
-                        $this->logger->debug($deliveryTag . ' requeued.');
-                        return $channel->basic_reject($deliveryTag, true);
-                    }
-                } catch (Throwable $exception) {
-                    $this->logger->debug($exception->getMessage());
+                }]);
+
+                if ($result === Result::ACK) {
+                    $this->logger->debug($deliveryTag . ' acked.');
+                    return $channel->basic_ack($deliveryTag);
                 }
+                if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
+                    $this->logger->debug($deliveryTag . ' requeued.');
+                    return $channel->basic_reject($deliveryTag, true);
+                }
+
                 $this->logger->debug($deliveryTag . ' rejected.');
                 $channel->basic_reject($deliveryTag, false);
             }
@@ -108,6 +120,9 @@ class Consumer extends Builder
 
         $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $channel->queue_bind($message->getQueue(), $message->getExchange(), $message->getRoutingKey());
+        $routineKeys = (array) $message->getRoutingKey();
+        foreach ($routineKeys as $routingKey) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
     }
 }

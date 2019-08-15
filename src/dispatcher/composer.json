@@ -28,15 +28,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Dispatcher\\": "src"
+            "Hyperf\\Dispatcher\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Dispatcher\\": "tests"
+            "HyperfTest\\Dispatcher\\": "tests/"
         }
     },
     "config": {
@@ -44,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Dispatcher\\ConfigProvider"

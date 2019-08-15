@@ -64,10 +64,10 @@ class Coroutine
                     if ($container->has(StdoutLoggerInterface::class)) {
                         /* @var LoggerInterface $logger */
                         $logger = $container->get(StdoutLoggerInterface::class);
-                        /* @var FormatterInterface $formmater */
+                        /* @var FormatterInterface $formatter */
                         if ($container->has(FormatterInterface::class)) {
-                            $formmater = $container->get(FormatterInterface::class);
-                            $logger->warning($formmater->format($throwable));
+                            $formatter = $container->get(FormatterInterface::class);
+                            $logger->warning($formatter->format($throwable));
                         } else {
                             $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
                         }

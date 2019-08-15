@@ -12,7 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-class Message implements MessageInterface
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
+use Serializable;
+
+class Message implements MessageInterface, Serializable
 {
     /**
      * @var JobInterface
@@ -36,9 +40,29 @@ class Message implements MessageInterface
 
     public function attempts(): bool
     {
-        if ($this->job->getMaxAttempts() > ++$this->attempts) {
+        if ($this->job->getMaxAttempts() > $this->attempts++) {
             return true;
         }
         return false;
+    }
+
+    public function serialize()
+    {
+        if ($this->job instanceof CompressInterface) {
+            $this->job = $this->job->compress();
+        }
+
+        return serialize([$this->job, $this->attempts]);
+    }
+
+    public function unserialize($serialized)
+    {
+        [$job, $attempts] = unserialize($serialized);
+        if ($job instanceof UnCompressInterface) {
+            $job = $job->uncompress();
+        }
+
+        $this->job = $job;
+        $this->attempts = $attempts;
     }
 }

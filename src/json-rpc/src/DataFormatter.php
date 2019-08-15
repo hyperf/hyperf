@@ -40,6 +40,13 @@ class DataFormatter implements DataFormatterInterface
     public function formatErrorResponse($data)
     {
         [$id, $code, $message, $data] = $data;
+
+        if (isset($data) && $data instanceof \Exception) {
+            $data = [
+                'class' => get_class($data),
+                'message' => $data->getMessage(),
+            ];
+        }
         return [
             'jsonrpc' => '2.0',
             'id' => $id ?? null,
@@ -50,6 +57,4 @@ class DataFormatter implements DataFormatterInterface
             ],
         ];
     }
-
-
 }

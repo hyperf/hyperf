@@ -29,6 +29,7 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -39,6 +40,8 @@ use stdClass;
  */
 class ModelBuilderTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function setUp()
     {
         Register::setConnectionResolver(new ConnectionResolver(['default' => new Connection(Mockery::mock(PDO::class))]));
@@ -234,8 +237,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunk(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkWithLastChunkPartial()
@@ -256,8 +257,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunk(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkCanBeStoppedByReturningFalse()
@@ -280,8 +279,6 @@ class ModelBuilderTest extends TestCase
 
             return false;
         });
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkWithCountZero()
@@ -299,8 +296,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunk(0, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         });
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithLastChunkComplete()
@@ -324,8 +319,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithLastChunkPartial()
@@ -346,9 +339,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testChunkPaginatesUsingIdWithCountZero()
@@ -366,9 +356,6 @@ class ModelBuilderTest extends TestCase
         $builder->chunkById(0, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);
         }, 'someIdField');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testPluckReturnsTheMutatedAttributesOfAModel()
@@ -524,9 +511,6 @@ class ModelBuilderTest extends TestCase
         $builder->setEagerLoads(['orders' => null, 'orders.lines' => null, 'orders.lines.details' => null]);
 
         $builder->getRelation('orders');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testGetRelationProperlySetsNestedRelationshipsWithSimilarNames()
@@ -547,9 +531,6 @@ class ModelBuilderTest extends TestCase
 
         $builder->getRelation('orders');
         $builder->getRelation('ordersGroups');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     /**
@@ -974,9 +955,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '=', $int);
 
         $builder->whereKey($int);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereKeyMethodWithArray()
@@ -990,9 +968,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereIn')->once()->with($keyName, $array);
 
         $builder->whereKey($array);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereKeyMethodWithCollection()
@@ -1006,9 +981,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereIn')->once()->with($keyName, $collection);
 
         $builder->whereKey($collection);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithInt()
@@ -1022,9 +994,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '!=', $int);
 
         $builder->whereKeyNot($int);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithArray()
@@ -1038,9 +1007,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, $array);
 
         $builder->whereKeyNot($array);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereKeyNotMethodWithCollection()
@@ -1054,9 +1020,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, $collection);
 
         $builder->whereKeyNot($collection);
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testWhereIn()
@@ -1077,9 +1040,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('foo');
 
         $builder->latest();
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testLatestWithoutColumnWithoutCreatedAt()
@@ -1091,9 +1051,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('created_at');
 
         $builder->latest();
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testLatestWithColumn()
@@ -1104,9 +1061,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('latest')->once()->with('foo');
 
         $builder->latest('foo');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testOldestWithoutColumnWithCreatedAt()
@@ -1118,9 +1072,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('foo');
 
         $builder->oldest();
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testOldestWithoutColumnWithoutCreatedAt()
@@ -1132,9 +1083,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('created_at');
 
         $builder->oldest();
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testOldestWithColumn()
@@ -1145,9 +1093,6 @@ class ModelBuilderTest extends TestCase
         $builder->getQuery()->shouldReceive('oldest')->once()->with('foo');
 
         $builder->oldest('foo');
-
-        // Avoid 'This test did not perform any assertions' notice
-        $this->assertTrue(true);
     }
 
     public function testUpdate()

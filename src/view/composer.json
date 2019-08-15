@@ -12,8 +12,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
         "psr/container": "^1.0",
         "psr/log": "^1.0"
     },
@@ -29,8 +29,6 @@
         "duncan3dc/blade": "Required to use blade as a view render engine."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\View\\": "src/"
         }
@@ -44,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\View\\ConfigProvider"

@@ -12,11 +12,11 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/consul": "~1.0.0",
-        "hyperf/contract": "~1.0.0"
+        "hyperf/consul": "~1.1.0",
+        "hyperf/contract": "~1.1.0"
     },
     "require-dev": {
-        "hyperf/event": "~1.0.0",
+        "hyperf/event": "~1.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
@@ -27,14 +27,13 @@
         "hyperf/framework": "Required to use RegisterServiceListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\ServiceGovernance\\": "src"
+            "Hyperf\\ServiceGovernance\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\ServiceGovernance\\": "tests/"
         }
     },
     "config": {
@@ -42,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ServiceGovernance\\ConfigProvider"

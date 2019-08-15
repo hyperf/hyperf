@@ -13,12 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\View;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
+use Hyperf\Utils\Context;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\EngineNotFindException;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Render implements RenderInterface
 {
@@ -69,6 +72,11 @@ class Render implements RenderInterface
                 $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
         }
 
-        return $result;
+        return $this->response()->withAddedHeader('content-type', 'text/html')->withBody(new SwooleStream($result));
+    }
+
+    protected function response(): ResponseInterface
+    {
+        return Context::get(ResponseInterface::class);
     }
 }

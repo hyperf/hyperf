@@ -12,11 +12,11 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
-        "hyperf/contract": "~1.0.0",
-        "hyperf/di": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/di": "~1.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
@@ -27,10 +27,8 @@
         "hyperf/di": "Required to use annotations."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\CircuitBreaker\\": "src"
+            "Hyperf\\CircuitBreaker\\": "src/"
         }
     },
     "autoload-dev": {
@@ -42,7 +40,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\CircuitBreaker\\ConfigProvider"

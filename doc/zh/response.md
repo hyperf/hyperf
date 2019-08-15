@@ -70,7 +70,7 @@ class IndexController
 
 ## 返回视图
 
-Hyperf 暂不支持视图返回，欢迎社区贡献相关的 PR。
+请参考 [视图](view.md) 部分文档
 
 ## 重定向
 

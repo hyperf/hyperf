@@ -150,7 +150,10 @@ class Request implements RequestInterface
      */
     public function header(string $key, $default = null)
     {
-        return $this->getHeaderLine($key) ?? $default;
+        if (! $this->hasHeader($key)) {
+            return $default;
+        }
+        return $this->getHeaderLine($key);
     }
 
     /**

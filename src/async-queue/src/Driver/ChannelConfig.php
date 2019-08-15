@@ -75,109 +75,67 @@ class ChannelConfig
         throw new InvalidQueueException(sprintf('Queue %s is not exist.', $queue));
     }
 
-    /**
-     * @return string
-     */
     public function getChannel(): string
     {
         return $this->channel;
     }
 
-    /**
-     * @param string $channel
-     * @return QueueConfig
-     */
-    public function setChannel(string $channel): QueueConfig
+    public function setChannel(string $channel): self
     {
         $this->channel = $channel;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getWaiting(): string
     {
         return $this->waiting;
     }
 
-    /**
-     * @param string $waiting
-     * @return QueueConfig
-     */
-    public function setWaiting(string $waiting): QueueConfig
+    public function setWaiting(string $waiting): self
     {
         $this->waiting = $waiting;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getReserved(): string
     {
         return $this->reserved;
     }
 
-    /**
-     * @param string $reserved
-     * @return QueueConfig
-     */
-    public function setReserved(string $reserved): QueueConfig
+    public function setReserved(string $reserved): self
     {
         $this->reserved = $reserved;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTimeout(): string
     {
         return $this->timeout;
     }
 
-    /**
-     * @param string $timeout
-     * @return QueueConfig
-     */
-    public function setTimeout(string $timeout): QueueConfig
+    public function setTimeout(string $timeout): self
     {
         $this->timeout = $timeout;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDelayed(): string
     {
         return $this->delayed;
     }
 
-    /**
-     * @param string $delayed
-     * @return QueueConfig
-     */
-    public function setDelayed(string $delayed): QueueConfig
+    public function setDelayed(string $delayed): self
     {
         $this->delayed = $delayed;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFailed(): string
     {
         return $this->failed;
     }
 
-    /**
-     * @param string $failed
-     * @return QueueConfig
-     */
-    public function setFailed(string $failed): QueueConfig
+    public function setFailed(string $failed): self
     {
         $this->failed = $failed;
         return $this;

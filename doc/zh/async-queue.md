@@ -39,7 +39,7 @@ return [
 
 ### 消费消息
 
-组件已经提供了默认子进程，只需要将它配置到 `processes.php` 中即可。
+组件已经提供了默认子进程，只需要将它配置到 `config/autoload/processes.php` 中即可。
 
 ```php
 <?php
@@ -99,7 +99,6 @@ class ExampleJob extends Job
         var_dump($this->params);
     }
 }
-
 ```
 
 发布消息
@@ -131,9 +130,8 @@ class QueueService
      * 投递消息.
      * @param $params 数据
      * @param int $delay 延时时间 单位秒
-     * @return bool
      */
-    public function push($params, $delay = 0)
+    public function push($params, int $delay = 0): bool
     {
         // 这里的 `ExampleJob` 会被序列化存到 Redis 中，所以内部变量最好只传入普通数据
         // 同理，如果内部使用了注解 @Value 会把对应对象一起序列化，导致消息体变大。
@@ -141,7 +139,6 @@ class QueueService
         return $this->driver->push(new ExampleJob($params), $delay);
     }
 }
-
 ```
 
 根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
@@ -179,5 +176,4 @@ class QueueController extends Controller
         return 'success';
     }
 }
-
 ```

@@ -16,6 +16,7 @@ use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\SelfResolvingDefinitionInterface;
+use Hyperf\Di\Exception\InvalidDefinitionException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -46,7 +47,7 @@ class ResolverDispatcher implements ResolverInterface
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
-     * @throws InvalidDefinition if the definition cannot be resolved
+     * @throws InvalidDefinitionException if the definition cannot be resolved
      * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])

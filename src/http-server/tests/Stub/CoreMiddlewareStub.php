@@ -27,5 +27,4 @@ class CoreMiddlewareStub extends CoreMiddleware
     {
         return new Response();
     }
-
 }

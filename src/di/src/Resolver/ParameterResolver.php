@@ -44,6 +44,8 @@ class ParameterResolver
         foreach ($method->getParameters() as $index => $parameter) {
             if (array_key_exists($parameter->getName(), $parameters)) {
                 $value = &$parameters[$parameter->getName()];
+            } elseif (array_key_exists($index, $parameters)) {
+                $value = &$parameters[$index];
             } elseif (array_key_exists($index, $definitionParameters)) {
                 $value = &$definitionParameters[$index];
             } else {

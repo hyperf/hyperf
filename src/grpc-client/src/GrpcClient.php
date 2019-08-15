@@ -19,7 +19,6 @@ use InvalidArgumentException;
 use RuntimeException;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;
-use Swoole\Http2\Request;
 
 class GrpcClient
 {

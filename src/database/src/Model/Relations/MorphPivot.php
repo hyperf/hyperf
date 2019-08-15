@@ -76,26 +76,6 @@ class MorphPivot extends Pivot
     }
 
     /**
-     * Get the queueable identity for the entity.
-     */
-    public function getQueueableId()
-    {
-        if (isset($this->attributes[$this->getKeyName()])) {
-            return $this->getKey();
-        }
-
-        return sprintf(
-            '%s:%s:%s:%s:%s:%s',
-            $this->foreignKey,
-            $this->getAttribute($this->foreignKey),
-            $this->relatedKey,
-            $this->getAttribute($this->relatedKey),
-            $this->morphType,
-            $this->morphClass
-        );
-    }
-
-    /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param array|int $ids
