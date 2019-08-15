@@ -35,8 +35,8 @@ composer create-project hyperf/hyperf-skeleton
 Assuming your native environment does not meet the Hyperf environment requirements, or maybe you are not so familiar with the environment configuration, you can run and develop the Hyperf project in the following ways:
 
 ```
-# Download and run hyperf/hyperf image，and bind the directory of project with /tmp/skeleton of Host
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+# Download and run hyperf/hyperf image，and bind the directory of project with /Users/yourname/skeleton of Host
+docker run -v /Users/yourname/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
 
 # After the mirror container is running, install Composer in the container
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
@@ -52,7 +52,7 @@ cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-Next, you can see your installed project in `/tmp/skeleton`. Since Hyperf is a persistent CLI framework, when you have modified your code, you should terminate the currently started process instance with `CTRL + C` and re-execute the `php bin/hyperf.php start` startup command to restart your server and reload the code.
+Next, you can see your installed project in `/Users/yourname/skeleton`. Since Hyperf is a persistent CLI framework, when you have modified your code, you should terminate the currently started process instance with `CTRL + C` and re-execute the `php bin/hyperf.php start` startup command to restart your server and reload the code.
 
 ## Incompatible extensions
 
