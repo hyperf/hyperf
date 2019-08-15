@@ -17,6 +17,7 @@ use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
@@ -27,7 +28,6 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
@@ -36,7 +36,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * generate a response object and delegate to next middleware (Because this middleware is the
  * core middleware, then the next middleware also means it's the previous middlewares object) .
  */
-class CoreMiddleware implements MiddlewareInterface
+class CoreMiddleware implements CoreMiddlewareInterface
 {
     /**
      * @var Dispatcher
@@ -88,7 +88,7 @@ class CoreMiddleware implements MiddlewareInterface
         $dispatched = $request->getAttribute(Dispatched::class);
 
         if (! $dispatched instanceof Dispatched) {
-            throw new ServerException('Dispatch failed.');
+            throw new ServerException('The object is not instanceof `HyperfHttpServerRouterDispatched`.');
         }
 
         switch ($dispatched->status) {

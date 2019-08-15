@@ -14,6 +14,7 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Server;
 use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
@@ -24,7 +25,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -64,7 +64,7 @@ class HttpServer extends Server
         ];
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
         return new HttpCoreMiddleware($this->container, $this->protocol, $this->serverName);
     }

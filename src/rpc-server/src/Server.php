@@ -18,6 +18,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnReceiveInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
@@ -38,7 +39,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected $middlewares;
 
     /**
-     * @var MiddlewareInterface
+     * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
 
@@ -132,7 +133,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
-    abstract protected function createCoreMiddleware(): MiddlewareInterface;
+    abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;
 

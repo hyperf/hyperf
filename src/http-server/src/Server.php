@@ -20,6 +20,7 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
@@ -28,7 +29,6 @@ use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
@@ -41,7 +41,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $middlewares;
 
     /**
-     * @var MiddlewareInterface
+     * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
 
@@ -145,7 +145,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         ];
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
         return new CoreMiddleware($this->container, $this->serverName);
     }

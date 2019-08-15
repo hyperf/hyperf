@@ -23,6 +23,7 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
@@ -51,7 +52,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $dispatcher;
 
     /**
-     * @var CoreMiddleware
+     * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
 

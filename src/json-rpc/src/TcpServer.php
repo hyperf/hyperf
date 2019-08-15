@@ -16,6 +16,7 @@ use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -24,7 +25,6 @@ use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
@@ -57,7 +57,7 @@ class TcpServer extends Server
         ]);
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
         return new CoreMiddleware($this->container, $this->protocol, $this->serverName);
     }

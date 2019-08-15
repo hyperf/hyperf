@@ -35,7 +35,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         $dispatched = $request->getAttribute(Dispatched::class);
 
         if (! $dispatched instanceof Dispatched) {
-            throw new ServerException('Dispatch failed.');
+            throw new ServerException('The object is not instanceof `HyperfHttpServerRouterDispatched`.');
         }
 
         switch ($dispatched->status) {
