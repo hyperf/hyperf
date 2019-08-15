@@ -43,7 +43,7 @@ class Unique
             'unique:%s,%s,%s,%s,%s',
             $this->table,
             $this->column,
-            $this->ignore ? '"' . addslashes($this->ignore) . '"' : 'NULL',
+            $this->ignore ? '"' . addslashes((string) $this->ignore) . '"' : 'NULL',
             $this->idColumn,
             $this->formatWheres()
         ), ',');
