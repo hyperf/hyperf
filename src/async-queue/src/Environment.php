@@ -14,6 +14,9 @@ namespace Hyperf\AsyncQueue;
 
 class Environment
 {
+    /**
+     * @var bool
+     */
     protected $asyncQueue = false;
 
     public function isAsyncQueue(): bool
