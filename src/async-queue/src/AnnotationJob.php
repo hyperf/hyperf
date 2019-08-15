@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
+use Hyperf\Utils\ApplicationContext;
+
 class AnnotationJob extends Job
 {
     /**
@@ -38,5 +40,10 @@ class AnnotationJob extends Job
 
     public function handle()
     {
+        $container = ApplicationContext::getContainer();
+
+        $class = $container->get($this->class);
+
+        $class->{$this->method}(...$this->params);
     }
 }
