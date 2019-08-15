@@ -1,14 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Validation\Cases;
 
 use Closure;
-use stdClass;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Validation\DatabasePresenceVerifier;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Hyperf\Validation\DatabasePresenceVerifier;
-use Hyperf\Database\ConnectionResolverInterface;
+use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ValidationDatabasePresenceVerifierTest extends TestCase
 {
     protected function tearDown(): void

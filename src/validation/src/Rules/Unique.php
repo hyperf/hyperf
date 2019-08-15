@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation\Rules;
 
 use Hyperf\Database\Model\Model;
@@ -23,10 +33,27 @@ class Unique
     protected $idColumn = 'id';
 
     /**
+     * Convert the rule to a validation string.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return rtrim(sprintf(
+            'unique:%s,%s,%s,%s,%s',
+            $this->table,
+            $this->column,
+            $this->ignore ? '"' . addslashes($this->ignore) . '"' : 'NULL',
+            $this->idColumn,
+            $this->formatWheres()
+        ), ',');
+    }
+
+    /**
      * Ignore the given ID during the unique check.
      *
-     * @param  mixed  $id
-     * @param  string|null  $idColumn
+     * @param mixed $id
+     * @param null|string $idColumn
      * @return $this
      */
     public function ignore($id, $idColumn = null)
@@ -44,8 +71,8 @@ class Unique
     /**
      * Ignore the given model during the unique check.
      *
-     * @param  \Hyperf\Database\Model\Model  $model
-     * @param  string|null  $idColumn
+     * @param \Hyperf\Database\Model\Model $model
+     * @param null|string $idColumn
      * @return $this
      */
     public function ignoreModel($model, $idColumn = null)
@@ -54,21 +81,5 @@ class Unique
         $this->ignore = $model->{$this->idColumn};
 
         return $this;
-    }
-
-    /**
-     * Convert the rule to a validation string.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return rtrim(sprintf('unique:%s,%s,%s,%s,%s',
-            $this->table,
-            $this->column,
-            $this->ignore ? '"'.addslashes($this->ignore).'"' : 'NULL',
-            $this->idColumn,
-            $this->formatWheres()
-        ), ',');
     }
 }

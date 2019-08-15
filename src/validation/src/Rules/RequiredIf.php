@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation\Rules;
 
 class RequiredIf
@@ -7,15 +17,14 @@ class RequiredIf
     /**
      * The condition that validates the attribute.
      *
-     * @var callable|bool
+     * @var bool|callable
      */
     public $condition;
 
     /**
      * Create a new required validation rule based on a condition.
      *
-     * @param  callable|bool  $condition
-     * @return void
+     * @param bool|callable $condition
      */
     public function __construct($condition)
     {

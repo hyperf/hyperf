@@ -1,11 +1,13 @@
 <?php
+
+declare(strict_types=1);
 /**
- * RequestCommand.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-07-26 20:59
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation\Request;
@@ -13,10 +15,8 @@ namespace Hyperf\Validation\Request;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Devtool\Generator\GeneratorCommand;
 
-
 /**
- * Class RequestCommand
- * @package Hyperf\Validation\Request
+ * Class RequestCommand.
  * @Command
  */
 class RequestCommand extends GeneratorCommand

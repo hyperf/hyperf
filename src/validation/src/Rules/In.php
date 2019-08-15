@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation\Rules;
 
 class In
@@ -19,8 +29,7 @@ class In
     /**
      * Create a new in rule instance.
      *
-     * @param  array  $values
-     * @return void
+     * @param array $values
      */
     public function __construct(array $values)
     {
@@ -37,9 +46,9 @@ class In
     public function __toString()
     {
         $values = array_map(function ($value) {
-            return '"'.str_replace('"', '""', $value).'"';
+            return '"' . str_replace('"', '""', $value) . '"';
         }, $this->values);
 
-        return $this->rule.':'.implode(',', $values);
+        return $this->rule . ':' . implode(',', $values);
     }
 }

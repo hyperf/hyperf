@@ -1,17 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * MessageProvider.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-07-25 18:32
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation\Contracts\Support;
-
-
-use Hyperf\Validation\Contracts\Support\MessageBag;
 
 interface MessageProvider
 {

@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Translation;
 
 use Hyperf\Utils\Str;
@@ -9,9 +19,9 @@ class MessageSelector
     /**
      * Select a proper translation string based on the given number.
      *
-     * @param  string  $line
-     * @param  int  $number
-     * @param  string  $locale
+     * @param string $line
+     * @param int $number
+     * @param string $locale
      * @return mixed
      */
     public function choose($line, $number, $locale)
@@ -34,77 +44,14 @@ class MessageSelector
     }
 
     /**
-     * Extract a translation string using inline conditions.
-     *
-     * @param  array  $segments
-     * @param  int  $number
-     * @return mixed
-     */
-    private function extract($segments, $number)
-    {
-        foreach ($segments as $part) {
-            if (! is_null($line = $this->extractFromString($part, $number))) {
-                return $line;
-            }
-        }
-    }
-
-    /**
-     * Get the translation string if the condition matches.
-     *
-     * @param  string  $part
-     * @param  int  $number
-     * @return mixed
-     */
-    private function extractFromString($part, $number)
-    {
-        preg_match('/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s', $part, $matches);
-
-        if (count($matches) !== 3) {
-            return;
-        }
-
-        $condition = $matches[1];
-
-        $value = $matches[2];
-
-        if (Str::contains($condition, ',')) {
-            [$from, $to] = explode(',', $condition, 2);
-
-            if ($to === '*' && $number >= $from) {
-                return $value;
-            } elseif ($from === '*' && $number <= $to) {
-                return $value;
-            } elseif ($number >= $from && $number <= $to) {
-                return $value;
-            }
-        }
-
-        return $condition == $number ? $value : null;
-    }
-
-    /**
-     * Strip the inline conditions from each segment, just leaving the text.
-     *
-     * @param  array  $segments
-     * @return array
-     */
-    private function stripConditions($segments)
-    {
-        return collect($segments)->map(function ($part) {
-            return preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part);
-        })->all();
-    }
-
-    /**
      * Get the index to use for pluralization.
      *
      * The plural rules are derived from code of the Zend Framework (2010-09-25), which
      * is subject to the new BSD license (http://framework.zend.com/license/new-bsd)
      * Copyright (c) 2005-2010 - Zend Technologies USA Inc. (http://www.zend.com)
      *
-     * @param  string  $locale
-     * @param  int  $number
+     * @param string $locale
+     * @param int $number
      * @return int
      */
     public function getPluralIndex($locale, $number)
@@ -408,5 +355,70 @@ class MessageSelector
             default:
                 return 0;
         }
+    }
+
+    /**
+     * Extract a translation string using inline conditions.
+     *
+     * @param array $segments
+     * @param int $number
+     * @return mixed
+     */
+    private function extract($segments, $number)
+    {
+        foreach ($segments as $part) {
+            if (! is_null($line = $this->extractFromString($part, $number))) {
+                return $line;
+            }
+        }
+    }
+
+    /**
+     * Get the translation string if the condition matches.
+     *
+     * @param string $part
+     * @param int $number
+     * @return mixed
+     */
+    private function extractFromString($part, $number)
+    {
+        preg_match('/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s', $part, $matches);
+
+        if (count($matches) !== 3) {
+            return;
+        }
+
+        $condition = $matches[1];
+
+        $value = $matches[2];
+
+        if (Str::contains($condition, ',')) {
+            [$from, $to] = explode(',', $condition, 2);
+
+            if ($to === '*' && $number >= $from) {
+                return $value;
+            }
+            if ($from === '*' && $number <= $to) {
+                return $value;
+            }
+            if ($number >= $from && $number <= $to) {
+                return $value;
+            }
+        }
+
+        return $condition == $number ? $value : null;
+    }
+
+    /**
+     * Strip the inline conditions from each segment, just leaving the text.
+     *
+     * @param array $segments
+     * @return array
+     */
+    private function stripConditions($segments)
+    {
+        return collect($segments)->map(function ($part) {
+            return preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part);
+        })->all();
     }
 }

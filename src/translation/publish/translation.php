@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * This file is part of Hyperf.
  *
@@ -12,7 +11,7 @@ declare(strict_types=1);
  */
 
 return [
-    'locale'          => 'en',
+    'locale' => 'en',
     'fallback_locale' => '',
-    'lang'            => BASE_PATH . '/resources/lang',
+    'lang' => BASE_PATH . '/resources/lang',
 ];

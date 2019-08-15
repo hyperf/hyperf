@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Translation\Support;
 
 class NamespacedItemResolver
@@ -14,7 +24,7 @@ class NamespacedItemResolver
     /**
      * Parse a key into namespace, group, and item.
      *
-     * @param  string  $key
+     * @param string $key
      * @return array
      */
     public function parseKey($key)
@@ -44,9 +54,20 @@ class NamespacedItemResolver
     }
 
     /**
+     * Set the parsed value of a key.
+     *
+     * @param string $key
+     * @param array $parsed
+     */
+    public function setParsedKey($key, $parsed)
+    {
+        $this->parsed[$key] = $parsed;
+    }
+
+    /**
      * Parse an array of basic segments.
      *
-     * @param  array  $segments
+     * @param array $segments
      * @return array
      */
     protected function parseBasicSegments(array $segments)
@@ -69,7 +90,7 @@ class NamespacedItemResolver
     /**
      * Parse an array of namespaced segments.
      *
-     * @param  string  $key
+     * @param string $key
      * @return array
      */
     protected function parseNamespacedSegments($key)
@@ -82,21 +103,10 @@ class NamespacedItemResolver
         $itemSegments = explode('.', $item);
 
         $groupAndItem = array_slice(
-            $this->parseBasicSegments($itemSegments), 1
+            $this->parseBasicSegments($itemSegments),
+            1
         );
 
         return array_merge([$namespace], $groupAndItem);
-    }
-
-    /**
-     * Set the parsed value of a key.
-     *
-     * @param  string  $key
-     * @param  array   $parsed
-     * @return void
-     */
-    public function setParsedKey($key, $parsed)
-    {
-        $this->parsed[$key] = $parsed;
     }
 }

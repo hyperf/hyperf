@@ -1,18 +1,19 @@
 <?php
+
+declare(strict_types=1);
 /**
- * ValidatorFactory.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019/7/26 01:31
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation;
 
-
-use Hyperf\Translation\Contracts\Translator;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Translation\Contracts\Translator;
 use Psr\Container\ContainerInterface;
 
 class ValidatorFactory
@@ -21,7 +22,7 @@ class ValidatorFactory
     {
         $translator = $container->get(Translator::class);
 
-        $validator = make(Factory::class, compact('translator','container'));
+        $validator = make(Factory::class, compact('translator', 'container'));
 
         if ($container->has(ConnectionResolverInterface::class) && $container->has(PresenceVerifierInterface::class)) {
             $presenceVerifier = $container->get(PresenceVerifierInterface::class);

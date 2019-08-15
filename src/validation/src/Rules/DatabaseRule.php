@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation\Rules;
 
 use Closure;
@@ -37,9 +47,8 @@ trait DatabaseRule
     /**
      * Create a new rule instance.
      *
-     * @param  string  $table
-     * @param  string  $column
-     * @return void
+     * @param string $table
+     * @param string $column
      */
     public function __construct($table, $column = 'NULL')
     {
@@ -50,8 +59,8 @@ trait DatabaseRule
     /**
      * Set a "where" constraint on the query.
      *
-     * @param  string|\Closure  $column
-     * @param  array|string|null  $value
+     * @param \Closure|string $column
+     * @param null|array|string $value
      * @return $this
      */
     public function where($column, $value = null)
@@ -72,8 +81,8 @@ trait DatabaseRule
     /**
      * Set a "where not" constraint on the query.
      *
-     * @param  string  $column
-     * @param  array|string  $value
+     * @param string $column
+     * @param array|string $value
      * @return $this
      */
     public function whereNot($column, $value)
@@ -82,13 +91,13 @@ trait DatabaseRule
             return $this->whereNotIn($column, $value);
         }
 
-        return $this->where($column, '!'.$value);
+        return $this->where($column, '!' . $value);
     }
 
     /**
      * Set a "where null" constraint on the query.
      *
-     * @param  string  $column
+     * @param string $column
      * @return $this
      */
     public function whereNull($column)
@@ -99,7 +108,7 @@ trait DatabaseRule
     /**
      * Set a "where not null" constraint on the query.
      *
-     * @param  string  $column
+     * @param string $column
      * @return $this
      */
     public function whereNotNull($column)
@@ -110,8 +119,8 @@ trait DatabaseRule
     /**
      * Set a "where in" constraint on the query.
      *
-     * @param  string  $column
-     * @param  array  $values
+     * @param string $column
+     * @param array $values
      * @return $this
      */
     public function whereIn($column, array $values)
@@ -124,8 +133,8 @@ trait DatabaseRule
     /**
      * Set a "where not in" constraint on the query.
      *
-     * @param  string  $column
-     * @param  array  $values
+     * @param string $column
+     * @param array $values
      * @return $this
      */
     public function whereNotIn($column, array $values)
@@ -138,7 +147,7 @@ trait DatabaseRule
     /**
      * Register a custom query callback.
      *
-     * @param  \Closure  $callback
+     * @param \Closure $callback
      * @return $this
      */
     public function using(Closure $callback)
@@ -166,7 +175,7 @@ trait DatabaseRule
     protected function formatWheres()
     {
         return collect($this->wheres)->map(function ($where) {
-            return $where['column'].','.'"'.str_replace('"', '""', $where['value']).'"';
+            return $where['column'] . ',' . '"' . str_replace('"', '""', $where['value']) . '"';
         })->implode(',');
     }
 }

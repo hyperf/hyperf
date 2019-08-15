@@ -1,54 +1,65 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
-use Hyperf\DbConnection\ConnectionResolver as DBConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Builder;
-use Hyperf\Server\Entry\EventDispatcher;
-use Hyperf\Utils\ApplicationContext;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Validation\Validator;
-use Hyperf\Translation\Translator;
-use Hyperf\Translation\ArrayLoader;
-use Hyperf\Validation\Rules\Exists;
+use Hyperf\DbConnection\ConnectionResolver as DBConnectionResolver;
 use Hyperf\DbConnection\Model\Model as Eloquent;
+use Hyperf\Server\Entry\EventDispatcher;
+use Hyperf\Translation\ArrayLoader;
+use Hyperf\Translation\Translator;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\DatabasePresenceVerifier;
+use Hyperf\Validation\Rules\Exists;
+use Hyperf\Validation\Validator;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-
+/**
+ * @internal
+ * @coversNothing
+ */
 class ValidationExistsRuleTest extends TestCase
 {
     /**
      * Setup the database schema.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
         $container = m::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
-        $connector  = new ConnectionFactory($container);
-        $dbConfig   = [
-            'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'database'  => 'hyperf',
-            'username'  => 'root',
-            'password'  => '',
-            'charset'   => 'utf8',
+        $connector = new ConnectionFactory($container);
+        $dbConfig = [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => 'hyperf',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
+            'prefix' => '',
         ];
         $connection = $connector->make($dbConfig);
-        $resolver   = new ConnectionResolver(['default' => $connection]);
+        $resolver = new ConnectionResolver(['default' => $connection]);
         $container->shouldReceive('get')->with(DBConnectionResolver::class)->andReturn($resolver);
         ApplicationContext::setContainer($container);
         Register::setConnectionResolver($resolver);
@@ -57,15 +68,25 @@ class ValidationExistsRuleTest extends TestCase
         $this->createSchema();
     }
 
+    /**
+     * Tear down the database schema.
+     */
+    protected function tearDown(): void
+    {
+        $this->schema('default')->drop('users');
+
+        m::close();
+    }
+
     public function testItCorrectlyFormatsAStringVersionOfTheRule()
     {
         $rule = new Exists('table');
         $rule->where('foo', 'bar');
-        $this->assertEquals('exists:table,NULL,foo,"bar"', (string)$rule);
+        $this->assertEquals('exists:table,NULL,foo,"bar"', (string) $rule);
 
         $rule = new Exists('table', 'column');
         $rule->where('foo', 'bar');
-        $this->assertEquals('exists:table,column,foo,"bar"', (string)$rule);
+        $this->assertEquals('exists:table,column,foo,"bar"', (string) $rule);
     }
 
     public function testItChoosesValidRecordsUsingWhereInRule()
@@ -79,7 +100,7 @@ class ValidationExistsRuleTest extends TestCase
         EloquentTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
-        $v     = new Validator($trans, [], ['id' => $rule]);
+        $v = new Validator($trans, [], ['id' => $rule]);
         $v->setPresenceVerifier(new DatabasePresenceVerifier(Register::getConnectionResolver()));
 
         $v->setData(['id' => 1]);
@@ -103,7 +124,7 @@ class ValidationExistsRuleTest extends TestCase
         EloquentTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
-        $v     = new Validator($trans, [], ['id' => $rule]);
+        $v = new Validator($trans, [], ['id' => $rule]);
         $v->setPresenceVerifier(new DatabasePresenceVerifier(Register::getConnectionResolver()));
 
         $v->setData(['id' => 1]);
@@ -127,7 +148,7 @@ class ValidationExistsRuleTest extends TestCase
         EloquentTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
-        $v     = new Validator($trans, [], ['id' => $rule]);
+        $v = new Validator($trans, [], ['id' => $rule]);
         $v->setPresenceVerifier(new DatabasePresenceVerifier(Register::getConnectionResolver()));
 
         $v->setData(['id' => 1]);
@@ -138,6 +159,14 @@ class ValidationExistsRuleTest extends TestCase
         $this->assertTrue($v->passes());
         $v->setData(['id' => 4]);
         $this->assertFalse($v->passes());
+    }
+
+    public function getIlluminateArrayTranslator()
+    {
+        return new Translator(
+            new ArrayLoader(),
+            'en'
+        );
     }
 
     protected function createSchema()
@@ -151,6 +180,7 @@ class ValidationExistsRuleTest extends TestCase
     /**
      * Get a schema builder instance.
      *
+     * @param mixed $connection
      * @return Builder
      */
     protected function schema($connection = 'default')
@@ -161,6 +191,7 @@ class ValidationExistsRuleTest extends TestCase
     /**
      * Get a database connection instance.
      *
+     * @param mixed $connection
      * @return Connection
      */
     protected function connection($connection = 'default')
@@ -177,25 +208,6 @@ class ValidationExistsRuleTest extends TestCase
     {
         return Register::getConnectionResolver();
     }
-
-    /**
-     * Tear down the database schema.
-     *
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        $this->schema('default')->drop('users');
-
-        m::close();
-    }
-
-    public function getIlluminateArrayTranslator()
-    {
-        return new Translator(
-            new ArrayLoader, 'en'
-        );
-    }
 }
 
 /**
@@ -203,7 +215,9 @@ class ValidationExistsRuleTest extends TestCase
  */
 class EloquentTestUser extends Eloquent
 {
-    protected $table      = 'users';
-    protected $guarded    = [];
-    public    $timestamps = false;
+    public $timestamps = false;
+
+    protected $table = 'users';
+
+    protected $guarded = [];
 }

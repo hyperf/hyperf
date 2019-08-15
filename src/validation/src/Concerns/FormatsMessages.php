@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
@@ -12,206 +22,28 @@ trait FormatsMessages
     use ReplacesAttributes;
 
     /**
-     * Get the validation message for an attribute and rule.
-     *
-     * @param  string $attribute
-     * @param  string $rule
-     * @return string
-     */
-    protected function getMessage($attribute, $rule)
-    {
-        $inlineMessage = $this->getInlineMessage($attribute, $rule);
-
-        // First we will retrieve the custom message for the validation rule if one
-        // exists. If a custom validation message is being used we'll return the
-        // custom message, otherwise we'll keep searching for a valid message.
-        if (!is_null($inlineMessage)) {
-            return $inlineMessage;
-        }
-
-        $lowerRule = Str::snake($rule);
-
-        $customMessage = $this->getCustomMessageFromTranslator(
-            $customKey = "validation.custom.{$attribute}.{$lowerRule}"
-        );
-
-        // First we check for a custom defined validation message for the attribute
-        // and rule. This allows the developer to specify specific messages for
-        // only some attributes and rules that need to get specially formed.
-        if ($customMessage !== $customKey) {
-            return $customMessage;
-        }
-
-        // If the rule being validated is a "size" rule, we will need to gather the
-        // specific error message for the type of attribute being validated such
-        // as a number, file or string which all have different message types.
-        elseif (in_array($rule, $this->sizeRules)) {
-            return $this->getSizeMessage($attribute, $rule);
-        }
-
-        // Finally, if no developer specified messages have been set, and no other
-        // special messages apply for this rule, we will just pull the default
-        // messages out of the translator service for this validation rule.
-        $key = "validation.{$lowerRule}";
-
-        if ($key != ($value = $this->translator->trans($key))) {
-            return $value;
-        }
-
-        return $this->getFromLocalArray(
-            $attribute, $lowerRule, $this->fallbackMessages
-        ) ?: $key;
-    }
-
-    /**
-     * Get the proper inline error message for standard and size rules.
-     *
-     * @param  string $attribute
-     * @param  string $rule
-     * @return string|null
-     */
-    protected function getInlineMessage($attribute, $rule)
-    {
-        $inlineEntry = $this->getFromLocalArray($attribute, Str::snake($rule));
-
-        return is_array($inlineEntry) && in_array($rule, $this->sizeRules)
-            ? $inlineEntry[$this->getAttributeType($attribute)]
-            : $inlineEntry;
-    }
-
-    /**
-     * Get the inline message for a rule if it exists.
-     *
-     * @param  string     $attribute
-     * @param  string     $lowerRule
-     * @param  array|null $source
-     * @return string|null
-     */
-    protected function getFromLocalArray($attribute, $lowerRule, $source = null)
-    {
-        $source = $source ?: $this->customMessages;
-
-        $keys = ["{$attribute}.{$lowerRule}", $lowerRule];
-
-        // First we will check for a custom message for an attribute specific rule
-        // message for the fields, then we will check for a general custom line
-        // that is not attribute specific. If we find either we'll return it.
-        foreach ($keys as $key) {
-            foreach (array_keys($source) as $sourceKey) {
-                if (Str::is($sourceKey, $key)) {
-                    return $source[$sourceKey];
-                }
-            }
-        }
-    }
-
-    /**
-     * Get the custom error message from translator.
-     *
-     * @param  string $key
-     * @return string
-     */
-    protected function getCustomMessageFromTranslator($key)
-    {
-        if (($message = $this->translator->trans($key)) !== $key) {
-            return $message;
-        }
-
-        // If an exact match was not found for the key, we will collapse all of these
-        // messages and loop through them and try to find a wildcard match for the
-        // given key. Otherwise, we will simply return the key's value back out.
-        $shortKey = preg_replace(
-            '/^validation\.custom\./', '', $key
-        );
-
-        return $this->getWildcardCustomMessages(Arr::dot(
-            (array)$this->translator->trans('validation.custom')
-        ), $shortKey, $key);
-    }
-
-    /**
-     * Check the given messages for a wildcard key.
-     *
-     * @param  array  $messages
-     * @param  string $search
-     * @param  string $default
-     * @return string
-     */
-    protected function getWildcardCustomMessages($messages, $search, $default)
-    {
-        foreach ($messages as $key => $message) {
-            if ($search === $key || (Str::contains((string)$key, ['*']) && Str::is($key, $search))) {
-                return $message;
-            }
-        }
-
-        return $default;
-    }
-
-    /**
-     * Get the proper error message for an attribute and size rule.
-     *
-     * @param  string $attribute
-     * @param  string $rule
-     * @return string
-     */
-    protected function getSizeMessage($attribute, $rule)
-    {
-        $lowerRule = Str::snake($rule);
-
-        // There are three different types of size validations. The attribute may be
-        // either a number, file, or string so we will check a few things to know
-        // which type of value it is and return the correct line for that type.
-        $type = $this->getAttributeType($attribute);
-
-        $key = "validation.{$lowerRule}.{$type}";
-
-        return $this->translator->trans($key);
-    }
-
-    /**
-     * Get the data type of the given attribute.
-     *
-     * @param  string $attribute
-     * @return string
-     */
-    protected function getAttributeType($attribute)
-    {
-        // We assume that the attributes present in the file array are files so that
-        // means that if the attribute does not have a numeric rule and the files
-        // list doesn't have it we'll just consider it a string by elimination.
-        if ($this->hasRule($attribute, $this->numericRules)) {
-            return 'numeric';
-        } elseif ($this->hasRule($attribute, ['Array'])) {
-            return 'array';
-        } elseif ($this->getValue($attribute) instanceof UploadedFile) {
-            return 'file';
-        }
-
-        return 'string';
-    }
-
-    /**
      * Replace all error message place-holders with actual values.
      *
-     * @param  string $message
-     * @param  string $attribute
-     * @param  string $rule
-     * @param  array  $parameters
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
      * @return string
      */
     public function makeReplacements($message, $attribute, $rule, $parameters)
     {
         $message = $this->replaceAttributePlaceholder(
-            $message, $this->getDisplayableAttribute($attribute)
+            $message,
+            $this->getDisplayableAttribute($attribute)
         );
 
         $message = $this->replaceInputPlaceholder($message, $attribute);
 
         if (isset($this->replacers[Str::snake($rule)])) {
             return $this->callReplacer($message, $attribute, Str::snake($rule), $parameters, $this);
-        } elseif (method_exists($this, $replacer = "replace{$rule}")) {
-            return $this->$replacer($message, $attribute, $rule, $parameters);
+        }
+        if (method_exists($this, $replacer = "replace{$rule}")) {
+            return $this->{$replacer}($message, $attribute, $rule, $parameters);
         }
 
         return $message;
@@ -220,7 +52,7 @@ trait FormatsMessages
     /**
      * Get the displayable name of the attribute.
      *
-     * @param  string $attribute
+     * @param string $attribute
      * @return string
      */
     public function getDisplayableAttribute($attribute)
@@ -257,55 +89,10 @@ trait FormatsMessages
     }
 
     /**
-     * Get the given attribute from the attribute translations.
-     *
-     * @param  string $name
-     * @return string
-     */
-    protected function getAttributeFromTranslations($name)
-    {
-        return Arr::get($this->translator->trans('validation.attributes'), $name);
-    }
-
-    /**
-     * Replace the :attribute placeholder in the given message.
-     *
-     * @param  string $message
-     * @param  string $value
-     * @return string
-     */
-    protected function replaceAttributePlaceholder($message, $value)
-    {
-        return str_replace(
-            [':attribute', ':ATTRIBUTE', ':Attribute'],
-            [$value, Str::upper($value), Str::ucfirst($value)],
-            $message
-        );
-    }
-
-    /**
-     * Replace the :input placeholder in the given message.
-     *
-     * @param  string $message
-     * @param  string $attribute
-     * @return string
-     */
-    protected function replaceInputPlaceholder($message, $attribute)
-    {
-        $actualValue = $this->getValue($attribute);
-
-        if (is_scalar($actualValue) || is_null($actualValue)) {
-            $message = str_replace(':input', $actualValue, $message);
-        }
-
-        return $message;
-    }
-
-    /**
      * Get the displayable name of the value.
      *
-     * @param  string $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return string
      */
     public function getDisplayableValue($attribute, $value)
@@ -324,9 +111,240 @@ trait FormatsMessages
     }
 
     /**
+     * Get the validation message for an attribute and rule.
+     *
+     * @param string $attribute
+     * @param string $rule
+     * @return string
+     */
+    protected function getMessage($attribute, $rule)
+    {
+        $inlineMessage = $this->getInlineMessage($attribute, $rule);
+
+        // First we will retrieve the custom message for the validation rule if one
+        // exists. If a custom validation message is being used we'll return the
+        // custom message, otherwise we'll keep searching for a valid message.
+        if (! is_null($inlineMessage)) {
+            return $inlineMessage;
+        }
+
+        $lowerRule = Str::snake($rule);
+
+        $customMessage = $this->getCustomMessageFromTranslator(
+            $customKey = "validation.custom.{$attribute}.{$lowerRule}"
+        );
+
+        // First we check for a custom defined validation message for the attribute
+        // and rule. This allows the developer to specify specific messages for
+        // only some attributes and rules that need to get specially formed.
+        if ($customMessage !== $customKey) {
+            return $customMessage;
+        }
+
+        // If the rule being validated is a "size" rule, we will need to gather the
+        // specific error message for the type of attribute being validated such
+        // as a number, file or string which all have different message types.
+        if (in_array($rule, $this->sizeRules)) {
+            return $this->getSizeMessage($attribute, $rule);
+        }
+
+        // Finally, if no developer specified messages have been set, and no other
+        // special messages apply for this rule, we will just pull the default
+        // messages out of the translator service for this validation rule.
+        $key = "validation.{$lowerRule}";
+
+        if ($key != ($value = $this->translator->trans($key))) {
+            return $value;
+        }
+
+        return $this->getFromLocalArray(
+            $attribute,
+            $lowerRule,
+            $this->fallbackMessages
+        ) ?: $key;
+    }
+
+    /**
+     * Get the proper inline error message for standard and size rules.
+     *
+     * @param string $attribute
+     * @param string $rule
+     * @return null|string
+     */
+    protected function getInlineMessage($attribute, $rule)
+    {
+        $inlineEntry = $this->getFromLocalArray($attribute, Str::snake($rule));
+
+        return is_array($inlineEntry) && in_array($rule, $this->sizeRules)
+            ? $inlineEntry[$this->getAttributeType($attribute)]
+            : $inlineEntry;
+    }
+
+    /**
+     * Get the inline message for a rule if it exists.
+     *
+     * @param string $attribute
+     * @param string $lowerRule
+     * @param null|array $source
+     * @return null|string
+     */
+    protected function getFromLocalArray($attribute, $lowerRule, $source = null)
+    {
+        $source = $source ?: $this->customMessages;
+
+        $keys = ["{$attribute}.{$lowerRule}", $lowerRule];
+
+        // First we will check for a custom message for an attribute specific rule
+        // message for the fields, then we will check for a general custom line
+        // that is not attribute specific. If we find either we'll return it.
+        foreach ($keys as $key) {
+            foreach (array_keys($source) as $sourceKey) {
+                if (Str::is($sourceKey, $key)) {
+                    return $source[$sourceKey];
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the custom error message from translator.
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function getCustomMessageFromTranslator($key)
+    {
+        if (($message = $this->translator->trans($key)) !== $key) {
+            return $message;
+        }
+
+        // If an exact match was not found for the key, we will collapse all of these
+        // messages and loop through them and try to find a wildcard match for the
+        // given key. Otherwise, we will simply return the key's value back out.
+        $shortKey = preg_replace(
+            '/^validation\.custom\./',
+            '',
+            $key
+        );
+
+        return $this->getWildcardCustomMessages(Arr::dot(
+            (array) $this->translator->trans('validation.custom')
+        ), $shortKey, $key);
+    }
+
+    /**
+     * Check the given messages for a wildcard key.
+     *
+     * @param array $messages
+     * @param string $search
+     * @param string $default
+     * @return string
+     */
+    protected function getWildcardCustomMessages($messages, $search, $default)
+    {
+        foreach ($messages as $key => $message) {
+            if ($search === $key || (Str::contains((string) $key, ['*']) && Str::is($key, $search))) {
+                return $message;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get the proper error message for an attribute and size rule.
+     *
+     * @param string $attribute
+     * @param string $rule
+     * @return string
+     */
+    protected function getSizeMessage($attribute, $rule)
+    {
+        $lowerRule = Str::snake($rule);
+
+        // There are three different types of size validations. The attribute may be
+        // either a number, file, or string so we will check a few things to know
+        // which type of value it is and return the correct line for that type.
+        $type = $this->getAttributeType($attribute);
+
+        $key = "validation.{$lowerRule}.{$type}";
+
+        return $this->translator->trans($key);
+    }
+
+    /**
+     * Get the data type of the given attribute.
+     *
+     * @param string $attribute
+     * @return string
+     */
+    protected function getAttributeType($attribute)
+    {
+        // We assume that the attributes present in the file array are files so that
+        // means that if the attribute does not have a numeric rule and the files
+        // list doesn't have it we'll just consider it a string by elimination.
+        if ($this->hasRule($attribute, $this->numericRules)) {
+            return 'numeric';
+        }
+        if ($this->hasRule($attribute, ['Array'])) {
+            return 'array';
+        }
+        if ($this->getValue($attribute) instanceof UploadedFile) {
+            return 'file';
+        }
+
+        return 'string';
+    }
+
+    /**
+     * Get the given attribute from the attribute translations.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getAttributeFromTranslations($name)
+    {
+        return Arr::get($this->translator->trans('validation.attributes'), $name);
+    }
+
+    /**
+     * Replace the :attribute placeholder in the given message.
+     *
+     * @param string $message
+     * @param string $value
+     * @return string
+     */
+    protected function replaceAttributePlaceholder($message, $value)
+    {
+        return str_replace(
+            [':attribute', ':ATTRIBUTE', ':Attribute'],
+            [$value, Str::upper($value), Str::ucfirst($value)],
+            $message
+        );
+    }
+
+    /**
+     * Replace the :input placeholder in the given message.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @return string
+     */
+    protected function replaceInputPlaceholder($message, $attribute)
+    {
+        $actualValue = $this->getValue($attribute);
+
+        if (is_scalar($actualValue) || is_null($actualValue)) {
+            $message = str_replace(':input', $actualValue, $message);
+        }
+
+        return $message;
+    }
+
+    /**
      * Transform an array of attributes to their displayable form.
      *
-     * @param  array $values
+     * @param array $values
      * @return array
      */
     protected function getAttributeList(array $values)
@@ -346,12 +364,12 @@ trait FormatsMessages
     /**
      * Call a custom validator message replacer.
      *
-     * @param  string                                   $message
-     * @param  string                                   $attribute
-     * @param  string                                   $rule
-     * @param  array                                    $parameters
-     * @param  \Hyperf\Validation\Validator $validator
-     * @return string|null
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @param \Hyperf\Validation\Validator $validator
+     * @return null|string
      */
     protected function callReplacer($message, $attribute, $rule, $parameters, $validator)
     {
@@ -359,7 +377,8 @@ trait FormatsMessages
 
         if ($callback instanceof Closure) {
             return call_user_func_array($callback, func_get_args());
-        } elseif (is_string($callback)) {
+        }
+        if (is_string($callback)) {
             return $this->callClassBasedReplacer($callback, $message, $attribute, $rule, $parameters, $validator);
         }
     }
@@ -367,12 +386,12 @@ trait FormatsMessages
     /**
      * Call a class based validator message replacer.
      *
-     * @param  string                                   $callback
-     * @param  string                                   $message
-     * @param  string                                   $attribute
-     * @param  string                                   $rule
-     * @param  array                                    $parameters
-     * @param  \Hyperf\Validation\Validator $validator
+     * @param string $callback
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @param \Hyperf\Validation\Validator $validator
      * @return string
      */
     protected function callClassBasedReplacer($callback, $message, $attribute, $rule, $parameters, $validator)

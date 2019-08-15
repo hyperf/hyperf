@@ -1,15 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * DatabasePresenceVerifierFactory.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019/7/26 01:50
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation;
-
 
 use Hyperf\Database\ConnectionResolverInterface;
 use Psr\Container\ContainerInterface;
@@ -20,9 +21,6 @@ class DatabasePresenceVerifierFactory
     {
         $db = $container->get(ConnectionResolverInterface::class);
 
-        $presenceVerifier = make(DatabasePresenceVerifier::class, compact('db'));
-
-        return $presenceVerifier;
-
+        return make(DatabasePresenceVerifier::class, compact('db'));
     }
 }

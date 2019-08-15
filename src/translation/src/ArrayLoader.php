@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Translation;
 
 use Hyperf\Translation\Contracts\Loader;
@@ -16,9 +26,9 @@ class ArrayLoader implements Loader
     /**
      * Load the messages for the given locale.
      *
-     * @param  string  $locale
-     * @param  string  $group
-     * @param  string|null  $namespace
+     * @param string $locale
+     * @param string $group
+     * @param null|string $namespace
      * @return array
      */
     public function load($locale, $group, $namespace = null)
@@ -31,33 +41,29 @@ class ArrayLoader implements Loader
     /**
      * Add a new namespace to the loader.
      *
-     * @param  string  $namespace
-     * @param  string  $hint
-     * @return void
+     * @param string $namespace
+     * @param string $hint
      */
     public function addNamespace($namespace, $hint)
     {
-        //
     }
 
     /**
      * Add a new JSON path to the loader.
      *
-     * @param  string  $path
-     * @return void
+     * @param string $path
      */
     public function addJsonPath($path)
     {
-        //
     }
 
     /**
      * Add messages to the loader.
      *
-     * @param  string  $locale
-     * @param  string  $group
-     * @param  array  $messages
-     * @param  string|null  $namespace
+     * @param string $locale
+     * @param string $group
+     * @param array $messages
+     * @param null|string $namespace
      * @return $this
      */
     public function addMessages($locale, $group, array $messages, $namespace = null)

@@ -1,11 +1,21 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Di\Container;
-use Hyperf\Utils\Str;
 use Hyperf\Translation\Contracts\Translator;
+use Hyperf\Utils\Str;
 use Hyperf\Validation\Contracts\Validation\Factory as FactoryContract;
 
 class Factory implements FactoryContract
@@ -76,11 +86,10 @@ class Factory implements FactoryContract
     /**
      * Create a new Validator factory instance.
      *
-     * @param  \Hyperf\Translation\Contracts\Translator|null  $translator
+     * @param null|\Hyperf\Translation\Contracts\Translator $translator
      * @param  Container
-     * @return void
      */
-    public function __construct(Translator $translator,Container $container = null)
+    public function __construct(Translator $translator, Container $container = null)
     {
         $this->container = $container;
         $this->translator = $translator;
@@ -89,16 +98,19 @@ class Factory implements FactoryContract
     /**
      * Create a new Validator instance.
      *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $customAttributes
+     * @param array $data
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
      * @return \Hyperf\Validation\Validator
      */
     public function make(array $data, array $rules, array $messages = [], array $customAttributes = [])
     {
         $validator = $this->resolve(
-            $data, $rules, $messages, $customAttributes
+            $data,
+            $rules,
+            $messages,
+            $customAttributes
         );
 
         // The presence verifier is responsible for checking the unique and exists data
@@ -123,13 +135,12 @@ class Factory implements FactoryContract
     /**
      * Validate the given data against the provided rules.
      *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $customAttributes
-     * @return array
-     *
+     * @param array $data
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
      * @throws \Hyperf\Validation\ValidationException
+     * @return array
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = [])
     {
@@ -137,52 +148,11 @@ class Factory implements FactoryContract
     }
 
     /**
-     * Resolve a new Validator instance.
-     *
-     * @param  array  $data
-     * @param  array  $rules
-     * @param  array  $messages
-     * @param  array  $customAttributes
-     * @return \Hyperf\Validation\Validator
-     */
-    protected function resolve(array $data, array $rules, array $messages, array $customAttributes)
-    {
-        if (is_null($this->resolver)) {
-            return new Validator($this->translator, $data, $rules, $messages, $customAttributes);
-        }
-
-        return call_user_func($this->resolver, $this->translator, $data, $rules, $messages, $customAttributes);
-    }
-
-    /**
-     * Add the extensions to a validator instance.
-     *
-     * @param  \Hyperf\Validation\Validator  $validator
-     * @return void
-     */
-    protected function addExtensions(Validator $validator)
-    {
-        $validator->addExtensions($this->extensions);
-
-        // Next, we will add the implicit extensions, which are similar to the required
-        // and accepted rule in that they are run even if the attributes is not in a
-        // array of data that is given to a validator instances via instantiation.
-        $validator->addImplicitExtensions($this->implicitExtensions);
-
-        $validator->addDependentExtensions($this->dependentExtensions);
-
-        $validator->addReplacers($this->replacers);
-
-        $validator->setFallbackMessages($this->fallbackMessages);
-    }
-
-    /**
      * Register a custom validator extension.
      *
-     * @param  string  $rule
-     * @param  \Closure|string  $extension
-     * @param  string|null  $message
-     * @return void
+     * @param string $rule
+     * @param \Closure|string $extension
+     * @param null|string $message
      */
     public function extend($rule, $extension, $message = null)
     {
@@ -196,10 +166,9 @@ class Factory implements FactoryContract
     /**
      * Register a custom implicit validator extension.
      *
-     * @param  string  $rule
-     * @param  \Closure|string  $extension
-     * @param  string|null  $message
-     * @return void
+     * @param string $rule
+     * @param \Closure|string $extension
+     * @param null|string $message
      */
     public function extendImplicit($rule, $extension, $message = null)
     {
@@ -213,10 +182,9 @@ class Factory implements FactoryContract
     /**
      * Register a custom dependent validator extension.
      *
-     * @param  string  $rule
-     * @param  \Closure|string  $extension
-     * @param  string|null  $message
-     * @return void
+     * @param string $rule
+     * @param \Closure|string $extension
+     * @param null|string $message
      */
     public function extendDependent($rule, $extension, $message = null)
     {
@@ -230,9 +198,8 @@ class Factory implements FactoryContract
     /**
      * Register a custom validator message replacer.
      *
-     * @param  string  $rule
-     * @param  \Closure|string  $replacer
-     * @return void
+     * @param string $rule
+     * @param \Closure|string $replacer
      */
     public function replacer($rule, $replacer)
     {
@@ -242,8 +209,7 @@ class Factory implements FactoryContract
     /**
      * Set the Validator instance resolver.
      *
-     * @param  \Closure  $resolver
-     * @return void
+     * @param \Closure $resolver
      */
     public function resolver(Closure $resolver)
     {
@@ -273,11 +239,49 @@ class Factory implements FactoryContract
     /**
      * Set the Presence Verifier implementation.
      *
-     * @param  \Hyperf\Validation\PresenceVerifierInterface  $presenceVerifier
-     * @return void
+     * @param \Hyperf\Validation\PresenceVerifierInterface $presenceVerifier
      */
     public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
     {
         $this->verifier = $presenceVerifier;
+    }
+
+    /**
+     * Resolve a new Validator instance.
+     *
+     * @param array $data
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @return \Hyperf\Validation\Validator
+     */
+    protected function resolve(array $data, array $rules, array $messages, array $customAttributes)
+    {
+        if (is_null($this->resolver)) {
+            return new Validator($this->translator, $data, $rules, $messages, $customAttributes);
+        }
+
+        return call_user_func($this->resolver, $this->translator, $data, $rules, $messages, $customAttributes);
+    }
+
+    /**
+     * Add the extensions to a validator instance.
+     *
+     * @param \Hyperf\Validation\Validator $validator
+     */
+    protected function addExtensions(Validator $validator)
+    {
+        $validator->addExtensions($this->extensions);
+
+        // Next, we will add the implicit extensions, which are similar to the required
+        // and accepted rule in that they are run even if the attributes is not in a
+        // array of data that is given to a validator instances via instantiation.
+        $validator->addImplicitExtensions($this->implicitExtensions);
+
+        $validator->addDependentExtensions($this->dependentExtensions);
+
+        $validator->addReplacers($this->replacers);
+
+        $validator->setFallbackMessages($this->fallbackMessages);
     }
 }

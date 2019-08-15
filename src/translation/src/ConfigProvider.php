@@ -21,19 +21,19 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Loader::class     => FileLoaderFactory::class,
+                Loader::class => FileLoaderFactory::class,
                 Translator::class => TranslatorFactory::class,
             ],
-            'scan'         => [
+            'scan' => [
                 'paths' => [
                     __DIR__,
                 ],
             ],
-            'publish'      => [
+            'publish' => [
                 [
-                    'id'          => 'config',
+                    'id' => 'config',
                     'description' => 'The config for translation.',
-                    'source'      => __DIR__ . '/../publish/translation.php',
+                    'source' => __DIR__ . '/../publish/translation.php',
                     'destination' => BASE_PATH . '/config/autoload/translation.php',
                 ],
             ],

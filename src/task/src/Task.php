@@ -15,7 +15,7 @@ namespace Hyperf\Task;
 class Task
 {
     /**
-     * @var callable|array
+     * @var array|callable
      */
     public $callback;
 

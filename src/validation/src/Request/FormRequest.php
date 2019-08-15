@@ -1,28 +1,29 @@
 <?php
+
+declare(strict_types=1);
 /**
- * FormRequest.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019/7/26 02:04
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation\Request;
 
-use Hyperf\Validation\Contracts\Validation\Factory;
 use Hyperf\HttpServer\Request;
+use Hyperf\Validation\Contracts\Validation\Factory;
 //use Illuminate\Http\JsonResponse;
 //use Illuminate\Routing\Redirector;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Hyperf\Validation\Contracts\Validation\Validator;
-use Hyperf\Validation\ValidationException;
-//use Illuminate\Auth\Access\AuthorizationException;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
+use Hyperf\Validation\Contracts\Validation\Validator;
+//use Illuminate\Auth\Access\AuthorizationException;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
+use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class FormRequest extends Request implements ValidatesWhenResolved
 {
@@ -77,10 +78,73 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected $dontFlash = ['password', 'password_confirmation'];
 
-
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
+    }
+
+    /**
+     * Get the proper failed validation response for the request.
+     *
+     * @param array $errors
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function response(array $errors)
+    {
+//        if ($this->expectsJson()) {
+//            return new JsonResponse($errors, 422);
+//        }
+
+//        return $this->redirector->to($this->getRedirectUrl())
+//            ->withInput($this->except($this->dontFlash))
+//            ->withErrors($errors, $this->errorBag);
+        return new JsonResponse($errors, 422);
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [];
+    }
+
+//    /**
+//     * Set the Redirector instance.
+//     *
+//     * @param  \Illuminate\Routing\Redirector $redirector
+//     * @return $this
+//     */
+//    public function setRedirector(Redirector $redirector)
+//    {
+//        $this->redirector = $redirector;
+//
+//        return $this;
+//    }
+
+    /**
+     * Set the container implementation.
+     *
+     * @param ContainerInterface $container
+     * @return $this
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        return $this;
     }
 
     /**
@@ -108,14 +172,16 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Create the default validator instance.
      *
-     * @param  Factory $factory
+     * @param Factory $factory
      * @return \Hyperf\Validation\Contracts\Validation\Validator
      */
     protected function createDefaultValidator(ValidationFactory $factory)
     {
         return $factory->make(
-            $this->validationData(), call_user_func_array([$this, 'rules'], []),
-            $this->messages(), $this->attributes()
+            $this->validationData(),
+            call_user_func_array([$this, 'rules'], []),
+            $this->messages(),
+            $this->attributes()
         );
     }
 
@@ -132,8 +198,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Handle a failed validation attempt.
      *
-     * @param  Validator $validator
-     * @return void
+     * @param Validator $validator
      *
      * @throws ValidationException
      */
@@ -145,27 +210,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * Get the proper failed validation response for the request.
-     *
-     * @param  array $errors
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function response(array $errors)
-    {
-//        if ($this->expectsJson()) {
-//            return new JsonResponse($errors, 422);
-//        }
-
-//        return $this->redirector->to($this->getRedirectUrl())
-//            ->withInput($this->except($this->dontFlash))
-//            ->withErrors($errors, $this->errorBag);
-        return new JsonResponse($errors, 422);
-    }
-
-    /**
      * Format the errors from the given Validator instance.
      *
-     * @param  Validator $validator
+     * @param Validator $validator
      * @return array
      */
     protected function formatErrors(Validator $validator)
@@ -210,58 +257,10 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Handle a failed authorization attempt.
      *
-     * @return void
-     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     protected function failedAuthorization()
     {
         // throw new AuthorizationException('This action is unauthorized.');
-    }
-
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [];
-    }
-
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array
-     */
-    public function attributes()
-    {
-        return [];
-    }
-
-//    /**
-//     * Set the Redirector instance.
-//     *
-//     * @param  \Illuminate\Routing\Redirector $redirector
-//     * @return $this
-//     */
-//    public function setRedirector(Redirector $redirector)
-//    {
-//        $this->redirector = $redirector;
-//
-//        return $this;
-//    }
-
-    /**
-     * Set the container implementation.
-     *
-     * @param  ContainerInterface $container
-     * @return $this
-     */
-    public function setContainer(ContainerInterface $container)
-    {
-        $this->container = $container;
-
-        return $this;
     }
 }

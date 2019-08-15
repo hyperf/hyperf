@@ -20,7 +20,7 @@ class PipeMessage
     public $type;
 
     /**
-     * @var callable|array
+     * @var array|callable
      */
     public $callable;
 

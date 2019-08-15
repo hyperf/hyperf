@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Utils\Arr;
@@ -10,8 +20,8 @@ class ValidationData
     /**
      * Initialize and gather data for given attribute.
      *
-     * @param  string  $attribute
-     * @param  array  $masterData
+     * @param string $attribute
+     * @param array $masterData
      * @return array
      */
     public static function initializeAndGatherData($attribute, $masterData)
@@ -19,59 +29,10 @@ class ValidationData
         $data = Arr::dot(static::initializeAttributeOnData($attribute, $masterData));
 
         return array_merge($data, static::extractValuesForWildcards(
-            $masterData, $data, $attribute
+            $masterData,
+            $data,
+            $attribute
         ));
-    }
-
-    /**
-     * Gather a copy of the attribute data filled with any missing attributes.
-     *
-     * @param  string  $attribute
-     * @param  array  $masterData
-     * @return array
-     */
-    protected static function initializeAttributeOnData($attribute, $masterData)
-    {
-        $explicitPath = static::getLeadingExplicitAttributePath($attribute);
-
-        $data = static::extractDataFromPath($explicitPath, $masterData);
-
-        if (! Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
-            return $data;
-        }
-
-        return data_set($data, $attribute, null, true);
-    }
-
-    /**
-     * Get all of the exact attribute values for a given wildcard attribute.
-     *
-     * @param  array  $masterData
-     * @param  array  $data
-     * @param  string  $attribute
-     * @return array
-     */
-    protected static function extractValuesForWildcards($masterData, $data, $attribute)
-    {
-        $keys = [];
-
-        $pattern = str_replace('\*', '[^\.]+', preg_quote($attribute));
-
-        foreach ($data as $key => $value) {
-            if ((bool) preg_match('/^'.$pattern.'/', $key, $matches)) {
-                $keys[] = $matches[0];
-            }
-        }
-
-        $keys = array_unique($keys);
-
-        $data = [];
-
-        foreach ($keys as $key) {
-            $data[$key] = Arr::get($masterData, $key);
-        }
-
-        return $data;
     }
 
     /**
@@ -79,8 +40,8 @@ class ValidationData
      *
      * Used to extract a sub-section of the data for faster iteration.
      *
-     * @param  string  $attribute
-     * @param  array  $masterData
+     * @param string $attribute
+     * @param array $masterData
      * @return array
      */
     public static function extractDataFromPath($attribute, $masterData)
@@ -103,11 +64,62 @@ class ValidationData
      *
      * Allows us to not spin through all of the flattened data for some operations.
      *
-     * @param  string  $attribute
+     * @param string $attribute
      * @return string
      */
     public static function getLeadingExplicitAttributePath($attribute)
     {
         return rtrim(explode('*', $attribute)[0], '.') ?: null;
+    }
+
+    /**
+     * Gather a copy of the attribute data filled with any missing attributes.
+     *
+     * @param string $attribute
+     * @param array $masterData
+     * @return array
+     */
+    protected static function initializeAttributeOnData($attribute, $masterData)
+    {
+        $explicitPath = static::getLeadingExplicitAttributePath($attribute);
+
+        $data = static::extractDataFromPath($explicitPath, $masterData);
+
+        if (! Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
+            return $data;
+        }
+
+        return data_set($data, $attribute, null, true);
+    }
+
+    /**
+     * Get all of the exact attribute values for a given wildcard attribute.
+     *
+     * @param array $masterData
+     * @param array $data
+     * @param string $attribute
+     * @return array
+     */
+    protected static function extractValuesForWildcards($masterData, $data, $attribute)
+    {
+        $keys = [];
+
+        $pattern = str_replace('\*', '[^\.]+', preg_quote($attribute));
+
+        foreach ($data as $key => $value) {
+            if ((bool) preg_match('/^' . $pattern . '/', $key, $matches)) {
+                $keys[] = $matches[0];
+            }
+        }
+
+        $keys = array_unique($keys);
+
+        $data = [];
+
+        foreach ($keys as $key) {
+            $data[$key] = Arr::get($masterData, $key);
+        }
+
+        return $data;
     }
 }

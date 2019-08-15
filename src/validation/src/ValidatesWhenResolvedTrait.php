@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation;
 
 /**
@@ -9,8 +19,6 @@ trait ValidatesWhenResolvedTrait
 {
     /**
      * Validate the class instance.
-     *
-     * @return void
      */
     public function validateResolved()
     {
@@ -21,7 +29,7 @@ trait ValidatesWhenResolvedTrait
         }
 
         $instance = $this->getValidatorInstance();
-        
+
         if ($instance->fails()) {
             $this->failedValidation($instance);
         }
@@ -29,8 +37,6 @@ trait ValidatesWhenResolvedTrait
 
     /**
      * Prepare the data for validation.
-     *
-     * @return void
      */
     protected function prepareForValidation()
     {
@@ -50,8 +56,7 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Hyperf\Validation\Contracts\Validation\Validator  $validator
-     * @return void
+     * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
      *
      * @throws \Hyperf\Validation\ValidationException
      */
@@ -77,12 +82,10 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed authorization attempt.
      *
-     * @return void
-     *
      * @throws \Hyperf\Validation\UnauthorizedException
      */
     protected function failedAuthorization()
     {
-        throw new UnauthorizedException;
+        throw new UnauthorizedException();
     }
 }

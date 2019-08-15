@@ -1,18 +1,19 @@
 <?php
+
+declare(strict_types=1);
 /**
- * TranslatorFactory.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-07-25 16:41
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Translation;
 
-
-use Hyperf\Translation\Contracts\Loader;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Translation\Contracts\Loader;
 use Psr\Container\ContainerInterface;
 
 class TranslatorFactory
@@ -23,8 +24,8 @@ class TranslatorFactory
         // locale as well as the fallback locale. So, we'll grab the application
         // configuration so we can easily get both of these values from there.
 
-        $config         = $container->get(ConfigInterface::class);
-        $locale         = $config->get('translation.locale');
+        $config = $container->get(ConfigInterface::class);
+        $locale = $config->get('translation.locale');
         $fallbackLocale = $config->get('translation.fallback_locale');
 
         $loader = $container->get(Loader::class);
@@ -32,8 +33,6 @@ class TranslatorFactory
         $trans = make(Translator::class, compact('loader', 'locale'));
         $trans->setFallback($fallbackLocale);
 
-
         return $trans;
-
     }
 }

@@ -1,14 +1,27 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Translation\Cases;
 
-use Mockery as m;
-use Hyperf\Utils\Collection;
-use Hyperf\Translation\Translator;
-use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Contracts\Loader;
+use Hyperf\Translation\MessageSelector;
+use Hyperf\Translation\Translator;
+use Hyperf\Utils\Collection;
+use Mockery as m;
 
-
+/**
+ * @internal
+ * @coversNothing
+ */
 class TranslationTranslatorTest extends AbstractTestCase
 {
     protected function tearDown(): void

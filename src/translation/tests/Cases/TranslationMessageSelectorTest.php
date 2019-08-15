@@ -1,17 +1,34 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Translation\Cases;
 
 use Hyperf\Translation\MessageSelector;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class TranslationMessageSelectorTest extends AbstractTestCase
 {
     /**
      * @dataProvider chooseTestData
+     * @param mixed $expected
+     * @param mixed $id
+     * @param mixed $number
      */
     public function testChoose($expected, $id, $number)
     {
-        $selector = new MessageSelector;
+        $selector = new MessageSelector();
 
         $this->assertEquals($expected, $selector->choose($id, $number, 'en'));
     }

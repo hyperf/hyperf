@@ -1,9 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation;
 
-use Hyperf\Utils\Traits\Macroable;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Traits\Macroable;
 
 class Rule
 {
@@ -12,7 +22,7 @@ class Rule
     /**
      * Get a dimensions constraint builder instance.
      *
-     * @param  array  $constraints
+     * @param array $constraints
      * @return \Hyperf\Validation\Rules\Dimensions
      */
     public static function dimensions(array $constraints = [])
@@ -23,8 +33,8 @@ class Rule
     /**
      * Get a exists constraint builder instance.
      *
-     * @param  string  $table
-     * @param  string  $column
+     * @param string $table
+     * @param string $column
      * @return \Hyperf\Validation\Rules\Exists
      */
     public static function exists($table, $column = 'NULL')
@@ -35,7 +45,7 @@ class Rule
     /**
      * Get an in constraint builder instance.
      *
-     * @param  Arrayable|array|string  $values
+     * @param array|Arrayable|string $values
      * @return \Hyperf\Validation\Rules\In
      */
     public static function in($values)
@@ -50,7 +60,7 @@ class Rule
     /**
      * Get a not_in constraint builder instance.
      *
-     * @param  Arrayable|array|string  $values
+     * @param array|Arrayable|string $values
      * @return \Hyperf\Validation\Rules\NotIn
      */
     public static function notIn($values)
@@ -65,7 +75,7 @@ class Rule
     /**
      * Get a required_if constraint builder instance.
      *
-     * @param  callable|bool  $callback
+     * @param bool|callable $callback
      * @return \Hyperf\Validation\Rules\RequiredIf
      */
     public static function requiredIf($callback)
@@ -76,8 +86,8 @@ class Rule
     /**
      * Get a unique constraint builder instance.
      *
-     * @param  string  $table
-     * @param  string  $column
+     * @param string $table
+     * @param string $column
      * @return \Hyperf\Validation\Rules\Unique
      */
     public static function unique($table, $column = 'NULL')

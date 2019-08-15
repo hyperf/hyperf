@@ -1,15 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Translation\Contracts\Translator as TranslatorInterface;
+use Hyperf\Validation\Factory;
+use Hyperf\Validation\PresenceVerifierInterface;
+use Hyperf\Validation\Validator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Hyperf\Validation\Factory;
-use Hyperf\Validation\Validator;
-use Hyperf\Validation\PresenceVerifierInterface;
-use Hyperf\Translation\Contracts\Translator as TranslatorInterface;
 
-
+/**
+ * @internal
+ * @coversNothing
+ */
 class ValidationFactoryTest extends TestCase
 {
     protected function tearDown(): void
@@ -28,13 +41,10 @@ class ValidationFactoryTest extends TestCase
 
         $presence = m::mock(PresenceVerifierInterface::class);
         $noop1 = function () {
-            //
         };
         $noop2 = function () {
-            //
         };
         $noop3 = function () {
-            //
         };
         $factory->extend('foo', $noop1);
         $factory->extendImplicit('implicit', $noop2);
@@ -61,11 +71,11 @@ class ValidationFactoryTest extends TestCase
     {
         $validator = m::mock(Validator::class);
         $translator = m::mock(TranslatorInterface::class);
-        $factory = m::mock(Factory::class.'[make]', [$translator]);
+        $factory = m::mock(Factory::class . '[make]', [$translator]);
 
         $factory->shouldReceive('make')->once()
-                ->with(['foo' => 'bar', 'baz' => 'boom'], ['foo' => 'required'], [], [])
-                ->andReturn($validator);
+            ->with(['foo' => 'bar', 'baz' => 'boom'], ['foo' => 'required'], [], [])
+            ->andReturn($validator);
 
         $validator->shouldReceive('validate')->once()->andReturn(['foo' => 'bar']);
 

@@ -1,11 +1,25 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Validation\Cases;
 
-use PHPUnit\Framework\TestCase;
 use Hyperf\Database\Model\Model;
 use Hyperf\Validation\Rules\Unique;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ValidationUniqueRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()
@@ -52,5 +66,6 @@ class ValidationUniqueRuleTest extends TestCase
 class EloquentModelStub extends Model
 {
     protected $primaryKey = 'id_column';
+
     protected $guarded = [];
 }

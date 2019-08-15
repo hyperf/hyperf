@@ -1,15 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * ValidationExceptionHandler.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-07-26 17:01
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation;
-
 
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -22,7 +23,7 @@ class ValidationExceptionHandler extends ExceptionHandler
     {
         if ($throwable instanceof ValidationException) {
             $data = json_encode([
-                'code'    => $throwable->getCode(),
+                'code' => $throwable->getCode(),
                 'message' => $throwable->validator->errors()->first(),
             ], JSON_UNESCAPED_UNICODE);
 

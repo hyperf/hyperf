@@ -1,15 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * MessageBag.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019/7/26 03:37
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Validation\Contracts\Support;
-
 
 use Hyperf\Utils\Contracts\Arrayable;
 
@@ -25,8 +26,8 @@ interface MessageBag extends Arrayable
     /**
      * Add a message to the bag.
      *
-     * @param  string  $key
-     * @param  string  $message
+     * @param string $key
+     * @param string $message
      * @return $this
      */
     public function add($key, $message);
@@ -34,7 +35,7 @@ interface MessageBag extends Arrayable
     /**
      * Merge a new array of messages into the bag.
      *
-     * @param  MessageProvider|array  $messages
+     * @param array|MessageProvider $messages
      * @return $this
      */
     public function merge($messages);
@@ -42,7 +43,7 @@ interface MessageBag extends Arrayable
     /**
      * Determine if messages exist for a given key.
      *
-     * @param  string|array  $key
+     * @param array|string $key
      * @return bool
      */
     public function has($key);
@@ -50,8 +51,8 @@ interface MessageBag extends Arrayable
     /**
      * Get the first message from the bag for a given key.
      *
-     * @param  string|null  $key
-     * @param  string|null  $format
+     * @param null|string $key
+     * @param null|string $format
      * @return string
      */
     public function first($key = null, $format = null);
@@ -59,8 +60,8 @@ interface MessageBag extends Arrayable
     /**
      * Get all of the messages from the bag for a given key.
      *
-     * @param  string  $key
-     * @param  string|null  $format
+     * @param string $key
+     * @param null|string $format
      * @return array
      */
     public function get($key, $format = null);
@@ -68,7 +69,7 @@ interface MessageBag extends Arrayable
     /**
      * Get all of the messages for every key in the bag.
      *
-     * @param  string|null  $format
+     * @param null|string $format
      * @return array
      */
     public function all($format = null);
@@ -90,7 +91,7 @@ interface MessageBag extends Arrayable
     /**
      * Set the default message format.
      *
-     * @param  string  $format
+     * @param string $format
      * @return $this
      */
     public function setFormat($format = ':message');

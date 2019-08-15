@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Server\Exception\ServerException;
@@ -17,7 +27,7 @@ class ValidationException extends ServerException
     /**
      * The recommended response to send to the client.
      *
-     * @var \Symfony\Component\HttpFoundation\Response|null
+     * @var null|\Symfony\Component\HttpFoundation\Response
      */
     public $response;
 
@@ -45,10 +55,9 @@ class ValidationException extends ServerException
     /**
      * Create a new exception instance.
      *
-     * @param  \Hyperf\Validation\Contracts\Validation\Validator  $validator
-     * @param  \Symfony\Component\HttpFoundation\Response|null  $response
-     * @param  string  $errorBag
-     * @return void
+     * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
+     * @param null|\Symfony\Component\HttpFoundation\Response $response
+     * @param string $errorBag
      */
     public function __construct($validator, $response = null, $errorBag = 'default')
     {
@@ -62,7 +71,7 @@ class ValidationException extends ServerException
     /**
      * Create a new validation exception from a plain array of messages.
      *
-     * @param  array  $messages
+     * @param array $messages
      * @return static
      */
     public static function withMessages(array $messages)
@@ -89,7 +98,7 @@ class ValidationException extends ServerException
     /**
      * Set the HTTP status code to be used for the response.
      *
-     * @param  int  $status
+     * @param int $status
      * @return $this
      */
     public function status($status)
@@ -102,7 +111,7 @@ class ValidationException extends ServerException
     /**
      * Set the error bag on the exception.
      *
-     * @param  string  $errorBag
+     * @param string $errorBag
      * @return $this
      */
     public function errorBag($errorBag)
@@ -115,7 +124,7 @@ class ValidationException extends ServerException
     /**
      * Set the URL to redirect to on a validation error.
      *
-     * @param  string  $url
+     * @param string $url
      * @return $this
      */
     public function redirectTo($url)
@@ -128,7 +137,7 @@ class ValidationException extends ServerException
     /**
      * Get the underlying response instance.
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return null|\Symfony\Component\HttpFoundation\Response
      */
     public function getResponse()
     {
