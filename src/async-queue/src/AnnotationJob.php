@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Utils\ApplicationContext;
 
 class AnnotationJob extends Job
@@ -29,13 +31,18 @@ class AnnotationJob extends Job
     /**
      * @var array
      */
-    public $params;
+    public $params = [];
 
     public function __construct(string $class, string $method, array $params)
     {
         $this->class = $class;
         $this->method = $method;
-        $this->params = $params;
+        foreach ($params as $key => $value) {
+            if ($value instanceof CompressInterface) {
+                $value = $value->compress();
+            }
+            $this->params[$key] = $value;
+        }
     }
 
     public function handle()
@@ -44,6 +51,13 @@ class AnnotationJob extends Job
 
         $class = $container->get($this->class);
 
+        $params = [];
+        foreach ($this->params as $key => $value) {
+            if ($value instanceof UnCompressInterface) {
+                $value = $value->uncompress();
+            }
+            $params[$key] = $value;
+        }
         $class->{$this->method}(...$this->params);
     }
 }

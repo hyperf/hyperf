@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Aspect;
 
-use Hyperf\AsyncQueue\Annotation\AsyncQueue;
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 use Hyperf\AsyncQueue\AnnotationJob;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Environment;
@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
 class AsyncQueueAspect extends AbstractAspect
 {
     public $annotations = [
-        AsyncQueue::class,
+        AsyncQueueMessage::class,
     ];
 
     /**
@@ -55,9 +55,9 @@ class AsyncQueueAspect extends AbstractAspect
         $delay = 0;
 
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var AsyncQueue $annotation */
-        $annotation = $metadata->method[AsyncQueue::class] ?? $metadata->class[AsyncQueue::class] ?? null;
-        if ($annotation instanceof AsyncQueue) {
+        /** @var AsyncQueueMessage $annotation */
+        $annotation = $metadata->method[AsyncQueueMessage::class] ?? $metadata->class[AsyncQueueMessage::class] ?? null;
+        if ($annotation instanceof AsyncQueueMessage) {
             $pool = $annotation->pool;
             $delay = $annotation->delay;
         }

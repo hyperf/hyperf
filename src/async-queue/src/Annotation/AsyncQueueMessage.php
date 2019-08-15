@@ -18,7 +18,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
-class AsyncQueue extends AbstractAnnotation
+class AsyncQueueMessage extends AbstractAnnotation
 {
     public $pool = 'default';
 
