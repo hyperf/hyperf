@@ -74,6 +74,20 @@ class Context
         $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
     }
 
+    /**
+     * Retrieve the value and override it by closure.
+     */
+    public static function override(string $id, \Closure $closure)
+    {
+        $value = null;
+        if (self::has($id)) {
+            $value = self::get($id);
+        }
+        $value = $closure($value);
+        self::set($id, $value);
+        return $value;
+    }
+
     public static function getContainer()
     {
         if (Coroutine::inCoroutine()) {
