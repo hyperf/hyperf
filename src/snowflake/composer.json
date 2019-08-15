@@ -1,38 +1,34 @@
 {
-    "name": "hyperf/grpc-client",
-    "description": "A GRPC Client for Hyperf.",
+    "name": "hyperf/snowflake",
+    "description": "A snowflake library",
     "license": "MIT",
     "keywords": [
         "php",
-        "swoole",
-        "hyperf",
-        "grpc",
-        "grpc-client"
+        "snowflake"
     ],
     "support": {
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/grpc": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
-        "jean85/pretty-package-versions": "^1.2"
+        "php": ">=7.2"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.9",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "phpunit/phpunit": "^7.0"
+    },
+    "suggest": {
+        "psr/container": "Required to use SnowflakeFactory.",
+        "hyperf/config": "Required to read snowflake config."
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\GrpcClient\\": "src/"
+            "Hyperf\\Snowflake\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\GrpcClient\\": "tests/",
-            "GPBMetadata\\": "tests/GPBMetadata",
-            "Grpc\\": "tests/Grpc"
+            "HyperfTest\\Snowflake\\": "tests/"
         }
     },
     "config": {
@@ -43,7 +39,7 @@
             "dev-master": "1.0-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\GrpcClient\\ConfigProvider"
+            "config": "Hyperf\\Snowflake\\ConfigProvider"
         }
     },
     "bin": [

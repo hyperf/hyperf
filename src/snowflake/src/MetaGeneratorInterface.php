@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace Hyperf\Snowflake;
 
-interface IdGeneratorInterface
+interface MetaGeneratorInterface
 {
-    public function generate();
+    public function generate(): Meta;
 }
