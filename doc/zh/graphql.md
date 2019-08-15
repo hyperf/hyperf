@@ -1,6 +1,6 @@
 # GraphQL
 
-GraphQL 组件对[thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite) 进行适配, 使用Hyperf 注解扫描更易用
+GraphQL 组件对 [thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite) 进行抽象。
 
 ## 安装
 
@@ -9,6 +9,7 @@ composer require hyperf/graphql
 ```
 
 ## 快速开始
+
 ### 简单查询
 ```php
 <?php
@@ -56,9 +57,9 @@ class GraphQLController
 }
 ```
 查询:
-```
+```graphql
 {
-	hello(name: "graphql")
+    hello(name: "graphql")
 }
 ```
 响应:
@@ -71,9 +72,10 @@ class GraphQLController
 ```
 
 ### 类型映射
+
 ```php
 <?php
-namespace App\Entities;
+namespace App\Model;
 
 use Hyperf\GraphQL\Annotation\Type;
 use Hyperf\GraphQL\Annotation\Field;
@@ -110,32 +112,32 @@ class Product
 }
 ```
 
-在`GraphQLController`中加入
+在 `GraphQLController` 中加入
+
 ```php
 <?php
-use App\Entities\Product;
+use App\Model\Product;
 
-...
-
-    /**
-     * @Query()
-     */
-    public function product(string $name, float $price): Product
-    {
-        return new Product($name, $price);
-    }
+/**
+ * @Query()
+ */
+public function product(string $name, float $price): Product
+{
+    return new Product($name, $price);
+}
 ```
 
 查询:
-```
+```graphql
 {
-	hello(name: "graphql")
-	product(name: "goods", price: 156.5){
-		name
-		price
-	}
+    hello(name: "graphql")
+    product(name: "goods", price: 156.5) {
+        name
+        price
+    }
 }
 ```
+
 响应:
 ```json
 {
@@ -148,4 +150,5 @@ use App\Entities\Product;
     }
 }
 ```
-具体使用方法可以查看[GraphQLite](https://graphqlite.thecodingmachine.io/docs/queries)
+
+更多使用方法可以查看 [GraphQLite](https://graphqlite.thecodingmachine.io/docs/queries) 的文档。
