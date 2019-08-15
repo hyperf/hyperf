@@ -1,8 +1,11 @@
-# v1.0.11 - TBD
+# v1.0.12 - TBD
+
+# v1.0.11 - 2019-08-15
 
 ## Added
 
 - [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added `Hyperf\Server\Listener\InitProcessTitleListener` to init th process name, also added `Hyperf\Framework\Event\OnStart` and `Hyperf\Framework\Event\OnManagerStart` events.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) Added Snowflake component.
 
 ## Fixed
 
