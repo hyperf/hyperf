@@ -8,6 +8,10 @@
 
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 
+## Added
+
+- [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
+
 # v1.0.11 - 2019-08-15
 
 ## Added
