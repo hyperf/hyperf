@@ -1,5 +1,13 @@
 # v1.1.0 - TBD
 
+## Added
+
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+
+## Deleted
+
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+
 # v1.0.11 - 2019-08-15
 
 ## Added
