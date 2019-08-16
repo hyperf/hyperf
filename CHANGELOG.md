@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueue.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
 
 ## Deleted
 
