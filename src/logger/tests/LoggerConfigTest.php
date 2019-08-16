@@ -107,7 +107,7 @@ class LoggerConfigTest extends TestCase
                         [
                             'class' => RotatingFileHandler::class,
                             'constructor' => [
-                                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
                                 'level' => Logger::DEBUG,
                             ],
                             'formatter' => [
