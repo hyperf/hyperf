@@ -57,7 +57,7 @@ class LoggerFactoryTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
 
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'logger' => [
                 'default' => [
                     'handler' => [
@@ -76,7 +76,6 @@ class LoggerFactoryTest extends TestCase
         ]));
 
         $container->shouldReceive('get')
-            ->once()
             ->with(LoggerFactory::class)
             ->andReturn(new LoggerFactory($container));
 
