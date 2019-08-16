@@ -1,5 +1,9 @@
 # v1.0.12 - TBD
 
+## Added
+
+- [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
+
 # v1.0.11 - 2019-08-15
 
 ## Added
