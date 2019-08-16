@@ -4,6 +4,9 @@
 
 - [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
 
+## Fixed
+- [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
+
 # v1.0.11 - 2019-08-15
 
 ## Added
