@@ -1,7 +1,3 @@
-branches:
-  only:
-    - master
-
 language: php
 
 sudo: required
