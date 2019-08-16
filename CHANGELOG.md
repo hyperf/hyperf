@@ -3,6 +3,7 @@
 ## Added
 
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+- [#409](https://github.com/hyperf-cloud/hyperf/pull/409) Added multi handlers for logger.
 
 ## Deleted
 
