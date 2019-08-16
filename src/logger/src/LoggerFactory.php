@@ -97,7 +97,7 @@ class LoggerFactory
 
     protected function handlers(array $config): array
     {
-        $handlerConfigs = $config['handers'] ?? [[]];
+        $handlerConfigs = $config['handlers'] ?? [[]];
         $handlers = [];
         $defaultHandlerConfig = $this->getDefaultHandlerConfig($config);
         $defaultFormatterConfig = $this->getDefaultFormatterConfig($config);
