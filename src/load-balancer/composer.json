@@ -23,10 +23,8 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\LoadBalancer\\": "src"
+            "Hyperf\\LoadBalancer\\": "src/"
         }
     },
     "autoload-dev": {

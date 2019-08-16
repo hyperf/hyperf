@@ -28,14 +28,13 @@
         "hyperf/event": "Required to use DeleteCacheListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\ModelCache\\": "src"
+            "Hyperf\\ModelCache\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\ModelCache\\": "tests/"
         }
     },
     "config": {

@@ -52,8 +52,8 @@ class Ast
         }));
         $traverser = new NodeTraverser();
         // @TODO Allow user modify or replace node vistor.
-        $traverser->addVisitor(new ProxyClassNameVistor($proxyClassName));
-        $traverser->addVisitor(new ProxyCallVistor($className));
+        $traverser->addVisitor(new ProxyClassNameVisitor($proxyClassName));
+        $traverser->addVisitor(new ProxyCallVisitor($className));
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }

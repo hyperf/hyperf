@@ -34,14 +34,13 @@
         "hyperf/rpc-server": "Reqiured to use JSON RPC in hyperf rpc server."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\JsonRpc\\": "src"
+            "Hyperf\\JsonRpc\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\JsonRpc\\": "tests/"
         }
     },
     "config": {

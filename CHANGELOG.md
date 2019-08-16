@@ -1,11 +1,75 @@
-# v1.0.9 - TBD
+# v1.0.12 - TBD
+
+# v1.0.11 - 2019-08-15
+
+## Added
+
+- [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added `Hyperf\Server\Listener\InitProcessTitleListener` to init th process name, also added `Hyperf\Framework\Event\OnStart` and `Hyperf\Framework\Event\OnManagerStart` events.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) Added Snowflake component.
+
+## Fixed
+
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in `MySQL 8`.
+- [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed the exception which implemented `\Serializable`, call `serialize()` and `unserialize()` functions failed.
+- [#384](https://github.com/hyperf-cloud/hyperf/pull/384) Fixed the `ExceptionHandler` that user defined does not works, because the framework has handled the exception automatically.
+- [#370](https://github.com/hyperf-cloud/hyperf/pull/370) Fixed set the error type client to `Hyperf\GrpcClient\BaseClient`, and added default content-type `application/grpc+proto` to the Request object, also allows the grpc client that user-defined to override the `buildRequest()` method to create a new Request object.
+
+## Changed
+
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Optimized aysnc-queue when push a job that implemented `Hyperf\Contract\CompressInterface`, will compress the job to a small object automatically.
+- [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Only write the annotation cache file when `$enableCache` is `true`.
+- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Added compression ability for `Collection` and `Model`, if the object implemented `Hyperf\Contract\CompressInterface`, then the object could compress to a small one by call `compress` method.
+
+# v1.0.10 - 2019-08-09
+
+## Added
+
+- [#321](https://github.com/hyperf-cloud/hyperf/pull/321) Adding custom object types of array support for the Controller/RequestHandler parameter of HTTP Server, especially for JSON RPC HTTP Server, now you can get support for auto-deserialization of objects by defining `@var Object[]` on the method.
+- [#324](https://github.com/hyperf-cloud/hyperf/pull/324) Added NodeRequestIdGenerator, an implementation of `Hyperf\Contract\IdGeneratorInterface`
+- [#336](https://github.com/hyperf-cloud/hyperf/pull/336) Added Dynamic Proxy RPC Client.
+- [#346](https://github.com/hyperf-cloud/hyperf/pull/346) [#348](https://github.com/hyperf-cloud/hyperf/pull/348) Added filesystem driver for `hyperf/cache`.
+
+## Changed
+
+- [#330](https://github.com/hyperf-cloud/hyperf/pull/330) Hidden the scan message of DI when $paths is empty.
+- [#328](https://github.com/hyperf-cloud/hyperf/pull/328) Added support for user defined project path according to the rules defined by composer.json's psr-4 autoload.
+- [#329](https://github.com/hyperf-cloud/hyperf/pull/329) Optimized exception handler of rpc-server and json-rpc component. 
+- [#340](https://github.com/hyperf-cloud/hyperf/pull/340) Added support for `make` function accept index-based array as parameters.
+- [#349](https://github.com/hyperf-cloud/hyperf/pull/349) Renamed the class name below, fixed the typo.
+
+|                     Before                      |                  After                     |
+|:----------------------------------------------:|:-----------------------------------------------:|
+| Hyperf\Database\Commands\Ast\ModelUpdateVistor | Hyperf\Database\Commands\Ast\ModelUpdateVisitor |
+|       Hyperf\Di\Aop\ProxyClassNameVistor       |       Hyperf\Di\Aop\ProxyClassNameVisitor       |
+|         Hyperf\Di\Aop\ProxyCallVistor          |         Hyperf\Di\Aop\ProxyCallVisitor          |
+
+## Fixed
+
+- [#325](https://github.com/hyperf-cloud/hyperf/pull/325) Fixed check the service registration status via consul services more than one times.
+- [#332](https://github.com/hyperf-cloud/hyperf/pull/332) Fixed type error in `Hyperf\Tracer\Middleware\TraceMiddeware`, only appears in openzipkin/zipkin v1.3.3+.
+- [#333](https://github.com/hyperf-cloud/hyperf/pull/333) Fixed Redis::delete() method has been removed in redis 5.0+.
+- [#334](https://github.com/hyperf-cloud/hyperf/pull/334) Fixed the configuration fetch from aliyun acm is not work expected in some case.
+- [#337](https://github.com/hyperf-cloud/hyperf/pull/337) Fixed the server will return 500 Response when the key of header is not a string.
+- [#338](https://github.com/hyperf-cloud/hyperf/pull/338) Fixed the problem of `ProviderConfig::load` will convert a string to a array when the dependencies has the same key in deep merging.
+
+# v1.0.9 - 2019-08-03
+
+## Added
+
+- [#317](https://github.com/hyperf-cloud/hyperf/pull/317) Added composer-json-fixer and Optimized composer.json. @[wenbinye](https://github.com/wenbinye)
+- [#320](https://github.com/hyperf-cloud/hyperf/pull/320) DI added support for closure definition.
 
 ## Fixed
 
 - [#300](https://github.com/hyperf-cloud/hyperf/pull/300) Let message queues run in sub-coroutines. Fixed async queue attempts twice to handle message, but only once actually.
 - [#305](https://github.com/hyperf-cloud/hyperf/pull/305) Fixed `$key` of method `Arr::set` not support `int` and `null`.
 - [#312](https://github.com/hyperf-cloud/hyperf/pull/312) Fixed amqp process collect listener will be handled later than the process boot listener.
+- [#315](https://github.com/hyperf-cloud/hyperf/pull/315) Fixed config etcd center not work after worker restart or in user process.
 - [#318](https://github.com/hyperf-cloud/hyperf/pull/318) Fixed service will register to service center ceaselessly.
+
+## Changed
+
+- [#323](https://github.com/hyperf-cloud/hyperf/pull/323) Force convert type of `$ttl` in annotation `Cacheable` and `CachePut` into int.
 
 # v1.0.8 - 2019-07-31
 

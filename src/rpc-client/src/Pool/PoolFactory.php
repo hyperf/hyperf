@@ -14,7 +14,6 @@ namespace Hyperf\RpcClient\Pool;
 
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
@@ -24,7 +23,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var RpcClientPool[]
      */
     protected $pools = [];
 
@@ -33,7 +32,7 @@ class PoolFactory
         $this->container = $container;
     }
 
-    public function getPool(string $name): RedisPool
+    public function getPool(string $name): RpcClientPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];

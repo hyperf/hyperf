@@ -14,7 +14,8 @@ namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
-use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
@@ -44,11 +45,22 @@ class CoreMiddleware implements MiddlewareInterface
      */
     protected $container;
 
+    /**
+     * @var MethodDefinitionCollectorInterface
+     */
+    private $methodDefinitionCollector;
+
+    /**
+     * @var NormalizerInterface
+     */
+    private $normalizer;
+
     public function __construct(ContainerInterface $container, string $serverName)
     {
         $this->container = $container;
-        $factory = $container->get(DispatcherFactory::class);
-        $this->dispatcher = $factory->getDispatcher($serverName);
+        $this->dispatcher = $this->createDispatcher($serverName);
+        $this->normalizer = $this->container->get(NormalizerInterface::class);
+        $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
     }
 
     /**
@@ -82,6 +94,22 @@ class CoreMiddleware implements MiddlewareInterface
             $response = $this->transferToResponse($response, $request);
         }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    public function getMethodDefinitionCollector(): MethodDefinitionCollectorInterface
+    {
+        return $this->methodDefinitionCollector;
+    }
+
+    public function getNormalizer(): NormalizerInterface
+    {
+        return $this->normalizer;
+    }
+
+    protected function createDispatcher(string $serverName): Dispatcher
+    {
+        $factory = $this->container->get(DispatcherFactory::class);
+        return $factory->getDispatcher($serverName);
     }
 
     /**
@@ -188,66 +216,25 @@ class CoreMiddleware implements MiddlewareInterface
     protected function parseParameters(string $controller, string $action, array $arguments): array
     {
         $injections = [];
-        $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
-        foreach ($definitions ?? [] as $definition) {
-            if (! is_array($definition)) {
-                throw new \RuntimeException('Invalid method definition.');
-            }
-            if (! isset($definition['type']) || ! isset($definition['name'])) {
-                $injections[] = null;
-                continue;
-            }
-            $injections[] = value(function () use ($definition, $arguments) {
-                switch ($definition['type']) {
-                    case 'int':
-                    case 'float':
-                    case 'bool':
-                    case 'string':
-                    case 'array':
-                        return $this->getValue($definition, $arguments);
-                    case 'object':
-                        if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
-                            throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
-                        }
-                        return $this->container->get($definition['ref']);
-                        break;
-                    default:
-                        throw new \RuntimeException('Invalid method definition detected.');
+        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
+        foreach ($definitions ?? [] as $pos => $definition) {
+            $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
+            if ($value === null) {
+                if ($definition->getMeta('defaultValueAvailable')) {
+                    $injections[] = $definition->getMeta('defaultValue');
+                } elseif ($definition->allowsNull()) {
+                    $injections[] = null;
+                } elseif ($this->container->has($definition->getName())) {
+                    $injections[] = $this->container->get($definition->getName());
+                } else {
+                    throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
+                        . "of {$controller}::{$action} should not be null");
                 }
-            });
+            } else {
+                $injections[] = $this->getNormalizer()->denormalize($value, $definition->getName());
+            }
         }
 
         return $injections;
-    }
-
-    protected function getValue($definition, $arguments)
-    {
-        if (isset($arguments[$definition['name']])) {
-            $value = $arguments[$definition['name']];
-            switch ($definition['type']) {
-                case 'int':
-                    return (int) $value;
-                case 'string':
-                    return (string) $value;
-                case 'float':
-                    return (float) $value;
-                case 'array':
-                    return (array) $value;
-                case 'bool':
-                    return (bool) $value;
-                default:
-                    return $value;
-            }
-        }
-
-        if (isset($definition['defaultValue'])) {
-            return $definition['defaultValue'];
-        }
-
-        if (isset($definition['allowsNull'])) {
-            return null;
-        }
-
-        throw new \RuntimeException('Invalid method definition detected.');
     }
 }

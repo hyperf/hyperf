@@ -22,17 +22,41 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  */
 class Cacheable extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
     public $prefix;
 
+    /**
+     * @var string
+     */
     public $value;
 
+    /**
+     * @var int
+     */
     public $ttl;
 
+    /**
+     * @var string
+     */
     public $listener;
 
+    /**
+     * @var string
+     */
     public $group = 'default';
 
+    /**
+     * @var bool
+     */
     public $collect = false;
+
+    public function __construct($value = null)
+    {
+        parent::__construct($value);
+        $this->ttl = (int) $this->ttl;
+    }
 
     public function collectMethod(string $className, ?string $target): void
     {

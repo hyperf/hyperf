@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
+use Hyperf\RpcClient\Listener\AddConsumerDefinitionListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -20,6 +22,9 @@ class ConfigProvider
             'dependencies' => [
             ],
             'commands' => [
+            ],
+            'listeners' => [
+                AddConsumerDefinitionListener::class,
             ],
             'scan' => [
                 'paths' => [

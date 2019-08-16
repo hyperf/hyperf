@@ -31,7 +31,7 @@ class Parser
      *                              |    +----------- min (0 - 59)
      *                              +------------- sec (0-59)
      * @param null|Carbon|int $startTime
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @return Carbon[]
      */
     public function parse(string $crontabString, $startTime = null)

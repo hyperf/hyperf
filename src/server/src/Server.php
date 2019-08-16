@@ -14,6 +14,7 @@ namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Bootstrap;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
 use Hyperf\Server\Exception\RuntimeException;
@@ -207,6 +208,18 @@ class Server implements ServerInterface
 
     protected function defaultCallbacks()
     {
+        $hasCallback = class_exists(Bootstrap\StartCallback::class) &&
+            class_exists(Bootstrap\ManagerStartCallback::class) &&
+            class_exists(Bootstrap\WorkerStartCallback::class);
+
+        if ($hasCallback) {
+            return [
+                SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+                SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
+                SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
+            ];
+        }
+
         return [
             SwooleEvent::ON_WORKER_START => function (SwooleServer $server, int $workerId) {
                 printf('Worker %d started.' . PHP_EOL, $workerId);

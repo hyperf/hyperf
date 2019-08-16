@@ -81,14 +81,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $coreHandler = $this->coreHandler;
-        $this->coreMiddleware = new $coreHandler($this->container, $serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware();
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
-            HttpExceptionHandler::class,
-        ]);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
@@ -124,6 +121,19 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         return $this;
+    }
+
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
+    }
+
+    protected function createCoreMiddleware(): MiddlewareInterface
+    {
+        $coreHandler = $this->coreHandler;
+        return new $coreHandler($this->container, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

@@ -30,8 +30,6 @@
         "hyperf/event": "Required to use DbQueryExecutedListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\Tracer\\": "src/"
         }

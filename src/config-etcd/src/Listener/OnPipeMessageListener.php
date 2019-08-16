@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigEtcd\Listener;
 
-use Hyperf\ConfigEtcd\ClientInterface;
 use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
@@ -21,6 +20,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
@@ -40,11 +40,6 @@ class OnPipeMessageListener implements ListenerInterface
     private $logger;
 
     /**
-     * @var ClientInterface
-     */
-    private $client;
-
-    /**
      * @var array
      */
     private $mapping;
@@ -58,7 +53,6 @@ class OnPipeMessageListener implements ListenerInterface
     {
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
-        $this->client = $container->get(ClientInterface::class);
 
         $this->mapping = $this->config->get('config_etcd.mapping', []);
         $this->packer = $container->get($this->config->get('config_etcd.packer', JsonPacker::class));
@@ -71,6 +65,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipMessage::class,
         ];
     }
 
@@ -80,7 +75,7 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;
 

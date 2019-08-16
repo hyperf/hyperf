@@ -29,14 +29,13 @@
         "hyperf/framework": "Required to use BootProcessListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\Process\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Process\\": "tests/"
         }
     },
     "config": {

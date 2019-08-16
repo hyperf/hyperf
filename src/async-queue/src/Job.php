@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-abstract class Job implements JobInterface
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
+
+abstract class Job implements JobInterface, CompressInterface, UnCompressInterface
 {
     /**
      * @var int
@@ -22,5 +25,33 @@ abstract class Job implements JobInterface
     public function getMaxAttempts(): int
     {
         return $this->maxAttempts;
+    }
+
+    /**
+     * @return JobInterface
+     */
+    public function uncompress(): CompressInterface
+    {
+        foreach ($this as $key => $value) {
+            if ($value instanceof UnCompressInterface) {
+                $this->{$key} = $value->uncompress();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return JobInterface
+     */
+    public function compress(): UnCompressInterface
+    {
+        foreach ($this as $key => $value) {
+            if ($value instanceof CompressInterface) {
+                $this->{$key} = $value->compress();
+            }
+        }
+
+        return $this;
     }
 }

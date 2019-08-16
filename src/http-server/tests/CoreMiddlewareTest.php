@@ -12,10 +12,14 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\MethodDefinitionCollector;
+use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
 use Mockery;
@@ -99,6 +103,10 @@ class CoreMiddlewareTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
+        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
+            ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('get')->with(NormalizerInterface::class)
+            ->andReturn(new SimpleNormalizer());
         return $container;
     }
 }

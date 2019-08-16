@@ -14,7 +14,8 @@
     "require": {
         "php": ">=7.2",
         "hyperf/grpc": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/utils": "~1.0.0",
+        "jean85/pretty-package-versions": "^1.2"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -23,14 +24,15 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\GrpcClient\\": "src"
+            "Hyperf\\GrpcClient\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\GrpcClient\\": "tests/",
+            "GPBMetadata\\": "tests/GPBMetadata",
+            "Grpc\\": "tests/Grpc"
         }
     },
     "config": {

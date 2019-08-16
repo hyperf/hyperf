@@ -29,14 +29,13 @@
         "hyperf/framework": "Reqiured to use PageResolverListener."
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
             "Hyperf\\Paginator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Paginator\\": "tests/"
         }
     },
     "config": {

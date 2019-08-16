@@ -20,11 +20,29 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class CachePut extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
     public $prefix;
 
+    /**
+     * @var string
+     */
     public $value;
 
+    /**
+     * @var int
+     */
     public $ttl;
 
+    /**
+     * @var string
+     */
     public $group = 'default';
+
+    public function __construct($value = null)
+    {
+        parent::__construct($value);
+        $this->ttl = (int) $this->ttl;
+    }
 }

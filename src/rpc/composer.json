@@ -24,14 +24,13 @@
     "suggest": {
     },
     "autoload": {
-        "files": [
-        ],
         "psr-4": {
-            "Hyperf\\Rpc\\": "src"
+            "Hyperf\\Rpc\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Rpc\\": "tests/"
         }
     },
     "config": {

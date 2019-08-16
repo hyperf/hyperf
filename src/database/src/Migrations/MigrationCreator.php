@@ -22,7 +22,7 @@ class MigrationCreator
     /**
      * The filesystem instance.
      *
-     * @var \Hyperf\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
@@ -36,7 +36,7 @@ class MigrationCreator
     /**
      * Create a new migration creator instance.
      *
-     * @param \Hyperf\Filesystem\Filesystem $files
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -46,14 +46,9 @@ class MigrationCreator
     /**
      * Create a new migration at the given path.
      *
-     * @param string $name
-     * @param string $path
-     * @param string $table
-     * @param bool $create
      * @throws \Exception
-     * @return string
      */
-    public function create($name, $path, $table = null, $create = false)
+    public function create(string $name, string $path, string $table = null, bool $create = false): string
     {
         $this->ensureMigrationDoesntAlreadyExist($name);
 
@@ -81,8 +76,6 @@ class MigrationCreator
 
     /**
      * Register a post migration create hook.
-     *
-     * @param \Closure $callback
      */
     public function afterCreate(Closure $callback)
     {
@@ -91,20 +84,16 @@ class MigrationCreator
 
     /**
      * Get the path to the stubs.
-     *
-     * @return string
      */
-    public function stubPath()
+    public function stubPath(): string
     {
         return __DIR__ . '/stubs';
     }
 
     /**
      * Get the filesystem instance.
-     *
-     * @return \Hyperf\Filesystem\Filesystem
      */
-    public function getFilesystem()
+    public function getFilesystem(): Filesystem
     {
         return $this->files;
     }
@@ -112,11 +101,9 @@ class MigrationCreator
     /**
      * Ensure that a migration with the given name doesn't already exist.
      *
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
      */
-    protected function ensureMigrationDoesntAlreadyExist($name)
+    protected function ensureMigrationDoesntAlreadyExist(string $name)
     {
         if (class_exists($className = $this->getClassName($name))) {
             throw new InvalidArgumentException("A {$className} class already exists.");
@@ -125,12 +112,8 @@ class MigrationCreator
 
     /**
      * Get the migration stub file.
-     *
-     * @param string $table
-     * @param bool $create
-     * @return string
      */
-    protected function getStub($table, $create)
+    protected function getStub(?string $table, bool $create): string
     {
         if (is_null($table)) {
             return $this->files->get($this->stubPath() . '/blank.stub');
@@ -146,13 +129,8 @@ class MigrationCreator
 
     /**
      * Populate the place-holders in the migration stub.
-     *
-     * @param string $name
-     * @param string $stub
-     * @param string $table
-     * @return string
      */
-    protected function populateStub($name, $stub, $table)
+    protected function populateStub(string $name, string $stub, ?string $table): string
     {
         $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
 
@@ -168,33 +146,24 @@ class MigrationCreator
 
     /**
      * Get the class name of a migration name.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function getClassName($name)
+    protected function getClassName(string $name): string
     {
         return Str::studly($name);
     }
 
     /**
      * Get the full path to the migration.
-     *
-     * @param string $name
-     * @param string $path
-     * @return string
      */
-    protected function getPath($name, $path)
+    protected function getPath(string $name, string $path): string
     {
         return $path . '/' . $this->getDatePrefix() . '_' . $name . '.php';
     }
 
     /**
      * Fire the registered post create hooks.
-     *
-     * @param string $table
      */
-    protected function firePostCreateHooks($table)
+    protected function firePostCreateHooks(?string $table)
     {
         foreach ($this->postCreate as $callback) {
             call_user_func($callback, $table);
@@ -203,10 +172,8 @@ class MigrationCreator
 
     /**
      * Get the date prefix for the migration.
-     *
-     * @return string
      */
-    protected function getDatePrefix()
+    protected function getDatePrefix(): string
     {
         return date('Y_m_d_His');
     }

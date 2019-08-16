@@ -52,7 +52,7 @@ class ConsumerManager
             $nums = $annotation->nums;
             $process = $this->createProcess($instance);
             $process->nums = (int) $nums;
-            $process->name = 'Consumer-' . $instance->getQueue();
+            $process->name = $annotation->name . '-' . $instance->getQueue();
             ProcessManager::register($process);
         }
     }
