@@ -231,3 +231,35 @@ return [
 
 > 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
 
+### 客户端消费服务实例
+
+除了通过上述框架内部客户端类消费服务外，我们还可以直接通过CRUL方式来消费服务。
+
+> 首先我们要知晓服务地址，可以通过如下方式查看：
+
+1. 如果我们已经成功的将服务发布到 `consul`了，那么访问当前地址 http://127.0.0.1:8500/ui/dc1/services 就可以看到成功注册的服务名称了，进到详情即可看到列表中服务对应的地址；
+
+2. 直接查看配置文件：`config/autoload/services.php` 中 `nodes` 节点，即当前服务地址；
+
+> 通过CRUL方式来消费服务：
+
+我们可以通过 `postman` 来发送 `post` 请求，格式如下：
+
+Body:raw格式，{ "method": "方法名" , "id": "任意标识符", "params": [标识符（与传入id对应的标识符相同）,传入参数（字符串）]}
+
+JSON示例：{"jsonrpc":"2.0","method":"/calculator/add","params":[2,9],"id":"1"}
+
+更多示例，可以直接查看文档：https://www.jsonrpc.org/specification
+
+> 踩坑环节：
+
+若一直提示 "Method not found"，请检查JSON格式中 "method" 是否同注册的服务方法名称一致，如不一致，我们直接通过命令 `php bin/hyperf.php start` 重新启动，此时会看到服务注册的相关 `DEBUG` 信息，如下：
+
+[DEBUG] [service-governance] Service CalculatorService[/calculator/add] is registering to the consul.
+
+[INFO] [service-governance] Service CalculatorService[/calculator/add] has been already registered to the consul.
+
+其中 `CalculatorService` 即我们注册的服务名称， `/calculator/add` 即我们所需的 `method`
+
+
+
