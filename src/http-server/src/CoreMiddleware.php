@@ -68,9 +68,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     public function dispatch(ServerRequestInterface $request): array
     {
-        $uri = $request->getUri();
-
-        $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
+        $routes = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         $dispatched = new Dispatched($routes);
         $request = $request->withAttribute(Dispatched::class, $dispatched);
@@ -88,7 +86,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         $dispatched = $request->getAttribute(Dispatched::class);
 
         if (! $dispatched instanceof Dispatched) {
-            throw new ServerException('The object is not instanceof `HyperfHttpServerRouterDispatched`.');
+            throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
         switch ($dispatched->status) {
