@@ -14,7 +14,7 @@ namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Server\ServerFactory;
-use Hyperf\WebSocketServer\Exception\MethodInvalidException;
+use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -22,10 +22,19 @@ use Psr\Container\ContainerInterface;
  */
 class Sender
 {
+    /**
+     * @var \Psr\Container\ContainerInterface
+     */
     protected $container;
 
+    /**
+     * @var \Hyperf\Contract\StdoutLoggerInterface
+     */
     protected $logger;
 
+    /**
+     * @var int
+     */
     protected $workerId;
 
     public function __construct(ContainerInterface $container)
@@ -41,25 +50,22 @@ class Sender
         }
     }
 
-    public function proxy($name, $arguments): bool
+    public function proxy(string $name, array $arguments): bool
     {
         $fd = $this->getFdFromProxyMethod($name, $arguments);
         if ($fd === false) {
-            throw new MethodInvalidException($arguments);
+            throw new InvalidMethodException($arguments);
         }
 
-        $ret = $this->check($fd);
-        if ($ret) {
+        $result = $this->check($fd);
+        if ($result) {
             $this->getServer()->push(...$arguments);
             $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
         }
 
-        return $ret;
+        return $result;
     }
 
-    /**
-     * @param int $workerId
-     */
     public function setWorkerId(int $workerId): void
     {
         $this->workerId = $workerId;
@@ -67,10 +73,9 @@ class Sender
 
     public function check($fd): bool
     {
-        $server = $this->getServer();
-        $info = $server->connection_info($fd);
+        $info = $this->getServer()->connection_info($fd);
 
-        if ($info && $info['websocket_status'] == WEBSOCKET_STATUS_ACTIVE) {
+        if ($info && $info['websocket_status'] === WEBSOCKET_STATUS_ACTIVE) {
             return true;
         }
 
@@ -78,11 +83,9 @@ class Sender
     }
 
     /**
-     * @param $method
-     * @param mixed $arguments
      * @return null|bool|int
      */
-    protected function getFdFromProxyMethod($method, $arguments)
+    protected function getFdFromProxyMethod(string $method, array $arguments)
     {
         if (in_array($method, ['push', 'send', 'sendto'])) {
             return $arguments[0];
@@ -91,12 +94,12 @@ class Sender
         return false;
     }
 
-    protected function getServer()
+    protected function getServer(): \Swoole\Server
     {
         return $this->container->get(ServerFactory::class)->getServer()->getServer();
     }
 
-    protected function sendPipeMessage($name, $arguments)
+    protected function sendPipeMessage(string $name, array $arguments): void
     {
         $server = $this->getServer();
         $workerCount = $server->setting['worker_num'] - 1;

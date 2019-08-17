@@ -14,6 +14,6 @@ namespace Hyperf\WebSocketServer\Exception;
 
 use Hyperf\Server\Exception\ServerException;
 
-class MethodInvalidException extends ServerException
+class InvalidMethodException extends ServerException
 {
 }
