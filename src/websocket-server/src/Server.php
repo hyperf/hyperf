@@ -24,6 +24,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -65,11 +66,6 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $logger;
 
     /**
-     * @var WebSocketServer
-     */
-    protected $server;
-
-    /**
      * @var array
      */
     protected $middlewares = [];
@@ -98,9 +94,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function setServer(WebSocketServer $server): void
+    public function getServer(): WebSocketServer
     {
-        $this->server = $server;
+        return $this->container->get(ServerFactory::class)->getServer()->getServer();
     }
 
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
@@ -130,7 +126,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 defer(function () use ($request, $class) {
                     $instance = $this->container->get($class);
                     if ($instance instanceof OnOpenInterface) {
-                        $instance->onOpen($this->server, $request);
+                        $instance->onOpen($this->getServer(), $request);
                     }
                 });
             }
