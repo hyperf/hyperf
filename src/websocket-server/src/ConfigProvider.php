@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\WebSocketServer\Listener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,7 +21,9 @@ class ConfigProvider
         return [
             'dependencies' => [
             ],
-            'commands' => [
+            'listeners' => [
+                Listener\InitSenderListener::class,
+                Listener\OnPipeMessageListener::class,
             ],
             'scan' => [
                 'paths' => [

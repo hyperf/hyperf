@@ -14,7 +14,6 @@ namespace Hyperf\WebSocketServer\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
@@ -22,10 +21,8 @@ use Hyperf\Server\ServerFactory;
 use Hyperf\WebSocketServer\Sender;
 use Hyperf\WebSocketServer\SenderPipeMessage;
 use Psr\Container\ContainerInterface;
+use Swoole\Server;
 
-/**
- * @Listener
- */
 class OnPipeMessageListener implements ListenerInterface
 {
     /**
@@ -81,7 +78,7 @@ class OnPipeMessageListener implements ListenerInterface
         }
     }
 
-    protected function getServer()
+    protected function getServer(): Server
     {
         return $this->container->get(ServerFactory::class)->getServer()->getServer();
     }

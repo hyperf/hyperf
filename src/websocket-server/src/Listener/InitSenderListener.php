@@ -12,15 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\WebSocketServer\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\WebSocketServer\Sender;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class InitSenderListener implements ListenerInterface
 {
     /**
@@ -45,7 +41,7 @@ class InitSenderListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($event instanceof AfterWorkerStart) {
+        if ($this->container->has(Sender::class)) {
             $sender = $this->container->get(Sender::class);
             $sender->setWorkerId($event->workerId);
         }
