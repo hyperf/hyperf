@@ -5,12 +5,9 @@
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and Fixed middleware that user defined does not works.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
 
-## Deprecated
-
-- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory` will be discarded. Bacause the Server is optimized, factory is useless.
-
 ## Deleted
 
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 
 # v1.0.12 - TBD
