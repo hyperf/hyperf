@@ -114,7 +114,8 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
 
         $request = new Request('GET', new Uri('/user'));
-        [$request, $dispatched] = $middleware->dispatch($request);
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
         $this->assertInstanceOf(Request::class, $request);
         $this->assertInstanceOf(Dispatched::class, $dispatched);
         $this->assertInstanceOf(Handler::class, $dispatched->handler);
@@ -124,7 +125,8 @@ class CoreMiddlewareTest extends TestCase
         $this->assertTrue($dispatched->isFound());
 
         $request = new Request('GET', new Uri('/user/123'));
-        [$request, $dispatched] = $middleware->dispatch($request);
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
         $this->assertInstanceOf(Request::class, $request);
         $this->assertInstanceOf(Dispatched::class, $dispatched);
         $this->assertInstanceOf(Handler::class, $dispatched->handler);
@@ -134,7 +136,8 @@ class CoreMiddlewareTest extends TestCase
         $this->assertTrue($dispatched->isFound());
 
         $request = new Request('GET', new Uri('/users'));
-        [$request, $dispatched] = $middleware->dispatch($request);
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
         $this->assertInstanceOf(Request::class, $request);
         $this->assertInstanceOf(Dispatched::class, $dispatched);
         $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));

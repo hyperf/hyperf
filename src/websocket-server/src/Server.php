@@ -120,12 +120,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
             }
 
-            /**
-             * @var array
-             * @var ServerRequestInterface $psr7Request
-             * @var Dispatched $dispatched
-             */
-            [$psr7Request, $dispatched] = $this->coreMiddleware->dispatch($psr7Request);
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
             if ($dispatched->isFind()) {
                 $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
@@ -136,7 +133,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            if (! empty($class)) {
+            if (!empty($class)) {
                 FdCollector::set($request->fd, $class);
 
                 defer(function () use ($request, $class) {
@@ -152,7 +149,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+            if (!$psr7Response || !$psr7Response instanceof Psr7Response) {
                 return;
             }
             $psr7Response->send();
@@ -162,14 +159,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function onMessage(\Swoole\Server $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
-        if (! $fdObj) {
+        if (!$fdObj) {
             $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $frame->fd));
             return;
         }
 
         $instance = $this->container->get($fdObj->class);
 
-        if (! $instance instanceof OnMessageInterface) {
+        if (!$instance instanceof OnMessageInterface) {
             $this->logger->warning("{$instance} is not instanceof " . OnMessageInterface::class);
             return;
         }
@@ -182,7 +179,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 
         $fdObj = FdCollector::get($fd);
-        if (! $fdObj) {
+        if (!$fdObj) {
             return;
         }
         $instance = $this->container->get($fdObj->class);

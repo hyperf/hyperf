@@ -108,7 +108,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
             $middlewares = $this->middlewares;
 
-            [$request] = $this->coreMiddleware->dispatch($request);
+            $request = $this->coreMiddleware->dispatch($request);
 
             $response = $this->dispatcher->dispatch($request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {

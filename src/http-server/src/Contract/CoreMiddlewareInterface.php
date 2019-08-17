@@ -12,20 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Contract;
 
-use Hyperf\HttpServer\Router\Dispatched;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
 interface CoreMiddlewareInterface extends MiddlewareInterface
 {
-    /**
-     * @param ServerRequestInterface $request
-     * @return array
-     *
-     * [
-     *     @var ServerRequestInterface $requst,
-     *     @var Dispatched $dispatched,
-     * ]
-     */
-    public function dispatch(ServerRequestInterface $request): array;
+    public function dispatch(ServerRequestInterface $request): ServerRequestInterface;
 }

@@ -66,14 +66,13 @@ class CoreMiddleware implements CoreMiddlewareInterface
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
     }
 
-    public function dispatch(ServerRequestInterface $request): array
+    public function dispatch(ServerRequestInterface $request): ServerRequestInterface
     {
         $routes = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         $dispatched = new Dispatched($routes);
-        $request = $request->withAttribute(Dispatched::class, $dispatched);
 
-        return [$request, $dispatched];
+        return Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, $dispatched));
     }
 
     /**
