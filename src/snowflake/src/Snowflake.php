@@ -65,22 +65,22 @@ class Snowflake implements IdGeneratorInterface
         ))->setTimestamp($timestamp + $this->beginSecond);
     }
 
-    protected function getTimestampShift()
+    protected function getTimestampShift(): int
     {
         return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS + Meta::BUSINESS_ID_BITS;
     }
 
-    protected function getBusinessIdShift()
+    protected function getBusinessIdShift(): int
     {
         return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS + Meta::DATA_CENTER_ID_BITS;
     }
 
-    protected function getDataCenterShift()
+    protected function getDataCenterShift(): int
     {
         return Meta::SEQUENCE_BITS + Meta::MACHINE_ID_BITS;
     }
 
-    protected function getMachineIdShift()
+    protected function getMachineIdShift(): int
     {
         return Meta::SEQUENCE_BITS;
     }
