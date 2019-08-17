@@ -14,8 +14,11 @@ namespace Hyperf\Logger;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\Exception\InvalidConfigException;
+use Hyperf\Utils\Arr;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -50,11 +53,11 @@ class LoggerFactory
         }
 
         $config = $config[$group];
-        $handler = $this->handler($config);
+        $handlers = $this->handlers($config);
 
         return make(Logger::class, [
             'name' => $name,
-            'handlers' => [$handler],
+            'handlers' => $handlers,
         ]);
     }
 
@@ -67,16 +70,55 @@ class LoggerFactory
         return $this->loggers[$name] = $this->make($name, $group);
     }
 
-    protected function handler(array $config): HandlerInterface
+    protected function getDefaultFormatterConfig($config)
     {
-        $handlerClass = $config['handler']['class'];
-        $handlerConstructor = $config['handler']['constructor'];
+        $formatterClass = Arr::get($config, 'formatter.class', LineFormatter::class);
+        $formatterConstructor = Arr::get($config, 'formatter.constructor', []);
 
+        return [
+            'class' => $formatterClass,
+            'constructor' => $formatterConstructor,
+        ];
+    }
+
+    protected function getDefaultHandlerConfig($config)
+    {
+        $handlerClass = Arr::get($config, 'handler.class', StreamHandler::class);
+        $handlerConstructor = Arr::get($config, 'handler.constructor', [
+            'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+            'level' => Logger::DEBUG,
+        ]);
+
+        return [
+            'class' => $handlerClass,
+            'constructor' => $handlerConstructor,
+        ];
+    }
+
+    protected function handlers(array $config): array
+    {
+        $handlerConfigs = $config['handlers'] ?? [[]];
+        $handlers = [];
+        $defaultHandlerConfig = $this->getDefaultHandlerConfig($config);
+        $defaultFormatterConfig = $this->getDefaultFormatterConfig($config);
+        foreach ($handlerConfigs as $value) {
+            $class = $value['class'] ?? $defaultHandlerConfig['class'];
+            $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
+            $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
+
+            $handlers[] = $this->handler($class, $constructor, $formatterConfig);
+        }
+
+        return $handlers;
+    }
+
+    protected function handler($class, $constructor, $formatterConfig): HandlerInterface
+    {
         /** @var HandlerInterface $handler */
-        $handler = make($handlerClass, $handlerConstructor);
+        $handler = make($class, $constructor);
 
-        $formatterClass = $config['formatter']['class'];
-        $formatterConstructor = $config['formatter']['constructor'];
+        $formatterClass = $formatterConfig['class'];
+        $formatterConstructor = $formatterConfig['constructor'];
 
         /** @var FormatterInterface $formatter */
         $formatter = make($formatterClass, $formatterConstructor);

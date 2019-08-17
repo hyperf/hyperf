@@ -72,32 +72,28 @@ class Meta
         $this->sequence = $sequence;
     }
 
-    /**
-     * @param int $timestamp
-     * @return Meta
-     */
     public function setTimestamp(int $timestamp): self
     {
         $this->timestamp = $timestamp;
         return $this;
     }
 
-    protected function maxMachineId()
+    protected function maxMachineId(): int
     {
         return -1 ^ (-1 << self::MACHINE_ID_BITS);
     }
 
-    protected function maxDataCenterId()
+    protected function maxDataCenterId(): int
     {
         return -1 ^ (-1 << self::DATA_CENTER_ID_BITS);
     }
 
-    protected function maxBusinessId()
+    protected function maxBusinessId(): int
     {
         return -1 ^ (-1 << self::BUSINESS_ID_BITS);
     }
 
-    protected function maxSequence()
+    protected function maxSequence(): int
     {
         return -1 ^ (-1 << self::SEQUENCE_BITS);
     }

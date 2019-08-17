@@ -13,6 +13,10 @@
 ## Added
 
 - [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
+- [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
+
+## Fixed
+- [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
 
 # v1.0.11 - 2019-08-15
 
