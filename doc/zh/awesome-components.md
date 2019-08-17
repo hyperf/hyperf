@@ -75,3 +75,12 @@
 - [hyperf/service-gevernance](https://github.com/hyperf-cloud/service-gevernance) Hyperf 官方提供的服务治理组件
 - [hyperf/tracer](https://github.com/hyperf-cloud/tracer) Hyperf 官方提供的 OpenTracing 分布式调用链追踪组件
 - [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) Hyperf 官方提供的服务熔断组件
+
+## 热更新/热重载
+
+- [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一个基于 fswatch 实现的通用热更新组件
+- [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一个由 Mixphp 实现的通用热更新组件
+- [buexplain/go-watch](https://github.com/buexplain/go-watch) 一个基于 Go 语言实现的通用热更新组件
+- [remy/nodemon](https://github.com/remy/nodemon) 一个基于 node.js 实现的通用热更新组件
+
+> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
