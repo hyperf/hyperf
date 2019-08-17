@@ -3,7 +3,7 @@
 ## Added
 
 - [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
-- [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added multi handlers for logger.
+- [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers config for logger.
 
 # v1.0.11 - 2019-08-15
 
