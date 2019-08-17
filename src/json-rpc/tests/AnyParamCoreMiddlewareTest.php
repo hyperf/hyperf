@@ -68,7 +68,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
                 ['value' => 2],
             ]);
 
-        [$request] = $middleware->dispatch($request);
+        $request = $middleware->dispatch($request);
         Context::set(ResponseInterface::class, new Response());
 
         $response = $middleware->process($request, $handler);
@@ -92,7 +92,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
 
-        [$request] = $middleware->dispatch($request);
+        $request = $middleware->dispatch($request);
         try {
             $response = $middleware->process($request, $handler);
         } catch (\Throwable $exception) {
