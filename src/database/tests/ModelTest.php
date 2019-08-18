@@ -12,60 +12,65 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Carbon\Carbon;
+use Mockery;
 use DateTime;
+use stdClass;
+use Exception;
+use Carbon\Carbon;
+use ReflectionClass;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Exception;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\ConnectionInterface as Connection;
-use Hyperf\Database\ConnectionResolver;
-use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Model\Booted;
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Events;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Register;
-use Hyperf\Database\Model\Relations\BelongsTo;
-use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Context;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Booted;
+use Hyperf\Database\Model\Events;
+use Hyperf\Event\EventDispatcher;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Event\ListenerProvider;
+use HyperfTest\Database\Stubs\User;
+use Hyperf\Database\Model\Register;
 use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Database\Model\Collection;
+use Psr\Container\ContainerInterface;
+use Hyperf\Database\ConnectionResolver;
+use Hyperf\Database\Model\Events\Event;
+use HyperfTest\Database\Stubs\ModelStub;
+use Hyperf\Database\ConnectionInterface;
+use HyperfTest\Database\Stubs\ObserverStub;
+use Hyperf\Database\Query\Grammars\Grammar;
 use HyperfTest\Database\Stubs\DateModelStub;
-use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
+use HyperfTest\Database\Stubs\ModelSaveStub;
+use HyperfTest\Database\Stubs\ModelWithStub;
+use HyperfTest\Database\Stubs\ModelCamelStub;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Model\Relations\BelongsTo;
+use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\KeyTypeModelStub;
 use HyperfTest\Database\Stubs\ModelAppendsStub;
-use HyperfTest\Database\Stubs\ModelBootingTestStub;
-use HyperfTest\Database\Stubs\ModelCamelStub;
 use HyperfTest\Database\Stubs\ModelCastingStub;
 use HyperfTest\Database\Stubs\ModelDestroyStub;
-use HyperfTest\Database\Stubs\ModelDynamicHiddenStub;
-use HyperfTest\Database\Stubs\ModelDynamicVisibleStub;
-use HyperfTest\Database\Stubs\ModelEventObjectStub;
-use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
-use HyperfTest\Database\Stubs\ModelGetMutatorsStub;
-use HyperfTest\Database\Stubs\ModelNonIncrementingStub;
-use HyperfTest\Database\Stubs\ModelSaveStub;
-use HyperfTest\Database\Stubs\ModelSavingEventStub;
-use HyperfTest\Database\Stubs\ModelStub;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\ConnectionResolverInterface;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
-use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use HyperfTest\Database\Stubs\ModelBootingTestStub;
+use HyperfTest\Database\Stubs\ModelEventObjectStub;
+use HyperfTest\Database\Stubs\ModelGetMutatorsStub;
+use HyperfTest\Database\Stubs\ModelSavingEventStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
-use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
-use HyperfTest\Database\Stubs\User;
-use Mockery;
-use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
+use HyperfTest\Database\Stubs\ModelDynamicHiddenStub;
+use HyperfTest\Database\Stubs\ModelEventListenerStub;
+use HyperfTest\Database\Stubs\ModelDynamicVisibleStub;
+use Hyperf\Database\ConnectionInterface as Connection;
+use HyperfTest\Database\Stubs\ModelNonIncrementingStub;
+use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
+use HyperfTest\Database\Stubs\ModelFindWithWritePdoStub;
+use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
-use ReflectionClass;
-use stdClass;
 
 /**
  * @internal
@@ -93,6 +98,8 @@ class ModelTest extends TestCase
         Carbon::resetToStringFormat();
 
         Booted::$container = [];
+
+        Model::clearObservables();
     }
 
     public function testAttributeManipulation()
@@ -1834,6 +1841,76 @@ class ModelTest extends TestCase
         });
 
         $this->assertTrue($called);
+    }
+
+    public function testSetObservables()
+    {
+        $model = new ModelStub(['id' => 1]);
+        $model->setObservables($observables = [
+            'created' => 'ObserverClass'
+        ]);
+
+        $this->assertSame($observables, $model->getObservables());
+    }
+
+    public function testObserve()
+    {
+        ModelStub::observe(ObserverStub::class);
+
+        $model = new ModelStub(['id' => 1]);
+
+        $this->assertSame(['updating' => ObserverStub::class], $model->getObservables());
+    }
+
+    public function testClearObservables()
+    {
+        $model = new ModelStub(['id' => 1]);
+        $model->setObservables($observables = [
+            'created' => 'ObserverClass'
+        ]);
+
+        ModelStub::clearObservables();
+
+        $this->assertSame([], $model->getObservables());
+    }
+
+    public function testGetObserverClassFromModelEvent()
+    {
+        $model = new ModelStub(['id' => 1]);
+        $model->setObservables($observables = [
+            'updating' => 'ObserverClass'
+        ]);
+
+        $saving = new Events\Saving($model, 'saving');
+        $updating = new Events\Updating($model, 'updating');
+
+        $this->assertNull($saving->getObserverClass());
+        $this->assertSame('ObserverClass', $updating->getObserverClass());
+    }
+
+    public function testHandleModelObserver()
+    {
+        $listenerProvider = new ListenerProvider;
+        $listenerProvider->on(Event::class, [new ModelEventListenerStub, 'process']);
+
+        Register::setEventDispatcher(new EventDispatcher($listenerProvider));
+
+        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps'])->getMock();
+        $query = Mockery::mock(Builder::class);
+        $query->shouldReceive('where')->once()->with('id', '=', 1);
+        $query->shouldReceive('update')->once()->with(['foo' => 'bar'])->andReturn(1);
+        $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+        $model->expects($this->once())->method('updateTimestamps');
+
+        $model::observe(ObserverStub::class);
+
+        $model->id = 1;
+        $model->syncOriginal();
+        $model->foo = 'foo';
+        $model->exists = true;
+
+        $this->assertTrue($model->save());
+
     }
 
     public function testModelGenerate()

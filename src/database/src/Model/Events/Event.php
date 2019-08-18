@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Events;
 
-use Hyperf\Database\Model\Model;
-use Hyperf\Event\Stoppable;
-use Psr\EventDispatcher\StoppableEventInterface;
-use function class_basename;
 use function lcfirst;
+use Hyperf\Event\Stoppable;
 use function method_exists;
+use function class_basename;
+use Hyperf\Database\Model\Model;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 abstract class Event implements StoppableEventInterface
 {
@@ -45,6 +45,10 @@ abstract class Event implements StoppableEventInterface
             return $this->getModel()->{$this->getMethod()}($this);
         }
 
+        if ($observerClass = $this->getObserverClass()) {
+            return make($observerClass)->{$this->getMethod()}($this);
+        }
+
         return $this;
     }
 
@@ -56,5 +60,10 @@ abstract class Event implements StoppableEventInterface
     public function getModel(): Model
     {
         return $this->model;
+    }
+
+    public function getObserverClass(): ?string
+    {
+        return $this->getModel()->getObservables()[$this->getMethod()] ?? null;
     }
 }
