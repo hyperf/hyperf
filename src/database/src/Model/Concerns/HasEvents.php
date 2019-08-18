@@ -106,6 +106,8 @@ trait HasEvents
 
     /**
      * Set the user-defined event names.
+     *
+     * @return self
      */
     public function setEvents(array $events): self
     {
@@ -125,6 +127,7 @@ trait HasEvents
      * Add some observable event.
      *
      * @param array|string $events
+     * @return void
      */
     public function addEvents($events): void
     {
@@ -133,6 +136,9 @@ trait HasEvents
 
     /**
      * Remove some registed event.
+     *
+     * @param array $events
+     * @return void
      */
     public function removeEvents(array $events): void
     {
@@ -159,6 +165,9 @@ trait HasEvents
 
     /**
      * Set observable mappings.
+     *
+     * @param array $observables
+     * @return self
      */
     public function setObservables(array $observables): self
     {
@@ -169,6 +178,8 @@ trait HasEvents
 
     /**
      * Get observable mappings.
+     *
+     * @return array
      */
     public function getObservables(): array
     {
@@ -177,6 +188,8 @@ trait HasEvents
 
     /**
      * Get the default events of Hyperf Database Model.
+     *
+     * @return array
      */
     protected function getDefaultEvents(): array
     {
