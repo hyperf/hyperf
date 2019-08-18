@@ -46,7 +46,7 @@ abstract class Event implements StoppableEventInterface
         }
 
         if ($observerClass = $this->getObserverClass()) {
-            return make($observerClass)->{$this->getMethod()}($this);
+            return make($observerClass)->{$this->getMethod()}($this->getModel());
         }
 
         return $this;

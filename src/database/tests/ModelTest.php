@@ -38,7 +38,6 @@ use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\Model\Events\Event;
 use HyperfTest\Database\Stubs\ModelStub;
 use Hyperf\Database\ConnectionInterface;
-use HyperfTest\Database\Stubs\ObserverStub;
 use Hyperf\Database\Query\Grammars\Grammar;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\ModelSaveStub;
@@ -53,6 +52,7 @@ use HyperfTest\Database\Stubs\ModelAppendsStub;
 use HyperfTest\Database\Stubs\ModelCastingStub;
 use HyperfTest\Database\Stubs\ModelDestroyStub;
 use Hyperf\Database\Query\Processors\Processor;
+use HyperfTest\Database\Stubs\ModelObserverStub;
 use Hyperf\Database\ConnectionResolverInterface;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -1855,11 +1855,11 @@ class ModelTest extends TestCase
 
     public function testObserve()
     {
-        ModelStub::observe(ObserverStub::class);
+        ModelStub::observe(ModelObserverStub::class);
 
         $model = new ModelStub(['id' => 1]);
 
-        $this->assertSame(['updating' => ObserverStub::class], $model->getObservables());
+        $this->assertSame(['updating' => ModelObserverStub::class], $model->getObservables());
     }
 
     public function testClearObservables()
@@ -1902,7 +1902,7 @@ class ModelTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        $model::observe(ObserverStub::class);
+        $model::observe(ModelObserverStub::class);
 
         $model->id = 1;
         $model->syncOriginal();
@@ -1910,7 +1910,6 @@ class ModelTest extends TestCase
         $model->exists = true;
 
         $this->assertTrue($model->save());
-
     }
 
     public function testModelGenerate()
