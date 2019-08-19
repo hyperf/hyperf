@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
-use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Events\Updating;
 
 class ModelObserverStub
 {
-    public function updating(Model $model)
+    public function updating(Updating $event)
     {
-        $model->foo = 'bar';
+        $event->getModel()->foo = 'bar';
     }
 }

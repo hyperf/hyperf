@@ -42,11 +42,13 @@ abstract class Event implements StoppableEventInterface
     public function handle()
     {
         if (method_exists($this->getModel(), $this->getMethod())) {
-            return $this->getModel()->{$this->getMethod()}($this);
+            $this->getModel()->{$this->getMethod()}($this);
         }
 
-        if ($observerClass = $this->getObserverClass()) {
-            return make($observerClass)->{$this->getMethod()}($this->getModel());
+        if ($observerClasses = $this->getObserverClasses()) {
+            foreach ($observerClasses as $observerClass) {
+                make($observerClass)->{$this->getMethod()}($this);
+            }
         }
 
         return $this;
@@ -62,8 +64,8 @@ abstract class Event implements StoppableEventInterface
         return $this->model;
     }
 
-    public function getObserverClass(): ?string
+    public function getObserverClasses(): array
     {
-        return $this->getModel()->getObservables()[$this->getMethod()] ?? null;
+        return $this->getModel()->getObservables()[$this->getMethod()] ?? [];
     }
 }

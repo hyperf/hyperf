@@ -1847,7 +1847,7 @@ class ModelTest extends TestCase
     {
         $model = new ModelStub(['id' => 1]);
         $model->setObservables($observables = [
-            'created' => 'ObserverClass'
+            'created' => ['ObserverClass']
         ]);
 
         $this->assertSame($observables, $model->getObservables());
@@ -1859,14 +1859,14 @@ class ModelTest extends TestCase
 
         $model = new ModelStub(['id' => 1]);
 
-        $this->assertSame(['updating' => ModelObserverStub::class], $model->getObservables());
+        $this->assertSame(['updating' => [ModelObserverStub::class]], $model->getObservables());
     }
 
     public function testClearObservables()
     {
         $model = new ModelStub(['id' => 1]);
         $model->setObservables($observables = [
-            'created' => 'ObserverClass'
+            'created' => ['ObserverClass']
         ]);
 
         ModelStub::clearObservables();
@@ -1874,18 +1874,18 @@ class ModelTest extends TestCase
         $this->assertSame([], $model->getObservables());
     }
 
-    public function testGetObserverClassFromModelEvent()
+    public function testGetObserverClassesFromModelEvent()
     {
         $model = new ModelStub(['id' => 1]);
         $model->setObservables($observables = [
-            'updating' => 'ObserverClass'
+            'updating' => ['ObserverClass']
         ]);
 
         $saving = new Events\Saving($model, 'saving');
         $updating = new Events\Updating($model, 'updating');
 
-        $this->assertNull($saving->getObserverClass());
-        $this->assertSame('ObserverClass', $updating->getObserverClass());
+        $this->assertSame([], $saving->getObserverClasses());
+        $this->assertSame(['ObserverClass'], $updating->getObserverClasses());
     }
 
     public function testHandleModelObserver()
