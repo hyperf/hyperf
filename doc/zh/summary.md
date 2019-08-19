@@ -94,4 +94,4 @@
 
   * [指南前言](zh/component-guide/intro.md)
   * [创建新的组件](zh/component-guide/create.md)
-  * Hyperf 框架流程介入
+  * [ConfigProvider 机制](zh/component-guide/configprovider.md)
