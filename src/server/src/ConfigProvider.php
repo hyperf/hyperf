@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Server;
 
 use Hyperf\Server\Listener\InitProcessTitleListener;
-use Swoole\Server;
+use Swoole\Server as SwooleServer;
 
 class ConfigProvider
 {
@@ -21,7 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Server::class => SwooleServerFactory::class,
+                SwooleServer::class => SwooleServerFactory::class,
             ],
             'commands' => [
             ],
