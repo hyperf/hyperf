@@ -3,7 +3,7 @@
 ## Added
 
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
-- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Added `Sender` to fix fd not found when use method `server::send`.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
 
 ## Deleted
 
