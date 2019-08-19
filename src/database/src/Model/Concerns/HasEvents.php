@@ -99,7 +99,7 @@ trait HasEvents
 
         foreach ($this->getDefaultEvents() as $alias => $eventClass) {
             if (method_exists($class, $alias)) {
-                static::$observables[static::class][$alias] = $class;
+                static::$observables[static::class][$alias] = $className;
             }
         }
     }
