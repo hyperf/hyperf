@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Server\ServerFactory;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
+use Swoole\Server;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -23,12 +23,12 @@ use Psr\Container\ContainerInterface;
 class Sender
 {
     /**
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
+     * @var StdoutLoggerInterface
      */
     protected $logger;
 
@@ -88,9 +88,9 @@ class Sender
         return (int) $arguments[0];
     }
 
-    protected function getServer(): \Swoole\Server
+    protected function getServer(): Server
     {
-        return $this->container->get(ServerFactory::class)->getServer()->getServer();
+        return $this->container->get(Server::class);
     }
 
     protected function sendPipeMessage(string $name, array $arguments): void
