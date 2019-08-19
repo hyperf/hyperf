@@ -24,7 +24,6 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\MiddlewareManager;
-use Hyperf\Server\ServerFactory;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -35,6 +34,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
+use Swoole\Server as SwooleServer;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -96,7 +96,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     public function getServer(): WebSocketServer
     {
-        return $this->container->get(ServerFactory::class)->getServer()->getServer();
+        return $this->container->get(SwooleServer::class);
     }
 
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
@@ -143,7 +143,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(\Swoole\Server $server, Frame $frame): void
+    public function onMessage(SwooleServer $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {
@@ -161,7 +161,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance->onMessage($server, $frame);
     }
 
-    public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void
+    public function onClose(SwooleServer $server, int $fd, int $reactorId): void
     {
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 
