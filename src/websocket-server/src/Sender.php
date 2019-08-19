@@ -53,9 +53,6 @@ class Sender
     public function proxy(string $name, array $arguments): bool
     {
         $fd = $this->getFdFromProxyMethod($name, $arguments);
-        if ($fd === false) {
-            throw new InvalidMethodException($arguments);
-        }
 
         $result = $this->check($fd);
         if ($result) {
@@ -82,16 +79,13 @@ class Sender
         return false;
     }
 
-    /**
-     * @return null|bool|int
-     */
-    protected function getFdFromProxyMethod(string $method, array $arguments)
+    protected function getFdFromProxyMethod(string $method, array $arguments): int
     {
-        if (in_array($method, ['push', 'send', 'sendto'])) {
-            return $arguments[0];
+        if (! in_array($method, ['push', 'send', 'sendto'])) {
+            throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
         }
 
-        return false;
+        return (int) $arguments[0];
     }
 
     protected function getServer(): \Swoole\Server
