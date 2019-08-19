@@ -12,43 +12,38 @@ declare(strict_types=1);
 
 namespace Hyperf\WebSocketServer\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeMainServerStart;
-use Hyperf\WebSocketServer\Server;
+use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\WebSocketServer\Sender;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
-class InitWebSocketServerListener implements ListenerInterface
+class InitSenderListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    private $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @return string[] returns the events that you want to listen
+     */
     public function listen(): array
     {
         return [
-            BeforeMainServerStart::class,
+            AfterWorkerStart::class,
         ];
     }
 
-    /**
-     * @param BeforeMainServerStart $event
-     */
     public function process(object $event)
     {
-        if (! $this->container->has(Server::class)) {
-            return;
+        if ($this->container->has(Sender::class)) {
+            $sender = $this->container->get(Sender::class);
+            $sender->setWorkerId($event->workerId);
         }
-        $server = $this->container->get(Server::class);
-        $event->server instanceof \Swoole\WebSocket\Server && $server->setServer($event->server);
     }
 }
