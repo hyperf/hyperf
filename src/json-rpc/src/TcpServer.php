@@ -40,11 +40,9 @@ class TcpServer extends Server
      */
     protected $packer;
 
-    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager)
+    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager, RequestDispatcher $dispatcher, StdoutLoggerInterface $logger)
     {
         $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
-        $dispatcher = $container->get(RequestDispatcher::class);
-        $logger = $container->get(StdoutLoggerInterface::class);
 
         parent::__construct($container, $protocol, $dispatcher, $logger);
 

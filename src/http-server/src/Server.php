@@ -70,10 +70,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected $serverName;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher)
     {
         $this->container = $container;
-        $this->dispatcher = $container->get(HttpDispatcher::class);
+        $this->dispatcher = $dispatcher;
     }
 
     public function initCoreMiddleware(string $serverName): void
