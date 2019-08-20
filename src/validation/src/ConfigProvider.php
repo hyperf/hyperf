@@ -27,6 +27,20 @@ class ConfigProvider
                     __DIR__,
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'zh_CN',
+                    'description' => 'The message bag for validation.',
+                    'source' => __DIR__ . '/../publish/zh_CN/validation.php',
+                    'destination' => BASE_PATH . '/resources/lang/zh_CN/validation.php',
+                ],
+                [
+                    'id' => 'en',
+                    'description' => 'The message bag for validation.',
+                    'source' => __DIR__ . '/../publish/en/validation.php',
+                    'destination' => BASE_PATH . '/resources/lang/en/validation.php',
+                ],
+            ],
         ];
     }
 }

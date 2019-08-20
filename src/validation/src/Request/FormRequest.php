@@ -14,12 +14,9 @@ namespace Hyperf\Validation\Request;
 
 use Hyperf\HttpServer\Request;
 use Hyperf\Validation\Contracts\Validation\Factory;
-//use Illuminate\Http\JsonResponse;
-//use Illuminate\Routing\Redirector;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
 use Hyperf\Validation\Contracts\Validation\Validator;
-//use Illuminate\Auth\Access\AuthorizationException;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;

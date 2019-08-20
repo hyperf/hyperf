@@ -3,12 +3,12 @@
 
 ## About
 
-chunhei2008/hyperf-validation 是对Laravel Validation的移植（不包含门面部分），具体使用方法可以参考Laravel Validation 的使用。
+hyperf/validation 是对Laravel Validation的移植（不包含门面部分），具体使用方法可以参考Laravel Validation 的使用。
 
 ## Install
 
 ```
-composer require chunhei2008/hyperf-validation
+composer require hyperf/validation
 
 ```
 
@@ -17,7 +17,7 @@ composer require chunhei2008/hyperf-validation
 
 ### publish config
 ```
-php bin/hyperf.php  vendor:publish chunhei2008/hyperf-translation
+php bin/hyperf.php  vendor:publish hyperf/translation
 
 ```
 
@@ -71,7 +71,7 @@ declare(strict_types=1);
 return [
     'handler' => [
         'http' => [
-            \Chunhei2008\Hyperf\Validation\ValidationExceptionHandler::class,
+            \Hyperf\Validation\ValidationExceptionHandler::class,
         ],
     ],
 ];
@@ -96,7 +96,7 @@ declare(strict_types=1);
 
 return [
     'http' => [
-        \Chunhei2008\Hyperf\Validation\Middleware\ValidationMiddleware::class,
+        \Hyperf\Validation\Middleware\ValidationMiddleware::class,
     ],
 ];
 

@@ -2,12 +2,12 @@
 
 ## About
 
-chunhei2008/hyperf-translation 是对Laravel Translation的移植（不包含门面和快捷函数部分），具体使用方法可以参考Laravel Lang的使用。
+hyperf/translation 是对Laravel Translation的移植（不包含门面和快捷函数部分），具体使用方法可以参考Laravel Lang的使用。
 
 ## Install
 
 ```
-composer require chunhei2008/hyperf-translation
+composer require hyperf/translation
 
 ```
 
@@ -16,7 +16,7 @@ composer require chunhei2008/hyperf-translation
 
 ### publish config
 ```
-php bin/hyperf.php  vendor:publish chunhei2008/hyperf-translation
+php bin/hyperf.php  vendor:publish hyperf/translation
 
 ```
 
@@ -56,7 +56,7 @@ return [
 
 ```
 
-$translator = $this->container->get(\Chunhei2008\Hyperf\Translation\Contracts\Translator::class);
+$translator = $this->container->get(\Hyperf\Translation\Contracts\Translator::class);
 
 $translator->trans('validation.accepted'),
         

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace %NAMESPACE%;
 
-use Chunhei2008\Hyperf\Validation\Request\FormRequest;
+use Hyperf\Validation\Request\FormRequest;
 
 class %CLASS% extends FormRequest
 {
