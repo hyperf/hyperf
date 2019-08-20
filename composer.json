@@ -97,7 +97,6 @@
         "hyperf/tracer": "self.version",
         "hyperf/translation": "self.version",
         "hyperf/utils": "self.version",
-        "hyperf/validation": "self.version",
         "hyperf/view": "self.version",
         "hyperf/websocket-client": "self.version",
         "hyperf/websocket-server": "self.version"
@@ -163,7 +162,6 @@
             "Hyperf\\Tracer\\": "src/tracer/src/",
             "Hyperf\\Translation\\": "src/translation/src/",
             "Hyperf\\Utils\\": "src/utils/src/",
-            "Hyperf\\Validation\\": "src/validation/src/",
             "Hyperf\\View\\": "src/view/src/",
             "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
             "Hyperf\\WebSocketServer\\": "src/websocket-server/src/"
@@ -209,7 +207,6 @@
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Translation\\": "src/translation/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
-            "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
     },
@@ -263,7 +260,6 @@
                 "Hyperf\\Tracer\\ConfigProvider",
                 "Hyperf\\Translation\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider",
-                "Hyperf\\Validation\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"
