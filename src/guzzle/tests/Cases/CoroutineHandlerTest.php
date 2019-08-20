@@ -148,6 +148,70 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame('pass', $setting['http_proxy_password']);
     }
 
+    public function testProxyArrayHttpScheme()
+    {
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertSame('127.0.0.1', $setting['http_proxy_host']);
+        $this->assertSame(12333, $setting['http_proxy_port']);
+        $this->assertArrayNotHasKey('http_proxy_user', $setting);
+        $this->assertArrayNotHasKey('http_proxy_password', $setting);
+    }
+
+    public function testProxyArrayHttpsScheme()
+    {
+        $client = new Client([
+            'base_uri' => 'https://www.baidu.com',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertSame('127.0.0.1', $setting['http_proxy_host']);
+        $this->assertSame(12334, $setting['http_proxy_port']);
+        $this->assertArrayNotHasKey('http_proxy_user', $setting);
+        $this->assertArrayNotHasKey('http_proxy_password', $setting);
+    }
+
+    public function testProxyArrayHostInNoproxy()
+    {
+        $client = new Client([
+            'base_uri' => 'https://www.baidu.cn',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertArrayNotHasKey('http_proxy_host', $setting);
+        $this->assertArrayNotHasKey('http_proxy_port', $setting);
+    }
+
     public function testSslKeyAndCert()
     {
         $client = new Client([
