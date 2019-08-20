@@ -142,7 +142,7 @@ class Factory implements FactoryContract
      * @throws \Hyperf\Validation\ValidationException
      * @return array
      */
-    public function validate(array $data, array $rules, array $messages = [], array $customAttributes = [])
+    public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []):array
     {
         return $this->make($data, $rules, $messages, $customAttributes)->validate();
     }
@@ -154,7 +154,7 @@ class Factory implements FactoryContract
      * @param \Closure|string $extension
      * @param null|string $message
      */
-    public function extend($rule, $extension, $message = null)
+    public function extend(string $rule, $extension, $message = null)
     {
         $this->extensions[$rule] = $extension;
 
@@ -170,7 +170,7 @@ class Factory implements FactoryContract
      * @param \Closure|string $extension
      * @param null|string $message
      */
-    public function extendImplicit($rule, $extension, $message = null)
+    public function extendImplicit(string $rule, $extension, $message = null)
     {
         $this->implicitExtensions[$rule] = $extension;
 
@@ -186,7 +186,7 @@ class Factory implements FactoryContract
      * @param \Closure|string $extension
      * @param null|string $message
      */
-    public function extendDependent($rule, $extension, $message = null)
+    public function extendDependent(string $rule, $extension, $message = null)
     {
         $this->dependentExtensions[$rule] = $extension;
 
@@ -201,7 +201,7 @@ class Factory implements FactoryContract
      * @param string $rule
      * @param \Closure|string $replacer
      */
-    public function replacer($rule, $replacer)
+    public function replacer(string $rule, $replacer)
     {
         $this->replacers[$rule] = $replacer;
     }

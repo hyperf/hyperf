@@ -22,28 +22,28 @@ interface Validator extends MessageProvider
      *
      * @return array
      */
-    public function validate();
+    public function validate():array ;
 
     /**
      * Get the attributes and values that were validated.
      *
      * @return array
      */
-    public function validated();
+    public function validated():array ;
 
     /**
      * Determine if the data fails the validation rules.
      *
      * @return bool
      */
-    public function fails();
+    public function fails():bool ;
 
     /**
      * Get the failed validation rules.
      *
      * @return array
      */
-    public function failed();
+    public function failed():array ;
 
     /**
      * Add conditions to a given field based on a Closure.

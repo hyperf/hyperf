@@ -445,7 +445,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
      * @param array  $replace
      * @return string
      */
-    protected function makeReplacements(string $line, array $replace): string
+    protected function makeReplacements($line, array $replace)
     {
         if (empty($replace)) {
             return $line;

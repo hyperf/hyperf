@@ -70,7 +70,7 @@ trait ValidatesWhenResolvedTrait
      *
      * @return bool
      */
-    protected function passesAuthorization()
+    protected function passesAuthorization():bool
     {
         if (method_exists($this, 'authorize')) {
             return $this->authorize();

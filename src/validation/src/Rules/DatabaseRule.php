@@ -50,7 +50,7 @@ trait DatabaseRule
      * @param string $table
      * @param string $column
      */
-    public function __construct($table, $column = 'NULL')
+    public function __construct(string $table,string $column = 'NULL')
     {
         $this->table = $table;
         $this->column = $column;
@@ -85,7 +85,7 @@ trait DatabaseRule
      * @param array|string $value
      * @return $this
      */
-    public function whereNot($column, $value)
+    public function whereNot(string $column, $value)
     {
         if (is_array($value)) {
             return $this->whereNotIn($column, $value);
@@ -100,7 +100,7 @@ trait DatabaseRule
      * @param string $column
      * @return $this
      */
-    public function whereNull($column)
+    public function whereNull(string $column)
     {
         return $this->where($column, 'NULL');
     }
@@ -111,7 +111,7 @@ trait DatabaseRule
      * @param string $column
      * @return $this
      */
-    public function whereNotNull($column)
+    public function whereNotNull(string $column)
     {
         return $this->where($column, 'NOT_NULL');
     }
@@ -123,7 +123,7 @@ trait DatabaseRule
      * @param array $values
      * @return $this
      */
-    public function whereIn($column, array $values)
+    public function whereIn(string $column, array $values)
     {
         return $this->where(function ($query) use ($column, $values) {
             $query->whereIn($column, $values);
@@ -137,7 +137,7 @@ trait DatabaseRule
      * @param array $values
      * @return $this
      */
-    public function whereNotIn($column, array $values)
+    public function whereNotIn(string $column, array $values)
     {
         return $this->where(function ($query) use ($column, $values) {
             $query->whereNotIn($column, $values);
@@ -162,7 +162,7 @@ trait DatabaseRule
      *
      * @return array
      */
-    public function queryCallbacks()
+    public function queryCallbacks():array
     {
         return $this->using;
     }
@@ -172,7 +172,7 @@ trait DatabaseRule
      *
      * @return string
      */
-    protected function formatWheres()
+    protected function formatWheres():string
     {
         return collect($this->wheres)->map(function ($where) {
             return $where['column'] . ',' . '"' . str_replace('"', '""', $where['value']) . '"';

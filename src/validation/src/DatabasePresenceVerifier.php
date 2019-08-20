@@ -45,19 +45,19 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Count the number of objects in a collection having the given value.
      *
-     * @param string $collection
-     * @param string $column
-     * @param string $value
-     * @param null|int $excludeId
+     * @param string      $collection
+     * @param string      $column
+     * @param string      $value
+     * @param null|int    $excludeId
      * @param null|string $idColumn
-     * @param array $extra
+     * @param array       $extra
      * @return int
      */
-    public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = [])
+    public function getCount(string $collection, string $column, string $value, $excludeId = null, $idColumn = null, array $extra = []): int
     {
         $query = $this->table($collection)->where($column, '=', $value);
 
-        if (! is_null($excludeId) && $excludeId !== 'NULL') {
+        if (!is_null($excludeId) && $excludeId !== 'NULL') {
             $query->where($idColumn ?: 'id', '<>', $excludeId);
         }
 
@@ -69,11 +69,11 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      *
      * @param string $collection
      * @param string $column
-     * @param array $values
-     * @param array $extra
+     * @param array  $values
+     * @param array  $extra
      * @return int
      */
-    public function getMultiCount($collection, $column, array $values, array $extra = [])
+    public function getMultiCount(string $collection, string $column, array $values, array $extra = []): int
     {
         $query = $this->table($collection)->whereIn($column, $values);
 
@@ -86,7 +86,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * @param string $table
      * @return \Hyperf\Database\Query\Builder
      */
-    public function table($table)
+    public function table(string $table)
     {
         return $this->db->connection($this->connection)->table($table)->useWritePdo();
     }
@@ -96,7 +96,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      *
      * @param string $connection
      */
-    public function setConnection($connection)
+    public function setConnection(string $connection)
     {
         $this->connection = $connection;
     }
@@ -105,10 +105,10 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add the given conditions to the query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param array $conditions
+     * @param array                          $conditions
      * @return \Hyperf\Database\Query\Builder
      */
-    protected function addConditions($query, $conditions)
+    protected function addConditions($query, array $conditions)
     {
         foreach ($conditions as $key => $value) {
             if ($value instanceof Closure) {
@@ -127,10 +127,10 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add a "where" clause to the given query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param string $key
-     * @param string $extraValue
+     * @param string                         $key
+     * @param string                         $extraValue
      */
-    protected function addWhere($query, $key, $extraValue)
+    protected function addWhere($query, string $key, $extraValue)
     {
         if ($extraValue === 'NULL') {
             $query->whereNull($key);

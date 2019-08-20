@@ -36,7 +36,7 @@ class Dimensions
      *
      * @return string
      */
-    public function __toString()
+    public function __toString():string
     {
         $result = '';
 
@@ -53,7 +53,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function width($value)
+    public function width(int $value)
     {
         $this->constraints['width'] = $value;
 
@@ -66,7 +66,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function height($value)
+    public function height(int $value)
     {
         $this->constraints['height'] = $value;
 
@@ -79,7 +79,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function minWidth($value)
+    public function minWidth(int $value)
     {
         $this->constraints['min_width'] = $value;
 
@@ -92,7 +92,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function minHeight($value)
+    public function minHeight(int $value)
     {
         $this->constraints['min_height'] = $value;
 
@@ -105,7 +105,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function maxWidth($value)
+    public function maxWidth(int $value)
     {
         $this->constraints['max_width'] = $value;
 
@@ -118,7 +118,7 @@ class Dimensions
      * @param int $value
      * @return $this
      */
-    public function maxHeight($value)
+    public function maxHeight(int $value)
     {
         $this->constraints['max_height'] = $value;
 
@@ -131,7 +131,7 @@ class Dimensions
      * @param float $value
      * @return $this
      */
-    public function ratio($value)
+    public function ratio(float $value)
     {
         $this->constraints['ratio'] = $value;
 

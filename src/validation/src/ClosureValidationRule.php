@@ -54,7 +54,7 @@ class ClosureValidationRule implements RuleContract
      * @param mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes(string $attribute, $value):bool
     {
         $this->failed = false;
 

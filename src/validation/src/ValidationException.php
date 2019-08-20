@@ -59,7 +59,7 @@ class ValidationException extends ServerException
      * @param null|\Symfony\Component\HttpFoundation\Response $response
      * @param string $errorBag
      */
-    public function __construct($validator, $response = null, $errorBag = 'default')
+    public function __construct($validator, $response = null,string $errorBag = 'default')
     {
         parent::__construct('The given data was invalid.');
 
@@ -90,7 +90,7 @@ class ValidationException extends ServerException
      *
      * @return array
      */
-    public function errors()
+    public function errors():array
     {
         return $this->validator->errors()->messages();
     }
@@ -101,7 +101,7 @@ class ValidationException extends ServerException
      * @param int $status
      * @return $this
      */
-    public function status($status)
+    public function status(int $status)
     {
         $this->status = $status;
 
@@ -114,7 +114,7 @@ class ValidationException extends ServerException
      * @param string $errorBag
      * @return $this
      */
-    public function errorBag($errorBag)
+    public function errorBag(string $errorBag)
     {
         $this->errorBag = $errorBag;
 
@@ -127,7 +127,7 @@ class ValidationException extends ServerException
      * @param string $url
      * @return $this
      */
-    public function redirectTo($url)
+    public function redirectTo(string $url)
     {
         $this->redirectTo = $url;
 

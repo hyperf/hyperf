@@ -51,7 +51,7 @@ class ValidationRuleParser
      * @param array $rules
      * @return \stdClass
      */
-    public function explode($rules)
+    public function explode(array $rules)
     {
         $this->implicitAttributes = [];
 
@@ -71,7 +71,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    public function mergeRules($results, $attribute, $rules = [])
+    public function mergeRules(array $results, $attribute, $rules = []):array
     {
         if (is_array($attribute)) {
             foreach ((array) $attribute as $innerAttribute => $innerRules) {
@@ -94,7 +94,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    public static function parse($rules)
+    public static function parse($rules):array
     {
         if ($rules instanceof RuleContract) {
             return [$rules, []];
@@ -103,7 +103,7 @@ class ValidationRuleParser
         if (is_array($rules)) {
             $rules = static::parseArrayRule($rules);
         } else {
-            $rules = static::parseStringRule($rules);
+            $rules = static::parseStringRule((string)$rules);
         }
 
         $rules[0] = static::normalizeRule($rules[0]);
@@ -117,7 +117,7 @@ class ValidationRuleParser
      * @param array $rules
      * @return array
      */
-    protected function explodeRules($rules)
+    protected function explodeRules(array $rules):array
     {
         foreach ($rules as $key => $rule) {
             if (Str::contains((string) $key, '*')) {
@@ -138,7 +138,7 @@ class ValidationRuleParser
      * @param mixed $rule
      * @return array
      */
-    protected function explodeExplicitRule($rule)
+    protected function explodeExplicitRule($rule):array
     {
         if (is_string($rule)) {
             return explode('|', $rule);
@@ -180,7 +180,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    protected function explodeWildcardRules($results, $attribute, $rules)
+    protected function explodeWildcardRules(array $results,string $attribute, $rules):array
     {
         $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute));
 
@@ -207,7 +207,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    protected function mergeRulesForAttribute($results, $attribute, $rules)
+    protected function mergeRulesForAttribute(array $results,string $attribute, $rules):array
     {
         $merge = head($this->explodeRules([$rules]));
 
@@ -225,7 +225,7 @@ class ValidationRuleParser
      * @param array $rules
      * @return array
      */
-    protected static function parseArrayRule(array $rules)
+    protected static function parseArrayRule(array $rules):array
     {
         return [Str::studly(trim((string)Arr::get($rules, (string) 0))), array_slice($rules, 1)];
     }
@@ -236,14 +236,14 @@ class ValidationRuleParser
      * @param string $rules
      * @return array
      */
-    protected static function parseStringRule($rules)
+    protected static function parseStringRule(string $rules):array
     {
         $parameters = [];
 
         // The format for specifying validation rules and parameters follows an
         // easy {rule}:{parameters} formatting convention. For instance the
         // rule "Max:3" states that the value may only be three letters.
-        if (strpos((string)$rules, ':') !== false) {
+        if (strpos($rules, ':') !== false) {
             [$rules, $parameter] = explode(':', $rules, 2);
 
             $parameters = static::parseParameters($rules, $parameter);
@@ -259,7 +259,7 @@ class ValidationRuleParser
      * @param string $parameter
      * @return array
      */
-    protected static function parseParameters($rule, $parameter)
+    protected static function parseParameters(string $rule,string $parameter):array
     {
         $rule = strtolower($rule);
 
@@ -276,7 +276,7 @@ class ValidationRuleParser
      * @param string $rule
      * @return string
      */
-    protected static function normalizeRule($rule)
+    protected static function normalizeRule(string $rule):string
     {
         switch ($rule) {
             case 'Int':

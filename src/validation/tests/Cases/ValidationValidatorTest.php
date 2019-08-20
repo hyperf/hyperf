@@ -4214,7 +4214,7 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'taylor'],
             ['name' => new class() implements Rule {
-                public function passes($attribute, $value)
+                public function passes(string $attribute, $value):bool
                 {
                     return $value === 'taylor';
                 }
@@ -4233,7 +4233,7 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'adam'],
             ['name' => [new class() implements Rule {
-                public function passes($attribute, $value)
+                public function passes(string $attribute, $value):bool
                 {
                     return $value === 'taylor';
                 }
@@ -4281,7 +4281,7 @@ class ValidationValidatorTest extends TestCase
             ['name' => 'taylor', 'states' => ['AR', 'TX'], 'number' => 9],
             [
                 'states.*' => new class() implements Rule {
-                    public function passes($attribute, $value)
+                    public function passes(string $attribute, $value):bool
                     {
                         return in_array($value, ['AK', 'HI']);
                     }
@@ -4318,7 +4318,7 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => new class() implements Rule {
-                public function passes($attribute, $value)
+                public function passes(string $attribute, $value):bool
                 {
                     return $value === 'taylor';
                 }
@@ -4339,7 +4339,7 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => [new class() implements Rule {
-                public function passes($attribute, $value)
+                public function passes(string $attribute, $value):bool
                 {
                     return $value === 'taylor';
                 }
@@ -4366,7 +4366,7 @@ class ValidationValidatorTest extends TestCase
             ['name' => $rule = new class() implements ImplicitRule {
                 public $called = false;
 
-                public function passes($attribute, $value)
+                public function passes(string $attribute, $value):bool
                 {
                     $this->called = true;
 
