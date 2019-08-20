@@ -6,7 +6,7 @@
         "validation",
         "hyperf"
     ],
-    "description": "chunhei2008/hyperf-validation",
+    "description": "hyperf validation",
     "autoload": {
         "psr-4": {
             "Hyperf\\Validation\\": "src/"
