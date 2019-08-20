@@ -10,8 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Task\Exception;
+namespace Hyperf\Translation\Contracts;
 
-class TaskException extends \RuntimeException
+interface HasLocalePreference
 {
+    /**
+     * Get the preferred locale of the entity.
+     *
+     * @return null|string
+     */
+    public function preferredLocale();
 }

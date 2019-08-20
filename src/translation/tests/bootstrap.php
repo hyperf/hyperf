@@ -10,8 +10,4 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Task\Exception;
-
-class TaskException extends \RuntimeException
-{
-}
+require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
