@@ -69,6 +69,14 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         return $clone;
     }
 
+    /**
+     * Return all cookies.
+     */
+    public function getCookies(): array
+    {
+        return $this->cookies;
+    }
+
     public function getSwooleResponse(): ?\Swoole\Http\Response
     {
         return $this->swooleResponse;
