@@ -23,7 +23,9 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -51,7 +53,12 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $dispatcher;
 
     /**
-     * @var CoreMiddleware
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
+     * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
 
@@ -75,11 +82,16 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected $serverName = 'websocket';
 
-    public function __construct(ContainerInterface $container)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        HttpDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        StdoutLoggerInterface $logger
+    ) {
         $this->container = $container;
-        $this->dispatcher = $container->get(HttpDispatcher::class);
-        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
+        $this->logger = $logger;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -114,7 +126,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
             }
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFind()) {
+                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registedMiddlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
@@ -132,8 +151,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
