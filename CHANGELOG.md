@@ -6,7 +6,9 @@
 - [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
 
 ## Fixed
+
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy not support array in CoroutineHandler.
 
 # v1.0.11 - 2019-08-15
 
