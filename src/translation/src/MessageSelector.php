@@ -24,7 +24,7 @@ class MessageSelector
      * @param string $locale
      * @return mixed
      */
-    public function choose(string $line, int $number, string $locale)
+    public function choose(string $line, $number, string $locale)
     {
         $segments = explode('|', $line);
 
@@ -364,7 +364,7 @@ class MessageSelector
      * @param int   $number
      * @return mixed
      */
-    private function extract(string $segments, int $number)
+    private function extract(array $segments, $number)
     {
         foreach ($segments as $part) {
             if (!is_null($line = $this->extractFromString($part, $number))) {
@@ -380,7 +380,7 @@ class MessageSelector
      * @param int    $number
      * @return mixed
      */
-    private function extractFromString(string $part, int $number)
+    private function extractFromString(string $part, $number)
     {
         preg_match('/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s', $part, $matches);
 

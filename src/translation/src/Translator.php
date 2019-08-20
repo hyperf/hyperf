@@ -412,11 +412,11 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
      * @param string $namespace
      * @param string $group
      * @param string $locale
-     * @param string $item
+     * @param mixed  $item
      * @param array  $replace
      * @return null|array|string
      */
-    protected function getLine(string $namespace, string $group, string $locale, string $item, array $replace)
+    protected function getLine(string $namespace, string $group, string $locale, $item, array $replace)
     {
         $this->load($namespace, $group, $locale);
         if (!is_null($item)) {
@@ -454,7 +454,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         $replace = $this->sortReplacements($replace);
 
         foreach ($replace as $key => $value) {
-            $line = str_replace(
+            $key   = (string)$key;
+            $value = (string)$value;
+            $line  = str_replace(
                 [':' . $key, ':' . Str::upper($key), ':' . Str::ucfirst($key)],
                 [$value, Str::upper($value), Str::ucfirst($value)],
                 $line
