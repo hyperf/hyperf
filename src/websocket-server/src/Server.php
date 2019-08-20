@@ -34,6 +34,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
+use Swoole\Server as SwooleServer;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -65,11 +66,6 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $logger;
 
     /**
-     * @var WebSocketServer
-     */
-    protected $server;
-
-    /**
      * @var array
      */
     protected $middlewares = [];
@@ -98,9 +94,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function setServer(WebSocketServer $server): void
+    public function getServer(): WebSocketServer
     {
-        $this->server = $server;
+        return $this->container->get(SwooleServer::class);
     }
 
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
@@ -130,7 +126,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 defer(function () use ($request, $class) {
                     $instance = $this->container->get($class);
                     if ($instance instanceof OnOpenInterface) {
-                        $instance->onOpen($this->server, $request);
+                        $instance->onOpen($this->getServer(), $request);
                     }
                 });
             }
@@ -147,7 +143,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(\Swoole\Server $server, Frame $frame): void
+    public function onMessage(SwooleServer $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {
@@ -165,7 +161,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance->onMessage($server, $frame);
     }
 
-    public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void
+    public function onClose(SwooleServer $server, int $fd, int $reactorId): void
     {
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 

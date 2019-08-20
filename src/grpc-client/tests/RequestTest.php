@@ -26,10 +26,9 @@ class RequestTest extends TestCase
     public function testRequest()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());
-        $this->assertSame([
-            'content-type' => 'application/grpc+proto',
-            'user-agent' => 'grpc-php-hyperf/1.0 (hyperf-grpc-client/dev-master)',
-        ], $request->headers);
+        $this->assertSame(2, count($request->headers));
+        $this->assertSame('application/grpc+proto', $request->headers['content-type']);
+        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame($path, $request->path);
         $this->assertSame(Parser::serializeMessage($info), $request->data);
     }
@@ -37,10 +36,9 @@ class RequestTest extends TestCase
     public function testGetDefaultHeaders()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());
-        $this->assertSame([
-            'content-type' => 'application/grpc+proto',
-            'user-agent' => 'grpc-php-hyperf/1.0 (hyperf-grpc-client/dev-master)',
-        ], $request->getDefaultHeaders());
+        $this->assertSame(2, count($request->getDefaultHeaders()));
+        $this->assertSame('application/grpc+proto', $request->getDefaultHeaders()['content-type']);
+        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->getDefaultHeaders()['user-agent']);
     }
 
     public function testUserDefinedHeaders()
@@ -49,10 +47,10 @@ class RequestTest extends TestCase
             'content-type' => 'application/grpc',
             'foo' => 'bar',
         ]);
-        $this->assertSame([
-            'content-type' => 'application/grpc',
-            'user-agent' => 'grpc-php-hyperf/1.0 (hyperf-grpc-client/dev-master)',
-            'foo' => 'bar',
-        ], $request->headers);
+
+        $this->assertSame(3, count($request->headers));
+        $this->assertSame('application/grpc', $request->headers['content-type']);
+        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
+        $this->assertSame('bar', $request->headers['foo']);
     }
 }

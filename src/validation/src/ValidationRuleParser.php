@@ -227,7 +227,7 @@ class ValidationRuleParser
      */
     protected static function parseArrayRule(array $rules)
     {
-        return [Str::studly(trim(Arr::get($rules, (string) 0))), array_slice($rules, 1)];
+        return [Str::studly(trim((string)Arr::get($rules, (string) 0))), array_slice($rules, 1)];
     }
 
     /**
@@ -243,7 +243,7 @@ class ValidationRuleParser
         // The format for specifying validation rules and parameters follows an
         // easy {rule}:{parameters} formatting convention. For instance the
         // rule "Max:3" states that the value may only be three letters.
-        if (strpos($rules, ':') !== false) {
+        if (strpos((string)$rules, ':') !== false) {
             [$rules, $parameter] = explode(':', $rules, 2);
 
             $parameters = static::parseParameters($rules, $parameter);

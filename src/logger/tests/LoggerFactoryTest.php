@@ -18,10 +18,13 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -47,17 +50,43 @@ class LoggerFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf');
-        $this->assertInstanceOf(StdoutLoggerInterface::class, $logger);
-        $this->assertInstanceOf(LoggerInterface::class, $logger);
-        $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
-    private function mockContainer()
+    public function testHandlerConfig()
+    {
+        $container = $this->mockContainer();
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get('hyperf', 'default');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $reflectionClass = new ReflectionClass($logger);
+        $handlersProperty = $reflectionClass->getProperty('handlers');
+        $handlersProperty->setAccessible(true);
+        $handlers = $handlersProperty->getValue($logger);
+        $this->assertCount(1, $handlers);
+        $this->assertInstanceOf(StreamHandler::class, current($handlers));
+    }
+
+    public function testHandlersConfig()
+    {
+        $container = $this->mockContainer();
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get('hyperf', 'default-handlers');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $reflectionClass = new ReflectionClass($logger);
+        $handlersProperty = $reflectionClass->getProperty('handlers');
+        $handlersProperty->setAccessible(true);
+        $handlers = $handlersProperty->getValue($logger);
+        $this->assertCount(2, $handlers);
+        $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
+        $this->assertInstanceOf(TestHandler::class, $handlers[1]);
+    }
+
+    private function mockContainer(): ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);
 
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'logger' => [
                 'default' => [
                     'handler' => [
@@ -72,11 +101,31 @@ class LoggerFactoryTest extends TestCase
                         'constructor' => [],
                     ],
                 ],
+                'default-handlers' => [
+                    'handlers' => [
+                        [
+                            'class' => \Monolog\Handler\StreamHandler::class,
+                            'constructor' => [
+                                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                'level' => \Monolog\Logger::DEBUG,
+                            ],
+                        ],
+                        [
+                            'class' => \Monolog\Handler\TestHandler::class,
+                            'constructor' => [
+                                'level' => \Monolog\Logger::DEBUG,
+                            ],
+                        ]
+                    ],
+                    'formatter' => [
+                        'class' => \Monolog\Formatter\LineFormatter::class,
+                        'constructor' => [],
+                    ],
+                ],
             ],
         ]));
 
         $container->shouldReceive('get')
-            ->once()
             ->with(LoggerFactory::class)
             ->andReturn(new LoggerFactory($container));
 

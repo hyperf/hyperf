@@ -24,14 +24,14 @@ class TranslatorFactory
         // locale as well as the fallback locale. So, we'll grab the application
         // configuration so we can easily get both of these values from there.
 
-        $config = $container->get(ConfigInterface::class);
-        $locale = $config->get('translation.locale');
+        $config         = $container->get(ConfigInterface::class);
+        $locale         = $config->get('translation.locale');
         $fallbackLocale = $config->get('translation.fallback_locale');
 
         $loader = $container->get(Loader::class);
 
         $trans = make(Translator::class, compact('loader', 'locale'));
-        $trans->setFallback($fallbackLocale);
+        $trans->setFallback((string)$fallbackLocale);
 
         return $trans;
     }

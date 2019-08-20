@@ -1,5 +1,24 @@
 # v1.1.0 - TBD
 
+## Added
+
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+
+## Deleted
+
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+
+# v1.0.12 - TBD
+
+## Added
+
+- [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
+- [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
+
+## Fixed
+- [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
+
 # v1.0.11 - 2019-08-15
 
 ## Added

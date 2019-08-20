@@ -52,7 +52,7 @@ class FileLoader implements Loader
      * @param Filesystem $files
      * @param string $path
      */
-    public function __construct(Filesystem $files, $path)
+    public function __construct(Filesystem $files,string $path)
     {
         $this->path = $path;
         $this->files = $files;
@@ -66,7 +66,7 @@ class FileLoader implements Loader
      * @param null|string $namespace
      * @return array
      */
-    public function load($locale, $group, $namespace = null)
+    public function load(string $locale,string $group, $namespace = null):array
     {
         if ($group === '*' && $namespace === '*') {
             return $this->loadJsonPaths($locale);
@@ -85,7 +85,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @param string $hint
      */
-    public function addNamespace($namespace, $hint)
+    public function addNamespace(string $namespace,string $hint)
     {
         $this->hints[$namespace] = $hint;
     }
@@ -95,7 +95,7 @@ class FileLoader implements Loader
      *
      * @param string $path
      */
-    public function addJsonPath($path)
+    public function addJsonPath(string $path)
     {
         $this->jsonPaths[] = $path;
     }
@@ -105,7 +105,7 @@ class FileLoader implements Loader
      *
      * @return array
      */
-    public function namespaces()
+    public function namespaces():array
     {
         return $this->hints;
     }
@@ -118,7 +118,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @return array
      */
-    protected function loadNamespaced($locale, $group, $namespace)
+    protected function loadNamespaced(string $locale,string $group,string $namespace):array
     {
         if (isset($this->hints[$namespace])) {
             $lines = $this->loadPath($this->hints[$namespace], $locale, $group);
@@ -138,7 +138,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @return array
      */
-    protected function loadNamespaceOverrides(array $lines, $locale, $group, $namespace)
+    protected function loadNamespaceOverrides(array $lines,string $locale,string $group,string $namespace):array
     {
         $file = "{$this->path}/vendor/{$namespace}/{$locale}/{$group}.php";
 
@@ -157,7 +157,7 @@ class FileLoader implements Loader
      * @param string $group
      * @return array
      */
-    protected function loadPath($path, $locale, $group)
+    protected function loadPath(string $path,string $locale,string $group):array
     {
         if ($this->files->exists($full = "{$path}/{$locale}/{$group}.php")) {
             return $this->files->getRequire($full);
@@ -173,7 +173,7 @@ class FileLoader implements Loader
      * @throws \RuntimeException
      * @return array
      */
-    protected function loadJsonPaths($locale)
+    protected function loadJsonPaths(string $locale)
     {
         return collect(array_merge($this->jsonPaths, [$this->path]))
             ->reduce(function ($output, $path) use ($locale) {

@@ -20,11 +20,11 @@ class MessageSelector
      * Select a proper translation string based on the given number.
      *
      * @param string $line
-     * @param int $number
+     * @param int    $number
      * @param string $locale
      * @return mixed
      */
-    public function choose($line, $number, $locale)
+    public function choose(string $line, int $number, string $locale)
     {
         $segments = explode('|', $line);
 
@@ -36,7 +36,7 @@ class MessageSelector
 
         $pluralIndex = $this->getPluralIndex($locale, $number);
 
-        if (count($segments) === 1 || ! isset($segments[$pluralIndex])) {
+        if (count($segments) === 1 || !isset($segments[$pluralIndex])) {
             return $segments[0];
         }
 
@@ -51,10 +51,10 @@ class MessageSelector
      * Copyright (c) 2005-2010 - Zend Technologies USA Inc. (http://www.zend.com)
      *
      * @param string $locale
-     * @param int $number
+     * @param int    $number
      * @return int
      */
-    public function getPluralIndex($locale, $number)
+    public function getPluralIndex(string $locale, int $number): int
     {
         switch ($locale) {
             case 'az':
@@ -361,13 +361,13 @@ class MessageSelector
      * Extract a translation string using inline conditions.
      *
      * @param array $segments
-     * @param int $number
+     * @param int   $number
      * @return mixed
      */
-    private function extract($segments, $number)
+    private function extract(string $segments, int $number)
     {
         foreach ($segments as $part) {
-            if (! is_null($line = $this->extractFromString($part, $number))) {
+            if (!is_null($line = $this->extractFromString($part, $number))) {
                 return $line;
             }
         }
@@ -377,10 +377,10 @@ class MessageSelector
      * Get the translation string if the condition matches.
      *
      * @param string $part
-     * @param int $number
+     * @param int    $number
      * @return mixed
      */
-    private function extractFromString($part, $number)
+    private function extractFromString(string $part, int $number)
     {
         preg_match('/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s', $part, $matches);
 
@@ -415,7 +415,7 @@ class MessageSelector
      * @param array $segments
      * @return array
      */
-    private function stripConditions($segments)
+    private function stripConditions(array $segments): array
     {
         return collect($segments)->map(function ($part) {
             return preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part);

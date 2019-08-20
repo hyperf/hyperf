@@ -17,12 +17,12 @@ interface Loader
     /**
      * Load the messages for the given locale.
      *
-     * @param string $locale
-     * @param string $group
+     * @param string      $locale
+     * @param string      $group
      * @param null|string $namespace
      * @return array
      */
-    public function load($locale, $group, $namespace = null);
+    public function load(string $locale, string $group, $namespace = null): array;
 
     /**
      * Add a new namespace to the loader.
@@ -30,19 +30,19 @@ interface Loader
      * @param string $namespace
      * @param string $hint
      */
-    public function addNamespace($namespace, $hint);
+    public function addNamespace(string $namespace, string $hint);
 
     /**
      * Add a new JSON path to the loader.
      *
      * @param string $path
      */
-    public function addJsonPath($path);
+    public function addJsonPath(string $path);
 
     /**
      * Get an array of all the registered namespaces.
      *
      * @return array
      */
-    public function namespaces();
+    public function namespaces(): array;
 }

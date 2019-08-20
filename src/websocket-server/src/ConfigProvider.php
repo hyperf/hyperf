@@ -19,7 +19,9 @@ class ConfigProvider
         return [
             'dependencies' => [
             ],
-            'commands' => [
+            'listeners' => [
+                Listener\InitSenderListener::class,
+                Listener\OnPipeMessageListener::class,
             ],
             'scan' => [
                 'paths' => [
