@@ -21,7 +21,7 @@ class Exists
      *
      * @return string
      */
-    public function __toString():string
+    public function __toString(): string
     {
         return rtrim(sprintf(
             'exists:%s,%s,%s',

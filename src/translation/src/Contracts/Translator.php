@@ -17,8 +17,8 @@ interface Translator
     /**
      * Get the translation for a given key.
      *
-     * @param string      $key
-     * @param array       $replace
+     * @param string $key
+     * @param array $replace
      * @param null|string $locale
      * @return mixed
      */
@@ -27,10 +27,10 @@ interface Translator
     /**
      * Get a translation according to an integer value.
      *
-     * @param string               $key
+     * @param string $key
      * @param array|\Countable|int $number
-     * @param array                $replace
-     * @param null|string          $locale
+     * @param array $replace
+     * @param null|string $locale
      * @return string
      */
     public function transChoice(string $key, $number, array $replace = [], $locale = null): string;

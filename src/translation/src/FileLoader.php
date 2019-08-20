@@ -52,7 +52,7 @@ class FileLoader implements Loader
      * @param Filesystem $files
      * @param string $path
      */
-    public function __construct(Filesystem $files,string $path)
+    public function __construct(Filesystem $files, string $path)
     {
         $this->path = $path;
         $this->files = $files;
@@ -66,7 +66,7 @@ class FileLoader implements Loader
      * @param null|string $namespace
      * @return array
      */
-    public function load(string $locale,string $group, $namespace = null):array
+    public function load(string $locale, string $group, $namespace = null): array
     {
         if ($group === '*' && $namespace === '*') {
             return $this->loadJsonPaths($locale);
@@ -85,7 +85,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @param string $hint
      */
-    public function addNamespace(string $namespace,string $hint)
+    public function addNamespace(string $namespace, string $hint)
     {
         $this->hints[$namespace] = $hint;
     }
@@ -105,7 +105,7 @@ class FileLoader implements Loader
      *
      * @return array
      */
-    public function namespaces():array
+    public function namespaces(): array
     {
         return $this->hints;
     }
@@ -118,7 +118,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @return array
      */
-    protected function loadNamespaced(string $locale,string $group,string $namespace):array
+    protected function loadNamespaced(string $locale, string $group, string $namespace): array
     {
         if (isset($this->hints[$namespace])) {
             $lines = $this->loadPath($this->hints[$namespace], $locale, $group);
@@ -138,7 +138,7 @@ class FileLoader implements Loader
      * @param string $namespace
      * @return array
      */
-    protected function loadNamespaceOverrides(array $lines,string $locale,string $group,string $namespace):array
+    protected function loadNamespaceOverrides(array $lines, string $locale, string $group, string $namespace): array
     {
         $file = "{$this->path}/vendor/{$namespace}/{$locale}/{$group}.php";
 
@@ -157,7 +157,7 @@ class FileLoader implements Loader
      * @param string $group
      * @return array
      */
-    protected function loadPath(string $path,string $locale,string $group):array
+    protected function loadPath(string $path, string $locale, string $group): array
     {
         if ($this->files->exists($full = "{$path}/{$locale}/{$group}.php")) {
             return $this->files->getRequire($full);

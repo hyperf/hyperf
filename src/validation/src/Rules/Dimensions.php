@@ -36,7 +36,7 @@ class Dimensions
      *
      * @return string
      */
-    public function __toString():string
+    public function __toString(): string
     {
         $result = '';
 

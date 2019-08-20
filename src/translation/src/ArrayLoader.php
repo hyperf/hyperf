@@ -26,8 +26,8 @@ class ArrayLoader implements Loader
     /**
      * Load the messages for the given locale.
      *
-     * @param string      $locale
-     * @param string      $group
+     * @param string $locale
+     * @param string $group
      * @param null|string $namespace
      * @return array
      */
@@ -60,9 +60,9 @@ class ArrayLoader implements Loader
     /**
      * Add messages to the loader.
      *
-     * @param string      $locale
-     * @param string      $group
-     * @param array       $messages
+     * @param string $locale
+     * @param string $group
+     * @param array $messages
      * @param null|string $namespace
      * @return $this
      */

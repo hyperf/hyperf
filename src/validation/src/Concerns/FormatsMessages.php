@@ -27,7 +27,7 @@ trait FormatsMessages
      * @param string $message
      * @param string $attribute
      * @param string $rule
-     * @param array  $parameters
+     * @param array $parameters
      * @return string
      */
     public function makeReplacements(string $message, string $attribute, string $rule, array $parameters): string
@@ -92,7 +92,7 @@ trait FormatsMessages
      * Get the displayable name of the value.
      *
      * @param string $attribute
-     * @param mixed  $value
+     * @param mixed $value
      * @return string
      */
     public function getDisplayableValue(string $attribute, $value)
@@ -124,7 +124,7 @@ trait FormatsMessages
         // First we will retrieve the custom message for the validation rule if one
         // exists. If a custom validation message is being used we'll return the
         // custom message, otherwise we'll keep searching for a valid message.
-        if (!is_null($inlineMessage)) {
+        if (! is_null($inlineMessage)) {
             return $inlineMessage;
         }
 
@@ -183,8 +183,8 @@ trait FormatsMessages
     /**
      * Get the inline message for a rule if it exists.
      *
-     * @param string     $attribute
-     * @param string     $lowerRule
+     * @param string $attribute
+     * @param string $lowerRule
      * @param null|array $source
      * @return null|string
      */
@@ -228,14 +228,14 @@ trait FormatsMessages
         );
 
         return $this->getWildcardCustomMessages(Arr::dot(
-            (array)$this->translator->trans('validation.custom')
+            (array) $this->translator->trans('validation.custom')
         ), $shortKey, $key);
     }
 
     /**
      * Check the given messages for a wildcard key.
      *
-     * @param array  $messages
+     * @param array $messages
      * @param string $search
      * @param string $default
      * @return string
@@ -243,7 +243,7 @@ trait FormatsMessages
     protected function getWildcardCustomMessages(array $messages, string $search, string $default): string
     {
         foreach ($messages as $key => $message) {
-            if ($search === $key || (Str::contains((string)$key, ['*']) && Str::is($key, $search))) {
+            if ($search === $key || (Str::contains((string) $key, ['*']) && Str::is($key, $search))) {
                 return $message;
             }
         }
@@ -258,7 +258,7 @@ trait FormatsMessages
      * @param string $rule
      * @return string
      */
-    protected function getSizeMessage(string $attribute,string $rule):string
+    protected function getSizeMessage(string $attribute, string $rule): string
     {
         $lowerRule = Str::snake($rule);
 
@@ -278,7 +278,7 @@ trait FormatsMessages
      * @param string $attribute
      * @return string
      */
-    protected function getAttributeType(string $attribute):string
+    protected function getAttributeType(string $attribute): string
     {
         // We assume that the attributes present in the file array are files so that
         // means that if the attribute does not have a numeric rule and the files
@@ -302,9 +302,9 @@ trait FormatsMessages
      * @param string $name
      * @return string
      */
-    protected function getAttributeFromTranslations(string $name):string
+    protected function getAttributeFromTranslations(string $name): string
     {
-        return (string)Arr::get($this->translator->trans('validation.attributes'), $name);
+        return (string) Arr::get($this->translator->trans('validation.attributes'), $name);
     }
 
     /**
@@ -314,7 +314,7 @@ trait FormatsMessages
      * @param string $value
      * @return string
      */
-    protected function replaceAttributePlaceholder(string $message,string $value):string
+    protected function replaceAttributePlaceholder(string $message, string $value): string
     {
         return str_replace(
             [':attribute', ':ATTRIBUTE', ':Attribute'],
@@ -330,7 +330,7 @@ trait FormatsMessages
      * @param string $attribute
      * @return string
      */
-    protected function replaceInputPlaceholder(string $message,string $attribute):string
+    protected function replaceInputPlaceholder(string $message, string $attribute): string
     {
         $actualValue = $this->getValue($attribute);
 
@@ -347,7 +347,7 @@ trait FormatsMessages
      * @param array $values
      * @return array
      */
-    protected function getAttributeList(array $values):array
+    protected function getAttributeList(array $values): array
     {
         $attributes = [];
 
@@ -364,14 +364,14 @@ trait FormatsMessages
     /**
      * Call a custom validator message replacer.
      *
-     * @param string                       $message
-     * @param string                       $attribute
-     * @param string                       $rule
-     * @param array                        $parameters
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
      * @param \Hyperf\Validation\Validator $validator
      * @return null|string
      */
-    protected function callReplacer(string $message,string $attribute,string $rule,array $parameters, $validator)
+    protected function callReplacer(string $message, string $attribute, string $rule, array $parameters, $validator)
     {
         $callback = $this->replacers[$rule];
 
@@ -386,15 +386,15 @@ trait FormatsMessages
     /**
      * Call a class based validator message replacer.
      *
-     * @param string                       $callback
-     * @param string                       $message
-     * @param string                       $attribute
-     * @param string                       $rule
-     * @param array                        $parameters
+     * @param string $callback
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
      * @param \Hyperf\Validation\Validator $validator
      * @return string
      */
-    protected function callClassBasedReplacer(string $callback,string $message,string $attribute,string $rule,array $parameters, $validator):string
+    protected function callClassBasedReplacer(string $callback, string $message, string $attribute, string $rule, array $parameters, $validator): string
     {
         [$class, $method] = Str::parseCallback($callback, 'replace');
 

@@ -17,8 +17,8 @@ interface Loader
     /**
      * Load the messages for the given locale.
      *
-     * @param string      $locale
-     * @param string      $group
+     * @param string $locale
+     * @param string $group
      * @param null|string $namespace
      * @return array
      */

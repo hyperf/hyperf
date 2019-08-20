@@ -27,7 +27,7 @@ class NamespacedItemResolver
      * @param string $key
      * @return array
      */
-    public function parseKey(string $key):array
+    public function parseKey(string $key): array
     {
         // If we've already parsed the given key, we'll return the cached version we
         // already have, as this will save us some processing. We cache off every
@@ -59,7 +59,7 @@ class NamespacedItemResolver
      * @param string $key
      * @param array $parsed
      */
-    public function setParsedKey(string $key,array $parsed)
+    public function setParsedKey(string $key, array $parsed)
     {
         $this->parsed[$key] = $parsed;
     }
@@ -93,7 +93,7 @@ class NamespacedItemResolver
      * @param string $key
      * @return array
      */
-    protected function parseNamespacedSegments(string $key):array
+    protected function parseNamespacedSegments(string $key): array
     {
         [$namespace, $item] = explode('::', $key);
 

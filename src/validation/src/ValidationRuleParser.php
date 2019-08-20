@@ -71,7 +71,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    public function mergeRules(array $results, $attribute, $rules = []):array
+    public function mergeRules(array $results, $attribute, $rules = []): array
     {
         if (is_array($attribute)) {
             foreach ((array) $attribute as $innerAttribute => $innerRules) {
@@ -94,7 +94,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    public static function parse($rules):array
+    public static function parse($rules): array
     {
         if ($rules instanceof RuleContract) {
             return [$rules, []];
@@ -103,7 +103,7 @@ class ValidationRuleParser
         if (is_array($rules)) {
             $rules = static::parseArrayRule($rules);
         } else {
-            $rules = static::parseStringRule((string)$rules);
+            $rules = static::parseStringRule((string) $rules);
         }
 
         $rules[0] = static::normalizeRule($rules[0]);
@@ -117,7 +117,7 @@ class ValidationRuleParser
      * @param array $rules
      * @return array
      */
-    protected function explodeRules(array $rules):array
+    protected function explodeRules(array $rules): array
     {
         foreach ($rules as $key => $rule) {
             if (Str::contains((string) $key, '*')) {
@@ -138,7 +138,7 @@ class ValidationRuleParser
      * @param mixed $rule
      * @return array
      */
-    protected function explodeExplicitRule($rule):array
+    protected function explodeExplicitRule($rule): array
     {
         if (is_string($rule)) {
             return explode('|', $rule);
@@ -180,7 +180,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    protected function explodeWildcardRules(array $results,string $attribute, $rules):array
+    protected function explodeWildcardRules(array $results, string $attribute, $rules): array
     {
         $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute));
 
@@ -207,7 +207,7 @@ class ValidationRuleParser
      * @param array|string $rules
      * @return array
      */
-    protected function mergeRulesForAttribute(array $results,string $attribute, $rules):array
+    protected function mergeRulesForAttribute(array $results, string $attribute, $rules): array
     {
         $merge = head($this->explodeRules([$rules]));
 
@@ -225,9 +225,9 @@ class ValidationRuleParser
      * @param array $rules
      * @return array
      */
-    protected static function parseArrayRule(array $rules):array
+    protected static function parseArrayRule(array $rules): array
     {
-        return [Str::studly(trim((string)Arr::get($rules, (string) 0))), array_slice($rules, 1)];
+        return [Str::studly(trim((string) Arr::get($rules, (string) 0))), array_slice($rules, 1)];
     }
 
     /**
@@ -236,7 +236,7 @@ class ValidationRuleParser
      * @param string $rules
      * @return array
      */
-    protected static function parseStringRule(string $rules):array
+    protected static function parseStringRule(string $rules): array
     {
         $parameters = [];
 
@@ -259,7 +259,7 @@ class ValidationRuleParser
      * @param string $parameter
      * @return array
      */
-    protected static function parseParameters(string $rule,string $parameter):array
+    protected static function parseParameters(string $rule, string $parameter): array
     {
         $rule = strtolower($rule);
 
@@ -276,7 +276,7 @@ class ValidationRuleParser
      * @param string $rule
      * @return string
      */
-    protected static function normalizeRule(string $rule):string
+    protected static function normalizeRule(string $rule): string
     {
         switch ($rule) {
             case 'Int':

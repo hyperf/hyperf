@@ -37,7 +37,7 @@ class Rule
      * @param string $column
      * @return \Hyperf\Validation\Rules\Exists
      */
-    public static function exists(string $table,string $column = 'NULL')
+    public static function exists(string $table, string $column = 'NULL')
     {
         return new Rules\Exists($table, $column);
     }
@@ -90,7 +90,7 @@ class Rule
      * @param string $column
      * @return \Hyperf\Validation\Rules\Unique
      */
-    public static function unique(string $table,string $column = 'NULL')
+    public static function unique(string $table, string $column = 'NULL')
     {
         return new Rules\Unique($table, $column);
     }

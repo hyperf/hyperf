@@ -37,7 +37,7 @@ class Unique
      *
      * @return string
      */
-    public function __toString():string
+    public function __toString(): string
     {
         return rtrim(sprintf(
             'unique:%s,%s,%s,%s,%s',

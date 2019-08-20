@@ -36,7 +36,7 @@ class RequiredIf
      *
      * @return string
      */
-    public function __toString():string
+    public function __toString(): string
     {
         if (is_callable($this->condition)) {
             return call_user_func($this->condition) ? 'required' : '';

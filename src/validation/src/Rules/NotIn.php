@@ -41,7 +41,7 @@ class NotIn
      *
      * @return string
      */
-    public function __toString():string
+    public function __toString(): string
     {
         $values = array_map(function ($value) {
             return '"' . str_replace('"', '""', $value) . '"';

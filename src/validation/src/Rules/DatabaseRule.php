@@ -50,7 +50,7 @@ trait DatabaseRule
      * @param string $table
      * @param string $column
      */
-    public function __construct(string $table,string $column = 'NULL')
+    public function __construct(string $table, string $column = 'NULL')
     {
         $this->table = $table;
         $this->column = $column;
@@ -162,7 +162,7 @@ trait DatabaseRule
      *
      * @return array
      */
-    public function queryCallbacks():array
+    public function queryCallbacks(): array
     {
         return $this->using;
     }
@@ -172,7 +172,7 @@ trait DatabaseRule
      *
      * @return string
      */
-    protected function formatWheres():string
+    protected function formatWheres(): string
     {
         return collect($this->wheres)->map(function ($where) {
             return $where['column'] . ',' . '"' . str_replace('"', '""', $where['value']) . '"';

@@ -20,7 +20,7 @@ class MessageSelector
      * Select a proper translation string based on the given number.
      *
      * @param string $line
-     * @param int    $number
+     * @param int $number
      * @param string $locale
      * @return mixed
      */
@@ -36,7 +36,7 @@ class MessageSelector
 
         $pluralIndex = $this->getPluralIndex($locale, $number);
 
-        if (count($segments) === 1 || !isset($segments[$pluralIndex])) {
+        if (count($segments) === 1 || ! isset($segments[$pluralIndex])) {
             return $segments[0];
         }
 
@@ -51,7 +51,7 @@ class MessageSelector
      * Copyright (c) 2005-2010 - Zend Technologies USA Inc. (http://www.zend.com)
      *
      * @param string $locale
-     * @param int    $number
+     * @param int $number
      * @return int
      */
     public function getPluralIndex(string $locale, int $number): int
@@ -361,13 +361,13 @@ class MessageSelector
      * Extract a translation string using inline conditions.
      *
      * @param array $segments
-     * @param int   $number
+     * @param int $number
      * @return mixed
      */
     private function extract(array $segments, $number)
     {
         foreach ($segments as $part) {
-            if (!is_null($line = $this->extractFromString($part, $number))) {
+            if (! is_null($line = $this->extractFromString($part, $number))) {
                 return $line;
             }
         }
@@ -377,7 +377,7 @@ class MessageSelector
      * Get the translation string if the condition matches.
      *
      * @param string $part
-     * @param int    $number
+     * @param int $number
      * @return mixed
      */
     private function extractFromString(string $part, $number)
