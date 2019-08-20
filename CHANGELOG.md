@@ -10,6 +10,10 @@
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
 - [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fix proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
 
+## Deprecated
+
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated.
+
 # v1.0.11 - 2019-08-15
 
 ## Added
