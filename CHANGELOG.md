@@ -8,7 +8,7 @@
 ## Fixed
 
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
-- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy not support array in CoroutineHandler.
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fix proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
 
 # v1.0.11 - 2019-08-15
 
