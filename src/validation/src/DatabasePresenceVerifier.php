@@ -45,19 +45,19 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Count the number of objects in a collection having the given value.
      *
-     * @param string $collection
-     * @param string $column
-     * @param string $value
-     * @param null|int $excludeId
+     * @param string      $collection
+     * @param string      $column
+     * @param string      $value
+     * @param null|int    $excludeId
      * @param null|string $idColumn
-     * @param array $extra
+     * @param array       $extra
      * @return int
      */
-    public function getCount(string $collection, string $column, string $value, $excludeId = null, $idColumn = null, array $extra = []): int
+    public function getCount(string $collection, string $column, $value, $excludeId = null, $idColumn = null, array $extra = []): int
     {
         $query = $this->table($collection)->where($column, '=', $value);
 
-        if (! is_null($excludeId) && $excludeId !== 'NULL') {
+        if (!is_null($excludeId) && $excludeId !== 'NULL') {
             $query->where($idColumn ?: 'id', '<>', $excludeId);
         }
 
@@ -69,8 +69,8 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      *
      * @param string $collection
      * @param string $column
-     * @param array $values
-     * @param array $extra
+     * @param array  $values
+     * @param array  $extra
      * @return int
      */
     public function getMultiCount(string $collection, string $column, array $values, array $extra = []): int
@@ -105,7 +105,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add the given conditions to the query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param array $conditions
+     * @param array                          $conditions
      * @return \Hyperf\Database\Query\Builder
      */
     protected function addConditions($query, array $conditions)
@@ -127,8 +127,8 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add a "where" clause to the given query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param string $key
-     * @param string $extraValue
+     * @param string                         $key
+     * @param string                         $extraValue
      */
     protected function addWhere($query, string $key, $extraValue)
     {
@@ -136,7 +136,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
             $query->whereNull($key);
         } elseif ($extraValue === 'NOT_NULL') {
             $query->whereNotNull($key);
-        } elseif (Str::startsWith((string) $extraValue, '!')) {
+        } elseif (Str::startsWith((string)$extraValue, '!')) {
             $query->where($key, '!=', mb_substr($extraValue, 1));
         } else {
             $query->where($key, $extraValue);
