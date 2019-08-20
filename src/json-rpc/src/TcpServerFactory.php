@@ -17,6 +17,9 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @deprecated v1.1
+ */
 class TcpServerFactory
 {
     protected $coreMiddleware = CoreMiddleware::class;

@@ -15,6 +15,9 @@ namespace Hyperf\HttpServer;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @deprecated v1.1
+ */
 class ServerFactory
 {
     protected $coreMiddleware = CoreMiddleware::class;
