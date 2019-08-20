@@ -36,7 +36,7 @@ use Throwable;
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
     /**
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
     protected $container;
 
