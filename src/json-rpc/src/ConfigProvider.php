@@ -22,7 +22,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                TcpServer::class => TcpServerFactory::class,
                 DataFormatter::class => DataFormatterFactory::class,
             ],
             'commands' => [

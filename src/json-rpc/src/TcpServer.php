@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -25,7 +26,6 @@ use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
@@ -40,13 +40,11 @@ class TcpServer extends Server
      */
     protected $packer;
 
-    public function __construct(
-        ContainerInterface $container,
-        ProtocolManager $protocolManager,
-        LoggerInterface $logger
-    ) {
-        $dispatcher = $container->get(RequestDispatcher::class);
+    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager)
+    {
         $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
+        $dispatcher = $container->get(RequestDispatcher::class);
+        $logger = $container->get(StdoutLoggerInterface::class);
 
         parent::__construct($container, $protocol, $dispatcher, $logger);
 
