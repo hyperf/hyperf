@@ -36,6 +36,21 @@ use Throwable;
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
     /**
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var HttpDispatcher
+     */
+    protected $dispatcher;
+
+    /**
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
      * @var array
      */
     protected $middlewares;
@@ -51,16 +66,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $exceptionHandlers;
 
     /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var HttpDispatcher
-     */
-    protected $dispatcher;
-
-    /**
      * @var Dispatcher
      */
     protected $routerDispatcher;
@@ -70,10 +75,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected $serverName;
 
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher)
+    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher)
     {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -104,8 +110,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
             if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {

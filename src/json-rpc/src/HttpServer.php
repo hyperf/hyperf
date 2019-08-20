@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -45,10 +46,13 @@ class HttpServer extends Server
      */
     protected $responseBuilder;
 
-    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager)
-    {
-        $this->container = $container;
-        $this->dispatcher = $container->get(RequestDispatcher::class);
+    public function __construct(
+        ContainerInterface $container,
+        RequestDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        ProtocolManager $protocolManager
+    ) {
+        parent::__construct($container, $dispatcher, $exceptionHandlerDispatcher);
         $this->protocol = new Protocol($container, $protocolManager, 'jsonrpc-http');
         $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [

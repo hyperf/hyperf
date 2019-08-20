@@ -53,6 +53,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $dispatcher;
 
     /**
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
      * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
@@ -77,10 +82,15 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected $serverName = 'websocket';
 
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, StdoutLoggerInterface $logger)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        HttpDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        StdoutLoggerInterface $logger
+    ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
         $this->logger = $logger;
     }
 
@@ -141,8 +151,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {

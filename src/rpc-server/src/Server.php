@@ -26,13 +26,27 @@ use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 use Throwable;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var DispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
     /**
      * @var array
      */
@@ -47,16 +61,6 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
      * @var array
      */
     protected $exceptionHandlers;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var DispatcherInterface
-     */
-    protected $dispatcher;
 
     /**
      * @var string
@@ -75,13 +79,15 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     public function __construct(
         ContainerInterface $container,
-        Protocol $protocol,
         DispatcherInterface $dispatcher,
+        ExceptionHandlerDispatcher $exceptionDispatcher,
+        Protocol $protocol,
         LoggerInterface $logger
     ) {
         $this->container = $container;
-        $this->protocol = $protocol;
         $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionDispatcher;
+        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 
