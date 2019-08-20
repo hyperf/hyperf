@@ -8,6 +8,10 @@
 ## Fixed
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
 
+## Deprecated
+
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `HttpServerFactory`, `JsonRpcHttpServerFactory`, `JsonRpcTcpServerFactory` as deprecated.
+
 # v1.0.11 - 2019-08-15
 
 ## Added
