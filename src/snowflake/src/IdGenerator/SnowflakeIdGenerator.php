@@ -10,13 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Snowflake;
+namespace Hyperf\Snowflake\IdGenerator;
 
-interface MetaGeneratorInterface
+use Hyperf\Snowflake\IdGenerator;
+
+class SnowflakeIdGenerator extends IdGenerator
 {
-    const DEFAULT_BEGIN_SECOND = 1560960000;
-
-    public function generate(): Meta;
-
-    public function getBeginTimeStamp(): int;
 }

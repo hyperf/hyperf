@@ -25,10 +25,13 @@ abstract class MetaGenerator implements MetaGeneratorInterface
 
     protected $lastTimeStamp = 0;
 
-    public function __construct(ConfigInterface $config)
+    protected $beginTimeStamp = 0;
+
+    public function __construct(ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
     {
         $this->config = $config;
         $this->lastTimeStamp = $this->getTimeStamp();
+        $this->beginTimeStamp = $beginTimeStamp * 1000;
     }
 
     public function generate(): Meta
@@ -36,7 +39,7 @@ abstract class MetaGenerator implements MetaGeneratorInterface
         $timestamp = $this->getTimeStamp();
 
         if ($timestamp < $this->lastTimeStamp) {
-            throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds', $this->lastTimeStamp - $timestamp));
+            throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds.', $this->lastTimeStamp - $timestamp));
         }
 
         if ($timestamp == $this->lastTimeStamp) {
@@ -48,7 +51,16 @@ abstract class MetaGenerator implements MetaGeneratorInterface
             $this->sequence = 0;
         }
 
-        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp);
+        if ($timestamp < $this->beginTimeStamp) {
+            throw new SnowflakeException(sprintf('The beginTimeStamp %d is invalid, because it smaller than timestamp %d.', $this->beginTimeStamp, $timestamp));
+        }
+
+        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp, $this->beginTimeStamp);
+    }
+
+    public function getBeginTimeStamp(): int
+    {
+        return $this->beginTimeStamp;
     }
 
     abstract public function getDataCenterId(): int;

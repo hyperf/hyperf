@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Snowflake\IdGeneratorInterface;
+use Hyperf\Snowflake\MetaGeneratorInterface;
 
 return [
-    'begin_second' => IdGeneratorInterface::DEFAULT_SECOND,
+    'begin_second' => MetaGeneratorInterface::DEFAULT_BEGIN_SECOND,
 ];

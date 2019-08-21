@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Snowflake;
 
 use Hyperf\Snowflake\Config;
-use Hyperf\Snowflake\IdGenerator\MilliSecondIdGenerator;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Hyperf\Snowflake\RandomMetaGenerator;
@@ -29,14 +29,14 @@ class GeneratorTest extends TestCase
     public function testGenerateReturnInt()
     {
         $config = new Config();
-        $generator = new MilliSecondIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
+        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
         $this->assertTrue(is_int($generator->generate()));
     }
 
     public function testDegenerateInstanceofMeta()
     {
         $config = new Config();
-        $generator = new MilliSecondIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
+        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
 
         $id = $generator->generate();
 
@@ -47,7 +47,7 @@ class GeneratorTest extends TestCase
     {
         $config = new Config();
         $metaGenerator = new RandomMilliSecondMetaGenerator($config);
-        $generator = new MilliSecondIdGenerator($metaGenerator, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator, $config);
 
         $meta = $metaGenerator->generate();
         $id = $generator->generate($meta);
@@ -58,11 +58,11 @@ class GeneratorTest extends TestCase
     {
         $config = new Config();
         $metaGenerator = new RandomMilliSecondMetaGenerator($config);
-        $generator = new MilliSecondIdGenerator($metaGenerator, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator, $config);
 
         $meta = $generator->degenerate(PHP_INT_MAX);
-        $days = intval(($meta->timestamp) / (3600 * 24 * 1000));
-        $this->assertSame(43573, $days);
+        $days = intval(($meta->getTimeInterval()) / (3600 * 24 * 1000));
+        $this->assertSame(25451, $days); // 70 years.
 
         // $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
         // $meta = $generator->degenerate(PHP_INT_MAX);

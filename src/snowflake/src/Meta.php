@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
-use Hyperf\Snowflake\Exception\SnowflakeException;
-
 class Meta
 {
     const MILLISECOND_BITS = 41;
@@ -27,38 +25,79 @@ class Meta
     /**
      * @var int [0, 31]
      */
-    public $dataCenterId;
+    protected $dataCenterId;
 
     /**
      * @var int [0, 31]
      */
-    public $workerId;
+    protected $workerId;
 
     /**
      * @var int [0, 4095]
      */
-    public $sequence;
+    protected $sequence;
 
     /**
-     * @var int seconds or millisecond
+     * @var int seconds or milliseconds
      */
-    public $timestamp = 0;
+    protected $timestamp = 0;
 
-    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp)
+    /**
+     * @var int seconds or milliseconds
+     */
+    protected $beginTimeStamp = 0;
+
+    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimeStamp = 1560960000)
     {
-        // if ($dataCenterId < 0 || $dataCenterId > $this->maxDataCenterId()) {
-        //     throw new SnowflakeException('DataCenter Id can\'t be greater than 4 or less than 0');
-        // }
-        // if ($machineId < 0 || $machineId > $this->maxMachineId()) {
-        //     throw new SnowflakeException('Machine Id can\'t be greater than 128 or less than 0');
-        // }
-        // if ($sequence < 0 || $sequence > $this->maxSequence()) {
-        //     throw new SnowflakeException('Sequence can\'t be greater than 4096 or less than 0');
-        // }
-
         $this->dataCenterId = $dataCenterId;
         $this->workerId = $workerId;
         $this->sequence = $sequence;
         $this->timestamp = $timestamp;
+        $this->beginTimeStamp = $beginTimeStamp;
+    }
+
+    public function getTimeInterval(): int
+    {
+        return $this->timestamp - $this->beginTimeStamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDataCenterId(): int
+    {
+        return $this->dataCenterId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWorkerId(): int
+    {
+        return $this->workerId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSequence(): int
+    {
+        return $this->sequence;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimestamp(): int
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBeginTimeStamp(): int
+    {
+        return $this->beginTimeStamp;
     }
 }

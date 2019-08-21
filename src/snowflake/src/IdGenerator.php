@@ -30,30 +30,29 @@ abstract class IdGenerator implements IdGeneratorInterface
         $this->config = $config;
     }
 
-    abstract public function getBeginTimeStamp(): int;
-
     public function generate(?Meta $meta = null): int
     {
         $meta = $this->meta($meta);
 
-        $timestamp = ($meta->timestamp - $this->getBeginTimeStamp()) << $this->config->getTimeStampShift();
-        $dataCenterId = $meta->dataCenterId << $this->config->getDataCenterShift();
-        $workerId = $meta->workerId << $this->config->getWorkerIdShift();
+        $interval = $meta->getTimeInterval() << $this->config->getTimeStampShift();
+        $dataCenterId = $meta->getDataCenterId() << $this->config->getDataCenterShift();
+        $workerId = $meta->getWorkerId() << $this->config->getWorkerIdShift();
 
-        return $timestamp | $dataCenterId | $workerId | $meta->sequence;
+        return $interval | $dataCenterId | $workerId | $meta->getSequence();
     }
 
     public function degenerate(int $id): Meta
     {
-        $timestamp = $id >> $this->config->getTimeStampShift();
+        $interval = $id >> $this->config->getTimeStampShift();
         $dataCenterId = $id >> $this->config->getDataCenterShift();
         $workerId = $id >> $this->config->getWorkerIdShift();
 
         return new Meta(
-            $timestamp << $this->config->getDataCenterBits() ^ $dataCenterId,
+            $interval << $this->config->getDataCenterBits() ^ $dataCenterId,
             $dataCenterId << $this->config->getWorkerBits() ^ $workerId,
             $workerId << $this->config->getSequenceBits() ^ $id,
-            $timestamp + $this->getBeginTimeStamp()
+            $interval + $this->metaGenerator->getBeginTimeStamp(),
+            $this->metaGenerator->getBeginTimeStamp()
         );
     }
 

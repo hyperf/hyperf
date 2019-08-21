@@ -13,17 +13,17 @@ declare(strict_types=1);
 namespace Hyperf\Snowflake;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Snowflake\IdGenerator\MilliSecondIdGenerator;
+use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Psr\Container\ContainerInterface;
 
-class SnowflakeFactory
+class MetaGeneratorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $beginSecond = $config->get('snowflake.begin_second', IdGeneratorInterface::DEFAULT_SECOND);
+        $beginSecond = $config->get('snowflake.begin_second', MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
 
-        return make(MilliSecondIdGenerator::class, [
+        return make(RandomMilliSecondMetaGenerator::class, [
             'beginTimeStamp' => $beginSecond,
         ]);
     }

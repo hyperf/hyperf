@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
-use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 
 class ConfigProvider
 {
@@ -20,8 +20,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                IdGeneratorInterface::class => SnowflakeFactory::class,
-                MetaGeneratorInterface::class => RandomMilliSecondMetaGenerator::class,
+                IdGeneratorInterface::class => SnowflakeIdGenerator::class,
+                MetaGeneratorInterface::class => MetaGeneratorFactory::class,
                 ConfigInterface::class => Config::class,
             ],
             'commands' => [
