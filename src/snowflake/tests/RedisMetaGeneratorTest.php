@@ -101,6 +101,23 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame(1, $meta->getWorkerId());
     }
 
+    public function testDeGenerateMaxId()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
+
+        $meta = $generator->degenerate(PHP_INT_MAX);
+        $interval = $meta->getTimeInterval();
+
+        $this->assertSame(31, $meta->getDataCenterId());
+        $this->assertSame(31, $meta->getWorkerId());
+        $this->assertSame(4095, $meta->getSequence());
+        $this->assertSame(69730, intval($interval / (3600 * 24 * 365))); // 70W years
+    }
+
     protected function getContainer()
     {
         $config = new Config([
