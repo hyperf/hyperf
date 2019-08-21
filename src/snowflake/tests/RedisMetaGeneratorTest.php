@@ -27,6 +27,7 @@ use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGenerator\RedisSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -115,7 +116,25 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame(31, $meta->getDataCenterId());
         $this->assertSame(31, $meta->getWorkerId());
         $this->assertSame(4095, $meta->getSequence());
-        $this->assertSame(69730, intval($interval / (3600 * 24 * 365))); // 70W years
+        $this->assertSame(69730, intval($interval / (3600 * 24 * 365))); // 7W years
+    }
+
+    public function testUserDefinedIdGenerator()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
+        $generator = new UserDefinedIdGenerator($generator);
+
+        $userId = 20190620;
+
+        $id = $generator->generate($userId);
+
+        $meta = $generator->degenerate($id);
+
+        $this->assertSame($meta->getWorkerId(), $userId % 31);
     }
 
     protected function getContainer()

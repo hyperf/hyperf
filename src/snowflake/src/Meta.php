@@ -86,6 +86,36 @@ class Meta
     }
 
     /**
+     * @param int $dataCenterId
+     * @return Meta
+     */
+    public function setDataCenterId(int $dataCenterId): self
+    {
+        $this->dataCenterId = $dataCenterId;
+        return $this;
+    }
+
+    /**
+     * @param int $workerId
+     * @return Meta
+     */
+    public function setWorkerId(int $workerId): self
+    {
+        $this->workerId = $workerId;
+        return $this;
+    }
+
+    /**
+     * @param int $sequence
+     * @return Meta
+     */
+    public function setSequence(int $sequence): self
+    {
+        $this->sequence = $sequence;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getTimestamp(): int

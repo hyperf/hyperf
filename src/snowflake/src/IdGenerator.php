@@ -56,6 +56,14 @@ abstract class IdGenerator implements IdGeneratorInterface
         );
     }
 
+    /**
+     * @return MetaGeneratorInterface
+     */
+    public function getMetaGenerator(): MetaGeneratorInterface
+    {
+        return $this->metaGenerator;
+    }
+
     protected function meta(?Meta $meta = null): Meta
     {
         if (is_null($meta)) {
