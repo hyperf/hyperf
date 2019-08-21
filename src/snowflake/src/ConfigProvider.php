@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
+use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,7 +21,8 @@ class ConfigProvider
         return [
             'dependencies' => [
                 IdGeneratorInterface::class => SnowflakeFactory::class,
-                MetaGeneratorInterface::class => RandomMetaGenerator::class,
+                MetaGeneratorInterface::class => RandomMilliSecondMetaGenerator::class,
+                ConfigInterface::class => Config::class,
             ],
             'commands' => [
             ],

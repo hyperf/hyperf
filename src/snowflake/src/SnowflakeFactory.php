@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Snowflake;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Snowflake\IdGenerator\MilliSecondIdGenerator;
 use Psr\Container\ContainerInterface;
 
 class SnowflakeFactory
@@ -20,12 +21,10 @@ class SnowflakeFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $level = $config->get('snowflake.level', IdGeneratorInterface::LEVEL_MILLISECOND);
         $beginSecond = $config->get('snowflake.begin_second', IdGeneratorInterface::DEFAULT_SECOND);
 
-        return make(Snowflake::class, [
-            'level' => $level,
-            'beginSecond' => $beginSecond,
+        return make(MilliSecondIdGenerator::class, [
+            'beginTimeStamp' => $beginSecond,
         ]);
     }
 }

@@ -14,10 +14,6 @@ namespace Hyperf\Snowflake;
 
 interface IdGeneratorInterface extends \Hyperf\Contract\IdGeneratorInterface
 {
-    const LEVEL_SECOND = 1;
-
-    const LEVEL_MILLISECOND = 2;
-
     const DEFAULT_SECOND = 1565712000;
 
     public function generate(?Meta $meta = null): int;

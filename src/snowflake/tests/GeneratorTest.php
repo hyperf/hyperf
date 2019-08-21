@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Snowflake;
 
+use Hyperf\Snowflake\Config;
+use Hyperf\Snowflake\IdGenerator\MilliSecondIdGenerator;
 use Hyperf\Snowflake\Meta;
+use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Hyperf\Snowflake\RandomMetaGenerator;
 use Hyperf\Snowflake\Snowflake;
 use PHPUnit\Framework\TestCase;
@@ -25,13 +28,15 @@ class GeneratorTest extends TestCase
 {
     public function testGenerateReturnInt()
     {
-        $generator = new Snowflake(new RandomMetaGenerator());
+        $config = new Config();
+        $generator = new MilliSecondIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
         $this->assertTrue(is_int($generator->generate()));
     }
 
     public function testDegenerateInstanceofMeta()
     {
-        $generator = new Snowflake(new RandomMetaGenerator());
+        $config = new Config();
+        $generator = new MilliSecondIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
 
         $id = $generator->generate();
 
@@ -40,27 +45,28 @@ class GeneratorTest extends TestCase
 
     public function testGenerateAndDegenerate()
     {
-        $metaGenerator = new RandomMetaGenerator();
-        $generator = new Snowflake($metaGenerator);
+        $config = new Config();
+        $metaGenerator = new RandomMilliSecondMetaGenerator($config);
+        $generator = new MilliSecondIdGenerator($metaGenerator, $config);
 
         $meta = $metaGenerator->generate();
         $id = $generator->generate($meta);
-        $this->assertEquals($meta, $generator->degenerate($id)->setTimestamp(0));
-
-        $id = $generator->generate();
-        $this->assertEquals($meta->sequence + 1, $generator->degenerate($id)->sequence);
+        $this->assertEquals($meta, $generator->degenerate($id));
     }
 
     public function testDegenerateMaxId()
     {
-        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
+        $config = new Config();
+        $metaGenerator = new RandomMilliSecondMetaGenerator($config);
+        $generator = new MilliSecondIdGenerator($metaGenerator, $config);
+
         $meta = $generator->degenerate(PHP_INT_MAX);
         $days = intval(($meta->timestamp) / (3600 * 24 * 1000));
-        $this->assertSame(3181, $days);
+        $this->assertSame(43573, $days);
 
-        $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
-        $meta = $generator->degenerate(PHP_INT_MAX);
-        $years = intval($meta->timestamp / (3600 * 24 * 365));
-        $this->assertSame(8716, $years);
+        // $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
+        // $meta = $generator->degenerate(PHP_INT_MAX);
+        // $years = intval($meta->timestamp / (3600 * 24 * 365));
+        // $this->assertSame(8716, $years);
     }
 }

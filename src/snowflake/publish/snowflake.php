@@ -13,6 +13,5 @@ declare(strict_types=1);
 use Hyperf\Snowflake\IdGeneratorInterface;
 
 return [
-    'level' => IdGeneratorInterface::LEVEL_MILLISECOND,
     'begin_second' => IdGeneratorInterface::DEFAULT_SECOND,
 ];
