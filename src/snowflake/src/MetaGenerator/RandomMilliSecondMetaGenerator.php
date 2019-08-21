@@ -40,4 +40,9 @@ class RandomMilliSecondMetaGenerator extends MetaGenerator
 
         return $timestamp;
     }
+
+    protected function getBeginTimeStampFromSeconds(int $seconds): int
+    {
+        return $seconds * 1000;
+    }
 }

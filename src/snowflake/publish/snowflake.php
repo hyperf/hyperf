@@ -10,8 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
+use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
 
 return [
     'begin_second' => MetaGeneratorInterface::DEFAULT_BEGIN_SECOND,
+    RedisMilliSecondMetaGenerator::class => [
+        'pool' => 'default',
+    ],
 ];

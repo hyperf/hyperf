@@ -16,15 +16,13 @@ use Hyperf\Snowflake\Config;
 use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
-use Hyperf\Snowflake\RandomMetaGenerator;
-use Hyperf\Snowflake\Snowflake;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class GeneratorTest extends TestCase
+class SnowflakeGeneratorTest extends TestCase
 {
     public function testGenerateReturnInt()
     {
@@ -63,10 +61,5 @@ class GeneratorTest extends TestCase
         $meta = $generator->degenerate(PHP_INT_MAX);
         $days = intval(($meta->getTimeInterval()) / (3600 * 24 * 1000));
         $this->assertSame(25451, $days); // 70 years.
-
-        // $generator = new Snowflake(new RandomMetaGenerator(), Snowflake::LEVEL_SECOND, 0);
-        // $meta = $generator->degenerate(PHP_INT_MAX);
-        // $years = intval($meta->timestamp / (3600 * 24 * 365));
-        // $this->assertSame(8716, $years);
     }
 }

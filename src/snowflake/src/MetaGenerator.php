@@ -31,7 +31,7 @@ abstract class MetaGenerator implements MetaGeneratorInterface
     {
         $this->config = $config;
         $this->lastTimeStamp = $this->getTimeStamp();
-        $this->beginTimeStamp = $beginTimeStamp * 1000;
+        $this->beginTimeStamp = $this->getBeginTimeStampFromSeconds($beginTimeStamp);
     }
 
     public function generate(): Meta
@@ -70,4 +70,6 @@ abstract class MetaGenerator implements MetaGeneratorInterface
     abstract public function getTimeStamp(): int;
 
     abstract public function getNextTimeStamp(): int;
+
+    abstract protected function getBeginTimeStampFromSeconds(int $seconds): int;
 }

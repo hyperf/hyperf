@@ -18,8 +18,9 @@
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
-        "psr/container": "Required to use SnowflakeFactory.",
-        "hyperf/config": "Required to read snowflake config."
+        "psr/container": "Required to use MetaGeneratorFactory.",
+        "hyperf/config": "Required to read snowflake config.",
+        "hyperf/redis": "Required to use RedisMilliSecondMetaGenerator."
     },
     "autoload": {
         "psr-4": {

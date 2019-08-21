@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Snowflake;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Snowflake\ConfigInterface as SnowflakeConfigInterface;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Psr\Container\ContainerInterface;
 
@@ -24,7 +25,8 @@ class MetaGeneratorFactory
         $beginSecond = $config->get('snowflake.begin_second', MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
 
         return make(RandomMilliSecondMetaGenerator::class, [
-            'beginTimeStamp' => $beginSecond,
+            $container->get(SnowflakeConfigInterface::class),
+            $beginSecond,
         ]);
     }
 }
