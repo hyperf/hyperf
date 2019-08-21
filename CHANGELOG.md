@@ -9,6 +9,7 @@
 
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
 - [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fix proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#430](https://github.com/hyperf-cloud/hyperf/pull/430) Fixed file() method of Request will threw an exception, when upload files with same name of form.
 
 ## Deprecated
 
