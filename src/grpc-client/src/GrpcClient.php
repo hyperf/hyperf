@@ -145,7 +145,7 @@ class GrpcClient
         }
         $this->mainCoroutineId = Coroutine::id();
         if ($this->mainCoroutineId <= 0) {
-            throw new BadMethodCallException('You must start it in an alone coroutine.');
+            throw new BadMethodCallException('You have to start it in an alone coroutine.');
         }
         if (! $this->getHttpClient()->connect()) {
             return false;
@@ -206,14 +206,11 @@ class GrpcClient
     /**
      * Open a stream and return the id.
      */
-    public function openStream(string $path, string $data = null, string $method = 'POST'): int
+    public function openStream(string $path, string $data = null): int
     {
-        $request = new Request();
-        $request->method = $method;
-        $request->path = $path;
-        if ($data) {
-            $request->data = $data;
-        }
+        $request = new Request($path);
+        $data && $request->data = $data;
+
         $request->pipeline = true;
 
         return $this->send($request);
@@ -278,9 +275,7 @@ class GrpcClient
 
     private function sendCloseRequest(): int
     {
-        $closeRequest = new Request();
-        $closeRequest->method = 'GET';
-        $closeRequest->path = Status::CLOSE_KEYWORD;
+        $closeRequest = new Request(Status::CLOSE_KEYWORD);
 
         return $this->send($closeRequest);
     }

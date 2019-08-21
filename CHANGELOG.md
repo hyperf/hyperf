@@ -1,4 +1,6 @@
-# v1.0.12 - TBD
+# v1.0.13 - TBD
+
+# v1.0.12 - 2019-08-21
 
 ## Added
 
@@ -8,7 +10,9 @@
 ## Fixed
 
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
-- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fix proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#430](https://github.com/hyperf-cloud/hyperf/pull/430) Fixed file() method of Request will threw an exception, when upload files with same name of form.
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) Fixed missing parameters of the grpc request.
 
 ## Deprecated
 
