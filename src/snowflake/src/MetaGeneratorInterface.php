@@ -19,4 +19,6 @@ interface MetaGeneratorInterface
     public function generate(): Meta;
 
     public function getBeginTimeStamp(): int;
+
+    public function getConfig(): ConfigInterface;
 }

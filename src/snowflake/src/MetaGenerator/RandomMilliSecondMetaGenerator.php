@@ -12,10 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake\MetaGenerator;
 
+use Hyperf\Snowflake\ConfigInterface;
 use Hyperf\Snowflake\MetaGenerator;
 
 class RandomMilliSecondMetaGenerator extends MetaGenerator
 {
+    public function __construct(ConfigInterface $config, int $beginTimeStamp)
+    {
+        parent::__construct($config, $beginTimeStamp * 1000);
+    }
+
     public function getDataCenterId(): int
     {
         return rand(0, 31);
@@ -39,10 +45,5 @@ class RandomMilliSecondMetaGenerator extends MetaGenerator
         }
 
         return $timestamp;
-    }
-
-    protected function getBeginTimeStampFromSeconds(int $seconds): int
-    {
-        return $seconds * 1000;
     }
 }

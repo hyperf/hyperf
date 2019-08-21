@@ -27,11 +27,11 @@ abstract class MetaGenerator implements MetaGeneratorInterface
 
     protected $beginTimeStamp = 0;
 
-    public function __construct(ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
+    public function __construct(ConfigInterface $config, int $beginTimeStamp)
     {
         $this->config = $config;
         $this->lastTimeStamp = $this->getTimeStamp();
-        $this->beginTimeStamp = $this->getBeginTimeStampFromSeconds($beginTimeStamp);
+        $this->beginTimeStamp = $beginTimeStamp;
     }
 
     public function generate(): Meta
@@ -39,7 +39,7 @@ abstract class MetaGenerator implements MetaGeneratorInterface
         $timestamp = $this->getTimeStamp();
 
         if ($timestamp < $this->lastTimeStamp) {
-            throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds.', $this->lastTimeStamp - $timestamp));
+            $this->clockMovedBackwards($timestamp, $this->lastTimeStamp);
         }
 
         if ($timestamp == $this->lastTimeStamp) {
@@ -55,12 +55,19 @@ abstract class MetaGenerator implements MetaGeneratorInterface
             throw new SnowflakeException(sprintf('The beginTimeStamp %d is invalid, because it smaller than timestamp %d.', $this->beginTimeStamp, $timestamp));
         }
 
+        $this->lastTimeStamp = $timestamp;
+
         return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp, $this->beginTimeStamp);
     }
 
     public function getBeginTimeStamp(): int
     {
         return $this->beginTimeStamp;
+    }
+
+    public function getConfig(): ConfigInterface
+    {
+        return $this->config;
     }
 
     abstract public function getDataCenterId(): int;
@@ -71,5 +78,8 @@ abstract class MetaGenerator implements MetaGeneratorInterface
 
     abstract public function getNextTimeStamp(): int;
 
-    abstract protected function getBeginTimeStampFromSeconds(int $seconds): int;
+    protected function clockMovedBackwards($timestamp, $lastTimeStamp)
+    {
+        throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds.', $lastTimeStamp - $timestamp));
+    }
 }

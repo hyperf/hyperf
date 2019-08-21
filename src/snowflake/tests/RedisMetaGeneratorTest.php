@@ -21,8 +21,10 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\Config as SnowflakeConfig;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
+use Hyperf\Snowflake\MetaGenerator\RedisSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -32,7 +34,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class RedisMilliSecondMetaGeneratorTest extends TestCase
+class RedisMetaGeneratorTest extends TestCase
 {
     protected function tearDown()
     {
@@ -51,7 +53,52 @@ class RedisMilliSecondMetaGeneratorTest extends TestCase
         $this->assertInstanceOf(Meta::class, $meta);
         $this->assertSame(0, $meta->getDataCenterId());
         $this->assertSame(1, $meta->getWorkerId());
-        $this->assertSame(0, $meta->getSequence());
+    }
+
+    public function testGenerateId()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisMilliSecondMetaGenerator($hConfig, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
+
+        $id = $generator->generate();
+        $this->assertTrue(is_int($id));
+
+        $meta = $generator->degenerate($id);
+        $this->assertInstanceOf(Meta::class, $meta);
+        $this->assertSame(0, $meta->getDataCenterId());
+        $this->assertSame(1, $meta->getWorkerId());
+    }
+
+    public function testGenerateMetaSeconds()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $meta = $metaGenerator->generate();
+        $this->assertInstanceOf(Meta::class, $meta);
+        $this->assertSame(0, $meta->getDataCenterId());
+        $this->assertSame(1, $meta->getWorkerId());
+    }
+
+    public function testGenerateAndDeGenerateSeconds()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
+
+        $id = $generator->generate();
+        $this->assertTrue(is_int($id));
+
+        $meta = $generator->degenerate($id);
+        $this->assertInstanceOf(Meta::class, $meta);
+        $this->assertSame(0, $meta->getDataCenterId());
+        $this->assertSame(1, $meta->getWorkerId());
     }
 
     protected function getContainer()
@@ -79,6 +126,9 @@ class RedisMilliSecondMetaGeneratorTest extends TestCase
             'snowflake' => [
                 'begin_second' => MetaGeneratorInterface::DEFAULT_BEGIN_SECOND,
                 RedisMilliSecondMetaGenerator::class => [
+                    'pool' => 'snowflake',
+                ],
+                RedisSecondMetaGenerator::class => [
                     'pool' => 'snowflake',
                 ],
             ],

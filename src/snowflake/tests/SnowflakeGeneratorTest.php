@@ -16,6 +16,7 @@ use Hyperf\Snowflake\Config;
 use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
+use Hyperf\Snowflake\MetaGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,14 +28,14 @@ class SnowflakeGeneratorTest extends TestCase
     public function testGenerateReturnInt()
     {
         $config = new Config();
-        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
+        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND));
         $this->assertTrue(is_int($generator->generate()));
     }
 
     public function testDegenerateInstanceofMeta()
     {
         $config = new Config();
-        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config), $config);
+        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND));
 
         $id = $generator->generate();
 
@@ -44,8 +45,8 @@ class SnowflakeGeneratorTest extends TestCase
     public function testGenerateAndDegenerate()
     {
         $config = new Config();
-        $metaGenerator = new RandomMilliSecondMetaGenerator($config);
-        $generator = new SnowflakeIdGenerator($metaGenerator, $config);
+        $metaGenerator = new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $meta = $metaGenerator->generate();
         $id = $generator->generate($meta);
@@ -55,8 +56,8 @@ class SnowflakeGeneratorTest extends TestCase
     public function testDegenerateMaxId()
     {
         $config = new Config();
-        $metaGenerator = new RandomMilliSecondMetaGenerator($config);
-        $generator = new SnowflakeIdGenerator($metaGenerator, $config);
+        $metaGenerator = new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $meta = $generator->degenerate(PHP_INT_MAX);
         $days = intval(($meta->getTimeInterval()) / (3600 * 24 * 1000));

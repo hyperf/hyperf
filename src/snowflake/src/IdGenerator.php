@@ -24,10 +24,10 @@ abstract class IdGenerator implements IdGeneratorInterface
      */
     protected $config;
 
-    public function __construct(MetaGeneratorInterface $metaGenerator, ConfigInterface $config)
+    public function __construct(MetaGeneratorInterface $metaGenerator)
     {
         $this->metaGenerator = $metaGenerator;
-        $this->config = $config;
+        $this->config = $metaGenerator->getConfig();
     }
 
     public function generate(?Meta $meta = null): int

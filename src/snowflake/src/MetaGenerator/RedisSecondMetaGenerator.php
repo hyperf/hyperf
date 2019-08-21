@@ -17,7 +17,7 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\ConfigInterface;
 use Hyperf\Snowflake\MetaGenerator;
 
-class RedisMilliSecondMetaGenerator extends MetaGenerator
+class RedisSecondMetaGenerator extends MetaGenerator
 {
     const REDIS_KEY = 'hyperf:snowflake:worker';
 
@@ -27,7 +27,7 @@ class RedisMilliSecondMetaGenerator extends MetaGenerator
 
     public function __construct(HyperfConfig $hConfig, ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
     {
-        parent::__construct($config, $beginTimeStamp * 1000);
+        parent::__construct($config, $beginTimeStamp);
 
         $pool = $hConfig->get('snowflake.' . static::class . '.pool', 'default');
 
@@ -54,16 +54,15 @@ class RedisMilliSecondMetaGenerator extends MetaGenerator
 
     public function getTimeStamp(): int
     {
-        return intval(microtime(true) * 1000);
+        return time();
     }
 
     public function getNextTimeStamp(): int
     {
-        $timestamp = $this->getTimeStamp();
-        while ($timestamp <= $this->lastTimeStamp) {
-            $timestamp = $this->getTimeStamp();
-        }
+        return $this->lastTimeStamp + 1;
+    }
 
-        return $timestamp;
+    protected function clockMovedBackwards($timestamp, $lastTimeStamp)
+    {
     }
 }
