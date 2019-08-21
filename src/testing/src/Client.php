@@ -21,6 +21,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
@@ -118,7 +119,14 @@ class Client extends Server
          */
         [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
 
-        $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+        /** @var Dispatched $dispatched */
+        $dispatched = $psr7Request->getAttribute(Dispatched::class);
+        $middlewares = $this->middlewares;
+        if ($dispatched->isFound()) {
+            $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registedMiddlewares);
+        }
 
         return $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
     }
