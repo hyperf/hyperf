@@ -20,7 +20,7 @@
     "suggest": {
         "psr/container": "Required to use MetaGeneratorFactory.",
         "hyperf/config": "Required to read snowflake config.",
-        "hyperf/redis": "Required to use RedisMilliSecondMetaGenerator."
+        "hyperf/redis": "Required to use RedisMilliSecondMetaGenerator or RedisSecondMetaGenerator."
     },
     "autoload": {
         "psr-4": {
