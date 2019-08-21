@@ -11,7 +11,9 @@
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 
-# v1.0.12 - TBD
+# v1.0.13 - TBD
+
+# v1.0.12 - 2019-08-21
 
 ## Added
 
@@ -19,7 +21,15 @@
 - [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
 
 ## Fixed
+
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#430](https://github.com/hyperf-cloud/hyperf/pull/430) Fixed file() method of Request will threw an exception, when upload files with same name of form.
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) Fixed missing parameters of the grpc request.
+
+## Deprecated
+
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated.
 
 # v1.0.11 - 2019-08-15
 
