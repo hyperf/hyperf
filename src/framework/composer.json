@@ -16,8 +16,8 @@
         "php": ">=7.2",
         "ext-swoole": ">=4.3",
         "fig/http-message-util": "^1.1.2",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0"
@@ -48,7 +48,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Framework\\ConfigProvider"

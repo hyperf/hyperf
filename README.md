@@ -13,7 +13,7 @@ In addition to providing `MySQL coroutine client` and `Redis coroutine client`, 
 
 # Original intention
 
-Although there are many new PHP frameworks have been appeared, but we still has not seen a perfect framework which has the coexistence of elegant design and ultra-high performance, nor would we find a framework that really paves the way for PHP microservices. For the original intention of Hyperf and its team members, we will continue to invest to it, and you are welcome to join us to participate in open source construction.
+Although many new PHP frameworks have appeared, we still haven't seen a comprehensive framework, which introduces an elegant design and ultra-high performance, suitable for PHP microservices and as an evangelist of PHP microservices. For the original intention of Hyperf and its team members, we will continue to invest in it, and you are welcome to join us to participate in open source development.
 
 # Design concept
 

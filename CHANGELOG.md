@@ -1,3 +1,16 @@
+# v1.1.0 - TBD
+
+## Added
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and Fixed middleware that user defined does not works.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+
+## Deleted
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+
 # v1.0.13 - TBD
 
 # v1.0.12 - 2019-08-21

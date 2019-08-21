@@ -11,10 +11,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0",
-        "hyperf/process": "~1.0.0",
-        "hyperf/pool": "~1.0.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "hyperf/process": "~1.1.0",
+        "hyperf/pool": "~1.1.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0",
@@ -22,9 +22,9 @@
         "doctrine/instantiator": "^1.2.0"
     },
     "require-dev": {
-        "hyperf/di": "~1.0.0",
-        "hyperf/event": "~1.0.0",
-        "hyperf/framework": "~1.0.0",
+        "hyperf/di": "~1.1.0",
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
@@ -49,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Amqp\\ConfigProvider"
