@@ -18,4 +18,9 @@ class FooController
     {
         return ['code' => 0, 'data' => 'Hello Hyperf!'];
     }
+
+    public function exception()
+    {
+        throw new \RuntimeException('Server Error', 500);
+    }
 }

@@ -128,7 +128,14 @@ class Client extends Server
             $middlewares = array_merge($middlewares, $registedMiddlewares);
         }
 
-        return $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        try {
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        } catch (\Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        }
+
+        return $psr7Response;
     }
 
     protected function init(string $method, string $path, array $options = []): array
