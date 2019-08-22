@@ -6,9 +6,9 @@
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
 
-## Fixed
+## Changed
 
-- [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Fixed `Hyperf\Testing\Client` would throw a exception not handle exception handlers.
+- [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 
 ## Deleted
 
