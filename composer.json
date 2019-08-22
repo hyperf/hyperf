@@ -161,6 +161,7 @@
             "Hyperf\\Task\\": "src/task/src/",
             "Hyperf\\Testing\\": "src/testing/src/",
             "Hyperf\\Tracer\\": "src/tracer/src/",
+            "Hyperf\\Translation\\": "src/translation/src/",
             "Hyperf\\Utils\\": "src/utils/src/",
             "Hyperf\\Validation\\": "src/validation/src/",
             "Hyperf\\View\\": "src/view/src/",
@@ -206,6 +207,7 @@
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Snowflake\\": "src/snowflake/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
+            "HyperfTest\\Translation\\": "src/translation/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
@@ -259,6 +261,7 @@
                 "Hyperf\\SwooleEnterprise\\ConfigProvider",
                 "Hyperf\\Task\\ConfigProvider",
                 "Hyperf\\Tracer\\ConfigProvider",
+                "Hyperf\\Translation\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider",
                 "Hyperf\\Validation\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
