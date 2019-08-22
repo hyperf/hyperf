@@ -8,7 +8,7 @@
 
 ## Changed
 
-- [#440](https://github.com/hyperf-cloud/hyperf/pull/440) Automatically close the spare redis client when it is used in low frequency.
+- [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 
 ## Deleted
 
