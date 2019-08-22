@@ -120,7 +120,6 @@ class RedisConnectionTest extends TestCase
 
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(true);
-
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
