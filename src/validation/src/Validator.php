@@ -22,6 +22,7 @@ use Hyperf\Validation\Contracts\Validation\ImplicitRule;
 use Hyperf\Validation\Contracts\Validation\Rule as RuleContract;
 use Hyperf\Validation\Contracts\Validation\Validator as ValidatorContract;
 use Hyperf\Validation\Support\MessageBag;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -82,7 +83,7 @@ class Validator implements ValidatorContract
     /**
      * The container instance.
      *
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -847,7 +848,7 @@ class Validator implements ValidatorContract
      *
      * @param Container $container
      */
-    public function setContainer(Container $container)
+    public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -1191,6 +1192,6 @@ class Validator implements ValidatorContract
     {
         [$class, $method] = Str::parseCallback($callback, 'validate');
 
-        return call_user_func_array([$this->container->make($class), $method], $parameters);
+        return call_user_func_array([make($class), $method], $parameters);
     }
 }

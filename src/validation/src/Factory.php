@@ -17,6 +17,7 @@ use Hyperf\Di\Container;
 use Hyperf\Translation\Contracts\Translator;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Contracts\Validation\Factory as FactoryContract;
+use Psr\Container\ContainerInterface;
 
 class Factory implements FactoryContract
 {
@@ -37,7 +38,7 @@ class Factory implements FactoryContract
     /**
      * The IoC container instance.
      *
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -89,7 +90,7 @@ class Factory implements FactoryContract
      * @param null|\Hyperf\Translation\Contracts\Translator $translator
      * @param  Container
      */
-    public function __construct(Translator $translator, Container $container = null)
+    public function __construct(Translator $translator, ContainerInterface $container = null)
     {
         $this->container = $container;
         $this->translator = $translator;

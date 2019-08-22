@@ -20,6 +20,7 @@ use Hyperf\Di\Definition\DefinitionSourceInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Contracts\Translator as TranslatorContract;
 use Hyperf\Translation\Translator;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contracts\Validation\ImplicitRule;
 use Hyperf\Validation\Contracts\Validation\Rule;
@@ -61,10 +62,12 @@ class ValidationValidatorTest extends TestCase
 
     public function testAfterCallbacksAreCalledWithValidatorInstance()
     {
+        $definitionSource = m::mock(DefinitionSourceInterface::class);
+        $container = new Container($definitionSource);
+        ApplicationContext::setContainer($container);
+
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'boom'], ['foo' => 'Same:baz']);
-        $definitionSource = m::mock(DefinitionSourceInterface::class);
-        $v->setContainer(new Container($definitionSource));
         $v->after(function ($validator) {
             $_SERVER['__validator.after.test'] = true;
 
@@ -106,7 +109,7 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['foo' => 'bar'], ['foo' => 'required']);
 
-        $v->validate();
+        $this->assertSame(['foo' => 'bar'], $v->validate());
     }
 
     public function testHasFailedValidationRules()
@@ -263,15 +266,19 @@ class ValidationValidatorTest extends TestCase
 
     public function testClassBasedCustomReplacers()
     {
+        $container = m::mock(Container::class);
+        $container->shouldReceive('make')->once()->with('Foo', m::any())->andReturn($foo = m::mock(stdClass::class));
+        $foo->shouldReceive('bar')->once()->andReturn('replaced!');
+
+        ApplicationContext::setContainer($container);
+
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.foo' => 'foo!'], 'en');
         $v = new Validator($trans, [], ['name' => 'required']);
-        $v->setContainer($container = m::mock(Container::class));
         $v->addReplacer('required', 'Foo@bar');
-        $container->shouldReceive('make')->once()->with('Foo')->andReturn($foo = m::mock(stdClass::class));
-        $foo->shouldReceive('bar')->once()->andReturn('replaced!');
         $v->passes();
         $v->messages()->setFormat(':message');
+
         $this->assertEquals('replaced!', $v->messages()->first('name'));
     }
 
@@ -3307,13 +3314,15 @@ class ValidationValidatorTest extends TestCase
 
     public function testClassBasedCustomValidators()
     {
+        $container = m::mock(Container::class);
+        $container->shouldReceive('make')->once()->with('Foo', m::any())->andReturn($foo = m::mock(stdClass::class));
+        $foo->shouldReceive('bar')->once()->andReturn(false);
+        ApplicationContext::setContainer($container);
+
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.foo' => 'foo!'], 'en');
         $v = new Validator($trans, ['name' => 'taylor'], ['name' => 'foo']);
-        $v->setContainer($container = m::mock(Container::class));
         $v->addExtension('foo', 'Foo@bar');
-        $container->shouldReceive('make')->once()->with('Foo')->andReturn($foo = m::mock(stdClass::class));
-        $foo->shouldReceive('bar')->once()->andReturn(false);
         $this->assertFalse($v->passes());
         $v->messages()->setFormat(':message');
         $this->assertEquals('foo!', $v->messages()->first('name'));
@@ -3321,13 +3330,15 @@ class ValidationValidatorTest extends TestCase
 
     public function testClassBasedCustomValidatorsUsingConventionalMethod()
     {
+        $container = m::mock(Container::class);
+        $container->shouldReceive('make')->once()->with('Foo', m::any())->andReturn($foo = m::mock(stdClass::class));
+        $foo->shouldReceive('validate')->once()->andReturn(false);
+        ApplicationContext::setContainer($container);
+
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.foo' => 'foo!'], 'en');
         $v = new Validator($trans, ['name' => 'taylor'], ['name' => 'foo']);
-        $v->setContainer($container = m::mock(Container::class));
         $v->addExtension('foo', 'Foo');
-        $container->shouldReceive('make')->once()->with('Foo')->andReturn($foo = m::mock(stdClass::class));
-        $foo->shouldReceive('validate')->once()->andReturn(false);
         $this->assertFalse($v->passes());
         $v->messages()->setFormat(':message');
         $this->assertEquals('foo!', $v->messages()->first('name'));
@@ -4386,7 +4397,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testValidateReturnsValidatedData()
     {
-        $post = ['first' => 'john',  'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
+        $post = ['first' => 'john', 'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
 
         $v = new Validator($this->getIlluminateArrayTranslator(), $post, ['first' => 'required', 'preferred' => 'required']);
         $v->sometimes('type', 'required', function () {
@@ -4440,7 +4451,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testValidateAndValidatedData()
     {
-        $post = ['first' => 'john',  'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
+        $post = ['first' => 'john', 'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
 
         $v = new Validator($this->getIlluminateArrayTranslator(), $post, ['first' => 'required', 'preferred' => 'required']);
         $v->sometimes('type', 'required', function () {
@@ -4455,7 +4466,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testValidatedNotValidateTwiceData()
     {
-        $post = ['first' => 'john',  'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
+        $post = ['first' => 'john', 'preferred' => 'john', 'last' => 'doe', 'type' => 'admin'];
 
         $validateCount = 0;
         $v = new Validator($this->getIlluminateArrayTranslator(), $post, ['first' => 'required', 'preferred' => 'required']);
