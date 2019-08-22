@@ -21,14 +21,14 @@ use DateTimeZone;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
 use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use SplFileInfo;
 use Throwable;
 
 trait ValidatesAttributes
@@ -382,10 +382,6 @@ trait ValidatesAttributes
      */
     public function validateDimensions(string $attribute, $value, array $parameters): bool
     {
-        if ($this->isValidFileInstance($value) && $value->getClientMimeType() === 'image/svg+xml') {
-            return true;
-        }
-
         if (! $this->isValidFileInstance($value) || ! $sizeDetails = @getimagesize($value->getRealPath())) {
             return false;
         }
@@ -844,7 +840,7 @@ trait ValidatesAttributes
      * Validate the guessed extension of a file upload is in a set of file extensions.
      *
      * @param string $attribute
-     * @param mixed $value
+     * @param SplFileInfo $value
      * @param array $parameters
      * @return bool
      */
@@ -858,14 +854,26 @@ trait ValidatesAttributes
             return false;
         }
 
-        return $value->getPath() !== '' && in_array($value->guessExtension(), $parameters);
+        if (empty($value->getPath())) {
+            return false;
+        }
+
+        if (in_array($value->getExtension(), $parameters)) {
+            return true;
+        }
+
+        if ($value instanceof UploadedFile) {
+            return in_array($value->getMimeType(), $parameters);
+        }
+
+        return false;
     }
 
     /**
      * Validate the MIME type of a file upload attribute is in a set of MIME types.
      *
      * @param string $attribute
-     * @param mixed $value
+     * @param SplFileInfo $value
      * @param array $parameters
      * @return bool
      */
@@ -1004,7 +1012,7 @@ trait ValidatesAttributes
         if ((is_array($value) || $value instanceof Countable) && count($value) < 1) {
             return false;
         }
-        if ($value instanceof File) {
+        if ($value instanceof SplFileInfo) {
             return (string) $value->getPath() !== '';
         }
 
@@ -1296,7 +1304,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return $value instanceof File;
+        return $value instanceof SplFileInfo;
     }
 
     /**
@@ -1627,7 +1635,7 @@ trait ValidatesAttributes
     /**
      * Check if PHP uploads are explicitly allowed.
      *
-     * @param mixed $value
+     * @param SplFileInfo $value
      * @param array $parameters
      * @return bool
      */
@@ -1641,9 +1649,7 @@ trait ValidatesAttributes
             'php', 'php3', 'php4', 'php5', 'phtml',
         ];
 
-        return ($value instanceof UploadedFile)
-            ? in_array(trim(strtolower($value->getClientOriginalExtension())), $phpExtensions)
-            : in_array(trim(strtolower($value->getExtension())), $phpExtensions);
+        return in_array(trim(strtolower($value->getExtension())), $phpExtensions);
     }
 
     /**
@@ -1721,7 +1727,7 @@ trait ValidatesAttributes
         if (is_array($value)) {
             return count($value);
         }
-        if ($value instanceof File) {
+        if ($value instanceof SplFileInfo) {
             return $value->getSize() / 1024;
         }
 

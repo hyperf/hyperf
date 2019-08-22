@@ -14,6 +14,7 @@ namespace Hyperf\Validation;
 
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Arr;
+use Psr\Http\Message\ResponseInterface;
 
 class ValidationException extends ServerException
 {
@@ -27,7 +28,7 @@ class ValidationException extends ServerException
     /**
      * The recommended response to send to the client.
      *
-     * @var null|\Symfony\Component\HttpFoundation\Response
+     * @var ResponseInterface
      */
     public $response;
 
@@ -56,7 +57,7 @@ class ValidationException extends ServerException
      * Create a new exception instance.
      *
      * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
-     * @param null|\Symfony\Component\HttpFoundation\Response $response
+     * @param null|ResponseInterface $response
      * @param string $errorBag
      */
     public function __construct($validator, $response = null, string $errorBag = 'default')
@@ -137,7 +138,7 @@ class ValidationException extends ServerException
     /**
      * Get the underlying response instance.
      *
-     * @return null|\Symfony\Component\HttpFoundation\Response
+     * @return ResponseInterface
      */
     public function getResponse()
     {

@@ -38,7 +38,6 @@
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/console": "^4.2",
         "symfony/finder": "^4.1",
-        "symfony/http-foundation": "^4.3",
         "vlucas/phpdotenv": "^3.1"
     },
     "require-dev": {

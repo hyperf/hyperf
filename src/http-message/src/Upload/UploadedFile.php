@@ -62,6 +62,11 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     private $size;
 
     /**
+     * @var string
+     */
+    private $mimeType;
+
+    /**
      * @param string $tmpFile
      * @param null|int $size
      * @param int $errorStatus
@@ -96,6 +101,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
         return end($segments) ?? null;
+    }
+
+    public function getMimeType(): string
+    {
+        if (is_string($this->mimeType)) {
+            return $this->mimeType;
+        }
+        return $this->mimeType = mime_content_type($this->tmpFile);
     }
 
     /**

@@ -14,6 +14,7 @@ namespace Hyperf\Validation;
 
 use BadMethodCallException;
 use Hyperf\Di\Container;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\Contracts\Translator;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Fluent;
@@ -24,7 +25,6 @@ use Hyperf\Validation\Contracts\Validation\Validator as ValidatorContract;
 use Hyperf\Validation\Support\MessageBag;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Validator implements ValidatorContract
 {

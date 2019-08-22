@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait FormatsMessages
 {
