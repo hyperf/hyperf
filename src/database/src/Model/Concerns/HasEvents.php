@@ -12,23 +12,23 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Booted;
-use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Booting;
 use Hyperf\Database\Model\Events\Created;
-use Hyperf\Database\Model\Events\Deleted;
-use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Deleting;
+use Hyperf\Database\Model\Events\ForceDeleted;
 use Hyperf\Database\Model\Events\Restored;
-use Hyperf\Database\Model\Events\Updating;
 use Hyperf\Database\Model\Events\Restoring;
 use Hyperf\Database\Model\Events\Retrieved;
-use Hyperf\Database\Model\Events\ForceDeleted;
-use Psr\EventDispatcher\StoppableEventInterface;
+use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Events\Saving;
+use Hyperf\Database\Model\Events\Updated;
+use Hyperf\Database\Model\Events\Updating;
+use Hyperf\Utils\Arr;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
  * @method retrieved(Retrieved $event)
@@ -56,12 +56,11 @@ trait HasEvents
     /**
      * Register observers with the model.
      *
-     * @param  object|array|string  $classes
-     * @return void
+     * @param array|object|string $classes
      */
     public static function observe($classes): void
     {
-        $instance = new static;
+        $instance = new static();
 
         foreach (Arr::wrap($classes) as $class) {
             $instance->registerObserver($class);
@@ -91,7 +90,6 @@ trait HasEvents
      * Add some observable event.
      *
      * @param array|string $events
-     * @return void
      */
     public function addEvents($events): void
     {
@@ -102,7 +100,6 @@ trait HasEvents
      * Remove some registed event.
      *
      * @param array $events
-     * @return void
      */
     public function removeEvents(array $events): void
     {

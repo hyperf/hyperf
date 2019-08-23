@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Events;
 
-use function lcfirst;
-use Hyperf\Event\Stoppable;
-use function method_exists;
-use function class_basename;
 use Hyperf\Database\Model\Model;
+use Hyperf\Event\Stoppable;
 use Psr\EventDispatcher\StoppableEventInterface;
+use function class_basename;
+use function lcfirst;
+use function method_exists;
 
 abstract class Event implements StoppableEventInterface
 {
