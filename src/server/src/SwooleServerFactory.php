@@ -10,17 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer;
+namespace Hyperf\Server;
 
 use Psr\Container\ContainerInterface;
 
-/**
- * @deprecated v1.1
- */
-class ServerFactory
+class SwooleServerFactory
 {
-    public function __invoke(ContainerInterface $container): Server
+    public function __invoke(ContainerInterface $container)
     {
-        return new Server($container);
+        $factory = $container->get(ServerFactory::class);
+
+        return $factory->getServer()->getServer();
     }
 }

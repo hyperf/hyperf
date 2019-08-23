@@ -14,9 +14,6 @@ namespace Hyperf\JsonRpc;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * {@inheritdoc}
- */
 class HttpCoreMiddleware extends CoreMiddleware
 {
     protected function handleNotFound(ServerRequestInterface $request)
