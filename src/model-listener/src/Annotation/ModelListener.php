@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ModelListener;
+namespace Hyperf\ModelListener\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\ModelListener\Collector\ListenerCollector;
