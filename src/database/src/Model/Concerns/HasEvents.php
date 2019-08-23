@@ -54,8 +54,6 @@ trait HasEvents
 
     /**
      * Set the user-defined event names.
-     *
-     * @return self
      */
     public function setEvents(array $events): self
     {
@@ -83,8 +81,6 @@ trait HasEvents
 
     /**
      * Remove some registed event.
-     *
-     * @param array $events
      */
     public function removeEvents(array $events): void
     {
@@ -111,8 +107,6 @@ trait HasEvents
 
     /**
      * Get the default events of Hyperf Database Model.
-     *
-     * @return array
      */
     protected function getDefaultEvents(): array
     {
