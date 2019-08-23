@@ -1,40 +1,41 @@
 {
-    "name": "hyperf/db-connection",
-    "description": "A hyperf db connection handler for hyperf/database.",
+    "name": "hyperf/model-listener",
+    "description": "A model listener for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
+        "swoole",
         "hyperf",
-        "database",
-        "connection"
+        "model-listener"
     ],
     "support": {
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/framework": "~1.1.0",
+        "hyperf/contract": "~1.1.0",
         "hyperf/database": "~1.1.0",
         "hyperf/di": "~1.1.0",
-        "hyperf/model-listener": "~1.1.0",
-        "hyperf/pool": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/event": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "psr/container": "^1.0",
+        "psr/log": "^1.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.9",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "phpunit/phpunit": "^7.0"
     },
     "suggest": {
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\DbConnection\\": "src/"
+            "Hyperf\\ModelListener\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\DbConnection\\": "tests/"
+            "HyperfTest\\ModelListener\\": "tests/"
         }
     },
     "config": {
@@ -45,7 +46,7 @@
             "dev-master": "1.1-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\DbConnection\\ConfigProvider"
+            "config": "Hyperf\\ModelListener\\ConfigProvider"
         }
     },
     "bin": [
