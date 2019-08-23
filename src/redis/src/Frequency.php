@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection;
+namespace Hyperf\Redis;
 
 use Hyperf\Pool\Frequency as DefaultFrequency;
 

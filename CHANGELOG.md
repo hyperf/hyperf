@@ -5,6 +5,7 @@
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and Fixed middleware that user defined does not works.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 
 ## Changed
 
