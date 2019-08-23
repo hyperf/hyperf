@@ -20,7 +20,7 @@ use Hyperf\Utils\Arr;
  * @Annotation
  * @Target({"CLASS"})
  */
-class Observer extends AbstractAnnotation
+class ModelListener extends AbstractAnnotation
 {
     /**
      * @var array
