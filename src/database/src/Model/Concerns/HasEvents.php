@@ -26,7 +26,6 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Updating;
-use Hyperf\Utils\Arr;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
@@ -52,20 +51,6 @@ trait HasEvents
      * @var array
      */
     protected $events = [];
-
-    /**
-     * Register observers with the model.
-     *
-     * @param array|object|string $classes
-     */
-    public static function observe($classes): void
-    {
-        $instance = new static();
-
-        foreach (Arr::wrap($classes) as $class) {
-            $instance->registerObserver($class);
-        }
-    }
 
     /**
      * Set the user-defined event names.

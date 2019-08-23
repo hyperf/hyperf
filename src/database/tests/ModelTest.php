@@ -93,8 +93,6 @@ class ModelTest extends TestCase
         Carbon::resetToStringFormat();
 
         Booted::$container = [];
-
-        Model::clearObservables();
     }
 
     public function testAttributeManipulation()
