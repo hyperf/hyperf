@@ -5,6 +5,7 @@
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and Fixed middleware that user defined does not works.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added observer for model.
 
 ## Changed
 
