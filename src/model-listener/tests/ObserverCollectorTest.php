@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\ModelListener;
 
-use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,32 +25,32 @@ class ObserverCollectorTest extends TestCase
     {
         parent::tearDown();
 
-        ObserverCollector::clearObservables();
+        ListenerCollector::clearListeners();
     }
 
     public function testRegisterObserver()
     {
         $class = 'HyperfTest\ModelListener\Stub\ModelStub';
-        ObserverCollector::register($class, 'ObserverClass');
-        $this->assertSame(['ObserverClass'], ObserverCollector::getObservables($class));
+        ListenerCollector::register($class, 'ObserverClass');
+        $this->assertSame(['ObserverClass'], ListenerCollector::getListeners($class));
     }
 
     public function testRegisterMoreThanOneObserver()
     {
         $class = 'HyperfTest\ModelListener\Stub\ModelStub';
-        ObserverCollector::register($class, 'ObserverClass');
-        ObserverCollector::register($class, 'ObserverClass2');
-        ObserverCollector::register($class, 'ObserverClass3');
-        $this->assertSame(['ObserverClass', 'ObserverClass2', 'ObserverClass3'], ObserverCollector::getObservables($class));
+        ListenerCollector::register($class, 'ObserverClass');
+        ListenerCollector::register($class, 'ObserverClass2');
+        ListenerCollector::register($class, 'ObserverClass3');
+        $this->assertSame(['ObserverClass', 'ObserverClass2', 'ObserverClass3'], ListenerCollector::getListeners($class));
     }
 
     public function testClearObservables()
     {
         $class = 'HyperfTest\ModelListener\Stub\ModelStub';
-        ObserverCollector::register($class, 'ObserverClass');
+        ListenerCollector::register($class, 'ObserverClass');
 
-        ObserverCollector::clearObservables();
+        ListenerCollector::clearListeners();
 
-        $this->assertSame([], ObserverCollector::getObservables($class));
+        $this->assertSame([], ListenerCollector::getListeners($class));
     }
 }

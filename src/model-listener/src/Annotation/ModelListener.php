@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ModelListener;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Utils\Arr;
 
 /**
@@ -45,7 +45,7 @@ class ModelListener extends AbstractAnnotation
         parent::collectClass($className);
 
         foreach ($this->models as $model) {
-            ObserverCollector::register($model, $className);
+            ListenerCollector::register($model, $className);
         }
     }
 }

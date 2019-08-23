@@ -17,7 +17,7 @@ use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
-use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\ModelListener\Listener\ModelEventListener;
 use HyperfTest\ModelListener\Stub\ModelListenerStub;
 use HyperfTest\ModelListener\Stub\ModelStub;
@@ -35,7 +35,7 @@ class ModelListenerTest extends TestCase
     {
         parent::tearDown();
 
-        ObserverCollector::clearObservables();
+        ListenerCollector::clearListeners();
     }
 
     public function testHandleModelListener()
@@ -53,7 +53,7 @@ class ModelListenerTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        ObserverCollector::register(get_class($model), ModelListenerStub::class);
+        ListenerCollector::register(get_class($model), ModelListenerStub::class);
 
         $model->id = 1;
         $model->syncOriginal();

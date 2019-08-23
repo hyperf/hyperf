@@ -15,7 +15,7 @@ namespace Hyperf\ModelListener\Listener;
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -49,7 +49,7 @@ class ModelEventListener implements ListenerInterface
         $model = $event->getModel();
         $modelName = get_class($model);
 
-        $observers = ObserverCollector::getObservables($modelName);
+        $observers = ListenerCollector::getListeners($modelName);
         foreach ($observers as $name) {
             if (! $this->container->has($name)) {
                 continue;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelListener\Collector;
 
-class ObserverCollector
+class ListenerCollector
 {
     /**
      * User exposed observable events.
@@ -21,16 +21,16 @@ class ObserverCollector
      *
      * @var array
      */
-    protected static $observables = [];
+    protected static $listeners = [];
 
     /**
      * Register a single observer with the model.
      */
     public static function register(string $model, string $observer): void
     {
-        static::$observables[$model] = array_unique(
+        static::$listeners[$model] = array_unique(
             array_merge(
-                static::$observables[$model] ?? [],
+                static::$listeners[$model] ?? [],
                 [$observer]
             )
         );
@@ -41,16 +41,16 @@ class ObserverCollector
      *
      * @return array
      */
-    public static function getObservables(string $model): array
+    public static function getListeners(string $model): array
     {
-        return static::$observables[$model] ?? [];
+        return static::$listeners[$model] ?? [];
     }
 
     /**
      * Clear all registered observers with the model.
      */
-    public static function clearObservables(): void
+    public static function clearListeners(): void
     {
-        static::$observables = [];
+        static::$listeners = [];
     }
 }

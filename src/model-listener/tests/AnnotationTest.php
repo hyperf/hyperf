@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\ModelListener;
 
-use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\ModelListener\ModelListener;
 use HyperfTest\ModelListener\Stub\ModelStub;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ class AnnotationTest extends TestCase
     {
         parent::tearDown();
 
-        ObserverCollector::clearObservables();
+        ListenerCollector::clearListeners();
     }
 
     public function testAnnotationCollect()
@@ -35,21 +35,21 @@ class AnnotationTest extends TestCase
         $annotation = new ModelListener(['value' => ModelStub::class]);
         $annotation->collectClass('Foo');
 
-        $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
     }
 
     public function testAnnotationCollectAssocArray()
     {
         $annotation = new ModelListener(['models' => [ModelStub::class]]);
         $annotation->collectClass('Foo');
-        $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
     }
 
     public function testAnnotationCollectArray()
     {
         $annotation = new ModelListener(['value' => [ModelStub::class, 'ModelStub']]);
         $annotation->collectClass('Foo');
-        $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
-        $this->assertSame(['Foo'], ObserverCollector::getObservables('ModelStub'));
+        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListeners('ModelStub'));
     }
 }
