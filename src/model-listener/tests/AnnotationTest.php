@@ -35,21 +35,21 @@ class AnnotationTest extends TestCase
         $annotation = new ModelListener(['value' => ModelStub::class]);
         $annotation->collectClass('Foo');
 
-        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
     }
 
     public function testAnnotationCollectAssocArray()
     {
         $annotation = new ModelListener(['models' => [ModelStub::class]]);
         $annotation->collectClass('Foo');
-        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
     }
 
     public function testAnnotationCollectArray()
     {
         $annotation = new ModelListener(['value' => [ModelStub::class, 'ModelStub']]);
         $annotation->collectClass('Foo');
-        $this->assertSame(['Foo'], ListenerCollector::getListeners(ModelStub::class));
-        $this->assertSame(['Foo'], ListenerCollector::getListeners('ModelStub'));
+        $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
+        $this->assertSame(['Foo'], ListenerCollector::getListenersForModel('ModelStub'));
     }
 }

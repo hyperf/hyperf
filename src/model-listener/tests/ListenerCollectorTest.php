@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class ObserverCollectorTest extends TestCase
+class ListenerCollectorTest extends TestCase
 {
     protected function tearDown()
     {
@@ -32,7 +32,7 @@ class ObserverCollectorTest extends TestCase
     {
         $class = 'HyperfTest\ModelListener\Stub\ModelStub';
         ListenerCollector::register($class, 'ObserverClass');
-        $this->assertSame(['ObserverClass'], ListenerCollector::getListeners($class));
+        $this->assertSame(['ObserverClass'], ListenerCollector::getListenersForModel($class));
     }
 
     public function testRegisterMoreThanOneObserver()
@@ -41,7 +41,7 @@ class ObserverCollectorTest extends TestCase
         ListenerCollector::register($class, 'ObserverClass');
         ListenerCollector::register($class, 'ObserverClass2');
         ListenerCollector::register($class, 'ObserverClass3');
-        $this->assertSame(['ObserverClass', 'ObserverClass2', 'ObserverClass3'], ListenerCollector::getListeners($class));
+        $this->assertSame(['ObserverClass', 'ObserverClass2', 'ObserverClass3'], ListenerCollector::getListenersForModel($class));
     }
 
     public function testClearObservables()
@@ -51,6 +51,6 @@ class ObserverCollectorTest extends TestCase
 
         ListenerCollector::clearListeners();
 
-        $this->assertSame([], ListenerCollector::getListeners($class));
+        $this->assertSame([], ListenerCollector::getListenersForModel($class));
     }
 }

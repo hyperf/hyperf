@@ -33,6 +33,6 @@ class ModelHookEventListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        return $event->handle();
+        $event->handle();
     }
 }

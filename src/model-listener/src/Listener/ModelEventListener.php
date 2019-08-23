@@ -42,25 +42,22 @@ class ModelEventListener implements ListenerInterface
 
     /**
      * @param Event $event
-     * @return Event
      */
     public function process(object $event)
     {
         $model = $event->getModel();
         $modelName = get_class($model);
 
-        $observers = ListenerCollector::getListeners($modelName);
-        foreach ($observers as $name) {
+        $listeners = ListenerCollector::getListenersForModel($modelName);
+        foreach ($listeners as $name) {
             if (! $this->container->has($name)) {
                 continue;
             }
 
-            $observer = $this->container->get($name);
-            if (method_exists($observer, $event->getMethod())) {
-                $observer->{$event->getMethod()}($event);
+            $listener = $this->container->get($name);
+            if (method_exists($listener, $event->getMethod())) {
+                $listener->{$event->getMethod()}($event);
             }
         }
-
-        return $event;
     }
 }

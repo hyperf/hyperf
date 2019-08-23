@@ -36,12 +36,12 @@ class ListenerCollector
         );
     }
 
-    public static function setListeners(string $model, array $listeners): void
+    public static function setListenersForModel(string $model, array $listeners): void
     {
         static::$listeners[$model] = $listeners;
     }
 
-    public static function getListeners(string $model): array
+    public static function getListenersForModel(string $model): array
     {
         return static::$listeners[$model] ?? [];
     }
