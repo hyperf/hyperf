@@ -17,9 +17,9 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**
- * @Listener
+ * @Listener(priority=99)
  */
-class ModelEventListener implements ListenerInterface
+class ModelHookEventListener implements ListenerInterface
 {
     public function listen(): array
     {

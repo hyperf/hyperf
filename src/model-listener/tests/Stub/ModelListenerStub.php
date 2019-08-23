@@ -10,11 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\ModelObserver\Stub;
+namespace HyperfTest\ModelListener\Stub;
 
-use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Events\Updating;
 
-class ModelStub extends Model
+class ModelListenerStub
 {
-    protected $fillable = ['id'];
+    public function updating(Updating $event)
+    {
+        $event->getModel()->foo = 'bar';
+    }
 }

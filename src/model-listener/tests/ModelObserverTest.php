@@ -10,17 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\ModelObserver;
+namespace HyperfTest\ModelListener;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
-use Hyperf\ModelObserver\Collector\ObserverCollector;
-use Hyperf\ModelObserver\Listener\ModelEventListener;
-use HyperfTest\ModelObserver\Stub\ModelObserverStub;
-use HyperfTest\ModelObserver\Stub\ModelStub;
+use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\ModelListener\Listener\ModelEventListener;
+use HyperfTest\ModelListener\Stub\ModelListenerStub;
+use HyperfTest\ModelListener\Stub\ModelStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -29,7 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-class ModelObserverTest extends TestCase
+class ModelListenerTest extends TestCase
 {
     protected function tearDown()
     {
@@ -38,7 +38,7 @@ class ModelObserverTest extends TestCase
         ObserverCollector::clearObservables();
     }
 
-    public function testHandleModelObserver()
+    public function testHandleModelListener()
     {
         $container = $this->getContainer();
         $listenerProvider = new ListenerProvider();
@@ -53,7 +53,7 @@ class ModelObserverTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        ObserverCollector::register(get_class($model), ModelObserverStub::class);
+        ObserverCollector::register(get_class($model), ModelListenerStub::class);
 
         $model->id = 1;
         $model->syncOriginal();
@@ -67,7 +67,7 @@ class ModelObserverTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with(ModelObserverStub::class)->andReturn(new ModelObserverStub());
+        $container->shouldReceive('get')->with(ModelListenerStub::class)->andReturn(new ModelListenerStub());
 
         return $container;
     }

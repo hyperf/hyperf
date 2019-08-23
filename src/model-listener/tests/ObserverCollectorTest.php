@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\ModelObserver;
+namespace HyperfTest\ModelListener;
 
-use Hyperf\ModelObserver\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ObserverCollector;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,14 +30,14 @@ class ObserverCollectorTest extends TestCase
 
     public function testRegisterObserver()
     {
-        $class = 'HyperfTest\ModelObserver\Stub\ModelStub';
+        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
         ObserverCollector::register($class, 'ObserverClass');
         $this->assertSame(['ObserverClass'], ObserverCollector::getObservables($class));
     }
 
     public function testRegisterMoreThanOneObserver()
     {
-        $class = 'HyperfTest\ModelObserver\Stub\ModelStub';
+        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
         ObserverCollector::register($class, 'ObserverClass');
         ObserverCollector::register($class, 'ObserverClass2');
         ObserverCollector::register($class, 'ObserverClass3');
@@ -46,7 +46,7 @@ class ObserverCollectorTest extends TestCase
 
     public function testClearObservables()
     {
-        $class = 'HyperfTest\ModelObserver\Stub\ModelStub';
+        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
         ObserverCollector::register($class, 'ObserverClass');
 
         ObserverCollector::clearObservables();

@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ModelObserver\Listener;
+namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\ModelObserver\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ObserverCollector;
 use Psr\Container\ContainerInterface;
 
 /**

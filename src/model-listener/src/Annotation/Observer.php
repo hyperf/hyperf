@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ModelObserver;
+namespace Hyperf\ModelListener;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\ModelObserver\Collector\ObserverCollector;
+use Hyperf\ModelListener\Collector\ObserverCollector;
 
 /**
  * @Annotation
