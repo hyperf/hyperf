@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Listener;
+namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
