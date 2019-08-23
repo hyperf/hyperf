@@ -15,7 +15,6 @@
         "hyperf/framework": "~1.1.0",
         "hyperf/database": "~1.1.0",
         "hyperf/di": "~1.1.0",
-        "hyperf/event": "~1.1.0",
         "hyperf/model-listener": "~1.1.0",
         "hyperf/pool": "~1.1.0",
         "hyperf/utils": "~1.1.0"

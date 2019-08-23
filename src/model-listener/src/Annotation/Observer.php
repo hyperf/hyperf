@@ -14,6 +14,7 @@ namespace Hyperf\ModelListener;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\ModelListener\Collector\ObserverCollector;
+use Hyperf\Utils\Arr;
 
 /**
  * @Annotation
@@ -22,14 +23,27 @@ use Hyperf\ModelListener\Collector\ObserverCollector;
 class Observer extends AbstractAnnotation
 {
     /**
-     * @var string
+     * @var array
      */
-    public $model;
+    public $models = [];
+
+    public function __construct($value = null)
+    {
+        if (is_string($value)) {
+            $this->models = [$value];
+        } elseif (is_array($value) && ! Arr::isAssoc($value)) {
+            $this->models = $value;
+        } else {
+            parent::__construct($value);
+        }
+    }
 
     public function collectClass(string $className): void
     {
         parent::collectClass($className);
 
-        ObserverCollector::set($this->model, $className);
+        foreach ($this->models as $model) {
+            ObserverCollector::register($model, $className);
+        }
     }
 }
