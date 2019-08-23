@@ -57,7 +57,7 @@ class FooExceptionHandler extends  ExceptionHandler
         }
 
         // 交给下一个异常处理器
-        return $respose;
+        return $response;
 
         // 或者不做处理直接屏蔽异常
     }
