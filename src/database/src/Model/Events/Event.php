@@ -45,12 +45,6 @@ abstract class Event implements StoppableEventInterface
             $this->getModel()->{$this->getMethod()}($this);
         }
 
-        if ($observerClasses = $this->getObserverClasses()) {
-            foreach ($observerClasses as $observerClass) {
-                make($observerClass)->{$this->getMethod()}($this);
-            }
-        }
-
         return $this;
     }
 
@@ -62,10 +56,5 @@ abstract class Event implements StoppableEventInterface
     public function getModel(): Model
     {
         return $this->model;
-    }
-
-    public function getObserverClasses(): array
-    {
-        return $this->getModel()->getObservables()[$this->getMethod()] ?? [];
     }
 }

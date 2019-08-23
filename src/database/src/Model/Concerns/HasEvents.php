@@ -54,15 +54,6 @@ trait HasEvents
     protected $events = [];
 
     /**
-     * User exposed observable events.
-     *
-     * These are extra user-defined events observers may subscribe to.
-     *
-     * @var array
-     */
-    protected static $observables = [];
-
-    /**
      * Register observers with the model.
      *
      * @param  object|array|string  $classes
@@ -74,38 +65,6 @@ trait HasEvents
 
         foreach (Arr::wrap($classes) as $class) {
             $instance->registerObserver($class);
-        }
-    }
-
-    /**
-     * Clear all registered observers with the model.
-     *
-     * @return void
-     */
-    public static function clearObservables(): void
-    {
-        static::$observables = [];
-    }
-
-    /**
-     * Register a single observer with the model.
-     *
-     * @param  object|string $class
-     * @return void
-     */
-    protected function registerObserver($class): void
-    {
-        $className = is_string($class) ? $class : get_class($class);
-
-        foreach ($this->getDefaultEvents() as $alias => $eventClass) {
-            if (method_exists($class, $alias)) {
-                static::$observables[static::class][$alias] = array_unique(
-                    array_merge(
-                        static::$observables[static::class][$alias] ?? [],
-                        [$className]
-                    )
-                );
-            }
         }
     }
 
@@ -166,29 +125,6 @@ trait HasEvents
     public function getAvailableEvents(): array
     {
         return array_replace($this->getDefaultEvents(), $this->events);
-    }
-
-    /**
-     * Set observable mappings.
-     *
-     * @param array $observables
-     * @return self
-     */
-    public function setObservables(array $observables): self
-    {
-        static::$observables[static::class] = $observables;
-
-        return $this;
-    }
-
-    /**
-     * Get observable mappings.
-     *
-     * @return array
-     */
-    public function getObservables(): array
-    {
-        return static::$observables[static::class] ?? [];
     }
 
     /**
