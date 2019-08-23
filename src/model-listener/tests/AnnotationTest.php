@@ -32,15 +32,10 @@ class AnnotationTest extends TestCase
 
     public function testAnnotationCollect()
     {
-        $annotation = new Observer(ModelStub::class);
+        $annotation = new Observer(['value' => ModelStub::class]);
         $annotation->collectClass('Foo');
 
         $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
-
-        // $annotation = new Observer(['model' => ModelStub::class]);
-        // $annotation->collectClass('Foo');
-        //
-        // $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
     }
 
     public function testAnnotationCollectAssocArray()
@@ -52,7 +47,7 @@ class AnnotationTest extends TestCase
 
     public function testAnnotationCollectArray()
     {
-        $annotation = new Observer([ModelStub::class, 'ModelStub']);
+        $annotation = new Observer(['value' => [ModelStub::class, 'ModelStub']]);
         $annotation->collectClass('Foo');
         $this->assertSame(['Foo'], ObserverCollector::getObservables(ModelStub::class));
         $this->assertSame(['Foo'], ObserverCollector::getObservables('ModelStub'));

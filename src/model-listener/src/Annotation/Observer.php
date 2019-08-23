@@ -29,12 +29,14 @@ class Observer extends AbstractAnnotation
 
     public function __construct($value = null)
     {
-        if (is_string($value)) {
-            $this->models = [$value];
-        } elseif (is_array($value) && ! Arr::isAssoc($value)) {
-            $this->models = $value;
-        } else {
-            parent::__construct($value);
+        parent::__construct($value);
+
+        if ($value = $value['value'] ?? null) {
+            if (is_string($value)) {
+                $this->models = [$value];
+            } elseif (is_array($value) && ! Arr::isAssoc($value)) {
+                $this->models = $value;
+            }
         }
     }
 
