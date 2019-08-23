@@ -201,6 +201,7 @@
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Snowflake\\": "src/snowflake/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
+            "HyperfTest\\Testing\\": "src/testing/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
