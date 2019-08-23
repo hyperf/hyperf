@@ -52,6 +52,7 @@ class Port
     public static function build(array $config)
     {
         $port = new static();
+        self::filter($config);
         isset($config['name']) && $port->setName($config['name']);
         isset($config['type']) && $port->setType($config['type']);
         isset($config['host']) && $port->setHost($config['host']);
@@ -137,5 +138,15 @@ class Port
     {
         $this->settings = $settings;
         return $this;
+    }
+
+    private static function filter(array &$config)
+    {
+        if ($config['type'] == ServerInterface::SERVER_TCP) {
+            $config['settings'] = array_replace($config['settings'] ?? [], [
+                'open_http2_protocol' => false,
+                'open_http_protocol' => false,
+            ]);
+        }
     }
 }
