@@ -116,9 +116,9 @@ class DispatcherFactory
         $autoMethods = ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
         foreach ($methods as $method) {
-            if ($method === '__construct') continue;
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
+            if (substr($methodName, 0, 2) === '__') continue;
             $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
             $methodMiddlewares = $middlewares;
