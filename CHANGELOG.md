@@ -19,7 +19,7 @@
 
 ## Fixed
 
-- [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TcpServer does not works, when has http or ws servers.
+- [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
 
 # v1.0.13 - TBD
 
