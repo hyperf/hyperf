@@ -17,6 +17,10 @@
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 
+## Fixed
+
+- [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TcpServer does not works, when has http or ws servers.
+
 # v1.0.13 - TBD
 
 # v1.0.12 - 2019-08-21
