@@ -15,6 +15,8 @@ namespace Hyperf\GrpcServer\Exception\Handler;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\GrpcServer\Exception\GrpcException;
+use Hyperf\GrpcServer\StatusCode;
 use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -39,7 +41,11 @@ class GrpcExceptionHandler extends ExceptionHandler
 
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        $this->logger->warning($this->formatter->format($throwable));
+        if ($throwable instanceof GrpcException) {
+            $this->logger->debug($this->formatter->format($throwable));
+        } else {
+            $this->logger->warning($this->formatter->format($throwable));
+        }
 
         return $this->transferToResponse($throwable->getCode(), $throwable->getMessage(), $response);
     }
@@ -55,11 +61,13 @@ class GrpcExceptionHandler extends ExceptionHandler
      * @param int|string $code
      * @param string $message
      * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     protected function transferToResponse($code, $message, ResponseInterface $response): ResponseInterface
     {
         $response = $response->withAddedHeader('Content-Type', 'application/grpc')
-            ->withAddedHeader('trailer', 'grpc-status, grpc-message');
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message')
+            ->withStatus(StatusCode::HTTP_CODE_MAPPING[$code] ?: 500);
 
         $response->getSwooleResponse()->trailer('grpc-status', (string) $code);
         $response->getSwooleResponse()->trailer('grpc-message', (string) $message);
