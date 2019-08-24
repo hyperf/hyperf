@@ -16,6 +16,28 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Utils\ApplicationContext;
 
+/**
+ * @method static bool hasTable(string $table)
+ * @method static array getColumnListing(string $table)
+ * @method static array getColumnTypeListing(string $table)
+ * @method static dropAllTables()
+ * @method static dropAllViews()
+ * @method static array getAllTables()
+ * @method static array getAllViews()
+ * @method static bool hasColumn(string $table, string $column)
+ * @method static bool hasColumns(string $table, array $columns)
+ * @method static string getColumnType(string $table, string $column)
+ * @method static table(string $table, \Closure $callback)
+ * @method static create(string $table, \Closure $callback))
+ * @method static drop(string $table)
+ * @method static dropIfExists(string $table)
+ * @method static rename(string $from, string $to)
+ * @method static enableForeignKeyConstraints(): bool
+ * @method static disableForeignKeyConstraints(): bool
+ * @method static \Hyperf\Database\Connection getConnection()
+ * @method static setConnection(\Hyperf\Database\Connection $connection)
+ * @method static blueprintResolver(\Closure $resolver)
+ */
 class Schema
 {
     public static function __callStatic($name, $arguments)
