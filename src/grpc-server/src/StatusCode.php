@@ -10,12 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-
 namespace Hyperf\GrpcServer;
 
 /**
- * the const inside this class is copied from this address
- * @link https://github.com/grpc/grpc-java/blob/b363f80764bcc8452ef54511b6c6d6b596f5f177/api/src/main/java/io/grpc/Status.java
+ * the const inside this class is copied from this address.
+ * @see https://github.com/grpc/grpc-java/blob/b363f80764bcc8452ef54511b6c6d6b596f5f177/api/src/main/java/io/grpc/Status.java
  * @see https://grpc.github.io/grpc/core/md_doc_statuscodes.html
  */
 class StatusCode
@@ -161,7 +160,6 @@ class StatusCode
      * operation.
      */
     const UNAUTHENTICATED = 16;
-
 
     /**
      * @see https://grpc.github.io/grpc/core/md_doc_statuscodes.html
