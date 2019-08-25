@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 
 # v1.0.12 - 2019-08-21
