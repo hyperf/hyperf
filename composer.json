@@ -45,6 +45,7 @@
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",
+        "phpstan/phpstan": "^0.11.15",
         "phpunit/phpunit": "^7.0.0",
         "swoft/swoole-ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
@@ -270,7 +271,8 @@
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1",
-        "json-fix": "./bin/composer-json-fixer"
+        "json-fix": "./bin/composer-json-fixer",
+        "analyse": "phpstan analyse --memory-limit 300M -l 5 -c phpstan.neon ./src/json-rpc"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

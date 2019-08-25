@@ -37,7 +37,7 @@ class HttpServer extends Server
     protected $protocol;
 
     /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
+     * @var \Hyperf\Contract\PackerInterface
      */
     protected $packer;
 

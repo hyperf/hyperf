@@ -1,0 +1,6 @@
+# Magic behaviour with __get, __set, __call and __callStatic is not exactly static analyser-friendly :)
+# Fortunately, You can ingore it by the following config.
+#
+parameters:
+  excludes_analyse:
+    - %currentWorkingDirectory%/src/*/tests/*
