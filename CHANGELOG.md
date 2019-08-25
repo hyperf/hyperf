@@ -1,5 +1,9 @@
 # v1.0.13 - TBD
 
+## Changed
+
+- [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
+
 # v1.0.12 - 2019-08-21
 
 ## Added
