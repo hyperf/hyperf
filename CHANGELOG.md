@@ -1,5 +1,9 @@
 # v1.0.13 - TBD
 
+## Added
+
+- [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
+
 # v1.0.12 - 2019-08-21
 
 ## Added
