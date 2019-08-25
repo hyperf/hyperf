@@ -20,6 +20,11 @@ class DemoController
 
     public function index(int $id, string $name = 'Hyperf', array $params = [])
     {
-        return [$id, $name, $params];
+        return $this->__return($id, $name, $params);
+    }
+
+    public function __return(...$args)
+    {
+        return $args;
     }
 }

@@ -47,6 +47,7 @@ class DispatcherFactoryTest extends TestCase
         $this->assertSame(['GET', 'POST', 'HEAD'], array_keys($routers));
         foreach ($routers as $method => $items) {
             $this->assertFalse(in_array('/test/__construct', array_keys($items)));
+            $this->assertFalse(in_array('/test/__return', array_keys($items)));
         }
     }
 }
