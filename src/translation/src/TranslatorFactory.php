@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Translation\Contracts\Loader;
+use Hyperf\Translation\Contract\Loader;
 use Psr\Container\ContainerInterface;
 
 class TranslatorFactory

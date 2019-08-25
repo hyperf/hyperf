@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Translation\Cases;
 
-use Hyperf\Translation\Contracts\Loader;
+use Hyperf\Translation\Contract\Loader;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
 use Hyperf\Utils\Collection;

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contracts\Loader;
-use Hyperf\Translation\Contracts\Translator;
+use Hyperf\Translation\Contract\Loader;
+use Hyperf\Translation\Contract\Translator;
 
 class ConfigProvider
 {

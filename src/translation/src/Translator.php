@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Countable;
-use Hyperf\Translation\Contracts\Loader;
-use Hyperf\Translation\Contracts\Translator as TranslatorContract;
+use Hyperf\Translation\Contract\Loader;
+use Hyperf\Translation\Contract\Translator as TranslatorContract;
 use Hyperf\Translation\Support\NamespacedItemResolver;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
@@ -28,7 +28,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * The loader implementation.
      *
-     * @var \Hyperf\Translation\Contracts\Loader
+     * @var \Hyperf\Translation\Contract\Loader
      */
     protected $loader;
 
@@ -63,7 +63,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Create a new translator instance.
      *
-     * @param \Hyperf\Translation\Contracts\Loader $loader
+     * @param \Hyperf\Translation\Contract\Loader $loader
      * @param string $locale
      */
     public function __construct(Loader $loader, string $locale)
@@ -328,7 +328,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get the language line loader implementation.
      *
-     * @return \Hyperf\Translation\Contracts\Loader
+     * @return \Hyperf\Translation\Contract\Loader
      */
     public function getLoader()
     {

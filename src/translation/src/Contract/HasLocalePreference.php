@@ -10,14 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Translation\Contracts;
+namespace Hyperf\Translation\Contract;
 
 interface HasLocalePreference
 {
     /**
      * Get the preferred locale of the entity.
-     *
-     * @return null|string
      */
-    public function preferredLocale();
+    public function preferredLocale(): ?string;
 }

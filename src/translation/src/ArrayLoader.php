@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contracts\Loader;
+use Hyperf\Translation\Contract\Loader;
 
 class ArrayLoader implements Loader
 {
@@ -25,13 +25,8 @@ class ArrayLoader implements Loader
 
     /**
      * Load the messages for the given locale.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param null|string $namespace
-     * @return array
      */
-    public function load(string $locale, string $group, $namespace = null): array
+    public function load(string $locale, string $group, ?string $namespace = null): array
     {
         $namespace = $namespace ?: '*';
 
@@ -40,9 +35,6 @@ class ArrayLoader implements Loader
 
     /**
      * Add a new namespace to the loader.
-     *
-     * @param string $namespace
-     * @param string $hint
      */
     public function addNamespace(string $namespace, string $hint)
     {
@@ -50,8 +42,6 @@ class ArrayLoader implements Loader
 
     /**
      * Add a new JSON path to the loader.
-     *
-     * @param string $path
      */
     public function addJsonPath(string $path)
     {
@@ -59,14 +49,8 @@ class ArrayLoader implements Loader
 
     /**
      * Add messages to the loader.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param array $messages
-     * @param null|string $namespace
-     * @return $this
      */
-    public function addMessages(string $locale, string $group, array $messages, $namespace = null)
+    public function addMessages(string $locale, string $group, array $messages, ?string $namespace = null): self
     {
         $namespace = $namespace ?: '*';
 
@@ -77,8 +61,6 @@ class ArrayLoader implements Loader
 
     /**
      * Get an array of all the registered namespaces.
-     *
-     * @return array
      */
     public function namespaces(): array
     {
