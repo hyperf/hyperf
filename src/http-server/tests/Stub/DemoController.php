@@ -14,6 +14,10 @@ namespace HyperfTest\HttpServer\Stub;
 
 class DemoController
 {
+    public function __construct()
+    {
+    }
+
     public function index(int $id, string $name = 'Hyperf', array $params = [])
     {
         return [$id, $name, $params];

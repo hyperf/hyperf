@@ -118,7 +118,9 @@ class DispatcherFactory
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            if (substr($methodName, 0, 2) === '__') continue;
+            if (substr($methodName, 0, 2) === '__') {
+                continue;
+            }
             $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
             $methodMiddlewares = $middlewares;
