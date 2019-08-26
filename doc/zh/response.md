@@ -126,3 +126,18 @@ class IndexController
 ## 分块传输编码 Chunk
 
 ## 返回文件下载
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpMessage\Server\Response;
+use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
+
+class IndexController
+{
+    public function download(Response $response): Psr7ResponseInterface
+    {
+        return $response->sendfile('/var/www/file.csv');
+    }
+}
+```
