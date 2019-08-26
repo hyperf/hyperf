@@ -65,6 +65,7 @@ class Container implements ContainerInterface
         $this->resolvedEntries = [
             self::class => $this,
             ContainerInterface::class => $this,
+            ProxyFactory::class => $this->proxyFactory,
         ];
     }
 
