@@ -45,7 +45,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
      */
     public function send()
     {
-        if (! $this->getSwooleResponse()) {
+        if ($this->is_end || !$this->getSwooleResponse()) {
             return;
         }
 
@@ -121,7 +121,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         /*
          * Cookies
          */
-        foreach ((array) $this->cookies as $domain => $paths) {
+        foreach ((array)$this->cookies as $domain => $paths) {
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {
