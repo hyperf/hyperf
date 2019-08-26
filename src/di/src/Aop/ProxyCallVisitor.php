@@ -227,17 +227,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         $class = $this->class->toString();
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // OriginalClass::class
-            new ClassConstFetch(new Name($class), new Identifier('class')),
+            new Node\Arg(new ClassConstFetch(new Name($class), new Identifier('class'))),
             // __FUNCTION__
-            new MagicConstFunction(),
+            new Node\Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
-            new StaticCall(new Name('self'), 'getParamsMap', [
-                new ClassConstFetch(new Name($class), new Identifier('class')),
-                new MagicConstFunction(),
-                new FuncCall(new Name('func_get_args')),
-            ]),
+            new Node\Arg(new StaticCall(new Name('self'), 'getParamsMap', [
+                new Node\Arg(new ClassConstFetch(new Name($class), new Identifier('class'))),
+                new Node\Arg(new MagicConstFunction()),
+                new Node\Arg(new FuncCall(new Name('func_get_args'))),
+            ])),
             // A closure that wrapped original method code.
-            new Closure([
+            new Node\Arg(new Closure([
                 'params' => value(function () use ($node) {
                     // Transfer the variadic variable to normal variable at closure argument. ...$params => $parms
                     $params = $node->getParams();
@@ -255,7 +255,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Variable('__method__'),
                 ],
                 'stmts' => $node->stmts,
-            ]),
+            ])),
         ]);
         $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new Node\Scalar\MagicConst\Function_()));
         $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new Node\Scalar\MagicConst\Method()));
@@ -277,10 +277,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
-        if (! $node->name) {
-            return false;
-        }
-
         $rewriteCollection = Aspect::parse($this->classname);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
