@@ -272,7 +272,7 @@
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1",
         "json-fix": "./bin/composer-json-fixer",
-        "analyse": "phpstan analyse --memory-limit 300M -l 5 -c phpstan.neon ./src/json-rpc"
+        "analyse": "phpstan analyse --memory-limit 300M -l 4 -c phpstan.neon"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
