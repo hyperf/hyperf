@@ -52,7 +52,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         ];
 
     /**
-     * @var Identifier
+     * @var null|Identifier
      */
     private $class;
 
@@ -78,7 +78,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 continue;
             }
             if (! $namespace instanceof Namespace_) {
-                return;
+                break;
             }
             // Add current class namespace.
             $usedNamespace = [
@@ -112,6 +112,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
             }
         }
+
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -134,7 +136,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 break;
             case $node instanceof StaticPropertyFetch && $this->extends:
                 // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
-                if ($node->class && $node->class->toString() === 'parent') {
+                if ($node->class instanceof Node\Name && $node->class->toString() === 'parent') {
                     $node->class = new Name($this->extends->toCodeString());
                     return $node;
                 }
