@@ -14,7 +14,7 @@ namespace HyperfTest\GrpcServer;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Hyperf\GrpcServer\StatusCode;
+use Hyperf\Grpc\StatusCode;
 use Hyperf\HttpMessage\Server\Response;
 use HyperfTest\GrpcServer\Stub\GrpcExceptionHandlerStub;
 use Mockery;

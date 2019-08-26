@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer;
+namespace Hyperf\Grpc;
 
 /**
  * the const inside this class is copied from this address.
