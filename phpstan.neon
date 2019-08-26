@@ -2,5 +2,10 @@
 # Fortunately, You can ingore it by the following config.
 #
 parameters:
+  bootstrap: "bootstrap.php"
+  ignoreErrors:
+    - "#will always evaluate to false#"
+    - "#Result of && is always false.#"
   excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
+

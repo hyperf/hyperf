@@ -20,7 +20,7 @@ interface DefinitionSourceInterface
      * Returns the DI definition for the entry name.
      *
      * @throws InvalidDefinitionException an invalid definition was found
-     * @return null|array
+     * @return null|DefinitionInterface
      */
     public function getDefinition(string $name);
 

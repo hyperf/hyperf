@@ -17,7 +17,6 @@ use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -61,7 +60,7 @@ class Container implements ContainerInterface
     {
         $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
-        $this->proxyFactory = new ProxyFactory($this);
+        $this->proxyFactory = new ProxyFactory();
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
@@ -97,8 +96,6 @@ class Container implements ContainerInterface
      * Finds an entry of the container by its identifier and returns it.
      *
      * @param string $name identifier of the entry to look for
-     * @throws NotFoundExceptionInterface no entry was found for **this** identifier
-     * @throws ContainerExceptionInterface error while retrieving the entry
      * @return mixed entry
      */
     public function get($name)
@@ -116,8 +113,7 @@ class Container implements ContainerInterface
      * Returns false otherwise.
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
-     *
-     * @param string $name identifier of the entry to look for
+     * @param mixed $name
      */
     public function has($name): bool
     {

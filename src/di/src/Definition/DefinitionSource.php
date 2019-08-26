@@ -149,8 +149,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * @param array|callable|string $definitions
-     * @param mixed $definition
+     * @param array|callable|string $definition
      */
     private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
