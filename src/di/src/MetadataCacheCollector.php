@@ -40,6 +40,7 @@ class MetadataCacheCollector
     public function serialize(): string
     {
         $metadata = [];
+        /** @var string $collector */
         foreach ($this->collectors as $collector) {
             if (method_exists($collector, 'serialize')) {
                 $metadata[$collector] = call([$collector, 'serialize']);
