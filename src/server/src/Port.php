@@ -51,6 +51,8 @@ class Port
 
     public static function build(array $config)
     {
+        $config = self::filter($config);
+
         $port = new static();
         isset($config['name']) && $port->setName($config['name']);
         isset($config['type']) && $port->setType($config['type']);
@@ -137,5 +139,19 @@ class Port
     {
         $this->settings = $settings;
         return $this;
+    }
+
+    private static function filter(array $config): array
+    {
+        if ((int) $config['type'] === ServerInterface::SERVER_TCP) {
+            $default = [
+                'open_http2_protocol' => false,
+                'open_http_protocol' => false,
+            ];
+
+            $config['settings'] = array_merge($default, $config['settings'] ?? []);
+        }
+
+        return $config;
     }
 }

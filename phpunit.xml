@@ -30,11 +30,14 @@
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
+            <directory suffix="Test.php">./src/pool/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
+            <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
+            <directory suffix="Test.php">./src/testing/tests</directory>
             <directory suffix="Test.php">./src/utils/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
         </testsuite>

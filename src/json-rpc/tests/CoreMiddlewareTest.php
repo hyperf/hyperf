@@ -64,6 +64,7 @@ class CoreMiddlewareTest extends TestCase
             ->withParsedBody([1, 2]);
         Context::set(ResponseInterface::class, new Response());
 
+        $request = $middleware->dispatch($request);
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
         $ret = json_decode((string) $response->getBody(), true);
@@ -85,6 +86,8 @@ class CoreMiddlewareTest extends TestCase
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
+
+        $request = $middleware->dispatch($request);
 
         try {
             $response = $middleware->process($request, $handler);
@@ -114,6 +117,8 @@ class CoreMiddlewareTest extends TestCase
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
+
+        $request = $middleware->dispatch($request);
 
         try {
             $response = $middleware->process($request, $handler);

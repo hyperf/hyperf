@@ -10,17 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer;
+use Hyperf\Snowflake\IdGeneratorInterface;
 
-use Psr\Container\ContainerInterface;
-
-/**
- * @deprecated v1.1
- */
-class ServerFactory
-{
-    public function __invoke(ContainerInterface $container): Server
-    {
-        return new Server($container);
-    }
-}
+return [
+    'level' => IdGeneratorInterface::LEVEL_MILLISECOND,
+    'begin_second' => IdGeneratorInterface::DEFAULT_SECOND,
+];

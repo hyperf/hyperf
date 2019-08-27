@@ -322,9 +322,9 @@ class Request implements RequestInterface
      * Retrieve a file from the request.
      *
      * @param null|mixed $default
-     * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
+     * @return null|UploadedFile|UploadedFile[]
      */
-    public function file(string $key, $default = null): ?UploadedFile
+    public function file(string $key, $default = null)
     {
         return Arr::get($this->getUploadedFiles(), $key, $default);
     }

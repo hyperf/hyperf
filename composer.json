@@ -45,8 +45,9 @@
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",
+        "phpstan/phpstan": "^0.11.15",
         "phpunit/phpunit": "^7.0.0",
-        "swoft/swoole-ide-helper": "^4.3",
+        "swoft/swoole-ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3"
     },
@@ -141,6 +142,7 @@
             "Hyperf\\Logger\\": "src/logger/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
             "Hyperf\\ModelCache\\": "src/model-cache/src/",
+            "Hyperf\\ModelListener\\": "src/model-listener/src/",
             "Hyperf\\Paginator\\": "src/paginator/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
             "Hyperf\\Process\\": "src/process/src/",
@@ -151,6 +153,7 @@
             "Hyperf\\Rpc\\": "src/rpc/src/",
             "Hyperf\\Server\\": "src/server/src/",
             "Hyperf\\ServiceGovernance\\": "src/service-governance/src/",
+            "Hyperf\\Snowflake\\": "src/snowflake/src/",
             "Hyperf\\Swagger\\": "src/swagger/src/",
             "Hyperf\\SwooleEnterprise\\": "src/swoole-enterprise/src/",
             "Hyperf\\Task\\": "src/task/src/",
@@ -164,6 +167,8 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata/",
+            "Grpc\\": "src/grpc-client/tests/Grpc/",
             "HyperfTest\\Amqp\\": "src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
@@ -189,6 +194,7 @@
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
             "HyperfTest\\ModelCache\\": "src/model-cache/tests/",
+            "HyperfTest\\ModelListener\\": "src/model-listener/tests/",
             "HyperfTest\\Paginator\\": "src/paginator/tests/",
             "HyperfTest\\Pool\\": "src/pool/tests/",
             "HyperfTest\\Process\\": "src/process/tests/",
@@ -196,11 +202,11 @@
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
+            "HyperfTest\\Snowflake\\": "src/snowflake/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
+            "HyperfTest\\Testing\\": "src/testing/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
-            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
-            "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata",
-            "Grpc\\": "src/grpc-client/tests/Grpc"
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
     },
     "config": {
@@ -237,6 +243,7 @@
                 "Hyperf\\Logger\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
                 "Hyperf\\ModelCache\\ConfigProvider",
+                "Hyperf\\ModelListener\\ConfigProvider",
                 "Hyperf\\Paginator\\ConfigProvider",
                 "Hyperf\\Pool\\ConfigProvider",
                 "Hyperf\\Process\\ConfigProvider",
@@ -246,6 +253,7 @@
                 "Hyperf\\RpcServer\\ConfigProvider",
                 "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\ServiceGovernance\\ConfigProvider",
+                "Hyperf\\Snowflake\\ConfigProvider",
                 "Hyperf\\Swagger\\ConfigProvider",
                 "Hyperf\\SwooleEnterprise\\ConfigProvider",
                 "Hyperf\\Task\\ConfigProvider",
@@ -263,7 +271,8 @@
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1",
-        "json-fix": "./bin/composer-json-fixer"
+        "json-fix": "./bin/composer-json-fixer",
+        "analyse": "phpstan analyse --memory-limit 300M -l 5 -c phpstan.neon ./src/json-rpc"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

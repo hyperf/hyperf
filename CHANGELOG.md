@@ -1,21 +1,65 @@
-# v1.0.11 - TBD
+# v1.1.0 - TBD
+
+## Added
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) [#447](https://github.com/hyperf-cloud/hyperf/issues/447) Optimized server and Fixed middleware that user defined does not works.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
+- [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
+
+## Changed
+
+- [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
+
+## Deleted
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+
+## Fixed
+
+- [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
+
+# v1.0.13 - TBD
+
+# v1.0.12 - 2019-08-21
+
+## Added
+
+- [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
+- [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
+
+## Fixed
+
+- [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#430](https://github.com/hyperf-cloud/hyperf/pull/430) Fixed file() method of Request will threw an exception, when upload files with same name of form.
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) Fixed missing parameters of the grpc request.
+
+## Deprecated
+
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated.
+
+# v1.0.11 - 2019-08-15
 
 ## Added
 
 - [#366](https://github.com/hyperf-cloud/hyperf/pull/366) Added `Hyperf\Server\Listener\InitProcessTitleListener` to init th process name, also added `Hyperf\Framework\Event\OnStart` and `Hyperf\Framework\Event\OnManagerStart` events.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) Added Snowflake component.
 
 ## Fixed
 
-- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in MySQL 8.
-- [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed exception which instanceof serializable normalize and denormalize failed.
+- [#361](https://github.com/hyperf-cloud/hyperf/pull/361) Fixed command `db:model` does not works in `MySQL 8`.
+- [#369](https://github.com/hyperf-cloud/hyperf/pull/369) Fixed the exception which implemented `\Serializable`, call `serialize()` and `unserialize()` functions failed.
 - [#384](https://github.com/hyperf-cloud/hyperf/pull/384) Fixed the `ExceptionHandler` that user defined does not works, because the framework has handled the exception automatically.
 - [#370](https://github.com/hyperf-cloud/hyperf/pull/370) Fixed set the error type client to `Hyperf\GrpcClient\BaseClient`, and added default content-type `application/grpc+proto` to the Request object, also allows the grpc client that user-defined to override the `buildRequest()` method to create a new Request object.
 
 ## Changed
 
-- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) Optimized aysnc-queue when push a job with `CodeGenerateInterface` param, it can be auto generate a small one.
+- [#356](https://github.com/hyperf-cloud/hyperf/pull/356) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Optimized aysnc-queue when push a job that implemented `Hyperf\Contract\CompressInterface`, will compress the job to a small object automatically.
 - [#358](https://github.com/hyperf-cloud/hyperf/pull/358) Only write the annotation cache file when `$enableCache` is `true`.
-- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) Added generate support for Collection and Model.
+- [#359](https://github.com/hyperf-cloud/hyperf/pull/359) [#390](https://github.com/hyperf-cloud/hyperf/pull/390) Added compression ability for `Collection` and `Model`, if the object implemented `Hyperf\Contract\CompressInterface`, then the object could compress to a small one by call `compress` method.
 
 # v1.0.10 - 2019-08-09
 

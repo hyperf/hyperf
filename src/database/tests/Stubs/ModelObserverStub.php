@@ -10,9 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace HyperfTest\Database\Stubs;
 
-interface CodeDegenerateInterface
+use Hyperf\Database\Model\Events\Updating;
+
+class ModelObserverStub
 {
-    public function degenerate(): CodeGenerateInterface;
+    public function updating(Updating $event)
+    {
+        $event->getModel()->foo = 'bar';
+    }
 }

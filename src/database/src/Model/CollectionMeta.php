@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 
-class CollectionMeta implements CodeDegenerateInterface
+class CollectionMeta implements UnCompressInterface
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class CollectionMeta implements CodeDegenerateInterface
         $this->keys = $keys;
     }
 
-    public function degenerate(): CodeGenerateInterface
+    public function uncompress(): CompressInterface
     {
         if (is_null($this->class)) {
             return new Collection();

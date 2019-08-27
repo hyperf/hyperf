@@ -16,13 +16,13 @@
         "psr/container": "^1.0",
         "vlucas/phpdotenv": "^3.1",
         "symfony/finder": "^4.2.8",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/contract": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
-        "hyperf/di": "~1.0.0",
-        "hyperf/event": "~1.0.0",
-        "hyperf/framework": "~1.0.0",
+        "hyperf/di": "~1.1.0",
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
@@ -52,7 +52,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Config\\ConfigProvider"

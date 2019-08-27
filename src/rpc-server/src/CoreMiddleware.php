@@ -15,6 +15,7 @@ namespace Hyperf\RpcServer;
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
@@ -47,12 +48,12 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         return $factory->getDispatcher($serverName);
     }
 
-    protected function handleFound(array $routes, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
     {
-        if ($routes[1] instanceof Closure) {
-            $response = call($routes[1]);
+        if ($dispatched->handler->callback instanceof Closure) {
+            $response = call($dispatched->handler->callback);
         } else {
-            [$controller, $action] = $this->prepareHandler($routes[1]);
+            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.

@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer;
 
 use Hyperf\Dispatcher\AbstractDispatcher;
+use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Dispatcher\HttpRequestHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestDispatcher extends AbstractDispatcher
+class RequestDispatcher extends HttpDispatcher
 {
     /**
      * @var ContainerInterface

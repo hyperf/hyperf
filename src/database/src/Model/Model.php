@@ -14,8 +14,8 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -28,7 +28,7 @@ use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CodeGenerateInterface
+abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
@@ -1134,7 +1134,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         unset($this->attributes[$offset], $this->relations[$offset]);
     }
 
-    public function generate(): CodeDegenerateInterface
+    public function compress(): UnCompressInterface
     {
         $key = $this->getKey();
         $class = get_class($this);
