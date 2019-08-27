@@ -2,12 +2,13 @@
 
 ## Added
 
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
 - [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 
 ## Changed
 
-- [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
+- [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AutoController`.
 
 ## Fixed 
 
