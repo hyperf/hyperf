@@ -10,24 +10,23 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Translation\Cases;
+namespace HyperfTest\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
 use Hyperf\Utils\Collection;
-use Mockery as m;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @coversNothing
  */
 class TranslatorTest extends TestCase
 {
     protected function tearDown(): void
     {
-        m::close();
+        Mockery::close();
     }
 
     public function testHasMethodReturnsFalseWhenReturnedTranslationIsNull()
@@ -185,7 +184,7 @@ class TranslatorTest extends TestCase
             ->method('get')
             ->with($this->equalTo('foo'), $this->equalTo(['replace']), $this->equalTo('en'))
             ->will($this->returnValue('line'));
-        $t->setSelector($selector = m::mock(MessageSelector::class));
+        $t->setSelector($selector = Mockery::mock(MessageSelector::class));
         $selector->shouldReceive('choose')->once()->with('line', 10, 'en')->andReturn('choiced');
 
         $t->choice('foo', 10, ['replace']);
@@ -201,7 +200,7 @@ class TranslatorTest extends TestCase
             ->method('get')
             ->with($this->equalTo('foo'), $this->equalTo(['replace']), $this->equalTo('en'))
             ->will($this->returnValue('line'));
-        $t->setSelector($selector = m::mock(MessageSelector::class));
+        $t->setSelector($selector = Mockery::mock(MessageSelector::class));
         $selector->shouldReceive('choose')->twice()->with('line', 3, 'en')->andReturn('choiced');
 
         $values = ['foo', 'bar', 'baz'];
@@ -288,6 +287,6 @@ class TranslatorTest extends TestCase
 
     protected function getLoader()
     {
-        return m::mock(TranslatorLoaderInterface::class);
+        return Mockery::mock(TranslatorLoaderInterface::class);
     }
 }
