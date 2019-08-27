@@ -11,6 +11,24 @@
 ## Changed
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
+- [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
+
+config/container.php
+
+```php
+<?php
+
+use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSourceFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = new Container((new DefinitionSourceFactory(true))());
+
+if (! $container instanceof \Psr\Container\ContainerInterface) {
+    throw new RuntimeException('The dependency injection container is invalid.');
+}
+return ApplicationContext::setContainer($container);
+```
 
 ## Deleted
 
