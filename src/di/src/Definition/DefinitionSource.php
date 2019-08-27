@@ -224,7 +224,8 @@ class DefinitionSource implements DefinitionSourceInterface
         $cacher = new MetadataCacheCollector($collectors);
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
-            $cacher->unserialize(file_get_contents($this->cachePath));
+            [, $serialized] = explode(PHP_EOL, file_get_contents($this->cachePath));
+            $cacher->unserialize($serialized);
             return false;
         }
         $this->printLn('Scanning ...');
@@ -243,7 +244,8 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        file_put_contents($this->cachePath, $cacher->serialize());
+        $data = implode(PHP_EOL, [$pathsHash, $cacher->serialize()]);
+        file_put_contents($this->cachePath, $data);
         return true;
     }
 
