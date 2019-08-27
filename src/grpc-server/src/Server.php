@@ -15,7 +15,6 @@ namespace Hyperf\GrpcServer;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\GrpcServer\Exception\Handler\GrpcExceptionHandler;
-use Hyperf\GrpcServer\Exception\Handler\GrpcExceptionHandlerSecondary;
 use Hyperf\HttpServer\Server as HttpServer;
 use Psr\Container\ContainerInterface;
 
@@ -36,9 +35,6 @@ class Server extends HttpServer
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
             GrpcExceptionHandler::class,
-        ]);
-        $this->exceptionHandlersSecondary = $config->get('exceptions.handler.secondary.' . $serverName, [
-            GrpcExceptionHandlerSecondary::class,
         ]);
     }
 }
