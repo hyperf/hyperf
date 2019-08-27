@@ -46,9 +46,20 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
         /**
          * @var Throwable
          * @var string[] $handlers
+         * @var string[] $secondaryHandlers
          */
-        [$throwable, $handlers] = $params;
+        [$throwable, $handlers, $secondaryHandlers] = $params;
         $response = Context::get(ResponseInterface::class);
+        [$isHandled, $response] = $this->handleExceptionWithHandlers($throwable, $response, $handlers);
+        if (! $isHandled && ! empty($secondaryHandlers)) {
+            [$isHandled, $response] = $this->handleExceptionWithHandlers($throwable, $response, $secondaryHandlers);
+        }
+        return $response;
+    }
+
+    private function handleExceptionWithHandlers(Throwable $throwable, ResponseInterface $response, $handlers)
+    {
+        $isHandled = false;
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
                 throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
@@ -58,10 +69,11 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
                 continue;
             }
             $response = $handlerInstance->handle($throwable, $response);
+            $isHandled = true;
             if ($handlerInstance->isPropagationStopped()) {
                 break;
             }
         }
-        return $response;
+        return [$isHandled, $response];
     }
 }

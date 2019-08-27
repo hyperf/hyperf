@@ -20,6 +20,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandlerSecondary;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -50,6 +51,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      * @var array
      */
     protected $exceptionHandlers;
+
+    /**
+     * @var array
+     */
+    protected $exceptionHandlersSecondary;
 
     /**
      * @var \Psr\Container\ContainerInterface
@@ -86,6 +92,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
+        $this->exceptionHandlersSecondary = $config->get('exceptions.handler.secondary.' . $serverName, $this->getDefaultExceptionHandlerSecondary());
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
@@ -99,7 +106,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers, $this->exceptionHandlersSecondary);
         } finally {
             // Send the Response to client.
             if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {
@@ -127,6 +134,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         return [
             HttpExceptionHandler::class,
+        ];
+    }
+
+    protected function getDefaultExceptionHandlerSecondary(): array
+    {
+        return [
+            HttpExceptionHandlerSecondary::class,
         ];
     }
 
