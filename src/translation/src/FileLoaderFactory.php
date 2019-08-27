@@ -22,7 +22,7 @@ class FileLoaderFactory
     {
         $config = $container->get(ConfigInterface::class);
         $files = $container->get(Filesystem::class);
-        $path = $config->get('translation.lang');
+        $path = $config->get('translation.path');
 
         return make(FileLoader::class, compact('files', 'path'));
     }
