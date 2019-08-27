@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contract\Loader;
+use Hyperf\Contract\TranslatorLoaderInterface;
 
-class ArrayLoader implements Loader
+class ArrayLoader implements TranslatorLoaderInterface
 {
     /**
      * All of the translation messages.

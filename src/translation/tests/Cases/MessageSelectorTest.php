@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace HyperfTest\Translation\Cases;
 
 use Hyperf\Translation\MessageSelector;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class TranslationMessageSelectorTest extends AbstractTestCase
+class MessageSelectorTest extends TestCase
 {
     /**
      * @dataProvider chooseTestData

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contract\Loader;
-use Hyperf\Translation\Contract\Translator;
+use Hyperf\Contract\TranslatorInterface;
+use Hyperf\Contract\TranslatorLoaderInterface;
 
 class ConfigProvider
 {
@@ -21,8 +21,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Loader::class => FileLoaderFactory::class,
-                Translator::class => TranslatorFactory::class,
+                TranslatorLoaderInterface::class => FileLoaderFactory::class,
+                TranslatorInterface::class => TranslatorFactory::class,
             ],
             'scan' => [
                 'paths' => [

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Translation\Contract\Loader;
+use Hyperf\Contract\TranslatorLoaderInterface;
 use Psr\Container\ContainerInterface;
 
 class TranslatorFactory
@@ -28,11 +28,11 @@ class TranslatorFactory
         $locale = $config->get('translation.locale');
         $fallbackLocale = $config->get('translation.fallback_locale');
 
-        $loader = $container->get(Loader::class);
+        $loader = $container->get(TranslatorLoaderInterface::class);
 
-        $trans = make(Translator::class, compact('loader', 'locale'));
-        $trans->setFallback((string) $fallbackLocale);
+        $translator = make(Translator::class, compact('loader', 'locale'));
+        $translator->setFallback((string) $fallbackLocale);
 
-        return $trans;
+        return $translator;
     }
 }

@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Translation\Contract;
+namespace Hyperf\Contract;
 
-interface Loader
+interface TranslatorLoaderInterface
 {
     /**
      * Load the messages for the given locale.

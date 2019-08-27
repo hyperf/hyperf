@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contract\Loader;
-use Hyperf\Utils\Collection;
+use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use RuntimeException;
 
-class FileLoader implements Loader
+class FileLoader implements TranslatorLoaderInterface
 {
     /**
      * The filesystem instance.

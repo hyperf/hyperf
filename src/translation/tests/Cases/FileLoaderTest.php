@@ -15,12 +15,13 @@ namespace HyperfTest\Translation\Cases;
 use Hyperf\Translation\FileLoader;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class TranslationFileLoaderTest extends AbstractTestCase
+class FileLoaderTest extends TestCase
 {
     protected function tearDown(): void
     {
