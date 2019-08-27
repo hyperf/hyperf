@@ -29,7 +29,7 @@ class AstTest extends TestCase
     public function testProxy()
     {
         $ast = new Ast();
-        $proxyClass = Foo::class . 'Froxy';
+        $proxyClass = Foo::class . 'Proxy';
         $code = $ast->proxy(Foo::class, $proxyClass);
 
         $this->assertEquals('<?php
@@ -45,7 +45,7 @@ declare (strict_types=1);
  */
 namespace HyperfTest\Di\Stub\Ast;
 
-class FooFroxy extends Foo
+class FooProxy extends Foo
 {
     use \Hyperf\Di\Aop\ProxyTrait;
 }', $code);
@@ -54,7 +54,7 @@ class FooFroxy extends Foo
     public function testParentMethods()
     {
         $ast = new Ast();
-        $proxyClass = Bar2::class . 'Froxy';
+        $proxyClass = Bar2::class . 'Proxy';
         $code = $ast->proxy(Bar2::class, $proxyClass);
 
         $this->assertEquals('<?php
@@ -70,7 +70,7 @@ declare (strict_types=1);
  */
 namespace HyperfTest\Di\Stub\Ast;
 
-class Bar2Froxy extends Bar2
+class Bar2Proxy extends Bar2
 {
     use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(int $id)
@@ -93,7 +93,7 @@ class Bar2Froxy extends Bar2
         ], []);
 
         $ast = new Ast();
-        $proxyClass = Bar3::class . 'Froxy';
+        $proxyClass = Bar3::class . 'Proxy';
         $code = $ast->proxy(Bar3::class, $proxyClass);
 
         $this->assertEquals('<?php
@@ -109,7 +109,7 @@ declare (strict_types=1);
  */
 namespace HyperfTest\Di\Stub\Ast;
 
-class Bar3Froxy extends Bar3
+class Bar3Proxy extends Bar3
 {
     use \Hyperf\Di\Aop\ProxyTrait;
     public function getId() : int
