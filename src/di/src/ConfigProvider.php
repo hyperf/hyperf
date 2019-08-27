@@ -14,7 +14,6 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\Command\InitProxyCommand;
 use Hyperf\Di\Listener\BootApplicationListener;
 
@@ -36,7 +35,7 @@ class ConfigProvider
                 'paths' => [
                     __DIR__,
                 ],
-                'cacheable' => [
+                'collectors' => [
                     AnnotationCollector::class,
                     AspectCollector::class,
                 ],

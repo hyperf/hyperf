@@ -12,29 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
-
 class MetadataCacheCollector
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var array
      */
     protected $collectors = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(array $collectors)
     {
-        $this->container = $container;
-
-        $collectors = $container->get(ConfigInterface::class)->get('scan.cacheable');
-        foreach ($collectors as $collector) {
-            $this->addCollector($collector);
-        }
+        $this->collectors = $collectors;
     }
 
     public function addCollector(string $collector)
