@@ -29,7 +29,7 @@ class ScanConfig
      */
     protected $collectors;
 
-    public function __construct(array $dirs, array $ignoreAnnotations, array $collectors)
+    public function __construct(array $dirs = [], array $ignoreAnnotations = [], array $collectors = [])
     {
         $this->dirs = $dirs;
         $this->ignoreAnnotations = $ignoreAnnotations;

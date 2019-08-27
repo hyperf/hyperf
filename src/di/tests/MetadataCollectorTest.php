@@ -36,14 +36,16 @@ class MetadataCollectorTest extends TestCase
 
     public function testMetadataCollectorCache()
     {
-        $container = $this->getContainer();
         $annotation = DemoAnnotation::class;
         $id = uniqid();
 
         AnnotationCollector::collectClass('Demo', $annotation, new DemoAnnotation($id));
         $collector = AnnotationCollector::list();
 
-        $cacher = new MetadataCacheCollector($container);
+        $cacher = new MetadataCacheCollector([
+            AnnotationCollector::class,
+            AspectCollector::class,
+        ]);
 
         $string = $cacher->serialize();
         AnnotationCollector::clear();
