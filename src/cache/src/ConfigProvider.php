@@ -28,6 +28,9 @@ class ConfigProvider
                 'paths' => [
                     __DIR__,
                 ],
+                'collectors' => [
+                    CacheListenerCollector::class,
+                ]
             ],
             'publish' => [
                 [
