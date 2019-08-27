@@ -51,7 +51,7 @@ class MetadataCacheCollector
 
     public function unserialize($serialized): void
     {
-        $metadatas = json_decode($serialized, true);
+        $metadatas = json_decode($serialized, true) ?? [];
         $collectors = [];
         foreach ($metadatas as $collector => $metadata) {
             if (method_exists($collector, 'deserialize')) {
