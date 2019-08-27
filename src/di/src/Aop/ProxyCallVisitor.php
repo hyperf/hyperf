@@ -277,6 +277,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
+        if (! $node->name) {
+            return false;
+        }
+
         $rewriteCollection = Aspect::parse($this->classname);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());

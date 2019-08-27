@@ -114,7 +114,8 @@ class Container implements ContainerInterface
      * Returns false otherwise.
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
-     * @param mixed $name
+     *
+     * @param string $name Identifier of the entry to look for.
      */
     public function has($name): bool
     {
