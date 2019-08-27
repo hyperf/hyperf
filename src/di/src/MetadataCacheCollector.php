@@ -10,10 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Di\Collector;
+namespace Hyperf\Di;
 
-use Hyperf\Di\Exception\InvalidDefinitionException;
-use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 
 class MetadataCacheCollector
@@ -26,11 +25,16 @@ class MetadataCacheCollector
     /**
      * @var array
      */
-    protected $collectors;
+    protected $collectors = [];
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+
+        $collectors = $container->get(ConfigInterface::class)->get('scan.cacheable');
+        foreach ($collectors as $collector) {
+            $this->addCollector($collector);
+        }
     }
 
     public function addCollector(string $collector)
@@ -41,36 +45,34 @@ class MetadataCacheCollector
         ));
     }
 
+    public function clear()
+    {
+        $this->collectors = [];
+    }
+
     public function serialize(): string
     {
         $metadata = [];
         foreach ($this->collectors as $collector) {
-            if ($this->container->has($collector)) {
-                $class = $this->container->get($collector);
-                if ($class instanceof MetadataCollectorInterface) {
-                    $metadata[$collector] = $class->getMetadata();
-                }
+            if (method_exists($collector, 'serialize')) {
+                $metadata[$collector] = call([$collector, 'serialize']);
             }
         }
 
-        return serialize($metadata);
+        return json_encode($metadata);
     }
 
     public function unserialize($serialized): void
     {
-        $metadatas = unserialize($serialized);
-
+        $metadatas = json_decode($serialized, true);
+        $collectors = [];
         foreach ($metadatas as $collector => $metadata) {
-            if (! $this->container->has($collector)) {
-                throw new NotFoundException(sprintf('Collector %s not found in Container.'));
+            if (method_exists($collector, 'deserialize')) {
+                call([$collector, 'deserialize'], [$metadata]);
+                $collectors[] = $collector;
             }
-
-            $class = $this->container->get($collector);
-            if (! $class instanceof MetadataCollectorInterface) {
-                throw new InvalidDefinitionException(sprintf('Collector %s is not instanceof MetadataCollectorInterface.'));
-            }
-
-            $class->setMetadata($metadata);
         }
+
+        $this->collectors = $collectors;
     }
 }

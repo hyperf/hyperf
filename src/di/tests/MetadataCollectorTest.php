@@ -1,12 +1,74 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Di;
 
-
+use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\MetadataCacheCollector;
+use HyperfTest\Di\Stub\AnnotationCollector;
+use HyperfTest\Di\Stub\AspectCollector;
+use HyperfTest\Di\Stub\DemoAnnotation;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class MetadataCollectorTest extends TestCase
 {
-    
+    protected function tearDown()
+    {
+        AspectCollector::clear();
+        AnnotationCollector::clear();
+    }
+
+    public function testMetadataCollectorCache()
+    {
+        $container = $this->getContainer();
+        $annotation = DemoAnnotation::class;
+        $id = uniqid();
+
+        AnnotationCollector::collectClass('Demo', $annotation, new DemoAnnotation($id));
+        $collector = AnnotationCollector::list();
+
+        $cacher = new MetadataCacheCollector($container);
+
+        $string = $cacher->serialize();
+        AnnotationCollector::clear();
+        $cacher->unserialize($string);
+
+        $collector2 = AnnotationCollector::list();
+
+        $this->assertEquals($collector, $collector2);
+    }
+
+    public function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+            'scan' => [
+                'paths' => [
+                    __DIR__,
+                ],
+                'cacheable' => [
+                    AnnotationCollector::class,
+                    AspectCollector::class,
+                ],
+            ],
+        ]));
+
+        return $container;
+    }
 }
