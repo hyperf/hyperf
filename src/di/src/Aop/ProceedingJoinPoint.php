@@ -63,7 +63,7 @@ class ProceedingJoinPoint
     {
         $closure = $this->pipe;
         if (! $closure instanceof Closure) {
-            throw new Exception('The pipi is not instanceof \Closure');
+            throw new Exception('The pipe is not instanceof \Closure');
         }
 
         return $closure($this);
