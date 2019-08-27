@@ -14,7 +14,7 @@ return [
     'enable' => false,
     'interval' => 5,
     'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
-    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+    'namespace_id' => env('ALIYUN_ACM_NAMESPACE_ID', ''),
     'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
     'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
     'access_key' => env('ALIYUN_ACM_AK', ''),

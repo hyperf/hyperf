@@ -55,7 +55,7 @@ class Client implements ClientInterface
 
         // ACM config
         $endpoint = $this->config->get('aliyun_acm.endpoint', 'acm.aliyun.com');
-        $namespace = $this->config->get('aliyun_acm.namespace', '');
+        $namespace_id = $this->config->get('aliyun_acm.namespace_id', '');
         $dataId = $this->config->get('aliyun_acm.data_id', '');
         $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
         $accessKey = $this->config->get('aliyun_acm.access_key', '');
@@ -63,7 +63,7 @@ class Client implements ClientInterface
 
         // Sign
         $timestamp = round(microtime(true) * 1000);
-        $sign = base64_encode(hash_hmac('sha1', "{$namespace}+{$group}+{$timestamp}", $secretKey, true));
+        $sign = base64_encode(hash_hmac('sha1', "{$namespace_id}+{$group}+{$timestamp}", $secretKey, true));
 
         if (! $this->servers) {
             // server list
@@ -83,7 +83,7 @@ class Client implements ClientInterface
                 'Spas-Signature' => $sign,
             ],
             'query' => [
-                'tenant' => $namespace,
+                'tenant' => $namespace_id,
                 'dataId' => $dataId,
                 'group' => $group,
             ],

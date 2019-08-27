@@ -33,7 +33,7 @@ class ClientTest extends TestCase
         // @TODO Add a test env.
         $configInstance = new Config([
             'aliyun_acm' => [
-                'namespace' => '',
+                'namespace_id' => '',
                 'data_id' => 'hyperf',
                 'access_key' => '',
                 'secret_key' => '',
