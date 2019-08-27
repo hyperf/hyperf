@@ -57,11 +57,8 @@ class GrpcExceptionHandler extends ExceptionHandler
 
     /**
      * Transfer the non-standard response content to a standard response object.
-     *
-     * @param int $code
-     * @param string $message
      */
-    protected function transferToResponse($code, $message, ResponseInterface $response): ResponseInterface
+    protected function transferToResponse(int $code, string $message, ResponseInterface $response): ResponseInterface
     {
         $response = $response->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
