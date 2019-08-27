@@ -38,14 +38,14 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     /**
      * @var bool
      */
-    protected $is_end = false;
+    protected $isEnd = false;
 
     /**
      * Handle response and send.
      */
     public function send()
     {
-        if ($this->is_end || !$this->getSwooleResponse()) {
+        if ($this->isEnd || !$this->getSwooleResponse()) {
             return;
         }
 
@@ -69,7 +69,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         $response->setHeader('Content-Transfer-Encoding', 'binary');
         $response->setHeader('Pragma', 'public');
         if ($response->sendfile($file_name)) {
-            $this->is_end = true;
+            $this->isEnd = true;
         }
     }
 
