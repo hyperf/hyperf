@@ -10,8 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Task\Exception;
+namespace Hyperf\GrpcServer\Exception;
 
-class TaskException extends \RuntimeException
+use Hyperf\Server\Exception\ServerException;
+
+class GrpcException extends ServerException
 {
 }

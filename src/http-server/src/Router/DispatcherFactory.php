@@ -117,6 +117,9 @@ class DispatcherFactory
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
+            if (substr($methodName, 0, 2) === '__') {
+                continue;
+            }
 
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
