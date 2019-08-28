@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Translation;
 
-use Hyperf\Translation\Contracts\Loader;
+use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use RuntimeException;
 
-class FileLoader implements Loader
+class FileLoader implements TranslatorLoaderInterface
 {
     /**
      * The filesystem instance.
@@ -60,13 +60,8 @@ class FileLoader implements Loader
 
     /**
      * Load the messages for the given locale.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param null|string $namespace
-     * @return array
      */
-    public function load(string $locale, string $group, $namespace = null): array
+    public function load(string $locale, string $group, ?string $namespace = null): array
     {
         if ($group === '*' && $namespace === '*') {
             return $this->loadJsonPaths($locale);
@@ -81,9 +76,6 @@ class FileLoader implements Loader
 
     /**
      * Add a new namespace to the loader.
-     *
-     * @param string $namespace
-     * @param string $hint
      */
     public function addNamespace(string $namespace, string $hint)
     {
@@ -92,8 +84,6 @@ class FileLoader implements Loader
 
     /**
      * Add a new JSON path to the loader.
-     *
-     * @param string $path
      */
     public function addJsonPath(string $path)
     {
@@ -102,8 +92,6 @@ class FileLoader implements Loader
 
     /**
      * Get an array of all the registered namespaces.
-     *
-     * @return array
      */
     public function namespaces(): array
     {
@@ -112,11 +100,6 @@ class FileLoader implements Loader
 
     /**
      * Load a namespaced translation group.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param string $namespace
-     * @return array
      */
     protected function loadNamespaced(string $locale, string $group, string $namespace): array
     {
@@ -131,12 +114,6 @@ class FileLoader implements Loader
 
     /**
      * Load a local namespaced translation group for overrides.
-     *
-     * @param array $lines
-     * @param string $locale
-     * @param string $group
-     * @param string $namespace
-     * @return array
      */
     protected function loadNamespaceOverrides(array $lines, string $locale, string $group, string $namespace): array
     {
@@ -151,11 +128,6 @@ class FileLoader implements Loader
 
     /**
      * Load a locale from a given path.
-     *
-     * @param string $path
-     * @param string $locale
-     * @param string $group
-     * @return array
      */
     protected function loadPath(string $path, string $locale, string $group): array
     {
@@ -169,11 +141,9 @@ class FileLoader implements Loader
     /**
      * Load a locale from the given JSON file path.
      *
-     * @param string $locale
      * @throws \RuntimeException
-     * @return array
      */
-    protected function loadJsonPaths(string $locale)
+    protected function loadJsonPaths(string $locale): iterable
     {
         return collect(array_merge($this->jsonPaths, [$this->path]))
             ->reduce(function ($output, $path) use ($locale) {

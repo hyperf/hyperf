@@ -10,4 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+namespace Hyperf\GrpcServer\Exception;
+
+use Hyperf\Server\Exception\ServerException;
+
+class GrpcException extends ServerException
+{
+}

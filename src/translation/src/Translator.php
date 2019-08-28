@@ -13,22 +13,21 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Countable;
-use Hyperf\Translation\Contracts\Loader;
-use Hyperf\Translation\Contracts\Translator as TranslatorContract;
-use Hyperf\Translation\Support\NamespacedItemResolver;
+use Hyperf\Contract\TranslatorInterface;
+use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 
-class Translator extends NamespacedItemResolver implements TranslatorContract
+class Translator implements TranslatorInterface
 {
     use Macroable;
 
     /**
      * The loader implementation.
      *
-     * @var \Hyperf\Translation\Contracts\Loader
+     * @var TranslatorLoaderInterface
      */
     protected $loader;
 
@@ -61,12 +60,13 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     protected $selector;
 
     /**
-     * Create a new translator instance.
+     * A cache of the parsed items.
      *
-     * @param \Hyperf\Translation\Contracts\Loader $loader
-     * @param string $locale
+     * @var array
      */
-    public function __construct(Loader $loader, string $locale)
+    protected $parsed = [];
+
+    public function __construct(TranslatorLoaderInterface $loader, string $locale)
     {
         $this->loader = $loader;
         $this->locale = $locale;
@@ -74,25 +74,16 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Determine if a translation exists for a given locale.
-     *
-     * @param string $key
-     * @param null|string $locale
-     * @return bool
      */
-    public function hasForLocale(string $key, $locale = null): bool
+    public function hasForLocale(string $key, ?string $locale = null): bool
     {
         return $this->has($key, $locale, false);
     }
 
     /**
      * Determine if a translation exists.
-     *
-     * @param string $key
-     * @param null|string $locale
-     * @param bool $fallback
-     * @return bool
      */
-    public function has(string $key, $locale = null, bool $fallback = true): bool
+    public function has(string $key, ?string $locale = null, bool $fallback = true): bool
     {
         return $this->get($key, [], $locale, $fallback) !== $key;
     }
@@ -100,12 +91,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get the translation for a given key.
      *
-     * @param string $key
-     * @param array $replace
-     * @param null|string $locale
      * @return array|string
      */
-    public function trans(string $key, array $replace = [], $locale = null)
+    public function trans(string $key, array $replace = [], ?string $locale = null)
     {
         return $this->get($key, $replace, $locale);
     }
@@ -113,13 +101,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get the translation for the given key.
      *
-     * @param string $key
-     * @param array $replace
-     * @param null|string $locale
-     * @param bool $fallback
      * @return array|string
      */
-    public function get(string $key, array $replace = [], $locale = null, $fallback = true)
+    public function get(string $key, array $replace = [], ?string $locale = null, bool $fallback = true)
     {
         [$namespace, $group, $item] = $this->parseKey($key);
 
@@ -150,12 +134,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get the translation for a given key from the JSON translation files.
      *
-     * @param string $key
-     * @param array $replace
-     * @param null|string $locale
      * @return array|string
      */
-    public function getFromJson(string $key, array $replace = [], $locale = null)
+    public function getFromJson(string $key, array $replace = [], ?string $locale = null)
     {
         $locale = $locale ?: $this->locale;
 
@@ -183,13 +164,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get a translation according to an integer value.
      *
-     * @param string $key
      * @param array|\Countable|int $number
-     * @param array $replace
-     * @param null|string $locale
-     * @return string
      */
-    public function transChoice(string $key, $number, array $replace = [], $locale = null): string
+    public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string
     {
         return $this->choice($key, $number, $replace, $locale);
     }
@@ -197,13 +174,9 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get a translation according to an integer value.
      *
-     * @param string $key
      * @param array|\Countable|int $number
-     * @param array $replace
-     * @param null|string $locale
-     * @return string
      */
-    public function choice(string $key, $number, array $replace = [], $locale = null): string
+    public function choice(string $key, $number, array $replace = [], ?string $locale = null): string
     {
         $line = $this->get(
             $key,
@@ -228,10 +201,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Add translation lines to the given locale.
-     *
-     * @param array $lines
-     * @param string $locale
-     * @param string $namespace
      */
     public function addLines(array $lines, string $locale, string $namespace = '*')
     {
@@ -244,10 +213,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Load the specified language group.
-     *
-     * @param string $namespace
-     * @param string $group
-     * @param string $locale
      */
     public function load(string $namespace, string $group, string $locale)
     {
@@ -265,9 +230,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Add a new namespace to the loader.
-     *
-     * @param string $namespace
-     * @param string $hint
      */
     public function addNamespace(string $namespace, string $hint)
     {
@@ -276,8 +238,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Add a new JSON path to the loader.
-     *
-     * @param string $path
      */
     public function addJsonPath(string $path)
     {
@@ -286,13 +246,31 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Parse a key into namespace, group, and item.
-     *
-     * @param string $key
-     * @return array
      */
     public function parseKey(string $key): array
     {
-        $segments = parent::parseKey($key);
+        // If we've already parsed the given key, we'll return the cached version we
+        // already have, as this will save us some processing. We cache off every
+        // key we parse so we can quickly return it on all subsequent requests.
+        if (isset($this->parsed[$key])) {
+            return $this->parsed[$key];
+        }
+
+        // If the key does not contain a double colon, it means the key is not in a
+        // namespace, and is just a regular configuration item. Namespaces are a
+        // tool for organizing configuration items for things such as modules.
+        if (strpos($key, '::') === false) {
+            $segments = explode('.', $key);
+
+            $parsed = $this->parseBasicSegments($segments);
+        } else {
+            $parsed = $this->parseNamespacedSegments($key);
+        }
+
+        // Once we have the parsed array of this key's elements, such as its groups
+        // and namespace, we will cache each array inside a simple list that has
+        // the key and the parsed array for quick look-ups for later requests.
+        $segments = $this->parsed[$key] = $parsed;
 
         if (is_null($segments[0])) {
             $segments[0] = '*';
@@ -303,10 +281,8 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Get the message selector instance.
-     *
-     * @return \Hyperf\Translation\MessageSelector
      */
-    public function getSelector()
+    public function getSelector(): MessageSelector
     {
         if (! isset($this->selector)) {
             $this->selector = new MessageSelector();
@@ -317,8 +293,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Set the message selector instance.
-     *
-     * @param \Hyperf\Translation\MessageSelector $selector
      */
     public function setSelector(MessageSelector $selector)
     {
@@ -328,7 +302,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Get the language line loader implementation.
      *
-     * @return \Hyperf\Translation\Contracts\Loader
+     * @return TranslatorLoaderInterface
      */
     public function getLoader()
     {
@@ -337,8 +311,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Get the default locale being used.
-     *
-     * @return string
      */
     public function locale(): string
     {
@@ -347,8 +319,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Get the default locale being used.
-     *
-     * @return string
      */
     public function getLocale(): string
     {
@@ -357,8 +327,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Set the default locale.
-     *
-     * @param string $locale
      */
     public function setLocale(string $locale)
     {
@@ -367,8 +335,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Get the fallback locale being used.
-     *
-     * @return string
      */
     public function getFallback(): string
     {
@@ -377,8 +343,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Set the fallback locale being used.
-     *
-     * @param string $fallback
      */
     public function setFallback(string $fallback)
     {
@@ -387,8 +351,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Set the loaded translation groups.
-     *
-     * @param array $loaded
      */
     public function setLoaded(array $loaded)
     {
@@ -396,12 +358,20 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     }
 
     /**
-     * Get the proper locale for a choice operation.
+     * Set the parsed value of a key.
      *
-     * @param null|string $locale
-     * @return string
+     * @param string $key
+     * @param array $parsed
      */
-    protected function localeForChoice($locale): string
+    public function setParsedKey(string $key, array $parsed)
+    {
+        $this->parsed[$key] = $parsed;
+    }
+
+    /**
+     * Get the proper locale for a choice operation.
+     */
+    protected function localeForChoice(?string $locale): string
     {
         return $locale ?: $this->locale ?: $this->fallback;
     }
@@ -409,11 +379,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     /**
      * Retrieve a language line out the loaded array.
      *
-     * @param string $namespace
-     * @param string $group
-     * @param string $locale
      * @param mixed $item
-     * @param array $replace
      * @return null|array|string
      */
     protected function getLine(string $namespace, string $group, string $locale, $item, array $replace)
@@ -440,12 +406,8 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Make the place-holder replacements on a line.
-     *
-     * @param string $line
-     * @param array $replace
-     * @return string
      */
-    protected function makeReplacements($line, array $replace)
+    protected function makeReplacements(string $line, array $replace): string
     {
         if (empty($replace)) {
             return $line;
@@ -468,9 +430,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Sort the replacements array.
-     *
-     * @param array $replace
-     * @return array
      */
     protected function sortReplacements(array $replace): array
     {
@@ -481,25 +440,63 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
 
     /**
      * Determine if the given group has been loaded.
-     *
-     * @param string $namespace
-     * @param string $group
-     * @param string $locale
-     * @return bool
      */
-    protected function isLoaded(string $namespace, string $group, string $locale)
+    protected function isLoaded(string $namespace, string $group, string $locale): bool
     {
         return isset($this->loaded[$namespace][$group][$locale]);
     }
 
     /**
      * Get the array of locales to be checked.
-     *
-     * @param null|string $locale
-     * @return array
      */
-    protected function localeArray($locale): array
+    protected function localeArray(?string $locale): array
     {
         return array_filter([$locale ?: $this->locale, $this->fallback]);
+    }
+
+    /**
+     * Parse an array of basic segments.
+     *
+     * @param array $segments
+     * @return array
+     */
+    protected function parseBasicSegments(array $segments)
+    {
+        // The first segment in a basic array will always be the group, so we can go
+        // ahead and grab that segment. If there is only one total segment we are
+        // just pulling an entire group out of the array and not a single item.
+        $group = $segments[0];
+
+        // If there is more than one segment in this group, it means we are pulling
+        // a specific item out of a group and will need to return this item name
+        // as well as the group so we know which item to pull from the arrays.
+        $item = count($segments) === 1
+            ? null
+            : implode('.', array_slice($segments, 1));
+
+        return [null, $group, $item];
+    }
+
+    /**
+     * Parse an array of namespaced segments.
+     *
+     * @param string $key
+     * @return array
+     */
+    protected function parseNamespacedSegments(string $key): array
+    {
+        [$namespace, $item] = explode('::', $key);
+
+        // First we'll just explode the first segment to get the namespace and group
+        // since the item should be in the remaining segments. Once we have these
+        // two pieces of data we can proceed with parsing out the item's value.
+        $itemSegments = explode('.', $item);
+
+        $groupAndItem = array_slice(
+            $this->parseBasicSegments($itemSegments),
+            1
+        );
+
+        return array_merge([$namespace], $groupAndItem);
     }
 }

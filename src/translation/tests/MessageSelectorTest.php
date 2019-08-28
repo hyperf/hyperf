@@ -10,15 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Translation\Cases;
+namespace HyperfTest\Translation;
 
 use Hyperf\Translation\MessageSelector;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @coversNothing
  */
-class TranslationMessageSelectorTest extends AbstractTestCase
+class MessageSelectorTest extends TestCase
 {
     /**
      * @dataProvider chooseTestData

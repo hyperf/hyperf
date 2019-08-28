@@ -56,6 +56,9 @@ class AnnotationReader
      */
     private $mode;
 
+    /**
+     * @var array
+     */
     private $methodAnnotationCache = [];
 
     /**

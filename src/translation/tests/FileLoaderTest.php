@@ -10,26 +10,26 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Translation\Cases;
+namespace HyperfTest\Translation;
 
 use Hyperf\Translation\FileLoader;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Mockery as m;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @coversNothing
  */
-class TranslationFileLoaderTest extends AbstractTestCase
+class FileLoaderTest extends TestCase
 {
     protected function tearDown(): void
     {
-        m::close();
+        Mockery::close();
     }
 
     public function testLoadMethodWithoutNamespacesProperlyCallsLoader()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/en/foo.php')->andReturn(true);
         $files->shouldReceive('getRequire')->once()->with(__DIR__ . '/en/foo.php')->andReturn(['messages']);
 
@@ -38,7 +38,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testLoadMethodWithNamespacesProperlyCallsLoader()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('exists')->once()->with('bar/en/foo.php')->andReturn(true);
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/vendor/namespace/en/foo.php')->andReturn(false);
         $files->shouldReceive('getRequire')->once()->with('bar/en/foo.php')->andReturn(['foo' => 'bar']);
@@ -49,7 +49,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testLoadMethodWithNamespacesProperlyCallsLoaderAndLoadsLocalOverrides()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('exists')->once()->with('bar/en/foo.php')->andReturn(true);
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/vendor/namespace/en/foo.php')->andReturn(true);
         $files->shouldReceive('getRequire')->once()->with('bar/en/foo.php')->andReturn(['foo' => 'bar']);
@@ -61,7 +61,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testEmptyArraysReturnedWhenFilesDontExist()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/en/foo.php')->andReturn(false);
         $files->shouldReceive('getRequire')->never();
 
@@ -70,7 +70,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testEmptyArraysReturnedWhenFilesDontExistForNamespacedItems()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('getRequire')->never();
 
         $this->assertEquals([], $loader->load('en', 'foo', 'bar'));
@@ -78,7 +78,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testLoadMethodForJSONProperlyCallsLoader()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/en.json')->andReturn(true);
         $files->shouldReceive('get')->once()->with(__DIR__ . '/en.json')->andReturn('{"foo":"bar"}');
 
@@ -87,7 +87,7 @@ class TranslationFileLoaderTest extends AbstractTestCase
 
     public function testLoadMethodForJSONProperlyCallsLoaderForMultiplePaths()
     {
-        $loader = new FileLoader($files = m::mock(Filesystem::class), __DIR__);
+        $loader = new FileLoader($files = Mockery::mock(Filesystem::class), __DIR__);
         $loader->addJsonPath(__DIR__ . '/another');
 
         $files->shouldReceive('exists')->once()->with(__DIR__ . '/en.json')->andReturn(true);
