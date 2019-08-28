@@ -13,19 +13,21 @@ declare(strict_types=1);
 namespace Hyperf\Snowflake;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Snowflake\ConfigInterface as SnowflakeConfigInterface;
+use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Psr\Container\ContainerInterface;
 
-class SnowflakeFactory
+class MetaGeneratorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $level = $config->get('snowflake.level', IdGeneratorInterface::LEVEL_MILLISECOND);
-        $beginSecond = $config->get('snowflake.begin_second', IdGeneratorInterface::DEFAULT_SECOND);
+        $beginSecond = $config->get('snowflake.begin_second', MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
 
-        return make(Snowflake::class, [
-            'level' => $level,
-            'beginSecond' => $beginSecond,
+        return make(RedisMilliSecondMetaGenerator::class, [
+            $config,
+            $container->get(SnowflakeConfigInterface::class),
+            $beginSecond,
         ]);
     }
 }
