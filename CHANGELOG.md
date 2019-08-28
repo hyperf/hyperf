@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
 - [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 
