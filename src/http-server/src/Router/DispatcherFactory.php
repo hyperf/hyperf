@@ -120,7 +120,7 @@ class DispatcherFactory
             if (substr($methodName, 0, 2) === '__') {
                 continue;
             }
-            
+
             $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
             $methodMiddlewares = $middlewares;
