@@ -116,7 +116,7 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 ### 安装组件
 
 ```bash
-composer require hyperf/swoole-enterprise
+composer require hyperf/swoole-tracker
 ```
 
 ## 使用
