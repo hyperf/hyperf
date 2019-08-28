@@ -1,4 +1,22 @@
-# v1.0.13 - TBD
+# v1.0.14 - TBD
+
+# v1.0.13 - 2019-08-28
+
+## Added
+
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
+- [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
+
+## Changed
+
+- [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
+- [#468](https://github.com/hyperf-cloud/hyperf/pull/468) Default exception handlers catch all exceptions.
+
+## Fixed 
+
+- [#466](https://github.com/hyperf-cloud/hyperf/pull/466) Fixed error when the number of data is not enough to paginate.
+- [#466](https://github.com/hyperf-cloud/hyperf/pull/470) Optimized `vendor:publish` command, if the destination folder exists, then will not repeatedly create the folder.
 
 # v1.0.12 - 2019-08-21
 
@@ -6,6 +24,10 @@
 
 - [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
 - [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
+
+## Changed
+
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) The third parameter of Hyperf\GrpcClient\GrpcClient::openStream() have been removed.
 
 ## Fixed
 
@@ -16,7 +38,7 @@
 
 ## Deprecated
 
-- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated.
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated, will be removed in `v1.1`.
 
 # v1.0.11 - 2019-08-15
 
