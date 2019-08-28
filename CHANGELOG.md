@@ -14,6 +14,7 @@
 ## Fixed 
 
 - [#466](https://github.com/hyperf-cloud/hyperf/pull/466) Fixed error when the number of data is not enough to paginate.
+- [#466](https://github.com/hyperf-cloud/hyperf/pull/470) Optimized `vendor:publish` command, if the destination folder exists, then will not repeatedly create the folder.
 
 # v1.0.12 - 2019-08-21
 
