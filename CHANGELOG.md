@@ -1,5 +1,9 @@
 # v1.0.14 - TBD
 
+## Fixed
+
+- [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
+
 # v1.0.13 - 2019-08-28
 
 ## Added
