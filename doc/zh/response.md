@@ -137,7 +137,7 @@ class IndexController
 {
     public function download(ResponseInterface $response): Psr7ResponseInterface
     {
-        // redirect() 方法返回的是一个 Psr\Http\Message\ResponseInterface 对象，需再 return 回去  
+        // download() 方法返回的是一个 Psr\Http\Message\ResponseInterface 对象，需再 return 回去  
         return $response->download('/var/www/file.csv','filename.csv');
     }
 }
