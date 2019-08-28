@@ -46,10 +46,10 @@ class RouteCollectorTest extends TestCase
         });
 
         $data = $collector->getData()[0];
-        $this->assertSame('Handler::Get', $data['GET']['/']);
-        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']);
-        $this->assertSame('Handler::Post', $data['POST']['/']);
-        $this->assertSame('Handler::ApiPost', $data['POST']['/api/']);
+        $this->assertSame('Handler::Get', $data['GET']['/']->callback);
+        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
+        $this->assertSame('Handler::Post', $data['POST']['/']->callback);
+        $this->assertSame('Handler::ApiPost', $data['POST']['/api/']->callback);
     }
 
     public function testAddGroupMiddleware()
@@ -71,16 +71,20 @@ class RouteCollectorTest extends TestCase
         $collector->post('/', 'Handler::Post', [
             'middleware' => ['PostMiddleware'],
         ]);
+        $collector->post('/user/{id:\d+}', 'Handler::Post', [
+            'middleware' => ['PostMiddleware'],
+        ]);
 
         $data = $collector->getData()[0];
-        $this->assertSame('Handler::Get', $data['GET']['/']);
-        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']);
-        $this->assertSame('Handler::Post', $data['POST']['/']);
+        $this->assertSame('Handler::Get', $data['GET']['/']->callback);
+        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
+        $this->assertSame('Handler::Post', $data['POST']['/']->callback);
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['GetMiddleware'], $middle['http']['/']['GET']);
         $this->assertSame(['PostMiddleware'], $middle['http']['/']['POST']);
         $this->assertSame(['ApiGetMiddleware', 'ApiSelfGetMiddleware'], $middle['http']['/api/']['GET']);
+        $this->assertSame(['PostMiddleware'], $middle['http']['/user/{id:\d+}']['POST']);
     }
 
     public function testAddGroupMiddlewareFromAnotherServer()

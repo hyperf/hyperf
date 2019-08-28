@@ -15,6 +15,8 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use HyperfTest\Di\Stub\Foo;
+use HyperfTest\Di\Stub\FooFactory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,5 +32,14 @@ class DefinitionSourceTest extends TestCase
             return 'bar';
         });
         $this->assertEquals('bar', $container->get('Foo'));
+    }
+
+    public function testDefinitionFactory()
+    {
+        $container = new Container(new DefinitionSource([], [], new Scanner()));
+        $container->getDefinitionSource()->addDefinition('Foo', FooFactory::class);
+
+        $foo = $container->get('Foo');
+        $this->assertInstanceOf(Foo::class, $foo);
     }
 }

@@ -43,6 +43,12 @@ class JsonRpcTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
+    /**
+     * TODO: Set config.
+     * @var array
+     */
+    private $config;
+
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
@@ -67,7 +73,7 @@ class JsonRpcTransporter implements TransporterInterface
             $result = $client->connect($node->host, $node->port, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
                 // Force close and reconnect to server.
-                $client->close(true);
+                $client->close();
                 throw new RuntimeException('Connect to server failed.');
             }
             return $client;
