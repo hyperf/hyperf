@@ -52,7 +52,7 @@ class GrpcExceptionHandler extends ExceptionHandler
 
     public function isValid(Throwable $throwable): bool
     {
-        return $throwable instanceof ServerException;
+        return true;
     }
 
     /**

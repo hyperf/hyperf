@@ -8,6 +8,7 @@
 ## Changed
 
 - [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
+- [#468](https://github.com/hyperf-cloud/hyperf/pull/468) Default exception handlers catch all exceptions.
 
 ## Fixed 
 
