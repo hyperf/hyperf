@@ -135,9 +135,10 @@ use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
 
 class IndexController
 {
-    public function download(Response $response): Psr7ResponseInterface
+    public function download(ResponseInterface $response): Psr7ResponseInterface
     {
-        return $response->sendfile('/var/www/file.csv');
+        // redirect() 方法返回的是一个 Psr\Http\Message\ResponseInterface 对象，需再 return 回去  
+        return $response->download('/var/www/file.csv','filename.csv');
     }
 }
 ```

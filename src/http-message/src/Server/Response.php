@@ -14,6 +14,7 @@ namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleFileStream;
 
 class Response extends \Hyperf\HttpMessage\Base\Response
 {
@@ -36,41 +37,20 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     }
 
     /**
-     * @var bool
-     */
-    protected $isEnd = false;
-
-    /**
      * Handle response and send.
      */
     public function send()
     {
-        if ($this->isEnd || !$this->getSwooleResponse()) {
+        if (! $this->getSwooleResponse()) {
             return;
         }
 
         $this->buildSwooleResponse($this->swooleResponse, $this);
-
-        $this->swooleResponse->end($this->getBody()->getContents());
-    }
-
-    /**
-     * Handle response and sendfile.
-     * @param string $file_name
-     * @param string $content_type
-     */
-    public function sendfile(string $file_name, string $content_type = 'application/octet-stream')
-    {
-        $response = $this->getSwooleResponse();
-        $response->setStatusCode(200);
-        $response->setHeader('Content-Description', 'File Transfer');
-        $response->setHeader('Content-Type', $content_type);
-        $response->setHeader('Content-Disposition', 'attachment; filename=' . basename($file_name));
-        $response->setHeader('Content-Transfer-Encoding', 'binary');
-        $response->setHeader('Pragma', 'public');
-        if ($response->sendfile($file_name)) {
-            $this->isEnd = true;
+        $content = $this->getBody();
+        if($content instanceof SwooleFileStream){
+            return $this->swooleResponse->sendfile($content->getContents());
         }
+        $this->swooleResponse->end($content->getContents());
     }
 
     /**
