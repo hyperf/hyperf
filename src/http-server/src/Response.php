@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\Utils\ApplicationContext;
@@ -108,6 +109,39 @@ class Response implements PsrResponseInterface, ResponseInterface
             return $schema . '://' . $host . '/' . $toUrl;
         });
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
+    }
+
+    /**
+     * Automatically sets the ETag header according to the checksum of the file.
+     * @param string $filePath
+     * @param bool $weak
+     * @return string
+     */
+    protected function autoEtag(string $filePath, $weak = false): string
+    {
+
+        $etag = sha1_file($filePath);
+        if (0 !== strpos($etag, '"')) {
+            $etag = '"' . $etag . '"';
+        }
+        return (true === $weak ? 'W/' : '') . $etag;
+    }
+
+    /**
+     * @param string $pathToFile
+     * @param string $name
+     * @return PsrResponseInterface
+     */
+    public function download(string $pathToFile, string $name = ''): PsrResponseInterface
+    {
+        $filename = $name ?: basename($pathToFile);
+        return $this->withHeader('Content-Description', 'File Transfer')
+            ->withHeader('Content-Type', 'application/octet-stream')
+            ->withHeader('Content-Disposition', "attachment; filename={$filename}")
+            ->withHeader('Content-Transfer-Encoding', 'binary')
+            ->withHeader('Pragma', 'public')
+            ->withHeader('ETag', $this->autoEtag($pathToFile))
+            ->withBody(new SwooleFileStream($pathToFile));
     }
 
     /**

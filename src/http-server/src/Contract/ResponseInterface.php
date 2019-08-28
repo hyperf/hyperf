@@ -44,4 +44,12 @@ interface ResponseInterface
      * Redirect to a URL.
      */
     public function redirect(string $toUrl, int $status = 302, string $schema = 'http'): PsrResponseInterface;
+
+    /**
+     * Create a new file download response.
+     * @param string $pathToFile
+     * @param string $name
+     * @return PsrResponseInterface
+     */
+    public function download(string $pathToFile, string $name = ''): PsrResponseInterface;
 }
