@@ -121,8 +121,6 @@ class DispatcherFactory
                 continue;
             }
 
-            $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
-
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
