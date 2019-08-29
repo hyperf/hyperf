@@ -17,7 +17,10 @@ use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
+use Hyperf\HttpServer\Exception\Http\FileException;
+use Hyperf\HttpServer\MimeType\MimeTypeExtensionGuesser;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -25,6 +28,7 @@ use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 use function get_class;
@@ -111,20 +115,41 @@ class Response implements PsrResponseInterface, ResponseInterface
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
     }
 
-    /**
-     * @param string $file
-     * @param string $name
-     * @return PsrResponseInterface
-     */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
-        $filename = $name ?: basename($file);
-        return $this->withHeader('Content-Description', 'File Transfer')
-            ->withHeader('Content-Type', 'application/octet-stream')
-            ->withHeader('Content-Disposition', "attachment; filename={$filename}")
-            ->withHeader('Content-Transfer-Encoding', 'binary')
-            ->withHeader('Pragma', 'public')
-            ->withHeader('ETag', $this->etag($file))
+        $file = new \SplFileInfo($file);
+
+        if (! $file->isReadable()) {
+            throw new FileException('File must be readable.');
+        }
+
+        $filename = $name ?: $file->getBasename();
+        $etag = $this->createEtag($file);
+
+        // Determine if ETag the client expects matches calculated ETag
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request instanceof ServerRequestInterface) {
+            $ifMatch = $request->getHeaderLine('if-match');
+            $ifNoneMatch = $request->getHeaderLine('if-none-match');
+            $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            array_walk($clientEtags, 'trim');
+            if (in_array($etag, $clientEtags, true)) {
+                return $this->withStatus(304);
+            }
+        }
+
+        return $this->withHeader('content-description', 'File Transfer')
+            ->withHeader('content-type', value(function () use ($file) {
+                if (ApplicationContext::hasContainer()) {
+                    $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
+                    $mineType = $guesser->guessMimeType($file->getExtension());
+                }
+                return $mineType ?? 'application/octet-stream';
+            }))
+            ->withHeader('content-disposition', "attachment; filename={$filename}")
+            ->withHeader('content-transfer-encoding', 'binary')
+            ->withHeader('pragma', 'public')
+            ->withHeader('etag', $etag)
             ->withBody(new SwooleFileStream($file));
     }
 
@@ -364,17 +389,22 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     /**
      * Get ETag header according to the checksum of the file.
-     * @param string $file
-     * @param bool $weak
-     * @return string
      */
-    protected function etag(string $file, $weak = false): string
+    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
     {
-        $etag = sha1_file($file);
-        if (strpos($etag, '"') !== 0) {
-            $etag = '"' . $etag . '"';
+        $etag = '';
+        if ($weak) {
+            ClearStatCache::clear($file->getPathname());
+            $lastModified = $file->getMTime();
+            $filesize = $file->getSize();
+            if (! $lastModified || ! $filesize) {
+                return $etag;
+            }
+            $etag = sprintf('W/"%x-%x"', $lastModified, $filesize);
+        } else {
+            $etag = md5_file($file->getPathname());
         }
-        return ($weak === true ? 'W/' : '') . $etag;
+        return $etag;
     }
 
     /**
