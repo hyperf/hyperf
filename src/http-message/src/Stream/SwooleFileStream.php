@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Stream;
 
+use Hyperf\HttpServer\Exception\Http\FileException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 
@@ -30,15 +31,18 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * SwooleFileStream constructor.
      *
-     * @param string $file
+     * @param string|\SplFileInfo $file
      */
-    public function __construct(string $file)
+    public function __construct($file)
     {
-        if (! file_exists($file)) {
-            throw new InvalidArgumentException('Not a file');
+        if (! $file instanceof \SplFileInfo) {
+            $file = new \SplFileInfo($file);
         }
-        $this->contents = $file;
-        $this->size = filesize($file);
+        if (! $file->isReadable()) {
+            throw new FileException('File must be readable.');
+        }
+        $this->contents = $file->getPathname();
+        $this->size = $file->getSize();
     }
 
     /**
