@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Translation\Contracts\Translator;
 use Psr\Container\ContainerInterface;
 
 class ValidatorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $translator = $container->get(Translator::class);
+        $translator = $container->get(TranslatorInterface::class);
 
         $validator = make(Factory::class, compact('translator', 'container'));
 

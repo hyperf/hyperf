@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use BadMethodCallException;
+use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Di\Container;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Translation\Contracts\Translator;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Fluent;
 use Hyperf\Utils\Str;
@@ -76,7 +76,7 @@ class Validator implements ValidatorContract
     /**
      * The Translator implementation.
      *
-     * @var \Hyperf\Translation\Contracts\Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -205,14 +205,14 @@ class Validator implements ValidatorContract
     /**
      * Create a new Validator instance.
      *
-     * @param \Hyperf\Translation\Contracts\Translator $translator
+     * @param TranslatorInterface $translator
      * @param array $data
      * @param array $rules
      * @param array $messages
      * @param array $customAttributes
      */
     public function __construct(
-        Translator $translator,
+        TranslatorInterface $translator,
         array $data,
         array $rules,
         array $messages = [],
@@ -826,7 +826,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Translator implementation.
      *
-     * @return \Hyperf\Translation\Contracts\Translator
+     * @return TranslatorInterface
      */
     public function getTranslator()
     {
@@ -836,9 +836,9 @@ class Validator implements ValidatorContract
     /**
      * Set the Translator implementation.
      *
-     * @param \Hyperf\Translation\Contracts\Translator $translator
+     * @param TranslatorInterface $translator
      */
-    public function setTranslator(Translator $translator)
+    public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }

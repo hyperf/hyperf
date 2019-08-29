@@ -267,16 +267,14 @@ class Translator implements TranslatorInterface
             $parsed = $this->parseNamespacedSegments($key);
         }
 
+        if (is_null($parsed[0])) {
+            $parsed[0] = '*';
+        }
+
         // Once we have the parsed array of this key's elements, such as its groups
         // and namespace, we will cache each array inside a simple list that has
         // the key and the parsed array for quick look-ups for later requests.
-        $segments = $this->parsed[$key] = $parsed;
-
-        if (is_null($segments[0])) {
-            $segments[0] = '*';
-        }
-
-        return $segments;
+        return $this->parsed[$key] = $parsed;
     }
 
     /**
@@ -395,6 +393,7 @@ class Translator implements TranslatorInterface
         if (is_string($line)) {
             return $this->makeReplacements($line, $replace);
         }
+
         if (is_array($line) && count($line) > 0) {
             foreach ($line as $key => $value) {
                 $line[$key] = $this->makeReplacements($value, $replace);
@@ -406,8 +405,11 @@ class Translator implements TranslatorInterface
 
     /**
      * Make the place-holder replacements on a line.
+     *
+     * @param array|string $line
+     * @return array|string
      */
-    protected function makeReplacements(string $line, array $replace): string
+    protected function makeReplacements($line, array $replace)
     {
         if (empty($replace)) {
             return $line;

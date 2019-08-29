@@ -462,7 +462,7 @@ trait ValidatesAttributes
             $column,
             $value,
             $parameters
-            ) >= $expected;
+        ) >= $expected;
     }
 
     /**
@@ -514,7 +514,7 @@ trait ValidatesAttributes
             $id,
             $idColumn,
             $extra
-            ) == 0;
+        ) == 0;
     }
 
     /**
@@ -1449,7 +1449,7 @@ trait ValidatesAttributes
     {
         return Carbon::hasTestNow() && is_string($value) && (
             $value === 'now' || Carbon::hasRelativeKeywords($value)
-            );
+        );
     }
 
     /**

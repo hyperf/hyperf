@@ -13,8 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use Closure;
-use Hyperf\Di\Container;
-use Hyperf\Translation\Contracts\Translator;
+use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Contracts\Validation\Factory as FactoryContract;
 use Psr\Container\ContainerInterface;
@@ -24,7 +23,7 @@ class Factory implements FactoryContract
     /**
      * The Translator implementation.
      *
-     * @var \Hyperf\Translation\Contracts\Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -86,11 +85,8 @@ class Factory implements FactoryContract
 
     /**
      * Create a new Validator factory instance.
-     *
-     * @param null|\Hyperf\Translation\Contracts\Translator $translator
-     * @param  Container
      */
-    public function __construct(Translator $translator, ContainerInterface $container = null)
+    public function __construct(TranslatorInterface $translator, ContainerInterface $container = null)
     {
         $this->container = $container;
         $this->translator = $translator;
@@ -220,7 +216,7 @@ class Factory implements FactoryContract
     /**
      * Get the Translator implementation.
      *
-     * @return \Hyperf\Translation\Contracts\Translator
+     * @return TranslatorInterface
      */
     public function getTranslator()
     {
