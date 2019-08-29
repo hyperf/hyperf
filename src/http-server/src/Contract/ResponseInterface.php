@@ -48,5 +48,5 @@ interface ResponseInterface
     /**
      * Create a new file download response.
      */
-    public function download(string $pathToFile, string $name = ''): PsrResponseInterface;
+    public function download(string $file, string $name = ''): PsrResponseInterface;
 }
