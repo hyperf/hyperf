@@ -14,16 +14,13 @@ namespace HyperfTest\Logger;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 use ReflectionClass;
 
 /**
@@ -115,7 +112,7 @@ class LoggerFactoryTest extends TestCase
                             'constructor' => [
                                 'level' => \Monolog\Logger::DEBUG,
                             ],
-                        ]
+                        ],
                     ],
                     'formatter' => [
                         'class' => \Monolog\Formatter\LineFormatter::class,

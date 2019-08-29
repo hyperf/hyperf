@@ -21,9 +21,6 @@ use Hyperf\Di\Aop\AroundInterface;
  */
 class Aspect extends AbstractAnnotation
 {
-    /**
-     * {@inheritdoc}
-     */
     public function collectClass(string $className): void
     {
         // @TODO Add order property.
@@ -33,7 +30,9 @@ class Aspect extends AbstractAnnotation
             $instance = $instantitor->instantiate($className);
             switch ($instance) {
                 case $instance instanceof AroundInterface:
-                    AspectCollector::setAround($className, $instance->classes, $instance->annotations);
+                    $classes = property_exists($instance, 'classes') ? $instance->classes : [];
+                    $annotations = property_exists($instance, 'annotations') ? $instance->annotations : [];
+                    AspectCollector::setAround($className, $classes, $annotations);
                     break;
             }
         }

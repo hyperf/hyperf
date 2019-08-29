@@ -35,6 +35,7 @@
   * [命令行](zh/command.md)
   * [自动化测试](zh/testing.md)
   * [视图](zh/view.md)
+  * [国际化](zh/translation.md)
   
 * 数据库模型
 
