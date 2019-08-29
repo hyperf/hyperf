@@ -115,6 +115,12 @@ class Response implements PsrResponseInterface, ResponseInterface
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
     }
 
+    /**
+     * Create a file download response.
+     *
+     * @param string $file The file path which want to send to client.
+     * @param string $name The alias name of the file that client receive.
+     */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
         $file = new \SplFileInfo($file);
@@ -140,6 +146,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
         return $this->withHeader('content-description', 'File Transfer')
             ->withHeader('content-type', value(function () use ($file) {
+                $mineType = null;
                 if (ApplicationContext::hasContainer()) {
                     $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
                     $mineType = $guesser->guessMimeType($file->getExtension());
