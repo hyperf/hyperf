@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Stream\FileInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Stream\SwooleFileStream;
 
 class Response extends \Hyperf\HttpMessage\Base\Response
 {
@@ -47,8 +47,8 @@ class Response extends \Hyperf\HttpMessage\Base\Response
 
         $this->buildSwooleResponse($this->swooleResponse, $this);
         $content = $this->getBody();
-        if($content instanceof SwooleFileStream){
-            return $this->swooleResponse->sendfile($content->getContents());
+        if ($content instanceof FileInterface) {
+            return $this->swooleResponse->sendfile($content->getFilename());
         }
         $this->swooleResponse->end($content->getContents());
     }
@@ -101,7 +101,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         /*
          * Cookies
          */
-        foreach ((array)$this->cookies as $domain => $paths) {
+        foreach ((array) $this->cookies as $domain => $paths) {
             foreach ($paths ?? [] as $path => $item) {
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {

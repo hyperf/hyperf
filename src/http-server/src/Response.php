@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\Utils\ApplicationContext;
@@ -112,36 +112,20 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * Automatically sets the ETag header according to the checksum of the file.
-     * @param string $filePath
-     * @param bool $weak
-     * @return string
-     */
-    protected function autoEtag(string $filePath, $weak = false): string
-    {
-
-        $etag = sha1_file($filePath);
-        if (0 !== strpos($etag, '"')) {
-            $etag = '"' . $etag . '"';
-        }
-        return (true === $weak ? 'W/' : '') . $etag;
-    }
-
-    /**
-     * @param string $pathToFile
+     * @param string $file
      * @param string $name
      * @return PsrResponseInterface
      */
-    public function download(string $pathToFile, string $name = ''): PsrResponseInterface
+    public function download(string $file, string $name = ''): PsrResponseInterface
     {
-        $filename = $name ?: basename($pathToFile);
+        $filename = $name ?: basename($file);
         return $this->withHeader('Content-Description', 'File Transfer')
             ->withHeader('Content-Type', 'application/octet-stream')
             ->withHeader('Content-Disposition', "attachment; filename={$filename}")
             ->withHeader('Content-Transfer-Encoding', 'binary')
             ->withHeader('Pragma', 'public')
-            ->withHeader('ETag', $this->autoEtag($pathToFile))
-            ->withBody(new SwooleFileStream($pathToFile));
+            ->withHeader('ETag', $this->etag($file))
+            ->withBody(new SwooleFileStream($file));
     }
 
     /**
@@ -376,6 +360,21 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    /**
+     * Get ETag header according to the checksum of the file.
+     * @param string $file
+     * @param bool $weak
+     * @return string
+     */
+    protected function etag(string $file, $weak = false): string
+    {
+        $etag = sha1_file($file);
+        if (strpos($etag, '"') !== 0) {
+            $etag = '"' . $etag . '"';
+        }
+        return ($weak === true ? 'W/' : '') . $etag;
     }
 
     /**
