@@ -10,6 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
@@ -431,5 +435,75 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
+    }
+}
+
+if ( !function_exists('container')) {
+    /**
+     * Container instance
+     */
+    function container()
+    {
+        return ApplicationContext::getContainer();
+    }
+}
+
+if ( !function_exists('redis')) {
+    /**
+     * redis Client instance
+     */
+    function redis()
+    {
+        return container()->get(\Redis::class);
+    }
+}
+
+if ( !function_exists('cache')) {
+    /**
+     * The cache instance is a simple cache
+     */
+    function cache()
+    {
+        return container()->get(\Psr\SimpleCache\CacheInterface::class);
+    }
+}
+
+if ( !function_exists('stdLog')) {
+    /**
+     * std Console log
+     */
+    function stdLog()
+    {
+        return container()->get(StdoutLoggerInterface::class);
+    }
+}
+
+if ( !function_exists('logger')) {
+    /**
+     * File log
+     */
+    function logger()
+    {
+        return container()->get(LoggerFactory::class)->make();
+    }
+}
+
+if ( !function_exists('request')) {
+    /**
+     * The request instance
+     */
+    function request()
+    {
+        return container()->get(RequestInterface::class);
+    }
+}
+
+if ( !function_exists('response')) {
+    /**
+     * The Response instance
+     */
+    function response()
+    {
+        return container()->get(ResponseInterface::class);
     }
 }
