@@ -104,36 +104,22 @@ class ModelOption
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUses(): string
     {
         return $this->uses;
     }
 
-    /**
-     * @param string $uses
-     * @return ModelOption
-     */
     public function setUses(string $uses): ModelOption
     {
         $this->uses = $uses;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isRefreshFillable(): bool
     {
         return $this->refreshFillable;
     }
 
-    /**
-     * @param bool $refreshFillable
-     * @return ModelOption
-     */
     public function setRefreshFillable(bool $refreshFillable): ModelOption
     {
         $this->refreshFillable = $refreshFillable;
