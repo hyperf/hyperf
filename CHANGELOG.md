@@ -1,5 +1,9 @@
 # v1.0.14 - TBD
 
+## Added
+
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Don't auto rewrite fillable argument when using no-fillable option.
+
 ## Fixed
 
 - [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
