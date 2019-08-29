@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Stream;
 
 use Hyperf\HttpServer\Exception\Http\FileException;
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 
 class SwooleFileStream implements StreamInterface, FileInterface
@@ -21,12 +20,12 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * @var string
      */
-    protected $contents;
+    protected $size;
 
     /**
-     * @var string
+     * @var \SplFileInfo
      */
-    protected $size;
+    protected $file;
 
     /**
      * SwooleFileStream constructor.
@@ -41,7 +40,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
         if (! $file->isReadable()) {
             throw new FileException('File must be readable.');
         }
-        $this->contents = $file->getPathname();
+        $this->file = $file;
         $this->size = $file->getSize();
     }
 
@@ -236,6 +235,6 @@ class SwooleFileStream implements StreamInterface, FileInterface
 
     public function getFilename(): string
     {
-        return $this->getContents();
+        return $this->file->getPathname();
     }
 }
