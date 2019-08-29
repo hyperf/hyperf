@@ -44,6 +44,11 @@ class ModelOption
      */
     protected $uses;
 
+    /**
+     * @var bool
+     */
+    protected $noFillable;
+
     public function getPool(): string
     {
         return $this->pool;
@@ -114,6 +119,24 @@ class ModelOption
     public function setUses(string $uses): ModelOption
     {
         $this->uses = $uses;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNoFillable(): bool
+    {
+        return $this->noFillable;
+    }
+
+    /**
+     * @param bool $noFillable
+     * @return ModelOption
+     */
+    public function setNoFillable(bool $noFillable): ModelOption
+    {
+        $this->noFillable = $noFillable;
         return $this;
     }
 }
