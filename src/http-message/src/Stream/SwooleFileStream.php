@@ -12,11 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Stream;
 
-
-use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 
-class SwooleFileStream implements StreamInterface
+class SwooleFileStream implements StreamInterface, FileInterface
 {
     /**
      * @var string
@@ -31,15 +30,15 @@ class SwooleFileStream implements StreamInterface
     /**
      * SwooleFileStream constructor.
      *
-     * @param string $file_path
+     * @param string $file
      */
-    public function __construct(string $file_path)
+    public function __construct(string $file)
     {
-        if (!file_exists($file_path)) {
+        if (! file_exists($file)) {
             throw new InvalidArgumentException('Not a file');
         }
-        $this->contents = $file_path;
-        $this->size = filesize($file_path);
+        $this->contents = $file;
+        $this->size = filesize($file);
     }
 
     /**
@@ -88,7 +87,7 @@ class SwooleFileStream implements StreamInterface
      */
     public function getSize()
     {
-        if (!$this->size) {
+        if (! $this->size) {
             $this->size = filesize($this->getContents());
         }
         return $this->size;
@@ -97,8 +96,8 @@ class SwooleFileStream implements StreamInterface
     /**
      * Returns the current position of the file read/write pointer.
      *
-     * @return int Position of the file pointer
      * @throws \RuntimeException on error
+     * @return int Position of the file pointer
      */
     public function tell()
     {
@@ -170,8 +169,8 @@ class SwooleFileStream implements StreamInterface
      * Write data to the stream.
      *
      * @param string $string the string that is to be written
-     * @return int returns the number of bytes written to the stream
      * @throws \RuntimeException on failure
+     * @return int returns the number of bytes written to the stream
      */
     public function write($string)
     {
@@ -194,9 +193,9 @@ class SwooleFileStream implements StreamInterface
      * @param int $length Read up to $length bytes from the object and return
      *                    them. Fewer than $length bytes may be returned if underlying stream
      *                    call returns fewer bytes.
+     * @throws \RuntimeException if an error occurs
      * @return string returns the data read from the stream, or an empty string
      *                if no bytes are available
-     * @throws \RuntimeException if an error occurs
      */
     public function read($length)
     {
@@ -206,9 +205,9 @@ class SwooleFileStream implements StreamInterface
     /**
      * Returns the remaining contents in a string.
      *
-     * @return string
      * @throws \RuntimeException if unable to read or an error occurs while
      *                           reading
+     * @return string
      */
     public function getContents()
     {
@@ -229,5 +228,10 @@ class SwooleFileStream implements StreamInterface
     public function getMetadata($key = null)
     {
         throw new \BadMethodCallException('Not implemented');
+    }
+
+    public function getFilename(): string
+    {
+        return $this->getContents();
     }
 }
