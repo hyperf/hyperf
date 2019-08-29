@@ -18,7 +18,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\HttpServer\MimeType\MimeTypeExtensionGuesser;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
