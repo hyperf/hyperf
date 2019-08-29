@@ -47,7 +47,7 @@ class ModelOption
     /**
      * @var bool
      */
-    protected $noFillable;
+    protected $refreshFillable;
 
     public function getPool(): string
     {
@@ -125,18 +125,18 @@ class ModelOption
     /**
      * @return bool
      */
-    public function isNoFillable(): bool
+    public function isRefreshFillable(): bool
     {
-        return $this->noFillable;
+        return $this->refreshFillable;
     }
 
     /**
-     * @param bool $noFillable
+     * @param bool $refreshFillable
      * @return ModelOption
      */
-    public function setNoFillable(bool $noFillable): ModelOption
+    public function setRefreshFillable(bool $refreshFillable): ModelOption
     {
-        $this->noFillable = $noFillable;
+        $this->refreshFillable = $refreshFillable;
         return $this;
     }
 }

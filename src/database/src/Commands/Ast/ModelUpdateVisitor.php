@@ -39,7 +39,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof Node\Stmt\PropertyProperty:
-                if ($node->name == 'fillable' && ! $this->option->isNoFillable()) {
+                if ($node->name == 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
                 } elseif ($node->name == 'casts') {
                     $node = $this->rewriteCasts($node);

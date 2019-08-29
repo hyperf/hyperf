@@ -1,8 +1,8 @@
 # v1.0.14 - TBD
 
-## Added
+## Changed
 
-- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Don't auto rewrite fillable argument when using no-fillable option.
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Don't auto rewrite fillable argument unless using refresh-fillable option.
 
 ## Fixed
 
