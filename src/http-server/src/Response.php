@@ -131,6 +131,14 @@ class Response implements PsrResponseInterface, ResponseInterface
 
         $filename = $name ?: $file->getBasename();
         $etag = $this->createEtag($file);
+        $contentType = value(function () use ($file) {
+            $mineType = null;
+            if (ApplicationContext::hasContainer()) {
+                $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
+                $mineType = $guesser->guessMimeType($file->getExtension());
+            }
+            return $mineType ?? 'application/octet-stream';
+        });
 
         // Determine if ETag the client expects matches calculated ETag
         $request = Context::get(ServerRequestInterface::class);
@@ -140,19 +148,12 @@ class Response implements PsrResponseInterface, ResponseInterface
             $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
             array_walk($clientEtags, 'trim');
             if (in_array($etag, $clientEtags, true)) {
-                return $this->withStatus(304);
+                return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
             }
         }
 
         return $this->withHeader('content-description', 'File Transfer')
-            ->withHeader('content-type', value(function () use ($file) {
-                $mineType = null;
-                if (ApplicationContext::hasContainer()) {
-                    $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
-                    $mineType = $guesser->guessMimeType($file->getExtension());
-                }
-                return $mineType ?? 'application/octet-stream';
-            }))
+            ->withHeader('content-type', $contentType)
             ->withHeader('content-disposition', "attachment; filename={$filename}")
             ->withHeader('content-transfer-encoding', 'binary')
             ->withHeader('pragma', 'public')
