@@ -2,7 +2,7 @@
 
 ## Changed
 
-- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Don't auto rewrite fillable argument unless using refresh-fillable option.
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
 
 ## Fixed
 
