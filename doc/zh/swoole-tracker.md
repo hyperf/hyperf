@@ -113,7 +113,6 @@ EXPOSE 9501
 ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 ```
 
-
 ## 使用
 
 ### 不依赖组件
@@ -123,6 +122,8 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 `Swoole`的`HttpServer`：`ip:prot`
 
 其他的`Server`：`ip(hostname):prot`
+
+即安装好`swoole_tracker`扩展之后就可以正常使用`Swoole Tracker`的功能
 
 ### 依赖组件
 
