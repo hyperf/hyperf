@@ -1,6 +1,6 @@
 # ConfigProvider mechanism
 
-The ConfigProvider mechanism is a very important mechanism for Hyperf componentization，`Decoupling between components` 和 `Component independence` and `Component reusability` It is based on this mechanism to be realized.
+The ConfigProvider mechanism is a very important mechanism for Hyperf componentization，`Decoupling between components` and `Component independence` and `Component reusability` It is based on this mechanism to be realized.
 
 # What is ConfigProvider mechanism?
 
