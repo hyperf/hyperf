@@ -475,9 +475,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             return $data;
         }
 
-        $method = strtolower($request->getMethod());
         $contentType = strtolower($request->getHeaderLine('Content-Type'));
-        if ($method == 'post' && strpos($contentType, 'application/json') === 0) {
+        if (strpos($contentType, 'application/json') === 0) {
             $data = json_decode($request->getBody()->getContents(), true) ?? [];
         }
 
