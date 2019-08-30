@@ -113,15 +113,26 @@ EXPOSE 9501
 ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 ```
 
-### 安装组件
+
+## 使用
+
+### 不依赖组件
+
+`Swoole Tracker`的`v2.5.0`版本支持自动生成应用名称并创建应用，无需修改任何代码，生成的应用名称格式为：
+
+`Swoole`的`HttpServer`：`ip:prot`
+
+其他的`Server`：`ip(hostname):prot`
+
+### 依赖组件
+
+当你需要自定义应用名称时则需要安装组件，使用`Composer`安装：
 
 ```bash
 composer require hyperf/swoole-tracker
 ```
 
-## 使用
-
-在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleTracker\Middleware\HttpServerMiddleware` 中间件即可，如下：
+安装完成后在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleTracker\Middleware\HttpServerMiddleware` 中间件即可，如下：
 
 ```php
 <?php
@@ -132,4 +143,3 @@ return [
     ],
 ];
 ```
-
