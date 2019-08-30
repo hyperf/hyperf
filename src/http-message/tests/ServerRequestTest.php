@@ -45,13 +45,19 @@ class ServerRequestTest extends TestCase
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
 
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/JSON');
-        $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
-        $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
-
-        $request = Mockery::mock(RequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
         $this->assertSame([], RequestStub::normalizeParsedBody($data, $request));
+    }
+
+    public function testNormalizeParsedBodyInvalidContentType()
+    {
+        $data = ['id' => 1];
+        $json = ['name' => 'Hyperf'];
+
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/JSON');
+        $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
+        $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
     }
 }
