@@ -8,7 +8,7 @@ composer create-project hyperf/component-creater your_component dev-master
 
 execute results are as follows：
 
-```
+```php
 $ composer create-project hyperf/component-creater your_component dev-master
 Installing hyperf/component-creater (dev-master 2a626139a08be9cc3b23e9f03592ccf1b7d3158a)
   - Installing hyperf/component-creater (dev-master 2a62613): Cloning 2a626139a0 from cache

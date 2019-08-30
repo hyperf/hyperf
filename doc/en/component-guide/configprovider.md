@@ -2,13 +2,13 @@
 
 The ConfigProvider mechanism is a very important mechanism for Hyperf componentization，`Decoupling between components` 和 `Component independence` and `Component reusability` It is based on this mechanism to be realized.
 
-# What is ConfigProvider mechanism？
+# What is ConfigProvider mechanism?
 
 Simply put, each component will provide a `ConfigProvider`，Usually a class that provides `ConfigProvider` in the root of the component，`ConfigProvider` will provide all configuration information for the corresponding component，This information is loaded by the Hyperf framework at startup，Finally, the configuration information in `ConfigProvider` will be merged into the implementation class corresponding to `Hyperf\Contract\ConfigInterface`，The `dependencies` information will be merged into `Hyperf\Di\Definition\DefinitionSource`，This enables configuration initialization to be performed when the component is used under the Hyperf framework.
 
 `ConfigProvider` itself does not have any dependencies, does not inherit any abstract classes and does not require any implementation of the interface, just provide a `__invoke` method and return an array of the corresponding configuration structure.
 
-# How to define a ConfigProvider ？
+# How to define a ConfigProvider?
 
 As usually，`ConfigProvider` will be defined in the root directory of the component, a `ConfigProvider` class is usually as follows：
 
