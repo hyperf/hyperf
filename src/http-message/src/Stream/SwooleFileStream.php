@@ -30,7 +30,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * SwooleFileStream constructor.
      *
-     * @param string|\SplFileInfo $file
+     * @param \SplFileInfo|string $file
      */
     public function __construct($file)
     {
