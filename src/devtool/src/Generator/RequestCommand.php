@@ -10,10 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Validation\Request;
+namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Devtool\Generator\GeneratorCommand;
 
 /**
  * Class RequestCommand.
@@ -29,7 +28,7 @@ class RequestCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/request.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/validation-request.stub';
     }
 
     protected function getDefaultNamespace(): string

@@ -83,7 +83,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Set the connection to be used.
      */
-    public function setConnection(string $connection)
+    public function setConnection(?string $connection)
     {
         $this->connection = $connection;
     }
