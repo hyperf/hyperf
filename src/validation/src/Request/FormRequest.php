@@ -14,7 +14,6 @@ namespace Hyperf\Validation\Request;
 
 use Hyperf\HttpServer\Request;
 use Hyperf\Utils\Context;
-use Hyperf\Validation\Contracts\Validation\Factory;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
 use Hyperf\Validation\Contracts\Validation\Validator;
@@ -56,7 +55,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get the proper failed validation response for the request.
      *
-     * @param array $errors
      * @return ResponseInterface
      */
     public function response()
@@ -69,20 +67,16 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [];
     }
 
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
-    public function attributes()
+    public function attributes(): array
     {
         return [];
     }
@@ -90,7 +84,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Set the container implementation.
      *
-     * @param ContainerInterface $container
      * @return $this
      */
     public function setContainer(ContainerInterface $container)
@@ -125,7 +118,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Create the default validator instance.
      *
-     * @param Factory $factory
      * @return \Hyperf\Validation\Contracts\Validation\Validator
      */
     protected function createDefaultValidator(ValidationFactory $factory)
@@ -151,8 +143,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Handle a failed validation attempt.
      *
-     * @param Validator $validator
-     *
      * @throws ValidationException
      */
     protected function failedValidation(Validator $validator)
@@ -162,11 +152,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Format the errors from the given Validator instance.
-     *
-     * @param Validator $validator
-     * @return array
      */
-    protected function formatErrors(Validator $validator)
+    protected function formatErrors(Validator $validator): array
     {
         return $validator->getMessageBag()->toArray();
     }
@@ -187,8 +174,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Handle a failed authorization attempt.
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     protected function failedAuthorization()
     {

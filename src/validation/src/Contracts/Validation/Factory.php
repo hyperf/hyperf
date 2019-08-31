@@ -17,10 +17,6 @@ interface Factory
     /**
      * Create a new Validator instance.
      *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
      * @return \Hyperf\Validation\Contracts\Validation\Validator
      */
     public function make(array $data, array $rules, array $messages = [], array $customAttributes = []);
@@ -28,7 +24,6 @@ interface Factory
     /**
      * Register a custom validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      * @param null|string $message
      */
@@ -37,7 +32,6 @@ interface Factory
     /**
      * Register a custom implicit validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      * @param null|string $message
      */
@@ -46,7 +40,6 @@ interface Factory
     /**
      * Register a custom implicit validator message replacer.
      *
-     * @param string $rule
      * @param \Closure|string $replacer
      */
     public function replacer(string $rule, $replacer);

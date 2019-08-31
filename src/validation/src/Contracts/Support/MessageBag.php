@@ -18,16 +18,12 @@ interface MessageBag extends Arrayable
 {
     /**
      * Get the keys present in the message bag.
-     *
-     * @return array
      */
     public function keys(): array;
 
     /**
      * Add a message to the bag.
      *
-     * @param string $key
-     * @param string $message
      * @return $this
      */
     public function add(string $key, string $message);
@@ -44,7 +40,6 @@ interface MessageBag extends Arrayable
      * Determine if messages exist for a given key.
      *
      * @param array|string $key
-     * @return bool
      */
     public function has($key): bool;
 
@@ -53,16 +48,13 @@ interface MessageBag extends Arrayable
      *
      * @param null|string $key
      * @param null|string $format
-     * @return string
      */
     public function first($key = null, $format = null): string;
 
     /**
      * Get all of the messages from the bag for a given key.
      *
-     * @param string $key
      * @param null|string $format
-     * @return array
      */
     public function get(string $key, $format = null): array;
 
@@ -70,50 +62,38 @@ interface MessageBag extends Arrayable
      * Get all of the messages for every key in the bag.
      *
      * @param null|string $format
-     * @return array
      */
     public function all($format = null): array;
 
     /**
      * Get the raw messages in the container.
-     *
-     * @return array
      */
     public function getMessages(): array;
 
     /**
      * Get the default message format.
-     *
-     * @return string
      */
     public function getFormat(): string;
 
     /**
      * Set the default message format.
      *
-     * @param string $format
      * @return $this
      */
     public function setFormat(string $format = ':message');
 
     /**
      * Determine if the message bag has any messages.
-     *
-     * @return bool
      */
     public function isEmpty(): bool;
 
     /**
      * Determine if the message bag has any messages.
-     *
-     * @return bool
      */
     public function isNotEmpty(): bool;
 
     /**
      * Get the number of messages in the container.
-     *
-     * @return int
      */
     public function count(): int;
 }

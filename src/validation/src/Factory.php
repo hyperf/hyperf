@@ -95,10 +95,6 @@ class Factory implements FactoryContract
     /**
      * Create a new Validator instance.
      *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
      * @return \Hyperf\Validation\Validator
      */
     public function make(array $data, array $rules, array $messages = [], array $customAttributes = [])
@@ -132,12 +128,7 @@ class Factory implements FactoryContract
     /**
      * Validate the given data against the provided rules.
      *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
      * @throws \Hyperf\Validation\ValidationException
-     * @return array
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {
@@ -147,7 +138,6 @@ class Factory implements FactoryContract
     /**
      * Register a custom validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      * @param null|string $message
      */
@@ -163,7 +153,6 @@ class Factory implements FactoryContract
     /**
      * Register a custom implicit validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      * @param null|string $message
      */
@@ -179,7 +168,6 @@ class Factory implements FactoryContract
     /**
      * Register a custom dependent validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      * @param null|string $message
      */
@@ -195,7 +183,6 @@ class Factory implements FactoryContract
     /**
      * Register a custom validator message replacer.
      *
-     * @param string $rule
      * @param \Closure|string $replacer
      */
     public function replacer(string $rule, $replacer)
@@ -235,8 +222,6 @@ class Factory implements FactoryContract
 
     /**
      * Set the Presence Verifier implementation.
-     *
-     * @param \Hyperf\Validation\PresenceVerifierInterface $presenceVerifier
      */
     public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
     {
@@ -246,10 +231,6 @@ class Factory implements FactoryContract
     /**
      * Resolve a new Validator instance.
      *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
      * @return \Hyperf\Validation\Validator
      */
     protected function resolve(array $data, array $rules, array $messages, array $customAttributes)
@@ -263,8 +244,6 @@ class Factory implements FactoryContract
 
     /**
      * Add the extensions to a validator instance.
-     *
-     * @param \Hyperf\Validation\Validator $validator
      */
     protected function addExtensions(Validator $validator)
     {

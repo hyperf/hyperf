@@ -19,29 +19,21 @@ interface Validator extends MessageProvider
 {
     /**
      * Run the validator's rules against its data.
-     *
-     * @return array
      */
     public function validate(): array;
 
     /**
      * Get the attributes and values that were validated.
-     *
-     * @return array
      */
     public function validated(): array;
 
     /**
      * Determine if the data fails the validation rules.
-     *
-     * @return bool
      */
     public function fails(): bool;
 
     /**
      * Get the failed validation rules.
-     *
-     * @return array
      */
     public function failed(): array;
 
@@ -50,7 +42,6 @@ interface Validator extends MessageProvider
      *
      * @param array|string $attribute
      * @param array|string $rules
-     * @param callable $callback
      * @return $this
      */
     public function sometimes($attribute, $rules, callable $callback);
