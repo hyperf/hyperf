@@ -58,7 +58,6 @@ class ValidationException extends ServerException
      *
      * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
      * @param null|ResponseInterface $response
-     * @param string $errorBag
      */
     public function __construct($validator, $response = null, string $errorBag = 'default')
     {
@@ -72,7 +71,6 @@ class ValidationException extends ServerException
     /**
      * Create a new validation exception from a plain array of messages.
      *
-     * @param array $messages
      * @return static
      */
     public static function withMessages(array $messages)
@@ -88,8 +86,6 @@ class ValidationException extends ServerException
 
     /**
      * Get all of the validation error messages.
-     *
-     * @return array
      */
     public function errors(): array
     {
@@ -99,7 +95,6 @@ class ValidationException extends ServerException
     /**
      * Set the HTTP status code to be used for the response.
      *
-     * @param int $status
      * @return $this
      */
     public function status(int $status)
@@ -112,7 +107,6 @@ class ValidationException extends ServerException
     /**
      * Set the error bag on the exception.
      *
-     * @param string $errorBag
      * @return $this
      */
     public function errorBag(string $errorBag)
@@ -125,7 +119,6 @@ class ValidationException extends ServerException
     /**
      * Set the URL to redirect to on a validation error.
      *
-     * @param string $url
      * @return $this
      */
     public function redirectTo(string $url)

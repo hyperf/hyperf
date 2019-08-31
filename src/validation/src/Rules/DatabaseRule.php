@@ -46,9 +46,6 @@ trait DatabaseRule
 
     /**
      * Create a new rule instance.
-     *
-     * @param string $table
-     * @param string $column
      */
     public function __construct(string $table, string $column = 'NULL')
     {
@@ -81,7 +78,6 @@ trait DatabaseRule
     /**
      * Set a "where not" constraint on the query.
      *
-     * @param string $column
      * @param array|string $value
      * @return $this
      */
@@ -97,7 +93,6 @@ trait DatabaseRule
     /**
      * Set a "where null" constraint on the query.
      *
-     * @param string $column
      * @return $this
      */
     public function whereNull(string $column)
@@ -108,7 +103,6 @@ trait DatabaseRule
     /**
      * Set a "where not null" constraint on the query.
      *
-     * @param string $column
      * @return $this
      */
     public function whereNotNull(string $column)
@@ -119,8 +113,6 @@ trait DatabaseRule
     /**
      * Set a "where in" constraint on the query.
      *
-     * @param string $column
-     * @param array $values
      * @return $this
      */
     public function whereIn(string $column, array $values)
@@ -133,8 +125,6 @@ trait DatabaseRule
     /**
      * Set a "where not in" constraint on the query.
      *
-     * @param string $column
-     * @param array $values
      * @return $this
      */
     public function whereNotIn(string $column, array $values)
@@ -147,7 +137,6 @@ trait DatabaseRule
     /**
      * Register a custom query callback.
      *
-     * @param \Closure $callback
      * @return $this
      */
     public function using(Closure $callback)
@@ -159,8 +148,6 @@ trait DatabaseRule
 
     /**
      * Get the custom query callbacks for the rule.
-     *
-     * @return array
      */
     public function queryCallbacks(): array
     {
@@ -169,8 +156,6 @@ trait DatabaseRule
 
     /**
      * Format the where clauses.
-     *
-     * @return string
      */
     protected function formatWheres(): string
     {

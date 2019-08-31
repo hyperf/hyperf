@@ -56,8 +56,6 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed validation attempt.
      *
-     * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
-     *
      * @throws \Hyperf\Validation\ValidationException
      */
     protected function failedValidation(Validator $validator)
@@ -67,8 +65,6 @@ trait ValidatesWhenResolvedTrait
 
     /**
      * Determine if the request passes the authorization check.
-     *
-     * @return bool
      */
     protected function passesAuthorization(): bool
     {

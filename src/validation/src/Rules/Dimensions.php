@@ -23,8 +23,6 @@ class Dimensions
 
     /**
      * Create a new dimensions rule instance.
-     *
-     * @param array $constraints;
      */
     public function __construct(array $constraints = [])
     {
@@ -33,8 +31,6 @@ class Dimensions
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
     public function __toString(): string
     {
@@ -50,7 +46,6 @@ class Dimensions
     /**
      * Set the "width" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function width(int $value)
@@ -63,7 +58,6 @@ class Dimensions
     /**
      * Set the "height" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function height(int $value)
@@ -76,7 +70,6 @@ class Dimensions
     /**
      * Set the "min width" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function minWidth(int $value)
@@ -89,7 +82,6 @@ class Dimensions
     /**
      * Set the "min height" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function minHeight(int $value)
@@ -102,7 +94,6 @@ class Dimensions
     /**
      * Set the "max width" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function maxWidth(int $value)
@@ -115,7 +106,6 @@ class Dimensions
     /**
      * Set the "max height" constraint.
      *
-     * @param int $value
      * @return $this
      */
     public function maxHeight(int $value)
@@ -128,7 +118,6 @@ class Dimensions
     /**
      * Set the "ratio" constraint.
      *
-     * @param float $value
      * @return $this
      */
     public function ratio(float $value)

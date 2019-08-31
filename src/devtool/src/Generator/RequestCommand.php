@@ -33,6 +33,6 @@ class RequestCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Requests';
+        return $this->getConfig()['namespace'] ?? 'App\\Request';
     }
 }

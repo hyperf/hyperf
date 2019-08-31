@@ -37,8 +37,6 @@ class ValidationRuleParser
 
     /**
      * Create a new validation rule parser.
-     *
-     * @param array $data
      */
     public function __construct(array $data)
     {
@@ -48,7 +46,6 @@ class ValidationRuleParser
     /**
      * Parse the human-friendly rules into a full rules array for the validator.
      *
-     * @param array $rules
      * @return \stdClass
      */
     public function explode(array $rules)
@@ -66,10 +63,8 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute(s).
      *
-     * @param array $results
      * @param array|string $attribute
      * @param array|string $rules
-     * @return array
      */
     public function mergeRules(array $results, $attribute, $rules = []): array
     {
@@ -92,7 +87,6 @@ class ValidationRuleParser
      * Extract the rule name and parameters from a rule.
      *
      * @param array|string $rules
-     * @return array
      */
     public static function parse($rules): array
     {
@@ -113,9 +107,6 @@ class ValidationRuleParser
 
     /**
      * Explode the rules into an array of explicit rules.
-     *
-     * @param array $rules
-     * @return array
      */
     protected function explodeRules(array $rules): array
     {
@@ -136,7 +127,6 @@ class ValidationRuleParser
      * Explode the explicit rule into an array if necessary.
      *
      * @param mixed $rule
-     * @return array
      */
     protected function explodeExplicitRule($rule): array
     {
@@ -175,10 +165,7 @@ class ValidationRuleParser
     /**
      * Define a set of rules that apply to each element in an array attribute.
      *
-     * @param array $results
-     * @param string $attribute
      * @param array|string $rules
-     * @return array
      */
     protected function explodeWildcardRules(array $results, string $attribute, $rules): array
     {
@@ -202,10 +189,7 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute.
      *
-     * @param array $results
-     * @param string $attribute
      * @param array|string $rules
-     * @return array
      */
     protected function mergeRulesForAttribute(array $results, string $attribute, $rules): array
     {
@@ -221,9 +205,6 @@ class ValidationRuleParser
 
     /**
      * Parse an array based rule.
-     *
-     * @param array $rules
-     * @return array
      */
     protected static function parseArrayRule(array $rules): array
     {
@@ -232,9 +213,6 @@ class ValidationRuleParser
 
     /**
      * Parse a string based rule.
-     *
-     * @param string $rules
-     * @return array
      */
     protected static function parseStringRule(string $rules): array
     {
@@ -254,10 +232,6 @@ class ValidationRuleParser
 
     /**
      * Parse a parameter list.
-     *
-     * @param string $rule
-     * @param string $parameter
-     * @return array
      */
     protected static function parseParameters(string $rule, string $parameter): array
     {
@@ -272,9 +246,6 @@ class ValidationRuleParser
 
     /**
      * Normalizes a rule so that we can accept short types.
-     *
-     * @param string $rule
-     * @return string
      */
     protected static function normalizeRule(string $rule): string
     {

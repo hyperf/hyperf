@@ -28,8 +28,6 @@ class NotIn
 
     /**
      * Create a new "not in" rule instance.
-     *
-     * @param array $values
      */
     public function __construct(array $values)
     {
@@ -38,8 +36,6 @@ class NotIn
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
     public function __toString(): string
     {

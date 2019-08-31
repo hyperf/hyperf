@@ -19,10 +19,6 @@ class ValidationData
 {
     /**
      * Initialize and gather data for given attribute.
-     *
-     * @param string $attribute
-     * @param array $masterData
-     * @return array
      */
     public static function initializeAndGatherData(string $attribute, array $masterData): array
     {
@@ -41,8 +37,6 @@ class ValidationData
      * Used to extract a sub-section of the data for faster iteration.
      *
      * @param string $attribute
-     * @param array $masterData
-     * @return array
      */
     public static function extractDataFromPath($attribute, array $masterData): array
     {
@@ -64,7 +58,6 @@ class ValidationData
      *
      * Allows us to not spin through all of the flattened data for some operations.
      *
-     * @param string $attribute
      * @return string
      */
     public static function getLeadingExplicitAttributePath(string $attribute)
@@ -75,8 +68,6 @@ class ValidationData
     /**
      * Gather a copy of the attribute data filled with any missing attributes.
      *
-     * @param string $attribute
-     * @param array $masterData
      * @return array
      */
     protected static function initializeAttributeOnData(string $attribute, array $masterData)
@@ -94,11 +85,6 @@ class ValidationData
 
     /**
      * Get all of the exact attribute values for a given wildcard attribute.
-     *
-     * @param array $masterData
-     * @param array $data
-     * @param string $attribute
-     * @return array
      */
     protected static function extractValuesForWildcards(array $masterData, array $data, string $attribute): array
     {

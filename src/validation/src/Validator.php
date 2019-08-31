@@ -204,12 +204,6 @@ class Validator implements ValidatorContract
 
     /**
      * Create a new Validator instance.
-     *
-     * @param TranslatorInterface $translator
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -252,9 +246,6 @@ class Validator implements ValidatorContract
 
     /**
      * Parse the data array, converting dots to ->.
-     *
-     * @param array $data
-     * @return array
      */
     public function parseData(array $data): array
     {
@@ -295,8 +286,6 @@ class Validator implements ValidatorContract
 
     /**
      * Determine if the data passes the validation rules.
-     *
-     * @return bool
      */
     public function passes(): bool
     {
@@ -331,8 +320,6 @@ class Validator implements ValidatorContract
 
     /**
      * Determine if the data fails the validation rules.
-     *
-     * @return bool
      */
     public function fails(): bool
     {
@@ -343,7 +330,6 @@ class Validator implements ValidatorContract
      * Run the validator's rules against its data.
      *
      * @throws \Hyperf\Validation\ValidationException
-     * @return array
      */
     public function validate(): array
     {
@@ -358,7 +344,6 @@ class Validator implements ValidatorContract
      * Get the attributes and values that were validated.
      *
      * @throws \Hyperf\Validation\ValidationException
-     * @return array
      */
     public function validated(): array
     {
@@ -383,10 +368,6 @@ class Validator implements ValidatorContract
 
     /**
      * Add a failed rule and error message to the collection.
-     *
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
      */
     public function addFailure(string $attribute, string $rule, array $parameters = [])
     {
@@ -406,8 +387,6 @@ class Validator implements ValidatorContract
 
     /**
      * Returns the data which was valid.
-     *
-     * @return array
      */
     public function valid(): array
     {
@@ -423,8 +402,6 @@ class Validator implements ValidatorContract
 
     /**
      * Returns the data which was invalid.
-     *
-     * @return array
      */
     public function invalid(): array
     {
@@ -440,8 +417,6 @@ class Validator implements ValidatorContract
 
     /**
      * Get the failed validation rules.
-     *
-     * @return array
      */
     public function failed(): array
     {
@@ -485,9 +460,7 @@ class Validator implements ValidatorContract
     /**
      * Determine if the given attribute has a rule in the given set.
      *
-     * @param string $attribute
      * @param array|string $rules
-     * @return bool
      */
     public function hasRule(string $attribute, $rules): bool
     {
@@ -496,8 +469,6 @@ class Validator implements ValidatorContract
 
     /**
      * Get the data under validation.
-     *
-     * @return array
      */
     public function attributes(): array
     {
@@ -506,8 +477,6 @@ class Validator implements ValidatorContract
 
     /**
      * Get the data under validation.
-     *
-     * @return array
      */
     public function getData(): array
     {
@@ -517,7 +486,6 @@ class Validator implements ValidatorContract
     /**
      * Set the data under validation.
      *
-     * @param array $data
      * @return $this
      */
     public function setData(array $data)
@@ -531,8 +499,6 @@ class Validator implements ValidatorContract
 
     /**
      * Get the validation rules.
-     *
-     * @return array
      */
     public function getRules(): array
     {
@@ -542,7 +508,6 @@ class Validator implements ValidatorContract
     /**
      * Set the validation rules.
      *
-     * @param array $rules
      * @return $this
      */
     public function setRules(array $rules)
@@ -558,8 +523,6 @@ class Validator implements ValidatorContract
 
     /**
      * Parse the given rules and merge them into current rules.
-     *
-     * @param array $rules
      */
     public function addRules(array $rules)
     {
@@ -585,7 +548,6 @@ class Validator implements ValidatorContract
      *
      * @param array|string $attribute
      * @param array|string $rules
-     * @param callable $callback
      * @return $this
      */
     public function sometimes($attribute, $rules, callable $callback)
@@ -603,8 +565,6 @@ class Validator implements ValidatorContract
 
     /**
      * Register an array of custom validator extensions.
-     *
-     * @param array $extensions
      */
     public function addExtensions(array $extensions)
     {
@@ -619,8 +579,6 @@ class Validator implements ValidatorContract
 
     /**
      * Register an array of custom implicit validator extensions.
-     *
-     * @param array $extensions
      */
     public function addImplicitExtensions(array $extensions)
     {
@@ -633,8 +591,6 @@ class Validator implements ValidatorContract
 
     /**
      * Register an array of custom implicit validator extensions.
-     *
-     * @param array $extensions
      */
     public function addDependentExtensions(array $extensions)
     {
@@ -648,7 +604,6 @@ class Validator implements ValidatorContract
     /**
      * Register a custom validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      */
     public function addExtension(string $rule, $extension)
@@ -659,7 +614,6 @@ class Validator implements ValidatorContract
     /**
      * Register a custom implicit validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      */
     public function addImplicitExtension(string $rule, $extension)
@@ -672,7 +626,6 @@ class Validator implements ValidatorContract
     /**
      * Register a custom dependent validator extension.
      *
-     * @param string $rule
      * @param \Closure|string $extension
      */
     public function addDependentExtension(string $rule, $extension)
@@ -684,8 +637,6 @@ class Validator implements ValidatorContract
 
     /**
      * Register an array of custom validator message replacers.
-     *
-     * @param array $replacers
      */
     public function addReplacers(array $replacers)
     {
@@ -701,7 +652,6 @@ class Validator implements ValidatorContract
     /**
      * Register a custom validator message replacer.
      *
-     * @param string $rule
      * @param \Closure|string $replacer
      */
     public function addReplacer(string $rule, $replacer)
@@ -712,7 +662,6 @@ class Validator implements ValidatorContract
     /**
      * Set the custom messages for the validator.
      *
-     * @param array $messages
      * @return $this
      */
     public function setCustomMessages(array $messages)
@@ -725,7 +674,6 @@ class Validator implements ValidatorContract
     /**
      * Set the custom attributes on the validator.
      *
-     * @param array $attributes
      * @return $this
      */
     public function setAttributeNames(array $attributes)
@@ -738,7 +686,6 @@ class Validator implements ValidatorContract
     /**
      * Add custom attributes to the validator.
      *
-     * @param array $customAttributes
      * @return $this
      */
     public function addCustomAttributes(array $customAttributes)
@@ -751,7 +698,6 @@ class Validator implements ValidatorContract
     /**
      * Set the custom values on the validator.
      *
-     * @param array $values
      * @return $this
      */
     public function setValueNames(array $values)
@@ -764,7 +710,6 @@ class Validator implements ValidatorContract
     /**
      * Add the custom values for the validator.
      *
-     * @param array $customValues
      * @return $this
      */
     public function addCustomValues(array $customValues)
@@ -776,8 +721,6 @@ class Validator implements ValidatorContract
 
     /**
      * Set the fallback messages for the validator.
-     *
-     * @param array $messages
      */
     public function setFallbackMessages(array $messages)
     {
@@ -815,8 +758,6 @@ class Validator implements ValidatorContract
 
     /**
      * Set the Presence Verifier implementation.
-     *
-     * @param \Hyperf\Validation\PresenceVerifierInterface $presenceVerifier
      */
     public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
     {
@@ -835,8 +776,6 @@ class Validator implements ValidatorContract
 
     /**
      * Set the Translator implementation.
-     *
-     * @param TranslatorInterface $translator
      */
     public function setTranslator(TranslatorInterface $translator)
     {
@@ -845,8 +784,6 @@ class Validator implements ValidatorContract
 
     /**
      * Set the IoC container instance.
-     *
-     * @param Container $container
      */
     public function setContainer(ContainerInterface $container)
     {
@@ -910,7 +847,6 @@ class Validator implements ValidatorContract
      * Determine if the given rule depends on other fields.
      *
      * @param string $rule
-     * @return bool
      */
     protected function dependsOnOtherFields($rule): bool
     {
@@ -921,9 +857,6 @@ class Validator implements ValidatorContract
      * Get the explicit keys from an attribute flattened with dot notation.
      *
      * E.g. 'foo.1.bar.spark.baz' -> [1, 'spark'] for 'foo.*.bar.*.baz'
-     *
-     * @param string $attribute
-     * @return array
      */
     protected function getExplicitKeys(string $attribute): array
     {
@@ -942,9 +875,6 @@ class Validator implements ValidatorContract
      * Get the primary attribute name.
      *
      * For example, if "name.0" is given, "name.*" will be returned.
-     *
-     * @param string $attribute
-     * @return string
      */
     protected function getPrimaryAttribute(string $attribute): string
     {
@@ -959,10 +889,6 @@ class Validator implements ValidatorContract
 
     /**
      * Replace each field parameter which has asterisks with the given keys.
-     *
-     * @param array $parameters
-     * @param array $keys
-     * @return array
      */
     protected function replaceAsterisksInParameters(array $parameters, array $keys): array
     {
@@ -975,9 +901,7 @@ class Validator implements ValidatorContract
      * Determine if the attribute is validatable.
      *
      * @param object|string $rule
-     * @param string $attribute
      * @param mixed $value
-     * @return bool
      */
     protected function isValidatable($rule, string $attribute, $value): bool
     {
@@ -991,9 +915,7 @@ class Validator implements ValidatorContract
      * Determine if the field is present, or the rule implies required.
      *
      * @param object|string $rule
-     * @param string $attribute
      * @param mixed $value
-     * @return bool
      */
     protected function presentOrRuleIsImplicit($rule, string $attribute, $value): bool
     {
@@ -1009,7 +931,6 @@ class Validator implements ValidatorContract
      * Determine if a given rule implies the attribute is required.
      *
      * @param object|string $rule
-     * @return bool
      */
     protected function isImplicit($rule): bool
     {
@@ -1019,9 +940,6 @@ class Validator implements ValidatorContract
 
     /**
      * Determine if the attribute passes any optional check.
-     *
-     * @param string $attribute
-     * @return bool
      */
     protected function passesOptionalCheck(string $attribute): bool
     {
@@ -1039,8 +957,6 @@ class Validator implements ValidatorContract
      * Determine if the attribute fails the nullable check.
      *
      * @param string $rule
-     * @param string $attribute
-     * @return bool
      */
     protected function isNotNullIfMarkedAsNullable($rule, string $attribute): bool
     {
@@ -1057,8 +973,6 @@ class Validator implements ValidatorContract
      * This is to avoid possible database type comparison errors.
      *
      * @param string $rule
-     * @param string $attribute
-     * @return bool
      */
     protected function hasNotFailedPreviousRuleIfPresenceRule($rule, string $attribute): bool
     {
@@ -1068,7 +982,6 @@ class Validator implements ValidatorContract
     /**
      * Validate an attribute using a custom rule object.
      *
-     * @param string $attribute
      * @param mixed $value
      * @param \Hyperf\Validation\Contracts\Validation\Rule $rule
      */
@@ -1092,9 +1005,6 @@ class Validator implements ValidatorContract
 
     /**
      * Check if we should stop further validations on a given attribute.
-     *
-     * @param string $attribute
-     * @return bool
      */
     protected function shouldStopValidating(string $attribute): bool
     {
@@ -1117,8 +1027,6 @@ class Validator implements ValidatorContract
 
     /**
      * Generate an array of all attributes that have messages.
-     *
-     * @return array
      */
     protected function attributesThatHaveMessages(): array
     {
@@ -1130,7 +1038,6 @@ class Validator implements ValidatorContract
     /**
      * Get a rule and its parameters for a given attribute.
      *
-     * @param string $attribute
      * @param array|string $rules
      * @return null|array
      */
@@ -1154,7 +1061,6 @@ class Validator implements ValidatorContract
     /**
      * Get the value of a given attribute.
      *
-     * @param string $attribute
      * @return mixed
      */
     protected function getValue(string $attribute)
@@ -1165,8 +1071,6 @@ class Validator implements ValidatorContract
     /**
      * Call a custom validator extension.
      *
-     * @param string $rule
-     * @param array $parameters
      * @return null|bool
      */
     protected function callExtension(string $rule, array $parameters)
@@ -1184,8 +1088,6 @@ class Validator implements ValidatorContract
     /**
      * Call a class based validator extension.
      *
-     * @param string $callback
-     * @param array $parameters
      * @return bool
      */
     protected function callClassBasedExtension(string $callback, array $parameters)
