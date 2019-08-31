@@ -23,12 +23,6 @@ trait FormatsMessages
 
     /**
      * Replace all error message place-holders with actual values.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     public function makeReplacements(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -51,9 +45,6 @@ trait FormatsMessages
 
     /**
      * Get the displayable name of the attribute.
-     *
-     * @param string $attribute
-     * @return string
      */
     public function getDisplayableAttribute(string $attribute): string
     {
@@ -112,10 +103,6 @@ trait FormatsMessages
 
     /**
      * Get the validation message for an attribute and rule.
-     *
-     * @param string $attribute
-     * @param string $rule
-     * @return string
      */
     protected function getMessage(string $attribute, string $rule): string
     {
@@ -167,8 +154,6 @@ trait FormatsMessages
     /**
      * Get the proper inline error message for standard and size rules.
      *
-     * @param string $attribute
-     * @param string $rule
      * @return null|string
      */
     protected function getInlineMessage(string $attribute, string $rule)
@@ -183,8 +168,6 @@ trait FormatsMessages
     /**
      * Get the inline message for a rule if it exists.
      *
-     * @param string $attribute
-     * @param string $lowerRule
      * @param null|array $source
      * @return null|string
      */
@@ -208,9 +191,6 @@ trait FormatsMessages
 
     /**
      * Get the custom error message from translator.
-     *
-     * @param string $key
-     * @return string
      */
     protected function getCustomMessageFromTranslator(string $key): string
     {
@@ -234,11 +214,6 @@ trait FormatsMessages
 
     /**
      * Check the given messages for a wildcard key.
-     *
-     * @param array $messages
-     * @param string $search
-     * @param string $default
-     * @return string
      */
     protected function getWildcardCustomMessages(array $messages, string $search, string $default): string
     {
@@ -253,10 +228,6 @@ trait FormatsMessages
 
     /**
      * Get the proper error message for an attribute and size rule.
-     *
-     * @param string $attribute
-     * @param string $rule
-     * @return string
      */
     protected function getSizeMessage(string $attribute, string $rule): string
     {
@@ -274,9 +245,6 @@ trait FormatsMessages
 
     /**
      * Get the data type of the given attribute.
-     *
-     * @param string $attribute
-     * @return string
      */
     protected function getAttributeType(string $attribute): string
     {
@@ -298,9 +266,6 @@ trait FormatsMessages
 
     /**
      * Get the given attribute from the attribute translations.
-     *
-     * @param string $name
-     * @return string
      */
     protected function getAttributeFromTranslations(string $name): string
     {
@@ -309,10 +274,6 @@ trait FormatsMessages
 
     /**
      * Replace the :attribute placeholder in the given message.
-     *
-     * @param string $message
-     * @param string $value
-     * @return string
      */
     protected function replaceAttributePlaceholder(string $message, string $value): string
     {
@@ -325,10 +286,6 @@ trait FormatsMessages
 
     /**
      * Replace the :input placeholder in the given message.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @return string
      */
     protected function replaceInputPlaceholder(string $message, string $attribute): string
     {
@@ -343,9 +300,6 @@ trait FormatsMessages
 
     /**
      * Transform an array of attributes to their displayable form.
-     *
-     * @param array $values
-     * @return array
      */
     protected function getAttributeList(array $values): array
     {
@@ -364,10 +318,6 @@ trait FormatsMessages
     /**
      * Call a custom validator message replacer.
      *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
      * @param \Hyperf\Validation\Validator $validator
      * @return null|string
      */
@@ -386,13 +336,7 @@ trait FormatsMessages
     /**
      * Call a class based validator message replacer.
      *
-     * @param string $callback
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
      * @param \Hyperf\Validation\Validator $validator
-     * @return string
      */
     protected function callClassBasedReplacer(string $callback, string $message, string $attribute, string $rule, array $parameters, $validator): string
     {
