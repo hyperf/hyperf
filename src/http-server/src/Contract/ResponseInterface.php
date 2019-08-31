@@ -48,8 +48,8 @@ interface ResponseInterface
     /**
      * Create a file download response.
      *
-     * @param string $file The file path which want to send to client.
-     * @param string $name The alias name of the file that client receive.
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface;
 }

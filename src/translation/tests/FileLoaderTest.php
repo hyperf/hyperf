@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ * @coversNothing
  */
 class FileLoaderTest extends TestCase
 {

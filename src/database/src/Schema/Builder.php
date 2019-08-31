@@ -81,7 +81,7 @@ class Builder
         return count($this->connection->selectFromWriteConnection(
             $this->grammar->compileTableExists(),
             [$table]
-            )) > 0;
+        )) > 0;
     }
 
     /**
