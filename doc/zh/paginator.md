@@ -98,3 +98,38 @@ $previousPageUrl = $paginator->previousPageUrl();
 // 获取指定 $page 页数的 URL
 $url = $paginator->url($page);
 ```
+
+## 获取当前页页码
+
+```php
+<?php
+$currentPage = $paginator->currentPage();
+```
+
+## 当前页是否为第一页
+
+```php
+<?php
+$onFirstPage = $paginator->onFirstPage();
+```
+
+## 是否有多页
+
+```php
+<?php
+$hasMorePages = $paginator->hasMorePages();
+```
+
+## 每页的数据条数
+
+```php
+<?php
+$perPage = $paginator->perPage();
+```
+
+## 数据总数
+
+```php
+<?php
+$total = $paginator->total();
+```
