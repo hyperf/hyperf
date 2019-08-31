@@ -13,10 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
+use Hyperf\HttpServer\Exception\Http\FileException;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -24,6 +28,7 @@ use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 use function get_class;
@@ -108,6 +113,52 @@ class Response implements PsrResponseInterface, ResponseInterface
             return $schema . '://' . $host . '/' . $toUrl;
         });
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
+    }
+
+    /**
+     * Create a file download response.
+     *
+     * @param string $file The file path which want to send to client.
+     * @param string $name The alias name of the file that client receive.
+     */
+    public function download(string $file, string $name = ''): PsrResponseInterface
+    {
+        $file = new \SplFileInfo($file);
+
+        if (! $file->isReadable()) {
+            throw new FileException('File must be readable.');
+        }
+
+        $filename = $name ?: $file->getBasename();
+        $etag = $this->createEtag($file);
+        $contentType = value(function () use ($file) {
+            $mineType = null;
+            if (ApplicationContext::hasContainer()) {
+                $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
+                $mineType = $guesser->guessMimeType($file->getExtension());
+            }
+            return $mineType ?? 'application/octet-stream';
+        });
+
+        // Determine if ETag the client expects matches calculated ETag
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request instanceof ServerRequestInterface) {
+            $ifMatch = $request->getHeaderLine('if-match');
+            $ifNoneMatch = $request->getHeaderLine('if-none-match');
+            $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            array_walk($clientEtags, 'trim');
+            if (in_array($etag, $clientEtags, true)) {
+                return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
+            }
+        }
+
+        return $this->withHeader('content-description', 'File Transfer')
+            ->withHeader('content-type', $contentType)
+            ->withHeader('content-disposition', "attachment; filename={$filename}")
+            ->withHeader('content-transfer-encoding', 'binary')
+            ->withHeader('pragma', 'public')
+            ->withHeader('etag', $etag)
+            ->withBody(new SwooleFileStream($file));
     }
 
     /**
@@ -342,6 +393,26 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    /**
+     * Get ETag header according to the checksum of the file.
+     */
+    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
+    {
+        $etag = '';
+        if ($weak) {
+            ClearStatCache::clear($file->getPathname());
+            $lastModified = $file->getMTime();
+            $filesize = $file->getSize();
+            if (! $lastModified || ! $filesize) {
+                return $etag;
+            }
+            $etag = sprintf('W/"%x-%x"', $lastModified, $filesize);
+        } else {
+            $etag = md5_file($file->getPathname());
+        }
+        return $etag;
     }
 
     /**

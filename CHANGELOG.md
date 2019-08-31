@@ -7,6 +7,7 @@
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
+- [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 
 ## Changed
 
@@ -29,6 +30,8 @@ if (! $container instanceof \Psr\Container\ContainerInterface) {
 }
 return ApplicationContext::setContainer($container);
 ```
+
+- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` can return JSON formatted data normally.
 
 ## Deleted
 
