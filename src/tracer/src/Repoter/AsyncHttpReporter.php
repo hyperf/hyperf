@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Tracer;
+namespace Hyperf\Tracer\Repoter;
 
 use Hyperf\Task\Annotation\Task;
 use Psr\Log\LoggerInterface;

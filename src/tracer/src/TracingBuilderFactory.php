@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Tracer\Repoter\AsyncHttpReporter;
 use Psr\Container\ContainerInterface;
 use Zipkin\Endpoint;
 use Zipkin\Samplers\BinarySampler;
