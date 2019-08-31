@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ * @coversNothing
  */
 class TranslatorTest extends TestCase
 {

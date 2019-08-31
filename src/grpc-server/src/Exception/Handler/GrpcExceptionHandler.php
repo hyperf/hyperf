@@ -17,7 +17,6 @@ use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
-use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

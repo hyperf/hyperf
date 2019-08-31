@@ -18,13 +18,13 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -118,8 +118,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Create a file download response.
      *
-     * @param string $file The file path which want to send to client.
-     * @param string $name The alias name of the file that client receive.
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {

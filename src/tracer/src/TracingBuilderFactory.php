@@ -15,7 +15,6 @@ namespace Hyperf\Tracer;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Zipkin\Endpoint;
-use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
 
@@ -31,7 +30,7 @@ class TracingBuilderFactory
         $this->config = $container->get(ConfigInterface::class);
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($container->get(HttpClientFactory::class), $options);
+        $reporter = new AsyncHttpReporter($container->get(HttpClientFactory::class), $options);
         return TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
