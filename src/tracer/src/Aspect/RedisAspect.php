@@ -41,7 +41,7 @@ class RedisAspect implements AroundInterface
     public $annotations = [];
 
     /**
-     * @var Tracing
+     * @var Tracer
      */
     private $tracer;
 

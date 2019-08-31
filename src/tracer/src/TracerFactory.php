@@ -32,7 +32,7 @@ class TracerFactory
 
         // v1.0 has no default config. Fallback to v1.0 mode for backward compatibility.
         if (empty($name)) {
-            $factory = new ZipkinTracerFactory($container);
+            $factory = $container->get(ZipkinTracerFactory::class);
             return $factory->make('');
         }
 
@@ -43,7 +43,7 @@ class TracerFactory
             );
         }
 
-        $factory = new $driver($container);
+        $factory = $container->get($driver);
 
         if (! ($factory instanceof NamedFactoryInterface)) {
             throw new InvalidArgumentException(

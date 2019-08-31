@@ -15,53 +15,49 @@ namespace Hyperf\Tracer\Adapter;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Jaeger\Config;
-use Psr\Container\ContainerInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 class JaegerTracerFactory implements NamedFactoryInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var ConfigInterface
      */
     private $config;
+
+    /**
+     * @var null|LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var null|CacheItemPoolInterface
+     */
+    private $cache;
 
     /**
      * @var string
      */
     private $prefix;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ConfigInterface $config, LoggerInterface $logger = null, CacheItemPoolInterface $cache = null)
     {
-        $this->container = $container;
-        $this->config = $container->get(ConfigInterface::class);
+        $this->config = $config;
+        $this->logger = $logger;
+        $this->cache = $cache;
     }
 
-    public function make(string $name)
+    public function make(string $name): \OpenTracing\Tracer
     {
         $this->prefix = "opentracing.tracer.{$name}.";
         [$name, $options] = $this->parseConfig();
 
-        $logger = null;
-        if ($this->container->has(LoggerInterface::class)) {
-            $logger = $this->container->get(LoggerInterface::class);
-        }
-
-        $cache = null;
-        if ($this->container->has(CacheItemPoolInterface::class)) {
-            $cache = $this->container->get(CacheItemPoolInterface::class);
-        }
-
         $jaegerConfig = new Config(
             $options,
             $name,
-            $logger,
-            $cache
+            $this->logger,
+            $this->cache
         );
         return $jaegerConfig->initializeTracer();
     }

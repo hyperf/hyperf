@@ -75,7 +75,7 @@ class HttpClientAspect implements AroundInterface
         $this->tracer->inject(
             $span->getContext(),
             TEXT_MAP,
-            $appendHeaders,
+            $appendHeaders
         );
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
         $proceedingJoinPoint->arguments['keys']['options'] = $options;

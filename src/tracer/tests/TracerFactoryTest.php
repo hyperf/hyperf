@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\Tracer;
 
 use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Tracer\TracerFactory;
 use Hyperf\Utils\ApplicationContext;
@@ -133,10 +132,18 @@ class TracerFactoryTest extends TestCase
     protected function getContainer($config)
     {
         $container = Mockery::mock(Container::class);
+        $client = Mockery::mock(\Hyperf\Tracer\Adapter\HttpClientFactory::class);
 
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
-        $container->shouldReceive('get')->with(\Hyperf\Tracer\Adapter\HttpClientFactory::class)->andReturn(null);
-        $container->shouldReceive('has')->andReturn(false);
+        $container->shouldReceive('get')
+            ->with(\Hyperf\Tracer\Adapter\ZipkinTracerFactory::class)
+            ->andReturn(new \Hyperf\Tracer\Adapter\ZipkinTracerFactory($config, $client));
+        $container->shouldReceive('get')
+            ->with(\Hyperf\Tracer\Adapter\JaegerTracerFactory::class)
+            ->andReturn(new \Hyperf\Tracer\Adapter\JaegerTracerFactory($config));
+        $container->shouldReceive('get')
+            ->with(\Hyperf\Contract\ConfigInterface::class)
+            ->andReturn($config);
+
         ApplicationContext::setContainer($container);
 
         return $container;

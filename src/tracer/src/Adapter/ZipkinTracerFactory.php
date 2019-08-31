@@ -14,7 +14,6 @@ namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
-use Psr\Container\ContainerInterface;
 use Zipkin\Endpoint;
 use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
@@ -24,34 +23,34 @@ use ZipkinOpenTracing\Tracer;
 class ZipkinTracerFactory implements NamedFactoryInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var ConfigInterface
      */
     private $config;
+
+    /**
+     * @var HttpClientFactory
+     */
+    private $client;
 
     /**
      * @var string
      */
     private $prefix = 'opentracing.zipkin.';
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ConfigInterface $config, HttpClientFactory $client)
     {
-        $this->container = $container;
-        $this->config = $container->get(ConfigInterface::class);
+        $this->config = $config;
+        $this->client = $client;
     }
 
-    public function make(string $name)
+    public function make(string $name): \OpenTracing\Tracer
     {
         if (! empty($name)) {
             $this->prefix = "opentracing.tracer.{$name}.";
         }
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($this->container->get(HttpClientFactory::class), $options);
+        $reporter = new Http($this->client, $options);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
