@@ -1179,8 +1179,9 @@ trait ValidatesAttributes
      * Get the date timestamp.
      *
      * @param mixed $value
+     * @return bool|int
      */
-    protected function getDateTimestamp($value): int
+    protected function getDateTimestamp($value)
     {
         if ($value instanceof DateTimeInterface) {
             return $value->getTimestamp();
@@ -1524,7 +1525,7 @@ trait ValidatesAttributes
     /**
      * Parse named parameters to $key => $value items.
      */
-    protected function parseNamedParameters(array $parameters): array
+    protected function parseNamedParameters(array $parameters): ?array
     {
         return array_reduce($parameters, function ($result, $item) {
             [$key, $value] = array_pad(explode('=', $item, 2), 2, null);
