@@ -30,17 +30,17 @@ class ZipkinTracerFactory implements NamedFactoryInterface
     /**
      * @var HttpClientFactory
      */
-    private $client;
+    private $clientFactory;
 
     /**
      * @var string
      */
     private $prefix = 'opentracing.zipkin.';
 
-    public function __construct(ConfigInterface $config, HttpClientFactory $client)
+    public function __construct(ConfigInterface $config, HttpClientFactory $clientFactory)
     {
         $this->config = $config;
-        $this->client = $client;
+        $this->clientFactory = $clientFactory;
     }
 
     public function make(string $name): \OpenTracing\Tracer
@@ -50,7 +50,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
         }
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($this->client, $options);
+        $reporter = new Http($this->clientFactory, $options);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
