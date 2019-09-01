@@ -13,18 +13,21 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Response as ServerResponse;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
+use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -118,8 +121,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Create a file download response.
      *
-     * @param string $file The file path which want to send to client.
-     * @param string $name The alias name of the file that client receive.
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
@@ -159,6 +162,30 @@ class Response implements PsrResponseInterface, ResponseInterface
             ->withHeader('pragma', 'public')
             ->withHeader('etag', $etag)
             ->withBody(new SwooleFileStream($file));
+    }
+
+    public function cookie(Cookie $cookie): ResponseInterface
+    {
+        Context::override(PsrResponseInterface::class, function ($response) use ($cookie) {
+            if (! $response instanceof ServerResponse) {
+                throw new InvalidResponseException('The response is not instanceof ' . ServerResponse::class);
+            }
+            return $response->withCookie($cookie);
+        });
+
+        return $this;
+    }
+
+    public function header(string $name, $value): ResponseInterface
+    {
+        Context::override(PsrResponseInterface::class, function ($response) use ($name, $value) {
+            if (! $response instanceof PsrResponseInterface) {
+                throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
+            }
+            return $response->withHeader($name, $value);
+        });
+
+        return $this;
     }
 
     /**

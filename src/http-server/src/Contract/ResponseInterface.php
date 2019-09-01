@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpServer\Contract;
 
+use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
@@ -48,8 +49,20 @@ interface ResponseInterface
     /**
      * Create a file download response.
      *
-     * @param string $file The file path which want to send to client.
-     * @param string $name The alias name of the file that client receive.
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface;
+
+    /**
+     * Override a response with a cookie.
+     */
+    public function cookie(Cookie $cookie): ResponseInterface;
+
+    /**
+     * Override a response with a header.
+     *
+     * @param string|string[] $value
+     */
+    public function header(string $name, $value): ResponseInterface;
 }
