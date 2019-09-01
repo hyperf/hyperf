@@ -44,8 +44,6 @@ return [
         'redis' => false,
         // 打开或关闭对 DB  调用的追踪
         'db' => false,
-        // 打开或关闭对方法调用的追踪
-        'method' => false,
     ],
 ];
 ```
