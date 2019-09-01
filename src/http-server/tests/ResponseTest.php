@@ -190,7 +190,7 @@ class ResponseTest extends TestCase
         $swooleResponse->shouldReceive('header')->withAnyArgs()->andReturnUsing(function ($name, $value) {
             return true;
         });
-        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->andReturnUsing(function ($name, $value, ...$args) use ($id) {
+        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value, ...$args) use ($id) {
             $this->assertTrue($name == 'Name' || $name == 'Request-Id');
             $this->assertTrue($value == 'Hyperf' || $value == $id);
             return true;
