@@ -69,23 +69,6 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * @param string $name
-     * @param string $value
-     * @param int $expire
-     * @param string $path
-     * @param string $domain
-     * @param bool $secure
-     * @param bool $httpOnly
-     * @return PsrResponseInterface
-     */
-    public function setCookie(string $name, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): PsrResponseInterface
-    {
-        $cookie = new \Hyperf\HttpMessage\Cookie\Cookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
-        return $this->getResponse()
-            ->withAddedHeader('Cookie', $cookie);
-    }
-
-    /**
      * Format data to JSON and return data with Content-Type:application/json header.
      *
      * @param array|Arrayable|Jsonable $data

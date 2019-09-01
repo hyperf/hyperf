@@ -55,16 +55,4 @@ interface ResponseInterface
     public function download(string $file, string $name = ''): PsrResponseInterface;
 
     public function withCookie(Cookie $cookie): ResponseInterface;
-
-    /**
-     * @param string $name
-     * @param string $value
-     * @param int $expire
-     * @param string $path
-     * @param string $domain
-     * @param bool $secure
-     * @param bool $httpOnly
-     * @return PsrResponseInterface
-     */
-    public function setCookie(string $name, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): PsrResponseInterface;
 }
