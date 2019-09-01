@@ -52,4 +52,17 @@ interface ResponseInterface
      * @param string $name The alias name of the file that client receive.
      */
     public function download(string $file, string $name = ''): PsrResponseInterface;
+
+    /**
+     * Response Cookie
+     * @param string $name
+     * @param string $value
+     * @param int $expire
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httpOnly
+     * @return PsrResponseInterface
+     */
+    public function setCookie(string $name, string $value='', int $expire=0, string $path='/', string $domain='', bool $secure=false, bool $httpOnly=true): PsrResponseInterface;
 }
