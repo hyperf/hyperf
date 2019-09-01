@@ -3,6 +3,7 @@
 ## Changed
 
 - [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
+- [#501](https://github.com/hyperf-cloud/hyperf/pull/501) When the path argument of Mapping annotation is an empty string, then the path is equal to prefix of Controller annotation.
 
 ## Fixed
 
