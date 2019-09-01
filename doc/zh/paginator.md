@@ -81,7 +81,7 @@ if ($paginator->hasMorePages()) {
 }
 ```
 
-## 获取上一页和下一页的 URL
+## 获取对应分页的 URL
 
 ```php
 <?php
@@ -89,31 +89,18 @@ if ($paginator->hasMorePages()) {
 $nextPageUrl = $paginator->nextPageUrl();
 // 上一页的 URL
 $previousPageUrl = $paginator->previousPageUrl();
-```
-
-## 获取指定页数的 URL
-
-```php
-<?php
 // 获取指定 $page 页数的 URL
 $url = $paginator->url($page);
 ```
 
-## 获取当前页页码
-
-```php
-<?php
-$currentPage = $paginator->currentPage();
-```
-
-## 当前页是否为第一页
+## 是否处于第一页
 
 ```php
 <?php
 $onFirstPage = $paginator->onFirstPage();
 ```
 
-## 是否有多页
+## 是否有更多分页
 
 ```php
 <?php
