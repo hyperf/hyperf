@@ -187,7 +187,7 @@ class ResponseTest extends TestCase
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
         $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturn(200);
-        $swooleResponse->shouldReceive('header')->withAnyArgs()->andReturnUsing(function ($name, $value) {
+        $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {
             if ($name == 'X-Token') {
                 $this->assertSame($value, 'xxx');
             }
