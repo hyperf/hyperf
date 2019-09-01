@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer;
 
+use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -22,6 +24,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Swoole\Http\Response as SwooleResponse;
 
 /**
  * @internal
@@ -172,5 +175,41 @@ class ResponseTest extends TestCase
         $response = $response->withBody(new SwooleStream('xxx'));
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
+    }
+
+    public function testWithCookie()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $swooleResponse = Mockery::mock(SwooleResponse::class);
+        $id = uniqid();
+        $cookie1 = new Cookie('Name', 'Hyperf');
+        $cookie2 = new Cookie('Request-Id', $id);
+        $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturn(200);
+        $swooleResponse->shouldReceive('header')->withAnyArgs()->andReturnUsing(function ($name, $value) {
+            return true;
+        });
+        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->andReturnUsing(function ($name, $value, ...$args) use ($id) {
+            $this->assertTrue($name == 'Name' || $name == 'Request-Id');
+            $this->assertTrue($value == 'Hyperf' || $value == $id);
+            return true;
+        });
+        $swooleResponse->shouldReceive('end')->once()->andReturn(true);
+
+        Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response($swooleResponse));
+
+        $response = new Response();
+        $response = $response->withCookie($cookie1)->withCookie($cookie2);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        $response = $response->raw('Hello Hyperf.');
+        $this->assertNotInstanceOf(Response::class, $response);
+        $this->assertNotInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(PsrResponseInterface::class, $response);
+
+        $response->send();
     }
 }
