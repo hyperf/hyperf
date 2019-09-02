@@ -39,6 +39,16 @@ class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
+    /**
+     * @var null|PsrResponseInterface
+     */
+    protected $response;
+
+    public function __construct(?PsrResponseInterface $response = null)
+    {
+        $this->response = $response;
+    }
+
     public function __call($name, $arguments)
     {
         $response = $this->getResponse();
@@ -414,7 +424,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
         }
 
-        return new ResponseInstance($response->{$name}(...$arguments));
+        return new static($response->{$name}(...$arguments));
     }
 
     /**
@@ -500,6 +510,10 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     protected function getResponse()
     {
+        if ($this->response instanceof PsrResponseInterface) {
+            return $this->response;
+        }
+
         return Context::get(PsrResponseInterface::class);
     }
 }
