@@ -36,7 +36,7 @@ use ReflectionMethod;
 
 class DispatcherFactory
 {
-    protected $routes = [BASE_PATH . '/config/routes.php'];
+    protected $routes = [];
 
     /**
      * @var \FastRoute\RouteCollector[]
@@ -50,6 +50,7 @@ class DispatcherFactory
 
     public function __construct()
     {
+        $this->routes = $this->getAllRoutes();
         $this->initAnnotationRoute(AnnotationCollector::list());
         $this->initConfigRoute();
     }
@@ -246,5 +247,23 @@ class DispatcherFactory
         /** @var Middleware $middleware */
         $middleware = $metadata[Middleware::class];
         return [$middleware->middleware];
+    }
+
+    protected function getAllRoutes()
+    {
+        $routeDir = BASE_PATH . '/routes/';
+        $routeFiles = scandir($routeDir);
+        $routeFilesList = [];
+        foreach ($routeFiles as $key=>$value) {
+            if (substr(strrchr($value, '.'), 1) === 'php') {
+                array_push($routeFilesList,$routeDir . $value);
+            }
+        }
+        /**
+         * Compatible with previous versions
+         */
+        $routes = array_merge($routeFilesList, [BASE_PATH . '/config/routes.php']);
+
+        return $routes;
     }
 }
