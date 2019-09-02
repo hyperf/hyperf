@@ -8,7 +8,7 @@
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 - [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
-- [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added `cookie` and `header` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
 
 ## Changed
 
