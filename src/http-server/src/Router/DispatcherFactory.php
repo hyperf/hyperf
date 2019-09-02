@@ -249,7 +249,7 @@ class DispatcherFactory
         return [$middleware->middleware];
     }
 
-    protected function getAllRoutes()
+    protected function getAllRoutes() :array
     {
         $routeDir = BASE_PATH . '/routes/';
         $routeFiles = scandir($routeDir);
