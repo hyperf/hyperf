@@ -6,7 +6,7 @@
 
 ### 通过配置文件定义路由
 
-在 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 骨架下，默认在 `config/routes.php` 文件内完成所有的路由定义，当然如果您路由众多，您也可以对该文件进行扩展，以适应您的需求，但 `Hyperf` 还支持 `注解路由`，我们更推荐使用 `注解路由`，特别是在路由众多的情况下。   
+在 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 骨架下，默认在 `config/routes.php` 文件内完成所有的路由定义，当然如果您路由众多，您也可以对该文件进行扩展，以适应您的需求，但 `Hyperf` 还支持 `注解路由`，我们更推荐使用 `注解路由`，特别是在路由众多的情况下。多路由文件，您现在可以在 `routes`  目录下增加新增的路由文件，框架会自动加载。   
 
 #### 通过闭包定义路由
 
