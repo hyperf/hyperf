@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Command\InitProxyCommand;
 use Hyperf\Di\Listener\BootApplicationListener;
 
@@ -32,6 +34,10 @@ class ConfigProvider
             'scan' => [
                 'paths' => [
                     __DIR__,
+                ],
+                'collectors' => [
+                    AnnotationCollector::class,
+                    AspectCollector::class,
                 ],
             ],
         ];

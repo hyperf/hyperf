@@ -10,9 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ModelListener;
-
-use Hyperf\ModelListener\Collector\ListenerCollector;
+namespace Hyperf\Constants;
 
 class ConfigProvider
 {
@@ -21,14 +19,10 @@ class ConfigProvider
         return [
             'dependencies' => [
             ],
-            'commands' => [
-            ],
             'scan' => [
-                'paths' => [
-                    __DIR__,
-                ],
+                'paths' => [],
                 'collectors' => [
-                    ListenerCollector::class,
+                    ConstantsCollector::class,
                 ],
             ],
         ];
