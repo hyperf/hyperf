@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\MetadataCacheCollector;
 use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
@@ -67,13 +68,13 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private $scanner;
 
-    public function __construct(array $source, array $scanDir, Scanner $scanner, bool $enableCache = false)
+    public function __construct(array $source, ScanConfig $scanConfig, bool $enableCache = false)
     {
-        $this->scanner = $scanner;
+        $this->scanner = new Scanner($scanConfig->getIgnoreAnnotations());
         $this->enableCache = $enableCache;
 
         // Scan the specified paths and collect the ast and annotations.
-        $this->scan($scanDir);
+        $this->scan($scanConfig->getDirs(), $scanConfig->getCollectors());
         $this->source = $this->normalizeSource($source);
     }
 
@@ -213,18 +214,17 @@ class DefinitionSource implements DefinitionSourceInterface
         return $definition;
     }
 
-    private function scan(array $paths): bool
+    private function scan(array $paths, array $collectors): bool
     {
         if (empty($paths)) {
             return true;
         }
         $pathsHash = md5(implode(',', $paths));
+        $cacher = new MetadataCacheCollector($collectors);
         if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
             $this->printLn('Detected an available cache, skip the scan process.');
-            [, $annotationMetadata, $aspectMetadata] = explode(PHP_EOL, file_get_contents($this->cachePath));
-            // Deserialize metadata when the cache is valid.
-            AnnotationCollector::deserialize($annotationMetadata);
-            AspectCollector::deserialize($aspectMetadata);
+            [, $serialized] = explode(PHP_EOL, file_get_contents($this->cachePath));
+            $cacher->unserialize($serialized);
             return false;
         }
         $this->printLn('Scanning ...');
@@ -242,7 +242,8 @@ class DefinitionSource implements DefinitionSourceInterface
                 mkdir($dirPath, 0755, true);
             }
         }
-        $data = implode(PHP_EOL, [$pathsHash, AnnotationCollector::serialize(), AspectCollector::serialize()]);
+
+        $data = implode(PHP_EOL, [$pathsHash, $cacher->serialize()]);
         file_put_contents($this->cachePath, $data);
         return true;
     }
