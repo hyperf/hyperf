@@ -14,7 +14,6 @@ namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Server\Response as ServerResponse;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -166,14 +165,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public function withCookie(Cookie $cookie): ResponseInterface
     {
-        Context::override(PsrResponseInterface::class, function ($response) use ($cookie) {
-            if (! $response instanceof ServerResponse) {
-                throw new InvalidResponseException('The response is not instanceof ' . ServerResponse::class);
-            }
-            return $response->withCookie($cookie);
-        });
-
-        return $this;
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -412,19 +404,17 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     protected function call($name, $arguments)
     {
-        Context::override(PsrResponseInterface::class, function ($response) use ($name, $arguments) {
-            if (! $response instanceof PsrResponseInterface) {
-                throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
-            }
+        $response = $this->getResponse();
 
-            if (! method_exists($response, $name)) {
-                throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
-            }
+        if (! $response instanceof PsrResponseInterface) {
+            throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
+        }
 
-            return  $response->{$name}(...$arguments);
-        });
+        if (! method_exists($response, $name)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        }
 
-        return $this;
+        return new ResponseInstance($response->{$name}(...$arguments));
     }
 
     /**

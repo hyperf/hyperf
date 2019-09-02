@@ -217,5 +217,7 @@ class ResponseTest extends TestCase
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
         $response->send();
+
+        $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }
 }
