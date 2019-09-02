@@ -43,10 +43,17 @@ class Coroutine
     /**
      * Returns the parent coroutine ID.
      * Returns -1 when running in non-coroutine context.
+     *
+     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
      */
     public static function parentId(): int
     {
-        return SwooleCoroutine::getPcid();
+        $result = SwooleCoroutine::getPcid();
+        if ($result === false) {
+            return -1;
+        }
+
+        return $result;
     }
 
     /**
