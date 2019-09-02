@@ -128,7 +128,7 @@ class IndexController
 ## 文件下载
 
 `Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `download(string $file, string $name = '')`  返回一个已设置下载文件状态的 `Psr7ResponseInterface` 对象。   
-如果请求中带有 `if-match` 或 `if-none-match` 的请求头，Hyperf 也会跟根据协议标准与 `ETag` 进行比较，如果一致则会返回一个 `304` 状态码的响应。
+如果请求中带有 `if-match` 或 `if-none-match` 的请求头，Hyperf 也会根据协议标准与 `ETag` 进行比较，如果一致则会返回一个 `304` 状态码的响应。
 
 `download` 方法：   
 
