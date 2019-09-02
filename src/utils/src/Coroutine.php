@@ -48,12 +48,12 @@ class Coroutine
      */
     public static function parentId(): int
     {
-        $result = SwooleCoroutine::getPcid();
-        if ($result === false) {
+        $cid = SwooleCoroutine::getPcid();
+        if ($cid === false) {
             return -1;
         }
 
-        return $result;
+        return $cid;
     }
 
     /**
