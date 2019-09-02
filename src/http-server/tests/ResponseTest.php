@@ -175,6 +175,7 @@ class ResponseTest extends TestCase
         $response = $response->withBody(new SwooleStream('xxx'));
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
     public function testCookiesAndHeaders()
@@ -186,7 +187,9 @@ class ResponseTest extends TestCase
         $id = uniqid();
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
-        $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturn(200);
+        $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturnUsing(function ($code) {
+            $this->assertSame($code, 200);
+        });
         $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {
             if ($name == 'X-Token') {
                 $this->assertSame($value, 'xxx');
@@ -203,7 +206,7 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response($swooleResponse));
 
         $response = new Response();
-        $response = $response->cookie($cookie1)->cookie($cookie2)->header('X-Token', 'xxx');
+        $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);

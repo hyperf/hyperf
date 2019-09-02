@@ -164,25 +164,13 @@ class Response implements PsrResponseInterface, ResponseInterface
             ->withBody(new SwooleFileStream($file));
     }
 
-    public function cookie(Cookie $cookie): ResponseInterface
+    public function withCookie(Cookie $cookie): ResponseInterface
     {
         Context::override(PsrResponseInterface::class, function ($response) use ($cookie) {
             if (! $response instanceof ServerResponse) {
                 throw new InvalidResponseException('The response is not instanceof ' . ServerResponse::class);
             }
             return $response->withCookie($cookie);
-        });
-
-        return $this;
-    }
-
-    public function header(string $name, $value): ResponseInterface
-    {
-        Context::override(PsrResponseInterface::class, function ($response) use ($name, $value) {
-            if (! $response instanceof PsrResponseInterface) {
-                throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
-            }
-            return $response->withHeader($name, $value);
         });
 
         return $this;
@@ -212,7 +200,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withProtocolVersion($version)
     {
-        return $this->getResponse()->withProtocolVersion($version);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -307,7 +295,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withHeader($name, $value)
     {
-        return $this->getResponse()->withHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -326,7 +314,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
-        return $this->getResponse()->withAddedHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -341,7 +329,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withoutHeader($name)
     {
-        return $this->getResponse()->withoutHeader($name);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -367,7 +355,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
-        return $this->getResponse()->withBody($body);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -402,7 +390,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        return $this->getResponse()->withStatus($code, $reasonPhrase);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -420,6 +408,23 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    protected function call($name, $arguments)
+    {
+        Context::override(PsrResponseInterface::class, function ($response) use ($name, $arguments) {
+            if (! $response instanceof PsrResponseInterface) {
+                throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
+            }
+
+            if (! method_exists($response, $name)) {
+                throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+            }
+
+            return  $response->{$name}(...$arguments);
+        });
+
+        return $this;
     }
 
     /**

@@ -57,12 +57,5 @@ interface ResponseInterface
     /**
      * Override a response with a cookie.
      */
-    public function cookie(Cookie $cookie): ResponseInterface;
-
-    /**
-     * Override a response with a header.
-     *
-     * @param string|string[] $value
-     */
-    public function header(string $name, $value): ResponseInterface;
+    public function withCookie(Cookie $cookie): ResponseInterface;
 }
