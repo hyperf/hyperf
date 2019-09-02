@@ -256,7 +256,7 @@ class DispatcherFactory
         $routeFilesList = [];
         foreach ($routeFiles as $key=>$value) {
             if (substr(strrchr($value, '.'), 1) === 'php') {
-                array_push($routeFilesList,$routeDir . $value);
+                array_push($routeFilesList, $routeDir . $value);
             }
         }
         /**
