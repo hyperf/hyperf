@@ -15,7 +15,6 @@ namespace Hyperf\Devtool\Generator;
 use Hyperf\Command\Annotation\Command;
 
 /**
- * Class RequestCommand.
  * @Command
  */
 class RequestCommand extends GeneratorCommand

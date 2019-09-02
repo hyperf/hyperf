@@ -69,7 +69,7 @@ class ValidationRuleParser
     public function mergeRules(array $results, $attribute, $rules = []): array
     {
         if (is_array($attribute)) {
-            foreach ((array) $attribute as $innerAttribute => $innerRules) {
+            foreach ($attribute as $innerAttribute => $innerRules) {
                 $results = $this->mergeRulesForAttribute($results, $innerAttribute, $innerRules);
             }
 
@@ -126,7 +126,7 @@ class ValidationRuleParser
     /**
      * Explode the explicit rule into an array if necessary.
      *
-     * @param mixed $rule
+     * @param array|object|string $rule
      */
     protected function explodeExplicitRule($rule): array
     {
@@ -208,7 +208,7 @@ class ValidationRuleParser
      */
     protected static function parseArrayRule(array $rules): array
     {
-        return [Str::studly(trim((string) Arr::get($rules, (string) 0))), array_slice($rules, 1)];
+        return [Str::studly(trim((string) Arr::get($rules, 0))), array_slice($rules, 1)];
     }
 
     /**
