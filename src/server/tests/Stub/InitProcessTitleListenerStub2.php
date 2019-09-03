@@ -15,8 +15,10 @@ namespace HyperfTest\Server\Stub;
 use Hyperf\Server\Listener\InitProcessTitleListener;
 use Hyperf\Utils\Context;
 
-class InitProcessTitleListenerStub extends InitProcessTitleListener
+class InitProcessTitleListenerStub2 extends InitProcessTitleListener
 {
+    protected $dot = '#';
+
     public function setTitle(string $title)
     {
         Context::set('test.server.process.title', $title);

@@ -25,7 +25,7 @@ class InitProcessTitleListener implements ListenerInterface
     /**
      * @var string
      */
-    protected $prefix = '';
+    protected $name = '';
 
     /**
      * @var string
@@ -36,7 +36,7 @@ class InitProcessTitleListener implements ListenerInterface
     {
         if ($container->has(ConfigInterface::class)) {
             if ($name = $container->get(ConfigInterface::class)->get('app_name')) {
-                $this->prefix = $name . $this->dot;
+                $this->name = $name;
             }
         }
     }
@@ -53,23 +53,35 @@ class InitProcessTitleListener implements ListenerInterface
 
     public function process(object $event)
     {
+        $array = [];
+        if ($this->name !== '') {
+            $array[] = $this->name;
+        }
+
         if ($event instanceof OnStart) {
-            $this->setTitle('Master');
+            $array[] = 'Master';
         } elseif ($event instanceof OnManagerStart) {
-            $this->setTitle('Manager');
+            $array[] = 'Manager';
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
-                $this->setTitle('TaskWorker.' . $event->workerId);
+                $array[] = 'TaskWorker';
+                $array[] = $event->workerId;
             } else {
-                $this->setTitle('Worker.' . $event->workerId);
+                $array[] = 'Worker';
+                $array[] = $event->workerId;
             }
         } elseif ($event instanceof BeforeProcessHandle) {
-            $this->setTitle($event->process->name . '.' . $event->index);
+            $array[] = $event->process->name;
+            $array[] = $event->index;
+        }
+
+        if ($title = implode($this->dot, $array)) {
+            $this->setTitle($title);
         }
     }
 
-    protected function setTitle($title)
+    protected function setTitle(string $title)
     {
-        @cli_set_process_title($this->prefix . $title);
+        @cli_set_process_title($title);
     }
 }

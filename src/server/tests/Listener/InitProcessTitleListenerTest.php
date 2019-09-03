@@ -22,6 +22,7 @@ use Hyperf\Server\Listener\InitProcessTitleListener;
 use Hyperf\Utils\Context;
 use HyperfTest\Server\Stub\DemoProcess;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub;
+use HyperfTest\Server\Stub\InitProcessTitleListenerStub2;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -82,5 +83,23 @@ class InitProcessTitleListenerTest extends TestCase
         $listener->process(new BeforeProcessHandle($process, 0));
 
         $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
+    }
+
+    public function testUserDefinedDot()
+    {
+        $name = 'hyperf-skeleton.' . uniqid();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(false);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+            'app_name' => $name,
+        ]));
+
+        $listener = new InitProcessTitleListenerStub2($container);
+        $process = new DemoProcess($container);
+
+        $listener->process(new BeforeProcessHandle($process, 0));
+
+        $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
     }
 }
