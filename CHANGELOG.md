@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) ensure returns -1 when running in non-coroutine context
 
 # v1.0.13 - 2019-08-28
 
