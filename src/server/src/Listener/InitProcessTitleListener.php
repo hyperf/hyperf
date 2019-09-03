@@ -27,11 +27,16 @@ class InitProcessTitleListener implements ListenerInterface
      */
     protected $prefix = '';
 
+    /**
+     * @var string
+     */
+    protected $dot = '.';
+
     public function __construct(ContainerInterface $container)
     {
         if ($container->has(ConfigInterface::class)) {
             if ($name = $container->get(ConfigInterface::class)->get('app_name')) {
-                $this->prefix = $name . '.';
+                $this->prefix = $name . $this->dot;
             }
         }
     }
