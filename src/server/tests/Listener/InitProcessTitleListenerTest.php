@@ -17,7 +17,12 @@ use Hyperf\Framework\Event\OnManagerStart;
 use Hyperf\Framework\Event\OnStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Listener\InitProcessTitleListener;
+use Hyperf\Utils\Context;
+use HyperfTest\Server\Stub\DemoProcess;
+use HyperfTest\Server\Stub\InitProcessTitleListenerStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -25,9 +30,15 @@ use PHPUnit\Framework\TestCase;
  */
 class InitProcessTitleListenerTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testInitProcessTitleListenerListen()
     {
-        $listener = new InitProcessTitleListener();
+        $container = Mockery::mock(ContainerInterface::class);
+        $listener = new InitProcessTitleListener($container);
 
         $this->assertSame([
             OnStart::class,
@@ -35,5 +46,31 @@ class InitProcessTitleListenerTest extends TestCase
             AfterWorkerStart::class,
             BeforeProcessHandle::class,
         ], $listener->listen());
+    }
+
+    public function testProcessDefaultName()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(Mockery::any())->andReturn(false);
+
+        $listener = new InitProcessTitleListenerStub($container);
+        $process = new DemoProcess($container);
+
+        $listener->process(new BeforeProcessHandle($process, 1));
+
+        $this->assertSame('Hyperf.test.demo.1', Context::get('test.server.process.title'));
+    }
+
+    public function testProcessName()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(Mockery::any())->andReturn(false);
+
+        $listener = new InitProcessTitleListenerStub($container);
+        $process = new DemoProcess($container);
+
+        $listener->process(new BeforeProcessHandle($process, 1));
+
+        $this->assertSame('Hyperf.test.demo.1', Context::get('test.server.process.title'));
     }
 }

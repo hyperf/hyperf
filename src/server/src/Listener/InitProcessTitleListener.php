@@ -12,14 +12,26 @@ declare(strict_types=1);
 
 namespace Hyperf\Server\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\OnManagerStart;
 use Hyperf\Framework\Event\OnStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Psr\Container\ContainerInterface;
 
 class InitProcessTitleListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function listen(): array
     {
         return [
@@ -32,18 +44,31 @@ class InitProcessTitleListener implements ListenerInterface
 
     public function process(object $event)
     {
+        $prefix = 'Hyperf.';
+        if ($this->container->has(ConfigInterface::class)) {
+            $name = $this->container->get(ConfigInterface::class)->get('app_name');
+            if ($name) {
+                $prefix = $name . '.';
+            }
+        }
+
         if ($event instanceof OnStart) {
-            @cli_set_process_title('Master');
+            $this->setTitle($prefix . 'Master');
         } elseif ($event instanceof OnManagerStart) {
-            @cli_set_process_title('Manager');
+            $this->setTitle($prefix . 'Manager');
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
-                @cli_set_process_title('TaskWorker.' . $event->workerId);
+                $this->setTitle($prefix . 'TaskWorker.' . $event->workerId);
             } else {
-                @cli_set_process_title('Worker.' . $event->workerId);
+                $this->setTitle($prefix . 'Worker.' . $event->workerId);
             }
         } elseif ($event instanceof BeforeProcessHandle) {
-            @cli_set_process_title($event->process->name . '.' . $event->index);
+            $this->setTitle($prefix . $event->process->name . '.' . $event->index);
         }
+    }
+
+    protected function setTitle($title)
+    {
+        @cli_set_process_title($title);
     }
 }
