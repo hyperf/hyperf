@@ -1,6 +1,6 @@
 # Swoole Tracker
 
-[Swoole Tracker](https://www.swoole-cloud.com/tracker.html) 作为 `Swoole` 官方出品的一整套企业级`PHP`和`Swoole`分析调试工具，更专一、更专业。
+[Swoole Tracker](https://www.swoole-cloud.com/tracker.html) 作为 `Swoole` 官方出品的一整套企业级 `PHP` 和 `Swoole`分析调试工具，更专一、更专业。（曾命名：Swoole Enterprise）
 
 - 时刻掌握应用架构模型
 > 自动发现应用依赖拓扑结构和展示，时刻掌握应用的架构模型
@@ -117,17 +117,17 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 
 ### 不依赖组件
 
-`Swoole Tracker`的`v2.5.0`版本支持自动生成应用名称并创建应用，无需修改任何代码，生成的应用名称格式为：
+`Swoole Tracker` 的 `v2.5.0` 以上版本支持自动生成应用名称并创建应用，无需修改任何代码，生成的应用名称格式为：
 
-`Swoole`的`HttpServer`：`ip:prot`
+`Swoole` 的 `HttpServer:ip:port`
 
-其他的`Server`：`ip(hostname):prot`
+其他的 `Server:ip(hostname):port`
 
-即安装好`swoole_tracker`扩展之后就可以正常使用`Swoole Tracker`的功能
+即安装好 `swoole_tracker` 扩展之后就可以正常使用 `Swoole Tracker` 的功能
 
 ### 依赖组件
 
-当你需要自定义应用名称时则需要安装组件，使用`Composer`安装：
+当你需要自定义应用名称时则需要安装组件，使用 `Composer` 安装：
 
 ```bash
 composer require hyperf/swoole-tracker
