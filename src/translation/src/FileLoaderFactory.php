@@ -10,22 +10,20 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Snowflake;
+namespace Hyperf\Translation;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
-class SnowflakeFactory
+class FileLoaderFactory
 {
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $level = $config->get('snowflake.level', IdGeneratorInterface::LEVEL_MILLISECOND);
-        $beginSecond = $config->get('snowflake.begin_second', IdGeneratorInterface::DEFAULT_SECOND);
+        $files = $container->get(Filesystem::class);
+        $path = $config->get('translation.path');
 
-        return make(Snowflake::class, [
-            'level' => $level,
-            'beginSecond' => $beginSecond,
-        ]);
+        return make(FileLoader::class, compact('files', 'path'));
     }
 }

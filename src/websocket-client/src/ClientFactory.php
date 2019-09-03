@@ -22,7 +22,7 @@ class ClientFactory
         if (! Str::startsWith($uri, ['ws://', 'wss://'])) {
             $uri = 'ws://' . $uri;
         }
-        $client =  make(Client::class, ['uri' => new Uri($uri)]);
+        $client = make(Client::class, ['uri' => new Uri($uri)]);
         if ($autoClose) {
             defer(function () use ($client) {
                 $client->close();

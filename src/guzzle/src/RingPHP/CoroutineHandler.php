@@ -67,12 +67,7 @@ class CoroutineHandler
 
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
-            return [
-                'status' => null,
-                'reason' => null,
-                'headers' => [],
-                'error' => $ex,
-            ];
+            return $this->getErrorResponse($ex, $btime, $effectiveUrl);
         }
 
         return $this->getResponse($client, $btime, $effectiveUrl);
@@ -114,6 +109,24 @@ class CoroutineHandler
         // TODO: 不知道为啥，这个扔进来就400
         unset($headers['Content-Length']);
         $client->setHeaders($headers);
+    }
+
+    protected function getErrorResponse(\Throwable $throwable, $btime, $effectiveUrl)
+    {
+        return new CompletedFutureArray([
+            'curl' => [
+                'errno' => 0,
+            ],
+            'transfer_stats' => [
+                'total_time' => microtime(true) - $btime,
+            ],
+            'effective_url' => $effectiveUrl,
+            'body' => '',
+            'status' => null,
+            'reason' => null,
+            'headers' => [],
+            'error' => $throwable,
+        ]);
     }
 
     protected function getResponse(Client $client, $btime, $effectiveUrl)
