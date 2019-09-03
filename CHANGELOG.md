@@ -7,7 +7,7 @@
 ## Fixed
 
 - [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
-- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) Fixed typehint error for `Coroutine::parentId` when running in non-coroutine environment.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) Fixed return type error of `Hyperf\Utils\Coroutine::parentId()` when running in non-coroutine environment.
 
 # v1.0.13 - 2019-08-28
 
