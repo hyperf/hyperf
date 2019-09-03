@@ -41,7 +41,7 @@ php /opt/www/bin/hyperf.php start
 2. `swoole-tracker.ini`
 
 ```bash
-[swoole_plus]
+[swoole_tracker]
 extension=/opt/swoole_tracker.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
@@ -117,11 +117,11 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 
 ### 不依赖组件
 
-`Swoole Tracker` 的 `v2.5.0` 以上版本支持自动生成应用名称并创建应用，无需修改任何代码，生成的应用名称格式为：
+`Swoole Tracker` 的 `v2.5.0` 以上版本支持自动生成应用名称并创建应用，无需修改任何代码。
 
-`Swoole` 的 `HttpServer:ip:port`
+如果使用 `Swoole` 的 `HttpServer` 那么生成的应用名称为`ip:port`
 
-其他的 `Server:ip(hostname):port`
+如果使用 `Swoole` 其他的 `Server` 那么生成的应用名称为`ip(hostname):port`
 
 即安装好 `swoole_tracker` 扩展之后就可以正常使用 `Swoole Tracker` 的功能
 
