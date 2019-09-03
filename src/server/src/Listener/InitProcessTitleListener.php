@@ -23,13 +23,17 @@ use Psr\Container\ContainerInterface;
 class InitProcessTitleListener implements ListenerInterface
 {
     /**
-     * @var ContainerInterface
+     * @var string
      */
-    protected $container;
+    protected $prefix = '';
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
+        if ($container->has(ConfigInterface::class)) {
+            if ($name = $container->get(ConfigInterface::class)->get('app_name')) {
+                $this->prefix = $name . '.';
+            }
+        }
     }
 
     public function listen(): array
@@ -44,31 +48,23 @@ class InitProcessTitleListener implements ListenerInterface
 
     public function process(object $event)
     {
-        $prefix = 'Hyperf.';
-        if ($this->container->has(ConfigInterface::class)) {
-            $name = $this->container->get(ConfigInterface::class)->get('app_name');
-            if ($name) {
-                $prefix = $name . '.';
-            }
-        }
-
         if ($event instanceof OnStart) {
-            $this->setTitle($prefix . 'Master');
+            $this->setTitle('Master');
         } elseif ($event instanceof OnManagerStart) {
-            $this->setTitle($prefix . 'Manager');
+            $this->setTitle('Manager');
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
-                $this->setTitle($prefix . 'TaskWorker.' . $event->workerId);
+                $this->setTitle('TaskWorker.' . $event->workerId);
             } else {
-                $this->setTitle($prefix . 'Worker.' . $event->workerId);
+                $this->setTitle('Worker.' . $event->workerId);
             }
         } elseif ($event instanceof BeforeProcessHandle) {
-            $this->setTitle($prefix . $event->process->name . '.' . $event->index);
+            $this->setTitle($event->process->name . '.' . $event->index);
         }
     }
 
     protected function setTitle($title)
     {
-        @cli_set_process_title($title);
+        @cli_set_process_title($this->prefix . $title);
     }
 }
