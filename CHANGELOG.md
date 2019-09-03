@@ -7,13 +7,13 @@
 ## Fixed
 
 - [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
-- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) ensure returns -1 when running in non-coroutine context
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) Fixed typehint error for `Coroutine::parentId` when running in non-coroutine environment.
 
 # v1.0.13 - 2019-08-28
 
 ## Added
 
-- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
+- [#428](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
 - [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 
