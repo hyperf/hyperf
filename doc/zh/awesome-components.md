@@ -106,7 +106,7 @@
 
 ## Swoole
 
-- - [hyperf/swoole-enterprise](https://github.com/hyperf-cloud/swoole-enterprise) Hyperf 官方提供的对接 Swoole Enterprise (Swoole Tracker) 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
+- - [hyperf/swoole-tracker](https://github.com/hyperf-cloud/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
 - - [hyperf/task](https://github.com/hyperf-cloud/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
 
 > Warning: 请勿于生产环境使用 `热更新/热重载` 功能
