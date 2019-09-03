@@ -41,7 +41,7 @@ class JaegerTracerFactory implements NamedFactoryInterface
      */
     private $prefix;
 
-    public function __construct(ConfigInterface $config, LoggerInterface $logger = null, CacheItemPoolInterface $cache = null)
+    public function __construct(ConfigInterface $config, ?LoggerInterface $logger = null, ?CacheItemPoolInterface $cache = null)
     {
         $this->config = $config;
         $this->logger = $logger;
