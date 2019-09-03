@@ -1,10 +1,10 @@
 # ConfigProvider mechanism
 
-The ConfigProvider mechanism is a very important mechanism for Hyperf componentization，`Decoupling between components` and `Component independence` and `Component reusability` It is based on this mechanism to be realized.
+The ConfigProvider mechanism is a very important mechanism for Hyperf componentization，`Decoupling between components` and `Component independence` and `Component reusability` are based on this mechanism to be realized.
 
 # What is ConfigProvider mechanism?
 
-Simply put, each component will provide a `ConfigProvider`，Usually a class that provides `ConfigProvider` in the root of the component，`ConfigProvider` will provide all configuration information for the corresponding component，This information is loaded by the Hyperf framework at startup，Finally, the configuration information in `ConfigProvider` will be merged into the implementation class corresponding to `Hyperf\Contract\ConfigInterface`，The `dependencies` information will be merged into `Hyperf\Di\Definition\DefinitionSource`，This enables configuration initialization to be performed when the component is used under the Hyperf framework.
+In brief, each component will provide a `ConfigProvider` class，usually `ConfigProvider` provides in the root of the component，`ConfigProvider` will provide all configuration information for the current component. This configuration information is loaded by the Hyperf framework at startup, finally, the configuration information in `ConfigProvider` will be merged into the implementation class corresponding to `Hyperf\Contract\ConfigInterface`, The `dependencies` information will be merged into `Hyperf\Di\Definition\DefinitionSource`. This allows the configuration initialization to be performed when the component is used under the Hyperf framework.
 
 `ConfigProvider` itself does not have any dependencies, does not inherit any abstract classes and does not require any implementation of the interface, just provide a `__invoke` method and return an array of the corresponding configuration structure.
 
@@ -22,24 +22,24 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            // Merge to  config/dependencies.php file
+            // Merge into config/dependencies.php
             'dependencies' => [],
-            // Merge to  config/autoload/annotations.php file
+            // Merge into config/autoload/annotations.php
             'scan' => [
                 'paths' => [
                     __DIR__,
                 ],
             ],
-            // default Command definition，Merge to Hyperf\Contract\ConfigInterface inner，Another way to understand is to correspond to config/autoload/commands.php
+            // Default Command definition，Merge into Hyperf\Contract\ConfigInterface，also means is to correspond to config/autoload/commands.php
             'commands' => [],
-            // as commands like
+            // The listeners is similar to commands
             'listeners' => [],
         ];
     }
 }
 ```
 
-Just create a class and it won't be loaded automatically by Hyperf. You still need to add some definitions to the component's `composer.json`, telling Hyperf that this is a ConfigProvider class that needs to be loaded, you need the `composer.json` inside the component. Add `extra.hyperf.config` configuration to the file and specify the namespace of the corresponding `ConfigProvider` class as shown below:
+It will not to load automatically by Hyperf that if you just create a `ConfigProvider` class, you still need to add some definitions to the `composer.json` of component, telling Hyperf that this is a ConfigProvider class that needs to be loaded, you need to add `extra.hyperf.config` configuration to `composer.json` and specify the namespace of the `ConfigProvider` class as shown below:
 
 ```json
 {
@@ -60,7 +60,7 @@ Just create a class and it won't be loaded automatically by Hyperf. You still ne
 }
 ```
 
-After the definition, you need to execute `composer install` or `composer update` or `composer dump-autoload`, etc., which will cause Composer to regenerate the `composer.lock` file in order to be read normally.
+After the definition, you need to execute `composer install` or `composer update` or `composer dump-autoload`, etc., which will make Composer to regenerate the `composer.lock` file, then Hyperf could detects the configuration of ConfigProvider.
 
 # Execution flow of the ConfigProvider mechanism
 
