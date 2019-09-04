@@ -10,15 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Snowflake;
+namespace HyperfTest\Server\Stub;
 
-interface MetaGeneratorInterface
+use Hyperf\Process\AbstractProcess;
+
+class DemoProcess extends AbstractProcess
 {
-    const DEFAULT_BEGIN_SECOND = 1560960000;
+    public $name = 'test.demo';
 
-    public function generate(): Meta;
-
-    public function getBeginTimeStamp(): int;
-
-    public function getConfig(): ConfigInterface;
+    public function handle(): void
+    {
+    }
 }

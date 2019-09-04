@@ -45,11 +45,23 @@ return ApplicationContext::setContainer($container);
 
 # v1.0.14 - TBD
 
+## Changed
+
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
+- [#501](https://github.com/hyperf-cloud/hyperf/pull/501) When the path argument of Mapping annotation is an empty string, then the path is equal to prefix of Controller annotation.
+- [#513](https://github.com/hyperf-cloud/hyperf/pull/513) Rewrite process name with `app_name`.
+
+## Fixed
+
+- [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) Fixed return type error of `Hyperf\Utils\Coroutine::parentId()` when running in non-coroutine environment.
+- [#514](https://github.com/hyperf-cloud/hyperf/pull/514) Fixed redis auth failed when the password is an empty string.
+
 # v1.0.13 - 2019-08-28
 
 ## Added
 
-- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
+- [#428](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
 - [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 
