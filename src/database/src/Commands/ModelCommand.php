@@ -95,7 +95,7 @@ class ModelCommand extends Command
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []));
+            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -211,7 +211,14 @@ class ModelCommand extends Command
     protected function getOption(string $name, string $key, string $pool = 'default', $default = null)
     {
         $result = $this->input->getOption($name);
-        $nonInput = in_array($name, ['force-casts', 'refresh-fillable']) ? false : null;
+        $nonInput = null;
+        if (in_array($name, ['force-casts', 'refresh-fillable'])) {
+            $nonInput = false;
+        }
+        if (in_array($name, ['table-mapping'])) {
+            $nonInput = [];
+        }
+
         if ($result === $nonInput) {
             $result = $this->config->get("databases.{$pool}.{$key}", $default);
         }

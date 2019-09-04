@@ -52,7 +52,7 @@ class ModelOption
     /**
      * @var array
      */
-    protected $tableMapping;
+    protected $tableMapping = [];
 
     public function getPool(): string
     {
