@@ -8,13 +8,13 @@
 
 首先第一步便是在阿里云上开通 `日志服务`。
 
-[文档](https://help.aliyun.com/product/28958.html?spm=a2c4g.11186623.6.540.12bac9b5C46s8N)
+[日志服务文档](https://help.aliyun.com/product/28958.html)
 
 以下的教程是一个顺序的操作方式，一步一步讲述如何使用日志服务。
 
-## 安装 Logtail容器
+## 安装 Logtail 容器
 
-[文档](https://help.aliyun.com/document_detail/66659.html?spm=a2c4g.11186623.2.15.52d541865uv5Xr)
+[标准 Docker 日志采集流程文档](https://help.aliyun.com/document_detail/66659.html)
 
 |                 参数                  |                    说明                    |
 |:-------------------------------------:|:------------------------------------------:|
@@ -34,7 +34,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 ### 创建 Project
 
-登录阿里云日志服务，点击 `创建Project`。填写以下信息
+登录阿里云日志服务，点击 `创建 Project`，填写以下信息
 
 |     参数     |     填写示例     |
 |:------------:|:----------------:|
@@ -48,25 +48,25 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 除以下参数，按需填写，其他都使用默认即可
 
-|     参数     |    填写示例     |
+|     参数     |     填写示例     |
 |:------------:|:---------------:|
 | Logstore名称 | hyperf-demo-api |
-|   永久保存   |      false      |
-| 数据保存时间 |       60        |
+|   永久保存    |      false      |
+| 数据保存时间  |       60        |
 
 ### 接入数据
 
-1. 选择 Docker文件
+1. 选择 Docker 文件
 
 2. 创建机器组
 
 如果已经创建过机器组，可以跳过这一步
 
 |      参数      |    填写示例    |
-|:--------------:|:--------------:|
-|   机器组名称   |     Hyperf     |
-|   机器组标识   | 用户自定义标识 |
-| 用户自定义标识 |     Hyperf     |
+|:-------------:|:-------------:|
+|   机器组名称    |     Hyperf    |
+|   机器组标识    |  用户自定义标识 |
+|  用户自定义标识  |     Hyperf    |
 
 3. 配置机器组
 
@@ -74,7 +74,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 4. 配置 Logtail
 
-Label白名单 这里可以按需填写，以下按照项目名字来配置，而项目名会在Docker容器运行时设置。
+`Label` 白名单，这里可以按需填写，以下按照项目名字来配置，而项目名会在 Docker 容器运行时设置。
 
 |      参数      |                     填写示例                      |    填写示例     |
 |:--------------:|:-------------------------------------------------:|:---------------:|
@@ -102,7 +102,7 @@ Label白名单 这里可以按需填写，以下按照项目名字来配置，�
 
 ### 运行镜像
 
-运行镜像时，只需要设置 Container labels 即可。
+运行镜像时，只需要设置 Container `labels` 即可。
 
 |   name   |      value      |
 |:--------:|:---------------:|
@@ -110,19 +110,18 @@ Label白名单 这里可以按需填写，以下按照项目名字来配置，�
 
 比如以下 Dockerfile
 
-```
+```Dockerfile
 # Default Dockerfile
 
 FROM hyperf/hyperf:7.2-alpine-cli
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="hyperf-demo-api"
 
-...
-
+# 其它内容省略
 ```
 
 ## 注意事项
 
-- Docker存储驱动限制：目前只支持overlay、overlay2，其他存储驱动需将日志所在目录mount到本地。然后改为收集宿主机 /logtail_host/your_path 下的日志即可。
+- Docker 存储驱动限制：目前只支持 `overlay`、`overlay2`，其他存储驱动需将日志所在目录 `mount` 到本地，然后改为收集宿主机 `~/logtail_host/your_path` 下的日志即可。
 
 
 
