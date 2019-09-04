@@ -14,6 +14,7 @@ namespace Hyperf\Di\Aop;
 
 use Closure;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Exception\Exception;
 
 class ProceedingJoinPoint
 {
@@ -43,7 +44,7 @@ class ProceedingJoinPoint
     public $originalMethod;
 
     /**
-     * @var Closure
+     * @var null|Closure
      */
     public $pipe;
 
@@ -61,6 +62,10 @@ class ProceedingJoinPoint
     public function process()
     {
         $closure = $this->pipe;
+        if (! $closure instanceof Closure) {
+            throw new Exception('The pipe is not instanceof \Closure');
+        }
+
         return $closure($this);
     }
 

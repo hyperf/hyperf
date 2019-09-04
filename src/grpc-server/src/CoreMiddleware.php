@@ -20,6 +20,8 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -45,26 +47,22 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var ResponseInterface $response */
-        $uri = $request->getUri();
+        /** @var Dispatched $dispatched */
+        $dispatched = $request->getAttribute(Dispatched::class);
 
-        /**
-         * @var array
-         *            Returns array with one of the following formats:
-         *            [self::NOT_FOUND]
-         *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
-         *            [self::FOUND, $handler, ['varName' => 'value', ...]]
-         */
-        $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
-        switch ($routes[0]) {
+        if (! $dispatched instanceof Dispatched) {
+            throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
+        }
+
+        switch ($dispatched->status) {
             case Dispatcher::FOUND:
-                [$controller, $action] = $this->prepareHandler($routes[1]);
+                [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
                 $controllerInstance = $this->container->get($controller);
                 if (! method_exists($controller, $action)) {
                     $grpcMessage = 'Action not exist.';
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
                 }
-                $parameters = $this->parseParameters($controller, $action, $routes[2]);
+                $parameters = $this->parseParameters($controller, $action, $dispatched->params);
                 $result = $controllerInstance->{$action}(...$parameters);
                 if (! $result instanceof Message) {
                     $grpcMessage = 'The result is not a valid message.';

@@ -100,6 +100,7 @@ docker network create \
 --driver overlay \
 --subnet 10.0.0.0/24 \
 --opt encrypted \
+--attachable \
 default-network
 ```
 
@@ -119,6 +120,14 @@ $ docker swarm join --token <token> ip:2377
 然后配置发布用的 gitlab-runner
 
 > 其他与 builder 一致，但是 tag 却不能一样。线上环境可以设置为 tags，测试环境设置为 test
+
+## 安装其他应用 
+
+以下以 `Mysql` 为例，直接使用上述 `network`，支持容器内使用 name 互调。
+
+```
+docker run --name mysql -v /srv/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=xxxx -p 3306:3306 --rm --network default-network -d mysql:5.7
+```
 
 ## 安装 Portainer
 
@@ -224,6 +233,85 @@ REDIS_DB=0
 
 ```
 curl http://127.0.0.1:9501/
+```
+
+## 安装 KONG 网关
+
+通常情况下，Swarm集群是不会直接对外的，所以我们这里推荐使用 `KONG` 作为网关。
+还有另外一个原因，那就是 `Swarm` 的 `Ingress网络` 设计上有缺陷，所以在连接不复用的情况下，会有并发瓶颈，具体请查看对应 `Issue` [#35082](https://github.com/moby/moby/issues/35082)
+而 `KONG` 作为网关，默认情况下就会复用后端的连接，所以会极大减缓上述问题。
+
+### 安装数据库
+
+```
+docker run -d --name kong-database \
+  --network=default-network \
+  -p 5432:5432 \
+  -e "POSTGRES_USER=kong" \
+  -e "POSTGRES_DB=kong" \
+  postgres:9.6
+```
+
+### 安装网关 
+
+初始化数据库
+
+```
+docker run --rm \
+  --network=default-network \
+  -e "KONG_DATABASE=postgres" \
+  -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
+  kong:latest kong migrations bootstrap
+```
+
+启动
+
+```
+docker run -d --name kong \
+  --network=default-network \
+  -e "KONG_DATABASE=postgres" \
+  -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
+  -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
+  -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \
+  -e "KONG_PROXY_ERROR_LOG=/dev/stderr" \
+  -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
+  -e "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl" \
+  -p 8000:8000 \
+  -p 8443:8443 \
+  -p 8001:8001 \
+  -p 8444:8444 \
+  kong:latest
+```
+
+### 安装 KONG Dashboard
+
+> 暂时 `Docker` 中没有更新 `v3.6.0` 所以最新版的 `KONG` 可能无法使用
+
+```
+docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard pgbi/kong-dashboard start \
+  --kong-url http://kong:8001 \
+  --basic-auth user1=password1 user2=password2
+```
+
+### 配置
+
+接下来只需要把部署 `KONG` 的机器 `IP` 对外，然后配置 `Service` 即可。
+如果机器直接对外，最好只开放 `80` `443` 端口，然后把 `Kong` 容器的 `8000` 和 `8443` 映射到 `80` 和 `443` 上。
+当然，如果使用了 `SLB` 等负载均衡，就直接通过负载均衡，把 `80` 和 `443` 映射到 `KONG` 所在几台机器的 `8000` `8443` 上。
+
+## 如何使用 Linux Crontab
+
+`Hyperf` 虽然提供了 `crontab` 组件，但是不一定可以满足所有人的需求，这里提供一个 `Linux` 使用的脚本，执行 `Docker` 内的 `Command`。
+
+```bash
+#!/usr/bin/env bash
+basepath=$(cd `dirname $0`; pwd)
+docker pull registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest
+docker run --rm -i -v $basepath/.env:/opt/www/.env \
+--entrypoint php registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest \
+/opt/www/bin/hyperf.php your_command
 ```
 
 ## 意外情况

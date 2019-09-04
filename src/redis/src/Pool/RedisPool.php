@@ -15,6 +15,7 @@ namespace Hyperf\Redis\Pool;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\RedisConnection;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
@@ -42,6 +43,8 @@ class RedisPool extends Pool
 
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
+
+        $this->frequency = make(Frequency::class);
 
         parent::__construct($container, $options);
     }

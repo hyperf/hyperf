@@ -105,9 +105,9 @@ $result = $task->handle(Coroutine::id());
 
 Swoole 暂时没有协程化的函数列表
 
-- mysql：底层使用 libmysqlclient
-- curl：底层使用 libcurl（即不能使用CURL驱动的Guzzle）
-- mongo：底层使用 mongo-c-client
+- mysql，底层使用 libmysqlclient
+- curl，底层使用 libcurl，在 Swoole 4.4 后底层进行了协程化(beta)
+- mongo，底层使用 mongo-c-client
 - pdo_pgsql
 - pdo_ori
 - pdo_odbc
@@ -143,10 +143,8 @@ class MongoTask
 
     /**
      * @Task
-     * @param string $namespace
-     * @param array $document
      */
-    public function insert($namespace, $document)
+    public function insert(string $namespace, array $document)
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
         $bulk = new BulkWrite();
@@ -158,11 +156,8 @@ class MongoTask
 
     /**
      * @Task
-     * @param string $namespace
-     * @param array $filter
-     * @param array $options
      */
-    public function query($namespace, $filter = [], $options = [])
+    public function query(string $namespace, array $filter = [], array $options = [])
     {
         $query = new Query($filter, $options);
         $cursor = $this->manager()->executeQuery($namespace, $query);

@@ -13,17 +13,24 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
+use Hyperf\HttpServer\Exception\Http\FileException;
+use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 use function get_class;
@@ -31,6 +38,16 @@ use function get_class;
 class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
+
+    /**
+     * @var null|PsrResponseInterface
+     */
+    protected $response;
+
+    public function __construct(?PsrResponseInterface $response = null)
+    {
+        $this->response = $response;
+    }
 
     public function __call($name, $arguments)
     {
@@ -111,6 +128,57 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
+     * Create a file download response.
+     *
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
+     */
+    public function download(string $file, string $name = ''): PsrResponseInterface
+    {
+        $file = new \SplFileInfo($file);
+
+        if (! $file->isReadable()) {
+            throw new FileException('File must be readable.');
+        }
+
+        $filename = $name ?: $file->getBasename();
+        $etag = $this->createEtag($file);
+        $contentType = value(function () use ($file) {
+            $mineType = null;
+            if (ApplicationContext::hasContainer()) {
+                $guesser = ApplicationContext::getContainer()->get(MimeTypeExtensionGuesser::class);
+                $mineType = $guesser->guessMimeType($file->getExtension());
+            }
+            return $mineType ?? 'application/octet-stream';
+        });
+
+        // Determine if ETag the client expects matches calculated ETag
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request instanceof ServerRequestInterface) {
+            $ifMatch = $request->getHeaderLine('if-match');
+            $ifNoneMatch = $request->getHeaderLine('if-none-match');
+            $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            array_walk($clientEtags, 'trim');
+            if (in_array($etag, $clientEtags, true)) {
+                return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
+            }
+        }
+
+        return $this->withHeader('content-description', 'File Transfer')
+            ->withHeader('content-type', $contentType)
+            ->withHeader('content-disposition', "attachment; filename={$filename}")
+            ->withHeader('content-transfer-encoding', 'binary')
+            ->withHeader('pragma', 'public')
+            ->withHeader('etag', $etag)
+            ->withBody(new SwooleFileStream($file));
+    }
+
+    public function withCookie(Cookie $cookie): ResponseInterface
+    {
+        return $this->call(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * Retrieves the HTTP protocol version as a string.
      * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
      *
@@ -134,7 +202,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withProtocolVersion($version)
     {
-        return $this->getResponse()->withProtocolVersion($version);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -229,7 +297,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withHeader($name, $value)
     {
-        return $this->getResponse()->withHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -248,7 +316,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
-        return $this->getResponse()->withAddedHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -263,7 +331,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withoutHeader($name)
     {
-        return $this->getResponse()->withoutHeader($name);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -289,7 +357,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
-        return $this->getResponse()->withBody($body);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -324,7 +392,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        return $this->getResponse()->withStatus($code, $reasonPhrase);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -342,6 +410,41 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    protected function call($name, $arguments)
+    {
+        $response = $this->getResponse();
+
+        if (! $response instanceof PsrResponseInterface) {
+            throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
+        }
+
+        if (! method_exists($response, $name)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        }
+
+        return new static($response->{$name}(...$arguments));
+    }
+
+    /**
+     * Get ETag header according to the checksum of the file.
+     */
+    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
+    {
+        $etag = '';
+        if ($weak) {
+            ClearStatCache::clear($file->getPathname());
+            $lastModified = $file->getMTime();
+            $filesize = $file->getSize();
+            if (! $lastModified || ! $filesize) {
+                return $etag;
+            }
+            $etag = sprintf('W/"%x-%x"', $lastModified, $filesize);
+        } else {
+            $etag = md5_file($file->getPathname());
+        }
+        return $etag;
     }
 
     /**
@@ -407,6 +510,10 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     protected function getResponse()
     {
+        if ($this->response instanceof PsrResponseInterface) {
+            return $this->response;
+        }
+
         return Context::get(PsrResponseInterface::class);
     }
 }

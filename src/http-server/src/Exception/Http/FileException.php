@@ -10,17 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer;
+namespace Hyperf\HttpServer\Exception\Http;
 
-use Psr\Container\ContainerInterface;
+use Hyperf\Server\Exception\ServerException;
 
-/**
- * @deprecated v1.1
- */
-class ServerFactory
+class FileException extends ServerException
 {
-    public function __invoke(ContainerInterface $container): Server
-    {
-        return new Server($container);
-    }
 }

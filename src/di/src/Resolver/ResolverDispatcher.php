@@ -23,12 +23,12 @@ use RuntimeException;
 class ResolverDispatcher implements ResolverInterface
 {
     /**
-     * @var ObjectResolver
+     * @var null|ObjectResolver
      */
     protected $objectResolver;
 
     /**
-     * @var FactoryResolver
+     * @var null|FactoryResolver
      */
     protected $factoryResolver;
 

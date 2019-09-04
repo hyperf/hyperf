@@ -74,20 +74,6 @@ class RedisDriver extends Driver
         return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
     }
 
-    /**
-     * @deprecated v1.1
-     */
-    public function delay(JobInterface $job, int $delay = 0): bool
-    {
-        if ($delay === 0) {
-            return $this->push($job);
-        }
-
-        $message = new Message($job);
-        $data = $this->packer->pack($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
-    }
-
     public function delete(JobInterface $job): bool
     {
         $message = new Message($job);
