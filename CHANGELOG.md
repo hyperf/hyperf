@@ -1,5 +1,9 @@
 # v1.0.14 - TBD
 
+## Added
+
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
+
 ## Changed
 
 - [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
