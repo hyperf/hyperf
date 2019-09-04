@@ -9,11 +9,13 @@
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 - [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
 
 ## Changed
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 - [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Generate the singular class of an plural table.
 
 config/container.php
 
