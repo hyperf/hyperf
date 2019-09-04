@@ -86,6 +86,7 @@
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
   * [Nginx 反向代理](zh/tutorial/nginx.md)
+  * [阿里云日志服务](zh/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
