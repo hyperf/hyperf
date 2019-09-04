@@ -301,6 +301,19 @@ docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard 
 如果机器直接对外，最好只开放 `80` `443` 端口，然后把 `Kong` 容器的 `8000` 和 `8443` 映射到 `80` 和 `443` 上。
 当然，如果使用了 `SLB` 等负载均衡，就直接通过负载均衡，把 `80` 和 `443` 映射到 `KONG` 所在几台机器的 `8000` `8443` 上。
 
+## 如何使用 Linux Crontab
+
+`Hyperf` 虽然提供了 `crontab` 组件，但是不一定可以满足所有人的需求，这里提供一个 `Linux` 使用的脚本，执行 `Docker` 内的 `Command`。
+
+```bash
+#!/usr/bin/env bash
+basepath=$(cd `dirname $0`; pwd)
+docker pull registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest
+docker run --rm -i -v $basepath/.env:/opt/www/.env \
+--entrypoint php registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest \
+/opt/www/bin/hyperf.php your_command
+```
+
 ## 意外情况
 
 ### fatal: git fetch-pack: expected shallow list
