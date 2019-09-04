@@ -33,12 +33,12 @@ use Psr\Container\ContainerInterface;
  * @method static int affectingStatement(string $query, array $bindings = [])
  * @method static bool unprepared(string $query)
  * @method static array prepareBindings(array $bindings)
- * @method static transaction(Closure $callback, int $attempts = 1)
+ * @method static transaction(\Closure $callback, int $attempts = 1)
  * @method static beginTransaction()
  * @method static rollBack()
  * @method static commit()
  * @method static int transactionLevel()
- * @method static array pretend(Closure $callback)
+ * @method static array pretend(\Closure $callback)
  * @method static ConnectionInterface connection(string $pool)
  */
 class Db
