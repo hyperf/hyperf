@@ -12,44 +12,13 @@
 
 以下的教程是一个顺序的操作方式，一步一步讲述如何使用日志服务。
 
-## 安装 Logtail
-
-`Logtail客户端` 是日志服务提供的日志采集客户端
-
-[文档](https://help.aliyun.com/document_detail/28982.html?spm=a2c4g.11186623.6.600.bd666a16cEkLw2)
-
-```
-wget http://logtail-release-${your_region_name}.oss-${your_region_name}-internal.aliyuncs.com/linux64/logtail.sh -O logtail.sh; chmod 755 logtail.sh; ./logtail.sh install ${your_region_name}
-```
-
-以下为杭州ECS的安装实例
-
-```
-wget http://logtail-release-cn-hangzhou.oss-cn-hangzhou-internal.aliyuncs.com/linux64/logtail.sh -O logtail.sh; chmod 755 logtail.sh; ./logtail.sh install cn-hangzhou
-```
-
-## 创建机器组
-
-日志服务通过机器组的方式管理所有需要通过 `Logtail` 客户端收集日志的服务器。
-
-机器组是包含多台服务器的虚拟分组。如果您有一台以上的服务器，并希望这些服务器使用同样的 `Logtail` 配置采集日志，可以将这些服务器加入同一个机器组，并将 `Logtail` 配置应用到该机器组。
-
-### 自定义标识机器组
-
-假设我们的机器组 名为 `Hyperf`。则修改 `/etc/ilogtail/user_defined_id` 文件，输入 `Hyperf`。
-
-```
-$ cat /etc/ilogtail/user_defined_id
-Hyperf
-```
-
 ## 安装 Logtail容器
 
 [文档](https://help.aliyun.com/document_detail/66659.html?spm=a2c4g.11186623.2.15.52d541865uv5Xr)
 
 |                 参数                  |                        说明                         |
 |:-------------------------------------:|:---------------------------------------------------:|
-|          ${your_region_name}          | 与 Logtail安装参数一致，比如华东1区域是 cn-hangzhou |
+|          ${your_region_name}          | 区域ID 比如华东1区域是 cn-hangzhou |
 |        ${your_aliyun_user_id}         |     用户标识，请替换为您的阿里云主账号用户ID。      |
 | ${your_machine_group_user_defined_id} |      集群的机器组自定义标识，即为上述的 Hyperf      |
 
