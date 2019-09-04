@@ -1,7 +1,7 @@
 # v1.0.14 - TBD
 
 ## Added
-- [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#528](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 
 ## Changed
 
