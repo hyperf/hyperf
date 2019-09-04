@@ -12,34 +12,35 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake\MetaGenerator;
 
-use Hyperf\Contract\ConfigInterface as HyperfConfig;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Snowflake\ConfigInterface;
+use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
 
 class RedisMilliSecondMetaGenerator extends MetaGenerator
 {
-    const REDIS_KEY = 'hyperf:snowflake:worker';
+    const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
 
     protected $workerId;
 
     protected $dataCenterId;
 
-    public function __construct(HyperfConfig $hConfig, ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
+    public function __construct(ConfigInterface $config, ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND)
     {
-        parent::__construct($config, $beginTimeStamp * 1000);
+        parent::__construct($configuration, $beginTimestamp * 1000);
 
-        $pool = $hConfig->get('snowflake.' . static::class . '.pool', 'default');
+        $pool = $config->get('snowflake.' . static::class . '.pool', 'default');
 
         /** @var \Redis $redis */
         $redis = make(RedisProxy::class, [
             'pool' => $pool,
         ]);
 
-        $id = $redis->incr(static::REDIS_KEY);
+        $key = $config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
+        $id = $redis->incr($key);
 
-        $this->workerId = $id % $config->maxWorkerId();
-        $this->dataCenterId = intval($id / $config->maxWorkerId()) % $config->maxDataCenterId();
+        $this->workerId = $id % $configuration->maxWorkerId();
+        $this->dataCenterId = intval($id / $configuration->maxWorkerId()) % $configuration->maxDataCenterId();
     }
 
     public function getDataCenterId(): int
@@ -52,16 +53,16 @@ class RedisMilliSecondMetaGenerator extends MetaGenerator
         return $this->workerId;
     }
 
-    public function getTimeStamp(): int
+    public function getTimestamp(): int
     {
         return intval(microtime(true) * 1000);
     }
 
-    public function getNextTimeStamp(): int
+    public function getNextTimestamp(): int
     {
-        $timestamp = $this->getTimeStamp();
-        while ($timestamp <= $this->lastTimeStamp) {
-            $timestamp = $this->getTimeStamp();
+        $timestamp = $this->getTimestamp();
+        while ($timestamp <= $this->lastTimestamp) {
+            $timestamp = $this->getTimestamp();
         }
 
         return $timestamp;

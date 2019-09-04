@@ -20,7 +20,7 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Snowflake\Config as SnowflakeConfig;
+use Hyperf\Snowflake\Configuration as SnowflakeConfig;
 use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
@@ -41,7 +41,7 @@ class RedisMetaGeneratorTest extends TestCase
     {
         $container = $this->getContainer();
         $redis = $container->make(RedisProxy::class, ['pool' => 'snowflake']);
-        $redis->del(RedisMilliSecondMetaGenerator::REDIS_KEY);
+        $redis->del(RedisMilliSecondMetaGenerator::DEFAULT_REDIS_KEY);
     }
 
     public function testGenerateMeta()
