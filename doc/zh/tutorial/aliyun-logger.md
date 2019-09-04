@@ -108,3 +108,9 @@ Label白名单 这里可以按需填写，以下按照项目名字来配置，�
 |:--------:|:---------------:|
 | app.name | hyperf-demo-api |
 
+## 注意事项
+
+- Docker存储驱动限制：目前只支持overlay、overlay2，其他存储驱动需将日志所在目录mount到本地。然后改为收集宿主机 /logtail_host/your_path 下的日志即可。
+
+
+
