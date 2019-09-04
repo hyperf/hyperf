@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\ValidatorInterface;
+
 /**
  * Provides default implementation of ValidatesWhenResolved contract.
  */
@@ -46,7 +48,7 @@ trait ValidatesWhenResolvedTrait
     /**
      * Get the validator instance for the request.
      *
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return ValidatorInterface
      */
     protected function getValidatorInstance()
     {
@@ -58,7 +60,7 @@ trait ValidatesWhenResolvedTrait
      *
      * @throws \Hyperf\Validation\ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(ValidatorInterface $validator)
     {
         throw new ValidationException($validator);
     }

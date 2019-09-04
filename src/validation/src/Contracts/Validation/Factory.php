@@ -17,7 +17,7 @@ interface Factory
     /**
      * Create a new Validator instance.
      *
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return \Hyperf\Contract\ValidatorInterface
      */
     public function make(array $data, array $rules, array $messages = [], array $customAttributes = []);
 

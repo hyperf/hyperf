@@ -10,14 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Validation\Contracts\Support;
+namespace Hyperf\Utils\Contracts;
 
 interface MessageProvider
 {
     /**
      * Get the messages for the instance.
-     *
-     * @return MessageBag
      */
-    public function getMessageBag();
+    public function getMessageBag(): MessageBag;
 }

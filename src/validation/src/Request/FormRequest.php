@@ -16,7 +16,7 @@ use Hyperf\HttpServer\Request;
 use Hyperf\Utils\Context;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
-use Hyperf\Validation\Contracts\Validation\Validator;
+use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
@@ -96,7 +96,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get the validator instance for the request.
      *
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return ValidatorInterface
      */
     protected function getValidatorInstance()
     {
@@ -118,7 +118,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Create the default validator instance.
      *
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return ValidatorInterface
      */
     protected function createDefaultValidator(ValidationFactory $factory)
     {
@@ -145,7 +145,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      *
      * @throws ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(ValidatorInterface $validator)
     {
         throw new ValidationException($validator, $this->response());
     }
@@ -153,7 +153,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Format the errors from the given Validator instance.
      */
-    protected function formatErrors(Validator $validator): array
+    protected function formatErrors(ValidatorInterface $validator): array
     {
         return $validator->getMessageBag()->toArray();
     }

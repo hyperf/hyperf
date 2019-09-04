@@ -25,9 +25,9 @@ class ValidationInRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()
     {
-        $rule = new In(['Laravel', 'Framework', 'PHP']);
+        $rule = new In(['Hyperf', 'Framework', 'PHP']);
 
-        $this->assertEquals('in:"Laravel","Framework","PHP"', (string) $rule);
+        $this->assertEquals('in:"Hyperf","Framework","PHP"', (string) $rule);
 
         $rule = new In(['Life, the Universe and Everything', 'this is a "quote"']);
 

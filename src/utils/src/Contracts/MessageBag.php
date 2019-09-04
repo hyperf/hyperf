@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Validation\Contracts\Support;
+namespace Hyperf\Utils\Contracts;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Validation\Contracts\Support\MessageProvider;
 
-interface MessageBag extends Arrayable
+interface MessageBag
 {
     /**
      * Get the keys present in the message bag.
@@ -23,10 +23,8 @@ interface MessageBag extends Arrayable
 
     /**
      * Add a message to the bag.
-     *
-     * @return $this
      */
-    public function add(string $key, string $message);
+    public function add(string $key, string $message): MessageBag;
 
     /**
      * Merge a new array of messages into the bag.
@@ -49,21 +47,17 @@ interface MessageBag extends Arrayable
      * @param null|string $key
      * @param null|string $format
      */
-    public function first($key = null, $format = null): string;
+    public function first(?string $key = null, ?string $format = null): string;
 
     /**
      * Get all of the messages from the bag for a given key.
-     *
-     * @param null|string $format
      */
-    public function get(string $key, $format = null): array;
+    public function get(string $key, ?string $format = null): array;
 
     /**
      * Get all of the messages for every key in the bag.
-     *
-     * @param null|string $format
      */
-    public function all($format = null): array;
+    public function all(?string $format = null): array;
 
     /**
      * Get the raw messages in the container.

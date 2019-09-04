@@ -3,7 +3,7 @@
 
 ## About
 
-hyperf/validation 是对Laravel Validation的移植（不包含门面部分），具体使用方法可以参考Laravel Validation 的使用。
+[hyperf/validation](https://github.com/hyperf-cloud/validation) 组件衍生于 `Laravel Validation` 组件的，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 Validation 组件。
 
 ## Install
 
@@ -17,7 +17,7 @@ composer require hyperf/validation
 
 ### publish config
 ```
-php bin/hyperf.php  vendor:publish hyperf/translation
+php bin/hyperf.php  vendor:publish hyperf/validation
 
 ```
 

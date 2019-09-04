@@ -1,22 +1,13 @@
 <?php
 
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
- */
+namespace Hyperf\Contract;
 
-namespace Hyperf\Validation\Contracts\Validation;
+use Hyperf\Utils\Contracts\MessageProvider;
+use Hyperf\Utils\Contracts\MessageBag;
 
-use Hyperf\Validation\Contracts\Support\MessageProvider;
-use Hyperf\Validation\Support\MessageBag;
-
-interface Validator extends MessageProvider
+interface ValidatorInterface extends MessageProvider
 {
+
     /**
      * Run the validator's rules against its data.
      */
@@ -56,8 +47,7 @@ interface Validator extends MessageProvider
 
     /**
      * Get all of the validation error messages.
-     *
-     * @return MessageBag
      */
-    public function errors();
+    public function errors(): MessageBag;
+
 }

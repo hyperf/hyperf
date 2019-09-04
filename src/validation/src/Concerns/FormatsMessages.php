@@ -16,6 +16,7 @@ use Closure;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
+use Hyperf\Validation\Validator;
 
 trait FormatsMessages
 {
@@ -317,11 +318,8 @@ trait FormatsMessages
 
     /**
      * Call a custom validator message replacer.
-     *
-     * @param \Hyperf\Validation\Validator $validator
-     * @return null|string
      */
-    protected function callReplacer(string $message, string $attribute, string $rule, array $parameters, $validator)
+    protected function callReplacer(string $message, string $attribute, string $rule, array $parameters, Validator $validator): ?string
     {
         $callback = $this->replacers[$rule];
 

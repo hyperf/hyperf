@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +22,7 @@ class ValidationException extends ServerException
     /**
      * The validator instance.
      *
-     * @var \Hyperf\Validation\Contracts\Validation\Validator
+     * @var ValidatorInterface
      */
     public $validator;
 
@@ -56,10 +57,10 @@ class ValidationException extends ServerException
     /**
      * Create a new exception instance.
      *
-     * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
+     * @param ValidatorInterface $validator
      * @param null|ResponseInterface $response
      */
-    public function __construct($validator, $response = null, string $errorBag = 'default')
+    public function __construct(ValidatorInterface $validator, $response = null, string $errorBag = 'default')
     {
         parent::__construct('The given data was invalid.');
 
