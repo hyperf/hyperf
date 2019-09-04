@@ -17,6 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
@@ -178,6 +179,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
         $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new RedisPool($container, $args['name']);
         });
