@@ -87,7 +87,7 @@
 
 ## ID 生成器
 
-- [hyperf/snawflake](https://github.com/hyperf-cloud/snawflake) Hyperf 官方提供的 Snowflake ID 生成器组件 (beta)
+- [hyperf/snowflake](https://github.com/hyperf-cloud/snowflake) Hyperf 官方提供的 Snowflake ID 生成器组件 (beta)
 
 ## 文档生成
 
