@@ -199,7 +199,7 @@ class CoroutineHandler
         }
 
         if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
-            return new RequestException('Server reset');
+            return new RequestException('Server reset', $request, null, null, $ctx);
         }
 
         return true;
