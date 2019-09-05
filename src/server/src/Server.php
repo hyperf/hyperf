@@ -112,6 +112,9 @@ class Server implements ServerInterface
             } else {
                 /** @var \Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
+                if (! $slaveServer) {
+                    throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
+                }
                 $server->getSettings() && $slaveServer->set($server->getSettings());
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
                 ServerManager::add($name, [$type, $slaveServer]);
@@ -177,7 +180,7 @@ class Server implements ServerInterface
     }
 
     /**
-     * @param Port|SwooleServer $server
+     * @param \Swoole\Server\Port|SwooleServer $server
      */
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {

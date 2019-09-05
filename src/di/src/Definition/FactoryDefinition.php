@@ -20,7 +20,7 @@ class FactoryDefinition implements DefinitionInterface
     private $name;
 
     /**
-     * @var callable
+     * @var callable|string
      */
     private $factory;
 

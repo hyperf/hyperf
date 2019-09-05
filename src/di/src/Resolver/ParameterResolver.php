@@ -21,7 +21,7 @@ use ReflectionParameter;
 class ParameterResolver
 {
     /**
-     * @var DefinitionInterface
+     * @var ResolverInterface
      */
     private $definitionResolver;
 

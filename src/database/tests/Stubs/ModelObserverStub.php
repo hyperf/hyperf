@@ -10,17 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcServer;
+namespace HyperfTest\Database\Stubs;
 
-use Psr\Container\ContainerInterface;
+use Hyperf\Database\Model\Events\Updating;
 
-/**
- * @deprecated v1.1
- */
-class ServerFactory
+class ModelObserverStub
 {
-    public function __invoke(ContainerInterface $container): Server
+    public function updating(Updating $event)
     {
-        return new Server($container);
+        $event->getModel()->foo = 'bar';
     }
 }

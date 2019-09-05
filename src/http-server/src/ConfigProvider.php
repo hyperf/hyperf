@@ -22,7 +22,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Server::class => ServerFactory::class,
                 RequestInterface::class => Request::class,
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
