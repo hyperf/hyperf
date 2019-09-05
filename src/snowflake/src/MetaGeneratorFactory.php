@@ -24,9 +24,9 @@ class MetaGeneratorFactory
         $beginSecond = $config->get('snowflake.begin_second', MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
 
         return make(RedisMilliSecondMetaGenerator::class, [
-            $config,
             $container->get(ConfigurationInterface::class),
             $beginSecond,
+            $config,
         ]);
     }
 }
