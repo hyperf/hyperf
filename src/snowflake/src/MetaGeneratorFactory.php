@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Snowflake;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Snowflake\ConfigInterface as SnowflakeConfigInterface;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Psr\Container\ContainerInterface;
 
@@ -26,7 +25,7 @@ class MetaGeneratorFactory
 
         return make(RedisMilliSecondMetaGenerator::class, [
             $config,
-            $container->get(SnowflakeConfigInterface::class),
+            $container->get(ConfigurationInterface::class),
             $beginSecond,
         ]);
     }

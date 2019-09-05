@@ -2,7 +2,8 @@
 
 ## Added
 
-[#525](https://github.com/hyperf-cloud/hyperf/pull/525) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
+- [#525](https://github.com/hyperf-cloud/hyperf/pull/525) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 
 ## Changed
 

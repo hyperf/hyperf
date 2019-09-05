@@ -20,7 +20,7 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Snowflake\Config as SnowflakeConfig;
+use Hyperf\Snowflake\Configuration as SnowflakeConfig;
 use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
@@ -41,14 +41,14 @@ class RedisMetaGeneratorTest extends TestCase
     {
         $container = $this->getContainer();
         $redis = $container->make(RedisProxy::class, ['pool' => 'snowflake']);
-        $redis->del(RedisMilliSecondMetaGenerator::REDIS_KEY);
+        $redis->del(RedisMilliSecondMetaGenerator::DEFAULT_REDIS_KEY);
     }
 
     public function testGenerateMeta()
     {
         $container = $this->getContainer();
         $config = $container->get(ConfigInterface::class);
-        $metaGenerator = new RedisMilliSecondMetaGenerator($config, new SnowflakeConfig());
+        $metaGenerator = new RedisMilliSecondMetaGenerator(new SnowflakeConfig(), MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $config);
 
         $meta = $metaGenerator->generate();
         $this->assertInstanceOf(Meta::class, $meta);
@@ -61,7 +61,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
         $config = new SnowflakeConfig();
-        $metaGenerator = new RedisMilliSecondMetaGenerator($hConfig, $config);
+        $metaGenerator = new RedisMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $id = $generator->generate();
@@ -78,7 +78,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
         $config = new SnowflakeConfig();
-        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
         $meta = $metaGenerator->generate();
         $this->assertInstanceOf(Meta::class, $meta);
         $this->assertSame(0, $meta->getDataCenterId());
@@ -90,7 +90,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
         $config = new SnowflakeConfig();
-        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $id = $generator->generate();
@@ -107,7 +107,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
         $config = new SnowflakeConfig();
-        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $meta = $generator->degenerate(PHP_INT_MAX);
@@ -124,7 +124,7 @@ class RedisMetaGeneratorTest extends TestCase
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
         $config = new SnowflakeConfig();
-        $metaGenerator = new RedisSecondMetaGenerator($hConfig, $config);
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
         $generator = new SnowflakeIdGenerator($metaGenerator);
         $generator = new UserDefinedIdGenerator($generator);
 
