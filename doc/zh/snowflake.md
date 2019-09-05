@@ -1,5 +1,9 @@
 # Snowflake
 
+> `snowflake` 是 `Twitter` 开源的分布式 `ID生成算法`，结果是一个 `long` 型的 `ID`。其核心思想是：使用 `41bit` 作为毫秒数，`10bit` 作为机器的 `ID`（5 个 `bit` 是数据中心，5 个 `bit` 的机器 `ID`），`12bit` 作为毫秒内的流水号（意味着每个节点在每毫秒可以产生 `4096` 个 `ID`），最后还有一个符号位，永远是 `0`。
+
+![snowflake](./imgs/snowflake.jpg)
+
 ## 安装
 
 ```
