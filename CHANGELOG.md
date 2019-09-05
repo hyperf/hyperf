@@ -49,7 +49,7 @@ return ApplicationContext::setContainer($container);
 
 ## Added
 
-- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) [#531](https://github.com/hyperf-cloud/hyperf/pull/531) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
 - [#525](https://github.com/hyperf-cloud/hyperf/pull/525) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 
 ## Changed
@@ -57,12 +57,11 @@ return ApplicationContext::setContainer($container);
 - [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
 - [#501](https://github.com/hyperf-cloud/hyperf/pull/501) When the path argument of Mapping annotation is an empty string, then the path is equal to prefix of Controller annotation.
 - [#513](https://github.com/hyperf-cloud/hyperf/pull/513) Rewrite process name with `app_name`.
-- [#526](https://github.com/hyperf-cloud/hyperf/pull/526) When execute `Hyperf\Utils\Coroutine::parentId()` static method in non-coroutine context will return null.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) [#526](https://github.com/hyperf-cloud/hyperf/pull/526) When execute `Hyperf\Utils\Coroutine::parentId()` static method in non-coroutine context will return null.
 
 ## Fixed
 
 - [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
-- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) Fixed return type error of `Hyperf\Utils\Coroutine::parentId()` when running in non-coroutine environment.
 - [#514](https://github.com/hyperf-cloud/hyperf/pull/514) Fixed redis auth failed when the password is an empty string.
 - [#527](https://github.com/hyperf-cloud/hyperf/pull/527) Fixed translator cannot translate repeatedly.
 
