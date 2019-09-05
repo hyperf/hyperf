@@ -19,7 +19,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
@@ -27,6 +26,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -425,26 +425,6 @@ class Response implements PsrResponseInterface, ResponseInterface
         }
 
         return new static($response->{$name}(...$arguments));
-    }
-
-    /**
-     * Get ETag header according to the checksum of the file.
-     */
-    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
-    {
-        $etag = '';
-        if ($weak) {
-            ClearStatCache::clear($file->getPathname());
-            $lastModified = $file->getMTime();
-            $filesize = $file->getSize();
-            if (! $lastModified || ! $filesize) {
-                return $etag;
-            }
-            $etag = sprintf('W/"%x-%x"', $lastModified, $filesize);
-        } else {
-            $etag = md5_file($file->getPathname());
-        }
-        return $etag;
     }
 
     /**
