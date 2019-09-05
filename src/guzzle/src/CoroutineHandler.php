@@ -190,11 +190,16 @@ class CoroutineHandler
             'errCode' => $errCode,
         ];
 
-        if ($statusCode === -1) {
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
             return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
         }
-        if ($statusCode === -2) {
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
             return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
+        }
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
+            return new RequestException('Server reset');
         }
 
         return true;
