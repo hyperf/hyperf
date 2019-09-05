@@ -25,7 +25,7 @@ class RedisSecondMetaGenerator extends MetaGenerator
 
     protected $dataCenterId;
 
-    public function __construct(ConfigInterface $config, ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND, ConfigInterface $config)
     {
         parent::__construct($configuration, $beginTimestamp);
 

@@ -14,7 +14,6 @@ namespace Hyperf\Snowflake;
 
 class Meta
 {
-
     /**
      * @var int [0, 31]
      */
