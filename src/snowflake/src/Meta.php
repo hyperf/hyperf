@@ -14,14 +14,6 @@ namespace Hyperf\Snowflake;
 
 class Meta
 {
-    const MILLISECOND_BITS = 41;
-
-    const DATA_CENTER_ID_BITS = 5;
-
-    const MACHINE_ID_BITS = 5;
-
-    const SEQUENCE_BITS = 12;
-
     /**
      * @var int [0, 31]
      */
@@ -45,89 +37,62 @@ class Meta
     /**
      * @var int seconds or milliseconds
      */
-    protected $beginTimeStamp = 0;
+    protected $beginTimestamp = 0;
 
-    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimeStamp = 1560960000)
+    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimestamp = 1560960000)
     {
         $this->dataCenterId = $dataCenterId;
         $this->workerId = $workerId;
         $this->sequence = $sequence;
         $this->timestamp = $timestamp;
-        $this->beginTimeStamp = $beginTimeStamp;
+        $this->beginTimestamp = $beginTimestamp;
     }
 
     public function getTimeInterval(): int
     {
-        return $this->timestamp - $this->beginTimeStamp;
+        return $this->timestamp - $this->beginTimestamp;
     }
 
-    /**
-     * @return int
-     */
     public function getDataCenterId(): int
     {
         return $this->dataCenterId;
     }
 
-    /**
-     * @return int
-     */
     public function getWorkerId(): int
     {
         return $this->workerId;
     }
 
-    /**
-     * @return int
-     */
     public function getSequence(): int
     {
         return $this->sequence;
     }
 
-    /**
-     * @param int $dataCenterId
-     * @return Meta
-     */
     public function setDataCenterId(int $dataCenterId): self
     {
         $this->dataCenterId = $dataCenterId;
         return $this;
     }
 
-    /**
-     * @param int $workerId
-     * @return Meta
-     */
     public function setWorkerId(int $workerId): self
     {
         $this->workerId = $workerId;
         return $this;
     }
 
-    /**
-     * @param int $sequence
-     * @return Meta
-     */
     public function setSequence(int $sequence): self
     {
         $this->sequence = $sequence;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getTimestamp(): int
     {
         return $this->timestamp;
     }
 
-    /**
-     * @return int
-     */
-    public function getBeginTimeStamp(): int
+    public function getBeginTimestamp(): int
     {
-        return $this->beginTimeStamp;
+        return $this->beginTimestamp;
     }
 }
