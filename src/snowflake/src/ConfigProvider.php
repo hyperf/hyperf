@@ -22,16 +22,7 @@ class ConfigProvider
             'dependencies' => [
                 IdGeneratorInterface::class => SnowflakeIdGenerator::class,
                 MetaGeneratorInterface::class => MetaGeneratorFactory::class,
-                ConfigInterface::class => Config::class,
-            ],
-            'commands' => [
-            ],
-            'listeners' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
-                ],
+                ConfigurationInterface::class => Configuration::class,
             ],
             'publish' => [
                 [
