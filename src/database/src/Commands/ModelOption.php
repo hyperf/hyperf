@@ -44,6 +44,11 @@ class ModelOption
      */
     protected $uses;
 
+    /**
+     * @var bool
+     */
+    protected $refreshFillable;
+
     public function getPool(): string
     {
         return $this->pool;
@@ -99,21 +104,25 @@ class ModelOption
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUses(): string
     {
         return $this->uses;
     }
 
-    /**
-     * @param string $uses
-     * @return ModelOption
-     */
     public function setUses(string $uses): ModelOption
     {
         $this->uses = $uses;
+        return $this;
+    }
+
+    public function isRefreshFillable(): bool
+    {
+        return $this->refreshFillable;
+    }
+
+    public function setRefreshFillable(bool $refreshFillable): ModelOption
+    {
+        $this->refreshFillable = $refreshFillable;
         return $this;
     }
 }

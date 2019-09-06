@@ -56,6 +56,9 @@ class AnnotationReader
      */
     private $mode;
 
+    /**
+     * @var array
+     */
     private $methodAnnotationCache = [];
 
     /**
@@ -101,25 +104,21 @@ class AnnotationReader
 
     public function getRequestAnnotation(ReflectionMethod $refMethod, string $annotationName): ?AbstractRequest
     {
-        /* @var null|AbstractRequest $queryAnnotation */
         return $this->getMethodAnnotation($refMethod, $annotationName);
     }
 
     public function getLoggedAnnotation(ReflectionMethod $refMethod): ?Logged
     {
-        /* @var null|Logged $loggedAnnotation */
         return $this->getMethodAnnotation($refMethod, Logged::class);
     }
 
     public function getRightAnnotation(ReflectionMethod $refMethod): ?Right
     {
-        /* @var null|Right $rightAnnotation */
         return $this->getMethodAnnotation($refMethod, Right::class);
     }
 
     public function getFailWithAnnotation(ReflectionMethod $refMethod): ?FailWith
     {
-        /* @var null|FailWith $failWithAnnotation */
         return $this->getMethodAnnotation($refMethod, FailWith::class);
     }
 
@@ -128,13 +127,11 @@ class AnnotationReader
      */
     public function getSourceFields(ReflectionClass $refClass): array
     {
-        /* @var SourceField[] $sourceFields */
         return $this->getClassAnnotations($refClass, SourceField::class);
     }
 
     public function getFactoryAnnotation(ReflectionMethod $refMethod): ?Factory
     {
-        /* @var null|Factory $factoryAnnotation */
         return $this->getMethodAnnotation($refMethod, Factory::class);
     }
 

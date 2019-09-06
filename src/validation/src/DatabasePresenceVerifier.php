@@ -45,13 +45,9 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Count the number of objects in a collection having the given value.
      *
-     * @param string $collection
-     * @param string $column
      * @param string $value
      * @param null|int $excludeId
      * @param null|string $idColumn
-     * @param array $extra
-     * @return int
      */
     public function getCount(string $collection, string $column, $value, $excludeId = null, $idColumn = null, array $extra = []): int
     {
@@ -66,12 +62,6 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
 
     /**
      * Count the number of objects in a collection with the given values.
-     *
-     * @param string $collection
-     * @param string $column
-     * @param array $values
-     * @param array $extra
-     * @return int
      */
     public function getMultiCount(string $collection, string $column, array $values, array $extra = []): int
     {
@@ -83,7 +73,6 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Get a query builder for the given table.
      *
-     * @param string $table
      * @return \Hyperf\Database\Query\Builder
      */
     public function table(string $table)
@@ -93,10 +82,8 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
 
     /**
      * Set the connection to be used.
-     *
-     * @param string $connection
      */
-    public function setConnection($connection)
+    public function setConnection(?string $connection)
     {
         $this->connection = $connection;
     }
@@ -105,7 +92,6 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add the given conditions to the query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param array $conditions
      * @return \Hyperf\Database\Query\Builder
      */
     protected function addConditions($query, array $conditions)
@@ -127,7 +113,6 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
      * Add a "where" clause to the given query.
      *
      * @param \Hyperf\Database\Query\Builder $query
-     * @param string $key
      * @param string $extraValue
      */
     protected function addWhere($query, string $key, $extraValue)

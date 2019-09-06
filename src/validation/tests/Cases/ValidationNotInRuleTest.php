@@ -24,9 +24,9 @@ class ValidationNotInRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()
     {
-        $rule = new NotIn(['Laravel', 'Framework', 'PHP']);
+        $rule = new NotIn(['Hyperf', 'Framework', 'PHP']);
 
-        $this->assertEquals('not_in:"Laravel","Framework","PHP"', (string) $rule);
+        $this->assertEquals('not_in:"Hyperf","Framework","PHP"', (string) $rule);
 
         $rule = Rule::notIn([1, 2, 3, 4]);
 

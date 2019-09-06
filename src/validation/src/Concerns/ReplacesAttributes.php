@@ -18,12 +18,6 @@ trait ReplacesAttributes
 {
     /**
      * Replace all place-holders for the between rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceBetween(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -32,12 +26,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the date_format rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDateFormat(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -46,12 +34,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the different rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDifferent(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -60,12 +42,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the digits rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDigits(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -74,12 +50,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the digits (between) rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDigitsBetween(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -88,12 +58,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the min rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceMin(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -102,26 +66,14 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the max rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
-    protected function replaceMax(string $message, string $attribute, string $rule, array $parameters)
+    protected function replaceMax(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(':max', $parameters[0], $message);
     }
 
     /**
      * Replace all place-holders for the in rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceIn(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -134,12 +86,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the not_in rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceNotIn(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -148,12 +94,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the in_array rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceInArray(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -162,12 +102,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the mimetypes rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceMimetypes(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -176,12 +110,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the mimes rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceMimes(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -190,12 +118,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_with rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredWith(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -204,12 +126,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_with_all rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredWithAll(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -218,12 +134,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_without rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredWithout(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -232,12 +142,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_without_all rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredWithoutAll(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -246,12 +150,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the size rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceSize(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -260,12 +158,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the gt rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceGt(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -278,12 +170,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the lt rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceLt(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -296,12 +182,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the gte rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceGte(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -314,12 +194,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the lte rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceLte(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -332,12 +206,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_if rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredIf(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -350,12 +218,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the required_unless rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceRequiredUnless(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -372,12 +234,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the same rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceSame(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -386,12 +242,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the before rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceBefore(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -404,12 +254,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the before_or_equal rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceBeforeOrEqual(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -418,12 +262,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the after rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceAfter(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -432,12 +270,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the after_or_equal rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceAfterOrEqual(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -446,12 +278,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the date_equals rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDateEquals(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -460,12 +286,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the dimensions rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceDimensions(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -482,12 +302,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the ends_with rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceEndsWith(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -500,12 +314,6 @@ trait ReplacesAttributes
 
     /**
      * Replace all place-holders for the starts_with rule.
-     *
-     * @param string $message
-     * @param string $attribute
-     * @param string $rule
-     * @param array $parameters
-     * @return string
      */
     protected function replaceStartsWith(string $message, string $attribute, string $rule, array $parameters): string
     {

@@ -22,7 +22,6 @@ class Rule
     /**
      * Get a dimensions constraint builder instance.
      *
-     * @param array $constraints
      * @return \Hyperf\Validation\Rules\Dimensions
      */
     public static function dimensions(array $constraints = [])
@@ -33,8 +32,6 @@ class Rule
     /**
      * Get a exists constraint builder instance.
      *
-     * @param string $table
-     * @param string $column
      * @return \Hyperf\Validation\Rules\Exists
      */
     public static function exists(string $table, string $column = 'NULL')

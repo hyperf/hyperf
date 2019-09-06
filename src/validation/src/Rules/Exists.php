@@ -18,8 +18,6 @@ class Exists
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
     public function __toString(): string
     {

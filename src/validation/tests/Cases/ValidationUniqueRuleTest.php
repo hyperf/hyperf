@@ -45,7 +45,7 @@ class ValidationUniqueRuleTest extends TestCase
         $rule->where('foo', 'bar');
         $this->assertEquals('unique:table,column,NULL,id_column,foo,"bar"', (string) $rule);
 
-        $model = new EloquentModelStub(['id_column' => 1]);
+        $model = new DatabaseModelStub(['id_column' => 1]);
 
         $rule = new Unique('table', 'column');
         $rule->ignore($model);
@@ -63,7 +63,7 @@ class ValidationUniqueRuleTest extends TestCase
     }
 }
 
-class EloquentModelStub extends Model
+class DatabaseModelStub extends Model
 {
     protected $primaryKey = 'id_column';
 

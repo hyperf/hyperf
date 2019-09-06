@@ -28,8 +28,6 @@ class In
 
     /**
      * Create a new in rule instance.
-     *
-     * @param array $values
      */
     public function __construct(array $values)
     {
@@ -38,8 +36,6 @@ class In
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      *
      * @see \Hyperf\Validation\ValidationRuleParser::parseParameters
      */

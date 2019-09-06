@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Request;
 
 use Hyperf\HttpServer\Request;
-use Hyperf\Validation\Contracts\Validation\Factory;
+use Hyperf\Utils\Context;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
-use Hyperf\Validation\Contracts\Validation\Validator;
+use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Psr\Http\Message\ResponseInterface;
 
 class FormRequest extends Request implements ValidatesWhenResolved
 {
@@ -32,34 +32,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
      * @var ContainerInterface
      */
     protected $container;
-
-//    /**
-//     * The redirector instance.
-//     *
-//     * @var \Illuminate\Routing\Redirector
-//     */
-//    protected $redirector;
-//
-//    /**
-//     * The URI to redirect to if validation fails.
-//     *
-//     * @var string
-//     */
-//    protected $redirect;
-//
-//    /**
-//     * The route to redirect to if validation fails.
-//     *
-//     * @var string
-//     */
-//    protected $redirectRoute;
-//
-//    /**
-//     * The controller action to redirect to if validation fails.
-//     *
-//     * @var string
-//     */
-//    protected $redirectAction;
 
     /**
      * The key to be used for the view error bag.
@@ -83,58 +55,35 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get the proper failed validation response for the request.
      *
-     * @param array $errors
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return ResponseInterface
      */
-    public function response(array $errors)
+    public function response()
     {
-//        if ($this->expectsJson()) {
-//            return new JsonResponse($errors, 422);
-//        }
+        /** @var ResponseInterface $response */
+        $response = Context::get(ResponseInterface::class);
 
-//        return $this->redirector->to($this->getRedirectUrl())
-//            ->withInput($this->except($this->dontFlash))
-//            ->withErrors($errors, $this->errorBag);
-        return new JsonResponse($errors, 422);
+        return $response->withStatus(422);
     }
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [];
     }
 
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
-    public function attributes()
+    public function attributes(): array
     {
         return [];
     }
 
-//    /**
-//     * Set the Redirector instance.
-//     *
-//     * @param  \Illuminate\Routing\Redirector $redirector
-//     * @return $this
-//     */
-//    public function setRedirector(Redirector $redirector)
-//    {
-//        $this->redirector = $redirector;
-//
-//        return $this;
-//    }
-
     /**
      * Set the container implementation.
      *
-     * @param ContainerInterface $container
      * @return $this
      */
     public function setContainer(ContainerInterface $container)
@@ -147,7 +96,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get the validator instance for the request.
      *
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return ValidatorInterface
      */
     protected function getValidatorInstance()
     {
@@ -169,8 +118,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Create the default validator instance.
      *
-     * @param Factory $factory
-     * @return \Hyperf\Validation\Contracts\Validation\Validator
+     * @return ValidatorInterface
      */
     protected function createDefaultValidator(ValidationFactory $factory)
     {
@@ -195,47 +143,20 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Handle a failed validation attempt.
      *
-     * @param Validator $validator
-     *
      * @throws ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(ValidatorInterface $validator)
     {
-        throw new ValidationException($validator, $this->response(
-            $this->formatErrors($validator)
-        ));
+        throw new ValidationException($validator, $this->response());
     }
 
     /**
      * Format the errors from the given Validator instance.
-     *
-     * @param Validator $validator
-     * @return array
      */
-    protected function formatErrors(Validator $validator)
+    protected function formatErrors(ValidatorInterface $validator): array
     {
         return $validator->getMessageBag()->toArray();
     }
-
-//    /**
-//     * Get the URL to redirect to on a validation error.
-//     *
-//     * @return string
-//     */
-//    protected function getRedirectUrl()
-//    {
-//        $url = $this->redirector->getUrlGenerator();
-//
-//        if ($this->redirect) {
-//            return $url->to($this->redirect);
-//        } elseif ($this->redirectRoute) {
-//            return $url->route($this->redirectRoute);
-//        } elseif ($this->redirectAction) {
-//            return $url->action($this->redirectAction);
-//        }
-//
-//        return $url->previous();
-//    }
 
     /**
      * Determine if the request passes the authorization check.
@@ -253,8 +174,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Handle a failed authorization attempt.
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     protected function failedAuthorization()
     {

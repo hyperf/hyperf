@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Validation\Cases;
 
-use Hyperf\Translation\Contracts\Translator as TranslatorInterface;
+use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Validation\Factory;
 use Hyperf\Validation\PresenceVerifierInterface;
 use Hyperf\Validation\Validator;

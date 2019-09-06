@@ -12,22 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Arr;
+use Psr\Http\Message\ResponseInterface;
 
 class ValidationException extends ServerException
 {
     /**
      * The validator instance.
      *
-     * @var \Hyperf\Validation\Contracts\Validation\Validator
+     * @var ValidatorInterface
      */
     public $validator;
 
     /**
      * The recommended response to send to the client.
      *
-     * @var null|\Symfony\Component\HttpFoundation\Response
+     * @var ResponseInterface
      */
     public $response;
 
@@ -55,11 +57,10 @@ class ValidationException extends ServerException
     /**
      * Create a new exception instance.
      *
-     * @param \Hyperf\Validation\Contracts\Validation\Validator $validator
-     * @param null|\Symfony\Component\HttpFoundation\Response $response
-     * @param string $errorBag
+     * @param ValidatorInterface $validator
+     * @param null|ResponseInterface $response
      */
-    public function __construct($validator, $response = null, string $errorBag = 'default')
+    public function __construct(ValidatorInterface $validator, $response = null, string $errorBag = 'default')
     {
         parent::__construct('The given data was invalid.');
 
@@ -71,7 +72,6 @@ class ValidationException extends ServerException
     /**
      * Create a new validation exception from a plain array of messages.
      *
-     * @param array $messages
      * @return static
      */
     public static function withMessages(array $messages)
@@ -87,8 +87,6 @@ class ValidationException extends ServerException
 
     /**
      * Get all of the validation error messages.
-     *
-     * @return array
      */
     public function errors(): array
     {
@@ -98,7 +96,6 @@ class ValidationException extends ServerException
     /**
      * Set the HTTP status code to be used for the response.
      *
-     * @param int $status
      * @return $this
      */
     public function status(int $status)
@@ -111,7 +108,6 @@ class ValidationException extends ServerException
     /**
      * Set the error bag on the exception.
      *
-     * @param string $errorBag
      * @return $this
      */
     public function errorBag(string $errorBag)
@@ -124,7 +120,6 @@ class ValidationException extends ServerException
     /**
      * Set the URL to redirect to on a validation error.
      *
-     * @param string $url
      * @return $this
      */
     public function redirectTo(string $url)
@@ -137,7 +132,7 @@ class ValidationException extends ServerException
     /**
      * Get the underlying response instance.
      *
-     * @return null|\Symfony\Component\HttpFoundation\Response
+     * @return ResponseInterface
      */
     public function getResponse()
     {

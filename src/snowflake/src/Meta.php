@@ -12,89 +12,122 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
-use Hyperf\Snowflake\Exception\SnowflakeException;
-
 class Meta
 {
+    const MILLISECOND_BITS = 41;
+
+    const DATA_CENTER_ID_BITS = 5;
+
+    const MACHINE_ID_BITS = 5;
+
     const SEQUENCE_BITS = 12;
 
-    const MILLISECOND_BITS = 39;
-
-    const BUSINESS_ID_BITS = 4;
-
-    const DATA_CENTER_ID_BITS = 2;
-
-    const MACHINE_ID_BITS = 7;
+    /**
+     * @var int [0, 31]
+     */
+    protected $dataCenterId;
 
     /**
-     * @var int [0, 15]
+     * @var int [0, 31]
      */
-    public $businessId;
-
-    /**
-     * @var int [0, 3]
-     */
-    public $dataCenterId;
-
-    /**
-     * @var int [0, 127]
-     */
-    public $machineId;
+    protected $workerId;
 
     /**
      * @var int [0, 4095]
      */
-    public $sequence;
+    protected $sequence;
 
     /**
-     * @var int seconds or millisecond
+     * @var int seconds or milliseconds
      */
-    public $timestamp = 0;
+    protected $timestamp = 0;
 
-    public function __construct(int $businessId, int $dataCenterId, int $machineId, int $sequence)
+    /**
+     * @var int seconds or milliseconds
+     */
+    protected $beginTimeStamp = 0;
+
+    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimeStamp = 1560960000)
     {
-        if ($businessId < 0 || $businessId > $this->maxBusinessId()) {
-            throw new SnowflakeException('Business Id can\'t be greater than 15 or less than 0');
-        }
-        if ($dataCenterId < 0 || $dataCenterId > $this->maxDataCenterId()) {
-            throw new SnowflakeException('DataCenter Id can\'t be greater than 4 or less than 0');
-        }
-        if ($machineId < 0 || $machineId > $this->maxMachineId()) {
-            throw new SnowflakeException('Machine Id can\'t be greater than 128 or less than 0');
-        }
-        if ($sequence < 0 || $sequence > $this->maxSequence()) {
-            throw new SnowflakeException('Sequence can\'t be greater than 4096 or less than 0');
-        }
-
-        $this->businessId = $businessId;
         $this->dataCenterId = $dataCenterId;
-        $this->machineId = $machineId;
+        $this->workerId = $workerId;
         $this->sequence = $sequence;
+        $this->timestamp = $timestamp;
+        $this->beginTimeStamp = $beginTimeStamp;
     }
 
-    public function setTimestamp(int $timestamp): self
+    public function getTimeInterval(): int
     {
-        $this->timestamp = $timestamp;
+        return $this->timestamp - $this->beginTimeStamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDataCenterId(): int
+    {
+        return $this->dataCenterId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWorkerId(): int
+    {
+        return $this->workerId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSequence(): int
+    {
+        return $this->sequence;
+    }
+
+    /**
+     * @param int $dataCenterId
+     * @return Meta
+     */
+    public function setDataCenterId(int $dataCenterId): self
+    {
+        $this->dataCenterId = $dataCenterId;
         return $this;
     }
 
-    protected function maxMachineId(): int
+    /**
+     * @param int $workerId
+     * @return Meta
+     */
+    public function setWorkerId(int $workerId): self
     {
-        return -1 ^ (-1 << self::MACHINE_ID_BITS);
+        $this->workerId = $workerId;
+        return $this;
     }
 
-    protected function maxDataCenterId(): int
+    /**
+     * @param int $sequence
+     * @return Meta
+     */
+    public function setSequence(int $sequence): self
     {
-        return -1 ^ (-1 << self::DATA_CENTER_ID_BITS);
+        $this->sequence = $sequence;
+        return $this;
     }
 
-    protected function maxBusinessId(): int
+    /**
+     * @return int
+     */
+    public function getTimestamp(): int
     {
-        return -1 ^ (-1 << self::BUSINESS_ID_BITS);
+        return $this->timestamp;
     }
 
-    protected function maxSequence(): int
+    /**
+     * @return int
+     */
+    public function getBeginTimeStamp(): int
     {
-        return -1 ^ (-1 << self::SEQUENCE_BITS);
+        return $this->beginTimeStamp;
     }
 }

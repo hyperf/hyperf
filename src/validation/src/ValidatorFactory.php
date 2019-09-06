@@ -12,23 +12,34 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Translation\Contracts\Translator;
 use Psr\Container\ContainerInterface;
 
 class ValidatorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $translator = $container->get(Translator::class);
+        $translator = $container->get(TranslatorInterface::class);
 
-        $validator = make(Factory::class, compact('translator', 'container'));
+        /** @var \Hyperf\Validation\Factory $validatorFactory */
+        $validatorFactory = make(Factory::class, compact('translator', 'container'));
 
         if ($container->has(ConnectionResolverInterface::class) && $container->has(PresenceVerifierInterface::class)) {
             $presenceVerifier = $container->get(PresenceVerifierInterface::class);
-            $validator->setPresenceVerifier($presenceVerifier);
+            $validatorFactory->setPresenceVerifier($presenceVerifier);
         }
 
-        return $validator;
+        $validatorFactory->resolver(function (
+            TranslatorInterface $translator,
+            array $data,
+            array $rules,
+            array $messages = [],
+            array $customAttributes = []
+        ) {
+            return make(Validator::class, [$translator, $data, $rules, $messages, $customAttributes]);
+        });
+
+        return $validatorFactory;
     }
 }

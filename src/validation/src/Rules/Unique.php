@@ -34,8 +34,6 @@ class Unique
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
     public function __toString(): string
     {
@@ -53,10 +51,9 @@ class Unique
      * Ignore the given ID during the unique check.
      *
      * @param mixed $id
-     * @param null|string $idColumn
      * @return $this
      */
-    public function ignore($id, $idColumn = null)
+    public function ignore($id, ?string $idColumn = null)
     {
         if ($id instanceof Model) {
             return $this->ignoreModel($id, $idColumn);
@@ -72,10 +69,9 @@ class Unique
      * Ignore the given model during the unique check.
      *
      * @param \Hyperf\Database\Model\Model $model
-     * @param null|string $idColumn
      * @return $this
      */
-    public function ignoreModel($model, $idColumn = null)
+    public function ignoreModel($model, ?string $idColumn = null)
     {
         $this->idColumn = $idColumn ?? $model->getKeyName();
         $this->ignore = $model->{$this->idColumn};

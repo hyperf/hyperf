@@ -20,7 +20,7 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\DbConnection\ConnectionResolver as DBConnectionResolver;
-use Hyperf\DbConnection\Model\Model as Eloquent;
+use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
@@ -94,10 +94,10 @@ class ValidationExistsRuleTest extends TestCase
         $rule = new Exists('users', 'id');
         $rule->whereIn('type', ['foo', 'bar']);
 
-        EloquentTestUser::create(['id' => '1', 'type' => 'foo']);
-        EloquentTestUser::create(['id' => '2', 'type' => 'bar']);
-        EloquentTestUser::create(['id' => '3', 'type' => 'baz']);
-        EloquentTestUser::create(['id' => '4', 'type' => 'other']);
+        DatabaseTestUser::create(['id' => '1', 'type' => 'foo']);
+        DatabaseTestUser::create(['id' => '2', 'type' => 'bar']);
+        DatabaseTestUser::create(['id' => '3', 'type' => 'baz']);
+        DatabaseTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, [], ['id' => $rule]);
@@ -118,10 +118,10 @@ class ValidationExistsRuleTest extends TestCase
         $rule = new Exists('users', 'id');
         $rule->whereNotIn('type', ['foo', 'bar']);
 
-        EloquentTestUser::create(['id' => '1', 'type' => 'foo']);
-        EloquentTestUser::create(['id' => '2', 'type' => 'bar']);
-        EloquentTestUser::create(['id' => '3', 'type' => 'baz']);
-        EloquentTestUser::create(['id' => '4', 'type' => 'other']);
+        DatabaseTestUser::create(['id' => '1', 'type' => 'foo']);
+        DatabaseTestUser::create(['id' => '2', 'type' => 'bar']);
+        DatabaseTestUser::create(['id' => '3', 'type' => 'baz']);
+        DatabaseTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, [], ['id' => $rule]);
@@ -142,10 +142,10 @@ class ValidationExistsRuleTest extends TestCase
         $rule = new Exists('users', 'id');
         $rule->whereIn('type', ['foo', 'bar', 'baz'])->whereNotIn('type', ['foo', 'bar']);
 
-        EloquentTestUser::create(['id' => '1', 'type' => 'foo']);
-        EloquentTestUser::create(['id' => '2', 'type' => 'bar']);
-        EloquentTestUser::create(['id' => '3', 'type' => 'baz']);
-        EloquentTestUser::create(['id' => '4', 'type' => 'other']);
+        DatabaseTestUser::create(['id' => '1', 'type' => 'foo']);
+        DatabaseTestUser::create(['id' => '2', 'type' => 'bar']);
+        DatabaseTestUser::create(['id' => '3', 'type' => 'baz']);
+        DatabaseTestUser::create(['id' => '4', 'type' => 'other']);
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, [], ['id' => $rule]);
@@ -211,9 +211,9 @@ class ValidationExistsRuleTest extends TestCase
 }
 
 /**
- * Eloquent Models.
+ * Database Models.
  */
-class EloquentTestUser extends Eloquent
+class DatabaseTestUser extends Model
 {
     public $timestamps = false;
 
