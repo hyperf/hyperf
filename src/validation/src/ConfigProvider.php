@@ -21,7 +21,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
-                FactoryInterface::class => Factory::class,
+                FactoryInterface::class => ValidatorFactory::class,
             ],
             'scan' => [
                 'paths' => [

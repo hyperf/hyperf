@@ -30,16 +30,6 @@ class ValidatorFactory
             $validatorFactory->setPresenceVerifier($presenceVerifier);
         }
 
-        $validatorFactory->resolver(function (
-            TranslatorInterface $translator,
-            array $data,
-            array $rules,
-            array $messages = [],
-            array $customAttributes = []
-        ) {
-            return make(Validator::class, [$translator, $data, $rules, $messages, $customAttributes]);
-        });
-
         return $validatorFactory;
     }
 }
