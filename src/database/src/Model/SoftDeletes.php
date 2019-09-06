@@ -90,6 +90,26 @@ trait SoftDeletes
     }
 
     /**
+     * Register a restoring model event with the dispatcher.
+     *
+     * @param \Closure|string $callback
+     */
+    public static function restoring($callback)
+    {
+        static::registerModelEvent('restoring', $callback);
+    }
+
+    /**
+     * Register a restored model event with the dispatcher.
+     *
+     * @param \Closure|string $callback
+     */
+    public static function restored($callback)
+    {
+        static::registerModelEvent('restored', $callback);
+    }
+
+    /**
      * Determine if the model is currently force deleting.
      *
      * @return bool
