@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Middleware;
 
-use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
-use Psr\Container\ContainerInterface;
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
@@ -22,6 +20,8 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -41,8 +41,8 @@ class ValidationMiddleware implements MiddlewareInterface
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container  = $container;
-        $factory          = $this->container->get(DispatcherFactory::class);
+        $this->container = $container;
+        $factory = $this->container->get(DispatcherFactory::class);
         $this->dispatcher = $factory->getDispatcher('http');
     }
 
@@ -103,7 +103,7 @@ class ValidationMiddleware implements MiddlewareInterface
             // Do nothing
         } else {
             [$controller, $action] = $this->prepareHandler($routes[1]);
-            if (!method_exists($controller, $action)) {
+            if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.
                 return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
             }
@@ -123,7 +123,6 @@ class ValidationMiddleware implements MiddlewareInterface
     {
         return Context::get(ResponseInterface::class);
     }
-
 
     /**
      * Parse the parameters of method definitions, and then bind the specified arguments or

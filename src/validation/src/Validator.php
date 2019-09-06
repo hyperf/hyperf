@@ -14,17 +14,16 @@ namespace Hyperf\Validation;
 
 use BadMethodCallException;
 use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Contract\ValidatorInterface;
+use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\Di\Container;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Fluent;
+use Hyperf\Utils\MessageBag;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Contracts\Validation\ImplicitRule;
 use Hyperf\Validation\Contracts\Validation\Rule as RuleContract;
-use Hyperf\Contract\ValidatorInterface as ValidatorContract;
-use Hyperf\Utils\MessageBag;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -223,6 +222,8 @@ class Validator implements ValidatorContract
     /**
      * Handle dynamic calls to class methods.
      *
+     * @param mixed $method
+     * @param mixed $parameters
      * @throws \BadMethodCallException
      */
     public function __call($method, $parameters)
@@ -324,7 +325,7 @@ class Validator implements ValidatorContract
     /**
      * Run the validator's rules against its data.
      *
-     * @throws \Hyperf\Validation\ValidationException If validate fails.
+     * @throws \Hyperf\Validation\ValidationException if validate fails
      */
     public function validate(): array
     {
@@ -338,7 +339,7 @@ class Validator implements ValidatorContract
     /**
      * Get the attributes and values that were validated.
      *
-     * @throws \Hyperf\Validation\ValidationException If invalid.
+     * @throws \Hyperf\Validation\ValidationException if invalid
      */
     public function validated(): array
     {
@@ -766,7 +767,7 @@ class Validator implements ValidatorContract
     /**
      * Validate a given attribute against a rule.
      *
-     * @param string|object $rule
+     * @param object|string $rule
      */
     protected function validateAttribute(string $attribute, $rule)
     {
@@ -818,7 +819,7 @@ class Validator implements ValidatorContract
     /**
      * Determine if the given rule depends on other fields.
      *
-     * @param string|object $rule
+     * @param object|string $rule
      */
     protected function dependsOnOtherFields($rule): bool
     {
@@ -873,6 +874,7 @@ class Validator implements ValidatorContract
      * Determine if the attribute is validatable.
      *
      * @param object|string $rule
+     * @param mixed $value
      */
     protected function isValidatable($rule, string $attribute, $value): bool
     {
@@ -886,6 +888,7 @@ class Validator implements ValidatorContract
      * Determine if the field is present, or the rule implies required.
      *
      * @param object|string $rule
+     * @param mixed $value
      */
     protected function presentOrRuleIsImplicit($rule, string $attribute, $value): bool
     {
@@ -926,7 +929,7 @@ class Validator implements ValidatorContract
     /**
      * Determine if the attribute fails the nullable check.
      *
-     * @param string|object $rule
+     * @param object|string $rule
      */
     protected function isNotNullIfMarkedAsNullable($rule, string $attribute): bool
     {
@@ -942,7 +945,7 @@ class Validator implements ValidatorContract
      *
      * This is to avoid possible database type comparison errors.
      *
-     * @param string|object $rule
+     * @param object|string $rule
      */
     protected function hasNotFailedPreviousRuleIfPresenceRule($rule, string $attribute): bool
     {
@@ -953,6 +956,7 @@ class Validator implements ValidatorContract
      * Validate an attribute using a custom rule object.
      *
      * @param \Hyperf\Validation\Contracts\Validation\Rule $rule
+     * @param mixed $value
      */
     protected function validateUsingCustomRule(string $attribute, $value, $rule)
     {

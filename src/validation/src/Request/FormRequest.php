@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Request;
 
+use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
 use Hyperf\Utils\Context;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
-use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
