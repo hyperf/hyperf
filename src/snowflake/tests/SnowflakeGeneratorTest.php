@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Snowflake;
 
-use Hyperf\Snowflake\Config;
+use Hyperf\Snowflake\Configuration;
 use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
@@ -27,14 +27,14 @@ class SnowflakeGeneratorTest extends TestCase
 {
     public function testGenerateReturnInt()
     {
-        $config = new Config();
+        $config = new Configuration();
         $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND));
         $this->assertTrue(is_int($generator->generate()));
     }
 
     public function testDegenerateInstanceofMeta()
     {
-        $config = new Config();
+        $config = new Configuration();
         $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND));
 
         $id = $generator->generate();
@@ -44,7 +44,7 @@ class SnowflakeGeneratorTest extends TestCase
 
     public function testGenerateAndDegenerate()
     {
-        $config = new Config();
+        $config = new Configuration();
         $metaGenerator = new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
@@ -55,7 +55,7 @@ class SnowflakeGeneratorTest extends TestCase
 
     public function testDegenerateMaxId()
     {
-        $config = new Config();
+        $config = new Configuration();
         $metaGenerator = new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND);
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
