@@ -1,0 +1,178 @@
+# Event
+Model events are implemented in the [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) interface.
+
+## Custom event listener
+
+Thanks to the support of the [hyperf/event](https://github.com/hyperf-cloud/event) component, users can easily monitor the following events.
+For example `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` .
+Next we will implement a listener that records SQL, and how to use it.
+First we define `DbQueryExecutedListener` , implement the `Hyperf\Event\Contract\ListenerInterface` interface and define the `Hyperf\Event\Annotation\Listener` annotation for the class, so Hyperf will automatically register the listener to the event dispatcher. Without any manual configuration, the sample code is as follows:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listeners;
+
+use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Logger\LoggerFactory;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Str;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+
+/**
+ * @Listener
+ */
+class DbQueryExecutedListener implements ListenerInterface
+{
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(LoggerFactory $loggerFactory)
+    {
+        $this->logger = $loggerFactory->get('sql');
+    }
+
+    public function listen(): array
+    {
+        return [
+            QueryExecuted::class,
+        ];
+    }
+
+    /**
+     * @param QueryExecuted $event
+     */
+    public function process(object $event)
+    {
+        if ($event instanceof QueryExecuted) {
+            $sql = $event->sql;
+            if (! Arr::isAssoc($event->bindings)) {
+                foreach ($event->bindings as $key => $value) {
+                    $sql = Str::replaceFirst('?', "'{$value}'", $sql);
+                }
+            }
+
+            $this->logger->info(sprintf('[%s] %s', $event->time, $sql));
+        }
+    }
+}
+
+```
+
+## Model event
+
+Model events are not consistent with `EloquentORM`, `EloquentORM` uses `Observer` to listen for model events. `Hyperf` directly uses the `hook function` to handle the corresponding event. If you still like the `Observer` method, you can do it yourself by `event listener`. Of course, you can also tell us under [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2).
+
+### Hook function
+
+|    事件名    |     触发实际     | 是否阻断 |               备注                |
+|:------------:|:----------------:|:--------:|:-------------------------- --:|
+|   booting    |  Before the model is first loaded  |    false    | Only trigger once in the process life cycle |
+|    booted    |  After the model is first loaded  |    false    | Only trigger once in the process life cycle |
+|  retrieved   | After filling the data   |    false    | Triggered whenever the model is queried from a DB or cache |
+|   creating   | When data is created   |    true    |                                  |
+|   created    | After the data is created   |    false    |                                  |
+|   updating   | When the data is updated   |    true    |                                  |
+|   updated    | After the data is updated   |    false    |                                  |
+|    saving    | When data is created or updated |    true    |                                  |
+|    saved     | After data is created or updated |    false    |                                  |
+|  restoring   | Soft delete data reply |    true    |                                  |
+|   restored   | Soft delete data after reply |    false    |                                  |
+|   deleting   | When deleting data   |    true    |                                  |
+|   deleted    | After data deletion   |    false    |                                  |
+| forceDeleted |  After data is forcibly deleted  |    false    |                                  |
+
+The use of events for a model is very simple, just add the corresponding method to the model. For example, when saving data below, trigger the `saving` event and actively override the `created_at` field.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Hyperf\Database\Model\Events\Saving;
+
+/**
+ * @property $id
+ * @property $name
+ * @property $gender
+ * @property $created_at
+ * @property $updated_at
+ */
+class User extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+
+    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+
+    public function saving(Saving $event)
+    {
+        $this->setCreatedAt('2019-01-01');
+    }
+}
+
+```
+
+### Event listener
+
+When you need to listen to all the model events, you can easily customize the corresponding `Listener`, such as the listener of the model cache below. When the model is modified and deleted, the corresponding cache will be deleted.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Hyperf\ModelCache\Listener;
+
+use Hyperf\Database\Model\Events\Deleted;
+use Hyperf\Database\Model\Events\Event;
+use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\ModelCache\CacheableInterface;
+
+/**
+ * @Listener
+ */
+class DeleteCacheListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            Deleted::class,
+            Saved::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        if ($event instanceof Event) {
+            $model = $event->getModel();
+            if ($model instanceof CacheableInterface) {
+                $model->deleteCache();
+            }
+        }
+    }
+}
+
+```
