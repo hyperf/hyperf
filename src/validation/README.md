@@ -120,7 +120,33 @@ class IndexController extends Controller
 
     public function foo(FooRequest $request)
     {
-        // todo
+        $request->input('foo');
+    }
+    
+    public function bar(RequestInterface $request){
+        $factory = $this->container->get(\Hyperf\Validation\Contracts\Validation\Factory::class);
+
+        $factory->extend('foo', function ($attribute, $value, $parameters, $validator) {
+            return $value == 'foo';
+        });
+
+        $factory->replacer('foo', function ($message, $attribute, $rule, $parameters) {
+            return str_replace(':foo', $attribute, $message);
+        });
+
+        $validator = $factory->make(
+            $request->all(),
+            [
+                'name' => 'required|foo',
+            ],
+            [
+                'name.foo' => ':foo is not foo',
+            ]
+        );
+
+        if (!$validator->passes()) {
+             $validator->errors();
+        }
     }
 }
 
