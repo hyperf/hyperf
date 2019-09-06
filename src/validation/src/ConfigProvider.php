@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use Hyperf\Validation\Contracts\Validation\Factory as FactoryInterface;
-use Hyperf\Contract\ValidatorInterface;
 
 class ConfigProvider
 {
@@ -21,7 +20,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ValidatorInterface::class => ValidatorFactory::class,
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
                 FactoryInterface::class => Factory::class,
             ],
@@ -35,13 +33,13 @@ class ConfigProvider
                     'id' => 'zh_CN',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/zh_CN/validation.php',
-                    'destination' => BASE_PATH . '/resources/lang/zh_CN/validation.php',
+                    'destination' => BASE_PATH . '/storage/languages/zh_CN/validation.php',
                 ],
                 [
                     'id' => 'en',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/en/validation.php',
-                    'destination' => BASE_PATH . '/resources/lang/en/validation.php',
+                    'destination' => BASE_PATH . '/storage/languages/en/validation.php',
                 ],
             ],
         ];
