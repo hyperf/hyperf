@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Command;
 
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -370,7 +371,7 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->coroutine) {
+        if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run(function () {
                 call([$this, 'handle']);
             });
