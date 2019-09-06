@@ -12,14 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Middleware;
 
+use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-class ValidationMiddleware implements MiddlewareInterface
+class ValidationMiddleware extends CoreMiddleware
 {
     /**
      * @var ContainerInterface
@@ -31,26 +28,16 @@ class ValidationMiddleware implements MiddlewareInterface
         parent::__construct($container, 'http');
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function parseParameters(string $controller, string $action, array $arguments): array
     {
-        $params = $request->get(Dispatched);
+        $params = parent::parseParameters($controller, $action, $arguments);
+
         foreach ($params as $param) {
             if ($param instanceof ValidatesWhenResolved) {
                 $param->validateResolved();
             }
         }
+
+        return $params;
     }
-//
-//    public function parseParameters(string $controller, string $action, array $arguments): array
-//    {
-//        $params = parent::parseParameters($controller, $action, $arguments);
-//
-//        foreach ($params as $param) {
-//            if ($param instanceof ValidatesWhenResolved) {
-//                $param->validateResolved();
-//            }
-//        }
-//
-//        return $params;
-//    }
 }
