@@ -55,7 +55,7 @@ abstract class Command extends SymfonyCommand
      *
      * @var bool
      */
-    protected $coroutine = false;
+    protected $coroutine = true;
 
     /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
