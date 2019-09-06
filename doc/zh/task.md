@@ -142,7 +142,7 @@ class MongoTask
     public $manager;
 
     /**
-     * @Task
+     * @var Task
      */
     public function insert(string $namespace, array $document)
     {
@@ -155,7 +155,7 @@ class MongoTask
     }
 
     /**
-     * @Task
+     * @var Task
      */
     public function query(string $namespace, array $filter = [], array $options = [])
     {
