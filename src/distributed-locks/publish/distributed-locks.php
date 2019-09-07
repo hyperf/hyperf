@@ -17,7 +17,6 @@ return [
         'driver' => 'redis',
     ],
     'redis' => [
-        'db'    => '',
         'pools' => [
             'default',
             'lock',

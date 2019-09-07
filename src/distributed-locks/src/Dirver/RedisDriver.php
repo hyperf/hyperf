@@ -19,10 +19,6 @@ use Redis;
 
 class RedisDriver extends Driver
 {
-    /**
-     * @var \Redis
-     */
-    protected $redis;
 
     /**
      * @var array

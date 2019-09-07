@@ -16,18 +16,18 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\DistributedLocks\Annotation\Mutex;
+use Hyperf\DistributedLocks\Annotation\Lock;
 use Swoole\Coroutine;
 
 /**
  * @Aspect
  */
-class MutexAnnotationAspect implements AroundInterface
+class LockAnnotationAspect implements AroundInterface
 {
     public $classes = [];
 
     public $annotations = [
-        Mutex::class,
+        Lock::class,
     ];
 
     /**
@@ -43,7 +43,7 @@ class MutexAnnotationAspect implements AroundInterface
 
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
-        $this->annotationProperty = get_object_vars(new Mutex());
+        $this->annotationProperty = get_object_vars(new Lock());
         $this->config             = $config->get('distributed-locks.mutex', []);
     }
 
@@ -67,9 +67,9 @@ class MutexAnnotationAspect implements AroundInterface
     }
 
     /**
-     * @param Mutex[] $annotations
+     * @param Lock[] $annotations
      */
-    public function getWeightingAnnotation(array $annotations): Mutex
+    public function getWeightingAnnotation(array $annotations): Lock
     {
         $property = array_merge($this->annotationProperty, $this->config);
         foreach ($annotations as $annotation) {
@@ -79,7 +79,7 @@ class MutexAnnotationAspect implements AroundInterface
             $property = array_merge($property, array_filter(get_object_vars($annotation)));
         }
 
-        return new Mutex($property);
+        return new Lock($property);
     }
 
     public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): array
@@ -87,7 +87,7 @@ class MutexAnnotationAspect implements AroundInterface
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
 
         return [
-            $metadata->method[Mutex::class] ?? null,
+            $metadata->method[Lock::class] ?? null,
         ];
     }
 }

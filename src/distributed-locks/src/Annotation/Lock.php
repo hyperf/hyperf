@@ -19,12 +19,12 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  * @Annotation
  * @Target({"METHOD"})
  */
-class Mutex extends AbstractAnnotation
+class Lock extends AbstractAnnotation
 {
     /**
      * @var string
      */
-    public $prefix;
+    public $mutex;
 
     /**
      * @var string
