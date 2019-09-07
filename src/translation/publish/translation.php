@@ -13,5 +13,5 @@ declare(strict_types=1);
 return [
     'locale' => 'zh_CN',
     'fallback_locale' => 'en',
-    'lang' => BASE_PATH . '/resources/lang',
+    'path' => BASE_PATH . '/storage/languages',
 ];

@@ -12,23 +12,17 @@ declare(strict_types=1);
 
 namespace Hyperf\Snowflake;
 
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dependencies' => [
-                IdGeneratorInterface::class => SnowflakeFactory::class,
-                MetaGeneratorInterface::class => RandomMetaGenerator::class,
-            ],
-            'commands' => [
-            ],
-            'listeners' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
-                ],
+                IdGeneratorInterface::class => SnowflakeIdGenerator::class,
+                MetaGeneratorInterface::class => MetaGeneratorFactory::class,
+                ConfigurationInterface::class => Configuration::class,
             ],
             'publish' => [
                 [
