@@ -4,6 +4,10 @@
 
 - [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
 
+## Deleted
+
+[#545](https://github.com/hyperf-cloud/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes. 
+
 # v1.0.14 - 2019-09-05
 
 ## Added
