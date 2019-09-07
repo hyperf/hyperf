@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\DistributedLocks\Driver;
 
-use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class RedisDriver extends Driver

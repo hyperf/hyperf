@@ -16,10 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\DistributedLocks\Annotation\Mutex;
-use Hyperf\DistributedLocks\Exception\RateLimitException;
-use Hyperf\DistributedLocks\Handler\RateLimitHandler;
 use Swoole\Coroutine;
 
 /**
