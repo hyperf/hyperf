@@ -1,18 +1,64 @@
-# v1.0.12 - TBD
+# v1.0.15 - TBD
+
+# v1.0.14 - 2019-09-05
+
+## Added
+
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) [#531](https://github.com/hyperf-cloud/hyperf/pull/531) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
+- [#525](https://github.com/hyperf-cloud/hyperf/pull/525) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+
+## Changed
+
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
+- [#501](https://github.com/hyperf-cloud/hyperf/pull/501) When the path argument of Mapping annotation is an empty string, then the path is equal to prefix of Controller annotation.
+- [#513](https://github.com/hyperf-cloud/hyperf/pull/513) Rewrite process name with `app_name`.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) [#526](https://github.com/hyperf-cloud/hyperf/pull/526) When execute `Hyperf\Utils\Coroutine::parentId()` static method in non-coroutine context will return null.
+
+## Fixed
+
+- [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
+- [#514](https://github.com/hyperf-cloud/hyperf/pull/514) Fixed redis auth failed when the password is an empty string.
+- [#527](https://github.com/hyperf-cloud/hyperf/pull/527) Fixed translator cannot translate repeatedly.
+
+# v1.0.13 - 2019-08-28
+
+## Added
+
+- [#428](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
+- [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
+- [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
+
+## Changed
+
+- [#451](https://github.com/hyperf-cloud/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
+- [#468](https://github.com/hyperf-cloud/hyperf/pull/468) Default exception handlers catch all exceptions.
+
+## Fixed 
+
+- [#466](https://github.com/hyperf-cloud/hyperf/pull/466) Fixed error when the number of data is not enough to paginate.
+- [#466](https://github.com/hyperf-cloud/hyperf/pull/470) Optimized `vendor:publish` command, if the destination folder exists, then will not repeatedly create the folder.
+
+# v1.0.12 - 2019-08-21
 
 ## Added
 
 - [#405](https://github.com/hyperf-cloud/hyperf/pull/405) Added Context::override() method.
 - [#415](https://github.com/hyperf-cloud/hyperf/pull/415) Added handlers configuration for logger, now you could config multiple handlers to logger.
 
+## Changed
+
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) The third parameter of Hyperf\GrpcClient\GrpcClient::openStream() have been removed.
+
 ## Fixed
 
 - [#414](https://github.com/hyperf-cloud/hyperf/pull/414) Fixed WebSocketExceptionHandler typo
-- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fix proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#424](https://github.com/hyperf-cloud/hyperf/pull/424) Fixed proxy configuration of `Hyperf\Guzzle\CoroutineHandler` does not support array parameter.
+- [#430](https://github.com/hyperf-cloud/hyperf/pull/430) Fixed file() method of Request will threw an exception, when upload files with same name of form.
+- [#431](https://github.com/hyperf-cloud/hyperf/pull/431) Fixed missing parameters of the grpc request.
 
 ## Deprecated
 
-- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated.
+- [#425](https://github.com/hyperf-cloud/hyperf/pull/425) Marked `Hyperf\HttpServer\HttpServerFactory`, `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\JsonRpc\TcpServerFactory` as deprecated, will be removed in `v1.1`.
 
 # v1.0.11 - 2019-08-15
 

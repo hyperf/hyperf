@@ -113,7 +113,9 @@ class VendorPublishCommand extends SymfonyCommand
                 continue;
             }
 
-            mkdir(dirname($destination), 0755, true);
+            if (! file_exists(dirname($destination))) {
+                mkdir(dirname($destination), 0755, true);
+            }
             copy($source, $destination);
 
             $this->output->writeln(sprintf('<fg=green>[%s] publish [%s] success.</>', $package, $id));

@@ -18,26 +18,26 @@ php bin/hyperf.php vendor:publish hyperf/translation
 
 Config files:
 ```
-+ ./config/path/autoload/translation.php
++ ./config/autoload/translation.php
 ```
 
 ### Configuration
 
-```
+```php
 <?php
 declare(strict_types=1);
 
 return [
-    'locale'          => 'en',   
+    'locale' => 'en',   
     'fallback_locale' => '',
-    'lang'            => BASE_PATH . '/resources/lang', 
+    'path' => BASE_PATH . '/storage/languages', 
 ];
 ```
 
 ## Usage
 
-```
+```php
 $container = ApplicationContext::getContainer();
-$translator = $container->get(\Hyperf\Translation\Contracts\Translator::class);
+$translator = $container->get(\Hyperf\Contract\TranslatorInterface::class);
 $translator->trans('validation.accepted');
 ```

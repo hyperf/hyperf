@@ -104,6 +104,7 @@
         "files": [
             "src/config/src/Functions.php",
             "src/di/src/Functions.php",
+            "src/translation/src/Functions.php",
             "src/utils/src/Functions.php"
         ],
         "psr-4": {
@@ -187,6 +188,7 @@
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
             "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
+            "HyperfTest\\GrpcServer\\": "src/grpc-server/tests/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
