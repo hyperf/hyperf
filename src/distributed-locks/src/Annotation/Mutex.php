@@ -44,13 +44,6 @@ class Mutex extends AbstractAnnotation
 
     public function collectMethod(string $className, ?string $target): void
     {
-//        if (isset($this->listener)) {
-//            CacheListenerCollector::set($this->listener, [
-//                'className' => $className,
-//                'method' => $target,
-//            ]);
-//        }
-
         AnnotationCollector::collectMethod($className, $target, static::class, $this);
     }
 }

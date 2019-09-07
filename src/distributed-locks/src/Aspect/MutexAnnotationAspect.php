@@ -44,7 +44,7 @@ class MutexAnnotationAspect implements AroundInterface
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new Mutex());
-        $this->config             = $config->get('distributed-locks', []);
+        $this->config             = $config->get('distributed-locks.mutex', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

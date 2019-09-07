@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 
 return [
-    'prefix' => 'lock:',
-    'ttl'    => 10,
-    'driver' => 'redis',
-    'redis'  => [
+    'mutex' => [
+        'prefix' => 'lock:',
+        'ttl'    => 10,
+        'driver' => 'redis',
+    ],
+    'redis' => [
         'db'    => '',
         'pools' => [
             'default',

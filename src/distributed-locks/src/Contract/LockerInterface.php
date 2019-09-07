@@ -14,9 +14,9 @@ namespace Hyperf\DistributedLocks\Contract;
 interface LockerInterface
 {
 
-    public function lock();
+    public function lock($resource, $ttl);
 
 
-    public function unlock();
+    public function unlock(array $lock);
 
 }
