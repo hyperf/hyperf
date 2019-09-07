@@ -31,7 +31,7 @@ class RedisDriver extends Driver
 
     public function get($key, $default = null)
     {
-        $res = $this->redis->get($this->getCacheKey($key));
+        $res = $this->redis->get($this->getMutexKey($key));
         if ($res === false) {
             return $default;
         }
@@ -41,7 +41,7 @@ class RedisDriver extends Driver
 
     public function fetch(string $key, $default = null): array
     {
-        $res = $this->redis->get($this->getCacheKey($key));
+        $res = $this->redis->get($this->getMutexKey($key));
         if ($res === false) {
             return [false, $default];
         }
@@ -53,15 +53,15 @@ class RedisDriver extends Driver
     {
         $res = $this->packer->pack($value);
         if ($ttl > 0) {
-            return $this->redis->set($this->getCacheKey($key), $res, $ttl);
+            return $this->redis->set($this->getMutexKey($key), $res, $ttl);
         }
 
-        return $this->redis->set($this->getCacheKey($key), $res);
+        return $this->redis->set($this->getMutexKey($key), $res);
     }
 
     public function delete($key)
     {
-        return (bool) $this->redis->del($this->getCacheKey($key));
+        return (bool) $this->redis->del($this->getMutexKey($key));
     }
 
     public function clear()
@@ -72,7 +72,7 @@ class RedisDriver extends Driver
     public function getMultiple($keys, $default = null)
     {
         $cacheKeys = array_map(function ($key) {
-            return $this->getCacheKey($key);
+            return $this->getMutexKey($key);
         }, $keys);
 
         $values = $this->redis->mget($cacheKeys);
@@ -92,7 +92,7 @@ class RedisDriver extends Driver
 
         $cacheKeys = [];
         foreach ($values as $key => $value) {
-            $cacheKeys[$this->getCacheKey($key)] = $this->packer->pack($value);
+            $cacheKeys[$this->getMutexKey($key)] = $this->packer->pack($value);
         }
 
         $ttl = (int) $ttl;
@@ -110,7 +110,7 @@ class RedisDriver extends Driver
     public function deleteMultiple($keys)
     {
         $cacheKeys = array_map(function ($key) {
-            return $this->getCacheKey($key);
+            return $this->getMutexKey($key);
         }, $keys);
 
         return $this->redis->del(...$cacheKeys);
@@ -118,14 +118,14 @@ class RedisDriver extends Driver
 
     public function has($key)
     {
-        return (bool) $this->redis->exists($this->getCacheKey($key));
+        return (bool) $this->redis->exists($this->getMutexKey($key));
     }
 
     public function clearPrefix(string $prefix): bool
     {
         $iterator = null;
         $key = $prefix . '*';
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
+        while ($keys = $this->redis->scan($iterator, $this->getMutexKey($key), 10000)) {
             $this->redis->del(...$keys);
         }
 
@@ -134,16 +134,26 @@ class RedisDriver extends Driver
 
     public function addKey(string $collector, string $key): bool
     {
-        return (bool) $this->redis->sAdd($this->getCacheKey($collector), $key);
+        return (bool) $this->redis->sAdd($this->getMutexKey($collector), $key);
     }
 
     public function keys(string $collector): array
     {
-        return $this->redis->sMembers($this->getCacheKey($collector)) ?? [];
+        return $this->redis->sMembers($this->getMutexKey($collector)) ?? [];
     }
 
     public function delKey(string $collector, ...$key): bool
     {
-        return (bool) $this->redis->sRem($this->getCacheKey($collector), ...$key);
+        return (bool) $this->redis->sRem($this->getMutexKey($collector), ...$key);
+    }
+
+    public function lock()
+    {
+        // TODO: Implement lock() method.
+    }
+
+    public function unlock()
+    {
+        // TODO: Implement unlock() method.
     }
 }

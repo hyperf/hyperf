@@ -42,13 +42,13 @@ abstract class Driver implements DriverInterface
     {
         $this->container = $container;
         $this->config = $config;
-        $this->prefix = $config['prefix'] ?? 'cache:';
+        $this->prefix = $config['prefix'] ?? 'lock:';
 
         $packerClass = $config['packer'] ?? PhpSerializerPacker::class;
         $this->packer = $container->get($packerClass);
     }
 
-    protected function getCacheKey(string $key)
+    protected function getMutexKey(string $key)
     {
         return $this->prefix . $key;
     }
