@@ -1,5 +1,9 @@
 # v1.0.15 - TBD
 
+## Fixed
+
+- [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
+
 # v1.0.14 - 2019-09-05
 
 ## Added
