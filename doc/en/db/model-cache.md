@@ -99,10 +99,10 @@ class User extends Model implements CacheableInterface
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
-// 查询单个缓存
+// Query a single cache
 $model = User::findFromCache($id);
 
-// 批量查询缓存，返回 Hyperf\Database\Model\Collection
+// Batch query cache, return Hyperf\Database\Model\Collection
 $models = User::findManyFromCache($ids);
 
 ```

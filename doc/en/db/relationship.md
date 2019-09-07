@@ -73,7 +73,7 @@ foreach ($books as $book) {
 Of course, since all associations can also be used as query constructors, you can add additional constraints on the books method using chained calls:
 
 ```php
-$book = User::query()->find(1)->books()->where('title', '一个月精通Hyperf框架')->first();
+$book = User::query()->find(1)->books()->where('title', 'One month proficient in the Hyperf framework')->first();
 ```
 
 ### One to many (reverse)
@@ -259,8 +259,9 @@ foreach ($users as $user){
 
 In this example, only two queries were executed
 
-```
+```sql
 SELECT * FROM `user`;
 
 SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
 ```
+

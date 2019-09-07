@@ -323,7 +323,7 @@ Db::table('users')
 
 ### Sub join query
 
-You can associate a query as a subquery using the `joinSub``, leftJoinSub` and `rightJoinSub` methods. Each of them receives three parameters: a subquery, a table alias, and a closure that defines the associated field:
+You can associate a query as a subquery using the `joinSub`, `leftJoinSub` and `rightJoinSub` methods. Each of them receives three parameters: a subquery, a table alias, and a closure that defines the associated field:
 
 ```php
 $latestPosts = Db::table('posts')

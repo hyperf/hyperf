@@ -415,9 +415,9 @@ The migration program automatically generates a reasonable index name, and each 
 ```php
 <?php
 
-// 定义唯一索引名称为 unique_name
+// Define a unique index name as unique_name
 $table->unique('name', 'unique_name');
-// 定义一个复合索引名称为 index_account_id_and_created_at
+// Define a composite index name as index_account_id_and_created_at
 $table->index(['account_id', 'created_at'], '');
 ```
 

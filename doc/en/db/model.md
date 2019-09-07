@@ -57,11 +57,11 @@ class User extends Model
 |  parameter   |  type  | default value |                     remark                      |
 | :----------: | :----: | :-----------: | :---------------------------------------------: |
 |  connection  | string |    default    |               Database connection               |
-|    table     | string |      无       |                 Data table name                 |
+|    table     | string |     null      |                 Data table name                 |
 |  primaryKey  | string |      id       |                Model primary key                |
 |   keyType    | string |      int      |                Primary key type                 |
 |   fillable   | array  |      []       |       Allowed bulk copying of attributes        |
-|    casts     | string |      无       |          Data formatting configuration          |
+|    casts     | string |     null      |          Data formatting configuration          |
 |  timestamps  |  bool  |     true      | Whether to automatically maintain the timestamp |
 | incrementing |  bool  |     true      |       Whether to increase the primary key       |
 

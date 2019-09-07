@@ -72,7 +72,7 @@ Model events are not consistent with `EloquentORM`, `EloquentORM` uses `Observer
 
 ### Hook function
 
-|    事件名    |     触发实际     | 是否阻断 |               备注                |
+|    Event name    |     trigger event     | Whether to block |               remark            |
 |:------------:|:----------------:|:--------:|:-------------------------- --:|
 |   booting    |  Before the model is first loaded  |    false    | Only trigger once in the process life cycle |
 |    booted    |  After the model is first loaded  |    false    | Only trigger once in the process life cycle |

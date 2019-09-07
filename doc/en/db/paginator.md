@@ -6,7 +6,7 @@ When using [hyperf/database](https://github.com/hyperf-cloud/database) to query 
 
 When you query data through [Query Constructor](en/db/querybuilder.md) or [Model](en/db/model.md), you can handle paging by the `paginate` method, which is automatically based on the user. The page being viewed to set limits and offsets. By default, the current page count is detected by the value of the `page` parameter with the current HTTP request:
 
-> 由于 Hyperf 当前并不支持视图，所以分页组件尚未支持对视图的渲染，直接返回分页结果默认会以 application/json 格式输出。
+> Since Hyperf does not currently support views, the paging component does not yet support rendering of views. Directly returning pagination results are output by default in application/json format.
 
 ## Query constructor paging
 
