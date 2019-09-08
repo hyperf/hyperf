@@ -40,29 +40,37 @@ class LockAnnotationAspect implements AroundInterface
      */
     private $config;
 
+    /**
+     * @var ContainerInterface
+     */
+    protected $manager;
 
-    public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
+    /**
+     * @var AnnotationManager
+     */
+    protected $annotationManager;
+
+    public function __construct(CacheManager $manager, ConfigInterface $config)
     {
+        $this->manager            = $manager;
         $this->annotationProperty = get_object_vars(new Lock());
         $this->config             = $config->get('distributed-locks.mutex', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        // todo 获得锁
+        $driver = $this->getDriver($config);
 
-        $locker = true;
+        $locker = $driver->lock($key, $ttl);
         if (!$locker) {
-            // 没有获得锁时处理
+            // todo
         }
-
         try {
-            $result = $proceedingJoinPoint->process();
+            return $proceedingJoinPoint->process();
         } catch (\Throwable $throwable) {
             throw $throwable;
         } finally {
-            // todo 解锁
-            $locker->unlock();
+            $driver->unlock([]);
         }
     }
 
