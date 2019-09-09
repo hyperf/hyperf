@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\DistributedLocks\Annotation\Lock;
+use Hyperf\DistributedLocks\LockManager;
 use Swoole\Coroutine;
 
 /**
@@ -50,7 +51,7 @@ class LockAnnotationAspect implements AroundInterface
      */
     protected $annotationManager;
 
-    public function __construct(CacheManager $manager, ConfigInterface $config)
+    public function __construct(LockManager $manager, ConfigInterface $config)
     {
         $this->manager            = $manager;
         $this->annotationProperty = get_object_vars(new Lock());
@@ -59,7 +60,7 @@ class LockAnnotationAspect implements AroundInterface
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $driver = $this->getDriver($config);
+        $driver = $this->manager->getDriver($config);
 
         $locker = $driver->lock($key, $ttl);
         if (!$locker) {

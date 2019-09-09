@@ -34,7 +34,7 @@ class RedisDriver extends Driver
     {
         parent::__construct($container, $config);
 
-        $this->redis      = $container->get(\Redis::class);
+        $this->redis      = $container->get(Redis::class);
         $this->config     = $container->get(ConfigInterface::class);
         $this->redisPools = $this->config->get('distributed-locks.redis.pools', []);
     }
