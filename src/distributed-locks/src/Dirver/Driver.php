@@ -31,11 +31,11 @@ abstract class Driver implements DriverInterface
      */
     protected $prefix;
 
-    public function __construct(ContainerInterface $container, array $config)
+    public function __construct(ContainerInterface $container, array $config, string $prefix = 'lock:')
     {
         $this->container = $container;
         $this->config    = $config;
-        $this->prefix    = $config['prefix'] ?? 'lock:';
+        $this->prefix    = $prefix;
     }
 
     /**

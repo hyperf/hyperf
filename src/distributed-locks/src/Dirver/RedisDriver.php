@@ -12,33 +12,59 @@ declare(strict_types=1);
 
 namespace Hyperf\DistributedLocks\Driver;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\RedisFactory;
 use Psr\Container\ContainerInterface;
 use Redis;
 
 class RedisDriver extends Driver
 {
+    /**
+     * @var int
+     */
+    protected $quorum;
+
+    /**
+     * @var int
+     */
+    protected $retryDelay;
+
+    /**
+     * @var int
+     */
+    protected $retryCount;
+
+    /**
+     * @var float
+     */
+    protected $clockDriftFactor = 0.01;
 
     /**
      * @var array
      */
-    protected $redisPools;
+    protected $pools;
 
     /**
      * @var
      */
     protected $config;
 
-    public function __construct(ContainerInterface $container, array $config)
+    public function __construct(ContainerInterface $container, array $config, string $prefix)
     {
-        parent::__construct($container, $config);
+        parent::__construct($container, $config, $prefix);
 
-        $this->redis      = $container->get(Redis::class);
-        $this->config     = $container->get(ConfigInterface::class);
-        $this->redisPools = $this->config->get('distributed-locks.redis.pools', []);
+        $this->pools      = $config['pools'] ?? [];
+        $this->retryDelay = $config['retry_delay'] ?? 200;
+        $this->retryCount = $config['retry_count'] ?? 0;
+        $this->quorum     = min(count($this->pools), (count($this->pools) / 2 + 1));
     }
 
+    /**
+     * @param $resource
+     * @param $ttl
+     * @return array|bool
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
     public function lock($resource, $ttl)
     {
         $mutexKey = $this->getMutexKey($resource);
@@ -47,8 +73,8 @@ class RedisDriver extends Driver
         do {
             $n         = 0;
             $startTime = microtime(true) * 1000;
-            foreach ($this->redisPools as $redisPool) {
-                $redis = $this->container->get(RedisFactory::class)->get($redisPool);
+            foreach ($this->pools as $pool) {
+                $redis = $this->container->get(RedisFactory::class)->get($pool);
                 if ($this->lockRedis($redis, $mutexKey, $token, $ttl)) {
                     $n++;
                 }
@@ -65,8 +91,8 @@ class RedisDriver extends Driver
                     'token'    => $token,
                 ];
             } else {
-                foreach ($this->redisPools as $redisPool) {
-                    $this->unlockRedis($redisPool, $mutexKey, $token);
+                foreach ($this->pools as $pool) {
+                    $this->unlockRedis($pool, $mutexKey, $token);
                 }
             }
             // Wait a random delay before to retry
@@ -78,14 +104,18 @@ class RedisDriver extends Driver
         return false;
     }
 
+    /**
+     * @param array $lock
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
     public function unlock(array $lock)
     {
         $resource = $lock['resource'];
         $token    = $lock['token'];
-        $mutexKey = $this->getMutexKey($resource);
-        foreach ($this->redisPools as $redisPool) {
-            $redis = $this->container->get(RedisFactory::class)->get($redisPool);
-            $this->unlockRedis($redis, $mutexKey, $token);
+        foreach ($this->pools as $pool) {
+            $redis = $this->container->get(RedisFactory::class)->get($pool);
+            $this->unlockRedis($redis, $resource, $token);
         }
     }
 

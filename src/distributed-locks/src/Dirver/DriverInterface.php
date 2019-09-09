@@ -17,6 +17,6 @@ use Psr\Container\ContainerInterface;
 
 interface DriverInterface extends LockerInterface
 {
-    public function __construct(ContainerInterface $container, array $config);
+    public function __construct(ContainerInterface $container, array $config, string $prefix);
 
 }

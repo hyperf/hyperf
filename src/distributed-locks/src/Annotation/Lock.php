@@ -36,6 +36,11 @@ class Lock extends AbstractAnnotation
      */
     public $ttl;
 
+    /**
+     * @var callable
+     */
+    public $callback = [];
+
     public function __construct($value = null)
     {
         parent::__construct($value);

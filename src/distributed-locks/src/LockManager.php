@@ -50,29 +50,12 @@ class LockManager
             throw new InvalidArgumentException(sprintf('The lock config %s is invalid.', $name));
         }
 
+        $prefix = $this->config->get('distributed-locks.prefix', '');
+
         $driverClass = $config['driver'] ?? RedisDriver::class;
 
-        $driver = make($driverClass, ['config' => $config]);
+        $driver = make($driverClass, ['config' => $config, 'prefix' => $prefix]);
 
         return $this->drivers[$name] = $driver;
-    }
-
-    public function call($callback, string $key, int $ttl = 3600, $config = 'redis')
-    {
-        $driver = $this->getDriver($config);
-
-        $locker = $driver->lock($key,$ttl);
-        if (!$locker) {
-            // todo
-        }
-        try {
-            $result = call($callback);
-        } catch (\Throwable $throwable) {
-            throw $throwable;
-        } finally {
-            $driver->unlock([]);
-        }
-
-        return $result;
     }
 }

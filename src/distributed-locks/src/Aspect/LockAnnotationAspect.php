@@ -17,6 +17,8 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\DistributedLocks\Annotation\Lock;
+use Hyperf\DistributedLocks\AnnotationManager;
+use Hyperf\DistributedLocks\Exception\LockException;
 use Hyperf\DistributedLocks\LockManager;
 use Swoole\Coroutine;
 
@@ -51,20 +53,31 @@ class LockAnnotationAspect implements AroundInterface
      */
     protected $annotationManager;
 
-    public function __construct(LockManager $manager, ConfigInterface $config)
+    public function __construct(LockManager $manager, AnnotationManager $annotationManager, ConfigInterface $config)
     {
         $this->manager            = $manager;
+        $this->annotationManager  = $annotationManager;
         $this->annotationProperty = get_object_vars(new Lock());
-        $this->config             = $config->get('distributed-locks.mutex', []);
+        $this->config             = $config->get('distributed-locks', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $driver = $this->manager->getDriver($config);
+        $className = $proceedingJoinPoint->className;
+        $method    = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
+
+        [$key, $ttl, $annotation] = $this->annotationManager->getLockValue($className, $method, $arguments);
+
+        $driver = $this->manager->getDriver($this->config['driver'] ?? 'redis');
 
         $locker = $driver->lock($key, $ttl);
         if (!$locker) {
-            // todo
+            if (!$annotation->callback || !is_callable($annotation->callback)) {
+                throw new LockException('Service Unavailable.', 503);
+            }
+
+            return call_user_func($annotation->callback);
         }
         try {
             return $proceedingJoinPoint->process();
