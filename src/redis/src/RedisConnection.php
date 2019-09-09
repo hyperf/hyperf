@@ -29,11 +29,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
      * @var array
      */
     protected $config = [
-        'host' => 'localhost',
-        'port' => 6379,
-        'auth' => null,
-        'db' => 0,
+        'host'    => 'localhost',
+        'port'    => 6379,
+        'prefix'  => '',
+        'auth'    => null,
+        'db'      => 0,
         'timeout' => 0.0,
+        'options' => [],
     ];
 
     /**
@@ -88,6 +90,15 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $database = $this->database ?? $db;
         if ($database > 0) {
             $redis->select($database);
+        }
+
+        $prefix = $this->config['prefix'] ?? '';
+        if ($prefix !== '') {
+            $redis->setOption(\Redis::OPT_PREFIX, $prefix);
+        }
+        $options = $this->config['options'] ?? [];
+        foreach ($options as $k => $v) {
+            $redis->setOption($k, $v);
         }
 
         $this->connection = $redis;
