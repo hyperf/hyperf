@@ -2,6 +2,8 @@
 
 ## Fixed
 
+- [#534](https://github.com/hyperf-cloud/hyperf/pull/534) Fixed Guzzle HTTP Client does not handle the response status is equal to `-3`;
+
 # v1.0.14 - 2019-09-05
 
 ## Added
