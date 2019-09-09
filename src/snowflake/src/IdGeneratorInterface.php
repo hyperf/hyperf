@@ -14,7 +14,13 @@ namespace Hyperf\Snowflake;
 
 interface IdGeneratorInterface extends \Hyperf\Contract\IdGeneratorInterface
 {
+    /**
+     * Generate an ID by meta, if meta is null, then use the default meta.
+     */
     public function generate(?Meta $meta = null): int;
 
+    /**
+     * Degenerate the meta by ID.
+     */
     public function degenerate(int $id): Meta;
 }

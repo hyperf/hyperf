@@ -20,22 +20,22 @@ abstract class IdGenerator implements IdGeneratorInterface
     protected $metaGenerator;
 
     /**
-     * @var ConfigInterface
+     * @var ConfigurationInterface
      */
     protected $config;
 
     public function __construct(MetaGeneratorInterface $metaGenerator)
     {
         $this->metaGenerator = $metaGenerator;
-        $this->config = $metaGenerator->getConfig();
+        $this->config = $metaGenerator->getConfiguration();
     }
 
     public function generate(?Meta $meta = null): int
     {
         $meta = $this->meta($meta);
 
-        $interval = $meta->getTimeInterval() << $this->config->getTimeStampShift();
-        $dataCenterId = $meta->getDataCenterId() << $this->config->getDataCenterShift();
+        $interval = $meta->getTimeInterval() << $this->config->getTimestampLeftShift();
+        $dataCenterId = $meta->getDataCenterId() << $this->config->getDataCenterIdShift();
         $workerId = $meta->getWorkerId() << $this->config->getWorkerIdShift();
 
         return $interval | $dataCenterId | $workerId | $meta->getSequence();
@@ -43,22 +43,19 @@ abstract class IdGenerator implements IdGeneratorInterface
 
     public function degenerate(int $id): Meta
     {
-        $interval = $id >> $this->config->getTimeStampShift();
-        $dataCenterId = $id >> $this->config->getDataCenterShift();
+        $interval = $id >> $this->config->getTimestampLeftShift();
+        $dataCenterId = $id >> $this->config->getDataCenterIdShift();
         $workerId = $id >> $this->config->getWorkerIdShift();
 
         return new Meta(
-            $interval << $this->config->getDataCenterBits() ^ $dataCenterId,
-            $dataCenterId << $this->config->getWorkerBits() ^ $workerId,
+            $interval << $this->config->getDataCenterIdBits() ^ $dataCenterId,
+            $dataCenterId << $this->config->getWorkerIdBits() ^ $workerId,
             $workerId << $this->config->getSequenceBits() ^ $id,
-            $interval + $this->metaGenerator->getBeginTimeStamp(),
-            $this->metaGenerator->getBeginTimeStamp()
+            $interval + $this->metaGenerator->getBeginTimestamp(),
+            $this->metaGenerator->getBeginTimestamp()
         );
     }
 
-    /**
-     * @return MetaGeneratorInterface
-     */
     public function getMetaGenerator(): MetaGeneratorInterface
     {
         return $this->metaGenerator;
