@@ -6,6 +6,7 @@
 - [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
 - [#542](https://github.com/hyperf-cloud/hyperf/pull/542) Fixed `Hyperf\Grpc\Parser::parseResponse` returns a non-standard error code for grpc.
 - [#551](https://github.com/hyperf-cloud/hyperf/pull/551) Fixed infinite loop in grpc client when the server closed the connection.
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Fixed udp server is not works.
 
 ## Deleted
 
@@ -15,6 +16,10 @@
 
 [#549](https://github.com/hyperf-cloud/hyperf/pull/549) Optimized `read` and `write` of `Hyperf\Amqp\Connection\SwooleIO`.
 [#559](https://github.com/hyperf-cloud/hyperf/pull/559) Optimized `redirect ` of `Hyperf\HttpServer\Response`.
+
+## Deprecated
+
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Marked `Hyperf\Server\ServerInterface::SERVER_TCP` as deprecated, will be removed in `v1.1`.
 
 # v1.0.14 - 2019-09-05
 
