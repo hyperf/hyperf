@@ -80,7 +80,7 @@ class Parser
         if ($response->statusCode !== 200) {
             $message = $response->headers['grpc-message'] ?? 'Http status Error';
             $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
-            return [$message, (int)$code, $response];
+            return [$message, (int) $code, $response];
         }
         $grpc_status = (int) ($response->headers['grpc-status'] ?? 0);
         if ($grpc_status !== 0) {
