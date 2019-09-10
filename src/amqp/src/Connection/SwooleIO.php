@@ -200,10 +200,6 @@ class SwooleIO extends AbstractIO
             throw new AMQPRuntimeException('Error sending data');
         }
 
-        if ($buffer === 0 && ! $this->sock->connected) {
-            throw new AMQPRuntimeException('Broken pipe or closed connection');
-        }
-
         $this->lastWrite = microtime(true);
     }
 
