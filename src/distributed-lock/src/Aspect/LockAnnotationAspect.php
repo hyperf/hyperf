@@ -20,7 +20,6 @@ use Hyperf\DistributedLock\Annotation\Lock;
 use Hyperf\DistributedLock\AnnotationManager;
 use Hyperf\DistributedLock\Exception\LockException;
 use Hyperf\DistributedLock\LockManager;
-use Swoole\Coroutine;
 
 /**
  * @Aspect
@@ -75,7 +74,7 @@ class LockAnnotationAspect implements AroundInterface
 
         $locker = $driver->lock($key, $ttl);
         if (!$locker) {
-            if (!$annotation->callback || !is_callable($annotation->callback)) {
+            if (!$annotation->lockFailedCallback || !is_callable($annotation->lockFailedCallback)) {
                 throw new LockException('Service Unavailable.', 503);
             }
 
@@ -88,30 +87,5 @@ class LockAnnotationAspect implements AroundInterface
         } finally {
             $driver->unlock([]);
         }
-    }
-
-    /**
-     * @param Lock[] $annotations
-     */
-    public function getWeightingAnnotation(array $annotations): Lock
-    {
-        $property = array_merge($this->annotationProperty, $this->config);
-        foreach ($annotations as $annotation) {
-            if (!$annotation) {
-                continue;
-            }
-            $property = array_merge($property, array_filter(get_object_vars($annotation)));
-        }
-
-        return new Lock($property);
-    }
-
-    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): array
-    {
-        $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-
-        return [
-            $metadata->method[Lock::class] ?? null,
-        ];
     }
 }

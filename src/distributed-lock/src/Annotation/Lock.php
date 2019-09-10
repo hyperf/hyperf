@@ -39,7 +39,7 @@ class Lock extends AbstractAnnotation
     /**
      * @var callable
      */
-    public $callback = [];
+    public $lockFailedCallback = [];
 
     public function __construct($value = null)
     {
