@@ -169,7 +169,7 @@ class Server implements ServerInterface
                 return new SwooleHttpServer($host, $port, $mode, $sockType);
             case ServerInterface::SERVER_WEBSOCKET:
                 return new SwooleWebSocketServer($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_TCP:
+            case ServerInterface::SERVER_BASE:
                 return new SwooleServer($host, $port, $mode, $sockType);
         }
 
