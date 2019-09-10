@@ -14,6 +14,7 @@
 ## Optimized
 
 [#549](https://github.com/hyperf-cloud/hyperf/pull/549) Optimized `read` and `write` of `Hyperf\Amqp\Connection\SwooleIO`.
+[#559](https://github.com/hyperf-cloud/hyperf/pull/559) Optimized `redirect ` of `Hyperf\HttpServer\Response`.
 
 # v1.0.14 - 2019-09-05
 
