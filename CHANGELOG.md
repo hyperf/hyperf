@@ -9,6 +9,10 @@
 
 [#545](https://github.com/hyperf-cloud/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes. 
 
+## Optimized
+
+[#549](https://github.com/hyperf-cloud/hyperf/pull/549) Optimized `read` and `write` of `Hyperf\Amqp\Connection\SwooleIO`.
+
 # v1.0.14 - 2019-09-05
 
 ## Added
