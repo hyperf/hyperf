@@ -59,6 +59,11 @@ abstract class Command extends SymfonyCommand
     protected $coroutine = true;
 
     /**
+     * @var int
+     */
+    protected $hook = SWOOLE_HOOK_ALL;
+
+    /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
      *
      * @var array
@@ -374,7 +379,7 @@ abstract class Command extends SymfonyCommand
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run(function () {
                 call([$this, 'handle']);
-            });
+            }, $this->hook);
 
             return 0;
         }

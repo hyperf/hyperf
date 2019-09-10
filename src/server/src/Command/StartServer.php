@@ -42,7 +42,9 @@ class StartServer extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        \Swoole\Runtime::enableCoroutine(true);
+        $config = $this->container->get(ConfigInterface::class);
+
+        \Swoole\Runtime::enableCoroutine(true, $config->get('hook', SWOOLE_HOOK_ALL));
 
         $this->checkEnvironment($output);
 
@@ -50,7 +52,7 @@ class StartServer extends SymfonyCommand
             ->setEventDispatcher($this->container->get(EventDispatcherInterface::class))
             ->setLogger($this->container->get(StdoutLoggerInterface::class));
 
-        $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
+        $serverConfig = $config->get('server', []);
         if (! $serverConfig) {
             throw new \InvalidArgumentException('At least one server should be defined.');
         }
