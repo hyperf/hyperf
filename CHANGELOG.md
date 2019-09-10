@@ -6,7 +6,7 @@
 - [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
 - [#542](https://github.com/hyperf-cloud/hyperf/pull/542) Fixed `Hyperf\Grpc\Parser::parseResponse` returns a non-standard error code for grpc.
 - [#551](https://github.com/hyperf-cloud/hyperf/pull/551) Fixed infinite loop in grpc client when the server closed the connection.
-- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Fixed udp server is not works.
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Fixed UDP Server does not works.
 
 ## Deleted
 
