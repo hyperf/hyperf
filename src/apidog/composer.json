@@ -1,0 +1,50 @@
+{
+    "name": "daodao97/apidog",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "Api Watch Dog: one Api params validation and swagger doc lib for hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Apidog\\": "src/"
+        },
+      "files": [
+        "./src/function.php"
+      ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.3",
+        "hyperf/di": "1.0.*",
+        "hyperf/logger": "^1.0",
+        "hyperf/utils": "1.0.*",
+        "seld/jsonlint": "^1.7"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "hyperf/testing": "1.0.*",
+        "phpstan/phpstan": "^0.10.5",
+        "swoft/swoole-ide-helper": "dev-master"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\Apidog\\ConfigProvider"
+        }
+    }
+}
