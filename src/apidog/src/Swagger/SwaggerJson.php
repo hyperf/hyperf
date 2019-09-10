@@ -71,7 +71,7 @@ class SwaggerJson
 
     public function basePath($className)
     {
-        return controllerNameToPath($className);
+        return controller_name_path($className);
     }
 
     public function makeParameters($params, $path)

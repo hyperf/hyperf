@@ -33,9 +33,7 @@ class DispathcerFactory extends DispatcherFactory
             return;
         }
         $prefix = $this->getPrefix($className, $annotation->prefix);
-        dump($prefix);
         $router = $this->getRouter($annotation->server);
-        $base_path = controllerNameToPath($className);
         foreach ($methodMetadata as $methodName => $values) {
             $methodMiddlewares = $middlewares;
             if (isset($values)) {
@@ -49,7 +47,7 @@ class DispathcerFactory extends DispatcherFactory
                 if (!isset($mapping->methods)) {
                     continue;
                 }
-                $path = $base_path . '/' . $methodName;
+                $path = $prefix . '/' . $methodName;
                 if ($mapping->path) {
                     $path = $mapping->path;
                 }
