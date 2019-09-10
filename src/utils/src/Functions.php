@@ -422,12 +422,7 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        if (version_compare(swoole_version(), '4.4.0', '>=')) {
-            $result = \Swoole\Coroutine\Run($callback);
-        } else {
-            go($callback);
-            $result = true;
-        }
+        $result = \Swoole\Coroutine\Run($callback);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;

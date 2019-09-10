@@ -10,16 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DbConnection\Listener;
+namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**
- * @Listener
+ * @Listener(priority=99)
  */
-class ModelEventListener implements ListenerInterface
+class ModelHookEventListener implements ListenerInterface
 {
     public function listen(): array
     {
@@ -33,6 +33,6 @@ class ModelEventListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        return $event->handle();
+        $event->handle();
     }
 }

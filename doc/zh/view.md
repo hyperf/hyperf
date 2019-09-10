@@ -12,12 +12,12 @@ composer require hyperf/view
 
 View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可自行创建，以下为相关配置的说明：
 
-|       配置        |  类型  |                 默认值                 |       备注       |
-|:-----------------:|:------:|:--------------------------------------:|:----------------:|
+|       配置        |  类型  |                默认值                 |       备注       |
+|:-----------------:|:------:|:-------------------------------------:|:----------------:|
 |      engine       | string | Hyperf\View\Engine\BladeEngine::class |   视图渲染引擎   |
-|       mode        | string |               Mode::TASK               |   视图渲染模式   |
-| config.view_path  | string |                   无                   | 视图文件默认地址 |
-| config.cache_path | string |                   无                   | 视图文件缓存地址 |
+|       mode        | string |              Mode::TASK               |   视图渲染模式   |
+| config.view_path  | string |                  无                   | 视图文件默认地址 |
+| config.cache_path | string |                  无                   | 视图文件缓存地址 |
 
 配置文件格式示例：
 

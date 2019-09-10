@@ -14,6 +14,8 @@ namespace Hyperf\WebSocketServer;
 
 use FastRoute\Dispatcher;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
@@ -29,26 +31,22 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var ResponseInterface $response */
-        $uri = $request->getUri();
-        /**
-         * @var array
-         *            Returns array with one of the following formats:
-         *            [self::NOT_FOUND]
-         *            [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
-         *            [self::FOUND, $handler, ['varName' => 'value', ...]]
-         */
-        $routes = $this->dispatcher->dispatch($request->getMethod(), $uri->getPath());
+        /** @var Dispatched $dispatched */
+        $dispatched = $request->getAttribute(Dispatched::class);
 
-        switch ($routes[0]) {
+        if (! $dispatched instanceof Dispatched) {
+            throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
+        }
+
+        switch ($dispatched->status) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->handleNotFound($request);
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->handleMethodNotAllowed($routes, $request);
+                $response = $this->handleMethodNotAllowed($dispatched->params, $request);
                 break;
             case Dispatcher::FOUND:
-                $response = $this->handleFound($routes, $request);
+                $response = $this->handleFound($dispatched, $request);
                 break;
         }
         if (! $response instanceof ResponseInterface) {
@@ -63,9 +61,9 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(array $routes, ServerRequestInterface $request): ResponseInterface
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): ResponseInterface
     {
-        [$controller,] = $this->prepareHandler($routes[1]);
+        [$controller,] = $this->prepareHandler($dispatched->handler->callback);
         if (! $this->container->has($controller)) {
             throw new WebSocketHandeShakeException('Router not exist.');
         }

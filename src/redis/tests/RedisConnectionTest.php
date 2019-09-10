@@ -15,6 +15,11 @@ namespace HyperfTest\Redis;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Pool\Channel;
+use Hyperf\Pool\LowFrequencyInterface;
+use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
+use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -69,10 +74,33 @@ class RedisConnectionTest extends TestCase
         $this->assertSame(null, $connection->getDatabase());
     }
 
+    public function testRedisCloseInLowFrequency()
+    {
+        $pool = $this->getRedisPool();
+
+        $connection1 = $pool->get()->getConnection();
+        $connection2 = $pool->get()->getConnection();
+        $connection3 = $pool->get()->getConnection();
+
+        $this->assertSame(3, $pool->getCurrentConnections());
+
+        $connection1->release();
+        $connection2->release();
+        $connection3->release();
+
+        $this->assertSame(3, $pool->getCurrentConnections());
+
+        $connection = $pool->get()->getConnection();
+
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        $connection->release();
+    }
+
     private function getRedisPool()
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
                     'host' => 'redis',
@@ -89,6 +117,18 @@ class RedisConnectionTest extends TestCase
                 ],
             ],
         ]));
+
+        $frequency = Mockery::mock(LowFrequencyInterface::class);
+        $frequency->shouldReceive('isLowFrequency')->andReturn(true);
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new PoolOption(...array_values($args));
+        });
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Channel($args['size']);
+        });
+
+        ApplicationContext::setContainer($container);
 
         return new RedisPoolStub($container, 'default');
     }
