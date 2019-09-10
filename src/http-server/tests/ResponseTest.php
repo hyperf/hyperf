@@ -14,6 +14,8 @@ namespace HyperfTest\HttpServer;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\Utils\ApplicationContext;
@@ -41,6 +43,9 @@ class ResponseTest extends TestCase
     public function testRedirect()
     {
         $container = Mockery::mock(ContainerInterface::class);
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getUri')->andReturn(new Uri('http://127.0.0.1:9501'));
+        $container->shouldReceive('get')->with(RequestInterface::class)->andReturn($request);
         ApplicationContext::setContainer($container);
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
@@ -57,6 +62,16 @@ class ResponseTest extends TestCase
 
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('http://www.baidu.com', $res->getHeaderLine('Location'));
+
+        $response = new Response();
+        $res = $response->redirect('/index');
+        $this->assertSame(302, $res->getStatusCode());
+        $this->assertSame('http://127.0.0.1:9501/index', $res->getHeaderLine('Location'));
+
+        $response = new Response();
+        $res = $response->redirect('index');
+        $this->assertSame(302, $res->getStatusCode());
+        $this->assertSame('http://127.0.0.1:9501/index', $res->getHeaderLine('Location'));
     }
 
     public function testToXml()
