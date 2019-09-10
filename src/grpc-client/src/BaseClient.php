@@ -77,6 +77,7 @@ class BaseClient
      * @param array $metadata A metadata map to send to the server
      *                        (optional)
      * @param array $options An array of options (optional)
+     * @throws GrpcClientException The client should not be used after this exception
      * @return []
      */
     protected function simpleRequest(
@@ -86,8 +87,8 @@ class BaseClient
     ) {
         $streamId = $this->send($this->buildRequest($method, $argument));
         if ($streamId === 0) {
-            // this client should not be used after this exception
-            throw new GrpcClientException('failed to send request to server', StatusCode::INTERNAL);
+            // The client should not be used after this exception
+            throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
         }
         return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
