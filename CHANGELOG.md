@@ -4,6 +4,7 @@
 
 - [#534](https://github.com/hyperf-cloud/hyperf/pull/534) Fixed Guzzle HTTP Client does not handle the response status is equal to `-3`;
 - [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
+- [#550](https://github.com/hyperf-cloud/hyperf/pull/550) Fixed an endless loop when the connection of gRPC client is closed.
 
 ## Deleted
 
