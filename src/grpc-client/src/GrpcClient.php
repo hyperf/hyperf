@@ -299,6 +299,7 @@ class GrpcClient
             $this->recvCoroutineId = Coroutine::id();
             // Start the receive loop
             while (true) {
+                /** @var \Swoole\Http2\Response $response */
                 $response = $this->getHttpClient()->recv();
                 if ($response !== false) {
                     $streamId = $response->streamId;
@@ -325,7 +326,7 @@ class GrpcClient
                     }
                 } else {
                     // If no response, then close all the connection.
-                    if (! $this->isConnected() && $this->closeRecv()) {
+                    if ($this->closeRecv()) {
                         break;
                     }
                 }
