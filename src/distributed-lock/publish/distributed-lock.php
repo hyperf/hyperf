@@ -16,13 +16,13 @@ return [
     'ttl'    => 10,
     'driver' => 'redis',
     'redis'  => [
-        'driftFactor' => 0.01, // time in ms
+        'drift_factor' => 0.01, // time in ms
         // the max number of times Redlock will attempt
         // to lock a resource before erroring
-        'retryCount'  => 10,
+        'retry'        => 10,
         // the time in ms between attempts
-        'retryDelay'  => 200, // time in ms
-        'pools'       => [
+        'retry_delay'  => 200, // time in ms
+        'pools'        => [
             'default',
             'lock',
         ],

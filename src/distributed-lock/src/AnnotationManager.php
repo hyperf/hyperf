@@ -65,7 +65,7 @@ class AnnotationManager
         $key = StringHelper::format($prefix, $arguments, $value);
 
         if (strlen($key) > 64) {
-            $this->logger->warning('The lock key length is too long. The key is ' . $key);
+            $this->logger->warning('The lock mutex key length is too long. The key is ' . $key);
         }
 
         return $key;
