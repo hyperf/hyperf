@@ -8,6 +8,12 @@
 curl -sSL https://get.daocloud.io/docker | sh
 ```
 
+修改文件 `/lib/systemd/system/docker.service`，允许使用 `TCP` 连接 `Docker`
+
+```
+ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+```
+
 ## 搭建自己的Gitlab
 
 ### 安装Gitlab
