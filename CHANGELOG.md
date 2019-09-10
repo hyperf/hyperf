@@ -7,38 +7,9 @@
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
-- [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
-- [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added function `swoole_hook_flags` to get the hook flags by defining `SWOOLE_HOOK_FLAGS`.
-
-bin/hyperf.php
-
-```php
-#!/usr/bin/env php
-<?php
-
-ini_set('display_errors', 'on');
-ini_set('display_startup_errors', 'on');
-
-error_reporting(E_ALL);
-date_default_timezone_set('Asia/Shanghai');
-
-! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
-
-require BASE_PATH . '/vendor/autoload.php';
-
-// Self-called anonymous function that creates its own scope and keep the global namespace clean.
-(function () {
-    /** @var \Psr\Container\ContainerInterface $container */
-    $container = require BASE_PATH . '/config/container.php';
-
-    $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
-    $application->run();
-})();
-
-```
+- [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
 
 ## Changed
 
