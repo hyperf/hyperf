@@ -19,21 +19,21 @@ class StringHelper
     /**
      * Format cache key with prefix and arguments.
      */
-    public static function format(string $prefix, array $arguments, ?string $value = null): string
+    public static function format(string $prefix, array $arguments, ?string $value = null, string $separator = ':'): string
     {
         if ($value !== null) {
             if ($matches = StringHelper::parse($value)) {
                 foreach ($matches as $search) {
                     $k = str_replace(['#{', '}'], '', $search);
 
-                    $value = Str::replaceFirst($search, (string) data_get($arguments, $k), $value);
+                    $value = Str::replaceFirst($search, (string)data_get($arguments, $k), $value);
                 }
             }
         } else {
-            $value = implode(':', $arguments);
+            $value = implode($separator, $arguments);
         }
 
-        return $prefix . ':' . $value;
+        return $prefix . $separator . $value;
     }
 
     /**

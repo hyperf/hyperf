@@ -38,13 +38,13 @@ class AnnotationManager
         $this->logger = $logger;
     }
 
-    public function getLockValue(string $className, string $method, array $arguments): array
+    public function getLockValue(string $className, string $method, array $arguments, string $separator = ':'): array
     {
         /** @var Lock $annotation */
         $annotation = $this->getAnnotation(Lock::class, $className, $method);
 
-        $key = $this->getFormatedKey($annotation->mutex, $arguments, $annotation->value);
-        $ttl = $annotation->ttl ?? $this->config->get("distributed-lock.ttl", 10);
+        $key = $this->getFormatedKey($annotation->mutex, $arguments, $annotation->value, $separator);
+        $ttl = $annotation->ttl ?? $this->config->get('distributed-lock.ttl', 10);
 
         return [$key, $ttl, $annotation];
     }
@@ -60,9 +60,9 @@ class AnnotationManager
         return $result;
     }
 
-    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
+    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null, string $separator = ':'): string
     {
-        $key = StringHelper::format($prefix, $arguments, $value);
+        $key = StringHelper::format($prefix, $arguments, $value, $separator);
 
         if (strlen($key) > 64) {
             $this->logger->warning('The lock mutex key length is too long. The key is ' . $key);

@@ -44,7 +44,7 @@ class LockAnnotationAspect implements AroundInterface
     private $config;
 
     /**
-     * @var ContainerInterface
+     * @var LockManager
      */
     protected $manager;
 
@@ -63,13 +63,15 @@ class LockAnnotationAspect implements AroundInterface
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className = $proceedingJoinPoint->className;
-        $method    = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->arguments['keys'];
+        $className  = $proceedingJoinPoint->className;
+        $method     = $proceedingJoinPoint->methodName;
+        $arguments  = $proceedingJoinPoint->arguments['keys'];
+        $driverName = $this->config['driver'] ?? 'redis';
+        $separator  = $this->config[$driverName]['separator'] ?? ':';
 
-        [$key, $ttl, $annotation] = $this->annotationManager->getLockValue($className, $method, $arguments);
+        [$key, $ttl, $annotation] = $this->annotationManager->getLockValue($className, $method, $arguments, $separator);
 
-        $driver = $this->manager->getDriver($this->config['driver'] ?? 'redis');
+        $driver = $this->manager->getDriver($driverName);
 
         $locker = $driver->lock($key, $ttl);
         if (!$locker) {

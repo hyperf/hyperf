@@ -22,6 +22,7 @@ return [
         'retry'        => 10,
         // the time in ms between attempts
         'retry_delay'  => 200, // time in ms
+        'separator'    => ':',
         'pools'        => [
             'default',
             'lock',
