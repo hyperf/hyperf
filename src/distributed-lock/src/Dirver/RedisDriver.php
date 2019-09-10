@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DistributedLock\Driver;
 
+use Hyperf\DistributedLock\Exception\InvalidArgumentException;
 use Hyperf\Redis\RedisFactory;
 use Psr\Container\ContainerInterface;
 use Redis;
@@ -31,12 +32,12 @@ class RedisDriver extends Driver
     /**
      * @var int
      */
-    protected $retryCount;
+    protected $retry;
 
     /**
      * @var float
      */
-    protected $clockDriftFactor = 0.01;
+    protected $driftFactor = 0.01;
 
     /**
      * @var array
@@ -52,10 +53,15 @@ class RedisDriver extends Driver
     {
         parent::__construct($container, $config, $prefix);
 
-        $this->pools      = $config['pools'] ?? [];
-        $this->retryDelay = $config['retry_delay'] ?? 200;
-        $this->retryCount = $config['retry_count'] ?? 0;
-        $this->quorum     = min(count($this->pools), (count($this->pools) / 2 + 1));
+        $pools = $config['pools'] ?? [];
+        if (empty($config)) {
+            throw new InvalidArgumentException('The lock config redis pools can\'t be empty.');
+        }
+        $this->pools       = $pools;
+        $this->retry       = $config['retry'] ?? 0;
+        $this->retryDelay  = $config['retry_delay'] ?? 200;
+        $this->driftFactor = $config['drift_factor'] ?? 0.01;
+        $this->quorum      = min(count($this->pools), (count($this->pools) / 2 + 1));
     }
 
     /**
@@ -69,7 +75,7 @@ class RedisDriver extends Driver
     {
         $mutexKey = $this->getMutexKey($resource);
         $token    = uniqid();
-        $retry    = $this->retryCount;
+        $retry    = $this->retry;
         do {
             $n         = 0;
             $startTime = microtime(true) * 1000;
@@ -82,7 +88,7 @@ class RedisDriver extends Driver
             # Add 2 milliseconds to the drift to account for Redis expires
             # precision, which is 1 millisecond, plus 1 millisecond min drift
             # for small TTLs.
-            $drift        = ($ttl * $this->clockDriftFactor) + 2;
+            $drift        = ($ttl * $this->driftFactor) + 2;
             $validityTime = $ttl - (microtime(true) * 1000 - $startTime) - $drift;
             if ($n >= $this->quorum && $validityTime > 0) {
                 return [
