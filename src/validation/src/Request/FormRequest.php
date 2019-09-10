@@ -54,10 +54,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Get the proper failed validation response for the request.
-     *
-     * @return ResponseInterface
      */
-    public function response()
+    public function response(): ResponseInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
@@ -95,10 +93,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Get the validator instance for the request.
-     *
-     * @return ValidatorInterface
      */
-    protected function getValidatorInstance()
+    protected function getValidatorInstance(): ValidatorInterface
     {
         $factory = $this->container->get(ValidationFactory::class);
 
@@ -117,10 +113,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Create the default validator instance.
-     *
-     * @return ValidatorInterface
      */
-    protected function createDefaultValidator(ValidationFactory $factory)
+    protected function createDefaultValidator(ValidationFactory $factory): ValidatorInterface
     {
         return $factory->make(
             $this->validationData(),
@@ -132,10 +126,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Get data to be validated from the request.
-     *
-     * @return array
      */
-    protected function validationData()
+    protected function validationData(): array
     {
         return $this->all();
     }
@@ -160,10 +152,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Determine if the request passes the authorization check.
-     *
-     * @return bool
      */
-    protected function passesAuthorization()
+    protected function passesAuthorization(): bool
     {
         if (method_exists($this, 'authorize')) {
             return call_user_func_array([$this, 'authorize'], []);

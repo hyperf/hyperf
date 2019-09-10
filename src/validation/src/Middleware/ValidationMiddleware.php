@@ -30,7 +30,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ValidationMiddleware implements MiddlewareInterface
 {
     /**
-     * @var
+     * @var Dispatcher
      */
     protected $dispatcher;
 
