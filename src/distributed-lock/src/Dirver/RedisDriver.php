@@ -14,6 +14,7 @@ namespace Hyperf\DistributedLock\Driver;
 
 use Hyperf\DistributedLock\Exception\InvalidArgumentException;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
 use Psr\Container\ContainerInterface;
 use Redis;
 
@@ -98,11 +99,12 @@ class RedisDriver extends Driver
                 ];
             } else {
                 foreach ($this->pools as $pool) {
-                    $this->unlockRedis($pool, $mutexKey, $token);
+                    $redis = $this->container->get(RedisFactory::class)->get($pool);
+                    $this->unlockRedis($redis, $mutexKey, $token);
                 }
             }
             // Wait a random delay before to retry
-            $delay = mt_rand(floor($this->retryDelay / 2), $this->retryDelay);
+            $delay = mt_rand((int)floor($this->retryDelay / 2), $this->retryDelay);
             usleep($delay * 1000);
             $retry--;
         } while ($retry > 0);
@@ -126,28 +128,28 @@ class RedisDriver extends Driver
     }
 
     /**
-     * @param Redis $client
-     * @param       $resource
-     * @param       $token
-     * @param       $ttl
+     * @param RedisProxy $client
+     * @param            $resource
+     * @param            $token
+     * @param            $ttl
      * @return bool
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    private function lockRedis(Redis $client, $resource, $token, $ttl)
+    private function lockRedis(RedisProxy $client, $resource, $token, $ttl)
     {
         return $client->set($resource, $token, ['NX', 'PX' => $ttl]);
     }
 
     /**
-     * @param Redis $client
-     * @param       $resource
-     * @param       $token
+     * @param RedisProxy $client
+     * @param            $resource
+     * @param            $token
      * @return mixed
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    private function unlockRedis(Redis $client, $resource, $token)
+    private function unlockRedis(RedisProxy $client, $resource, $token)
     {
         $script = '
             if redis.call("GET", KEYS[1]) == ARGV[1] then

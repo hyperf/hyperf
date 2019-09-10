@@ -74,18 +74,18 @@ class LockAnnotationAspect implements AroundInterface
 
         $locker = $driver->lock($key, $ttl);
         if (!$locker) {
-            if (!$annotation->lockFailedCallback || !is_callable($annotation->lockFailedCallback)) {
+            if (!$annotation->failedCallback || !is_callable($annotation->failedCallback)) {
                 throw new LockException('Service Unavailable.', 503);
             }
 
-            return call_user_func($annotation->callback);
+            return call_user_func($annotation->failedCallback);
         }
         try {
             return $proceedingJoinPoint->process();
         } catch (\Throwable $throwable) {
             throw $throwable;
         } finally {
-            $driver->unlock([]);
+            $driver->unlock($locker);
         }
     }
 }
