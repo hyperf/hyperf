@@ -14,6 +14,8 @@ namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Grpc\Parser;
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
@@ -83,6 +85,10 @@ class BaseClient
         $deserialize
     ) {
         $streamId = $this->send($this->buildRequest($method, $argument));
+        if ($streamId === 0) {
+            // this client should not be used after this exception
+            throw new GrpcClientException('failed to send request to server', StatusCode::INTERNAL);
+        }
         return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
 
