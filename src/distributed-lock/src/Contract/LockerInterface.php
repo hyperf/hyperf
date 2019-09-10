@@ -8,7 +8,7 @@
  * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
  */
 
-namespace Hyperf\DistributedLocks\Contract;
+namespace Hyperf\DistributedLock\Contract;
 
 
 interface LockerInterface

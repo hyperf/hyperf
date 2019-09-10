@@ -10,16 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DistributedLocks\Aspect;
+namespace Hyperf\DistributedLock\Aspect;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\DistributedLocks\Annotation\Lock;
-use Hyperf\DistributedLocks\AnnotationManager;
-use Hyperf\DistributedLocks\Exception\LockException;
-use Hyperf\DistributedLocks\LockManager;
+use Hyperf\DistributedLock\Annotation\Lock;
+use Hyperf\DistributedLock\AnnotationManager;
+use Hyperf\DistributedLock\Exception\LockException;
+use Hyperf\DistributedLock\LockManager;
 use Swoole\Coroutine;
 
 /**
@@ -58,7 +58,7 @@ class LockAnnotationAspect implements AroundInterface
         $this->manager            = $manager;
         $this->annotationManager  = $annotationManager;
         $this->annotationProperty = get_object_vars(new Lock());
-        $this->config             = $config->get('distributed-locks', []);
+        $this->config             = $config->get('distributed-lock', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

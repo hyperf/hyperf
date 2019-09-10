@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/distributed-locks",
+    "name": "hyperf/distributed-lock",
     "description": "A Distributed locks for Hyperf.",
     "license": "MIT",
     "keywords": [
@@ -27,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\DistributedLocks\\": "src/"
+            "Hyperf\\DistributedLock\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\DistributedLocks\\": "tests/"
+            "HyperfTest\\DistributedLock\\": "tests/"
         }
     },
     "config": {
@@ -43,7 +43,7 @@
             "dev-master": "1.1-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\DistributedLocks\\ConfigProvider"
+            "config": "Hyperf\\DistributedLock\\ConfigProvider"
         }
     },
     "bin": [

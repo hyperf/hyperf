@@ -10,15 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DistributedLocks;
+namespace Hyperf\DistributedLock;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\DistributedLocks\Annotation\Lock;
-use Hyperf\DistributedLocks\Exception\LockException;
-use Hyperf\DistributedLocks\Helper\StringHelper;
+use Hyperf\DistributedLock\Annotation\Lock;
+use Hyperf\DistributedLock\Exception\LockException;
+use Hyperf\DistributedLock\Helper\StringHelper;
 
 class AnnotationManager
 {
@@ -44,7 +44,7 @@ class AnnotationManager
         $annotation = $this->getAnnotation(Lock::class, $className, $method);
 
         $key = $this->getFormatedKey($annotation->mutex, $arguments, $annotation->value);
-        $ttl = $annotation->ttl ?? $this->config->get("distributed-locks.ttl", 10);
+        $ttl = $annotation->ttl ?? $this->config->get("distributed-lock.ttl", 10);
 
         return [$key, $ttl, $annotation];
     }

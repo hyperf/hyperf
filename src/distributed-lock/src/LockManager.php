@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DistributedLocks;
+namespace Hyperf\DistributedLock;
 
-use Hyperf\DistributedLocks\Driver\DriverInterface;
-use Hyperf\DistributedLocks\Driver\RedisDriver;
-use Hyperf\DistributedLocks\Exception\InvalidArgumentException;
+use Hyperf\DistributedLock\Driver\DriverInterface;
+use Hyperf\DistributedLock\Driver\RedisDriver;
+use Hyperf\DistributedLock\Exception\InvalidArgumentException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use function call;
@@ -45,12 +45,12 @@ class LockManager
             return $this->drivers[$name];
         }
 
-        $config = $this->config->get("distributed-locks.{$name}");
+        $config = $this->config->get("distributed-lock.{$name}");
         if (empty($config)) {
             throw new InvalidArgumentException(sprintf('The lock config %s is invalid.', $name));
         }
 
-        $prefix = $this->config->get('distributed-locks.prefix', '');
+        $prefix = $this->config->get('distributed-lock.prefix', '');
 
         $driverClass = $config['driver'] ?? RedisDriver::class;
 

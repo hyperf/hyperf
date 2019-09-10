@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DistributedLocks\Driver;
+namespace Hyperf\DistributedLock\Driver;
 
-use Hyperf\DistributedLocks\Contract\LockerInterface;
+use Hyperf\DistributedLock\Contract\LockerInterface;
 use Psr\Container\ContainerInterface;
 
 interface DriverInterface extends LockerInterface
