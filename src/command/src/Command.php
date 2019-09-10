@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
@@ -59,9 +61,9 @@ abstract class Command extends SymfonyCommand
     protected $coroutine = true;
 
     /**
-     * @var int
+     * @var null|int
      */
-    protected $hook = SWOOLE_HOOK_ALL;
+    protected $hook;
 
     /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
@@ -379,10 +381,30 @@ abstract class Command extends SymfonyCommand
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run(function () {
                 call([$this, 'handle']);
-            }, $this->hook);
+            }, $this->getHookLevel($this->hook));
 
             return 0;
         }
         return call([$this, 'handle']);
+    }
+
+    protected function getHookLevel(?int $hook): int
+    {
+        if (is_int($hook)) {
+            return $hook;
+        }
+
+        if (! ApplicationContext::hasContainer()) {
+            return SWOOLE_HOOK_ALL;
+        }
+
+        $container = ApplicationContext::getContainer();
+
+        if (! $container->has(ConfigInterface::class)) {
+            return SWOOLE_HOOK_ALL;
+        }
+
+        $config = $container->get(ConfigInterface::class);
+        return $config->get('hook', SWOOLE_HOOK_ALL);
     }
 }
