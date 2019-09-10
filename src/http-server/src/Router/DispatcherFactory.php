@@ -30,7 +30,6 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
 
@@ -121,7 +120,6 @@ class DispatcherFactory
             if (substr($methodName, 0, 2) === '__') {
                 continue;
             }
-            $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
 
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
@@ -130,16 +128,15 @@ class DispatcherFactory
                 $methodMiddlewares = array_unique($methodMiddlewares);
             }
 
-            // Register middlewares.
-            foreach ($autoMethods as $autoMethod) {
-                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
-            }
+            $router->addRoute($autoMethods, $path, [$className, $methodName], [
+                'middleware' => $methodMiddlewares,
+            ]);
+
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
-                $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
-                foreach ($autoMethods as $autoMethod) {
-                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
-                }
+                $router->addRoute($autoMethods, $path, [$className, $methodName], [
+                    'middleware' => $methodMiddlewares,
+                ]);
             }
         }
     }
@@ -185,16 +182,9 @@ class DispatcherFactory
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [
-                        $className,
-                        $methodName,
-                        $annotation->server,
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], [
+                        'middleware' => $methodMiddlewares,
                     ]);
-
-                    // Register middlewares.
-                    foreach ($mapping->methods as $mappingMethod) {
-                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $methodMiddlewares);
-                    }
                 }
             }
         }

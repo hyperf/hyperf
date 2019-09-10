@@ -23,7 +23,9 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -34,6 +36,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
+use Swoole\Server as SwooleServer;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -50,7 +53,12 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $dispatcher;
 
     /**
-     * @var CoreMiddleware
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
+     * @var CoreMiddlewareInterface
      */
     protected $coreMiddleware;
 
@@ -65,11 +73,6 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $logger;
 
     /**
-     * @var WebSocketServer
-     */
-    protected $server;
-
-    /**
      * @var array
      */
     protected $middlewares = [];
@@ -79,11 +82,16 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected $serverName = 'websocket';
 
-    public function __construct(ContainerInterface $container)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        HttpDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        StdoutLoggerInterface $logger
+    ) {
         $this->container = $container;
-        $this->dispatcher = $container->get(HttpDispatcher::class);
-        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
+        $this->logger = $logger;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -98,9 +106,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function setServer(WebSocketServer $server): void
+    public function getServer(): WebSocketServer
     {
-        $this->server = $server;
+        return $this->container->get(SwooleServer::class);
     }
 
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
@@ -118,7 +126,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
             }
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFound()) {
+                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registedMiddlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
@@ -130,14 +145,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 defer(function () use ($request, $class) {
                     $instance = $this->container->get($class);
                     if ($instance instanceof OnOpenInterface) {
-                        $instance->onOpen($this->server, $request);
+                        $instance->onOpen($this->getServer(), $request);
                     }
                 });
             }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
@@ -147,7 +161,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(\Swoole\Server $server, Frame $frame): void
+    public function onMessage(SwooleServer $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {
@@ -165,7 +179,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance->onMessage($server, $frame);
     }
 
-    public function onClose(\Swoole\Server $server, int $fd, int $reactorId): void
+    public function onClose(SwooleServer $server, int $fd, int $reactorId): void
     {
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 

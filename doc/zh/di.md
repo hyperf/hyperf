@@ -95,7 +95,7 @@ class IndexController
 }
 ```
 
-> 注意调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，Controller 默认是由 DI 创建的
+> 注意调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，Controller 默认是由 DI 创建的，直接 `new` 该对象不会生效；
 
 > 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
 

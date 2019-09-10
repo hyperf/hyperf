@@ -74,7 +74,7 @@ class Grammar extends BaseGrammar
         $sql = trim(
             $this->concatenate(
                 $this->compileComponents($query)
-        )
+            )
         );
 
         $query->columns = $original;
@@ -770,7 +770,7 @@ class Grammar extends BaseGrammar
         return $not . $this->compileJsonContains(
             $where['column'],
             $this->parameter($where['value'])
-            );
+        );
     }
 
     /**
