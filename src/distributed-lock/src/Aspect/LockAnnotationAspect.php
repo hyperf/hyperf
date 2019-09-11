@@ -72,8 +72,8 @@ class LockAnnotationAspect implements AroundInterface
 
         $driver = $this->manager->getDriver($driverName);
 
-        $locker = $driver->lock($key, $ttl);
-        if (!$locker) {
+        $mutex = $driver->lock($key, $ttl);
+        if (!$mutex->isAcquired()) {
             if (!$annotation->failedCallback || !is_callable($annotation->failedCallback)) {
                 throw new LockException('Service Unavailable.', 503);
             }
@@ -85,7 +85,7 @@ class LockAnnotationAspect implements AroundInterface
         } catch (\Throwable $throwable) {
             throw $throwable;
         } finally {
-            $driver->unlock($locker);
+            $driver->unlock($mutex);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Hyperf\DistributedLock\Driver;
 
 use Hyperf\Consul\KVInterface;
 use Hyperf\Consul\SessionInterface;
+use Hyperf\DistributedLock\Mutex;
 use Psr\Container\ContainerInterface;
 
 class ConsulDriver extends Driver
@@ -38,23 +39,50 @@ class ConsulDriver extends Driver
         $this->kv      = $this->container->get(KVInterface::class);
     }
 
-    public function lock($resource, $ttl)
+
+    /**
+     * @param string $resource
+     * @param int    $ttl
+     * @return Mutex
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
+    public function lock(string $resource, int $ttl): Mutex
     {
+        $mutex = new Mutex();
         // Start a session
         $sessionId = $this->session->create()->json()['ID'];
 
         $token = '';
 
         // Lock a key / value with the current session
-        return $lockAcquired = $this->kv->put($resource, $token, ['acquire' => $sessionId])->json();
+        $lockAcquired = $this->kv->put($resource, $token, ['acquire' => $sessionId])->json();
+        if ($lockAcquired === false) {
+            $this->session->destroy($sessionId);
+
+            return $mutex;
+        }
+
+        return $mutex->setIsAcquired()
+            ->setContext([
+                'session_id' => $sessionId,
+                'resource'   => $resource,
+                'token'      => $token,
+            ]);
     }
 
-    public function unlock(array $lock)
+    /**
+     * @param Mutex $mutex
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
+    public function unlock(Mutex $mutex): void
     {
-        $sessionId = $lock['sessionId'];
-        $resourse  = $lock['resourse'];
+        $context   = $mutex->getContext();
+        $sessionId = $context['session_id'] ?? '';
+        $resource  = $context['resource'] ?? '';
 
-        $this->kv->delete($resourse);
+        $this->kv->delete($resource);
         $this->session->destroy($sessionId);
     }
 }

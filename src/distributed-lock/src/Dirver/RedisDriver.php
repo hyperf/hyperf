@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\DistributedLock\Driver;
 
 use Hyperf\DistributedLock\Exception\InvalidArgumentException;
+use Hyperf\DistributedLock\Mutex;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Psr\Container\ContainerInterface;
@@ -66,17 +67,18 @@ class RedisDriver extends Driver
     }
 
     /**
-     * @param $resource
-     * @param $ttl
-     * @return array|bool
+     * @param string $resource
+     * @param int    $ttl
+     * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    public function lock($resource, $ttl)
+    public function lock(string $resource, int $ttl): Mutex
     {
         $mutexKey = $this->getMutexKey($resource);
         $token    = uniqid();
         $retry    = $this->retry;
+        $mutex    = new Mutex;
         do {
             $n         = 0;
             $startTime = microtime(true) * 1000;
@@ -92,11 +94,12 @@ class RedisDriver extends Driver
             $drift        = ($ttl * $this->driftFactor) + 2;
             $validityTime = $ttl - (microtime(true) * 1000 - $startTime) - $drift;
             if ($n >= $this->quorum && $validityTime > 0) {
-                return [
-                    'validity' => $validityTime,
-                    'resource' => $mutexKey,
-                    'token'    => $token,
-                ];
+                return $mutex->setIsAcquired()
+                    ->setContext([
+                        'validity' => $validityTime,
+                        'resource' => $mutexKey,
+                        'token'    => $token,
+                    ]);
             } else {
                 foreach ($this->pools as $pool) {
                     $redis = $this->container->get(RedisFactory::class)->get($pool);
@@ -109,18 +112,19 @@ class RedisDriver extends Driver
             $retry--;
         } while ($retry > 0);
 
-        return false;
+        return $mutex;
     }
 
     /**
-     * @param array $lock
+     * @param Mutex $mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    public function unlock(array $lock)
+    public function unlock(Mutex $mutex): void
     {
-        $resource = $lock['resource'];
-        $token    = $lock['token'];
+        $context  = $mutex->getContext();
+        $resource = $context['resource'] ?? '';
+        $token    = $context['token'] ?? '';
         foreach ($this->pools as $pool) {
             $redis = $this->container->get(RedisFactory::class)->get($pool);
             $this->unlockRedis($redis, $resource, $token);

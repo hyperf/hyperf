@@ -11,24 +11,24 @@
 namespace Hyperf\DistributedLock\Contract;
 
 
+use Hyperf\DistributedLock\Mutex;
+
 interface LockerInterface
 {
     /**
-     * @param $resource
-     * @param $ttl
-     * @return mixed
+     * @param string $resource
+     * @param int    $ttl
+     * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    public function lock($resource, $ttl);
-
+    public function lock(string $resource, int $ttl): Mutex;
 
     /**
-     * @param array $lock
-     * @return mixed
+     * @param Mutex $mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    public function unlock(array $lock);
+    public function unlock(Mutex $mutex): void;
 
 }
