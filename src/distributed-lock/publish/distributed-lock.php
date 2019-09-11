@@ -25,7 +25,6 @@ return [
         'separator'    => ':',
         'pools'        => [
             'default',
-            'lock',
         ],
     ],
     'consul' => [
