@@ -7,7 +7,9 @@
         "swoole",
         "hyperf",
         "distributed",
-        "lock"
+        "lock",
+        "redis",
+        "consul"
     ],
     "support": {
     },
@@ -15,6 +17,7 @@
         "php": ">=7.2",
         "hyperf/di": "^1.0",
         "hyperf/redis": "^1.0",
+        "hyperf/consul": "^1.0",
         "psr/container": "^1.0"
     },
     "require-dev": {
