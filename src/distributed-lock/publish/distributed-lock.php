@@ -28,4 +28,10 @@ return [
             'lock',
         ],
     ],
+    'consul' => [
+        'drift_factor' => 0.01, // time in ms
+        'retry'        => 10,
+        'retry_delay'  => 200, // time in ms
+        'separator'    => '/',
+    ],
 ];
