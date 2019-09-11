@@ -58,6 +58,7 @@ class Port
         isset($config['type']) && $port->setType($config['type']);
         isset($config['host']) && $port->setHost($config['host']);
         isset($config['port']) && $port->setPort($config['port']);
+        isset($config['sock_type']) && $port->setSockType($config['sock_type']);
         isset($config['callbacks']) && $port->setCallbacks($config['callbacks']);
         isset($config['settings']) && $port->setSettings($config['settings']);
 
