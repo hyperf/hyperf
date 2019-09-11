@@ -18,6 +18,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnReceiveInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
@@ -25,33 +26,12 @@ use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 use Throwable;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 {
-    /**
-     * @var array
-     */
-    protected $middlewares;
-
-    /**
-     * @var string
-     */
-    protected $coreHandler;
-
-    /**
-     * @var MiddlewareInterface
-     */
-    protected $coreMiddleware;
-
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
     /**
      * @var ContainerInterface
      */
@@ -61,6 +41,26 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
      * @var DispatcherInterface
      */
     protected $dispatcher;
+
+    /**
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
+     * @var array
+     */
+    protected $middlewares;
+
+    /**
+     * @var CoreMiddlewareInterface
+     */
+    protected $coreMiddleware;
+
+    /**
+     * @var array
+     */
+    protected $exceptionHandlers;
 
     /**
      * @var string
@@ -78,18 +78,16 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected $logger;
 
     public function __construct(
-        string $serverName,
-        string $coreHandler,
         ContainerInterface $container,
+        DispatcherInterface $dispatcher,
+        ExceptionHandlerDispatcher $exceptionDispatcher,
         Protocol $protocol,
-        $dispatcher,
         LoggerInterface $logger
     ) {
-        $this->serverName = $serverName;
-        $this->coreHandler = $coreHandler;
         $this->container = $container;
-        $this->protocol = $protocol;
         $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionDispatcher;
+        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 
@@ -116,6 +114,8 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
             $middlewares = $this->middlewares;
 
+            $request = $this->coreMiddleware->dispatch($request);
+
             $response = $this->dispatcher->dispatch($request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
@@ -139,11 +139,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
-    {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $this->serverName);
-    }
+    abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;
 

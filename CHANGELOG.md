@@ -1,3 +1,50 @@
+# v1.1.0 - TBD
+
+## Added
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) [#447](https://github.com/hyperf-cloud/hyperf/issues/447) Optimized server and Fixed middleware that user defined does not works.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
+- [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
+- [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
+- [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
+
+## Changed
+
+- [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
+- [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Generate the singular class of an plural table.
+
+config/container.php
+
+```php
+<?php
+
+use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSourceFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = new Container((new DefinitionSourceFactory(true))());
+
+if (! $container instanceof \Psr\Container\ContainerInterface) {
+    throw new RuntimeException('The dependency injection container is invalid.');
+}
+return ApplicationContext::setContainer($container);
+```
+
+- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` can return JSON formatted data normally.
+
+## Deleted
+
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+
+## Fixed
+
+- [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
+
 # v1.0.16 - TBD
 
 # v1.0.15 - 2019-09-11

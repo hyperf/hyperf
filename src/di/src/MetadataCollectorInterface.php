@@ -35,4 +35,9 @@ interface MetadataCollectorInterface
      * Deserialize the serialized metadata and set the metadata to holder.
      */
     public static function deserialize(string $metadata): bool;
+
+    /**
+     * Return all metadata array.
+     */
+    public static function list(): array;
 }

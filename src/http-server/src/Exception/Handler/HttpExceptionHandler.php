@@ -16,7 +16,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

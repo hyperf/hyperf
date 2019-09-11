@@ -94,7 +94,8 @@ class ModelCommand extends Command
             ->setInheritance($this->getOption('inheritance', 'commands.db:model.inheritance', $pool, 'Model'))
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
-            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false));
+            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
+            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -114,6 +115,7 @@ class ModelCommand extends Command
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
         $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
+        $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -144,7 +146,8 @@ class ModelCommand extends Command
         $columns = $this->formatColumns($builder->getColumnTypeListing($table));
 
         $project = new Project();
-        $class = $project->namespace($option->getPath()) . Str::studly($table);
+        $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
+        $class = $project->namespace($option->getPath()) . $class;
         $path = BASE_PATH . '/' . $project->path($class);
 
         if (! file_exists($path)) {
@@ -208,7 +211,14 @@ class ModelCommand extends Command
     protected function getOption(string $name, string $key, string $pool = 'default', $default = null)
     {
         $result = $this->input->getOption($name);
-        $nonInput = in_array($name, ['force-casts', 'refresh-fillable']) ? false : null;
+        $nonInput = null;
+        if (in_array($name, ['force-casts', 'refresh-fillable'])) {
+            $nonInput = false;
+        }
+        if (in_array($name, ['table-mapping'])) {
+            $nonInput = [];
+        }
+
         if ($result === $nonInput) {
             $result = $this->config->get("databases.{$pool}.{$key}", $default);
         }

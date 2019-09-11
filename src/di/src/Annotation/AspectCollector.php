@@ -28,8 +28,8 @@ class AspectCollector extends MetadataCollector
 
     public static function setAround(string $aspect, array $classes, array $annotations): void
     {
-        $classes && static::set('classes.' . $aspect, $classes);
-        $annotations && static::set('annotations.' . $aspect, $annotations);
+        static::set('classes.' . $aspect, $classes);
+        static::set('annotations.' . $aspect, $annotations);
         static::$aspectRules[$aspect] = [
             'classes' => $classes,
             'annotations' => $annotations,
