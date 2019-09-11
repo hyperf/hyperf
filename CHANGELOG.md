@@ -1,5 +1,9 @@
 # v1.0.16 - TBD
 
+## Added
+
+- [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
+
 # v1.0.15 - 2019-09-11
 
 ## Fixed
