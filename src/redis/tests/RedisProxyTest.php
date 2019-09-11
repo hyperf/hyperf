@@ -33,18 +33,34 @@ class RedisProxyTest extends TestCase
     protected function tearDown()
     {
         Mockery::close();
+
+        $redis = $this->getRedis();
+        $redis->del('test');
+        $redis->del('test:test');
     }
 
-    public function testRedisOptions()
+    public function testRedisOptionPrefix()
     {
         $redis = $this->getRedis([
             \Redis::OPT_PREFIX => 'test:',
         ]);
 
-        $redis->set('xxx', 'yyy');
-        $this->assertSame('yyy', $redis->get('xxx'));
+        $redis->set('test', 'yyy');
+        $this->assertSame('yyy', $redis->get('test'));
 
-        $this->assertSame('yyy', $this->getRedis()->get('test:xxx'));
+        $this->assertSame('yyy', $this->getRedis()->get('test:test'));
+    }
+
+    public function testRedisOptionSerializer()
+    {
+        $redis = $this->getRedis([
+            \Redis::OPT_SERIALIZER => (string) \Redis::SERIALIZER_PHP,
+        ]);
+
+        $redis->set('test', 'yyy');
+        $this->assertSame('yyy', $redis->get('test'));
+
+        $this->assertSame('s:3:"yyy";', $this->getRedis()->get('test'));
     }
 
     /**

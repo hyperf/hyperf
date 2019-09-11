@@ -83,8 +83,10 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         $options = $this->config['options'] ?? [];
-        foreach ($options as $key => $value) {
-            $redis->setOption($key, $value);
+
+        foreach ($options as $name => $value) {
+            // The name is int, value is string.
+            $redis->setOption($name, $value);
         }
 
         if (isset($auth) && $auth !== '') {
