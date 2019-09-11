@@ -44,7 +44,7 @@ class Lock extends AbstractAnnotation
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->ttl = (int)$this->ttl;
+        $this->ttl = (int) $this->ttl;
     }
 
     public function collectMethod(string $className, ?string $target): void

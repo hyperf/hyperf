@@ -51,65 +51,64 @@ class RedisDriver extends Driver
      */
     protected $config;
 
-    public function __construct(ContainerInterface $container, array $config, string $prefix)
+    public function __construct(ContainerInterface $container, array $config)
     {
-        parent::__construct($container, $config, $prefix);
+        parent::__construct($container, $config);
 
         $pools = $config['pools'] ?? [];
         if (empty($config)) {
             throw new InvalidArgumentException('The lock config redis pools can\'t be empty.');
         }
-        $this->pools       = $pools;
-        $this->retry       = $config['retry'] ?? 0;
-        $this->retryDelay  = $config['retry_delay'] ?? 200;
+        $this->pools = $pools;
+        $this->retry = $config['retry'] ?? 0;
+        $this->retryDelay = $config['retry_delay'] ?? 200;
         $this->driftFactor = $config['drift_factor'] ?? 0.01;
-        $this->quorum      = min(count($this->pools), (count($this->pools) / 2 + 1));
+        $this->quorum = min(count($this->pools), (count($this->pools) / 2 + 1));
     }
 
     /**
      * @param string $resource
-     * @param int    $ttl
+     * @param int $ttl
      * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
     public function lock(string $resource, int $ttl): Mutex
     {
-        $mutexKey = $this->getMutexKey($resource);
-        $token    = uniqid();
-        $retry    = $this->retry;
-        $mutex    = new Mutex;
+        $token = uniqid();
+        $retry = $this->retry;
+        $mutex = new Mutex();
         do {
-            $n         = 0;
+            $n = 0;
             $startTime = microtime(true) * 1000;
             foreach ($this->pools as $pool) {
                 $redis = $this->container->get(RedisFactory::class)->get($pool);
-                if ($this->lockRedis($redis, $mutexKey, $token, $ttl)) {
-                    $n++;
+                if ($this->lockRedis($redis, $resource, $token, $ttl)) {
+                    ++$n;
                 }
             }
             # Add 2 milliseconds to the drift to account for Redis expires
             # precision, which is 1 millisecond, plus 1 millisecond min drift
             # for small TTLs.
-            $drift        = ($ttl * $this->driftFactor) + 2;
+            $drift = ($ttl * $this->driftFactor) + 2;
             $validityTime = $ttl - (microtime(true) * 1000 - $startTime) - $drift;
             if ($n >= $this->quorum && $validityTime > 0) {
                 return $mutex->setIsAcquired()
                     ->setContext([
                         'validity' => $validityTime,
-                        'resource' => $mutexKey,
-                        'token'    => $token,
+                        'resource' => $resource,
+                        'token' => $token,
                     ]);
-            } else {
-                foreach ($this->pools as $pool) {
-                    $redis = $this->container->get(RedisFactory::class)->get($pool);
-                    $this->unlockRedis($redis, $mutexKey, $token);
-                }
             }
+            foreach ($this->pools as $pool) {
+                $redis = $this->container->get(RedisFactory::class)->get($pool);
+                $this->unlockRedis($redis, $resource, $token);
+            }
+
             // Wait a random delay before to retry
-            $delay = mt_rand((int)floor($this->retryDelay / 2), $this->retryDelay);
+            $delay = mt_rand((int) floor($this->retryDelay / 2), $this->retryDelay);
             usleep($delay * 1000);
-            $retry--;
+            --$retry;
         } while ($retry > 0);
 
         return $mutex;
@@ -122,9 +121,9 @@ class RedisDriver extends Driver
      */
     public function unlock(Mutex $mutex): void
     {
-        $context  = $mutex->getContext();
+        $context = $mutex->getContext();
         $resource = $context['resource'] ?? '';
-        $token    = $context['token'] ?? '';
+        $token = $context['token'] ?? '';
         foreach ($this->pools as $pool) {
             $redis = $this->container->get(RedisFactory::class)->get($pool);
             $this->unlockRedis($redis, $resource, $token);
@@ -133,9 +132,9 @@ class RedisDriver extends Driver
 
     /**
      * @param RedisProxy $client
-     * @param            $resource
-     * @param            $token
-     * @param            $ttl
+     * @param $resource
+     * @param $token
+     * @param $ttl
      * @return bool
      *
      * Author: wangyi <chunhei2008@qq.com>
@@ -147,8 +146,8 @@ class RedisDriver extends Driver
 
     /**
      * @param RedisProxy $client
-     * @param            $resource
-     * @param            $token
+     * @param $resource
+     * @param $token
      * @return mixed
      *
      * Author: wangyi <chunhei2008@qq.com>

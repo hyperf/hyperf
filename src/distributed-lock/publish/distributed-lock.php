@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * This file is part of Hyperf.
  *
@@ -12,25 +11,24 @@ declare(strict_types=1);
  */
 
 return [
-    'prefix' => 'lock:',
-    'ttl'    => 10,
+    'prefix' => 'lock',
+    'ttl' => 10,
+    'separator' => ':',
     'driver' => 'redis',
-    'redis'  => [
+    'redis' => [
         'drift_factor' => 0.01, // time in ms
         // the max number of times Redlock will attempt
         // to lock a resource before erroring
-        'retry'        => 10,
+        'retry' => 10,
         // the time in ms between attempts
-        'retry_delay'  => 200, // time in ms
-        'separator'    => ':',
-        'pools'        => [
+        'retry_delay' => 200, // time in ms
+        'pools' => [
             'default',
         ],
     ],
     'consul' => [
         'drift_factor' => 0.01, // time in ms
-        'retry'        => 10,
-        'retry_delay'  => 200, // time in ms
-        'separator'    => '/',
+        'retry' => 10,
+        'retry_delay' => 200, // time in ms
     ],
 ];

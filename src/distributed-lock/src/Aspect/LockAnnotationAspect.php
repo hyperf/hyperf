@@ -33,16 +33,6 @@ class LockAnnotationAspect implements AroundInterface
     ];
 
     /**
-     * @var array
-     */
-    private $annotationProperty;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
      * @var LockManager
      */
     protected $manager;
@@ -52,29 +42,39 @@ class LockAnnotationAspect implements AroundInterface
      */
     protected $annotationManager;
 
+    /**
+     * @var array
+     */
+    private $annotationProperty;
+
+    /**
+     * @var array
+     */
+    private $config;
+
     public function __construct(LockManager $manager, AnnotationManager $annotationManager, ConfigInterface $config)
     {
-        $this->manager            = $manager;
-        $this->annotationManager  = $annotationManager;
+        $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
         $this->annotationProperty = get_object_vars(new Lock());
-        $this->config             = $config->get('distributed-lock', []);
+        $this->config = $config->get('distributed-lock', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className  = $proceedingJoinPoint->className;
-        $method     = $proceedingJoinPoint->methodName;
-        $arguments  = $proceedingJoinPoint->arguments['keys'];
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
         $driverName = $this->config['driver'] ?? 'redis';
-        $separator  = $this->config[$driverName]['separator'] ?? ':';
+        $separator = $this->config['separator'] ?? ':';
 
-        [$key, $ttl, $annotation] = $this->annotationManager->getLockValue($className, $method, $arguments, $separator);
+        [$key, $ttl, $annotation] = $this->annotationManager->getMutexKey($className, $method, $arguments, $separator);
 
         $driver = $this->manager->getDriver($driverName);
 
         $mutex = $driver->lock($key, $ttl);
-        if (!$mutex->isAcquired()) {
-            if (!$annotation->failedCallback || !is_callable($annotation->failedCallback)) {
+        if (! $mutex->isAcquired()) {
+            if (! $annotation->failedCallback || ! is_callable($annotation->failedCallback)) {
                 throw new LockException('Service Unavailable.', 503);
             }
 

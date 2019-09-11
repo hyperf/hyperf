@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\DistributedLock;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DistributedLock\Driver\DriverInterface;
 use Hyperf\DistributedLock\Driver\RedisDriver;
 use Hyperf\DistributedLock\Exception\InvalidArgumentException;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 
 class LockManager
 {
@@ -24,6 +24,7 @@ class LockManager
      * @var ConfigInterface
      */
     protected $config;
+
     /**
      * @var array
      */
@@ -47,6 +48,12 @@ class LockManager
         $this->logger = $logger;
     }
 
+    /**
+     * @param string $name
+     * @return DriverInterface
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
     public function getDriver(string $name = 'redis'): DriverInterface
     {
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {
@@ -61,7 +68,7 @@ class LockManager
         $prefix = $this->config->get('distributed-lock.prefix', '');
 
         $driverClass = $this->registerDriverClasses[$name] ?? '';
-        if (!$driverClass) {
+        if (! $driverClass) {
             throw new InvalidArgumentException(sprintf('The lock driver %s is not registered.', $name));
         }
 
@@ -78,7 +85,7 @@ class LockManager
      */
     public function registerDriver(string $name, string $driverClass)
     {
-        if (!class_exists($driverClass)) {
+        if (! class_exists($driverClass)) {
             throw new InvalidArgumentException(sprintf('The lock driver class %s is not exists.', $name));
         }
         $this->registerDriverClasses[$name] = $driverClass;

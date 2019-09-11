@@ -38,12 +38,13 @@ class AnnotationManager
         $this->logger = $logger;
     }
 
-    public function getLockValue(string $className, string $method, array $arguments, string $separator = ':'): array
+    public function getMutexKey(string $className, string $method, array $arguments, string $separator = ':'): array
     {
         /** @var Lock $annotation */
         $annotation = $this->getAnnotation(Lock::class, $className, $method);
+        $prefix = $this->config->get('distributed-lock.prefix', 'lock');
 
-        $key = $this->getFormatedKey($annotation->mutex, $arguments, $annotation->value, $separator);
+        $key = $this->getFormatedKey($prefix . $separator . $annotation->mutex, $arguments, $annotation->value, $separator);
         $ttl = $annotation->ttl ?? $this->config->get('distributed-lock.ttl', 10);
 
         return [$key, $ttl, $annotation];
@@ -52,8 +53,8 @@ class AnnotationManager
     protected function getAnnotation(string $annotation, string $className, string $method): AbstractAnnotation
     {
         $collector = AnnotationCollector::get($className);
-        $result    = $collector['_m'][$method][$annotation] ?? null;
-        if (!$result instanceof $annotation) {
+        $result = $collector['_m'][$method][$annotation] ?? null;
+        if (! $result instanceof $annotation) {
             throw new LockException(sprintf('Annotation %s in %s:%s not exist.', $annotation, $className, $method));
         }
 

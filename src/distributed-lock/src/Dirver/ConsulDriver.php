@@ -1,15 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * ConsulDriver.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-09-11 09:54
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DistributedLock\Driver;
-
 
 use Hyperf\Consul\KVInterface;
 use Hyperf\Consul\SessionInterface;
@@ -19,7 +20,7 @@ use Psr\Container\ContainerInterface;
 class ConsulDriver extends Driver
 {
     /**
-     * @var SessionInterface|mixed
+     * @var mixed|SessionInterface
      */
     protected $session;
 
@@ -28,21 +29,20 @@ class ConsulDriver extends Driver
      */
     protected $kv;
 
-    public function __construct(ContainerInterface $container, array $config, string $prefix = 'lock/')
+    public function __construct(ContainerInterface $container, array $config)
     {
-        parent::__construct($container, $config, $prefix);
-        $this->retry       = $config['retry'] ?? 0;
-        $this->retryDelay  = $config['retry_delay'] ?? 200;
+        parent::__construct($container, $config);
+        $this->retry = $config['retry'] ?? 0;
+        $this->retryDelay = $config['retry_delay'] ?? 200;
         $this->driftFactor = $config['drift_factor'] ?? 0.01;
 
         $this->session = $this->container->get(SessionInterface::class);
-        $this->kv      = $this->container->get(KVInterface::class);
+        $this->kv = $this->container->get(KVInterface::class);
     }
-
 
     /**
      * @param string $resource
-     * @param int    $ttl
+     * @param int $ttl
      * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
@@ -66,8 +66,8 @@ class ConsulDriver extends Driver
         return $mutex->setIsAcquired()
             ->setContext([
                 'session_id' => $sessionId,
-                'resource'   => $resource,
-                'token'      => $token,
+                'resource' => $resource,
+                'token' => $token,
             ]);
     }
 
@@ -78,9 +78,9 @@ class ConsulDriver extends Driver
      */
     public function unlock(Mutex $mutex): void
     {
-        $context   = $mutex->getContext();
+        $context = $mutex->getContext();
         $sessionId = $context['session_id'] ?? '';
-        $resource  = $context['resource'] ?? '';
+        $resource = $context['resource'] ?? '';
 
         $this->kv->delete($resource);
         $this->session->destroy($sessionId);

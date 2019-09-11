@@ -1,15 +1,16 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Mutex.php
+ * This file is part of Hyperf.
  *
- * Author: wangyi <chunhei2008@qq.com>
- *
- * Date:   2019-09-11 12:46
- * Copyright: (C) 2014, Guangzhou YIDEJIA Network Technology Co., Ltd.
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DistributedLock;
-
 
 class Mutex
 {

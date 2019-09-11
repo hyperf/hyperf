@@ -26,26 +26,9 @@ abstract class Driver implements DriverInterface
      */
     protected $config;
 
-    /**
-     * @var string
-     */
-    protected $prefix;
-
-    public function __construct(ContainerInterface $container, array $config, string $prefix = 'lock:')
+    public function __construct(ContainerInterface $container, array $config)
     {
         $this->container = $container;
-        $this->config    = $config;
-        $this->prefix    = $prefix;
-    }
-
-    /**
-     * @param string $key
-     * @return string
-     *
-     * Author: wangyi <chunhei2008@qq.com>
-     */
-    protected function getMutexKey(string $key)
-    {
-        return $this->prefix . $key;
+        $this->config = $config;
     }
 }
