@@ -42,16 +42,16 @@ class ConsulDriver extends Driver
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
-        $this->retry      = $config['retry'] ?? 0;
+        $this->retry = $config['retry'] ?? 0;
         $this->retryDelay = $config['retry_delay'] ?? 200;
 
         $this->session = $this->container->get(SessionInterface::class);
-        $this->kv      = $this->container->get(KVInterface::class);
+        $this->kv = $this->container->get(KVInterface::class);
     }
 
     /**
      * @param string $resource
-     * @param int    $ttl
+     * @param int $ttl
      * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
@@ -69,7 +69,7 @@ class ConsulDriver extends Driver
             $lockAcquired = $this->kv->put($resource, $token, ['acquire' => $sessionId])->json();
             if ($lockAcquired === false) {
                 // Wait a random delay before to retry
-                $delay = mt_rand((int)floor($this->retryDelay / 2), $this->retryDelay);
+                $delay = mt_rand((int) floor($this->retryDelay / 2), $this->retryDelay);
                 usleep($delay * 1000);
             }
             --$retry;
@@ -84,8 +84,8 @@ class ConsulDriver extends Driver
         return $mutex->setIsAcquired()
             ->setContext([
                 'session_id' => $sessionId,
-                'resource'   => $resource,
-                'token'      => $token,
+                'resource' => $resource,
+                'token' => $token,
             ]);
     }
 
@@ -96,9 +96,9 @@ class ConsulDriver extends Driver
      */
     public function unlock(Mutex $mutex): void
     {
-        $context   = $mutex->getContext();
+        $context = $mutex->getContext();
         $sessionId = $context['session_id'] ?? '';
-        $resource  = $context['resource'] ?? '';
+        $resource = $context['resource'] ?? '';
 
         $this->kv->delete($resource);
         $this->session->destroy($sessionId);

@@ -11,20 +11,20 @@ declare(strict_types=1);
  */
 
 return [
-    'prefix'    => 'lock',
-    'ttl'       => 10,
+    'prefix' => 'lock',
+    'ttl' => 10,
     'separator' => ':',
-    'driver'    => 'redis',
-    'redis'     => [
+    'driver' => 'redis',
+    'redis' => [
         'drift_factor' => 0.01,
-        'retry'        => 0,
-        'retry_delay'  => 200, // time in ms
-        'pools'        => [
+        'retry' => 0,
+        'retry_delay' => 200, // time in ms
+        'pools' => [
             'default',
         ],
     ],
-    'consul'    => [
-        'retry'       => 0,
+    'consul' => [
+        'retry' => 0,
         'retry_delay' => 200, // time in ms
     ],
 ];

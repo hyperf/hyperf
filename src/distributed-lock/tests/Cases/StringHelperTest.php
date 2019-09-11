@@ -32,7 +32,6 @@ class StringHelperTest extends TestCase
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf']);
         $this->assertSame('test:1:Hyperf', $string);
 
-
         $string = StringHelper::format('test', ['id' => 1], '_#{id}', ':');
         $this->assertSame('test:_1', $string);
 
@@ -41,7 +40,6 @@ class StringHelperTest extends TestCase
 
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf'], ':');
         $this->assertSame('test:1:Hyperf', $string);
-
 
         $string = StringHelper::format('test', ['id' => 1], '_#{id}', '/');
         $this->assertSame('test/_1', $string);

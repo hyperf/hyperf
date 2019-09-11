@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\DistributedLock\Cases;
 
-use Hyperf\DistributedLock\LockManager;
-use Hyperf\DistributedLock\Driver\RedisDriver;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\DistributedLock\Driver\RedisDriver;
+use Hyperf\DistributedLock\LockManager;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
@@ -70,13 +70,11 @@ class RedisDriverTest extends TestCase
         $this->assertNull($result);
     }
 
-
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
         $config = new Config([
             'distributed-lock' => [
-
             ],
             'redis' => [
                 'db0' => [
