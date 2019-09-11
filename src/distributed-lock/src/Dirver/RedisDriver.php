@@ -131,7 +131,7 @@ class RedisDriver extends Driver
     }
 
     /**
-     * @param RedisProxy $client
+     * @param RedisProxy $redis
      * @param $resource
      * @param $token
      * @param $ttl
@@ -139,20 +139,20 @@ class RedisDriver extends Driver
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    private function lockRedis(RedisProxy $client, $resource, $token, $ttl)
+    private function lockRedis(RedisProxy $redis, $resource, $token, $ttl)
     {
-        return $client->set($resource, $token, ['NX', 'PX' => $ttl]);
+        return $redis->set($resource, $token, ['NX', 'PX' => $ttl]);
     }
 
     /**
-     * @param RedisProxy $client
+     * @param RedisProxy $redis
      * @param $resource
      * @param $token
      * @return mixed
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    private function unlockRedis(RedisProxy $client, $resource, $token)
+    private function unlockRedis(RedisProxy $redis, $resource, $token)
     {
         $script = '
             if redis.call("GET", KEYS[1]) == ARGV[1] then
@@ -162,6 +162,6 @@ class RedisDriver extends Driver
             end
         ';
 
-        return $client->eval($script, [$resource, $token], 1);
+        return $redis->eval($script, [$resource, $token], 1);
     }
 }
