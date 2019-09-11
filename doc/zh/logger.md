@@ -97,7 +97,7 @@ $formatter = new LineFormatter($output, $dateFormat);
 // 将 Formatter 设置到 Handler 里面
 $stream->setFormatter($formatter);
 
-// 讲 Handler 推入到 Channel 的 Handler 队列内
+// 将 Handler 推入到 Channel 的 Handler 队列内
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 
