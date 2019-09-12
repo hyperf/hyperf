@@ -42,11 +42,28 @@ return [
 `hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接使用\Redis客户端。
 
 ```php
-<?php
 
-$redis = $this->container->get(\Redis::class);
+use ...
 
-$result = $redis->keys('*');
+class ...
+
+{
+    protected $container;
+
+    // 通过在构造函数的参数上声明参数类型完成自动注入
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    public function index() 
+    {
+        $redis = $this->container->get(\Redis::class);
+    
+        $result = $redis->keys('*');
+    }
+
+}
 
 ```
 
