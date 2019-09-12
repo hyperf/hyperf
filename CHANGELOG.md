@@ -4,6 +4,10 @@
 
 - [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
 
+## Fixed
+
+- [#567](https://github.com/hyperf-cloud/hyperf/pull/567) Fixed rpc-client `getReturnType` failed, when the name is not equal of service.
+
 # v1.0.15 - 2019-09-11
 
 ## Fixed
