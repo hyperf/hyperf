@@ -27,6 +27,11 @@ class ServiceClient extends AbstractServiceClient
     protected $methodDefinitionCollector;
 
     /**
+     * @var string
+     */
+    protected $serviceInterface;
+
+    /**
      * @var NormalizerInterface
      */
     private $normalizer;
@@ -52,7 +57,7 @@ class ServiceClient extends AbstractServiceClient
         }
 
         if (isset($response['result'])) {
-            $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
+            $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }
 
@@ -83,6 +88,10 @@ class ServiceClient extends AbstractServiceClient
     {
         if (isset($options['load_balancer'])) {
             $this->loadBalancer = $options['load_balancer'];
+        }
+
+        if (isset($options['service_interface'])) {
+            $this->serviceInterface = $options['service_interface'];
         }
     }
 }

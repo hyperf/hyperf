@@ -17,7 +17,6 @@ use Hyperf\Di\Container;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\RpcClient\ProxyFactory;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class AddConsumerDefinitionListener implements ListenerInterface
@@ -69,7 +68,10 @@ class AddConsumerDefinitionListener implements ListenerInterface
                             $container,
                             $consumer['name'],
                             $consumer['protocol'] ?? 'jsonrpc-http',
-                            Arr::only($consumer, ['load_balancer'])
+                            [
+                                'load_balancer' => $consumer['load_balancer'] ?? null,
+                                'service_interface' => $serviceClass,
+                            ]
                         );
                     }
                 );
