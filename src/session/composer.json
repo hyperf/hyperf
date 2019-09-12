@@ -1,0 +1,32 @@
+{
+  "name": "hyperf/session",
+  "description": "A session component for hyperf.",
+  "authors": [
+    {
+      "name": "dickens7",
+      "email": "languageusa@163.com"
+    }
+  ],
+  "require": {
+    "psr/container": "^1.0",
+    "hyperf/pool": "~1.0.0",
+    "hyperf/redis": "~1.0.0",
+    "hyperf/utils": "~1.0.0",
+    "hyperf/contract": "~1.0.0",
+    "hyperf/http-message": "~1.0.0",
+    "hyperf/http-server": "~1.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Hyperf\\Session\\": "src"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    },
+    "hyperf": {
+      "config": "Hyperf\\Session\\ConfigProvider"
+    }
+  }
+}
