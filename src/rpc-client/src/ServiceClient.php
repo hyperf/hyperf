@@ -86,12 +86,10 @@ class ServiceClient extends AbstractServiceClient
 
     protected function setOptions(array $options): void
     {
+        $this->serviceInterface = $options['service_interface'] ?? $this->serviceName;
+
         if (isset($options['load_balancer'])) {
             $this->loadBalancer = $options['load_balancer'];
-        }
-
-        if (isset($options['service_interface'])) {
-            $this->serviceInterface = $options['service_interface'];
         }
     }
 }
