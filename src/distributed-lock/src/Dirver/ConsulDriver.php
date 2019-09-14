@@ -65,9 +65,12 @@ class ConsulDriver extends Driver
     {
         $mutex = new Mutex();
         // Start a session
-        $sessionId = $this->session->create()->json()['ID'];
+        $token = $sessionId = $this->session->create([
+            'LockDelay' => '0.5s',
+            'Behavior' => 'release',
+            'TTL' => $ttl . 's',
+        ])->json()['ID'];
 
-        $token = $sessionId;
         $retry = $this->retry;
         do {
             // Lock a key / value with the current session
