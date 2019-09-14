@@ -38,36 +38,63 @@ class ConsulDriverTest extends TestCase
 {
     protected function tearDown()
     {
-        $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
-        $driver->clear();
-
         Mockery::close();
     }
 
     public function testLock()
     {
         $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
+        $driver    = $container->get(LockManager::class)->getDriver('consul');
 
-        $this->assertNull($driver->get('xxx', null));
-        $this->assertTrue($driver->set('xxx', 'yyy'));
-        $this->assertSame('yyy', $driver->get('xxx'));
+        $resource = 'resource';
+        $ttl      = 10;
 
-        $id = uniqid();
-        $obj = new Foo($id);
-        $driver->set('xxx', $obj);
-        $this->assertSame($id, $driver->get('xxx')->id);
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        $driver->unlock($mutex);
     }
 
-    public function testUnlock()
+    public function testLockFiled()
     {
         $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
+        $driver    = $container->get(LockManager::class)->getDriver('consul');
 
-        [$bool, $result] = $driver->fetch('xxx');
-        $this->assertFalse($bool);
-        $this->assertNull($result);
+        $resource = 'resource1';
+        $ttl      = 10;
+
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        $mutex1 = $driver->lock($resource, $ttl);
+        $this->assertFalse($mutex1->acquired());
+
+        $driver->unlock($resource, $ttl);
+    }
+
+    public function testLockTTL()
+    {
+        $container = $this->getContainer();
+        $driver    = $container->get(LockManager::class)->getDriver('redis');
+
+        $resource = 'resource1';
+        $ttl      = 10;
+
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        sleep(10);
+
+        $mutex1 = $driver->lock($resource, $ttl);
+        $this->assertTrue($mutex1->acquired());
+
+        $driver->unlock($resource, $ttl);
     }
 
     protected function getContainer()
@@ -76,46 +103,12 @@ class ConsulDriverTest extends TestCase
         $config = new Config([
             'distributed-lock' => [
             ],
-            'redis' => [
+            'consul' => [
                 'db0' => [
                     'host' => 'localhost',
                     'auth' => '910123',
                     'port' => 6379,
                     'db' => 0,
-                    'timeout' => 0.0,
-                    'reserved' => null,
-                    'retry_interval' => 0,
-                    'pool' => [
-                        'min_connections' => 1,
-                        'max_connections' => 10,
-                        'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 60,
-                    ],
-                ],
-                'db1' => [
-                    'host' => 'localhost',
-                    'auth' => '910123',
-                    'port' => 6379,
-                    'db' => 1,
-                    'timeout' => 0.0,
-                    'reserved' => null,
-                    'retry_interval' => 0,
-                    'pool' => [
-                        'min_connections' => 1,
-                        'max_connections' => 10,
-                        'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 60,
-                    ],
-                ],
-                'db2' => [
-                    'host' => 'localhost',
-                    'auth' => '910123',
-                    'port' => 6379,
-                    'db' => 2,
                     'timeout' => 0.0,
                     'reserved' => null,
                     'retry_interval' => 0,

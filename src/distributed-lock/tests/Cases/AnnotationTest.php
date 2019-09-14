@@ -25,10 +25,10 @@ class AnnotationTest extends TestCase
     {
         $annotation = new Lock([
             'mutex' => 'test',
-            'ttl' => 3600,
+            'ttl' => 10,
         ]);
 
         $this->assertSame('test', $annotation->mutex);
-        $this->assertSame(3600, $annotation->ttl);
+        $this->assertSame(10, $annotation->ttl);
     }
 }

@@ -18,15 +18,13 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\DistributedLock\Driver\RedisDriver;
 use Hyperf\DistributedLock\LockManager;
+use Hyperf\DistributedLock\Mutex;
 use Hyperf\Pool\Channel;
-use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
-use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
-use HyperfTest\Cache\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -38,94 +36,135 @@ class RedisDriverTest extends TestCase
 {
     protected function tearDown()
     {
-        $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
-        $driver->clear();
-
         Mockery::close();
     }
 
     public function testLock()
     {
         $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
+        $driver    = $container->get(LockManager::class)->getDriver('redis');
 
-        $this->assertNull($driver->get('xxx', null));
-        $this->assertTrue($driver->set('xxx', 'yyy'));
-        $this->assertSame('yyy', $driver->get('xxx'));
+        $resource = 'resource';
+        $ttl      = 10;
 
-        $id = uniqid();
-        $obj = new Foo($id);
-        $driver->set('xxx', $obj);
-        $this->assertSame($id, $driver->get('xxx')->id);
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        $driver->unlock($mutex);
     }
 
-    public function testUnlock()
+    public function testLockFiled()
     {
         $container = $this->getContainer();
-        $driver = $container->get(LockManager::class)->getDriver();
+        $driver    = $container->get(LockManager::class)->getDriver('redis');
 
-        [$bool, $result] = $driver->fetch('xxx');
-        $this->assertFalse($bool);
-        $this->assertNull($result);
+        $resource = 'resource1';
+        $ttl      = 10;
+
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        $mutex1 = $driver->lock($resource, $ttl);
+        $this->assertFalse($mutex1->acquired());
+
+        $driver->unlock($resource, $ttl);
+    }
+
+    public function testLockTTL()
+    {
+        $container = $this->getContainer();
+        $driver    = $container->get(LockManager::class)->getDriver('redis');
+
+        $resource = 'resource1';
+        $ttl      = 10;
+
+        $mutex = $driver->lock($resource, $ttl);
+
+        $this->assertTrue($mutex instanceof Mutex);
+        $this->assertTrue($mutex->acquired());
+
+        sleep(10);
+
+        $mutex1 = $driver->lock($resource, $ttl);
+        $this->assertTrue($mutex1->acquired());
+
+        $driver->unlock($resource, $ttl);
     }
 
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
-        $config = new Config([
+        $config    = new Config([
             'distributed-lock' => [
+                'prefix'    => 'lock',
+                'ttl'       => 10,
+                'separator' => ':',
+                'driver'    => 'redis',
+                'redis'     => [
+                    'drift_factor' => 0.01,
+                    'retry'        => 0,
+                    'retry_delay'  => 200, // time in ms
+                    'pools'        => [
+                        'db0',
+                        'db1',
+                        'db2',
+                    ],
+                ],
             ],
-            'redis' => [
+            'redis'            => [
                 'db0' => [
-                    'host' => 'localhost',
-                    'auth' => '910123',
-                    'port' => 6379,
-                    'db' => 0,
-                    'timeout' => 0.0,
-                    'reserved' => null,
+                    'host'           => 'localhost',
+                    'auth'           => '910123',
+                    'port'           => 6379,
+                    'db'             => 0,
+                    'timeout'        => 0.0,
+                    'reserved'       => null,
                     'retry_interval' => 0,
-                    'pool' => [
+                    'pool'           => [
                         'min_connections' => 1,
                         'max_connections' => 10,
                         'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 60,
+                        'wait_timeout'    => 3.0,
+                        'heartbeat'       => -1,
+                        'max_idle_time'   => 60,
                     ],
                 ],
                 'db1' => [
-                    'host' => 'localhost',
-                    'auth' => '910123',
-                    'port' => 6379,
-                    'db' => 1,
-                    'timeout' => 0.0,
-                    'reserved' => null,
+                    'host'           => 'localhost',
+                    'auth'           => '910123',
+                    'port'           => 6379,
+                    'db'             => 1,
+                    'timeout'        => 0.0,
+                    'reserved'       => null,
                     'retry_interval' => 0,
-                    'pool' => [
+                    'pool'           => [
                         'min_connections' => 1,
                         'max_connections' => 10,
                         'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 60,
+                        'wait_timeout'    => 3.0,
+                        'heartbeat'       => -1,
+                        'max_idle_time'   => 60,
                     ],
                 ],
                 'db2' => [
-                    'host' => 'localhost',
-                    'auth' => '910123',
-                    'port' => 6379,
-                    'db' => 2,
-                    'timeout' => 0.0,
-                    'reserved' => null,
+                    'host'           => 'localhost',
+                    'auth'           => '910123',
+                    'port'           => 6379,
+                    'db'             => 2,
+                    'timeout'        => 0.0,
+                    'reserved'       => null,
                     'retry_interval' => 0,
-                    'pool' => [
+                    'pool'           => [
                         'min_connections' => 1,
                         'max_connections' => 10,
                         'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 60,
+                        'wait_timeout'    => 3.0,
+                        'heartbeat'       => -1,
+                        'max_idle_time'   => 60,
                     ],
                 ],
             ],
@@ -138,10 +177,7 @@ class RedisDriverTest extends TestCase
         $container->shouldReceive('make')->with(RedisDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new RedisDriver($container, $args['config']);
         });
-        $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
-        $frequency = Mockery::mock(LowFrequencyInterface::class);
-        $frequency->shouldReceive('isLowFrequency')->andReturn(true);
-        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
+
         $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new RedisPool($container, $args['name']);
         });
