@@ -47,11 +47,66 @@ class ConsulDriver extends Driver
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
-        $this->retry      = $config['retry'] ?? 0;
+        $this->retry = $config['retry'] ?? 0;
         $this->retryDelay = $config['retry_delay'] ?? 200;
 
         $this->session = $this->createSession();
-        $this->kv      = $this->createKV();
+        $this->kv = $this->createKV();
+    }
+
+    /**
+     * @param string $resource
+     * @param int $ttl
+     * @return Mutex
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
+    public function lock(string $resource, int $ttl): Mutex
+    {
+        $mutex = new Mutex();
+        // Start a session
+        $sessionId = $this->session->create()->json()['ID'];
+
+        $token = $sessionId;
+        $retry = $this->retry;
+        do {
+            // Lock a key / value with the current session
+            $lockAcquired = $this->kv->put($resource, $token, ['acquire' => $sessionId])->json();
+            if ($lockAcquired === false) {
+                // Wait a random delay before to retry
+                $delay = mt_rand((int) floor($this->retryDelay / 2), $this->retryDelay);
+                usleep($delay * 1000);
+            }
+            --$retry;
+        } while ($lockAcquired === false && $retry > 0);
+
+        if ($lockAcquired === false) {
+            $this->session->destroy($sessionId);
+
+            return $mutex;
+        }
+
+        return $mutex->setAcquired()
+            ->setContext([
+                'session_id' => $sessionId,
+                'resource' => $resource,
+                'token' => $token,
+            ]);
+    }
+
+    /**
+     * @param Mutex $mutex
+     *
+     * Author: wangyi <chunhei2008@qq.com>
+     */
+    public function unlock(Mutex $mutex): void
+    {
+        $context = $mutex->getContext();
+        $sessionId = $context['session_id'] ?? '';
+        $resource = $context['resource'] ?? '';
+
+        $this->kv->delete($resource);
+        $this->session->destroy($sessionId);
     }
 
     /**
@@ -80,61 +135,5 @@ class ConsulDriver extends Driver
                 'base_uri' => $this->container->get(ConfigInterface::class)->get('consul.uri', KV::DEFAULT_URI),
             ]);
         }, $this->container->get(LoggerFactory::class)->get('default'));
-    }
-
-
-    /**
-     * @param string $resource
-     * @param int    $ttl
-     * @return Mutex
-     *
-     * Author: wangyi <chunhei2008@qq.com>
-     */
-    public function lock(string $resource, int $ttl): Mutex
-    {
-        $mutex = new Mutex();
-        // Start a session
-        $sessionId = $this->session->create()->json()['ID'];
-
-        $token = $sessionId;
-        $retry = $this->retry;
-        do {
-            // Lock a key / value with the current session
-            $lockAcquired = $this->kv->put($resource, $token, ['acquire' => $sessionId])->json();
-            if ($lockAcquired === false) {
-                // Wait a random delay before to retry
-                $delay = mt_rand((int)floor($this->retryDelay / 2), $this->retryDelay);
-                usleep($delay * 1000);
-            }
-            --$retry;
-        } while ($lockAcquired === false && $retry > 0);
-
-        if ($lockAcquired === false) {
-            $this->session->destroy($sessionId);
-
-            return $mutex;
-        }
-
-        return $mutex->setAcquired()
-            ->setContext([
-                'session_id' => $sessionId,
-                'resource'   => $resource,
-                'token'      => $token,
-            ]);
-    }
-
-    /**
-     * @param Mutex $mutex
-     *
-     * Author: wangyi <chunhei2008@qq.com>
-     */
-    public function unlock(Mutex $mutex): void
-    {
-        $context   = $mutex->getContext();
-        $sessionId = $context['session_id'] ?? '';
-        $resource  = $context['resource'] ?? '';
-
-        $this->kv->delete($resource);
-        $this->session->destroy($sessionId);
     }
 }

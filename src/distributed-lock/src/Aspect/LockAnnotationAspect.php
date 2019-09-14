@@ -54,27 +54,27 @@ class LockAnnotationAspect implements AroundInterface
 
     public function __construct(LockManager $manager, AnnotationManager $annotationManager, ConfigInterface $config)
     {
-        $this->manager            = $manager;
-        $this->annotationManager  = $annotationManager;
+        $this->manager = $manager;
+        $this->annotationManager = $annotationManager;
         $this->annotationProperty = get_object_vars(new Lock());
-        $this->config             = $config->get('distributed-lock', []);
+        $this->config = $config->get('distributed-lock', []);
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className  = $proceedingJoinPoint->className;
-        $method     = $proceedingJoinPoint->methodName;
-        $arguments  = $proceedingJoinPoint->arguments['keys'];
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
         $driverName = $this->config['driver'] ?? 'redis';
-        $separator  = $this->config['separator'] ?? ':';
+        $separator = $this->config['separator'] ?? ':';
 
         [$key, $ttl, $annotation] = $this->annotationManager->getMutexKey($className, $method, $arguments, $separator);
 
         $driver = $this->manager->getDriver($driverName);
 
         $mutex = $driver->lock($key, $ttl);
-        if (!$mutex->acquired()) {
-            if (!$annotation->failedCallback || !is_callable($annotation->failedCallback)) {
+        if (! $mutex->acquired()) {
+            if (! $annotation->failedCallback || ! is_callable($annotation->failedCallback)) {
                 throw new LockException('Service Unavailable.', 503);
             }
 
