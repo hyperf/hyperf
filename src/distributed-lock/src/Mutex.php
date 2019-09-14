@@ -22,7 +22,7 @@ class Mutex
     /**
      * @var bool
      */
-    private $isAcquired = false;
+    private $acquired = false;
 
     /**
      * @return array
@@ -48,20 +48,20 @@ class Mutex
     /**
      * @return bool
      */
-    public function isAcquired(): bool
+    public function acquired(): bool
     {
-        return $this->isAcquired;
+        return $this->acquired;
     }
 
     /**
-     * @param bool $isAcquired
+     * @param bool $acquired
      * @return Mutex
      *
      * Author: wangyi <chunhei2008@qq.com>
      */
-    public function setIsAcquired(bool $isAcquired = true): self
+    public function setAcquired(bool $acquired = true): self
     {
-        $this->isAcquired = $isAcquired;
+        $this->acquired = $acquired;
 
         return $this;
     }

@@ -14,6 +14,7 @@ namespace Hyperf\DistributedLock;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\DistributedLock\Driver\ConsulDriver;
 use Hyperf\DistributedLock\Driver\DriverInterface;
 use Hyperf\DistributedLock\Driver\RedisDriver;
 use Hyperf\DistributedLock\Exception\InvalidArgumentException;
@@ -39,7 +40,8 @@ class LockManager
      * @var array
      */
     protected $registerDriverClasses = [
-        'redis' => RedisDriver::class,
+        'redis'  => RedisDriver::class,
+        'consul' => ConsulDriver::class,
     ];
 
     public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
@@ -68,7 +70,7 @@ class LockManager
         $prefix = $this->config->get('distributed-lock.prefix', '');
 
         $driverClass = $this->registerDriverClasses[$name] ?? '';
-        if (! $driverClass) {
+        if (!$driverClass) {
             throw new InvalidArgumentException(sprintf('The lock driver %s is not registered.', $name));
         }
 
@@ -85,7 +87,7 @@ class LockManager
      */
     public function registerDriver(string $name, string $driverClass)
     {
-        if (! class_exists($driverClass)) {
+        if (!class_exists($driverClass)) {
             throw new InvalidArgumentException(sprintf('The lock driver class %s is not exists.', $name));
         }
         $this->registerDriverClasses[$name] = $driverClass;

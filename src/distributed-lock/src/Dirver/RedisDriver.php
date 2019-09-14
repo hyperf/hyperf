@@ -93,7 +93,7 @@ class RedisDriver extends Driver
             $drift = ($ttl * $this->driftFactor) + 2;
             $validityTime = $ttl - (microtime(true) * 1000 - $startTime) - $drift;
             if ($n >= $this->quorum && $validityTime > 0) {
-                return $mutex->setIsAcquired()
+                return $mutex->setAcquired()
                     ->setContext([
                         'validity' => $validityTime,
                         'resource' => $resource,
