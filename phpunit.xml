@@ -20,6 +20,7 @@
             <directory suffix="Test.php">./src/db-connection/tests</directory>
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>
+            <directory suffix="Test.php">./src/distributed-lock/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/grpc-client/tests</directory>
