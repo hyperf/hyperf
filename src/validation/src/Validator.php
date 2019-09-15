@@ -15,7 +15,6 @@ namespace Hyperf\Validation;
 use BadMethodCallException;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
-use Hyperf\Di\Container;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
