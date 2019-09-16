@@ -4,6 +4,10 @@
 
 - [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
 
+## Fixed 
+
+- [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
+
 # v1.0.15 - 2019-09-11
 
 ## Fixed
