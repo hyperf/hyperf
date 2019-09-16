@@ -34,6 +34,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'auth' => null,
         'db' => 0,
         'timeout' => 0.0,
+        'options' => [],
     ];
 
     /**
@@ -79,6 +80,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $redis = new \Redis();
         if (! $redis->connect($host, $port, $timeout)) {
             throw new ConnectionException('Connection reconnect failed.');
+        }
+
+        $options = $this->config['options'] ?? [];
+
+        foreach ($options as $name => $value) {
+            // The name is int, value is string.
+            $redis->setOption($name, $value);
         }
 
         if (isset($auth) && $auth !== '') {

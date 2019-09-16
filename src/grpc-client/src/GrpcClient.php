@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use BadMethodCallException;
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
@@ -230,6 +232,9 @@ class GrpcClient
             $streamId = $this->sendResultChannel->pop();
         } else {
             $streamId = $this->getHttpClient()->send($request);
+        }
+        if ($streamId === false) {
+            throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
         }
         if ($streamId > 0) {
             $this->recvChannelMap[$streamId] = $this->channelPool->get();
