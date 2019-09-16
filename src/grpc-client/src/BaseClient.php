@@ -44,8 +44,11 @@ class BaseClient
             $this->grpcClient->set($hostname, $options);
         }
         if (! $this->start()) {
-            $message = 'grpc client start failed with error code ' . $this->getGrpcClient()->getErrCode()
-                . ' when connect to ' . $hostname;
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->getGrpcClient()->getErrCode(),
+                $hostname
+            );
             throw new GrpcClientException($message, StatusCode::INTERNAL);
         }
     }
