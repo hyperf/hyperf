@@ -262,6 +262,11 @@ class GrpcClient
         return false;
     }
 
+    public function getErrCode(): int
+    {
+        return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
+
     /**
      * @param bool|float $yield
      */
@@ -385,10 +390,5 @@ class GrpcClient
         $httpClient = new SwooleHttp2Client($this->host, $this->port, $this->ssl);
         $httpClient->set($this->options);
         return $httpClient;
-    }
-
-    public function getErrCode(): int
-    {
-        return $this->httpClient ? $this->httpClient->errCode : 0;
     }
 }
