@@ -234,9 +234,9 @@ class IndexController
 
 `Hyperf` 支持监听多个端口，但因为 `callbacks` 中的对象直接从容器中获取，所以相同的 `Hyperf\HttpServer\Server::class` 会在容器中被覆盖。所以我们需要在依赖关系中，重新定义 `Server`，确保对象隔离。
 
-> WebSocket 和 Tcp 服务同上。
+> WebSocket 和 TCP 等 Server 同理。
 
-config/dependencies.php
+`config/dependencies.php`
 
 ```php
 <?php
@@ -246,14 +246,12 @@ return [
         'InnerHttp' => Hyperf\HttpServer\Server::class,
     ],
 ];
-
 ```
 
-config/autoload/server.php
+`config/autoload/server.php`
 
 ```php
 <?php
-
 return [
     'servers' => [
         [
