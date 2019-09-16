@@ -381,4 +381,9 @@ class GrpcClient
         $httpClient->set($this->options);
         return $httpClient;
     }
+
+    public function getErrCode(): int
+    {
+        return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
 }
