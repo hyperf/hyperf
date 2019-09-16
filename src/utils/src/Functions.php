@@ -428,3 +428,13 @@ if (! function_exists('run')) {
         return $result;
     }
 }
+
+if (! function_exists('swoole_hook_flags')) {
+    /**
+     * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
+     */
+    function swoole_hook_flags(): int
+    {
+        return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}

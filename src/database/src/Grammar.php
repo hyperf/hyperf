@@ -197,7 +197,7 @@ abstract class Grammar
             $segments[0]
         ) . ' as ' . $this->wrapValue(
             $segments[1]
-            );
+        );
     }
 
     /**

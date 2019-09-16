@@ -49,6 +49,11 @@ class ModelOption
      */
     protected $refreshFillable;
 
+    /**
+     * @var array
+     */
+    protected $tableMapping = [];
+
     public function getPool(): string
     {
         return $this->pool;
@@ -123,6 +128,21 @@ class ModelOption
     public function setRefreshFillable(bool $refreshFillable): ModelOption
     {
         $this->refreshFillable = $refreshFillable;
+        return $this;
+    }
+
+    public function getTableMapping(): array
+    {
+        return $this->tableMapping;
+    }
+
+    public function setTableMapping(array $tableMapping): ModelOption
+    {
+        foreach ($tableMapping as $item) {
+            [$key, $name] = explode(':', $item);
+            $this->tableMapping[$key] = $name;
+        }
+
         return $this;
     }
 }

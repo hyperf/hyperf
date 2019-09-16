@@ -10,7 +10,18 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
+namespace HyperfTest\Command\Command;
 
-require_once BASE_PATH . '/vendor/autoload.php';
+use Hyperf\Command\Command;
+
+class DefaultSwooleFlagsCommand extends Command
+{
+    public function handle()
+    {
+    }
+
+    public function getHookFlags(): int
+    {
+        return $this->hookFlags;
+    }
+}

@@ -122,7 +122,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             $uri = $request->getUri();
             $host = $uri->getAuthority();
             // Build the url by $schema and host.
-            return $schema . '://' . $host . '/' . $toUrl;
+            return $schema . '://' . $host . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
         });
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
     }
