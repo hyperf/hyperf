@@ -18,9 +18,15 @@ use Hyperf\DistributedLock\Driver\ConsulDriver;
 use Hyperf\DistributedLock\Driver\DriverInterface;
 use Hyperf\DistributedLock\Driver\RedisDriver;
 use Hyperf\DistributedLock\Exception\InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 
 class LockManager
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
     /**
      * @var ConfigInterface
      */
@@ -40,14 +46,15 @@ class LockManager
      * @var array
      */
     protected $registerDriverClasses = [
-        'redis' => RedisDriver::class,
+        'redis'  => RedisDriver::class,
         'consul' => ConsulDriver::class,
     ];
 
-    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
+    public function __construct(ContainerInterface $container, ConfigInterface $config, StdoutLoggerInterface $logger)
     {
-        $this->config = $config;
-        $this->logger = $logger;
+        $this->container = $container;
+        $this->config    = $config;
+        $this->logger    = $logger;
     }
 
     /**
@@ -67,14 +74,12 @@ class LockManager
             throw new InvalidArgumentException(sprintf('The lock driver config %s is invalid.', $name));
         }
 
-        $prefix = $this->config->get('distributed-lock.prefix', '');
-
         $driverClass = $this->registerDriverClasses[$name] ?? '';
-        if (! $driverClass) {
+        if (!$driverClass) {
             throw new InvalidArgumentException(sprintf('The lock driver %s is not registered.', $name));
         }
 
-        $driver = make($driverClass, ['config' => $config, 'prefix' => $prefix]);
+        $driver = make($driverClass, ['config' => $config, 'container' => $this->container]);
 
         return $this->drivers[$name] = $driver;
     }
@@ -87,7 +92,7 @@ class LockManager
      */
     public function registerDriver(string $name, string $driverClass)
     {
-        if (! class_exists($driverClass)) {
+        if (!class_exists($driverClass)) {
             throw new InvalidArgumentException(sprintf('The lock driver class %s is not exists.', $name));
         }
         $this->registerDriverClasses[$name] = $driverClass;

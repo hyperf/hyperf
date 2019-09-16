@@ -44,7 +44,7 @@ class AnnotationManager
         $annotation = $this->getAnnotation(Lock::class, $className, $method);
         $prefix = $this->config->get('distributed-lock.prefix', 'lock');
 
-        $key = $this->getFormatedKey($prefix . $separator . $annotation->mutex, $arguments, $annotation->value, $separator);
+        $key = $this->getFormattedKey($prefix . $separator . $annotation->mutex, $arguments, $annotation->value, $separator);
         $ttl = $annotation->ttl ?? $this->config->get('distributed-lock.ttl', 10);
 
         return [$key, $ttl, $annotation];
@@ -61,7 +61,7 @@ class AnnotationManager
         return $result;
     }
 
-    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null, string $separator = ':'): string
+    protected function getFormattedKey(string $prefix, array $arguments, ?string $value = null, string $separator = ':'): string
     {
         $key = StringHelper::format($prefix, $arguments, $value, $separator);
 
