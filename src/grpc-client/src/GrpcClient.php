@@ -262,6 +262,11 @@ class GrpcClient
         return false;
     }
 
+    public function getErrCode(): int
+    {
+        return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
+
     /**
      * @param bool|float $yield
      */
