@@ -21,6 +21,11 @@ class RedisMilliSecondMetaGenerator extends MetaGenerator
 {
     const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     protected $workerId;
 
     protected $dataCenterId;
@@ -29,27 +34,38 @@ class RedisMilliSecondMetaGenerator extends MetaGenerator
     {
         parent::__construct($configuration, $beginTimestamp * 1000);
 
-        $pool = $config->get('snowflake.' . static::class . '.pool', 'default');
+        $this->config = $config;
+    }
 
-        /** @var \Redis $redis */
-        $redis = make(RedisProxy::class, [
-            'pool' => $pool,
-        ]);
+    public function init()
+    {
+        if (is_null($this->workerId) || is_null($this->dataCenterId)) {
+            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
 
-        $key = $config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
-        $id = $redis->incr($key);
+            /** @var \Redis $redis */
+            $redis = make(RedisProxy::class, [
+                'pool' => $pool,
+            ]);
 
-        $this->workerId = $id % $configuration->maxWorkerId();
-        $this->dataCenterId = intval($id / $configuration->maxWorkerId()) % $configuration->maxDataCenterId();
+            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
+            $id = $redis->incr($key);
+
+            $this->workerId = $id % $this->configuration->maxWorkerId();
+            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+        }
     }
 
     public function getDataCenterId(): int
     {
+        $this->init();
+
         return $this->dataCenterId;
     }
 
     public function getWorkerId(): int
     {
+        $this->init();
+
         return $this->workerId;
     }
 
