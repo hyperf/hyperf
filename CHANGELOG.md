@@ -9,6 +9,10 @@
 - [#564](https://github.com/hyperf-cloud/hyperf/pull/564) Fixed typehint error, when `Coroutine\Http2\Client->send` failed.
 - [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
 
+# Changed
+
+- [#583](https://github.com/hyperf-cloud/hyperf/pull/583) Throw `GrpcClientException`, when `BaseClient::start` failed.
+
 # v1.0.15 - 2019-09-11
 
 ## Fixed
