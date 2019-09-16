@@ -36,7 +36,6 @@ class BaseClientTest extends TestCase
         $this->getContainer();
 
         $this->expectException(GrpcClientException::class);
-        $this->expectExceptionMessage('Grpc client start failed with error code 61 when connect to 127.0.0.1:1111');
 
         $client = new BaseClient('127.0.0.1:1111');
     }
