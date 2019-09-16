@@ -13,6 +13,7 @@
             <directory suffix="Test.php">./src/amqp/tests</directory>
             <directory suffix="Test.php">./src/async-queue/tests</directory>
             <directory suffix="Test.php">./src/cache/tests</directory>
+            <directory suffix="Test.php">./src/clickhouse/tests</directory>
             <directory suffix="Test.php">./src/config/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/consul/tests</directory>
