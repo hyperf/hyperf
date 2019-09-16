@@ -32,6 +32,11 @@ class Concurrent
         $this->timeout = $timeout;
     }
 
+    public function length(): int
+    {
+        return $this->channel->length();
+    }
+
     public function call(callable $callable): void
     {
         while (true) {
