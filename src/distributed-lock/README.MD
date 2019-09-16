@@ -10,9 +10,6 @@
 composer require hyperf/distributed-lock
 
 
-@Lock(mutex="",value="",ttl="")
-
-
 ```
 
 
