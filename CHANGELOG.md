@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#567](https://github.com/hyperf-cloud/hyperf/pull/567) Fixed rpc-client `getReturnType` failed, when the name is not equal of service.
+- [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
 
 # v1.0.15 - 2019-09-11
 
