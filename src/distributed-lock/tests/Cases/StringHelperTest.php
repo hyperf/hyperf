@@ -44,7 +44,7 @@ class StringHelperTest extends TestCase
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf'], '#{id}_#{name}', '/');
         $this->assertSame('test/1_Hyperf', $string);
 
-        $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf'], '#{id}/#{name}','/');
+        $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf'], '#{id}/#{name}', '/');
         $this->assertSame('test/1/Hyperf', $string);
     }
 }
