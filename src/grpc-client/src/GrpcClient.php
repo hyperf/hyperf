@@ -171,7 +171,7 @@ class GrpcClient
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
             if ($shouldKill) {
-                // this call will set connected of http client to false
+                // Set `connected` of http client to `false`
                 $this->getHttpClient()->close();
             }
         }
