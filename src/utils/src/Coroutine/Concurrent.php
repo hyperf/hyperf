@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Coroutine;
 
+use Hyperf\Utils\Coroutine;
 use Swoole\Coroutine\Channel;
 
 class Concurrent
@@ -45,7 +46,7 @@ class Concurrent
             }
         }
 
-        go(function () use ($callable) {
+        Coroutine::create(function () use ($callable) {
             $callable();
             $this->channel->pop($this->timeout);
         });
