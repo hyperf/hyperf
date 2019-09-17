@@ -53,7 +53,13 @@ class TaskExecutor
             throw new TaskExecuteException('Task execute failed.');
         }
 
-        return $this->factory->pop($taskId, $timeout);
+        $result = $this->factory->pop($taskId, $timeout);
+
+        if ($result instanceof Exception) {
+            throw $result->throwable;
+        }
+
+        return $result;
     }
 
     public function isTaskEnvironment(): bool

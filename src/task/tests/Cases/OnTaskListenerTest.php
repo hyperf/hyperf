@@ -14,12 +14,12 @@ namespace HyperfTest\Task\Cases;
 
 use Hyperf\Framework\Event\OnTask;
 use Hyperf\Task\ChannelFactory;
+use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use HyperfTest\Task\Stub\Foo;
-use HyperfTest\Task\Stub\SwooleServer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -49,6 +49,26 @@ class OnTaskListenerTest extends TestCase
         $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertSame($id, $result->data);
+        });
+
+        $listener->process($event);
+    }
+
+    public function testProcessException()
+    {
+        $container = $this->getContainer();
+
+        $listener = new OnTaskListener($container);
+        $id = uniqid();
+        $event = Mockery::mock(OnTask::class);
+        $event->task = new Server\Task();
+        $event->task->data = new Task([Foo::class, 'exception'], [$id]);
+
+        $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id) {
+            $this->assertInstanceOf(Finish::class, $result);
+            $this->assertInstanceOf(Exception::class, $result->data);
+            $this->assertInstanceOf(\RuntimeException::class, $result->data->throwable);
+            $this->assertSame('Foo::exception failed.', $result->data->throwable->getMessage());
         });
 
         $listener->process($event);

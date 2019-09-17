@@ -16,15 +16,10 @@ use Throwable;
 
 class Exception
 {
-    protected $throwable;
+    public $throwable;
 
     public function __construct(Throwable $throwable)
     {
         $this->throwable = $throwable;
-    }
-
-    public function getThrowable(): Throwable
-    {
-        return $this->throwable;
     }
 }

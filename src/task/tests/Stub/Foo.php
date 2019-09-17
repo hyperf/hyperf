@@ -18,4 +18,9 @@ class Foo
     {
         return $id;
     }
+
+    public function exception()
+    {
+        throw new \RuntimeException('Foo::exception failed.');
+    }
 }
