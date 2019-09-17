@@ -36,7 +36,8 @@ composer require hyperf/snowflake
 
 框架提供了 `MetaGeneratorInterface` 和 `IdGeneratorInterface`，`MetaGeneratorInterface` 会生成 `ID` 的 `Meta` 文件，`IdGeneratorInterface` 则会根据对应的 `Meta` 文件生成 `分布式ID`。
 
-框架默认使用的 `MetaGeneratorInterface` 是基于 `Redis` 实现的 `毫秒级别生成器`。配置如下：
+框架默认使用的 `MetaGeneratorInterface` 是基于 `Redis` 实现的 `毫秒级别生成器`。    
+配置文件位于 `config/autoload/snowflake.php`，如配置文件不存在可通过执行 `php bin/hyperf.php vender:publish hyperf/snowflake` 命令创建默认配置，配置文件内容如下：
 
 ```php
 <?php
