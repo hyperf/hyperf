@@ -33,7 +33,7 @@ Based on the above characteristics, Hyperf has a lots of possibilities, such as 
 
 ### Code Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+This project exists thanks to all the people who contribute. [[Contribute](https://github.com/hyperf-cloud/hyperf/graphs/contributors)].
 <a href="https://github.com/hyperf-cloud/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
