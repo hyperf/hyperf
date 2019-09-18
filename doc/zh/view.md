@@ -137,7 +137,7 @@ Hello, {{ $name }}. You are using blade template now.
 </html>
 ```
 
-控制器中获取 `Hyperf\View\Render` 示例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
+控制器中获取 `Hyperf\View\Render` 实例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
 
 ```php
 <?php
