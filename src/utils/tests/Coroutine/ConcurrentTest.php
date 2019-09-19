@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils\Coroutine;
 
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine\Concurrent;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 
 /**
@@ -22,6 +25,11 @@ use Swoole\Coroutine;
  */
 class ConcurrentTest extends TestCase
 {
+    protected function setUp()
+    {
+        $this->getContainer();
+    }
+
     public function testConcurrent()
     {
         $con = new Concurrent(10, 1);
@@ -51,5 +59,13 @@ class ConcurrentTest extends TestCase
 
         $this->assertSame(5, $count);
         $this->assertSame(10, $con->length());
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(false);
+
+        ApplicationContext::setContainer($container);
     }
 }
