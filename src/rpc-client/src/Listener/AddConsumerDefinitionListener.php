@@ -69,7 +69,7 @@ class AddConsumerDefinitionListener implements ListenerInterface
                             $consumer['name'],
                             $consumer['protocol'] ?? 'jsonrpc-http',
                             [
-                                'load_balancer' => $consumer['load_balancer'] ?? null,
+                                'load_balancer' => $consumer['load_balancer'] ?? 'random',
                                 'service_interface' => $serviceClass,
                             ]
                         );
