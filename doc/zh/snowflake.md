@@ -84,7 +84,7 @@ $meta = $generator->degenerate($id);
 
 ## 重写 `Meta` 生成器
 
-`分布式ID` 的实现方式多种多样，虽然都是 `Snowflake` 算法，但也不尽相同。比如有人可能会根据 `UserId` 生成 `Meta`，而非 `WorkerId`。接下来，让我们实现一个简单的 `MetaGenerator`。
+`分布式全局唯一 ID` 的实现方式多种多样，也有很多基于 `Snowflake` 算法的变体算法，虽然都是 `Snowflake` 算法，但也不尽相同。比如有人可能会根据 `UserId` 生成 `Meta`，而非 `WorkerId`。接下来，让我们实现一个简单的 `MetaGenerator`。
 简单的来讲，`UserId` 绝对会超过 `10 bit`，所以默认的 `DataCenterId` 和 `WorkerId` 肯定是装不过来的，所以就需要对 `UserId` 取模。
 
 ```php
