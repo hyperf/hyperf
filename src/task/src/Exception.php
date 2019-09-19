@@ -16,10 +16,26 @@ use Throwable;
 
 class Exception
 {
-    public $throwable;
+    /**
+     * @var string
+     */
+    public $class;
+
+    /**
+     * @var int
+     */
+    public $code;
+
+    /**
+     * @var string
+     */
+    public $message;
 
     public function __construct(Throwable $throwable)
     {
-        $this->throwable = $throwable;
+        $this->class = get_class($throwable);
+
+        $this->code = $throwable->getCode();
+        $this->message = $throwable->getMessage();
     }
 }

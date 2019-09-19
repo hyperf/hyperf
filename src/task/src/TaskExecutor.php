@@ -56,7 +56,12 @@ class TaskExecutor
         $result = $this->factory->pop($taskId, $timeout);
 
         if ($result instanceof Exception) {
-            throw $result->throwable;
+            throw new TaskExecuteException(sprintf(
+                'Task throw %s, code=%s, message=%s.',
+                $result->class,
+                $result->code,
+                $result->message
+            ));
         }
 
         return $result;
