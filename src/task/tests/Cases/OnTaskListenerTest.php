@@ -19,6 +19,7 @@ use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
+use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -68,7 +69,8 @@ class OnTaskListenerTest extends TestCase
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
             $this->assertSame(\RuntimeException::class, $result->data->class);
-            $this->assertSame('Foo::exception failed.', $result->data->message);
+            $this->assertSame('Foo::exception failed.', $result->data->attributes['message']);
+            $this->assertSame(0, $result->data->attributes['code']);
         });
 
         $listener->process($event);
@@ -77,8 +79,10 @@ class OnTaskListenerTest extends TestCase
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
+        $normalizer = new ExceptionNormalizer();
+        $container->shouldReceive('get')->with(ExceptionNormalizer::class)->andReturn($normalizer);
         $container->shouldReceive('has')->with(Mockery::any())->andReturn(true);
-        $container->shouldReceive('get')->with(TaskExecutor::class)->andReturn(new TaskExecutor(new ChannelFactory()));
+        $container->shouldReceive('get')->with(TaskExecutor::class)->andReturn(new TaskExecutor(new ChannelFactory(), $normalizer));
         $container->shouldReceive('get')->with(Foo::class)->andReturn(new Foo());
 
         return $container;

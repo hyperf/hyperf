@@ -53,7 +53,7 @@ class OnTaskListener implements ListenerInterface
                 $result = $this->call($data);
                 $this->setResult($event, $result);
             } catch (\Throwable $throwable) {
-                $this->setResult($event, new Exception($throwable));
+                $this->setResult($event, new Exception($this->container, $throwable));
             }
         }
     }

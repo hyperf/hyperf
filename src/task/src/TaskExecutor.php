@@ -14,6 +14,7 @@ namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
+use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
 
 class TaskExecutor
@@ -29,13 +30,19 @@ class TaskExecutor
     protected $factory;
 
     /**
+     * @var ExceptionNormalizer
+     */
+    protected $normalizer;
+
+    /**
      * @var bool
      */
     protected $isTaskEnvironment = false;
 
-    public function __construct(ChannelFactory $factory)
+    public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
     {
         $this->factory = $factory;
+        $this->normalizer = $normalizer;
     }
 
     public function setServer(Server $server): void
@@ -56,13 +63,8 @@ class TaskExecutor
         $result = $this->factory->pop($taskId, $timeout);
 
         if ($result instanceof Exception) {
-            // TODO: Build a exception with code and message.
-            throw new TaskExecuteException(sprintf(
-                'Task throw %s, code=%s, message=%s.',
-                $result->class,
-                $result->code,
-                $result->message
-            ));
+            $exception = $this->normalizer->denormalize($result->attributes, $result->class);
+            throw $exception;
         }
 
         return $result;

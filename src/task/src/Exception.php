@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Task;
 
+use Hyperf\Utils\Serializer\ExceptionNormalizer;
+use Psr\Container\ContainerInterface;
 use Throwable;
 
 class Exception
@@ -22,19 +24,13 @@ class Exception
     public $class;
 
     /**
-     * @var int
+     * @var array|bool|float|int|string
      */
-    public $code;
+    public $attributes;
 
-    /**
-     * @var string
-     */
-    public $message;
-
-    public function __construct(Throwable $throwable)
+    public function __construct(ContainerInterface $container, Throwable $throwable)
     {
         $this->class = get_class($throwable);
-        $this->code = $throwable->getCode();
-        $this->message = $throwable->getMessage();
+        $this->attributes = $container->get(ExceptionNormalizer::class)->normalize($throwable);
     }
 }
