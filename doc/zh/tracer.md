@@ -1,7 +1,7 @@
 # 调用链追踪
 
 在微服务场景下，我们会拆分出来很多的服务，也就意味着一个业务请求，少则跨越 3-4 个服务，多则几十个甚至更多，在这种架构下我们需要对某一个问题进行 Debug 的时候是极其困难的一件事情，那么我们就需要一个调用链追踪系统来帮助我们动态地展示服务调用的链路，以便我们可以快速地对问题点进行定位，亦可根据链路信息对服务进行调优。   
-在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据OpenTracing协议定制实现。
+在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据 OpenTracing 协议定制实现。
 
 ## 安装
 
@@ -48,7 +48,7 @@ return [
 ];
 ```
 
-在开始追踪之前，我们还需要选择所使用的Tracer驱动，并对Tracer进行配置。
+在开始追踪之前，我们还需要选择所使用的 Tracer 驱动，并对 Tracer 进行配置。
 
 #### 选择追踪器驱动
 
@@ -129,6 +129,7 @@ return [
 ```php
 <?php
 use Hyperf\Tracer\Adapter\JaegerTracerFactory;
+use const Jaeger\SAMPLER_TYPE_CONST;
 
 return [
     // 选择默认的 Tracer
@@ -146,9 +147,9 @@ return [
             'options' => [
                 // 采样器，默认为所有请求的都追踪
                 'sampler' => [
-                    'type' => \Jaeger\SAMPLER_TYPE_CONST,
+                    'type' => SAMPLER_TYPE_CONST,
                     'param' => true,
-                ],,
+                ],
                 // 上报地址
                 'local_agent' => [
                     'reporting_host' => env('JAEGER_REPORTING_HOST', 'localhost'),
@@ -174,7 +175,7 @@ declare(strict_types=1);
 
 return [
     'http' => [
-        Hyperf\Tracer\Middleware\TraceMiddeware::class,
+        \Hyperf\Tracer\Middleware\TraceMiddeware::class,
     ],
 ];
 ```
