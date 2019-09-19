@@ -3,6 +3,7 @@
 ## Added
 
 - [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
+- [#580](https://github.com/hyperf-cloud/hyperf/pull/580) Added coroutine concurrency control features.
 
 ## Fixed 
 
