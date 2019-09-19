@@ -32,17 +32,23 @@ class ConcurrentTest extends TestCase
 
     public function testConcurrent()
     {
-        $con = new Concurrent(10, 1);
+        $concurrent = new Concurrent($limit = 10, 1);
+        $this->assertSame($limit, $concurrent->getLimit());
+        $this->assertTrue($concurrent->isEmpty());
+        $this->assertFalse($concurrent->isFull());
         $count = 0;
         for ($i = 0; $i < 15; ++$i) {
-            $con->call(function () use (&$count) {
+            $concurrent->create(function () use (&$count) {
                 Coroutine::sleep(0.1);
                 ++$count;
             });
         }
 
+        $this->assertFalse($concurrent->isFull());
         $this->assertSame(5, $count);
-        $this->assertSame(10, $con->length());
+        $this->assertSame($limit, $concurrent->getRunningCoroutineCount());
+        $this->assertSame($limit, $concurrent->getLength());
+        $this->assertSame($limit, $concurrent->length());
     }
 
     public function testException()
@@ -50,7 +56,7 @@ class ConcurrentTest extends TestCase
         $con = new Concurrent(10, 1);
         $count = 0;
         for ($i = 0; $i < 15; ++$i) {
-            $con->call(function () use (&$count) {
+            $con->create(function () use (&$count) {
                 Coroutine::sleep(0.1);
                 ++$count;
                 throw new \Exception('ddd');
@@ -58,7 +64,7 @@ class ConcurrentTest extends TestCase
         }
 
         $this->assertSame(5, $count);
-        $this->assertSame(10, $con->length());
+        $this->assertSame(10, $con->getRunningCoroutineCount());
     }
 
     protected function getContainer()

@@ -18,6 +18,12 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Swoole\Coroutine\Channel;
 
+/**
+ * @method bool isFull()
+ * @method bool isEmpty()
+ * @method array stats()
+ * @method int length()
+ */
 class Concurrent
 {
     /**
@@ -30,21 +36,49 @@ class Concurrent
      */
     protected $timeout;
 
-    public function __construct($size, $timeout = 10.0)
+    /**
+     * @var int
+     */
+    protected $limit;
+
+    public function __construct(int $limit, float $timeout = 10.0)
     {
-        $this->channel = new Channel($size);
+        $this->limit = $limit;
+        $this->channel = new Channel($limit);
         $this->timeout = $timeout;
     }
 
-    public function length(): int
+    public function __call($name, $arguments)
+    {
+        if (in_array($name, ['isFull', 'isEmpty', 'length', 'stats'])) {
+            return $this->channel->{$name}(...$arguments);
+        }
+    }
+
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    public function getLength(): int
     {
         return $this->channel->length();
     }
 
-    public function call(callable $callable): void
+    public function getRunningCoroutineCount(): int
+    {
+        return $this->getLength();
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
+    }
+
+    public function create(callable $callable): void
     {
         while (true) {
-            if ($this->channel->push(true, $this->timeout)) {
+            if ($this->channel->push(true, $this->getTimeout())) {
                 break;
             }
         }
@@ -62,7 +96,7 @@ class Concurrent
                     }
                 }
             } finally {
-                $this->channel->pop($this->timeout);
+                $this->channel->pop($this->getTimeout());
             }
         });
     }
