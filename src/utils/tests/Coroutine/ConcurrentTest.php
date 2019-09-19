@@ -44,7 +44,7 @@ class ConcurrentTest extends TestCase
             });
         }
 
-        $this->assertFalse($concurrent->isFull());
+        $this->assertTrue($concurrent->isFull());
         $this->assertSame(5, $count);
         $this->assertSame($limit, $concurrent->getRunningCoroutineCount());
         $this->assertSame($limit, $concurrent->getLength());
