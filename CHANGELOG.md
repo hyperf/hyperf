@@ -7,27 +7,96 @@
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
+- [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
+- [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
 
 ## Changed
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
+- [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Generate the singular class of an plural table.
+
+config/container.php
+
+```php
+<?php
+
+use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSourceFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = new Container((new DefinitionSourceFactory(true))());
+
+if (! $container instanceof \Psr\Container\ContainerInterface) {
+    throw new RuntimeException('The dependency injection container is invalid.');
+}
+return ApplicationContext::setContainer($container);
+```
+
+- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` can return JSON formatted data normally.
 
 ## Deleted
 
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+- [#563](https://github.com/hyperf-cloud/hyperf/pull/563) Deleted deprecated constants `Hyperf\Server\ServerInterface::SERVER_TCP`, use `Hyperf\Server\ServerInterface::SERVER_BASE` to instead of it.
 
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
 
-# v1.0.14 - TBD
+# v1.0.16 - TBD
+
+# v1.0.15 - 2019-09-11
+
+## Fixed
+
+- [#534](https://github.com/hyperf-cloud/hyperf/pull/534) Fixed Guzzle HTTP Client does not handle the response status is equal to `-3`;
+- [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
+- [#542](https://github.com/hyperf-cloud/hyperf/pull/542) Fixed `Hyperf\Grpc\Parser::parseResponse` returns a non-standard error code for grpc.
+- [#551](https://github.com/hyperf-cloud/hyperf/pull/551) Fixed infinite loop in grpc client when the server closed the connection.
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Fixed UDP Server does not works.
+
+## Deleted
+
+- [#545](https://github.com/hyperf-cloud/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes. 
+
+## Optimized
+
+- [#549](https://github.com/hyperf-cloud/hyperf/pull/549) Optimized `read` and `write` of `Hyperf\Amqp\Connection\SwooleIO`.
+- [#559](https://github.com/hyperf-cloud/hyperf/pull/559) Optimized `redirect ` of `Hyperf\HttpServer\Response`.
+- [#560](https://github.com/hyperf-cloud/hyperf/pull/560) Optimized class `Hyperf\WebSocketServer\CoreMiddleware`.
+
+## Deprecated
+
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Marked `Hyperf\Server\ServerInterface::SERVER_TCP` as deprecated, will be removed in `v1.1`.
+
+# v1.0.14 - 2019-09-05
+
+## Added
+
+- [#389](https://github.com/hyperf-cloud/hyperf/pull/389) [#419](https://github.com/hyperf-cloud/hyperf/pull/419) [#432](https://github.com/hyperf-cloud/hyperf/pull/432) [#524](https://github.com/hyperf-cloud/hyperf/pull/524) [#531](https://github.com/hyperf-cloud/hyperf/pull/531) Added snowflake component, snowflake is a distributed global unique ID generation algorithm put forward by Twitter, this component implemented this algorithm for easy to use.
+- [#525](https://github.com/hyperf-cloud/hyperf/pull/525) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+
+## Changed
+
+- [#482](https://github.com/hyperf-cloud/hyperf/pull/482) Re-generate the `fillable` argument of Model when use `refresh-fillable` option, at the same time, the command will keep the `fillable` argument as default behaviours.
+- [#501](https://github.com/hyperf-cloud/hyperf/pull/501) When the path argument of Mapping annotation is an empty string, then the path is equal to prefix of Controller annotation.
+- [#513](https://github.com/hyperf-cloud/hyperf/pull/513) Rewrite process name with `app_name`.
+- [#508](https://github.com/hyperf-cloud/hyperf/pull/508) [#526](https://github.com/hyperf-cloud/hyperf/pull/526) When execute `Hyperf\Utils\Coroutine::parentId()` static method in non-coroutine context will return null.
+
+## Fixed
+
+- [#479](https://github.com/hyperf-cloud/hyperf/pull/479) Fixed typehint error when host of Elasticsearch client does not reached.
+- [#514](https://github.com/hyperf-cloud/hyperf/pull/514) Fixed redis auth failed when the password is an empty string.
+- [#527](https://github.com/hyperf-cloud/hyperf/pull/527) Fixed translator cannot translate repeatedly.
 
 # v1.0.13 - 2019-08-28
 
 ## Added
 
-- [#449](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
+- [#428](https://github.com/hyperf-cloud/hyperf/pull/428) Added an independent component [hyperf/translation](https://github.com/hyperf-cloud/translation), forked by illuminate/translation.
 - [#449](https://github.com/hyperf-cloud/hyperf/pull/449) Added standard error code for grpc-server.
 - [#450](https://github.com/hyperf-cloud/hyperf/pull/450) Added comments of static methods for `Hyperf\Database\Schema\Schema`.
 

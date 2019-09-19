@@ -42,7 +42,7 @@ class StartServer extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        \Swoole\Runtime::enableCoroutine(true);
+        \Swoole\Runtime::enableCoroutine(true, swoole_hook_flags());
 
         $this->checkEnvironment($output);
 

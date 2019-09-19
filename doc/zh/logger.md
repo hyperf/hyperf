@@ -58,8 +58,8 @@ class DemoService
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        // default 对应 config/autoload/logger.php 内的 key
-        $this->logger = $loggerFactory->get('default');
+        // 第一个参数对应日志的 name, 第二个参数对应 config/autoload/logger.php 内的 key
+        $this->logger = $loggerFactory->get('log', 'default');
     }
 
     public function method()
@@ -97,7 +97,7 @@ $formatter = new LineFormatter($output, $dateFormat);
 // 将 Formatter 设置到 Handler 里面
 $stream->setFormatter($formatter);
 
-// 讲 Handler 推入到 Channel 的 Handler 队列内
+// 将 Handler 推入到 Channel 的 Handler 队列内
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 

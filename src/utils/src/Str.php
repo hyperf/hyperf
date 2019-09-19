@@ -324,7 +324,7 @@ class Str
     /**
      * Replace the first occurrence of a given value in the string.
      */
-    public static function replaceFirst(string $search, string  $replace, string $subject): string
+    public static function replaceFirst(string $search, string $replace, string $subject): string
     {
         if ($search == '') {
             return $subject;
@@ -342,7 +342,7 @@ class Str
     /**
      * Replace the last occurrence of a given value in the string.
      */
-    public static function replaceLast(string $search, string  $replace, string $subject): string
+    public static function replaceLast(string $search, string $replace, string $subject): string
     {
         $position = strrpos($subject, $search);
 

@@ -17,6 +17,11 @@ use Swoole\Coroutine\Http\Client;
 
 class CoroutineHandlerStub extends CoroutineHandler
 {
+    public function checkStatusCode(Client $client, $request)
+    {
+        return parent::checkStatusCode($client, $request);
+    }
+
     protected function execute(Client $client, $path)
     {
         $client->body = json_encode([

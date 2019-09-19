@@ -17,6 +17,11 @@ use Swoole\Coroutine\Http\Client;
 
 class RingPHPCoroutineHanderStub extends CoroutineHandler
 {
+    public function checkStatusCode($client, $request)
+    {
+        return parent::checkStatusCode($client, $request);
+    }
+
     protected function execute(Client $client, $path)
     {
         $client->body = json_encode([

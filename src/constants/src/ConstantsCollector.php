@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Constants;
 
-use Hyperf\Utils\Traits\Container;
+use Hyperf\Di\MetadataCollector;
 
-class ConstantsCollector
+class ConstantsCollector extends MetadataCollector
 {
-    use Container;
-
     /**
      * @var array
      */

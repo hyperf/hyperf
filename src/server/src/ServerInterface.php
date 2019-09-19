@@ -22,7 +22,7 @@ interface ServerInterface
 
     const SERVER_WEBSOCKET = 2;
 
-    const SERVER_TCP = 3;
+    const SERVER_BASE = 3;
 
     public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher);
 
