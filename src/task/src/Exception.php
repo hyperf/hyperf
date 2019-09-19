@@ -34,7 +34,6 @@ class Exception
     public function __construct(Throwable $throwable)
     {
         $this->class = get_class($throwable);
-
         $this->code = $throwable->getCode();
         $this->message = $throwable->getMessage();
     }

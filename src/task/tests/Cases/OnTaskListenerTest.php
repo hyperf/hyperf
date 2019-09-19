@@ -67,8 +67,8 @@ class OnTaskListenerTest extends TestCase
         $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
-            $this->assertInstanceOf(\RuntimeException::class, $result->data->throwable);
-            $this->assertSame('Foo::exception failed.', $result->data->throwable->getMessage());
+            $this->assertSame(\RuntimeException::class, $result->data->class);
+            $this->assertSame('Foo::exception failed.', $result->data->message);
         });
 
         $listener->process($event);
