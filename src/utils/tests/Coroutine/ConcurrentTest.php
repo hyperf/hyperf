@@ -36,4 +36,20 @@ class ConcurrentTest extends TestCase
         $this->assertSame(5, $count);
         $this->assertSame(10, $con->length());
     }
+
+    public function testException()
+    {
+        $con = new Concurrent(10, 1);
+        $count = 0;
+        for ($i = 0; $i < 15; ++$i) {
+            $con->call(function () use (&$count) {
+                Coroutine::sleep(0.1);
+                ++$count;
+                throw new \Exception('ddd');
+            });
+        }
+
+        $this->assertSame(5, $count);
+        $this->assertSame(10, $con->length());
+    }
 }

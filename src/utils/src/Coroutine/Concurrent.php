@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils\Coroutine;
 
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Swoole\Coroutine\Channel;
 
@@ -47,8 +50,20 @@ class Concurrent
         }
 
         Coroutine::create(function () use ($callable) {
-            $callable();
-            $this->channel->pop($this->timeout);
+            try {
+                $callable();
+            } catch (\Throwable $exception) {
+                if (ApplicationContext::hasContainer()) {
+                    $container = ApplicationContext::getContainer();
+                    if ($container->has(StdoutLoggerInterface::class) && $container->has(FormatterInterface::class)) {
+                        $logger = $container->get(StdoutLoggerInterface::class);
+                        $formatter = $container->get(FormatterInterface::class);
+                        $logger->error($formatter->format($exception));
+                    }
+                }
+            } finally {
+                $this->channel->pop($this->timeout);
+            }
         });
     }
 }
