@@ -10,8 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcClient\Exception;
+namespace HyperfTest\Utils\Stub;
 
-class GrpcClientException extends \RuntimeException
+class FooException extends \Exception
 {
+    public function __construct($code = 0, $message = '')
+    {
+        parent::__construct($message, $code);
+    }
 }

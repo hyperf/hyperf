@@ -48,6 +48,23 @@ return ApplicationContext::setContainer($container);
 
 # v1.0.16 - TBD
 
+## Added
+
+- [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
+- [#580](https://github.com/hyperf-cloud/hyperf/pull/580) Added coroutine concurrency control features.
+
+## Fixed
+
+- [#564](https://github.com/hyperf-cloud/hyperf/pull/564) Fixed typehint error, when `Coroutine\Http2\Client->send` failed.
+- [#567](https://github.com/hyperf-cloud/hyperf/pull/567) Fixed rpc-client `getReturnType` failed, when the name is not equal of service.
+- [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
+- [#579](https://github.com/hyperf-cloud/hyperf/pull/579) Dynamic init snowflake meta data, fixed the problem that when using snowflake in command mode (e.g. `di:init-proxy`) will connect to redis server and wait timeout.
+
+# Changed
+
+- [#583](https://github.com/hyperf-cloud/hyperf/pull/583) Throw `GrpcClientException`, when `BaseClient::start` failed.
+- [#585](https://github.com/hyperf-cloud/hyperf/pull/585) Throw exception when execute failed in task worker.
+
 # v1.0.15 - 2019-09-11
 
 ## Fixed

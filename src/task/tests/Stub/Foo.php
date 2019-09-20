@@ -10,8 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcClient\Exception;
+namespace HyperfTest\Task\Stub;
 
-class GrpcClientException extends \RuntimeException
+class Foo
 {
+    public function get($id)
+    {
+        return $id;
+    }
+
+    public function exception()
+    {
+        throw new \RuntimeException('Foo::exception failed.');
+    }
 }

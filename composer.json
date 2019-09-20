@@ -191,6 +191,7 @@
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
+            "HyperfTest\\ExceptionHandler\\": "src/exception-handler/tests/",
             "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
             "HyperfTest\\GrpcServer\\": "src/grpc-server/tests/",
             "HyperfTest\\Guzzle\\": "src/guzzle/tests/",

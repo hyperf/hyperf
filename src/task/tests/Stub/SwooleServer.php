@@ -10,8 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GrpcClient\Exception;
+namespace HyperfTest\Task\Stub;
 
-class GrpcClientException extends \RuntimeException
+use Hyperf\Server\Server;
+
+class SwooleServer extends Server
 {
 }
