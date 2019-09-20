@@ -47,10 +47,8 @@ trait ValidatesWhenResolvedTrait
 
     /**
      * Get the validator instance for the request.
-     *
-     * @return ValidatorInterface
      */
-    protected function getValidatorInstance()
+    protected function getValidatorInstance(): ValidatorInterface
     {
         return $this->validator();
     }

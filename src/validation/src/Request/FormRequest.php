@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Request;
 use Hyperf\Utils\Context;
 use Hyperf\Validation\Contracts\Validation\Factory as ValidationFactory;
 use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
+use Hyperf\Validation\UnauthorizedException;
 use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
@@ -61,6 +62,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $response = Context::get(ResponseInterface::class);
 
         return $response->withStatus(422);
+    }
+
+    /**
+     * Get the validated data from the request.
+     */
+    public function validated(): array
+    {
+        return $this->getValidatorInstance()->validated();
     }
 
     /**
@@ -167,6 +176,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function failedAuthorization()
     {
-        // throw new AuthorizationException('This action is unauthorized.');
+        throw new UnauthorizedException('This action is unauthorized.');
     }
 }
