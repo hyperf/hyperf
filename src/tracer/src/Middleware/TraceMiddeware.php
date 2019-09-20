@@ -14,6 +14,7 @@ namespace Hyperf\Tracer\Middleware;
 
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Utils\Coroutine;
+use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,7 +54,7 @@ class TraceMiddeware implements MiddlewareInterface
         return $response;
     }
 
-    protected function buildSpan(ServerRequestInterface $request)
+    protected function buildSpan(ServerRequestInterface $request): Span
     {
         $uri = $request->getUri();
         $span = $this->startSpan('request');

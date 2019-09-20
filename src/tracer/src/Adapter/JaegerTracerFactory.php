@@ -15,6 +15,7 @@ namespace Hyperf\Tracer\Adapter;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Jaeger\Config;
+use OpenTracing\Tracer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use const Jaeger\SAMPLER_TYPE_CONST;
@@ -48,7 +49,7 @@ class JaegerTracerFactory implements NamedFactoryInterface
         $this->cache = $cache;
     }
 
-    public function make(string $name): \OpenTracing\Tracer
+    public function make(string $name): Tracer
     {
         $this->prefix = "opentracing.tracer.{$name}.";
         [$name, $options] = $this->parseConfig();

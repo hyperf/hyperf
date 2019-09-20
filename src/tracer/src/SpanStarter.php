@@ -23,9 +23,6 @@ trait SpanStarter
 {
     /**
      * Helper method to start a span while setting context.
-     * @param string $name
-     * @param string $kind
-     * @param array $option
      */
     protected function startSpan(
         string $name,

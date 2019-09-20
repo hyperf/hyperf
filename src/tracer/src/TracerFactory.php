@@ -30,7 +30,7 @@ class TracerFactory
         $this->config = $container->get(ConfigInterface::class);
         $name = $this->config->get('opentracing.default');
 
-        // v1.0 has no default config. Fallback to v1.0 mode for backward compatibility.
+        // v1.0 has no 'default' config. Fallback to v1.0 mode for backward compatibility.
         if (empty($name)) {
             $factory = $container->get(ZipkinTracerFactory::class);
             return $factory->make('');
