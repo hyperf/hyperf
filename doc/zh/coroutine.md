@@ -187,6 +187,26 @@ $result = parallel([
 
 > 注意 `Parallel` 本身也需要在协程内才能使用
 
+### Concurrent 并发控制特性
+
+`Concurrent` 基于 `Swoole\Coroutine\Channel` 实现，用来控制同时执行协程数量的特性。
+
+以下样例，当同时执行 `10` 个任务时，会在循环中阻塞，但只会阻塞当前协程，直到释放出一个位置后，循环继续。
+
+```php
+<?php
+
+use Hyperf\Utils\Coroutine\Concurrent;
+
+$concurrent = new Concurrent(10, 1);
+
+for ($i = 0; $i < 15; ++$i) {
+    $concurrent->create(function () use ($count) {
+        // Do something...
+    });
+}
+```
+
 ### 协程上下文
 
 由于同一个进程内协程间是内存共享的，但协程的执行/切换是非顺序的，也就意味着我们很难掌控当前的协程是哪一个*(事实上可以，但通常没人这么干)*，所以我们需要在发生协程切换时能够同时切换对应的上下文。   
