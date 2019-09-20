@@ -14,12 +14,12 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|     配置      |  类型  |                   默认值                    |        备注        |
-|:-------------:|:------:|:-------------------------------------------:|:------------------:|
-|    driver     | string | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
-|    channel    | string |                    queue                    |      队列前缀      |
-| retry_seconds |  int   |                      5                      | 失败后重新尝试间隔 |
-|   processes   |  int   |                      1                      |     消费进程数     |
+|     配置      |   类型    |                   默认值                    |        备注        |
+|:-------------:|:---------:|:-------------------------------------------:|:------------------:|
+|    driver     |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
+|    channel    |  string   |                    queue                    |      队列前缀      |
+| retry_seconds | int,array |                      5                      | 失败后重新尝试间隔 |
+|   processes   |    int    |                      1                      |     消费进程数     |
 
 ```php
 <?php
@@ -29,6 +29,22 @@ return [
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => 5,
+        'processes' => 1,
+    ],
+];
+
+```
+
+`retry_seconds` 也可以传入数组，根据重试次数相应修改重试时间，例如
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => 'queue',
+        'retry_seconds' => [1, 5, 10, 20],
         'processes' => 1,
     ],
 ];

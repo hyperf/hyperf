@@ -39,7 +39,7 @@ class RedisDriver extends Driver
 
     /**
      * Retry delay time.
-     * @var int
+     * @var array|int
      */
     protected $retrySeconds;
 
