@@ -16,16 +16,20 @@ use GuzzleHttp\Client;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Tracer\Tracing;
+use Hyperf\Utils\Context;
+use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
-use Zipkin\Propagation\Map;
+use const OpenTracing\Formats\TEXT_MAP;
 
 /**
  * @Aspect
  */
 class HttpClientAspect implements AroundInterface
 {
+    use SpanStarter;
+
     public $classes = [
         Client::class . '::requestAsync',
     ];
@@ -33,18 +37,18 @@ class HttpClientAspect implements AroundInterface
     public $annotations = [];
 
     /**
-     * @var Tracing
+     * @var Tracer
      */
-    private $tracing;
+    private $tracer;
 
     /**
      * @var SwitchManager
      */
     private $switchManager;
 
-    public function __construct(Tracing $tracing, SwitchManager $switchManager)
+    public function __construct(Tracer $tracer, SwitchManager $switchManager)
     {
-        $this->tracing = $tracing;
+        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
     }
 
@@ -64,18 +68,20 @@ class HttpClientAspect implements AroundInterface
         $method = $arguments['keys']['method'] ?? 'Null';
         $uri = $arguments['keys']['uri'] ?? 'Null';
         $key = "HTTP Request [{$method}] {$uri}";
-        $span = $this->tracing->span($key);
-        $span->tag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
+        $span = $this->startSpan($key);
+        $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         $appendHeaders = [];
         // Injects the context into the wire
-        $injector = $this->tracing->getPropagation()->getInjector(new Map());
-        $injector($span->getContext(), $appendHeaders);
+        $this->tracer->inject(
+            $span->getContext(),
+            TEXT_MAP,
+            $appendHeaders
+        );
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
-        $span->start();
         $result = $proceedingJoinPoint->process();
         if ($result instanceof ResponseInterface) {
-            $span->tag('status', $result->getStatusCode());
+            $span->setTag('status', $result->getStatusCode());
         }
         $span->finish();
         return $result;

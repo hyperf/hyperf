@@ -2,20 +2,20 @@
 
 ## Added
 
-- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) [#447](https://github.com/hyperf-cloud/hyperf/issues/447) Optimized server and Fixed middleware that user defined does not works.
-- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
-- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and fixed middleware that user defined does not works.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation `@AsyncQueueMessage`.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any `fd` in current server, even the worker process does not hold the `fd`
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
-- [#455](https://github.com/hyperf-cloud/hyperf/pull/455) Added `download()` method of `Hyperf\HttpServer\Contract\ResponseInterface`.
+- [#478](https://github.com/hyperf-cloud/hyperf/pull/441) Adopt opentracing interfaces and support [Jaeger](https://www.jaegertracing.io/).
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
+- [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
 
 ## Changed
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 - [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
-- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Generate the singular class of an plural table.
 
 config/container.php
 
@@ -34,18 +34,61 @@ if (! $container instanceof \Psr\Container\ContainerInterface) {
 return ApplicationContext::setContainer($container);
 ```
 
-- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` can return JSON formatted data normally.
+- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` of Request is available to return JSON formatted data normally.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
 
 ## Deleted
 
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
+- [#563](https://github.com/hyperf-cloud/hyperf/pull/563) Deleted deprecated constants `Hyperf\Server\ServerInterface::SERVER_TCP`, use `Hyperf\Server\ServerInterface::SERVER_BASE` to instead of it.
 
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
 
-# v1.0.15 - TBD
+# v1.0.16 - TBD
+
+## Added
+
+- [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
+- [#580](https://github.com/hyperf-cloud/hyperf/pull/580) Added coroutine concurrency control features.
+
+## Fixed
+
+- [#564](https://github.com/hyperf-cloud/hyperf/pull/564) Fixed typehint error, when `Coroutine\Http2\Client->send` failed.
+- [#567](https://github.com/hyperf-cloud/hyperf/pull/567) Fixed rpc-client `getReturnType` failed, when the name is not equal of service.
+- [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
+- [#579](https://github.com/hyperf-cloud/hyperf/pull/579) Dynamic init snowflake meta data, fixed the problem that when using snowflake in command mode (e.g. `di:init-proxy`) will connect to redis server and wait timeout.
+
+# Changed
+
+- [#583](https://github.com/hyperf-cloud/hyperf/pull/583) Throw `GrpcClientException`, when `BaseClient::start` failed.
+- [#585](https://github.com/hyperf-cloud/hyperf/pull/585) Throw exception when execute failed in task worker.
+
+# v1.0.15 - 2019-09-11
+
+## Fixed
+
+- [#534](https://github.com/hyperf-cloud/hyperf/pull/534) Fixed Guzzle HTTP Client does not handle the response status is equal to `-3`;
+- [#541](https://github.com/hyperf-cloud/hyperf/pull/541) Fixed bug grpc client cannot be set correctly.
+- [#542](https://github.com/hyperf-cloud/hyperf/pull/542) Fixed `Hyperf\Grpc\Parser::parseResponse` returns a non-standard error code for grpc.
+- [#551](https://github.com/hyperf-cloud/hyperf/pull/551) Fixed infinite loop in grpc client when the server closed the connection.
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Fixed UDP Server does not works.
+
+## Deleted
+
+- [#545](https://github.com/hyperf-cloud/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes. 
+
+## Optimized
+
+- [#549](https://github.com/hyperf-cloud/hyperf/pull/549) Optimized `read` and `write` of `Hyperf\Amqp\Connection\SwooleIO`.
+- [#559](https://github.com/hyperf-cloud/hyperf/pull/559) Optimized `redirect ` of `Hyperf\HttpServer\Response`.
+- [#560](https://github.com/hyperf-cloud/hyperf/pull/560) Optimized class `Hyperf\WebSocketServer\CoreMiddleware`.
+
+## Deprecated
+
+- [#558](https://github.com/hyperf-cloud/hyperf/pull/558) Marked `Hyperf\Server\ServerInterface::SERVER_TCP` as deprecated, will be removed in `v1.1`.
 
 # v1.0.14 - 2019-09-05
 

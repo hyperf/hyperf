@@ -33,7 +33,7 @@ class PortTest extends TestCase
 
         $port = Port::build([
             'name' => 'tcp',
-            'type' => Server::SERVER_TCP,
+            'type' => Server::SERVER_BASE,
         ]);
 
         $this->assertSame([
@@ -43,7 +43,7 @@ class PortTest extends TestCase
 
         $port = Port::build([
             'name' => 'tcp',
-            'type' => Server::SERVER_TCP,
+            'type' => Server::SERVER_BASE,
             'settings' => [
                 'open_http2_protocol' => true,
             ],
