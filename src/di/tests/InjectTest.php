@@ -29,7 +29,7 @@ class InjectTest extends TestCase
 {
     public function testInject()
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig(['./Stub'])));
+        $container = new Container(new DefinitionSource([], new ScanConfig([__DIR__.'/Stub'])));
         $demoInject = $container->get(DemoInject::class);
         $this->assertSame(Demo::class, get_class($demoInject->getDemo()));
         $this->assertSame(null, $demoInject->getDemo1());
@@ -39,7 +39,7 @@ class InjectTest extends TestCase
     {
 
         try {
-            $container = new Container(new DefinitionSource([], new ScanConfig(['./Stub','./ExceptionStub'])));
+            $container = new Container(new DefinitionSource([], new ScanConfig([__DIR__.'/Stub',__DIR__.'/ExceptionStub'])));
             $container->get(DemoInjectException::class);
         } catch (\Exception $e) {
             $this->assertSame(true, $e instanceof AnnotationException);
