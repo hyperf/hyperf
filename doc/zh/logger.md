@@ -1,6 +1,6 @@
 # 日志
 
-`hyperf/logger` 组件是基于 [psr/logger](https://github.com/php-fig/logger) 实现的，默认使用 [monolog/monolog](https://github.com/Seldaek/monolog) 作为驱动，在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认使用 `Monolog\Handler\StreamHandler`, 由于 `Swoole` 已经对 `fopen`, `fwrite` 等函数进行了协程化处理，所以只要不将 `useLocking` 参数设置为 `true`，就是协程安全的。
+`hyperf/logger` 组件是基于 [psr/logger](https://github.com/php-fig/log) 实现的，默认使用 [monolog/monolog](https://github.com/Seldaek/monolog) 作为驱动，在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认使用 `Monolog\Handler\StreamHandler`, 由于 `Swoole` 已经对 `fopen`, `fwrite` 等函数进行了协程化处理，所以只要不将 `useLocking` 参数设置为 `true`，就是协程安全的。
 
 ## 安装
 
@@ -58,8 +58,8 @@ class DemoService
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        // default 对应 config/autoload/logger.php 内的 key
-        $this->logger = $loggerFactory->get('default');
+        // 第一个参数对应日志的 name, 第二个参数对应 config/autoload/logger.php 内的 key
+        $this->logger = $loggerFactory->get('log', 'default');
     }
 
     public function method()
@@ -97,7 +97,7 @@ $formatter = new LineFormatter($output, $dateFormat);
 // 将 Formatter 设置到 Handler 里面
 $stream->setFormatter($formatter);
 
-// 讲 Handler 推入到 Channel 的 Handler 队列内
+// 将 Handler 推入到 Channel 的 Handler 队列内
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 

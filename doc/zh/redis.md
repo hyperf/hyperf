@@ -17,7 +17,6 @@ composer require hyperf/redis
 
 ```php
 <?php
-
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -39,15 +38,16 @@ return [
 
 ## 使用
 
-`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接使用\Redis客户端。
+`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接通过依赖注入容器注入 `\Redis` 来使用 Redis 客户端，实际获得的是 `Hyperf\Redis\Redis` 的一个代理对象。
 
 ```php
 <?php
+use Hyperf\Utils\ApplicationContext;
 
-$redis = $this->container->get(\Redis::class);
+$container = ApplicationContext::getContainer();
 
+$redis = $container->get(\Redis::class);
 $result = $redis->keys('*');
-
 ```
 
 ## 多库配置
@@ -97,7 +97,6 @@ return [
 
 ```php
 <?php
-
 use Hyperf\Redis\Redis;
 
 class FooRedis extends Redis
@@ -115,16 +114,17 @@ $result = $redis->keys('*');
 
 ### 使用工厂类
 
-在每个库对应一个静态的场景时，通过代理类是一种很好的区分的方法，但有时候需求可能会更加的动态，这时候我们可以通过 `Hyperf\Redis\RedisFactory` 工厂类来动态的传递 `poolName` 来获得对应的连接池的客户端，而无需为每个库创建代理类，示例如下：
+在每个库对应一个固定的使用场景时，通过代理类是一种很好的区分的方法，但有时候需求可能会更加的动态，这时候我们可以通过 `Hyperf\Redis\RedisFactory` 工厂类来动态的传递 `poolName` 来获得对应的连接池的客户端，而无需为每个库创建代理类，示例如下：
 
 ```php
 <?php
-
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
 
 // 通过 DI 容器获取或直接注入 RedisFactory 类
-$redis = $this->container->get(RedisFactory::class)->get('foo');
-
+$redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 

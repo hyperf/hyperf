@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
@@ -26,9 +27,9 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(array $routes, ServerRequestInterface $request): ResponseInterface
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): ResponseInterface
     {
-        [$controller,] = $this->prepareHandler($routes[1]);
+        [$controller,] = $this->prepareHandler($dispatched->handler->callback);
         if (! $this->container->has($controller)) {
             throw new WebSocketHandeShakeException('Router not exist.');
         }

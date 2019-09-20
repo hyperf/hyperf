@@ -16,9 +16,9 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\JsonRpc\DataFormatter;
@@ -142,7 +142,7 @@ class RpcServiceClientTest extends TestCase
             JsonRpcTransporter::class => function () use ($transporter) {
                 return $transporter;
             },
-        ], [], new Scanner()));
+        ], new ScanConfig()));
         ApplicationContext::setContainer($container);
         return $container;
     }

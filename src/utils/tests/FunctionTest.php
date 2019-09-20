@@ -105,4 +105,9 @@ class FunctionTest extends TestCase
             $this->assertSame(1, $result);
         }
     }
+
+    public function testSwooleHookFlags()
+    {
+        $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
+    }
 }

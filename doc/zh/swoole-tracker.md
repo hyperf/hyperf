@@ -1,6 +1,6 @@
-# Swoole Enterprise
+# Swoole Tracker
 
-[Swoole Enterprise](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品的一整套企业级`PHP`和`Swoole`分析调试工具，更专一、更专业。
+[Swoole Tracker](https://www.swoole-cloud.com/tracker.html) 作为 `Swoole` 官方出品的一整套企业级 `PHP` 和 `Swoole`分析调试工具，更专一、更专业。（曾命名：Swoole Enterprise）
 
 - 时刻掌握应用架构模型
 > 自动发现应用依赖拓扑结构和展示，时刻掌握应用的架构模型
@@ -21,7 +21,7 @@
 
 注册完账户后，进入[控制台](https://www.swoole-cloud.com/dashboard/catdemo/)，并申请试用，下载对应客户端。
 
-相关文档，请移步 [试用文档](https://www.yuque.com/swoole-wiki/try) 或 [详细文档](https://www.yuque.com/swoole-wiki/dam5n7) 
+相关文档，请移步 [试用文档](https://www.kancloud.cn/swoole-inc/ee-base-wiki/1214079) 或 [详细文档](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1213080) 
 
 > 具体文档地址，以从控制台下载的对应客户端中展示的为准。
 
@@ -38,11 +38,11 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-2. `swoole-plus.ini`
+2. `swoole-tracker.ini`
 
 ```bash
-[swoole_plus]
-extension=/opt/swoole_plus.so
+[swoole_tracker]
+extension=/opt/swoole_tracker.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
@@ -98,8 +98,8 @@ WORKDIR /opt/www/.build
 # 这里的地址，以客户端中显示的为准
 RUN ./deploy_env.sh www.swoole-cloud.com \
     && chmod 755 entrypoint.sh \
-    && cp swoole_plus72.so /opt/swoole_plus.so \
-    && cp swoole-plus.ini /etc/php7/conf.d/swoole-plus.ini \
+    && cp swoole_tracker72.so /opt/swoole_tracker.so \
+    && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
     && php -m
 
 WORKDIR /opt/www
@@ -113,23 +113,34 @@ EXPOSE 9501
 ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 ```
 
-### 安装组件
-
-```bash
-composer require hyperf/swoole-enterprise dev-master
-```
-
 ## 使用
 
-在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware` 中间件即可，如下：
+### 不依赖组件
+
+`Swoole Tracker` 的 `v2.5.0` 以上版本支持自动生成应用名称并创建应用，无需修改任何代码。
+
+如果使用 `Swoole` 的 `HttpServer` 那么生成的应用名称为`ip:port`
+
+如果使用 `Swoole` 其他的 `Server` 那么生成的应用名称为`ip(hostname):port`
+
+即安装好 `swoole_tracker` 扩展之后就可以正常使用 `Swoole Tracker` 的功能
+
+### 依赖组件
+
+当你需要自定义应用名称时则需要安装组件，使用 `Composer` 安装：
+
+```bash
+composer require hyperf/swoole-tracker
+```
+
+安装完成后在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleTracker\Middleware\HttpServerMiddleware` 中间件即可，如下：
 
 ```php
 <?php
 
 return [
     'http' => [
-        Hyperf\SwooleEnterprise\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleTracker\Middleware\HttpServerMiddleware::class
     ],
 ];
 ```
-

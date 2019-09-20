@@ -14,13 +14,14 @@ namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
@@ -49,7 +50,7 @@ class Client extends Server
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct('http', CoreMiddleware::class, $container, $container->get(HttpDispatcher::class));
+        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class));
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
@@ -118,9 +119,23 @@ class Client extends Server
          */
         [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
 
-        $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+        /** @var Dispatched $dispatched */
+        $dispatched = $psr7Request->getAttribute(Dispatched::class);
+        $middlewares = $this->middlewares;
+        if ($dispatched->isFound()) {
+            $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registedMiddlewares);
+        }
 
-        return $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        try {
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        } catch (\Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        }
+
+        return $psr7Response;
     }
 
     protected function init(string $method, string $path, array $options = []): array

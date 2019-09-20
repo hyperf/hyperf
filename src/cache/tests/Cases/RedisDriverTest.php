@@ -19,7 +19,9 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
+use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
@@ -138,6 +140,9 @@ class RedisDriverTest extends TestCase
             return new RedisDriver($container, $args['config']);
         });
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
+        $frequency = Mockery::mock(LowFrequencyInterface::class);
+        $frequency->shouldReceive('isLowFrequency')->andReturn(true);
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new RedisPool($container, $args['name']);
         });

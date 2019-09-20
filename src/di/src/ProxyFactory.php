@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Utils\Coroutine\Locker as CoLocker;
 
@@ -40,16 +39,11 @@ class ProxyFactory
         if (isset(static::$map[$identifier])) {
             return static::$map[$identifier];
         }
-        $proxyIdentifier = null;
-        if ($definition instanceof FactoryDefinition) {
-            $proxyIdentifier = $definition->getFactory() . '_' . md5($definition->getFactory());
-            $proxyIdentifier && $definition->setTarget($proxyIdentifier);
-            $this->loadProxy($definition->getName(), $definition->getFactory());
-        } elseif ($definition instanceof ObjectDefinition) {
-            $proxyIdentifier = $definition->getClassName() . '_' . md5($definition->getClassName());
-            $definition->setProxyClassName($proxyIdentifier);
-            $this->loadProxy($definition->getClassName(), $definition->getProxyClassName());
-        }
+
+        $proxyIdentifier = $definition->getClassName() . '_' . md5($definition->getClassName());
+        $definition->setProxyClassName($proxyIdentifier);
+        $this->loadProxy($definition->getClassName(), $definition->getProxyClassName());
+
         static::$map[$identifier] = $definition;
         return static::$map[$identifier];
     }
