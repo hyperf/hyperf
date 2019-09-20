@@ -16,7 +16,9 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
+use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
@@ -90,6 +92,9 @@ class RedisProxyTest extends TestCase
             ],
         ]));
         $pool = new RedisPool($container, 'default');
+        $frequency = Mockery::mock(LowFrequencyInterface::class);
+        $frequency->shouldReceive('isLowFrequency')->andReturn(false);
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
         $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
