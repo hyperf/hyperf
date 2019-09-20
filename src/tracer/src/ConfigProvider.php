@@ -13,8 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
-use Zipkin\Tracing;
-use Zipkin\TracingBuilder;
+use OpenTracing\Tracer;
 
 class ConfigProvider
 {
@@ -22,8 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Tracing::class => \Hyperf\Tracer\Tracing::class,
-                TracingBuilder::class => TracingBuilderFactory::class,
+                Tracer::class => TracerFactory::class,
                 SwitchManager::class => SwitchManagerFactory::class,
                 Client::class => Client::class,
             ],
