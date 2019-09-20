@@ -564,11 +564,7 @@ class Request implements RequestInterface
     {
         return $this->storeParsedData(function () {
             $request = $this->getRequest();
-            $contentType = $request->getHeaderLine('Content-Type');
-            if ($contentType && Str::startsWith($contentType, 'application/json')) {
-                $body = $request->getBody();
-                $data = json_decode($body->getContents(), true) ?? [];
-            } elseif (is_array($request->getParsedBody())) {
+            if (is_array($request->getParsedBody())) {
                 $data = $request->getParsedBody();
             } else {
                 $data = [];

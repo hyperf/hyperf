@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\ModelListener;
 
-use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\ModelListener\Annotation\ModelListener;
+use Hyperf\ModelListener\Collector\ListenerCollector;
 use HyperfTest\ModelListener\Stub\ModelStub;
 use PHPUnit\Framework\TestCase;
 

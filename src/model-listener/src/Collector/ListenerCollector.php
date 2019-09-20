@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelListener\Collector;
 
-class ListenerCollector
+use Hyperf\Di\MetadataCollector;
+
+class ListenerCollector extends MetadataCollector
 {
     /**
      * User exposed listeners.
@@ -21,16 +23,16 @@ class ListenerCollector
      *
      * @var array
      */
-    protected static $listeners = [];
+    protected static $container = [];
 
     /**
      * Register a single listener with the model.
      */
     public static function register(string $model, string $listener): void
     {
-        static::$listeners[$model] = array_unique(
+        static::$container[$model] = array_unique(
             array_merge(
-                static::$listeners[$model] ?? [],
+                static::$container[$model] ?? [],
                 [$listener]
             )
         );
@@ -38,12 +40,12 @@ class ListenerCollector
 
     public static function setListenersForModel(string $model, array $listeners): void
     {
-        static::$listeners[$model] = $listeners;
+        static::$container[$model] = $listeners;
     }
 
     public static function getListenersForModel(string $model): array
     {
-        return static::$listeners[$model] ?? [];
+        return static::$container[$model] ?? [];
     }
 
     /**
@@ -51,6 +53,6 @@ class ListenerCollector
      */
     public static function clearListeners(): void
     {
-        static::$listeners = [];
+        static::$container = [];
     }
 }

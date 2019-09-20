@@ -21,7 +21,6 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.3",
         "hyperf/utils": "~1.1.0",
         "hyperf/etcd": "~1.1.0"
     },

@@ -67,12 +67,7 @@ class CoroutineHandler
 
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
-            return [
-                'status' => null,
-                'reason' => null,
-                'headers' => [],
-                'error' => $ex,
-            ];
+            return $this->getErrorResponse($ex, $btime, $effectiveUrl);
         }
 
         return $this->getResponse($client, $btime, $effectiveUrl);
@@ -116,6 +111,24 @@ class CoroutineHandler
         $client->setHeaders($headers);
     }
 
+    protected function getErrorResponse(\Throwable $throwable, $btime, $effectiveUrl)
+    {
+        return new CompletedFutureArray([
+            'curl' => [
+                'errno' => 0,
+            ],
+            'transfer_stats' => [
+                'total_time' => microtime(true) - $btime,
+            ],
+            'effective_url' => $effectiveUrl,
+            'body' => '',
+            'status' => null,
+            'reason' => null,
+            'headers' => [],
+            'error' => $throwable,
+        ]);
+    }
+
     protected function getResponse(Client $client, $btime, $effectiveUrl)
     {
         return new CompletedFutureArray([
@@ -134,11 +147,16 @@ class CoroutineHandler
         $statusCode = $client->statusCode;
         $errCode = $client->errCode;
 
-        if ($statusCode === -1) {
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
             return new RingException(sprintf('Connection timed out errCode=%s', $errCode));
         }
-        if ($statusCode === -2) {
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
             return new RingException('Request timed out');
+        }
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
+            return new RingException('Server reset');
         }
 
         return true;

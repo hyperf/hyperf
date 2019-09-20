@@ -267,16 +267,15 @@ class Translator implements TranslatorInterface
             $parsed = $this->parseNamespacedSegments($key);
         }
 
+        if (is_null($parsed[0])) {
+            $parsed[0] = '*';
+        }
+
         // Once we have the parsed array of this key's elements, such as its groups
         // and namespace, we will cache each array inside a simple list that has
         // the key and the parsed array for quick look-ups for later requests.
-        $segments = $this->parsed[$key] = $parsed;
 
-        if (is_null($segments[0])) {
-            $segments[0] = '*';
-        }
-
-        return $segments;
+        return $this->parsed[$key] = $parsed;
     }
 
     /**

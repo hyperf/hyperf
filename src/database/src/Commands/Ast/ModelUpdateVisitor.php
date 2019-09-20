@@ -12,24 +12,34 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Database\Commands\ModelOption;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
+    /**
+     * @var array
+     */
     protected $columns = [];
 
-    public function __construct($columns = [])
+    /**
+     * @var ModelOption
+     */
+    protected $option;
+
+    public function __construct($columns = [], ModelOption $option)
     {
         $this->columns = $columns;
+        $this->option = $option;
     }
 
     public function leaveNode(Node $node)
     {
         switch ($node) {
             case $node instanceof Node\Stmt\PropertyProperty:
-                if ($node->name == 'fillable') {
+                if ($node->name == 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
                 } elseif ($node->name == 'casts') {
                     $node = $this->rewriteCasts($node);
