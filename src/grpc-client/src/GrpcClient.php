@@ -168,6 +168,10 @@ class GrpcClient
             $shouldKill = true;
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
+            if ($shouldKill) {
+                // Set `connected` of http client to `false`
+                $this->getHttpClient()->close();
+            }
         }
         // Clear the receive channel map
         if (! empty($this->recvChannelMap)) {
@@ -325,7 +329,7 @@ class GrpcClient
                     }
                 } else {
                     // If no response, then close all the connection.
-                    if (! $this->isConnected() && $this->closeRecv()) {
+                    if ($this->closeRecv()) {
                         break;
                     }
                 }

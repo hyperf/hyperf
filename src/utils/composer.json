@@ -12,6 +12,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "ext-swoole": ">=4.4",
         "doctrine/inflector": "^1.3",
         "hyperf/contract": "~1.1.0"
     },

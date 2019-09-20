@@ -81,7 +81,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             throw new ConnectionException('Connection reconnect failed.');
         }
 
-        if (isset($auth)) {
+        if (isset($auth) && $auth !== '') {
             $redis->auth($auth);
         }
 

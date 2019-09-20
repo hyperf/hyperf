@@ -75,10 +75,11 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
-  * [Swoole Enterprise](zh/swoole-enterprise.md)
+  * [Swoole Tracker](zh/swoole-tracker.md)
   * [定时任务](zh/crontab.md)
   * [Task 机制](zh/task.md)
   * [枚举类](zh/constants.md)
+  * [Snowflake](zh/snowflake.md)
 
 * 应用部署
 
@@ -86,6 +87,7 @@
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
   * [Nginx 反向代理](zh/tutorial/nginx.md)
+  * [阿里云日志服务](zh/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
