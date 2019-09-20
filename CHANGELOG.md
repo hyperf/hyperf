@@ -15,6 +15,7 @@
 # Changed
 
 - [#583](https://github.com/hyperf-cloud/hyperf/pull/583) Throw `GrpcClientException`, when `BaseClient::start` failed.
+- [#585](https://github.com/hyperf-cloud/hyperf/pull/585) Throw exception when execute failed in task worker.
 
 # v1.0.15 - 2019-09-11
 
