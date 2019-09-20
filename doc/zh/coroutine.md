@@ -187,11 +187,11 @@ $result = parallel([
 
 > 注意 `Parallel` 本身也需要在协程内才能使用
 
-### Concurrent 并发控制特性
+### Concurrent 协程运行控制
 
-`Concurrent` 基于 `Swoole\Coroutine\Channel` 实现，用来控制同时执行协程数量的特性。
+`Hyperf\Utils\Coroutine\Concurrent` 基于 `Swoole\Coroutine\Channel` 实现，用来控制一个代码块内同时运行的最大协程数量的特性。
 
-以下样例，当同时执行 `10` 个任务时，会在循环中阻塞，但只会阻塞当前协程，直到释放出一个位置后，循环继续。
+以下样例，当同时执行 `10` 个子协程时，会在循环中阻塞，但只会阻塞当前协程，直到释放出一个位置后，循环继续执行下一个子协程。
 
 ```php
 <?php
