@@ -4,9 +4,10 @@
 
 - [#565](https://github.com/hyperf-cloud/hyperf/pull/565) Added options config for redis.
 
-## Fixed 
+## Fixed
 
 - [#564](https://github.com/hyperf-cloud/hyperf/pull/564) Fixed typehint error, when `Coroutine\Http2\Client->send` failed.
+- [#567](https://github.com/hyperf-cloud/hyperf/pull/567) Fixed rpc-client `getReturnType` failed, when the name is not equal of service.
 - [#571](https://github.com/hyperf-cloud/hyperf/pull/571) Fixed the next request will be effected after using stopPropagation.
 - [#579](https://github.com/hyperf-cloud/hyperf/pull/579) Dynamic init snowflake meta data, fixed the problem that when using snowflake in command mode (e.g. `di:init-proxy`) will connect to redis server and wait timeout.
 
