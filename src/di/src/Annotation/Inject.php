@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\ReflectionManager;
+use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
 
 /**
@@ -27,19 +28,37 @@ class Inject extends AbstractAnnotation
     public $value;
 
     /**
+     * @var boolean
+     */
+    public $require;
+    /**
      * @var PhpDocReader
      */
     private $docReader;
 
     public function __construct($value = null)
     {
+
+        if(!isset($value['require'])){
+            $value['require'] = false;
+        }
         parent::__construct($value);
         $this->docReader = make(PhpDocReader::class);
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
-        $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
-        AnnotationCollector::collectProperty($className, $target, static::class, $this);
+        if($this->require){
+            $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
+        }else{
+            try{
+                $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
+                AnnotationCollector::collectProperty($className, $target, static::class, $this);
+            }catch (AnnotationException $e){
+                $this->value = '';
+            }
+        }
+
     }
 }

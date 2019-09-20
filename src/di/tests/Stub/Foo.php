@@ -24,6 +24,11 @@ class Foo
      */
     public $int;
 
+    /**
+     * Foo constructor.
+     * @param string $string
+     * @param int $int
+     */
     public function __construct(string $string = '', int $int = 1)
     {
         $this->string = $string;
