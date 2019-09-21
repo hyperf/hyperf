@@ -10,8 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Validation\Contracts\Validation;
+namespace Hyperf\Validation\Contract;
 
-interface ImplicitRule extends Rule
+interface ValidatesWhenResolved
 {
+    /**
+     * Validate the given class instance.
+     */
+    public function validateResolved();
 }

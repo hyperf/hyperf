@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Validation\Factory;
-use Hyperf\Validation\PresenceVerifierInterface;
+use Hyperf\Validation\ValidatorFactory;
+use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Validator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +33,7 @@ class ValidationFactoryTest extends TestCase
     public function testMakeMethodCreatesValidValidator()
     {
         $translator = m::mock(TranslatorInterface::class);
-        $factory = new Factory($translator);
+        $factory = new ValidatorFactory($translator);
         $validator = $factory->make(['foo' => 'bar'], ['baz' => 'boom']);
         $this->assertEquals($translator, $validator->getTranslator());
         $this->assertEquals(['foo' => 'bar'], $validator->getData());
@@ -71,7 +71,7 @@ class ValidationFactoryTest extends TestCase
     {
         $validator = m::mock(Validator::class);
         $translator = m::mock(TranslatorInterface::class);
-        $factory = m::mock(Factory::class . '[make]', [$translator]);
+        $factory = m::mock(ValidatorFactory::class . '[make]', [$translator]);
 
         $factory->shouldReceive('make')->once()
             ->with(['foo' => 'bar', 'baz' => 'boom'], ['foo' => 'required'], [], [])
@@ -91,7 +91,7 @@ class ValidationFactoryTest extends TestCase
     {
         unset($_SERVER['__validator.factory']);
         $translator = m::mock(TranslatorInterface::class);
-        $factory = new Factory($translator);
+        $factory = new ValidatorFactory($translator);
         $factory->resolver(function ($translator, $data, $rules) {
             $_SERVER['__validator.factory'] = true;
 
@@ -109,7 +109,7 @@ class ValidationFactoryTest extends TestCase
     public function testValidateMethodCanBeCalledPublicly()
     {
         $translator = m::mock(TranslatorInterface::class);
-        $factory = new Factory($translator);
+        $factory = new ValidatorFactory($translator);
         $factory->extend('foo', function ($attribute, $value, $parameters, $validator) {
             return $validator->validateArray($attribute, $value);
         });

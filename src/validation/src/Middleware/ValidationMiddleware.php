@@ -17,8 +17,9 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
-use Hyperf\Validation\Contracts\Validation\ValidatesWhenResolved;
+use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\UnauthorizedException;
+use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,7 +68,7 @@ class ValidationMiddleware implements MiddlewareInterface
                 $classname = $parameter->getType()->getName();
                 $implements = $this->getClassImplements($classname);
                 if (in_array(ValidatesWhenResolved::class, $implements, true)) {
-                    /** @var ValidatesWhenResolved $parameterInstance */
+                    /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $parameterInstance */
                     $parameterInstance = $this->container->get($classname);
                     $parameterInstance->validateResolved();
                 }

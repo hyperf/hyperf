@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
-use Hyperf\Validation\Contracts\Validation\Rule as RuleContract;
+use Hyperf\Validation\Contract\Rule;
+use Hyperf\Validation\Contract\Rule as RuleContract;
 
 class ClosureValidationRule implements RuleContract
 {

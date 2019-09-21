@@ -21,22 +21,14 @@ class ValidationExceptionHandler extends ExceptionHandler
 {
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        if ($throwable instanceof ValidationException) {
-            $data = json_encode([
-                'code' => $throwable->getCode(),
-                'message' => $throwable->validator->errors()->first(),
-            ], JSON_UNESCAPED_UNICODE);
-
-            $this->stopPropagation();
-
-            return $response->withStatus(500)->withBody(new SwooleStream($data));
-        }
-
-        return $response;
+        $this->stopPropagation();
+        /** @var \Hyperf\Validation\ValidationException $throwable */
+        $body = $throwable->validator->errors()->first();
+        return $response->withStatus($throwable->status)->withBody(new SwooleStream($body));
     }
 
     public function isValid(Throwable $throwable): bool
     {
-        return true;
+        return $throwable instanceof ValidationException;
     }
 }

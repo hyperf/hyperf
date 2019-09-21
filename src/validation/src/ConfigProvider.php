@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation;
 
-use Hyperf\Validation\Contracts\Validation\Factory as FactoryInterface;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface as FactoryInterface;
+use Hyperf\Validation\Contract\PresenceVerifierInterface;
 
 class ConfigProvider
 {
@@ -21,7 +22,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
-                FactoryInterface::class => ValidatorFactory::class,
+                FactoryInterface::class => ValidatorFactoryFactory::class,
             ],
             'scan' => [
                 'paths' => [

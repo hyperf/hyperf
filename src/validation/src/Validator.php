@@ -21,8 +21,9 @@ use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Fluent;
 use Hyperf\Utils\MessageBag;
 use Hyperf\Utils\Str;
-use Hyperf\Validation\Contracts\Validation\ImplicitRule;
-use Hyperf\Validation\Contracts\Validation\Rule as RuleContract;
+use Hyperf\Validation\Contract\ImplicitRule;
+use Hyperf\Validation\Contract\PresenceVerifierInterface;
+use Hyperf\Validation\Contract\Rule as RuleContract;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -90,7 +91,7 @@ class Validator implements ValidatorContract
     /**
      * The Presence Verifier implementation.
      *
-     * @var \Hyperf\Validation\PresenceVerifierInterface
+     * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
     protected $presenceVerifier;
 
@@ -706,8 +707,8 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     * @throws \RuntimeException
-     * @return \Hyperf\Validation\PresenceVerifierInterface
+     *@throws \RuntimeException
+     * @return \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
     public function getPresenceVerifier()
     {
@@ -722,7 +723,7 @@ class Validator implements ValidatorContract
      * Get the Presence Verifier implementation.
      *
      * @throws \RuntimeException
-     * @return \Hyperf\Validation\PresenceVerifierInterface
+     * @return \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
     public function getPresenceVerifierFor(?string $connection)
     {
@@ -954,7 +955,7 @@ class Validator implements ValidatorContract
     /**
      * Validate an attribute using a custom rule object.
      *
-     * @param \Hyperf\Validation\Contracts\Validation\Rule $rule
+     * @param \Hyperf\Validation\Contract\Rule $rule
      * @param mixed $value
      */
     protected function validateUsingCustomRule(string $attribute, $value, $rule)

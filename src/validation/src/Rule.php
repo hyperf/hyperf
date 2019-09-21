@@ -21,20 +21,16 @@ class Rule
 
     /**
      * Get a dimensions constraint builder instance.
-     *
-     * @return \Hyperf\Validation\Rules\Dimensions
      */
-    public static function dimensions(array $constraints = [])
+    public static function dimensions(array $constraints = []): Rules\Dimensions
     {
         return new Rules\Dimensions($constraints);
     }
 
     /**
      * Get a exists constraint builder instance.
-     *
-     * @return \Hyperf\Validation\Rules\Exists
      */
-    public static function exists(string $table, string $column = 'NULL')
+    public static function exists(string $table, string $column = 'NULL'): Rules\Exists
     {
         return new Rules\Exists($table, $column);
     }
@@ -43,9 +39,8 @@ class Rule
      * Get an in constraint builder instance.
      *
      * @param array|Arrayable|string $values
-     * @return \Hyperf\Validation\Rules\In
      */
-    public static function in($values)
+    public static function in($values): Rules\In
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -58,9 +53,8 @@ class Rule
      * Get a not_in constraint builder instance.
      *
      * @param array|Arrayable|string $values
-     * @return \Hyperf\Validation\Rules\NotIn
      */
-    public static function notIn($values)
+    public static function notIn($values): Rules\NotIn
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -73,21 +67,16 @@ class Rule
      * Get a required_if constraint builder instance.
      *
      * @param bool|callable $callback
-     * @return \Hyperf\Validation\Rules\RequiredIf
      */
-    public static function requiredIf($callback)
+    public static function requiredIf($callback): Rules\RequiredIf
     {
         return new Rules\RequiredIf($callback);
     }
 
     /**
      * Get a unique constraint builder instance.
-     *
-     * @param string $table
-     * @param string $column
-     * @return \Hyperf\Validation\Rules\Unique
      */
-    public static function unique(string $table, string $column = 'NULL')
+    public static function unique(string $table, string $column = 'NULL'): Rules\Unique
     {
         return new Rules\Unique($table, $column);
     }

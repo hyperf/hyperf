@@ -10,32 +10,30 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Validation\Contracts\Validation;
+namespace Hyperf\Validation\Contract;
 
-interface Factory
+use Hyperf\Contract\ValidatorInterface;
+
+interface ValidatorFactoryInterface
 {
     /**
      * Create a new Validator instance.
-     *
-     * @return \Hyperf\Contract\ValidatorInterface
      */
-    public function make(array $data, array $rules, array $messages = [], array $customAttributes = []);
+    public function make(array $data, array $rules, array $messages = [], array $customAttributes = []): ValidatorInterface;
 
     /**
      * Register a custom validator extension.
      *
      * @param \Closure|string $extension
-     * @param null|string $message
      */
-    public function extend(string $rule, $extension, $message = null);
+    public function extend(string $rule, $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator extension.
      *
      * @param \Closure|string $extension
-     * @param null|string $message
      */
-    public function extendImplicit(string $rule, $extension, $message = null);
+    public function extendImplicit(string $rule, $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator message replacer.
