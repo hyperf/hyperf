@@ -15,7 +15,7 @@ namespace Hyperf\Utils\Coroutine;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
@@ -32,20 +32,20 @@ class Concurrent
     protected $channel;
 
     /**
-     * @var float
-     */
-    protected $timeout;
-
-    /**
      * @var int
      */
     protected $limit;
 
-    public function __construct(int $limit, float $timeout = 10.0)
+    /**
+     * @var Channel
+     */
+    protected $wait;
+
+    public function __construct(int $limit)
     {
         $this->limit = $limit;
         $this->channel = new Channel($limit);
-        $this->timeout = $timeout;
+        $this->wait = new Channel(1);
     }
 
     public function __call($name, $arguments)
@@ -70,18 +70,9 @@ class Concurrent
         return $this->getLength();
     }
 
-    public function getTimeout(): float
-    {
-        return $this->timeout;
-    }
-
     public function create(callable $callable): void
     {
-        while (true) {
-            if ($this->channel->push(true, $this->getTimeout())) {
-                break;
-            }
-        }
+        $this->channel->push(true);
 
         Coroutine::create(function () use ($callable) {
             try {
@@ -96,8 +87,16 @@ class Concurrent
                     }
                 }
             } finally {
-                $this->channel->pop($this->getTimeout());
+                $this->channel->pop();
+                if ($this->channel->isEmpty() && $this->wait->isEmpty()) {
+                    $this->wait->push(true);
+                }
             }
         });
+    }
+
+    public function wait(): void
+    {
+        $this->wait->pop();
     }
 }

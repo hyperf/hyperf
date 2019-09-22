@@ -49,6 +49,10 @@ class ConcurrentTest extends TestCase
         $this->assertSame($limit, $concurrent->getRunningCoroutineCount());
         $this->assertSame($limit, $concurrent->getLength());
         $this->assertSame($limit, $concurrent->length());
+
+        $concurrent->wait();
+        $this->assertTrue($concurrent->isEmpty());
+        $this->assertSame(15, $count);
     }
 
     public function testException()
@@ -65,6 +69,10 @@ class ConcurrentTest extends TestCase
 
         $this->assertSame(5, $count);
         $this->assertSame(10, $con->getRunningCoroutineCount());
+
+        $con->wait();
+        $this->assertTrue($con->isEmpty());
+        $this->assertSame(15, $count);
     }
 
     protected function getContainer()
