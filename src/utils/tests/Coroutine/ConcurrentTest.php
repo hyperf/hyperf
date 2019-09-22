@@ -65,6 +65,10 @@ class ConcurrentTest extends TestCase
 
         $this->assertSame(5, $count);
         $this->assertSame(10, $con->getRunningCoroutineCount());
+
+        while (! $con->isEmpty()) {
+            Coroutine::sleep(0.1);
+        }
     }
 
     protected function getContainer()
