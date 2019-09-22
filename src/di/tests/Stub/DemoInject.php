@@ -10,19 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-
 namespace HyperfTest\Di\Stub;
-
 
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * Class DemoInject
- * @package HyperfTest\Di\Stub
- */
 class DemoInject
 {
-
     /**
      * @Inject
      * @var Demo
@@ -35,7 +28,6 @@ class DemoInject
      */
     private $demo1;
 
-
     public function getDemo()
     {
         return $this->demo;
@@ -45,5 +37,4 @@ class DemoInject
     {
         return $this->demo1;
     }
-
 }

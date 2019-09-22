@@ -12,27 +12,21 @@ declare(strict_types=1);
 
 namespace HyperfTest\Di\ExceptionStub;
 
-
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * Class DemoInject
- * @package HyperfTest\Di\Stub
+ * Class DemoInject.
  */
 class DemoInjectException
 {
-
     /**
      * @Inject(require=true)
      * @var Demo1
      */
     private $demo;
 
-
     public function getDemo()
     {
         return $this->demo;
     }
-
-
 }
