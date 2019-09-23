@@ -57,8 +57,9 @@ abstract class Driver implements DriverInterface
             throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
         }
 
-        if ($concurrent = $config['concurrent'] ?? null) {
-            $this->concurrent = new Concurrent($concurrent['limit'] ?? 10, $concurrent['timeout'] ?? 10);
+        $concurrentLimit = $config['concurrent']['limit'] ?? null;
+        if ($concurrentLimit && is_numeric($concurrentLimit)) {
+            $this->concurrent = new Concurrent((int) $concurrentLimit);
         }
     }
 
@@ -83,12 +84,14 @@ abstract class Driver implements DriverInterface
 
                     $this->ack($data);
                 } catch (\Throwable $ex) {
-                    if ($message->attempts() && $this->remove($data)) {
-                        $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
-                        $this->retry($message);
-                    } else {
-                        $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
-                        $this->fail($data);
+                    if (isset($message) && isset($data)) {
+                        if ($message->attempts() && $this->remove($data)) {
+                            $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
+                            $this->retry($message);
+                        } else {
+                            $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
+                            $this->fail($data);
+                        }
                     }
                 }
             };
