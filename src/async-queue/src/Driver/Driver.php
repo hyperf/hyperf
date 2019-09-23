@@ -67,14 +67,14 @@ abstract class Driver implements DriverInterface
         $this->container->get(Environment::class)->setAsyncQueue(true);
 
         while (true) {
-            [$data, $message] = $this->pop();
-
-            if ($data === false) {
-                continue;
-            }
-
-            $callback = function () use ($message, $data) {
+            $callback = function () {
                 try {
+                    [$data, $message] = $this->pop();
+
+                    if ($data === false) {
+                        return;
+                    }
+
                     if ($message instanceof MessageInterface) {
                         $this->event && $this->event->dispatch(new BeforeHandle($message));
                         $message->job()->handle();
