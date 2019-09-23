@@ -20,7 +20,6 @@ return [
         'processes' => 1,
         'concurrent' => [
             'limit' => 10,
-            'timeout' => 10.0,
         ],
     ],
 ];
