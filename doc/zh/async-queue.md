@@ -1,6 +1,6 @@
 # 异步队列
 
-异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种 `异步处理` 和 `异步延时处理` 的能力，并不能严格地保证消息的持久化和支持 `ACK 应答机制`。
+异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种 `异步处理` 和 `异步延时处理` 的能力，并 **不能** 严格地保证消息的持久化和 **不支持** ACK 应答机制。
 
 ## 安装
 
@@ -70,9 +70,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 }
 ```
 
-### 发布消息
+### 生产消息
 
-首先我们定义一个消息，如下
+首先我们定义一个消息类，如下
 
 ```php
 <?php
@@ -101,7 +101,7 @@ class ExampleJob extends Job
 }
 ```
 
-发布消息
+生产消息
 
 ```php
 <?php
@@ -127,7 +127,7 @@ class QueueService
     }
 
     /**
-     * 投递消息.
+     * 生产消息.
      * @param $params 数据
      * @param int $delay 延时时间 单位秒
      */
