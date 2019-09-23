@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Contract;
 
-use Hyperf\Validation\Contract\Rule;
-
 interface ImplicitRule extends Rule
 {
 }

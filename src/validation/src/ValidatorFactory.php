@@ -16,8 +16,8 @@ use Closure;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Utils\Str;
-use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Container\ContainerInterface;
 
 class ValidatorFactory implements ValidatorFactoryInterface

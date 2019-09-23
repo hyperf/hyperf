@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Validation\ValidatorFactory;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Validator;
+use Hyperf\Validation\ValidatorFactory;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 

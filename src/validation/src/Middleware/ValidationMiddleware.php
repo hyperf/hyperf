@@ -19,17 +19,14 @@ use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\UnauthorizedException;
-use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface as HyperfResponseInterface;
 
 class ValidationMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var \Psr\Container\ContainerInterface
      */

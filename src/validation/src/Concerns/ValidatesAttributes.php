@@ -37,7 +37,6 @@ trait ValidatesAttributes
      * Validate that an attribute was "accepted".
      *
      * This validation rule implies the attribute is "required".
-     *
      * @param mixed $value
      */
     public function validateAccepted(string $attribute, $value): bool

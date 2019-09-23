@@ -224,7 +224,7 @@ class Validator implements ValidatorContract
      *
      * @param mixed $method
      * @param mixed $parameters
-     * @throws \BadMethodCallException
+     * @throws \BadMethodCallException when method does not exist
      */
     public function __call($method, $parameters)
     {
@@ -708,9 +708,8 @@ class Validator implements ValidatorContract
      * Get the Presence Verifier implementation.
      *
      *@throws \RuntimeException
-     * @return \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
-    public function getPresenceVerifier()
+    public function getPresenceVerifier(): PresenceVerifierInterface
     {
         if (! isset($this->presenceVerifier)) {
             throw new RuntimeException('Presence verifier has not been set.');
@@ -723,9 +722,8 @@ class Validator implements ValidatorContract
      * Get the Presence Verifier implementation.
      *
      * @throws \RuntimeException
-     * @return \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
-    public function getPresenceVerifierFor(?string $connection)
+    public function getPresenceVerifierFor(?string $connection): PresenceVerifierInterface
     {
         return tap($this->getPresenceVerifier(), function ($verifier) use ($connection) {
             $verifier->setConnection($connection);
@@ -954,11 +952,9 @@ class Validator implements ValidatorContract
 
     /**
      * Validate an attribute using a custom rule object.
-     *
-     * @param \Hyperf\Validation\Contract\Rule $rule
      * @param mixed $value
      */
-    protected function validateUsingCustomRule(string $attribute, $value, $rule)
+    protected function validateUsingCustomRule(string $attribute, $value, RuleContract $rule)
     {
         if (! $rule->passes($attribute, $value)) {
             $this->failedRules[$attribute][get_class($rule)] = [];
@@ -1012,12 +1008,11 @@ class Validator implements ValidatorContract
      * Get a rule and its parameters for a given attribute.
      *
      * @param array|string $rules
-     * @return null|array
      */
-    protected function getRule(string $attribute, $rules)
+    protected function getRule(string $attribute, $rules): ?array
     {
         if (! array_key_exists($attribute, $this->rules)) {
-            return;
+            return null;
         }
 
         $rules = (array) $rules;
@@ -1029,12 +1024,11 @@ class Validator implements ValidatorContract
                 return [$rule, $parameters];
             }
         }
+        return null;
     }
 
     /**
      * Get the value of a given attribute.
-     *
-     * @return mixed
      */
     protected function getValue(string $attribute)
     {
@@ -1043,10 +1037,8 @@ class Validator implements ValidatorContract
 
     /**
      * Call a custom validator extension.
-     *
-     * @return null|bool
      */
-    protected function callExtension(string $rule, array $parameters)
+    protected function callExtension(string $rule, array $parameters): ?bool
     {
         $callback = $this->extensions[$rule];
 
@@ -1060,10 +1052,8 @@ class Validator implements ValidatorContract
 
     /**
      * Call a class based validator extension.
-     *
-     * @return bool
      */
-    protected function callClassBasedExtension(string $callback, array $parameters)
+    protected function callClassBasedExtension(string $callback, array $parameters): bool
     {
         [$class, $method] = Str::parseCallback($callback, 'validate');
 
