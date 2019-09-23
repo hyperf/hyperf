@@ -36,16 +36,10 @@ class Concurrent
      */
     protected $limit;
 
-    /**
-     * @var Channel
-     */
-    protected $wait;
-
     public function __construct(int $limit)
     {
         $this->limit = $limit;
         $this->channel = new Channel($limit);
-        $this->wait = new Channel(1);
     }
 
     public function __call($name, $arguments)
@@ -88,15 +82,7 @@ class Concurrent
                 }
             } finally {
                 $this->channel->pop();
-                if ($this->channel->isEmpty() && $this->wait->isEmpty()) {
-                    $this->wait->push(true);
-                }
             }
         });
-    }
-
-    public function wait(): void
-    {
-        $this->wait->pop();
     }
 }
