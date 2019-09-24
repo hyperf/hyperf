@@ -25,6 +25,7 @@ class SwitchManager
             'guzzle' => false,
             'redis' => false,
             'db' => false,
+            // beta feature, please donot enable 'method' in production environment
             'method' => false,
         ];
 
