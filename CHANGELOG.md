@@ -10,6 +10,7 @@
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
 - [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
+- [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
 
 ## Changed
 
