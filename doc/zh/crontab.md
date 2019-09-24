@@ -117,7 +117,7 @@ return [
 ];
 ```
 
-##### Worker 进程执行策略
+##### Worker 进程执行策略 [默认]
 
 策略类：`Hyperf\Crontab\Strategy\WorkerStrategy`   
 
@@ -127,7 +127,7 @@ return [
 
 策略类：`Hyperf\Crontab\Strategy\TaskWorkerStrategy`   
 
-默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `TaskWorker` 进程中，由各个 `TaskWorker` 进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
+此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `TaskWorker` 进程中，由各个 `TaskWorker` 进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
 
 ##### 多进程执行策略
 

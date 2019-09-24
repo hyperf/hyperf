@@ -40,6 +40,7 @@
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
             <directory suffix="Test.php">./src/testing/tests</directory>
+            <directory suffix="Test.php">./src/tracer/tests</directory>
             <directory suffix="Test.php">./src/translation/tests</directory>
             <directory suffix="Test.php">./src/utils/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>

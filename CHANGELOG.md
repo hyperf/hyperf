@@ -2,21 +2,24 @@
 
 ## Added
 
-- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) [#447](https://github.com/hyperf-cloud/hyperf/issues/447) Optimized server and Fixed middleware that user defined does not works.
-- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation AsyncQueueMessage.
-- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any fd in current server, even the worker process does not hold the fd
+- [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Optimized server and fixed middleware that user defined does not works.
+- [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation `@AsyncQueueMessage`.
+- [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any `fd` in current server, even the worker process does not hold the `fd`
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
+- [#478](https://github.com/hyperf-cloud/hyperf/pull/441) Adopt opentracing interfaces and support [Jaeger](https://www.jaegertracing.io/).
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Added option `table-mapping` for command `db:model`.
 - [#555](https://github.com/hyperf-cloud/hyperf/pull/555) Added global function `swoole_hook_flags` to get the hook flags by constant `SWOOLE_HOOK_FLAGS`, and you could define in `bin/hyperf.php` via `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` to define the constant.
+- [#596](https://github.com/hyperf-cloud/hyperf/pull/596) Added `required` parameter for `@Inject`, if you define `@Inject(required=false)` annotation to a property, therefore the DI container will not throw an `Hyperf\Di\Exception\NotFoundException` when the dependency of the property does not exists, the default value of `required` parameter is `true`. In constructor injection mode, you could define the default value of the parameter of the `__construct` to `null`, this means this parameter is nullable and will not throw the exception too.
+- [#597](https://github.com/hyperf-cloud/hyperf/pull/597) Added concurrent for async-queue.
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
 
 ## Changed
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 - [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
-- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) Generate the singular class of an plural table.
+- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 
 config/container.php
 
@@ -35,7 +38,8 @@ if (! $container instanceof \Psr\Container\ContainerInterface) {
 return ApplicationContext::setContainer($container);
 ```
 
-- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` can return JSON formatted data normally.
+- [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` of Request is available to return JSON formatted data normally.
+- [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
 
 ## Deleted
 

@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\AsyncQueue;
 
+use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\AsyncQueue\Driver\RedisDriver;
 use Hyperf\AsyncQueue\Message;
+use Hyperf\Di\Container;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Hyperf\Utils\Str;
@@ -23,7 +26,6 @@ use HyperfTest\AsyncQueue\Stub\DemoModelMeta;
 use HyperfTest\AsyncQueue\Stub\Redis;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -113,10 +115,15 @@ class RedisDriverTest extends TestCase
     protected function getContainer()
     {
         $packer = new PhpSerializerPacker();
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn($packer);
         $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
         $container->shouldReceive('get')->once()->with(\Redis::class)->andReturn(new Redis());
+        $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new ChannelConfig($args['channel']);
+        });
+
+        ApplicationContext::setContainer($container);
 
         return $container;
     }

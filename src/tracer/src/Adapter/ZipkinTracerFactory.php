@@ -10,32 +10,53 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Tracer;
+namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
+use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Zipkin\Endpoint;
 use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
+use ZipkinOpenTracing\Tracer;
 
-class TracingBuilderFactory
+class ZipkinTracerFactory implements NamedFactoryInterface
 {
     /**
      * @var ConfigInterface
      */
     private $config;
 
-    public function __invoke(ContainerInterface $container): TracingBuilder
+    /**
+     * @var HttpClientFactory
+     */
+    private $clientFactory;
+
+    /**
+     * @var string
+     */
+    private $prefix = 'opentracing.zipkin.';
+
+    public function __construct(ConfigInterface $config, HttpClientFactory $clientFactory)
     {
-        $this->config = $container->get(ConfigInterface::class);
+        $this->config = $config;
+        $this->clientFactory = $clientFactory;
+    }
+
+    public function make(string $name): \OpenTracing\Tracer
+    {
+        if (! empty($name)) {
+            $this->prefix = "opentracing.tracer.{$name}.";
+        }
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($container->get(HttpClientFactory::class), $options);
-        return TracingBuilder::create()
+        $reporter = new Http($this->clientFactory, $options);
+        $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
-            ->havingReporter($reporter);
+            ->havingReporter($reporter)
+            ->build();
+        return new Tracer($tracing);
     }
 
     private function parseConfig(): array
@@ -57,7 +78,6 @@ class TracingBuilderFactory
 
     private function getConfig(string $key, $default)
     {
-        $prefix = 'opentracing.zipkin.';
-        return $this->config->get($prefix . $key, $default);
+        return $this->config->get($this->prefix . $key, $default);
     }
 }
