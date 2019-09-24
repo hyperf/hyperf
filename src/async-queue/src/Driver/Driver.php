@@ -67,35 +67,35 @@ abstract class Driver implements DriverInterface
     {
         $this->container->get(Environment::class)->setAsyncQueue(true);
 
-        while (true) {
-            $callback = function () {
-                try {
-                    [$data, $message] = $this->pop();
+        $callback = function () {
+            try {
+                [$data, $message] = $this->pop();
 
-                    if ($data === false) {
-                        return;
-                    }
+                if ($data === false) {
+                    return;
+                }
 
-                    if ($message instanceof MessageInterface) {
-                        $this->event && $this->event->dispatch(new BeforeHandle($message));
-                        $message->job()->handle();
-                        $this->event && $this->event->dispatch(new AfterHandle($message));
-                    }
+                if ($message instanceof MessageInterface) {
+                    $this->event && $this->event->dispatch(new BeforeHandle($message));
+                    $message->job()->handle();
+                    $this->event && $this->event->dispatch(new AfterHandle($message));
+                }
 
-                    $this->ack($data);
-                } catch (\Throwable $ex) {
-                    if (isset($message) && isset($data)) {
-                        if ($message->attempts() && $this->remove($data)) {
-                            $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
-                            $this->retry($message);
-                        } else {
-                            $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
-                            $this->fail($data);
-                        }
+                $this->ack($data);
+            } catch (\Throwable $ex) {
+                if (isset($message, $data)) {
+                    if ($message->attempts() && $this->remove($data)) {
+                        $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
+                        $this->retry($message);
+                    } else {
+                        $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
+                        $this->fail($data);
                     }
                 }
-            };
+            }
+        };
 
+        while (true) {
             if ($this->concurrent instanceof Concurrent) {
                 $this->concurrent->create($callback);
             } else {

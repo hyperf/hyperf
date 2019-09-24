@@ -44,12 +44,10 @@ class DriverTest extends TestCase
 
         $driver = new RedisDriverStub($container, ['concurrent' => [
             'limit' => 100,
-            'timeout' => 10.0,
         ]]);
 
         $this->assertInstanceOf(Concurrent::class, $driver->getConcurrent());
         $this->assertSame(100, $driver->getConcurrent()->getLimit());
-        $this->assertSame(10.0, $driver->getConcurrent()->getTimeout());
     }
 
     protected function getContainer()
