@@ -39,7 +39,7 @@ class RedisDriver extends Driver
 
     /**
      * Retry delay time.
-     * @var int
+     * @var array|int
      */
     protected $retrySeconds;
 
@@ -157,7 +157,23 @@ class RedisDriver extends Driver
     protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $this->retrySeconds, $data) > 0;
+
+        $delay = time() + $this->getRetrySeconds($message->getAttempts());
+
+        return $this->redis->zAdd($this->channel->getDelayed(), $delay, $data) > 0;
+    }
+
+    protected function getRetrySeconds(int $attempts): int
+    {
+        if (! is_array($this->retrySeconds)) {
+            return $this->retrySeconds;
+        }
+
+        if (empty($this->retrySeconds)) {
+            return 10;
+        }
+
+        return $this->retrySeconds[$attempts - 1] ?? end($this->retrySeconds);
     }
 
     /**

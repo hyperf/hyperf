@@ -46,6 +46,11 @@ class Message implements MessageInterface, Serializable
         return false;
     }
 
+    public function getAttempts(): int
+    {
+        return $this->attempts;
+    }
+
     public function serialize()
     {
         if ($this->job instanceof CompressInterface) {
