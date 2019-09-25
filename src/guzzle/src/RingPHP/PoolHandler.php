@@ -35,7 +35,6 @@ class PoolHandler extends CoroutineHandler
         $method = $request['http_method'] ?? 'GET';
         $scheme = $request['scheme'] ?? 'http';
         $ssl = $scheme === 'https';
-        $uri = $request['uri'] ?? '/';
         $body = $request['body'] ?? '';
         $effectiveUrl = Core::url($request);
         $params = parse_url($effectiveUrl);
