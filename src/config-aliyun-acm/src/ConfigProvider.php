@@ -20,9 +20,11 @@ class ConfigProvider
             'dependencies' => [
                 ClientInterface::class => Client::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

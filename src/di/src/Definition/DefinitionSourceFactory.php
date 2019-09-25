@@ -53,15 +53,26 @@ class DefinitionSourceFactory
             $serverDependencies = array_replace($serverDependencies, $definitions['dependencies'] ?? []);
         }
 
-        $scanDirs = $configFromProviders['scan']['paths'] ?? [];
-        $ignoreAnnotations = [];
-        $collectors = $configFromProviders['scan']['collectors'] ?? [];
+        $scanDirs = $configFromProviders['annotations']['scan']['paths'] ?? [];
+        $ignoreAnnotations = $configFromProviders['annotations']['scan']['ignore_annotations'] ?? [];
+        $collectors = $configFromProviders['annotations']['scan']['collectors'] ?? [];
 
+        // Load the config/autoload/annotations.php and merge the config
         if (file_exists($configDir . '/autoload/annotations.php')) {
             $annotations = include $configDir . '/autoload/annotations.php';
             $scanDirs = array_merge($scanDirs, $annotations['scan']['paths'] ?? []);
-            $ignoreAnnotations = $annotations['scan']['ignore_annotations'] ?? [];
+            $ignoreAnnotations = array_merge($ignoreAnnotations, $annotations['scan']['ignore_annotations'] ?? []);
             $collectors = array_merge($collectors, $annotations['scan']['collectors'] ?? []);
+        }
+
+        // Load the config/config.php and merge the config
+        if (file_exists($configDir . '/config.php')) {
+            $configContent = include $configDir . '/config.php';
+            if (isset($configContent['annotations'])) {
+                $scanDirs = array_merge($scanDirs, $configContent['annotations']['scan']['paths'] ?? []);
+                $ignoreAnnotations = array_merge($ignoreAnnotations, $configContent['annotations']['scan']['ignore_annotations'] ?? []);
+                $collectors = array_merge($collectors, $configContent['annotations']['scan']['collectors'] ?? []);
+            }
         }
 
         $scanConfig = new ScanConfig($scanDirs, $ignoreAnnotations, $collectors);
