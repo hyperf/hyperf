@@ -60,7 +60,7 @@ use Swoole\Http\Request;
 use Swoole\Server;
 use Swoole\Websocket\Frame;
 
-class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
+class WebSocketController extends Controller implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     public function onMessage(Server $server, Frame $frame): void
     {
