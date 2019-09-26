@@ -91,6 +91,7 @@ abstract class AbstractProcess implements ProcessInterface
                 $this->handle();
 
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                $this->process->exit(0);
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
