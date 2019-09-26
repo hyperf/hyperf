@@ -26,11 +26,11 @@ class ConfigProviderTest extends TestCase
         $dir = str_replace('/tests', '/src', __DIR__);
 
         $this->assertSame([
-
-
-            'scan' => [
-                'paths' => [
-                    $dir,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        $dir,
+                    ],
                 ],
             ],
             'publish' => [
