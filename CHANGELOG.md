@@ -70,6 +70,7 @@ Now:
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 - [#563](https://github.com/hyperf-cloud/hyperf/pull/563) Deleted deprecated constants `Hyperf\Server\ServerInterface::SERVER_TCP`, use `Hyperf\Server\ServerInterface::SERVER_BASE` to instead of it.
 - [#612](https://github.com/hyperf-cloud/hyperf/pull/612) Deleted useless `$url` for RingPHP Handlers.
+- [#616](https://github.com/hyperf-cloud/hyperf/pull/616) Deleted useless code of guzzle.
 
 ## Fixed
 
