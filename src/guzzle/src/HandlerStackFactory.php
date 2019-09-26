@@ -20,6 +20,9 @@ use Swoole\Coroutine;
 
 class HandlerStackFactory
 {
+    /**
+     * @var array
+     */
     protected $option = [
         'min_connections' => 1,
         'max_connections' => 30,
@@ -27,10 +30,16 @@ class HandlerStackFactory
         'max_idle_time' => 60,
     ];
 
+    /**
+     * @var array
+     */
     protected $middlewares = [
         'retry' => [RetryMiddleware::class, [1, 10]],
     ];
 
+    /**
+     * @var bool
+     */
     protected $usePoolHandler = false;
 
     public function __construct()
@@ -40,7 +49,7 @@ class HandlerStackFactory
         }
     }
 
-    public function create(array $option = [], array $middlewares = [])
+    public function create(array $option = [], array $middlewares = []): HandlerStack
     {
         $handler = null;
         $option = array_merge($this->option, $option);
