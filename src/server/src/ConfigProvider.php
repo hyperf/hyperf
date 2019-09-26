@@ -23,14 +23,14 @@ class ConfigProvider
             'dependencies' => [
                 SwooleServer::class => SwooleServerFactory::class,
             ],
-            'commands' => [
-            ],
             'listeners' => [
                 InitProcessTitleListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

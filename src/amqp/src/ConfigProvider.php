@@ -25,11 +25,11 @@ class ConfigProvider
                 Packer::class => JsonPacker::class,
                 Consumer::class => ConsumerFactory::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

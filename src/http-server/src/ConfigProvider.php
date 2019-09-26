@@ -26,11 +26,11 @@ class ConfigProvider
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

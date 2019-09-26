@@ -50,9 +50,11 @@ class ConfigProvider
                 RollbackCommand::class,
                 StatusCommand::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [
