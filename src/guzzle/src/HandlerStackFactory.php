@@ -20,14 +20,15 @@ use Swoole\Coroutine;
 
 class HandlerStackFactory
 {
-    protected $defaultOption = [
+    protected $option = [
         'min_connections' => 1,
         'max_connections' => 30,
         'wait_timeout' => 3.0,
         'max_idle_time' => 60,
-        'middleware' => [
-            'retry' => [RetryMiddleware::class, [1, 10]],
-        ],
+    ];
+
+    protected $middlewares = [
+        'retry' => [RetryMiddleware::class, [1, 10]],
     ];
 
     protected $usePoolHandler = false;
@@ -39,10 +40,11 @@ class HandlerStackFactory
         }
     }
 
-    public function create(array $option = [])
+    public function create(array $option = [], array $middlewares = [])
     {
         $handler = null;
-        $option = array_merge($this->defaultOption, $option);
+        $option = array_merge($this->option, $option);
+        $middlewares = array_merge($this->middlewares, $middlewares);
 
         if (Coroutine::getCid() > 0) {
             if ($this->usePoolHandler) {
@@ -56,7 +58,7 @@ class HandlerStackFactory
 
         $stack = HandlerStack::create($handler);
 
-        foreach ($option['middleware'] ?? [] as $key => $middleware) {
+        foreach ($middlewares as $key => $middleware) {
             if (is_array($middleware)) {
                 [$class, $arguments] = $middleware;
                 $middleware = new $class(...$arguments);

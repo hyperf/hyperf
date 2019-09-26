@@ -17,6 +17,7 @@ use Hyperf\Di\Container;
 use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Guzzle\PoolHandler;
+use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -69,9 +70,42 @@ class HandlerStackFactoryTest extends TestCase
 
         $property = $ref->getProperty('stack');
         $property->setAccessible(true);
-        foreach ($property->getValue($stack) as $stack) {
-            $this->assertTrue(in_array($stack[1], ['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry']));
-        }
+        $items = array_column($property->getValue($stack), 1);
+
+        $this->assertEquals(['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry'], $items);
+    }
+
+    public function testPoolHandlerOption()
+    {
+        $this->setContainer();
+
+        $factory = new HandlerStackFactory();
+        $stack = $factory->create(['max_connections' => 50]);
+
+        $ref = new \ReflectionClass($stack);
+        $handler = $ref->getProperty('handler');
+        $handler->setAccessible(true);
+        $handler = $handler->getValue($stack);
+
+        $ref = new \ReflectionClass($handler);
+        $option = $ref->getProperty('option');
+        $option->setAccessible(true);
+
+        $this->assertSame(50, $option->getValue($handler)['max_connections']);
+    }
+
+    public function testPoolHandlerMiddleware()
+    {
+        $this->setContainer();
+
+        $factory = new HandlerStackFactory();
+        $stack = $factory->create([], ['retry_again' => [RetryMiddleware::class, [1, 10]]]);
+
+        $ref = new \ReflectionClass($stack);
+        $property = $ref->getProperty('stack');
+        $property->setAccessible(true);
+        $items = array_column($property->getValue($stack), 1);
+        $this->assertEquals(['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry', 'retry_again'], $items);
     }
 
     protected function setContainer()
