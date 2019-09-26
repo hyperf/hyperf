@@ -16,6 +16,8 @@ use GuzzleHttp\HandlerStack;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Guzzle\HandlerStackFactory;
+use Hyperf\Guzzle\PoolHandler;
+use Hyperf\Pool\SimplePool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -50,19 +52,36 @@ class HandlerStackFactoryTest extends TestCase
         }
     }
 
-    // public function testCreatePoolHandler()
-    // {
-    //     $this->getContainer();
-    //
-    //     $factory = new HandlerStackFactory();
-    //
-    //     $stack = $factory->create();
-    //
-    //     $this->assertInstanceOf(HandlerStack::class, $stack);
-    // }
-    //
-    // protected function getContainer()
-    // {
-    //     $container = Mockery::mock(Container::class);
-    // }
+    public function testCreatePoolHandler()
+    {
+        $this->setContainer();
+
+        $factory = new HandlerStackFactory();
+        $stack = $factory->create();
+        $this->assertTrue($stack->hasHandler());
+        $this->assertInstanceOf(HandlerStack::class, $stack);
+
+        $ref = new \ReflectionClass($stack);
+
+        $handler = $ref->getProperty('handler');
+        $handler->setAccessible(true);
+        $this->assertInstanceOf(PoolHandler::class, $handler->getValue($stack));
+
+        $property = $ref->getProperty('stack');
+        $property->setAccessible(true);
+        foreach ($property->getValue($stack) as $stack) {
+            $this->assertTrue(in_array($stack[1], ['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry']));
+        }
+    }
+
+    protected function setContainer()
+    {
+        $container = Mockery::mock(Container::class);
+        $factory = new PoolFactory($container);
+        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($factory) {
+            return new PoolHandler($factory, $args['option']);
+        });
+
+        ApplicationContext::setContainer($container);
+    }
 }
