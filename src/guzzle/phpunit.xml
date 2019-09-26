@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="test/bootstrap.php"
+<phpunit bootstrap="tests/bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          verbose="true"
@@ -11,6 +11,6 @@
          stopOnFailure="false"
          syntaxCheck="true">
     <testsuite name="Testsuite">
-        <directory>./test/</directory>
+        <directory>./tests/</directory>
     </testsuite>
 </phpunit>
