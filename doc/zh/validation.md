@@ -26,7 +26,7 @@ return [
 ## 发布验证器语言文件
 
 ```bash
-php bin/hyperf.php vendor:publish hyperf/translation
+php bin/hyperf.php vendor:publish hyperf/validation
 ```
 上面的命令将会发布验证器的语言文件validation.php到对应的语言文件目录，`en` 指英文语言文件，`zh-CN` 指中文简体的语言文件，你可以按照实际需要对`validation.php` 文件内容进行修改和自定义。
 
@@ -60,7 +60,7 @@ php bin/hyperf.php gen:request FooRequest
  */
 public function rules(): array {
     return [
-        'foo' => 'required|unique:posts|max:255',
+        'foo' => 'required|max:255',
         'bar' => 'required',
     ];
 }
@@ -171,6 +171,16 @@ class IndexController extends Controller
 
 
 # 验证规则
+
+## 使用方法
+
+### 规则名
+
+### 数组
+
+### 回调
+
+
 
 参考 Laravel 5.8 验证
 
