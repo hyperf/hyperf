@@ -66,6 +66,21 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $process;
 
+    /**
+     * @var int
+     */
+    protected $recvLength = 65535;
+
+    /**
+     * @var float
+     */
+    protected $recvTimeout = 10.0;
+
+    /**
+     * @var bool
+     */
+    private $running = true;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -91,7 +106,7 @@ abstract class AbstractProcess implements ProcessInterface
                 $this->handle();
 
                 $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
-                $this->process->exit(0);
+                $this->running = false;
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
@@ -107,12 +122,12 @@ abstract class AbstractProcess implements ProcessInterface
     protected function listen()
     {
         go(function () {
-            while (true) {
+            while ($this->running) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();
-                    $recv = $sock->recv();
-                    if ($this->event && $data = unserialize($recv)) {
+                    $recv = $sock->recv($this->recvLength, $this->recvTimeout);
+                    if ($this->event && $recv !== false && $data = unserialize($recv)) {
                         $this->event->dispatch(new PipeMessage($data));
                     }
                 } catch (\Throwable $exception) {

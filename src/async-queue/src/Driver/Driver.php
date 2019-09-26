@@ -20,10 +20,12 @@ use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine;
 
 abstract class Driver implements DriverInterface
 {
@@ -47,11 +49,17 @@ abstract class Driver implements DriverInterface
      */
     protected $concurrent;
 
+    /**
+     * @var array
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container, $config)
     {
         $this->container = $container;
         $this->packer = $container->get($config['packer'] ?? PhpSerializerPacker::class);
         $this->event = $container->get(EventDispatcherInterface::class);
+        $this->config = $config;
 
         if (! $this->packer instanceof PackerInterface) {
             throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
@@ -67,14 +75,38 @@ abstract class Driver implements DriverInterface
     {
         $this->container->get(Environment::class)->setAsyncQueue(true);
 
-        $callback = function () {
+        $messageCount = 0;
+        $maxMessages = Arr::get($this->config, 'max_messages', 0);
+
+        while (true) {
+            [$data, $message] = $this->pop();
+
+            if ($data === false) {
+                continue;
+            }
+
+            $callback = $this->getCallback($data, $message);
+
+            if ($this->concurrent instanceof Concurrent) {
+                $this->concurrent->create($callback);
+            } else {
+                parallel([$callback]);
+            }
+
+            if ($maxMessages > 0 && ++$messageCount >= $maxMessages) {
+                break;
+            }
+        }
+
+        while (! $this->concurrent->isEmpty()) {
+            Coroutine::sleep(0.001);
+        }
+    }
+
+    protected function getCallback($data, $message): callable
+    {
+        return function () use ($data, $message) {
             try {
-                [$data, $message] = $this->pop();
-
-                if ($data === false) {
-                    return;
-                }
-
                 if ($message instanceof MessageInterface) {
                     $this->event && $this->event->dispatch(new BeforeHandle($message));
                     $message->job()->handle();
@@ -94,14 +126,6 @@ abstract class Driver implements DriverInterface
                 }
             }
         };
-
-        while (true) {
-            if ($this->concurrent instanceof Concurrent) {
-                $this->concurrent->create($callback);
-            } else {
-                parallel([$callback]);
-            }
-        }
     }
 
     /**
