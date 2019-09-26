@@ -13,6 +13,11 @@ EasyWeChat 是一个开源的 微信 非官方 SDK。
 
 $app = Factory::miniProgram($config);
 $app['guzzle_handler'] = CoroutineHandler::class;
+
+AbstractProvider::setGuzzleOptions([
+    'http_errors' => false,
+    'handler' => HandlerStack::create(new CoroutineHandler()),
+]);
 ```
 
 ## 修改 `SWOOLE_HOOK_FLAGS`
