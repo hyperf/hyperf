@@ -39,7 +39,6 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml",
-        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
+        "test": "./vendor/bin/phpunit"
     }
 }
