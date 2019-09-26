@@ -1,5 +1,6 @@
 {
     "name": "hyperf/guzzle",
+    "description": "Swoole coroutine handler for guzzle",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -8,7 +9,20 @@
         "guzzle",
         "handler"
     ],
-    "description": "Swoole coroutine handler for guzzle",
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "swoft/swoole-ide-helper": "dev-master",
+        "phpunit/phpunit": "^5.7",
+        "guzzlehttp/ringphp": "~1.0"
+    },
+    "suggest": {
+        "hyperf/pool": "Required to use pool handler."
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Guzzle\\": "src/"
@@ -19,19 +33,8 @@
             "HyperfTest\\Guzzle\\": "tests/"
         }
     },
-    "require": {
-        "php": ">=7.0",
-        "psr/http-message": "^1.0",
-        "psr/container": "^1.0",
-        "guzzlehttp/guzzle": "^6.3"
-    },
-    "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
-        "phpunit/phpunit": "^5.7",
-        "guzzlehttp/ringphp": "~1.0"
-    },
-    "suggest": {
-        "hyperf/pool": "Required to use pool handler."
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
@@ -39,6 +42,6 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit"
+        "test": "phpunit --colors=always"
     }
 }
