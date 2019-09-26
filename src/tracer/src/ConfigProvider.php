@@ -25,11 +25,11 @@ class ConfigProvider
                 SwitchManager::class => SwitchManagerFactory::class,
                 Client::class => Client::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

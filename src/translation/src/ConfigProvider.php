@@ -24,9 +24,11 @@ class ConfigProvider
                 TranslatorLoaderInterface::class => FileLoaderFactory::class,
                 TranslatorInterface::class => TranslatorFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [
