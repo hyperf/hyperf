@@ -36,5 +36,8 @@ class ProxyTraitTest extends TestCase
 
         $this->assertEquals(['id' => 1, 'str' => '', 'num' => 1.0], $obj->get3()['keys']);
         $this->assertEquals(['id', 'str', 'num'], $obj->get3()['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => 'hy', 'num' => 1.0], $obj->get3(1, 'hy')['keys']);
+        $this->assertEquals(['id', 'str', 'num'], $obj->get3(1, 'hy')['order']);
     }
 }

@@ -46,9 +46,10 @@ trait ProxyTrait
         $leftCount = count($args);
         foreach ($reflectParameters as $key => $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
-            if (! isset($arg) && $leftCount-- <= 0) {
+            if (! isset($arg) && $leftCount <= 0) {
                 $arg = $reflectionParameter->getDefaultValue();
             }
+            --$leftCount;
             $map['keys'][$reflectionParameter->getName()] = $arg;
             $map['order'][] = $reflectionParameter->getName();
         }
