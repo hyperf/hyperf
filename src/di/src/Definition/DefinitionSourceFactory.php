@@ -50,7 +50,7 @@ class DefinitionSourceFactory
         $serverDependencies = $configFromProviders['dependencies'] ?? [];
         if (file_exists($configDir . '/autoload/dependencies.php')) {
             $definitions = include $configDir . '/autoload/dependencies.php';
-            $serverDependencies = array_replace($serverDependencies, $definitions['dependencies'] ?? []);
+            $serverDependencies = array_replace($serverDependencies, $definitions ?? []);
         }
 
         $scanDirs = $configFromProviders['annotations']['scan']['paths'] ?? [];
