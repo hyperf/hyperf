@@ -24,7 +24,8 @@ class ClientFactory
         $option = make(Option::class);
         $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
             ->setAppid($config->get('apollo.appid', ''))
-            ->setCluster($config->get('apollo.cluster', ''));
+            ->setCluster($config->get('apollo.cluster', ''))
+            ->setClientIp(current(swoole_get_local_ip()));
         $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
