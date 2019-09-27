@@ -21,6 +21,8 @@ use Hyperf\Database\Commands\Migrations\ResetCommand;
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
 use Hyperf\Database\Commands\Migrations\StatusCommand;
 use Hyperf\Database\Commands\ModelCommand;
+use Hyperf\Database\Commands\Seeders\GenSeederCommand;
+use Hyperf\Database\Commands\Seeders\SeedCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
@@ -49,6 +51,8 @@ class ConfigProvider
                 ResetCommand::class,
                 RollbackCommand::class,
                 StatusCommand::class,
+                GenSeederCommand::class,
+                SeedCommand::class,
             ],
             'annotations' => [
                 'scan' => [
