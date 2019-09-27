@@ -13,18 +13,20 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
+use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -36,6 +38,16 @@ use function get_class;
 class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
+
+    /**
+     * @var null|PsrResponseInterface
+     */
+    protected $response;
+
+    public function __construct(?PsrResponseInterface $response = null)
+    {
+        $this->response = $response;
+    }
 
     public function __call($name, $arguments)
     {
@@ -118,8 +130,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Create a file download response.
      *
-     * @param string $file The file path which want to send to client.
-     * @param string $name The alias name of the file that client receive.
+     * @param string $file the file path which want to send to client
+     * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
@@ -161,6 +173,11 @@ class Response implements PsrResponseInterface, ResponseInterface
             ->withBody(new SwooleFileStream($file));
     }
 
+    public function withCookie(Cookie $cookie): ResponseInterface
+    {
+        return $this->call(__FUNCTION__, func_get_args());
+    }
+
     /**
      * Retrieves the HTTP protocol version as a string.
      * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
@@ -185,7 +202,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withProtocolVersion($version)
     {
-        return $this->getResponse()->withProtocolVersion($version);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -280,7 +297,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withHeader($name, $value)
     {
-        return $this->getResponse()->withHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -299,7 +316,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
-        return $this->getResponse()->withAddedHeader($name, $value);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -314,7 +331,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withoutHeader($name)
     {
-        return $this->getResponse()->withoutHeader($name);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -340,7 +357,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
-        return $this->getResponse()->withBody($body);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -375,7 +392,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        return $this->getResponse()->withStatus($code, $reasonPhrase);
+        return $this->call(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -393,6 +410,21 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    protected function call($name, $arguments)
+    {
+        $response = $this->getResponse();
+
+        if (! $response instanceof PsrResponseInterface) {
+            throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
+        }
+
+        if (! method_exists($response, $name)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        }
+
+        return new static($response->{$name}(...$arguments));
     }
 
     /**
@@ -478,6 +510,10 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     protected function getResponse()
     {
+        if ($this->response instanceof PsrResponseInterface) {
+            return $this->response;
+        }
+
         return Context::get(PsrResponseInterface::class);
     }
 }

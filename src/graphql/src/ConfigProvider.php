@@ -39,9 +39,11 @@ class ConfigProvider
                 AuthorizationServiceInterface::class => FailAuthorizationService::class,
                 NamingStrategyInterface::class => NamingStrategy::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

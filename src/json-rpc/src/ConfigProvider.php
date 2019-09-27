@@ -22,11 +22,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                TcpServer::class => TcpServerFactory::class,
-                HttpServer::class => HttpServerFactory::class,
                 DataFormatter::class => DataFormatterFactory::class,
-            ],
-            'commands' => [
             ],
             'listeners' => [
                 RegisterProtocolListener::class,
@@ -37,9 +33,11 @@ class ConfigProvider
                     return null;
                 }),
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

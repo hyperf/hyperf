@@ -22,9 +22,11 @@ class ConfigProvider
             'dependencies' => [
                 ConfigInterface::class => ConfigFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

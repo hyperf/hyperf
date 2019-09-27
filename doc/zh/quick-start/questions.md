@@ -28,17 +28,22 @@ swoole.use_shortname = 'Off'
 runtime/container/proxy/
 ```
 
-清理命令
-```
+重新生成缓存命令，新缓存会覆盖原目录
+```bash
 php bin/hyperf.php di:init-proxy
 ```
 
-所以单测命令可以使用以下代替
+删除代理类缓存
+```bash
+rm -rf ./runtime/container/proxy
 ```
+
+所以单测命令可以使用以下代替：
+```bash
 php bin/hyperf.php di:init-proxy && composer test
 ```
 
 同理，启动命令可以使用以下代替
-```
+```bash
 php bin/hyperf.php di:init-proxy && php bin/hyperf.php start
 ```

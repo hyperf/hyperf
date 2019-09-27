@@ -17,13 +17,15 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
+            'listeners' => [
+                Listener\InitSenderListener::class,
+                Listener\OnPipeMessageListener::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

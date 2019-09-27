@@ -54,9 +54,11 @@ class ConfigProvider
                 GenSeederCommand::class,
                 SeedCommand::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

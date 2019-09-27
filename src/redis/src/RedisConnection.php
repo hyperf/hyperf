@@ -106,6 +106,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function close(): bool
     {
+        unset($this->connection);
+
         return true;
     }
 
