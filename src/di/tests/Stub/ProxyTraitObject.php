@@ -27,4 +27,9 @@ class ProxyTraitObject
     {
         return $this->getParamsMap(static::class, 'get2', func_get_args());
     }
+
+    public function get3(?int $id = 1, string $str = '', float $num = 1.0)
+    {
+        return $this->getParamsMap(static::class, 'get3', func_get_args());
+    }
 }

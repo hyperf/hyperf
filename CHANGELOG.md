@@ -76,6 +76,7 @@ Now:
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
+- [#623](https://github.com/hyperf-cloud/hyperf/pull/623) Fixed `null` is replaced by default value.
 
 # v1.0.16 - TBD
 
