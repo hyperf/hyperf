@@ -1,6 +1,6 @@
 # EasyWechat
 
-EasyWeChat 是一个开源的 微信 非官方 SDK。
+[EasyWeChat](https://www.easywechat.com/) 是一个开源的 微信 非官方 SDK。
 
 > 因为组件默认使用 `Curl`，所以我们需要修改对应的 `GuzzleClient` 为协程客户端，或者修改常量 `SWOOLE_HOOK_FLAGS` 为 `SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL`
 

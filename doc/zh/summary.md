@@ -81,10 +81,6 @@
   * [枚举类](zh/constants.md)
   * [Snowflake](zh/snowflake.md)
 
-* 第三方组件
-
-  * [EasyWechat](zh/sdks/wechat.md)
-
 * 应用部署
 
   * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
