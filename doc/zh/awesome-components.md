@@ -104,9 +104,15 @@
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一个基于 Go 语言实现的通用热更新组件
 - [remy/nodemon](https://github.com/remy/nodemon) 一个基于 node.js 实现的通用热更新组件
 
+> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
+
 ## Swoole
 
 - - [hyperf/swoole-tracker](https://github.com/hyperf-cloud/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
 - - [hyperf/task](https://github.com/hyperf-cloud/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
 
-> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
+## 第三方 SDK
+
+- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付SDK
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
+
