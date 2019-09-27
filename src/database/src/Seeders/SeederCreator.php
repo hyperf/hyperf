@@ -57,13 +57,33 @@ class SeederCreator
     }
 
     /**
+     * Get the path to the stubs.
+     *
+     * @return string
+     */
+    public function stubPath()
+    {
+        return __DIR__ . '/stubs';
+    }
+
+    /**
+     * Get the filesystem instance.
+     *
+     * @return \Hyperf\Utils\Filesystem\Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->files;
+    }
+
+    /**
      * Get the seeder stub file.
      *
      * @return string
      */
     protected function getStub()
     {
-        return $this->files->get($this->stubPath().'/seeder.stub');
+        return $this->files->get($this->stubPath() . '/seeder.stub');
     }
 
     /**
@@ -82,7 +102,6 @@ class SeederCreator
      * Ensure that a seeder with the given name doesn't already exist.
      *
      * @param string $name
-     * @return void
      *
      * @throws \InvalidArgumentException
      */
@@ -96,7 +115,7 @@ class SeederCreator
     /**
      * Get the class name of a seeder name.
      *
-     * @param  string  $name
+     * @param string $name
      * @return string
      */
     protected function getClassName($name)
@@ -113,26 +132,6 @@ class SeederCreator
      */
     protected function getPath($name, $path)
     {
-        return $path.'/'.$name.'.php';
-    }
-
-    /**
-     * Get the path to the stubs.
-     *
-     * @return string
-     */
-    public function stubPath()
-    {
-        return __DIR__.'/stubs';
-    }
-
-    /**
-     * Get the filesystem instance.
-     *
-     * @return \Hyperf\Utils\Filesystem\Filesystem
-     */
-    public function getFilesystem()
-    {
-        return $this->files;
+        return $path . '/' . $name . '.php';
     }
 }

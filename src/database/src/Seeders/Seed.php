@@ -182,13 +182,13 @@ class Seed
     /**
      * Get all of the seeder files in a given path.
      *
-     * @param string|array $paths
+     * @param array|string $paths
      * @return array
      */
     public function getSeederFiles($paths)
     {
         return Collection::make($paths)->flatMap(function ($path) {
-            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path.'/*.php');
+            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*.php');
         })->filter()->sortBy(function ($file) {
             return $this->getSeederName($file);
         })->values()->keyBy(function ($file) {
@@ -253,8 +253,7 @@ class Seed
     /**
      * Write a note to the console's output.
      *
-     * @param  string  $message
-     * @return void
+     * @param string $message
      */
     protected function note($message)
     {

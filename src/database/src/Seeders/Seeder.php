@@ -12,17 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Seeders;
 
-use InvalidArgumentException;
-
 abstract class Seeder
 {
-    /**
-     * The name of the database connection to use.
-     *
-     * @var string|null
-     */
-    protected $connection = 'default';
-
     /**
      * Enables, if supported, wrapping the seeder within a transaction.
      *
@@ -31,9 +22,16 @@ abstract class Seeder
     public $withinTransaction = true;
 
     /**
+     * The name of the database connection to use.
+     *
+     * @var null|string
+     */
+    protected $connection = 'default';
+
+    /**
      * Get the seeder connection name.
      *
-     * @return string|null
+     * @return null|string
      */
     public function getConnection()
     {
