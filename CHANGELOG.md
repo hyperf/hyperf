@@ -14,6 +14,7 @@
 - [#596](https://github.com/hyperf-cloud/hyperf/pull/596) Added `required` parameter for `@Inject`, if you define `@Inject(required=false)` annotation to a property, therefore the DI container will not throw an `Hyperf\Di\Exception\NotFoundException` when the dependency of the property does not exists, the default value of `required` parameter is `true`. In constructor injection mode, you could define the default value of the parameter of the `__construct` to `null`, this means this parameter is nullable and will not throw the exception too.
 - [#597](https://github.com/hyperf-cloud/hyperf/pull/597) Added concurrent for async-queue.
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
+- [#620](https://github.com/hyperf-cloud/hyperf/pull/620) Add automatic restart mechanism for consumer of async queue.
 
 ## Changed
 
