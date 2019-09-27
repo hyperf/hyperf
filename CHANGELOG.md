@@ -77,7 +77,7 @@ Now:
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
 
-# v1.0.16 - TBD
+# v1.0.16 - 2019-09-20
 
 ## Added
 
