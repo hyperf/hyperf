@@ -21,6 +21,7 @@
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 - [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
 - [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
+- [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the instantiate of `Hyperf\HttpServer\CoreMiddleware`, now you can rewrite him.
 
 config/container.php
 
