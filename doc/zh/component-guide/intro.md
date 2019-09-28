@@ -12,8 +12,8 @@
 在代码组织上，我们建议在同一个目录下 Clone [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目骨架和 [hyperf-cloud/hyperf](https://github.com/hyperf-cloud/hyperf) 项目组件库两个项目。进行下面的操作并呈以下结构：
 
 ```bash
-// 安装 skeleton，并配置完成
-composer create-project hyperf/hyperf-skeleton 
+// 克隆 hyperf-skeleton 脚手架项目或者您自己 Fork 的项目，这里一定要克隆否则后续步骤的软链接创建会失败
+git clone https://github.com/hyperf-cloud/hyperf-skeleton.git
 
 // 克隆 hyperf 组件库项目，这里记得要替换 hyperf-cloud 为您的 Github ID，也就是克隆您所 Fork 的项目
 git clone git@github.com:hyperf-cloud/hyperf.git
