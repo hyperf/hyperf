@@ -14,6 +14,7 @@ namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
@@ -168,6 +169,7 @@ class ModelCommand extends Command
             'option' => $option,
         ]);
         $traverser->addVisitor($visitor);
+        $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
