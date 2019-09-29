@@ -69,7 +69,7 @@ class ModelCommand extends Command
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct('db:model');
+        parent::__construct('gen:model');
         $this->container = $container;
     }
 

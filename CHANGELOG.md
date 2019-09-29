@@ -67,6 +67,8 @@ Now:
 ],
 ```
 
+- [](https://github.com/hyperf-cloud/hyperf/pull/638) Renamed command `db:model` to `gen:model` and added rewrite connection name visitor.
+
 ## Deleted
 
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
