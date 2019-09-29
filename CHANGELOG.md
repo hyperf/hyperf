@@ -67,7 +67,7 @@ Now:
 ],
 ```
 
-- [](https://github.com/hyperf-cloud/hyperf/pull/638) Renamed command `db:model` to `gen:model` and added rewrite connection name visitor.
+- [#638](https://github.com/hyperf-cloud/hyperf/pull/638) Renamed command `db:model` to `gen:model` and added rewrite connection name visitor.
 
 ## Deleted
 
