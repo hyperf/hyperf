@@ -1,5 +1,9 @@
 # v1.0.17 - TBD
 
+## Fixed
+
+- [#636](https://github.com/hyperf-cloud/hyperf/pull/636) Fixed http client with pool handler may be used by different coroutine at the same time.
+
 # v1.0.16 - 2019-09-20
 
 ## Added
