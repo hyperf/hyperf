@@ -9,7 +9,6 @@
 
 ```
 composer require hyperf/validation
-
 ```
 
 ## Config
@@ -18,19 +17,17 @@ composer require hyperf/validation
 ### publish config
 ```
 php bin/hyperf.php  vendor:publish hyperf/validation
-
 ```
 
 ### config path
 
 ```
 your/config/path/autoload/translation.php
-
 ```
 
 ### config content
 
-```
+```php
 <?php
 
 declare(strict_types=1);
@@ -49,12 +46,11 @@ return [
     'fallback_locale' => '',
     'lang'            => BASE_PATH . '/resources/lang', 
 ];
-
 ```
 
 ### exception handler
 
-```
+```php
 <?php
 
 declare(strict_types=1);
@@ -75,12 +71,11 @@ return [
         ],
     ],
 ];
-
 ```
 
 ### validation middleware
 
-```
+```php
 <?php
 
 declare(strict_types=1);
@@ -99,7 +94,6 @@ return [
         \Hyperf\Validation\Middleware\ValidationMiddleware::class,
     ],
 ];
-
 ```
 
 
@@ -113,11 +107,9 @@ php bin/hyperf.php gen:request FooRequest
 ```
 
 
-```
+```php
 class IndexController extends Controller
 {
-   
-
     public function foo(FooRequest $request)
     {
         $request->input('foo');
@@ -149,6 +141,4 @@ class IndexController extends Controller
         }
     }
 }
-
-
 ```
