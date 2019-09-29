@@ -71,7 +71,7 @@ This component is the official default configuration component that is implement
 
 ### Set configuration value
 
-Configurations in the `config/config.php` and `config/server.php` and `autoload` folders can be scanned and injected into the corresponding object of `Hyperf\Contract\ConfigInterface` when the server starts. This process is done by `Hyperf\Config\ConfigFactory` when the Config object is instantiated.
+Configurations in the `config/config.php` and `config/autoload/server.php` and `autoload` folders can be scanned and injected into the corresponding object of `Hyperf\Contract\ConfigInterface` when the server starts. This process is done by `Hyperf\Config\ConfigFactory` when the Config object is instantiated.
 
 ### Get configuration value
 
