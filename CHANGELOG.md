@@ -20,8 +20,6 @@
 
 - [#437](https://github.com/hyperf-cloud/hyperf/pull/437) Changed `Hyperf\Testing\Client` handle exception handlers instead of throw an exception directly.
 - [#463](https://github.com/hyperf-cloud/hyperf/pull/463) Simplify `container.php` and improve annotation caching mechanism.
-- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
-- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Optimized the instantiate of Consumer.
 
 config/container.php
 
@@ -42,7 +40,9 @@ return ApplicationContext::setContainer($container);
 
 - [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` of Request is available to return JSON formatted data normally.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
+- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#614](https://github.com/hyperf-cloud/hyperf/pull/614) [#617](https://github.com/hyperf-cloud/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
+- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Optimized the instantiate of Consumer.
 
 Changed the structure of config provider:   
 Before:
