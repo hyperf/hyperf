@@ -67,7 +67,7 @@ Now:
 
 - [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the way to instantiate `Hyperf\HttpServer\CoreMiddleware`, use `make()` instead of `new`.
 - [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Changed the way to instantiate AMQP Consumer, use `make()` instead of `new`.
-- [#637](https://github.com/hyperf-cloud/hyperf/pull/637) Changed the args for `OnMessageInterface` and `OnOpenInterface`, use `Swoole\WebSocket\Server` instead of `Swoole\Server`.
+- [#637](https://github.com/hyperf-cloud/hyperf/pull/637) Changed the argument 1 of `Hyperf\Contract\OnMessageInterface` and `Hyperf\Contract\OnOpenInterface`, use `Swoole\WebSocket\Server` instead of `Swoole\Server`.
 
 
 ## Deleted
