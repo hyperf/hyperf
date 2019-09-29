@@ -42,8 +42,8 @@ return ApplicationContext::setContainer($container);
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
 - [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#614](https://github.com/hyperf-cloud/hyperf/pull/614) [#617](https://github.com/hyperf-cloud/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
-- [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the instantiate of `Hyperf\HttpServer\CoreMiddleware`, now you can rewrite him.
-- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Optimized the instantiate of Consumer.
+- [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the way to instantiate `Hyperf\HttpServer\CoreMiddleware`, use `make()` instead of `new`
+- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Changed the way to instantiate AMQP Consumer, use `make()` instead of `new`
 
 Changed the structure of config provider:   
 Before:
