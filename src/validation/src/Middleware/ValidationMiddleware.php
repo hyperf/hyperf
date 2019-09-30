@@ -58,7 +58,7 @@ class ValidationMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $reflectionMethod = ReflectionManager::reflectMethod(...$dispatched->handler->callback);
+        $reflectionMethod = ReflectionManager::reflectMethod(...explode('@', $dispatched->handler->callback));
         $parmeters = $reflectionMethod->getParameters();
         try {
             foreach ($parmeters as $parameter) {
