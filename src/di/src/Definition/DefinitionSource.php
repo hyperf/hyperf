@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\MetadataCacheCollector;
 use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
@@ -216,26 +217,64 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths, array $collectors): bool
     {
+        $appPaths = [];
+        $vendorPaths = [];
+
+        /**
+         * if you are a hyperf developer
+         * this var value will be your local path, like hyperf/src
+         * @var string
+         */
+        $ident = 'vendor';
+
+        foreach ($paths as $path) {
+            if (strpos($path, $ident) !== false) {
+                $vendorPaths[] = $path;
+            } else {
+                $appPaths[] = $path;
+            }
+        }
+
+        $collectors = [
+            AnnotationCollector::class,
+            AspectCollector::class,
+        ];
+
+        $appMetadata = $this->loadMetadata($appPaths, $collectors, 'app');
+        $vendorMetadata = $this->loadMetadata($vendorPaths, $collectors, 'vendor');
+        return true;
+    }
+
+    private function loadMetadata(array $paths, array $collectors, $type)
+    {
         if (empty($paths)) {
             return true;
         }
+        $cachePath = $this->cachePath . '.' . $type;
         $pathsHash = md5(implode(',', $paths));
         $cacher = new MetadataCacheCollector($collectors);
-        if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
-            $this->printLn('Detected an available cache, skip the scan process.');
-            [, $serialized] = explode(PHP_EOL, file_get_contents($this->cachePath));
+        if ($this->hasAvailableCache($paths, $pathsHash, $cachePath)) {
+            $this->printLn('Detected an available cache, skip the ' . $type . ' scan process.');
+            [, $serialized] = explode(PHP_EOL, file_get_contents($cachePath));
+            $serialized = base64_decode($serialized);
             $cacher->unserialize($serialized);
+            $this->scanner->collect(array_keys(unserialize($serialized)));
             return false;
         }
-        $this->printLn('Scanning ...');
-        $this->scanner->scan($paths);
-        $this->printLn('Scan completed.');
+        $this->printLn('Scanning ' . $type . ' ...');
+        $startTime = microtime(true);
+        $meta = $this->scanner->scan($paths);
+        foreach ($meta as $className => $stmts) {
+            AstCollector::set($className, $stmts);
+        }
+        $useTime = microtime(true) - $startTime;
+        $this->printLn('Scan ' . $type . ' completed use time ' . $useTime);
         if (! $this->enableCache) {
             return true;
         }
         // enableCache: set cache
-        if (! file_exists($this->cachePath)) {
-            $exploded = explode('/', $this->cachePath);
+        if (! file_exists($cachePath)) {
+            $exploded = explode('/', $cachePath);
             unset($exploded[count($exploded) - 1]);
             $dirPath = implode('/', $exploded);
             if (! is_dir($dirPath)) {
@@ -243,8 +282,8 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        $data = implode(PHP_EOL, [$pathsHash, $cacher->serialize()]);
-        file_put_contents($this->cachePath, $data);
+        $data = implode(PHP_EOL, [$pathsHash, base64_encode(serialize($meta))]);
+        file_put_contents($cachePath, $data);
         return true;
     }
 
@@ -264,7 +303,6 @@ class DefinitionSource implements DefinitionSourceInterface
             }
             break;
         }
-        fclose($handler);
         $cacheLastModified = filemtime($filename) ?? 0;
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
