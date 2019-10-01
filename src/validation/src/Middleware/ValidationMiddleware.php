@@ -61,11 +61,11 @@ class ValidationMiddleware implements MiddlewareInterface
         }
 
         if ($dispatched->handler->callback instanceof Closure) {
-            $reflectionMethod = new ReflectionFunction($dispatched->handler->callback);
-        } else {
-            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
-            $reflectionMethod = ReflectionManager::reflectMethod($controller, $action);
+            return $handler->handle($request);
         }
+
+        [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+        $reflectionMethod = ReflectionManager::reflectMethod($controller, $action);
         $parameters = $reflectionMethod->getParameters();
         try {
             foreach ($parameters as $parameter) {
