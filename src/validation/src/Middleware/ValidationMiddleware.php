@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Middleware;
 
+use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -24,6 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ReflectionFunction;
 
 class ValidationMiddleware implements MiddlewareInterface
 {
@@ -58,10 +60,15 @@ class ValidationMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $reflectionMethod = ReflectionManager::reflectMethod(...explode('@', $dispatched->handler->callback));
-        $parmeters = $reflectionMethod->getParameters();
+        if ($dispatched->handler->callback instanceof Closure) {
+            $reflectionMethod = new ReflectionFunction($dispatched->handler->callback);
+        } else {
+            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+            $reflectionMethod = ReflectionManager::reflectMethod($controller, $action);
+        }
+        $parameters = $reflectionMethod->getParameters();
         try {
-            foreach ($parmeters as $parameter) {
+            foreach ($parameters as $parameter) {
                 $classname = $parameter->getType()->getName();
                 $implements = $this->getClassImplements($classname);
                 if (in_array(ValidatesWhenResolved::class, $implements, true)) {
@@ -86,5 +93,23 @@ class ValidationMiddleware implements MiddlewareInterface
             $this->implements[$class] = class_implements($class);
         }
         return $this->implements[$class];
+    }
+
+    /**
+     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     */
+    protected function prepareHandler($handler): array
+    {
+        if (is_string($handler)) {
+            if (strpos($handler, '@') !== false) {
+                return explode('@', $handler);
+            }
+            return explode('::', $handler);
+        }
+        if (is_array($handler) && isset($handler[0], $handler[1])) {
+            return $handler;
+        }
+
+        throw new \RuntimeException('Handler not exist.');
     }
 }
