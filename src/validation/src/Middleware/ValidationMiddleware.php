@@ -67,21 +67,14 @@ class ValidationMiddleware implements MiddlewareInterface
         [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
         $reflectionMethod = ReflectionManager::reflectMethod($controller, $action);
         $parameters = $reflectionMethod->getParameters();
-        try {
-            foreach ($parameters as $parameter) {
-                $classname = $parameter->getType()->getName();
-                $implements = $this->getClassImplements($classname);
-                if (in_array(ValidatesWhenResolved::class, $implements, true)) {
-                    /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $parameterInstance */
-                    $parameterInstance = $this->container->get($classname);
-                    $parameterInstance->validateResolved();
-                }
+        foreach ($parameters as $parameter) {
+            $classname = $parameter->getType()->getName();
+            $implements = $this->getClassImplements($classname);
+            if (in_array(ValidatesWhenResolved::class, $implements, true)) {
+                /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $parameterInstance */
+                $parameterInstance = $this->container->get($classname);
+                $parameterInstance->validateResolved();
             }
-        } catch (UnauthorizedException $exception) {
-            $response = Context::override(ResponseInterface::class, function (ResponseInterface $response) {
-                return $response->withStatus(403);
-            });
-            return $response;
         }
 
         return $handler->handle($request);
