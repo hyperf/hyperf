@@ -17,7 +17,6 @@ use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\AstCollector;
-use Hyperf\Di\MetadataCacheCollector;
 use Hyperf\Di\ReflectionManager;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
@@ -25,7 +24,6 @@ use Symfony\Component\Finder\Finder;
 use function class_exists;
 use function count;
 use function explode;
-use function fclose;
 use function feof;
 use function fgets;
 use function file_exists;
@@ -57,7 +55,7 @@ class DefinitionSource implements DefinitionSourceInterface
      *
      * @var string
      */
-    private $cachePath = BASE_PATH . '/runtime/container/annotations.cache';
+    private $cachePath = BASE_PATH . '/runtime/container/annotations';
 
     /**
      * @var array
@@ -222,7 +220,7 @@ class DefinitionSource implements DefinitionSourceInterface
 
         /**
          * if you are a hyperf developer
-         * this var value will be your local path, like hyperf/src
+         * this var value will be your local path, like hyperf/src.
          * @var string
          */
         $ident = 'vendor';
@@ -235,13 +233,9 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        $collectors = [
-            AnnotationCollector::class,
-            AspectCollector::class,
-        ];
+        $this->loadMetadata($appPaths, $collectors, 'app');
+        $this->loadMetadata($vendorPaths, $collectors, 'vendor');
 
-        $appMetadata = $this->loadMetadata($appPaths, $collectors, 'app');
-        $vendorMetadata = $this->loadMetadata($vendorPaths, $collectors, 'vendor');
         return true;
     }
 
@@ -250,15 +244,12 @@ class DefinitionSource implements DefinitionSourceInterface
         if (empty($paths)) {
             return true;
         }
-        $cachePath = $this->cachePath . '.' . $type;
+        $cachePath = $this->cachePath . '.' . $type . '.cache';
         $pathsHash = md5(implode(',', $paths));
-        $cacher = new MetadataCacheCollector($collectors);
         if ($this->hasAvailableCache($paths, $pathsHash, $cachePath)) {
             $this->printLn('Detected an available cache, skip the ' . $type . ' scan process.');
             [, $serialized] = explode(PHP_EOL, file_get_contents($cachePath));
-            $serialized = base64_decode($serialized);
-            $cacher->unserialize($serialized);
-            $this->scanner->collect(array_keys(unserialize($serialized)));
+            $this->scanner->collect(unserialize($serialized));
             return false;
         }
         $this->printLn('Scanning ' . $type . ' ...');
@@ -282,7 +273,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        $data = implode(PHP_EOL, [$pathsHash, base64_encode(serialize($meta))]);
+        $data = implode(PHP_EOL, [$pathsHash, serialize(array_keys($meta))]);
         file_put_contents($cachePath, $data);
         return true;
     }
