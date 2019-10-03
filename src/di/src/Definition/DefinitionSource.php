@@ -18,6 +18,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Str;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;
@@ -215,31 +216,39 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths, array $collectors): bool
     {
-        $appPaths = [];
-        $vendorPaths = [];
+        $appPaths = $vendorPaths = [];
 
         /**
-         * if you are a hyperf developer
-         * this var value will be your local path, like hyperf/src.
+         * If you are a hyperf developer
+         * this value will be your local path, like hyperf/src.
          * @var string
          */
         $ident = 'vendor';
+        $isDefinedBasePath = defined('BASE_PATH');
 
         foreach ($paths as $path) {
-            if (strpos($path, $ident) !== false) {
-                $vendorPaths[] = $path;
+            if ($isDefinedBasePath) {
+                if (Str::startsWith($path, BASE_PATH . '/' . $ident)) {
+                    $vendorPaths[] = $path;
+                } else {
+                    $appPaths[] = $path;
+                }
             } else {
-                $appPaths[] = $path;
+                if (strpos($path, $ident) !== false) {
+                    $vendorPaths[] = $path;
+                } else {
+                    $appPaths[] = $path;
+                }
             }
         }
 
-        $this->loadMetadata($appPaths, $collectors, 'app');
-        $this->loadMetadata($vendorPaths, $collectors, 'vendor');
+        $this->loadMetadata($appPaths, 'app');
+        $this->loadMetadata($vendorPaths, 'vendor');
 
         return true;
     }
 
-    private function loadMetadata(array $paths, array $collectors, $type)
+    private function loadMetadata(array $paths, $type)
     {
         if (empty($paths)) {
             return true;
@@ -259,7 +268,7 @@ class DefinitionSource implements DefinitionSourceInterface
             AstCollector::set($className, $stmts);
         }
         $useTime = microtime(true) - $startTime;
-        $this->printLn('Scan ' . $type . ' completed use time ' . $useTime);
+        $this->printLn('Scan ' . $type . ' completed, took ' . $useTime * 1000 . ' milliseconds.');
         if (! $this->enableCache) {
             return true;
         }
