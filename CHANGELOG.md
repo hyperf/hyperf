@@ -79,6 +79,10 @@ Now:
 - [#612](https://github.com/hyperf-cloud/hyperf/pull/612) Deleted useless `$url` for RingPHP Handlers.
 - [#616](https://github.com/hyperf-cloud/hyperf/pull/616) [#618](https://github.com/hyperf-cloud/hyperf/pull/618) Deleted useless code of guzzle.
 
+## Optimized
+
+- [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, seperate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
+
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
