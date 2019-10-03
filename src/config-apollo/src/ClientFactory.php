@@ -21,11 +21,14 @@ class ClientFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
+        /** @var \Hyperf\ConfigApollo\Option $option */
         $option = make(Option::class);
         $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
             ->setAppid($config->get('apollo.appid', ''))
             ->setCluster($config->get('apollo.cluster', ''))
-            ->setClientIp(current(swoole_get_local_ip()));
+            ->setClientIp($config->get('apollo.client_ip', current(swoole_get_local_ip())))
+            ->setPullTimeout($config->get('apollo.pull_timeout', 10))
+            ->setIntervalTimeout($config->get('apollo.interval_timeout', 60));
         $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
