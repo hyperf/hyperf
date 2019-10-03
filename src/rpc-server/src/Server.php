@@ -131,17 +131,28 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         }
     }
 
-    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
-    {
-        $server->send($fd, (string) $response->getBody());
-    }
-
     public function onConnect(SwooleServer $server)
     {
         // $server is the main server object, not the server object that this callback on.
         /* @var \Swoole\Server\Port */
         [$type, $port] = ServerManager::get($this->serverName);
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
+    }
+
+    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
+    {
+        $eof = $server->setting['package_eof'] ?? '';
+        $serverPort = $server->getClientInfo($fd)['server_port'] ?? null;
+        if ($serverPort) {
+            foreach ($server->ports ?? [] as $port) {
+                if ($port->port === $serverPort) {
+                    $eof = $port->setting['package_eof'] ?? '';
+                    break;
+                }
+            }
+        }
+
+        $server->send($fd, (string) $response->getBody() . $eof);
     }
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;

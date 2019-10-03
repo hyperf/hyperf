@@ -59,22 +59,6 @@ class TcpServer extends Server
         ]);
     }
 
-    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
-    {
-        $eof = $server->setting['package_eof'] ?? '';
-        $serverPort = $server->getClientInfo($fd)['server_port'] ?? null;
-        if ($serverPort) {
-            foreach ($server->ports as $port) {
-                if ($port->port === $serverPort) {
-                    $eof = $port->setting['package_eof'] ?? '';
-                    break;
-                }
-            }
-        }
-
-        $server->send($fd, (string) $response->getBody() . $eof);
-    }
-
     protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
         return new CoreMiddleware($this->container, $this->protocol, $this->serverName);
