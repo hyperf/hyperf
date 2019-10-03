@@ -161,7 +161,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(SwooleServer $server, Frame $frame): void
+    public function onMessage(WebSocketServer $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {
