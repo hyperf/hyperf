@@ -43,10 +43,10 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof Node\Stmt\Property:
-                if ($node->props[0]->name == 'connection') {
+                if ($node->props[0]->name->toLowerString() === 'connection') {
                     $this->hasConnection = true;
 
-                    if ($this->isRemovedConnection()) {
+                    if ($this->shouldRemovedConnection()) {
                         return NodeTraverser::REMOVE_NODE;
                     }
 
@@ -59,41 +59,39 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 
     public function afterTraverse(array $nodes)
     {
-        if ($this->hasConnection) {
-            return null;
-        }
-
-        if ($this->isRemovedConnection()) {
+        if ($this->hasConnection || $this->shouldRemovedConnection()) {
             return null;
         }
 
         foreach ($nodes as $namespace) {
-            if ($namespace instanceof Node\Stmt\Namespace_) {
-                foreach ($namespace->stmts as $class) {
-                    if ($class instanceof Node\Stmt\Class_) {
-                        foreach ($class->stmts as $property) {
-                            $flags = Node\Stmt\Class_::MODIFIER_PROTECTED;
-                            $prop = new Node\Stmt\PropertyProperty('connection', new Node\Scalar\String_($this->connection));
-                            $class->stmts[] = new Node\Stmt\Property($flags, [$prop]);
-                            return null;
-                        }
-                    }
+            if (! $namespace instanceof Node\Stmt\Namespace_) {
+                continue;
+            }
+            foreach ($namespace->stmts as $class) {
+                if (! $class instanceof Node\Stmt\Class_) {
+                    continue;
+                }
+                foreach ($class->stmts as $property) {
+                    $flags = Node\Stmt\Class_::MODIFIER_PROTECTED;
+                    $prop = new Node\Stmt\PropertyProperty('connection', new Node\Scalar\String_($this->connection));
+                    $class->stmts[] = new Node\Stmt\Property($flags, [$prop]);
+                    return null;
                 }
             }
         }
+
         return null;
     }
 
-    protected function isRemovedConnection(): bool
+    protected function shouldRemovedConnection(): bool
     {
         $ref = new \ReflectionClass($this->class);
-        if ($parent = $ref->getParentClass()) {
-            $connection = $parent->getDefaultProperties()['connection'] ?? null;
-            if ($connection === $this->connection) {
-                return true;
-            }
+
+        if (! $ref->getParentClass()) {
+            return false;
         }
 
-        return false;
+        $connection = $ref->getParentClass()->getDefaultProperties()['connection'] ?? null;
+        return $connection === $this->connection;
     }
 }
