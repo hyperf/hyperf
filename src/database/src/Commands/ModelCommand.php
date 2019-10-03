@@ -96,7 +96,7 @@ class ModelCommand extends Command
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool));
+            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []));
 
         if ($table) {
             $this->createModel($table, $option);
