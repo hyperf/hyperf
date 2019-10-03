@@ -6,6 +6,7 @@
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation `@AsyncQueueMessage`.
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any `fd` in current server, even the worker process does not hold the `fd`
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
+- [#429](https://github.com/hyperf-cloud/hyperf/pull/429) Added validation component, a component similar to [illuminate/validation](https://github.com/illuminate/validation).
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 - [#478](https://github.com/hyperf-cloud/hyperf/pull/441) Adopt opentracing interfaces and support [Jaeger](https://www.jaegertracing.io/).
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
@@ -15,6 +16,7 @@
 - [#597](https://github.com/hyperf-cloud/hyperf/pull/597) Added concurrent for async-queue.
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
 - [#619](https://github.com/hyperf-cloud/hyperf/pull/619) Added HandlrStackFactory of guzzle.
+- [#629](https://github.com/hyperf-cloud/hyperf/pull/629) Allows to modify the `clientIp`, `pullTimeout`, `intervalTimeout` of Apollo client via config file.
 
 ## Changed
 
@@ -42,8 +44,6 @@ return ApplicationContext::setContainer($container);
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
 - [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#614](https://github.com/hyperf-cloud/hyperf/pull/614) [#617](https://github.com/hyperf-cloud/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
-- [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the way to instantiate `Hyperf\HttpServer\CoreMiddleware`, use `make()` instead of `new`
-- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Changed the way to instantiate AMQP Consumer, use `make()` instead of `new`
 
 Changed the structure of config provider:   
 Before:
@@ -67,6 +67,9 @@ Now:
 ],
 ```
 
+- [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the way to instantiate `Hyperf\HttpServer\CoreMiddleware`, use `make()` instead of `new`.
+- [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Changed the way to instantiate AMQP Consumer, use `make()` instead of `new`.
+- [#637](https://github.com/hyperf-cloud/hyperf/pull/637) Changed the argument 1 of `Hyperf\Contract\OnMessageInterface` and `Hyperf\Contract\OnOpenInterface`, use `Swoole\WebSocket\Server` instead of `Swoole\Server`.
 - [#638](https://github.com/hyperf-cloud/hyperf/pull/638) Renamed command `db:model` to `gen:model` and added rewrite connection name visitor.
 
 ## Deleted

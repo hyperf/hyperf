@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-use Swoole\Server;
 use Swoole\Websocket\Frame;
+use Swoole\WebSocket\Server;
 
 interface OnMessageInterface
 {

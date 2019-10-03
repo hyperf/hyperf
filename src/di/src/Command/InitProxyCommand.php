@@ -102,7 +102,7 @@ class InitProxyCommand extends Command
             try {
                 $this->container->get($item);
             } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
+                // Entry cannot be resolved.
             }
         }
 
@@ -111,7 +111,7 @@ class InitProxyCommand extends Command
                 try {
                     $this->container->get($key);
                 } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
+                    // Entry cannot be resolved.
                 }
             }
         }

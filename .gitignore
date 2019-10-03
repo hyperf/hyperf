@@ -10,3 +10,4 @@ vendor/
 .env
 .DS_Store
 *.lock
+node_modules/*
