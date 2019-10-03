@@ -126,9 +126,14 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
                 $response = $this->transferToResponse($response);
             }
             if ($response) {
-                $server->send($fd, (string) $response->getBody());
+                $this->send($server, $fd, $response);
             }
         }
+    }
+
+    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
+    {
+        $server->send($fd, (string) $response->getBody());
     }
 
     public function onConnect(SwooleServer $server)
