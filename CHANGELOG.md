@@ -81,7 +81,7 @@ Now:
 
 ## Optimized
 
-- [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, seperate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
+- [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, separate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
 
 ## Fixed
 
