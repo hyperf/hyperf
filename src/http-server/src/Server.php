@@ -149,7 +149,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
-        return new CoreMiddleware($this->container, $this->serverName);
+        return make(CoreMiddleware::class, [$this->container, $this->serverName]);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

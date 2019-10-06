@@ -25,14 +25,8 @@ class ConfigProvider
                 PaginatorInterface::class => Paginator::class,
                 LengthAwarePaginatorInterface::class => LengthAwarePaginator::class,
             ],
-            'commands' => [
-            ],
             'listeners' => [
                 PageResolverListener::class,
-            ],
-            'scan' => [
-                'paths' => [
-                ],
             ],
         ];
     }

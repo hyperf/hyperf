@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Contract;
 
 use Swoole\Http\Request;
-use Swoole\Server;
+use Swoole\WebSocket\Server;
 
 interface OnOpenInterface
 {

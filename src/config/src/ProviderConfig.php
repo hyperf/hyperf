@@ -49,7 +49,7 @@ class ProviderConfig
     protected static function loadProviders(array $providers): array
     {
         $providerConfigs = [];
-        foreach ($providers ?? [] as $provider) {
+        foreach ($providers as $provider) {
             if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                 $providerConfigs[] = (new $provider())();
             }

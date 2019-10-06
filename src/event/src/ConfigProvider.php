@@ -24,9 +24,11 @@ class ConfigProvider
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

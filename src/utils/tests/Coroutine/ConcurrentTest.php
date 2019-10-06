@@ -77,7 +77,6 @@ class ConcurrentTest extends TestCase
         while (! $con->isEmpty()) {
             Coroutine::sleep(0.1);
         }
-
         $this->assertSame(15, $count);
     }
 

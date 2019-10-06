@@ -17,12 +17,11 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
-            'scan' => [
-                'paths' => [],
-                'collectors' => [
-                    ConstantsCollector::class,
+            'annotations' => [
+                'scan' => [
+                    'collectors' => [
+                        ConstantsCollector::class,
+                    ],
                 ],
             ],
         ];

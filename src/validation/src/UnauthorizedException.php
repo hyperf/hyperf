@@ -10,4 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+namespace Hyperf\Validation;
+
+use RuntimeException;
+
+class UnauthorizedException extends RuntimeException
+{
+}
