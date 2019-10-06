@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE.md
  */
 
 namespace Hyperf\GrpcServer\Exception\Handler;
@@ -17,7 +17,6 @@ use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
-use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
