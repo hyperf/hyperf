@@ -88,6 +88,7 @@ Now:
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
+- [#623](https://github.com/hyperf-cloud/hyperf/pull/623) Fixed the argument value will be replaced by default value when pass a `null` to the method of proxy class.
 
 # v1.0.16 - 2019-09-20
 
