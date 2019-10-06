@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use Hyperf\Framework\Event\OnFinish;
+use Hyperf\Framework\Event\OnManagerStop;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Server;
+use Swoole\Server as SwooleServer;
 
-class FinishCallback
+class ManagerStopCallback
 {
     /**
      * @var EventDispatcherInterface
@@ -28,8 +28,8 @@ class FinishCallback
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function onFinish(Server $server, int $taskId, $data)
+    public function onManagerStop(SwooleServer $server)
     {
-        $this->dispatcher->dispatch(new OnFinish($server, $taskId, $data));
+        $this->dispatcher->dispatch(new OnManagerStop($server));
     }
 }

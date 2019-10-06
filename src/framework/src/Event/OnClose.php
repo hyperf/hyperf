@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Event;
 
-use Swoole\Server;
-
-class OnPipeMessage
+class OnClose
 {
     /**
      * @var \Swoole\Server
@@ -24,17 +22,17 @@ class OnPipeMessage
     /**
      * @var int
      */
-    public $fromWorkerId;
+    public $fd;
 
     /**
-     * @var mixed
+     * @var int
      */
-    public $data;
+    public $reactorId;
 
-    public function __construct(Server $server, int $fromWorkerId, $data)
+    public function __construct($server, int $fd, int $reactorId)
     {
         $this->server = $server;
-        $this->fromWorkerId = $fromWorkerId;
-        $this->data = $data;
+        $this->fd = $fd;
+        $this->reactorId = $reactorId;
     }
 }

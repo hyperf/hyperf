@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use Hyperf\Framework\Event\OnFinish;
+use Hyperf\Framework\Event\OnConnect;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 
-class FinishCallback
+class ConnectCallback
 {
     /**
      * @var EventDispatcherInterface
@@ -28,8 +28,8 @@ class FinishCallback
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function onFinish(Server $server, int $taskId, $data)
+    public function onConnect(Server $server, int $fd, int $reactorId)
     {
-        $this->dispatcher->dispatch(new OnFinish($server, $taskId, $data));
+        $this->dispatcher->dispatch(new OnConnect($server, $fd, $reactorId));
     }
 }
