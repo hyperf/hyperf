@@ -17,6 +17,7 @@ use FastRoute\Dispatcher;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
+use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\UnauthorizedException;
 use Psr\Container\ContainerInterface;
