@@ -18,6 +18,7 @@
 - [#619](https://github.com/hyperf-cloud/hyperf/pull/619) Added HandlrStackFactory of guzzle.
 - [#620](https://github.com/hyperf-cloud/hyperf/pull/620) Add automatic restart mechanism for consumer of async queue.
 - [#629](https://github.com/hyperf-cloud/hyperf/pull/629) Allows to modify the `clientIp`, `pullTimeout`, `intervalTimeout` of Apollo client via config file.
+- [#654](https://github.com/hyperf-cloud/hyperf/pull/654) Added all Swoole events and abstract hyperf events.
 
 ## Changed
 
