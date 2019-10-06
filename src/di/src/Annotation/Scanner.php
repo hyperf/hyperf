@@ -15,7 +15,6 @@ namespace Hyperf\Di\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
 use Symfony\Component\Finder\Finder;
 
@@ -53,8 +52,7 @@ class Scanner
         array_walk($this->ignoreAnnotations, function ($value) {
             AnnotationReader::addGlobalIgnoredName($value);
         });
-        $reader = new AnnotationReader();
-        $classCollection = [];
+        $meta = [];
         foreach ($finder as $file) {
             try {
                 $stmts = $this->parser->parse($file->getContents());
@@ -62,12 +60,19 @@ class Scanner
                 if (! $className) {
                     continue;
                 }
-                AstCollector::set($className, $stmts);
-                $classCollection[] = $className;
+                $meta[$className] = $stmts;
             } catch (\RuntimeException $e) {
                 continue;
             }
         }
+        $this->collect(array_keys($meta));
+
+        return $meta;
+    }
+
+    public function collect($classCollection)
+    {
+        $reader = new AnnotationReader();
         // Because the annotation class should loaded before use it, so load file via $finder previous, and then parse annotation here.
         foreach ($classCollection as $className) {
             $reflectionClass = ReflectionManager::reflectClass($className);
@@ -106,8 +111,6 @@ class Scanner
                 }
             }
         }
-
-        return $classCollection;
     }
 
     /**

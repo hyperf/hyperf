@@ -14,6 +14,7 @@ namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
@@ -68,7 +69,7 @@ class ModelCommand extends Command
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct('db:model');
+        parent::__construct('gen:model');
         $this->container = $container;
     }
 
@@ -95,7 +96,7 @@ class ModelCommand extends Command
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool));
+            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -168,6 +169,7 @@ class ModelCommand extends Command
             'option' => $option,
         ]);
         $traverser->addVisitor($visitor);
+        $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 

@@ -16,6 +16,8 @@
 - [#597](https://github.com/hyperf-cloud/hyperf/pull/597) Added concurrent for async-queue.
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
 - [#619](https://github.com/hyperf-cloud/hyperf/pull/619) Added HandlrStackFactory of guzzle.
+- [#620](https://github.com/hyperf-cloud/hyperf/pull/620) Add automatic restart mechanism for consumer of async queue.
+- [#629](https://github.com/hyperf-cloud/hyperf/pull/629) Allows to modify the `clientIp`, `pullTimeout`, `intervalTimeout` of Apollo client via config file.
 
 ## Changed
 
@@ -69,7 +71,7 @@ Now:
 - [#630](https://github.com/hyperf-cloud/hyperf/pull/630) Changed the way to instantiate `Hyperf\HttpServer\CoreMiddleware`, use `make()` instead of `new`.
 - [#631](https://github.com/hyperf-cloud/hyperf/pull/631) Changed the way to instantiate AMQP Consumer, use `make()` instead of `new`.
 - [#637](https://github.com/hyperf-cloud/hyperf/pull/637) Changed the argument 1 of `Hyperf\Contract\OnMessageInterface` and `Hyperf\Contract\OnOpenInterface`, use `Swoole\WebSocket\Server` instead of `Swoole\Server`.
-
+- [#638](https://github.com/hyperf-cloud/hyperf/pull/638) Renamed command `db:model` to `gen:model` and added rewrite connection name visitor.
 
 ## Deleted
 
@@ -79,9 +81,14 @@ Now:
 - [#612](https://github.com/hyperf-cloud/hyperf/pull/612) Deleted useless `$url` for RingPHP Handlers.
 - [#616](https://github.com/hyperf-cloud/hyperf/pull/616) [#618](https://github.com/hyperf-cloud/hyperf/pull/618) Deleted useless code of guzzle.
 
+## Optimized
+
+- [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, separate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
+
 ## Fixed
 
 - [#448](https://github.com/hyperf-cloud/hyperf/pull/448) Fixed TCP Server does not works when HTTP Server or WebSocket Server exists.
+- [#623](https://github.com/hyperf-cloud/hyperf/pull/623) Fixed the argument value will be replaced by default value when pass a `null` to the method of proxy class.
 
 # v1.0.16 - 2019-09-20
 
