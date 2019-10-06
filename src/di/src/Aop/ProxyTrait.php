@@ -43,13 +43,13 @@ trait ProxyTrait
         ];
         $reflectMethod = ReflectionManager::reflectMethod($className, $method);
         $reflectParameters = $reflectMethod->getParameters();
-        $leftCount = count($args);
+        $leftArgCount = count($args);
         foreach ($reflectParameters as $key => $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
-            if (! isset($arg) && $leftCount <= 0) {
+            if (! isset($arg) && $leftArgCount <= 0) {
                 $arg = $reflectionParameter->getDefaultValue();
             }
-            --$leftCount;
+            --$leftArgCount;
             $map['keys'][$reflectionParameter->getName()] = $arg;
             $map['order'][] = $reflectionParameter->getName();
         }
