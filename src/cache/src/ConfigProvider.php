@@ -29,7 +29,7 @@ class ConfigProvider
                     ],
                     'collectors' => [
                         CacheListenerCollector::class,
-                    ]
+                    ],
                 ],
             ],
             'publish' => [

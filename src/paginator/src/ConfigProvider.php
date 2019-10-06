@@ -28,7 +28,6 @@ class ConfigProvider
             'listeners' => [
                 PageResolverListener::class,
             ],
-
         ];
     }
 }
