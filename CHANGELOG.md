@@ -85,6 +85,7 @@ Now:
 ## Optimized
 
 - [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, separate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
+- [#653](https://github.com/hyperf-cloud/hyperf/pull/653) Optimized the detect logical of swoole shortname.
 
 ## Fixed
 
