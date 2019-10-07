@@ -212,4 +212,56 @@ for ($i = 0; $i < 15; ++$i) {
 ### 协程上下文
 
 由于同一个进程内协程间是内存共享的，但协程的执行/切换是非顺序的，也就意味着我们很难掌控当前的协程是哪一个*(事实上可以，但通常没人这么干)*，所以我们需要在发生协程切换时能够同时切换对应的上下文。   
-在 Hyperf 里实现协程的上下文管理将非常简单，基于 `Hyperf\Utils\Context` 类的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)` 静态方法即可完成上下文数据的管理，通过这些方法设置和获取的值，都仅限于当前的协程，在协程结束时，对应的上下文也会自动跟随释放掉，无需手动管理，无需担忧内存泄漏的风险。
+在 Hyperf 里实现协程的上下文管理将非常简单，基于 `Hyperf\Utils\Context` 类的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 静态方法即可完成上下文数据的管理，通过这些方法设置和获取的值，都仅限于当前的协程，在协程结束时，对应的上下文也会自动跟随释放掉，无需手动管理，无需担忧内存泄漏的风险。
+
+#### Hyperf\Utils\Context::set()
+
+通过调用 `set(string $id, $value)` 方法储存一个值到当前协程的上下文中，如下：
+
+```php
+<?php
+use Hyperf\Utils\Context;
+
+// 将 bar 字符串以 foo 为 key 储存到当前协程上下文中
+$foo = Context::set('foo', 'bar');
+// set 方法会再将 value 作为方法的返回值返回回来，所以 $foo 的值为 bar
+```
+
+#### Hyperf\Utils\Context::get()
+
+通过调用 `get(string $id, $default = null)` 方法可从当前协程的上下文中取出一个以 `$id` 为 key 储存的值，如不存在则返回 `$default` ，如下：
+
+```php
+<?php
+use Hyperf\Utils\Context;
+
+// 从当前协程上下文中取出 key 为 foo 的值，如不存在则返回 bar 字符串
+$foo = Context::get('foo', 'bar');
+```
+
+#### Hyperf\Utils\Context::has()
+
+通过调用 `has(string $id)` 方法可判断当前协程的上下文中是否存在以 `$id` 为 key 储存的值，如存在则返回 `true`，不存在则返回 `false`，如下：
+
+```php
+<?php
+use Hyperf\Utils\Context;
+
+// 从当前协程上下文中判断 key 为 foo 的值是否存在
+$foo = Context::has('foo');
+```
+
+#### Hyperf\Utils\Context::override()
+
+当我们需要做一些复杂的上下文处理，比如先判断一个 key 是否存在，如果存在则取出 value 来再对 value 进行某些修改，然后再将 value 设置回上下文容器中，此时会有比较繁杂的判断条件，可直接通过调用 `override` 方法来实现这个逻辑，如下：
+
+```php
+<?php
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Utils\Context;
+
+// 从协程上下文取出 $request 对象并设置 key 为 foo 的 Header，然后再保存到协程上下文中
+$request = Context::override(RequestInterface::class, function (RequestInterface $request) {
+    return $request->withAddedHeader('foo', 'bar');
+});
+```
