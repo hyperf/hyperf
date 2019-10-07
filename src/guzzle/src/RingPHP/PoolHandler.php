@@ -72,7 +72,6 @@ class PoolHandler extends CoroutineHandler
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
                 $connection->close();
-                $connection->release();
                 return $this->getErrorResponse($ex, $btime, $effectiveUrl);
             }
 
