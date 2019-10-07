@@ -231,13 +231,11 @@ return [
 ```
 
 
-这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/autoload/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
 
 ```php
 return [
-    'dependencies' => [
-        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
-    ],
+    App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
 ];
 ```
 

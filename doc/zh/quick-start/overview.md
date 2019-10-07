@@ -236,15 +236,13 @@ class IndexController
 
 > WebSocket 和 TCP 等 Server 同理。
 
-`config/dependencies.php`
+`config/autoload/dependencies.php`
 
 ```php
 <?php
 
 return [
-    'dependencies' => [
-        'InnerHttp' => Hyperf\HttpServer\Server::class,
-    ],
+    'InnerHttp' => Hyperf\HttpServer\Server::class,
 ];
 ```
 

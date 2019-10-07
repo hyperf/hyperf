@@ -14,7 +14,7 @@
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) 为 `Hyperf\HttpServer\Contract\ResponseInterface` 增加链式方法调用支持，解决调用了代理方法的方法后无法再调用原始方法的问题；
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) 为  `gen:model` 命令新增了 `table-mapping` 选项；
 - [#555](https://github.com/hyperf-cloud/hyperf/pull/555) 新增了一个全局函数 `swoole_hook_flags` 来获取由常量 `SWOOLE_HOOK_FLAGS` 所定义的 Runtime Hook 等级，您可以在 `bin/hyperf.php` 通过 `! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);` 的方式来定义该常量，即 Runtime Hook 等级；
-- [#596](https://github.com/hyperf-cloud/hyperf/pull/596)  为`@Inject` 注解增加了  `required` 参数，当您定义 `@Inject(required=false)` 注解到一个成员属性上，那么当该依赖项不存在时也不会抛出 `Hyperf\Di\Exception\NotFoundException` 异常，而是以默认值 `null` 来注入， `required` 参数的默认值为 `true`，当在构造器注入的情况下，您可以通过对构造器的参数定义一个 `null` 默认值来达到同样的目的；
+- [#596](https://github.com/hyperf-cloud/hyperf/pull/596)  为`@Inject` 注解增加了  `require` 参数，当您定义 `@Inject(require=false)` 注解到一个成员属性上，那么当该依赖项不存在时也不会抛出 `Hyperf\Di\Exception\NotFoundException` 异常，而是以默认值 `null` 来注入， `require` 参数的默认值为 `true`，当在构造器注入的情况下，您可以通过对构造器的参数定义为 `nullable` 来达到同样的目的；
 - [#597](https://github.com/hyperf-cloud/hyperf/pull/597) 为 AsyncQueue 组件的消费者增加 `Concurrent` 来控制消费速率；
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) 为 AsyncQueue 组件的消费者增加根据当前重试次数来设定该消息的重试等待时长的功能，可以为消息设置阶梯式的重试等待；
 - [#619](https://github.com/hyperf-cloud/hyperf/pull/619) 为 Guzzle 客户端增加 HandlerStackFactory 类，以便更便捷地创建一个 HandlerStack；
