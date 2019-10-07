@@ -146,7 +146,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         if ($serverPort) {
             foreach ($server->ports ?? [] as $port) {
                 if ($port->port === $serverPort) {
-                    $eof = $port->setting['package_eof'] ?? '';
+                    $eof = $port->setting['package_eof'] ?? $eof;
                     break;
                 }
             }
