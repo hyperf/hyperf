@@ -20,6 +20,11 @@ class Result
     const ACK = 'ack';
 
     /**
+     * Unacknowledge the message.
+     */
+    const NACK = 'nack';
+
+    /**
      * Reject the message and requeue it.
      */
     const REQUEUE = 'requeue';
