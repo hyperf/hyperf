@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Middleware;
 
+use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -54,37 +55,68 @@ class ValidationMiddleware implements MiddlewareInterface
         if (! $dispatched instanceof Dispatched) {
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
-        if ($dispatched->status !== Dispatcher::FOUND) {
-            return $handler->handle($request);
-        }
 
-        $reflectionMethod = ReflectionManager::reflectMethod(...$dispatched->handler->callback);
-        $parmeters = $reflectionMethod->getParameters();
-        try {
-            foreach ($parmeters as $parameter) {
-                $classname = $parameter->getType()->getName();
-                $implements = $this->getClassImplements($classname);
-                if (in_array(ValidatesWhenResolved::class, $implements, true)) {
-                    /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $parameterInstance */
-                    $parameterInstance = $this->container->get($classname);
-                    $parameterInstance->validateResolved();
+        if ($this->shouldHandle($dispatched)) {
+            try {
+                [$requestHandler, $method] = $this->prepareHandler($dispatched->handler->callback);
+                $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
+                $parameters = $reflectionMethod->getParameters();
+                foreach ($parameters as $parameter) {
+                    $classname = $parameter->getType()->getName();
+                    if ($this->isImplementedValidatesWhenResolved($classname)) {
+                        /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
+                        $formRequest = $this->container->get($classname);
+                        $formRequest->validateResolved();
+                    }
                 }
+            } catch (UnauthorizedException $exception) {
+                return $this->handleUnauthorizedException($exception);
             }
-        } catch (UnauthorizedException $exception) {
-            $response = Context::override(ResponseInterface::class, function (ResponseInterface $response) {
-                return $response->withStatus(403);
-            });
-            return $response;
         }
 
         return $handler->handle($request);
     }
 
-    public function getClassImplements(string $class): array
+    public function isImplementedValidatesWhenResolved(string $classname): bool
     {
-        if (! isset($this->implements[$class])) {
-            $this->implements[$class] = class_implements($class);
+        if (! isset($this->implements[$classname])) {
+            $implements = class_implements($classname);
+            $this->implements[$classname] = in_array(ValidatesWhenResolved::class, $implements, true);
         }
-        return $this->implements[$class];
+        return $this->implements[$classname];
+    }
+
+    /**
+     * @param UnauthorizedException $exception Keep this argument here even this argument is unused in the method,
+     *                                         maybe the user need the details of exception when rewrite this method
+     */
+    protected function handleUnauthorizedException(UnauthorizedException $exception): ResponseInterface
+    {
+        return Context::override(ResponseInterface::class, function (ResponseInterface $response) {
+            return $response->withStatus(403);
+        });
+    }
+
+    protected function shouldHandle(Dispatched $dispatched): bool
+    {
+        return $dispatched->status === Dispatcher::FOUND || ! $dispatched->handler->callback instanceof Closure;
+    }
+
+    /**
+     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     * @param array|string $handler
+     */
+    protected function prepareHandler($handler): array
+    {
+        if (is_string($handler)) {
+            if (strpos($handler, '@') !== false) {
+                return explode('@', $handler);
+            }
+            return explode('::', $handler);
+        }
+        if (is_array($handler) && isset($handler[0], $handler[1])) {
+            return $handler;
+        }
+        throw new \RuntimeException('Handler not exist.');
     }
 }

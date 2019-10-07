@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Contract;
 
+/**
+ * Keep the same interface name as illuminate/validation, but actually this method does not
+ * called after object resolved, this method will call in Hyperf\Validation\Middleware\ValidationMiddleware
+ */
 interface ValidatesWhenResolved
 {
     /**
