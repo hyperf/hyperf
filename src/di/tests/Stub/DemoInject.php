@@ -23,7 +23,7 @@ class DemoInject
     private $demo;
 
     /**
-     * @Inject(require=false)
+     * @Inject(required=false)
      * @var Demo1
      */
     private $demo1;

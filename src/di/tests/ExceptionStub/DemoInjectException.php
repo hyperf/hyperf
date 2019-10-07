@@ -20,7 +20,7 @@ use Hyperf\Di\Annotation\Inject;
 class DemoInjectException
 {
     /**
-     * @Inject(require=true)
+     * @Inject(required=true)
      * @var Demo1
      */
     private $demo;
