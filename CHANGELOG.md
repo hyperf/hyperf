@@ -6,7 +6,7 @@
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Added Annotation `@AsyncQueueMessage`.
 - [#418](https://github.com/hyperf-cloud/hyperf/pull/418) Allows send WebSocket message to any `fd` in current server, even the worker process does not hold the `fd`
 - [#420](https://github.com/hyperf-cloud/hyperf/pull/420) Added listener for model.
-- [#429](https://github.com/hyperf-cloud/hyperf/pull/429) Added validation component, a component similar to [illuminate/validation](https://github.com/illuminate/validation).
+- [#429](https://github.com/hyperf-cloud/hyperf/pull/429) [#643](https://github.com/hyperf-cloud/hyperf/pull/643) Added validation component, a component similar to [illuminate/validation](https://github.com/illuminate/validation).
 - [#441](https://github.com/hyperf-cloud/hyperf/pull/441) Automatically close the spare redis client when it is used in low frequency.
 - [#478](https://github.com/hyperf-cloud/hyperf/pull/441) Adopt opentracing interfaces and support [Jaeger](https://www.jaegertracing.io/).
 - [#500](https://github.com/hyperf-cloud/hyperf/pull/499) Added fluent method calls of `Hyperf\HttpServer\Contract\ResponseInterface`.
@@ -15,9 +15,10 @@
 - [#596](https://github.com/hyperf-cloud/hyperf/pull/596) Added `required` parameter for `@Inject`, if you define `@Inject(required=false)` annotation to a property, therefore the DI container will not throw an `Hyperf\Di\Exception\NotFoundException` when the dependency of the property does not exists, the default value of `required` parameter is `true`. In constructor injection mode, you could define the default value of the parameter of the `__construct` to `null`, this means this parameter is nullable and will not throw the exception too.
 - [#597](https://github.com/hyperf-cloud/hyperf/pull/597) Added concurrent for async-queue.
 - [#599](https://github.com/hyperf-cloud/hyperf/pull/599) Allows set the retry seconds according to attempt times of async queue consumer.
-- [#619](https://github.com/hyperf-cloud/hyperf/pull/619) Added HandlrStackFactory of guzzle.
+- [#619](https://github.com/hyperf-cloud/hyperf/pull/619) Added HandlerStackFactory of guzzle.
 - [#620](https://github.com/hyperf-cloud/hyperf/pull/620) Add automatic restart mechanism for consumer of async queue.
 - [#629](https://github.com/hyperf-cloud/hyperf/pull/629) Allows to modify the `clientIp`, `pullTimeout`, `intervalTimeout` of Apollo client via config file.
+- [#648](https://github.com/hyperf-cloud/hyperf/pull/648) Added `nack` return type of AMQP consumer, the abstract consumer will execute `basic_nack` method when the message handler return a `Hyperf\Amqp\Result::NACK`.
 - [#654](https://github.com/hyperf-cloud/hyperf/pull/654) Added all Swoole events and abstract hyperf events.
 
 ## Changed
@@ -44,7 +45,6 @@ return ApplicationContext::setContainer($container);
 
 - [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` of Request is available to return JSON formatted data normally.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
-- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#614](https://github.com/hyperf-cloud/hyperf/pull/614) [#617](https://github.com/hyperf-cloud/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
 
 Changed the structure of config provider:   
@@ -79,12 +79,14 @@ Now:
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 - [#563](https://github.com/hyperf-cloud/hyperf/pull/563) Deleted deprecated constants `Hyperf\Server\ServerInterface::SERVER_TCP`, use `Hyperf\Server\ServerInterface::SERVER_BASE` to instead of it.
+- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#612](https://github.com/hyperf-cloud/hyperf/pull/612) Deleted useless `$url` for RingPHP Handlers.
 - [#616](https://github.com/hyperf-cloud/hyperf/pull/616) [#618](https://github.com/hyperf-cloud/hyperf/pull/618) Deleted useless code of guzzle.
 
 ## Optimized
 
 - [#644](https://github.com/hyperf-cloud/hyperf/pull/644) Optimized annotation scan process, separate to two scan parts `app` and `vendor`, greatly decrease the elapsed time.
+- [#653](https://github.com/hyperf-cloud/hyperf/pull/653) Optimized the detect logical of swoole shortname.
 
 ## Fixed
 
