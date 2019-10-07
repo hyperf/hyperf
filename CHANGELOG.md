@@ -43,7 +43,6 @@ return ApplicationContext::setContainer($container);
 
 - [#486](https://github.com/hyperf-cloud/hyperf/pull/486) Changed `getParsedBody` of Request is available to return JSON formatted data normally.
 - [#523](https://github.com/hyperf-cloud/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
-- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#614](https://github.com/hyperf-cloud/hyperf/pull/614) [#617](https://github.com/hyperf-cloud/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
 
 Changed the structure of config provider:   
@@ -78,6 +77,7 @@ Now:
 - [#401](https://github.com/hyperf-cloud/hyperf/pull/401) Deleted class `Hyperf\JsonRpc\HttpServerFactory`, `Hyperf\HttpServer\ServerFactory`, `Hyperf\GrpcServer\ServerFactory`.
 - [#402](https://github.com/hyperf-cloud/hyperf/pull/402) Deleted deprecated method `AsyncQueue::delay`.
 - [#563](https://github.com/hyperf-cloud/hyperf/pull/563) Deleted deprecated constants `Hyperf\Server\ServerInterface::SERVER_TCP`, use `Hyperf\Server\ServerInterface::SERVER_BASE` to instead of it.
+- [#602](https://github.com/hyperf-cloud/hyperf/pull/602) Removed timeout property of `Hyperf\Utils\Coroutine\Concurrent`.
 - [#612](https://github.com/hyperf-cloud/hyperf/pull/612) Deleted useless `$url` for RingPHP Handlers.
 - [#616](https://github.com/hyperf-cloud/hyperf/pull/616) [#618](https://github.com/hyperf-cloud/hyperf/pull/618) Deleted useless code of guzzle.
 
