@@ -253,6 +253,8 @@ $foo = Context::has('foo');
 
 #### Hyperf\Utils\Context::override()
 
+> Override 方法仅可在 1.0.12 版本或更高版本使用
+
 当我们需要做一些复杂的上下文处理，比如先判断一个 key 是否存在，如果存在则取出 value 来再对 value 进行某些修改，然后再将 value 设置回上下文容器中，此时会有比较繁杂的判断条件，可直接通过调用 `override` 方法来实现这个逻辑，如下：
 
 ```php
