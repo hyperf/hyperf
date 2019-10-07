@@ -30,7 +30,7 @@ class Inject extends AbstractAnnotation
     /**
      * @var bool
      */
-    public $require = true;
+    public $required = true;
 
     /**
      * @var PhpDocReader
@@ -49,7 +49,7 @@ class Inject extends AbstractAnnotation
             $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
         } catch (AnnotationException $e) {
-            if ($this->require) {
+            if ($this->required) {
                 throw $e;
             }
             $this->value = '';
