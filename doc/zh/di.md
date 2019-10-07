@@ -130,11 +130,11 @@ class IndexController
 
 > 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
 
-##### Require 参数
+##### Required 参数
 
-> Require 参数仅可在 1.1.0 版本或更高版本使用
+> Required 参数仅可在 1.1.0 版本或更高版本使用
 
-`@Inject` 注解存在一个 `require` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI 容器或不可创建时，将不会抛出异常而是注入一个 `null`，如下：
+`@Inject` 注解存在一个 `required` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI 容器或不可创建时，将不会抛出异常而是注入一个 `null`，如下：
 
 ```php
 <?php
@@ -149,7 +149,7 @@ class IndexController
      * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
      * 
-     * @Inject(require=false) 
+     * @Inject(required=false) 
      * @var UserService
      */
     private $userService;
@@ -215,7 +215,6 @@ namespace App\Controller;
 
 use App\Service\UserServiceInterface;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
