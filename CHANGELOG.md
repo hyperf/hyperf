@@ -19,6 +19,7 @@
 - [#620](https://github.com/hyperf-cloud/hyperf/pull/620) Add automatic restart mechanism for consumer of async queue.
 - [#629](https://github.com/hyperf-cloud/hyperf/pull/629) Allows to modify the `clientIp`, `pullTimeout`, `intervalTimeout` of Apollo client via config file.
 - [#648](https://github.com/hyperf-cloud/hyperf/pull/648) Added `nack` return type of AMQP consumer, the abstract consumer will execute `basic_nack` method when the message handler return a `Hyperf\Amqp\Result::NACK`.
+- [#654](https://github.com/hyperf-cloud/hyperf/pull/654) Added all Swoole events and abstract hyperf events.
 
 ## Changed
 

@@ -36,7 +36,7 @@ class TaskCallback
         $this->taskEnableCoroutine = $config->get('server.settings.task_enable_coroutine', false);
     }
 
-    public function onTask(Server $serv, ...$arguments)
+    public function onTask(Server $server, ...$arguments)
     {
         if ($this->taskEnableCoroutine) {
             $task = $arguments[0];
@@ -48,13 +48,13 @@ class TaskCallback
             $task->data = $data;
         }
 
-        $event = $this->dispatcher->dispatch(new OnTask($serv, $task));
+        $event = $this->dispatcher->dispatch(new OnTask($server, $task));
 
         if ($event instanceof OnTask && ! is_null($event->result)) {
             if ($this->taskEnableCoroutine) {
                 $task->finish($event->result);
             } else {
-                $serv->finish($event->result);
+                $server->finish($event->result);
             }
         }
     }

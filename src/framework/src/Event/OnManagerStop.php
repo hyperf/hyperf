@@ -14,27 +14,15 @@ namespace Hyperf\Framework\Event;
 
 use Swoole\Server;
 
-class OnPipeMessage
+class OnManagerStop
 {
     /**
-     * @var \Swoole\Server
+     * @var Server
      */
     public $server;
 
-    /**
-     * @var int
-     */
-    public $fromWorkerId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct(Server $server, int $fromWorkerId, $data)
+    public function __construct(Server $server)
     {
         $this->server = $server;
-        $this->fromWorkerId = $fromWorkerId;
-        $this->data = $data;
     }
 }

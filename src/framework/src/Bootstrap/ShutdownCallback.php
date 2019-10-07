@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Bootstrap;
 
-use Hyperf\Framework\Event\OnFinish;
+use Hyperf\Framework\Event\OnShutdown;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 
-class FinishCallback
+class ShutdownCallback
 {
     /**
      * @var EventDispatcherInterface
@@ -28,8 +28,8 @@ class FinishCallback
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function onFinish(Server $server, int $taskId, $data)
+    public function onShutdown(Server $server)
     {
-        $this->dispatcher->dispatch(new OnFinish($server, $taskId, $data));
+        $this->dispatcher->dispatch(new OnShutdown($server));
     }
 }
