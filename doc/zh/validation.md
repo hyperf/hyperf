@@ -149,7 +149,7 @@ public function attributes(): array
 
 ### 手动创建验证器
 
-如果您不想使用 `表单请求(FormRequest)` 的自动验证功能，可以通过注入 `ValidationFactoryInterface` 接口类来获得验证器工厂类，然后通过 `make` 方法手动创建一个验证器实例：
+如果您不想使用 `表单请求(FormRequest)` 的自动验证功能，可以通过注入 `ValidatorFactoryInterface` 接口类来获得验证器工厂类，然后通过 `make` 方法手动创建一个验证器实例：
 
 ```php
 <?php
@@ -172,6 +172,10 @@ class IndexController
     {
         $validator = $this->validationFactory->make(
             $request->all(),
+            [
+                'foo' => 'required',
+                'bar' => 'required',
+            ],
             [
                 'foo.required' => 'foo is required',
                 'bar.required' => 'bar is required',
@@ -254,7 +258,7 @@ class IndexController
 {
     /**
      * @Inject()
-     * @var ValidationFactoryInterface
+     * @var ValidatorFactoryInterface
      */
     protected $validationFactory;
 
@@ -262,6 +266,10 @@ class IndexController
     {
         $validator = $this->validationFactory->make(
             $request->all(),
+            [
+                'foo' => 'required',
+                'bar' => 'required',
+            ],
             [
                 'foo.required' => 'foo is required',
                 'bar.required' => 'bar is required',
