@@ -14,12 +14,16 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|     配置      |   类型    |                   默认值                    |        备注        |
-|:-------------:|:---------:|:-------------------------------------------:|:------------------:|
-|    driver     |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
-|    channel    |  string   |                    queue                    |      队列前缀      |
-| retry_seconds | int,array |                      5                      | 失败后重新尝试间隔 |
-|   processes   |    int    |                      1                      |     消费进程数     |
+|       配置       |   类型    |                   默认值                    |                  备注                   |
+|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+|      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
+|     channel      |  string   |                    queue                    |                队列前缀                 |
+|     timeout      |    int    |                      2                      |            pop消息的超时时间            |
+|  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
+|  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
+|    processes     |    int    |                      1                      |               消费进程数                |
+| concurrent.limit |    int    |                      1                      |             同时处理消息数              |
+|   max_messages   |    int    |                      0                      | 进程重启所需最大处理的消息数 默认不重启 |
 
 ```php
 <?php
@@ -28,8 +32,13 @@ return [
     'default' => [
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
+        'timeout' => 2,
         'retry_seconds' => 5,
+        'handle_timeout' => 10,
         'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
     ],
 ];
 
