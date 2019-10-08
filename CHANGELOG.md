@@ -5,6 +5,7 @@
 - [#664](https://github.com/hyperf-cloud/hyperf/pull/664) Changed the default return value of FormRequest::authorize which generate via `gen:request` command.
 - [#665](https://github.com/hyperf-cloud/hyperf/pull/665) Fixed framework will generate proxy class of all classes that in app directory every time.
 - [#667](https://github.com/hyperf-cloud/hyperf/pull/667) Fixed trying to get property 'callback' of non-object in `Hyperf\Validation\Middleware\ValidationMiddleware`.
+- [#672](https://github.com/hyperf-cloud/hyperf/pull/672) Fixed  `Hyperf\Validation\Middleware\ValidationMiddleware` will throw an unexpected exception when the action method has defined a non-object parameter.
 
 # v1.1.0 - 2019-10-08
 
