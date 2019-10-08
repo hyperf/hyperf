@@ -1,3 +1,10 @@
+# v1.1.1 - 2019-10-08
+
+## Fixed
+
+- [#665](https://github.com/hyperf-cloud/hyperf/pull/665) Fixed proxy classes are generated automatically in the app directory.
+- [#667](https://github.com/hyperf-cloud/hyperf/pull/667) Fixed trying to get property 'callback' of non-object in `ValidationMiddleware`.
+
 # v1.1.0 - 2019-10-08
 
 ## Added
