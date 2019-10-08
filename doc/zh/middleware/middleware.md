@@ -65,7 +65,7 @@ Router::addGroup(
 在通过注解定义路由时，我们推荐通过注解的方式来定义中间件，对中间件的定义有两个注解，分别为：   
   - `@Middleware` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
   - `@Middlewares` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `@Middleware` 注解实现多个中间件的定义
-  
+
 > 使用 `@Middleware` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `@Middlewares` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
@@ -235,6 +235,75 @@ use Psr\Http\Message\ServerRequestInterface;
 \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
 \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```
+
+
+
+## 覆写 CoreMiddleWare 的行为
+
+默认情况下，路由/方法未命中的时候，Hyperf 的 `Hyperf\HttpServer\CoreMiddleware` 直接返回了带状态代码的空响应，之所以这么设计是有原因的，参见 [issue #603](https://github.com/hyperf-cloud/hyperf/issues/603#issuecomment-538902894) ，但是基于实际业务考虑，v1.1开始，`Hyperf\HttpServer\CoreMiddleware` 开始在DI下被管理，允许你可以通过设置依赖注入来把 `Hyperf\HttpServer\CoreMiddleware` 指向你自己继承和实现的核心中间件，比如`App\Middleware\CoreMiddleware`，然后覆写`handleNotFound` `handleMethodNotAllowed`2个方法实现自定义响应。
+
+具体配置例子为：
+
+`config/autoload/dependencies.php`
+
+```php
+return [
+    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
+];
+
+```
+
+`App\Middleware\CoreMiddleware`
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ */
+
+namespace App\Middleware;
+
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Utils\Contracts\Arrayable;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
+{
+
+    /**
+     * Handle the response when cannot found any routes.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        //修改为你的响应内容
+        return $this->response()->withStatus(404)->withBody(new SwooleStream('页面飞走了'));
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    {
+        //修改为你的响应内容
+        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $methods))->withBody(new SwooleStream('请求的方法不允许'));
+    }
+}
+
+```
+
+
 
 ## 常用中间件
 
