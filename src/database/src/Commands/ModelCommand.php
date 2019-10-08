@@ -145,10 +145,7 @@ class ModelCommand extends Command
 
     protected function shouldCreate(string $table)
     {
-        $config = $this->container->get(ConfigInterface::class);
-        $migrationTable = $config->get('databases.migrations', 'migrations');
-
-        return $table !== $migrationTable;
+        return $table !== $this->config->get('databases.migrations', 'migrations');
     }
 
     protected function createModel(string $table, ModelOption $option)
