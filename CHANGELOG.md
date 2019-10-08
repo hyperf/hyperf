@@ -6,6 +6,7 @@
 - [#665](https://github.com/hyperf-cloud/hyperf/pull/665) Fixed framework will generate proxy class of all classes that in app directory every time.
 - [#667](https://github.com/hyperf-cloud/hyperf/pull/667) Fixed trying to get property 'callback' of non-object in `Hyperf\Validation\Middleware\ValidationMiddleware`.
 - [#672](https://github.com/hyperf-cloud/hyperf/pull/672) Fixed  `Hyperf\Validation\Middleware\ValidationMiddleware` will throw an unexpected exception when the action method has defined a non-object parameter.
+- [#674](https://github.com/hyperf-cloud/hyperf/pull/674) Fixed the table of Model is not correct when using `gen:model`.
 
 # v1.1.0 - 2019-10-08
 

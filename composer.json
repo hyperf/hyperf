@@ -11,6 +11,7 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
+        "ext-swoole": ">=4.4",
         "egulias/email-validator": "^2.1",
         "bandwidth-throttle/token-bucket": "^2.0",
         "doctrine/annotations": "^1.6",
