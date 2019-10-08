@@ -79,7 +79,7 @@ class ValidationMiddleware implements MiddlewareInterface
 
     public function isImplementedValidatesWhenResolved(string $classname): bool
     {
-        if (! isset($this->implements[$classname])) {
+        if (! isset($this->implements[$classname]) && class_exists($classname)) {
             $implements = class_implements($classname);
             $this->implements[$classname] = in_array(ValidatesWhenResolved::class, $implements, true);
         }
