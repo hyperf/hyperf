@@ -99,7 +99,7 @@ class ValidationMiddleware implements MiddlewareInterface
 
     protected function shouldHandle(Dispatched $dispatched): bool
     {
-        return $dispatched->status === Dispatcher::FOUND || ! $dispatched->handler->callback instanceof Closure;
+        return $dispatched->status === Dispatcher::FOUND && ! $dispatched->handler->callback instanceof Closure;
     }
 
     /**
