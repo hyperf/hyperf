@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
@@ -20,7 +19,7 @@ use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
 /**
- * @Aspect.
+ * Aspect.
  */
 class MethodAspect extends AbstractAspect
 {
