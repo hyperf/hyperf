@@ -173,8 +173,8 @@ class IndexController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'foo.required' => 'foo is required',
-                'bar.required' => 'bar is required',
+                'foo' => 'required',
+                'bar' => 'required',
             ]
         );
 
