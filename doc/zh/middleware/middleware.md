@@ -240,7 +240,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 ## 覆写 CoreMiddleWare 的行为
 
-默认情况下，路由/方法未命中的时候，Hyperf 的 `Hyperf\HttpServer\CoreMiddleware` 直接返回了带状态代码的空响应，之所以这么设计是有原因的，参见 [issue #603](https://github.com/hyperf-cloud/hyperf/issues/603#issuecomment-538902894) ，但是基于实际业务考虑，v1.1开始，`Hyperf\HttpServer\CoreMiddleware` 开始在DI下被管理，允许你可以通过设置依赖注入来把 `Hyperf\HttpServer\CoreMiddleware` 指向你自己继承和实现的核心中间件，比如`App\Middleware\CoreMiddleware`，然后覆写`handleNotFound` `handleMethodNotAllowed`2个方法实现自定义响应。
+默认情况下，路由或者方法未命中(HTTP 404、405)的时候，Hyperf 的 `Hyperf\HttpServer\CoreMiddleware` 直接返回了带状态代码的空响应，之所以这么设计是有原因的，参见 [issue #603](https://github.com/hyperf-cloud/hyperf/issues/603#issuecomment-538902894) ，但是基于实际业务考虑，v1.1开始，`Hyperf\HttpServer\CoreMiddleware` 开始在DI下被管理，允许你可以通过设置依赖注入来把 `Hyperf\HttpServer\CoreMiddleware` 指向你自己继承和实现的核心中间件，比如`App\Middleware\CoreMiddleware`，然后覆写`handleNotFound` `handleMethodNotAllowed`2个方法实现自定义响应。
 
 具体配置例子为：
 
