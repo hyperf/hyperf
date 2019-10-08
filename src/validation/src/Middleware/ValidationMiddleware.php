@@ -83,7 +83,7 @@ class ValidationMiddleware implements MiddlewareInterface
             $implements = class_implements($classname);
             $this->implements[$classname] = in_array(ValidatesWhenResolved::class, $implements, true);
         }
-        return $this->implements[$classname];
+        return $this->implements[$classname] ?? false;
     }
 
     /**
