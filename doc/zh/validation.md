@@ -164,7 +164,7 @@ class IndexController
 {
     /**
      * @Inject()
-     * @var ValidationFactoryInterface
+     * @var ValidatorFactoryInterface
      */
     protected $validationFactory;
 
