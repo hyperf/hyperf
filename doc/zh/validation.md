@@ -175,6 +175,10 @@ class IndexController
             [
                 'foo' => 'required',
                 'bar' => 'required',
+            ],
+            [
+                'foo.required' => 'foo is required',
+                'bar.required' => 'bar is required',
             ]
         );
 
@@ -254,7 +258,7 @@ class IndexController
 {
     /**
      * @Inject()
-     * @var ValidationFactoryInterface
+     * @var ValidatorFactoryInterface
      */
     protected $validationFactory;
 
@@ -262,6 +266,10 @@ class IndexController
     {
         $validator = $this->validationFactory->make(
             $request->all(),
+            [
+                'foo' => 'required',
+                'bar' => 'required',
+            ],
             [
                 'foo.required' => 'foo is required',
                 'bar.required' => 'bar is required',
