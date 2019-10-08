@@ -133,7 +133,7 @@ class ModelCommand extends Command
         foreach ($builder->getAllTables() as $row) {
             $row = (array) $row;
             $table = reset($row);
-            if ($table !== 'migrations') {
+            if ($this->shouldCreate($table)) {
                 $tables[] = $table;
             }
         }
@@ -141,6 +141,14 @@ class ModelCommand extends Command
         foreach ($tables as $table) {
             $this->createModel($table, $option);
         }
+    }
+
+    protected function shouldCreate(string $table)
+    {
+        $config = $this->container->get(ConfigInterface::class);
+        $migrationTable = $config->get('databases.migrations', 'migrations');
+
+        return $table !== $migrationTable;
     }
 
     protected function createModel(string $table, ModelOption $option)
