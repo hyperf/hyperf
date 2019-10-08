@@ -236,37 +236,15 @@ use Psr\Http\Message\ServerRequestInterface;
 \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```
 
+## 自定义 CoreMiddleWare 的行为
 
+默认情况下，Hyperf 在处理路由找不到或 HTTP 方法不允许时，即 HTTP 状态码为 `404` `405` 的时候，是由 `CoreMiddleware` 直接处理并返回对应的响应对象的，得益于 Hyperf 依赖注入的设计，您可以通过替换对象的方式来把 `CoreMiddleware` 指向由您自己实现的 `CoreMiddleware` 去。
 
-## 覆写 CoreMiddleWare 的行为
-
-默认情况下，路由或者方法未命中(HTTP 404、405)的时候，Hyperf 的 `Hyperf\HttpServer\CoreMiddleware` 直接返回了带状态代码的空响应，之所以这么设计是有原因的，参见 [issue #603](https://github.com/hyperf-cloud/hyperf/issues/603#issuecomment-538902894) ，但是基于实际业务考虑，v1.1开始，`Hyperf\HttpServer\CoreMiddleware` 开始在DI下被管理，允许你可以通过设置依赖注入来把 `Hyperf\HttpServer\CoreMiddleware` 指向你自己继承和实现的核心中间件，比如`App\Middleware\CoreMiddleware`，然后覆写`handleNotFound` `handleMethodNotAllowed`2个方法实现自定义响应。
-
-具体配置例子为：
-
-`config/autoload/dependencies.php`
-
-```php
-return [
-    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
-];
-
-```
-
-`App\Middleware\CoreMiddleware`
+比如我们希望定义一个 `App\Middleware\CoreMiddleware` 类来重写默认的行为，我们可以先定义一个 `App\Middleware\CoreMiddleware` 类如下，这里我们仅以 HTTP Server 为例，其它 Server 也可采用同样的做法来达到同样的目的。
 
 ```php
 <?php
-
 declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
- */
 
 namespace App\Middleware;
 
@@ -277,7 +255,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
-
     /**
      * Handle the response when cannot found any routes.
      *
@@ -285,8 +262,8 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        //修改为你的响应内容
-        return $this->response()->withStatus(404)->withBody(new SwooleStream('页面飞走了'));
+        // 重写路由找不到的处理逻辑
+        return $this->response()->withStatus(404);
     }
 
     /**
@@ -296,14 +273,22 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
      */
     protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        //修改为你的响应内容
-        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $methods))->withBody(new SwooleStream('请求的方法不允许'));
+        // 重写 HTTP 方法不允许的处理逻辑
+        return $this->response()->withStatus(405);
     }
 }
-
 ```
 
+然后再在 `config/autoload/dependencies.php` 定义对象关系重写 CoreMiddleware 对象：
 
+```php
+<?php
+return [
+    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
+];
+```
+
+> 这里直接重写 CoreMiddleware 的做法需要在 1.1.0+ 版本上才有效，1.0.x 版本仍需要你再将 CoreMiddleware 的上层调用通过 DI 进行重写，然后替换 CoreMiddleware 的传值为您定义的中间件类。
 
 ## 常用中间件
 
