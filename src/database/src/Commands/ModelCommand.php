@@ -132,7 +132,10 @@ class ModelCommand extends Command
 
         foreach ($builder->getAllTables() as $row) {
             $row = (array) $row;
-            $tables[] = reset($row);
+            $table = reset($row);
+            if ($table !== 'migrations') {
+                $tables[] = $table;
+            }
         }
 
         foreach ($tables as $table) {
