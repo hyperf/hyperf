@@ -157,7 +157,7 @@ class ModelCommand extends Command
                 @mkdir($dir, 0755, true);
             }
 
-            file_put_contents($path, $this->buildClass($class, $option));
+            file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
         $columns = $this->getColumns($class, $columns, $option->isForceCasts());
@@ -231,7 +231,7 @@ class ModelCommand extends Command
     /**
      * Build the class with the given name.
      */
-    protected function buildClass(string $name, ModelOption $option): string
+    protected function buildClass(string $table, string $name, ModelOption $option): string
     {
         $stub = file_get_contents(__DIR__ . '/stubs/Model.stub');
 
@@ -239,7 +239,8 @@ class ModelCommand extends Command
             ->replaceInheritance($stub, $option->getInheritance())
             ->replaceConnection($stub, $option->getPool())
             ->replaceUses($stub, $option->getUses())
-            ->replaceClass($stub, $name);
+            ->replaceClass($stub, $name)
+            ->replaceTable($stub, $table);
     }
 
     /**
@@ -301,13 +302,21 @@ class ModelCommand extends Command
     /**
      * Replace the class name for the given stub.
      */
-    protected function replaceClass(string $stub, string $name): string
+    protected function replaceClass(string &$stub, string $name): self
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
         $stub = str_replace('%CLASS%', $class, $stub);
 
-        return str_replace('%TABLE%', Str::snake($class), $stub);
+        return $this;
+    }
+
+    /**
+     * Replace the table name for the given stub.
+     */
+    protected function replaceTable(string $stub, string $table): string
+    {
+        return str_replace('%TABLE%', $table, $stub);
     }
 
     /**
