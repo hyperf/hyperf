@@ -15,6 +15,9 @@ composer require hyperf/validation
 ### Publish config file
 
 ```
+# 发布国际化配置，已经发布过国际化配置可以省略
+php bin/hyperf.php vendor:publish hyperf/translation
+
 php bin/hyperf.php vendor:publish hyperf/validation
 ```
 
@@ -29,9 +32,9 @@ your/config/path/autoload/translation.php
 ```php
 <?php
 return [
-    'locale'          => 'en',   
-    'fallback_locale' => '',
-    'lang'            => BASE_PATH . '/resources/lang', 
+    'locale' => 'zh_CN',
+    'fallback_locale' => 'en',
+    'path' => BASE_PATH . '/storage/languages',
 ];
 ```
 
