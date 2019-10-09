@@ -30,7 +30,7 @@ return [
 
 ### 添加异常处理器
 
-异常处理器主要对 `Hyperf\Validation\ValidationException` 异常进行处理，我们提供了一个 `Hyperf\Validation\ValidationExceptionHandler` 来进行处理，您需要手动将这个异常处理器配置到您的项目的 `config/autoload/exception.php` 文件内，当然，您也可以自定义您的异常处理器。
+异常处理器主要对 `Hyperf\Validation\ValidationException` 异常进行处理，我们提供了一个 `Hyperf\Validation\ValidationExceptionHandler` 来进行处理，您需要手动将这个异常处理器配置到您的项目的 `config/autoload/exceptions.php` 文件内，当然，您也可以自定义您的异常处理器。
 
 ```php
 <?php
