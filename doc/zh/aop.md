@@ -17,7 +17,7 @@ AOP 为 `Aspect Oriented Programming` 的缩写，意为：`面向切面编程`�
 
 ## 定义切面(Aspect)
 
-每个 `切面(Aspect)` 必须实现 `Hyperf\Di\Aop\ArroundInterface` 接口，并提供 `public` 的 `$classes` 和 `$annotations` 属性，为了方便使用，我们可以通过继承 `Hyperf\Di\Aop\AbstractAspect` 来简化定义过程，我们通过代码来描述一下。
+每个 `切面(Aspect)` 必须实现 `Hyperf\Di\Aop\AroundInterface` 接口，并提供 `public` 的 `$classes` 和 `$annotations` 属性，为了方便使用，我们可以通过继承 `Hyperf\Di\Aop\AbstractAspect` 来简化定义过程，我们通过代码来描述一下。
 
 ```php
 <?php
