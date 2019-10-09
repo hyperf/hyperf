@@ -6,6 +6,13 @@
 
 Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
+
+1.1.0 + 版本：
+```
+$ php bin/hyperf.php gen:model table_name
+```
+
+1.0.* 版本：
 ```
 $ php bin/hyperf.php db:model table_name
 ```
