@@ -96,7 +96,8 @@ class ModelCommand extends Command
             ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
             ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []));
+            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []))
+            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.db:model.ignore_tables', $pool, []));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -117,6 +118,7 @@ class ModelCommand extends Command
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
         $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
+        $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -133,7 +135,7 @@ class ModelCommand extends Command
         foreach ($builder->getAllTables() as $row) {
             $row = (array) $row;
             $table = reset($row);
-            if ($this->shouldCreate($table)) {
+            if (! $this->isIgnoreTable($table, $option)) {
                 $tables[] = $table;
             }
         }
@@ -143,9 +145,13 @@ class ModelCommand extends Command
         }
     }
 
-    protected function shouldCreate(string $table)
+    protected function isIgnoreTable(string $table, ModelOption $option): bool
     {
-        return $table !== $this->config->get('databases.migrations', 'migrations');
+        if (in_array($table, $option->getIgnoreTables())) {
+            return true;
+        }
+
+        return $table === $this->config->get('databases.migrations', 'migrations');
     }
 
     protected function createModel(string $table, ModelOption $option)
@@ -225,7 +231,7 @@ class ModelCommand extends Command
         if (in_array($name, ['force-casts', 'refresh-fillable'])) {
             $nonInput = false;
         }
-        if (in_array($name, ['table-mapping'])) {
+        if (in_array($name, ['table-mapping', 'ignore-tables'])) {
             $nonInput = [];
         }
 
