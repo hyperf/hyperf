@@ -12,14 +12,14 @@ composer require hyperf/translation
 
 # 语言文件
 
-Hyperf 的语言文件默认都放在 `storage/languages` 下面，您也可以在 `config/autoload/translation.php` 内更改语言文件的文件夹，每种语言对应其中的一个子文件夹，例如 `en` 指英文语言文件，`zh-CN` 指中文简体的语言文件，你可以按照实际需要创建新的语言文件夹和里面的语言文件。示例如下：
+Hyperf 的语言文件默认都放在 `storage/languages` 下面，您也可以在 `config/autoload/translation.php` 内更改语言文件的文件夹，每种语言对应其中的一个子文件夹，例如 `en` 指英文语言文件，`zh_CN` 指中文简体的语言文件，你可以按照实际需要创建新的语言文件夹和里面的语言文件。示例如下：
 
 ```
 /storage
     /languages
         /en
             messages.php
-        /zh-CN
+        /zh_CN
             messages.php
 ```
 
@@ -44,7 +44,7 @@ return [
 
 return [
     // 默认语言
-    'locale' => 'zh-CN',
+    'locale' => 'zh_CN',
     // 回退语言，当默认语言的语言文本没有提供时，就会使用回退语言的对应语言文本
     'fallback_locale' => 'en',
     // 语言文件存放的文件夹
@@ -74,7 +74,7 @@ class FooController
     
     public function index()
     {
-        return $this->translator->trans('messages.welcome', [], 'zh-CN');
+        return $this->translator->trans('messages.welcome', [], 'zh_CN');
     }
 }
 ```
