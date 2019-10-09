@@ -23,6 +23,7 @@ composer require hyperf/websocket-server
         'port' => 9502,
         'sock_type' => SWOOLE_SOCK_TCP,
         'callbacks' => [
+            // SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'], // 同时监听HTTP请求
             SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
             SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
             SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
@@ -41,7 +42,8 @@ composer require hyperf/websocket-server
 <?php
 
 Router::addServer('ws', function () {
-    Router::get('/', 'App\Controller\WebSocketController');
+    Router::get('/', 'App\Controller\IndexController@index'); // HTTP 路由
+    Router::addRoute(['GET', 'POST'], '/ws', 'App\Controller\WebSocketController'); // ws 路由, 客户端连接URL需要带上路径
 });
 ```
 
