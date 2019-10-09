@@ -49,6 +49,9 @@ return [
 ### 发布验证器语言文件
 
 ```bash
+# 发布国际化配置，已经发布过国际化配置可以省略
+php bin/hyperf.php vendor:publish hyperf/translation
+
 php bin/hyperf.php vendor:publish hyperf/validation
 ```
 
