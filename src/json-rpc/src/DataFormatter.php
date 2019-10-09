@@ -13,12 +13,20 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Utils\Contracts\Arrayable;
 
 class DataFormatter implements DataFormatterInterface
 {
     public function formatRequest($data)
     {
         [$path, $params, $id] = $data;
+
+        foreach ($params as $key => $param) {
+            if ($param instanceof Arrayable) {
+                $params[$key] = $param->toArray();
+            }
+        }
+        
         return [
             'jsonrpc' => '2.0',
             'method' => $path,
