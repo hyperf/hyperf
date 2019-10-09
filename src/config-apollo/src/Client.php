@@ -16,6 +16,7 @@ use Closure;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Str;
 
 class Client implements ClientInterface
 {
@@ -105,7 +106,7 @@ class Client implements ClientInterface
                         'releaseKey' => $releaseKey,
                     ],
                 ]);
-                if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
+                if ($response->getStatusCode() === 200 && Str::contains($response->getHeaderLine('Content-Type'), 'application/json')) {
                     $body = json_decode((string) $response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
@@ -140,7 +141,7 @@ class Client implements ClientInterface
                     'releaseKey' => $releaseKey,
                 ],
             ]);
-            if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
+            if ($response->getStatusCode() === 200 && Str::contains($response->getHeaderLine('Content-Type'), 'application/json')) {
                 $body = json_decode((string) $response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
