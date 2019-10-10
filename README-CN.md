@@ -46,18 +46,18 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 官网 [https://hyperf.io](https://hyperf.io)   
 文档 [https://hyperf.wiki](https://hyperf.wiki)
 
-## 贡献值
+# 贡献者
 
-### 代码贡献者
+## 代码贡献者
 
 感谢所有参与 Hyperf 开发的代码贡献者。 [[contributors](https://github.com/hyperf-cloud/hyperf/graphs/contributors)]
 <a href="https://github.com/hyperf-cloud/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
-### 资金赞助方
+## 资金赞助方
 
 成为我们的资金赞助方，帮助我们维持我们的社区。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
-#### 组织/公司
+### 组织/公司
 
 以组织/公司的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
