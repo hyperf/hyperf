@@ -30,7 +30,7 @@ return [
 
 ### 添加异常处理器
 
-异常处理器主要对 `Hyperf\Validation\ValidationException` 异常进行处理，我们提供了一个 `Hyperf\Validation\ValidationExceptionHandler` 来进行处理，您需要手动将这个异常处理器配置到您的项目的 `config/autoload/exception.php` 文件内，当然，您也可以自定义您的异常处理器。
+异常处理器主要对 `Hyperf\Validation\ValidationException` 异常进行处理，我们提供了一个 `Hyperf\Validation\ValidationExceptionHandler` 来进行处理，您需要手动将这个异常处理器配置到您的项目的 `config/autoload/exceptions.php` 文件内，当然，您也可以自定义您的异常处理器。
 
 ```php
 <?php
@@ -48,6 +48,14 @@ return [
 
 ### 发布验证器语言文件
 
+由于存在多语言的功能，故该组件依赖 [hyperf/translation](https://github.com/hyperf-cloud/translation) 组件，如您未曾添加过 Translation 组件的配置文件，请先执行下面的命令来发布 Translation 组件的配置文件，如您已经发布过或手动添加过，只需发布验证器组件的语言文件即可：
+
+发布 Translation 组件的文件：
+```php
+php bin/hyperf.php vendor:publish hyperf/translation
+```
+
+发布验证器组件的文件：
 ```bash
 php bin/hyperf.php vendor:publish hyperf/validation
 ```
@@ -63,8 +71,6 @@ php bin/hyperf.php vendor:publish hyperf/validation
             validation.php
 
 ```
-
-> 由于存在多语言的功能，故该组件依赖 [hyperf/translation](https://github.com/hyperf-cloud/translation) 组件。
 
 ## 使用
 
