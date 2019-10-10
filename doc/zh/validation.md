@@ -812,36 +812,36 @@ $validator = $this->validationFactory->make($data, [
 
 复杂条件验证
 
-有时候你可能想要基于更复杂的条件逻辑添加验证规则。例如，你可能想要只有在另一个字段值大于 100 时才要求一个给定字段是必须的，或者，你可能需要只有当另一个字段存在时两个字段才都有给定值。添加这个验证规则并不是一件头疼的事。首先，创建一个永远不会改变的静态规则到 Validator 实例：
-
+有时候你可能想要基于更复杂的条件逻辑添加验证规则。例如，你可能想要只有在另一个字段值大于 100 时才要求一个给定字段是必须的，或者，你可能需要只有当另一个字段存在时两个字段才都有给定值。添加这个验证规则并不是一件头疼的事。首先，创建一个永远不会改变的静态规则到 `Validator` 实例：
+```php
 $validator = $this->validationFactory->make($data, [
     'email' => 'required|email',
     'games' => 'required|numeric',
 ]);
-
-让我们假定我们的 Web 应用服务于游戏收藏者。如果一个游戏收藏者注册了我们的应用并拥有超过 100 个游戏，我们想要他们解释为什么他们会有这么多游戏，例如，也许他们在运营一个游戏二手店，又或者他们只是喜欢收藏。要添加这种条件，我们可以使用 Validator 实例上的 sometimes 方法：
-
+```
+让我们假定我们的 Web 应用服务于游戏收藏者。如果一个游戏收藏者注册了我们的应用并拥有超过 100 个游戏，我们想要他们解释为什么他们会有这么多游戏，例如，也许他们在运营一个游戏二手店，又或者他们只是喜欢收藏。要添加这种条件，我们可以使用 `Validator` 实例上的 `sometimes` 方法：
+```php
 $v->sometimes('reason', 'required|max:500', function($input) {
     return $input->games >= 100;
 });
+```
 
-
-传递给 sometimes 方法的第一个参数是我们需要有条件验证的名称字段，第二个参数是我们想要添加的规则，如果作为第三个参数的闭包返回 true，规则被添加。该方法让构建复杂条件验证变得简单，你甚至可以一次为多个字段添加条件验证：
-
+传递给 `sometimes` 方法的第一个参数是我们需要有条件验证的名称字段，第二个参数是我们想要添加的规则，如果作为第三个参数的闭包返回 `true`，规则被添加。该方法让构建复杂条件验证变得简单，你甚至可以一次为多个字段添加条件验证：
+```php
 $v->sometimes(['reason', 'cost'], 'required', function($input) {
     return $input->games >= 100;
 });
-
-注：传递给闭包的 $input 参数是 Hyperf\Support\Fluent 的一个实例，可用于访问输入和文件。
+```
+注：传递给闭包的 `$input` 参数是 `Hyperf\Support\Fluent` 的一个实例，可用于访问输入和文件。
 
 ### 验证数组输入
 
 验证表单数组输入字段不再是件痛苦的事情，例如，如果进入的 HTTP 请求包含 `photos[profile]` 字段，可以这么验证：
-
+```php
 $validator = $this->validationFactory->make($request->all(), [
     'photos.profile' => 'required|image',
 ]);
-
+```
 我们还可以验证数组的每个元素，例如，要验证给定数组输入中每个 email 是否是唯一的，可以这么做（这种针对提交的数组字段是二维数组，如 `person[][email]` 或 `person[test][email]`）：
 
 ```php
@@ -859,4 +859,92 @@ $validator = $this->validationFactory->make($request->all(), [
         'unique' => '每个人的邮箱地址必须是唯一的',
     ]
 ],
+```
+
+### 自定义验证规则
+
+#### 注册自定义验证规则
+
+`Validation`  组件使用事件机制实现自定义验证规则，我们定义了 `ValidatorFactoryResolved` 事件，您需要做的就是定义一个 `ValidatorFactoryResolved` 的监听器并且在监听器中实现验证器的注册，示例如下。
+
+```php
+namespace App\Listener;
+
+
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use Hyperf\Validation\Event\ValidatorFactoryResolved;
+
+class ValidatorFactoryResolvedListener implements ListenerInterface
+{
+
+    public function listen(): array
+    {
+        return [
+            ValidatorFactoryResolved::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        /**  @var ValidatorFactoryInterface $validatorFactory */
+        $validatorFactory = $event->validatorFactory;
+        // 注册了 foo 验证器
+        $validatorFactory->extend('foo', function ($attribute, $value, $parameters, $validator) {
+            return $value == 'foo';
+        });
+        // 当创建一个自定义验证规则时，你可能有时候需要为错误信息定义自定义占位符这里扩展了 :foo 占位符
+        $validatorFactory->replacer('foo', function ($message, $attribute, $rule, $parameters) {
+            return str_replace(':foo', $attribute, $message);
+        });
+    }
+}
+```
+
+#### 自定义错误信息
+
+你还需要为自定义规则定义错误信息。你可以使用内联自定义消息数组或者在验证语言文件中添加条目来实现这一功能。消息应该被放到数组的第一维，而不是在只用于存放属性指定错误信息的 custom 数组内，以上一节的 `foo` 自定义验证器为例:
+
+`storage/languages/en/validation.php` 文件添加到数组中
+```php
+    'foo' => 'The :attribute must be foo',
+```
+
+`storage/languages/zh_CN/validation.php` 文件添加到数组中
+```php    
+    'foo' => ' :attribute 必须是 foo',
+```
+
+#### 自定义验证器使用
+
+```
+<?php
+
+declare(strict_types=1);
+
+namespace App\Request;
+
+use Hyperf\Validation\Request\FormRequest;
+
+class DemoRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            // 使用 foo 验证器
+            'name' => 'foo'
+        ];
+    }
+}
 ```
