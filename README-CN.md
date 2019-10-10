@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/hyperf-cloud/hyperf.svg?branch=master)](https://travis-ci.org/hyperf-cloud/hyperf)
 <a href="https://packagist.org/packages/hyperf/hyperf"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable.svg" alt="Latest Stable Version"></a>
-[![Financial Contributors on Open Collective](https://opencollective.com/hyperf/all/badge.svg?label=financial+contributors)](https://opencollective.com/hyperf) 
 [![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
 [![Hyperf License](https://img.shields.io/github/license/hyperf-cloud/hyperf.svg?maxAge=2592000)](https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE)
@@ -56,26 +55,11 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 ### 资金赞助方
 
-成为我们的资金赞助方，帮助我们维持我们的社区。 [[赞助](https://opencollective.com/hyperf/contribute)]
+成为我们的资金赞助方，帮助我们维持我们的社区。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
-#### 个人
+#### 组织/公司
 
-<a href="https://opencollective.com/hyperf"><img src="https://opencollective.com/hyperf/individuals.svg?width=890"></a>
-
-#### 组织
-
-以组织的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://opencollective.com/hyperf/contribute)]
-
-<a href="https://opencollective.com/hyperf/organization/0/website"><img src="https://opencollective.com/hyperf/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/1/website"><img src="https://opencollective.com/hyperf/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/2/website"><img src="https://opencollective.com/hyperf/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/3/website"><img src="https://opencollective.com/hyperf/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/4/website"><img src="https://opencollective.com/hyperf/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/5/website"><img src="https://opencollective.com/hyperf/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/6/website"><img src="https://opencollective.com/hyperf/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/7/website"><img src="https://opencollective.com/hyperf/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/8/website"><img src="https://opencollective.com/hyperf/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/9/website"><img src="https://opencollective.com/hyperf/organization/9/avatar.svg"></a>
+以组织/公司的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
 # 开源协议
 
