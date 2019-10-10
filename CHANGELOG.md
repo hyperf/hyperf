@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
+- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) Fixed bug that validationData don't contains uploaded files.
 
 # v1.1.1 - 2019-10-08
 
