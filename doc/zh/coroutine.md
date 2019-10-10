@@ -259,11 +259,11 @@ $foo = Context::has('foo');
 
 ```php
 <?php
-use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Hyperf\Utils\Context;
 
 // 从协程上下文取出 $request 对象并设置 key 为 foo 的 Header，然后再保存到协程上下文中
-$request = Context::override(RequestInterface::class, function (RequestInterface $request) {
+$request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {
     return $request->withAddedHeader('foo', 'bar');
 });
 ```
