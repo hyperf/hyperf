@@ -107,7 +107,7 @@ class Request implements RequestInterface
      */
     public function all(): array
     {
-        $data = $this->getInputData();
+        $data = array_merge($this->getInputData(), $this->getUploadedFiles());
         return $data ?? [];
     }
 
