@@ -38,4 +38,9 @@ class DemoRequest extends FormRequest
             'password' => 'required',
         ];
     }
+
+    public function getValidationData()
+    {
+        return parent::validationData();
+    }
 }
