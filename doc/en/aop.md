@@ -17,7 +17,7 @@ Compared to the AOP feature implemented by other frameworks, we have further sim
 
 ## Define Aspect
 
-Each `Aspect` have to implemented `Hyperf\Di\Aop\ArroundInterface`, and provided `$classes` and `$annotations` properties at `public` level. For ease of use, we can simplify the usage by inheriting `Hyperf\Di\Aop\AbstractAspect` in our aspect class.
+Each `Aspect` have to implemented `Hyperf\Di\Aop\AroundInterface`, and provided `$classes` and `$annotations` properties at `public` level. For ease of use, we can simplify the usage by inheriting `Hyperf\Di\Aop\AbstractAspect` in our aspect class.
 
 ```php
 <?php

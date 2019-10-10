@@ -18,7 +18,7 @@ The global middleware can ONLY be configured through the configuration file. The
 ```php
 <?php
 return [
-    // `http` corresponds to the value corresponding to the name attribute of each server in config/server.php. This configuration is only applied to the server you configured.
+    // `http` corresponds to the value corresponding to the name attribute of each server in config/autoload/server.php. This configuration is only applied to the server you configured.
     'http' => [
         // Configure your global middleware in an array, in order according to the order of the array
         YourMiddleware::class

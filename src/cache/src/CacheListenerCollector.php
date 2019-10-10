@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Cache;
 
 use Hyperf\Di\MetadataCollector;
-use Hyperf\Utils\Traits\Container;
 
 class CacheListenerCollector extends MetadataCollector
 {

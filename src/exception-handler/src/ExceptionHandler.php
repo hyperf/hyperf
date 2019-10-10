@@ -18,13 +18,6 @@ use Throwable;
 abstract class ExceptionHandler
 {
     /**
-     * Determine if the exception should propagate to next handler.
-     *
-     * @var bool
-     */
-    protected $propagationStopped = false;
-
-    /**
      * Handle the exception, and return the specified result.
      */
     abstract public function handle(Throwable $throwable, ResponseInterface $response);
@@ -43,8 +36,8 @@ abstract class ExceptionHandler
      */
     public function stopPropagation(): bool
     {
-        $this->propagationStopped = true;
-        return $this->propagationStopped;
+        Propagation::instance()->setPropagationStopped(true);
+        return true;
     }
 
     /**
@@ -54,6 +47,6 @@ abstract class ExceptionHandler
      */
     public function isPropagationStopped(): bool
     {
-        return $this->propagationStopped;
+        return Propagation::instance()->isPropagationStopped();
     }
 }

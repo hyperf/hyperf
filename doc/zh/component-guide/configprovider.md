@@ -4,7 +4,7 @@ ConfigProvider 机制对于 Hyperf 组件化来说是个非常重要的机制，
 
 # 什么是 ConfigProvider 机制 ？
 
-简单来说，就是每个组件都会提供一个 `ConfigProvider`，通常是在组件的根目录提供一个 `ConfigProvider` 的类，`ConfigProvider` 会提供对应组件的所有配置信息，这些信息都会被 Hyperf 框架在启动时加载，最终`ConfigProvider` 内的配置信息会被合并到 `Hyperf\Contract\ConfigInterface` 对应的实现类去，而 `dependencies` 信息则会合并到 `Hyperf\Di\Definition\DefinitionSource` 去，从而实现该组件在 Hyperf 框架下使用时要进行的配置初始化。   
+简单来说，就是每个组件都会提供一个 `ConfigProvider`，通常是在组件的根目录提供一个 `ConfigProvider` 的类，`ConfigProvider` 会提供对应组件的所有配置信息，这些信息都会被 Hyperf 框架在启动时加载，最终`ConfigProvider` 内的配置信息会被合并到 `Hyperf\Contract\ConfigInterface` 对应的实现类去，从而实现各个组件在 Hyperf 框架下使用时要进行的配置初始化。   
 
 `ConfigProvider` 本身不具备任何依赖，不继承任何的抽象类和不要求实现任何的接口，只需提供一个 `__invoke` 方法并返回一个对应配置结构的数组即可。
 
@@ -22,18 +22,21 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            // 合并到  config/dependencies.php 文件
+            // 合并到  config/autoload/dependencies.php 文件
             'dependencies' => [],
             // 合并到  config/autoload/annotations.php 文件
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             // 默认 Command 的定义，合并到 Hyperf\Contract\ConfigInterface 内，换个方式理解也就是与 config/autoload/commands.php 对应
             'commands' => [],
             // 与 commands 类似
             'listeners' => [],
+            // 亦可继续定义其它配置，最终都会何必到与 ConfigInterface 对应的配置储存器中
         ];
     }
 }

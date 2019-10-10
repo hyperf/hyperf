@@ -1,6 +1,6 @@
 # 异步队列
 
-异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种 `异步处理` 和 `异步延时处理` 的能力，并不能严格地保证消息的持久化和支持 `ACK 应答机制`。
+异步队列区别于 `RabbitMQ` `Kafka` 等消息队列，它只提供一种 `异步处理` 和 `异步延时处理` 的能力，并 **不能** 严格地保证消息的持久化和 **不支持** ACK 应答机制。
 
 ## 安装
 
@@ -14,12 +14,16 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|     配置      |  类型  |                   默认值                    |        备注        |
-|:-------------:|:------:|:-------------------------------------------:|:------------------:|
-|    driver     | string | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
-|    channel    | string |                    queue                    |      队列前缀      |
-| retry_seconds |  int   |                      5                      | 失败后重新尝试间隔 |
-|   processes   |  int   |                      1                      |     消费进程数     |
+|       配置       |   类型    |                   默认值                    |                  备注                   |
+|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+|      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
+|     channel      |  string   |                    queue                    |                队列前缀                 |
+|     timeout      |    int    |                      2                      |            pop消息的超时时间            |
+|  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
+|  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
+|    processes     |    int    |                      1                      |               消费进程数                |
+| concurrent.limit |    int    |                      1                      |             同时处理消息数              |
+|   max_messages   |    int    |                      0                      | 进程重启所需最大处理的消息数 默认不重启 |
 
 ```php
 <?php
@@ -28,7 +32,28 @@ return [
     'default' => [
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
+        'timeout' => 2,
         'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+];
+
+```
+
+`retry_seconds` 也可以传入数组，根据重试次数相应修改重试时间，例如
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => 'queue',
+        'retry_seconds' => [1, 5, 10, 20],
         'processes' => 1,
     ],
 ];
@@ -70,9 +95,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 }
 ```
 
-### 发布消息
+### 生产消息
 
-首先我们定义一个消息，如下
+首先我们定义一个消息类，如下
 
 ```php
 <?php
@@ -101,7 +126,7 @@ class ExampleJob extends Job
 }
 ```
 
-发布消息
+生产消息
 
 ```php
 <?php
@@ -127,7 +152,7 @@ class QueueService
     }
 
     /**
-     * 投递消息.
+     * 生产消息.
      * @param $params 数据
      * @param int $delay 延时时间 单位秒
      */

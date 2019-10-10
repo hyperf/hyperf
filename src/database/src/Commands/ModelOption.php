@@ -54,6 +54,11 @@ class ModelOption
      */
     protected $tableMapping = [];
 
+    /**
+     * @var array
+     */
+    protected $ignoreTables = [];
+
     public function getPool(): string
     {
         return $this->pool;
@@ -143,6 +148,17 @@ class ModelOption
             $this->tableMapping[$key] = $name;
         }
 
+        return $this;
+    }
+
+    public function getIgnoreTables(): array
+    {
+        return $this->ignoreTables;
+    }
+
+    public function setIgnoreTables(array $ignoreTables): ModelOption
+    {
+        $this->ignoreTables = $ignoreTables;
         return $this;
     }
 }

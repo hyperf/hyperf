@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -35,13 +34,12 @@ class ConsumerManager
     public function run()
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
-        $instantiator = $this->container->get(Instantiator::class);
         /**
          * @var string
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {
-            $instance = $instantiator->instantiate($class);
+            $instance = make($class);
             if (! $instance instanceof ConsumerMessageInterface) {
                 continue;
             }

@@ -23,6 +23,7 @@
             <directory suffix="Test.php">./src/distributed-lock/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
+            <directory suffix="Test.php">./src/exception-handler/tests</directory>
             <directory suffix="Test.php">./src/grpc-client/tests</directory>
             <directory suffix="Test.php">./src/grpc-server/tests</directory>
             <directory suffix="Test.php">./src/guzzle/tests</directory>
@@ -40,8 +41,10 @@
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
             <directory suffix="Test.php">./src/testing/tests</directory>
+            <directory suffix="Test.php">./src/tracer/tests</directory>
             <directory suffix="Test.php">./src/translation/tests</directory>
             <directory suffix="Test.php">./src/utils/tests</directory>
+            <directory suffix="Test.php">./src/validation/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
         </testsuite>
     </testsuites>

@@ -17,13 +17,11 @@ class ConfigProvider
     public function __invoke()
     {
         return [
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [
