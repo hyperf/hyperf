@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DistributedLock\Driver;
 
+use Hyperf\DistributedLock\Contract\DriverInterface;
 use Psr\Container\ContainerInterface;
 
 abstract class Driver implements DriverInterface

@@ -19,18 +19,20 @@ class ConfigProvider
         return [
             'dependencies' => [
             ],
-            'commands' => [
+            'commands'     => [
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations'  => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
-            'publish' => [
+            'publish'      => [
                 [
-                    'id' => 'config',
+                    'id'          => 'config',
                     'description' => 'The config for distributed lock.',
-                    'source' => __DIR__ . '/../publish/distributed-lock.php',
+                    'source'      => __DIR__ . '/../publish/distributed-lock.php',
                     'destination' => BASE_PATH . '/config/autoload/distributed-lock.php',
                 ],
             ],
