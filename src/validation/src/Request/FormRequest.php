@@ -138,7 +138,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function validationData(): array
     {
-        return $this->all();
+        return $this->all(true);
     }
 
     /**
