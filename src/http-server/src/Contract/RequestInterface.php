@@ -19,8 +19,10 @@ interface RequestInterface extends ServerRequestInterface
 {
     /**
      * Retrieve all input data from request, include query parameters, parsed body and json body.
+     *
+     * @param bool $hasFiles Is contained uploaded files?
      */
-    public function all(): array;
+    public function all($hasFiles = false): array;
 
     /**
      * Retrieve the data from query parameters, if $key is null, will return all query parameters.

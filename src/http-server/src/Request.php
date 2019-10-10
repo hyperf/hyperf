@@ -104,10 +104,15 @@ class Request implements RequestInterface
 
     /**
      * Retrieve all input data from request, include query parameters, parsed body and json body.
+     *
+     * @param bool $hasFiles Is contained uploaded files?
      */
-    public function all(): array
+    public function all($hasFiles = false): array
     {
-        $data = array_merge($this->getInputData(), $this->getUploadedFiles());
+        $data = $this->getInputData();
+        if ($hasFiles) {
+            $data = array_merge($data, $this->getUploadedFiles());
+        }
         return $data ?? [];
     }
 

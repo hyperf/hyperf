@@ -45,6 +45,25 @@ class RequestTest extends TestCase
         $this->assertInstanceOf(UploadedFile::class, $request->file('file'));
     }
 
+    public function testRequestAll()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $file = new UploadedFile('/tmp/tmp_name', 32, 0);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
+            'file' => $file,
+        ]);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn([
+            'id' => 1,
+        ]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        Context::set(ServerRequestInterface::class, $psrRequest);
+        $request = new Request();
+
+        $this->assertEquals(['id' => 1], $request->all());
+        $this->assertEquals(['id' => 1, 'file' => $file], $request->all(true));
+    }
+
     public function testRequestHeaderDefaultValue()
     {
         $psrRequest = Mockery::mock(ServerRequestInterface::class);
