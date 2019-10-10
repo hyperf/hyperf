@@ -29,6 +29,7 @@ class RequestTest extends TestCase
     {
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
+        Context::set('http.request.parsedData', null);
     }
 
     public function testRequestHasFile()
@@ -62,6 +63,25 @@ class RequestTest extends TestCase
 
         $this->assertEquals(['id' => 1], $request->all());
         $this->assertEquals(['id' => 1, 'file' => $file], $request->all(true));
+    }
+
+    public function testRequestAllWithSameKey()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $file = new UploadedFile('/tmp/tmp_name', 32, 0);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
+            'file' => [$file],
+        ]);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn([
+            'file' => ['Invalid File.'],
+        ]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        Context::set(ServerRequestInterface::class, $psrRequest);
+        $request = new Request();
+
+        $this->assertEquals(['file' => ['Invalid File.']], $request->all());
+        $this->assertEquals(['file' => ['Invalid File.', $file]], $request->all(true));
     }
 
     public function testRequestHeaderDefaultValue()

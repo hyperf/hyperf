@@ -111,7 +111,7 @@ class Request implements RequestInterface
     {
         $data = $this->getInputData();
         if ($hasFiles) {
-            $data = array_merge($data, $this->getUploadedFiles());
+            $data = array_merge_recursive($data, $this->getUploadedFiles());
         }
         return $data ?? [];
     }
