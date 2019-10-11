@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
+- [#701](https://github.com/hyperf-cloud/hyperf/pull/701) Fixed process not auto restart when throw a exception.
 
 # v1.1.1 - 2019-10-08
 
