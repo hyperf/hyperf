@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract;
 
-interface ResponseSendInterface
+interface Sendable
 {
     /**
      * Handle response and send.

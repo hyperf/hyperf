@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\Contract\ResponseSendInterface;
+use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -36,7 +36,7 @@ use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 use function get_class;
 
-class Response implements PsrResponseInterface, ResponseInterface, ResponseSendInterface
+class Response implements PsrResponseInterface, ResponseInterface, Sendable
 {
     use Macroable;
 

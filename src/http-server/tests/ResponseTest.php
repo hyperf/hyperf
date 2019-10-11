@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer;
 
-use Hyperf\Contract\ResponseSendInterface;
+use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -192,7 +192,7 @@ class ResponseTest extends TestCase
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertInstanceOf(ResponseSendInterface::class, $response);
+        $this->assertInstanceOf(Sendable::class, $response);
     }
 
     public function testCookiesAndHeaders()
