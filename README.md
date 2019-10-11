@@ -41,9 +41,9 @@ This project exists thanks to all the people who contribute. [[Contribute](https
 
 # Financial Contributors
 
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/hyperf/contribute)]
+Become a financial contributor and help us sustain our community. [[Contribute](https://hyperf.wiki/#/en/donate)]
 
-Support this project with your organization or company. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/hyperf/contribute)]
+Support this project with your organization or company. Your logo will show up here with a link to your website. [[Contribute](https://hyperf.wiki/#/en/donate)]
 
 ## Gold Sponsors
 
@@ -53,14 +53,13 @@ Support this project with your organization or company. Your logo will show up h
     <tr>
       <td align="left" valign="middle">
         <a href="https://1shanghu.com" target="_blank">
-          <img width="148px" src="https://github.com/hyperf-cloud/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
+          <img height="60px" src="https://github.com/hyperf-cloud/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>
   </tbody>
 </table>
 <!--gold end-->
-
 
 # License
 
