@@ -55,12 +55,23 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 成为我们的资金赞助方，帮助我们维持我们的社区。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
-## 组织/公司
-
 以组织/公司的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
+## 金牌赞助方
 
-
+<!--gold start-->
+<table>
+  <tbody>
+    <tr>
+      <td align="left" valign="middle">
+        <a href="https://1shanghu.com" target="_blank">
+          <img height="60px" src="https://github.com/hyperf-cloud/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
+        </a>
+      </td>
+    </tr><tr></tr>
+  </tbody>
+</table>
+<!--gold end-->
 
 # 开源协议
 
