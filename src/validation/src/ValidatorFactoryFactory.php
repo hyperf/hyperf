@@ -15,7 +15,9 @@ namespace Hyperf\Validation;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
+use Hyperf\Validation\Event\ValidatorFactoryResolved;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ValidatorFactoryFactory
 {
@@ -30,6 +32,9 @@ class ValidatorFactoryFactory
             $presenceVerifier = $container->get(PresenceVerifierInterface::class);
             $validatorFactory->setPresenceVerifier($presenceVerifier);
         }
+
+        $eventDispatcher = $container->get(EventDispatcherInterface::class);
+        $eventDispatcher->dispatch(new ValidatorFactoryResolved($validatorFactory));
 
         return $validatorFactory;
     }
