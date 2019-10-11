@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Contract\ResponseSendInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\FileInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\HttpMessage\Base\Response
+class Response extends \Hyperf\HttpMessage\Base\Response implements ResponseSendInterface
 {
     /**
      * @var null|\Swoole\Http\Response
