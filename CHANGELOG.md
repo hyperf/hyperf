@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
-- [#701](https://github.com/hyperf-cloud/hyperf/pull/701) Fixed the custom process will not restart automatically when throw an exception.
+- [#701](https://github.com/hyperf-cloud/hyperf/pull/701) Fixed the custom process will not restart automatically when throw an uncaptured exception.
 
 # v1.1.1 - 2019-10-08
 
