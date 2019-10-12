@@ -90,7 +90,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
+        $this->exceptionHandlers = array_merge($config->get('exceptions.handler.' . $serverName, []), $this->getDefaultExceptionHandler());
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
@@ -155,8 +155,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
     {
         // Initialize PSR-7 Request and Response objects.
-        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         return [$psr7Request, $psr7Response];
     }
 }

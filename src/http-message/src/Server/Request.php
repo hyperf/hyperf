@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -475,11 +476,38 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             return $data;
         }
 
-        $contentType = strtolower($request->getHeaderLine('Content-Type'));
-        if (strpos($contentType, 'application/json') === 0) {
-            $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $rawContentType = $request->getHeaderLine('Content-Type');
+        if (($pos = strpos($rawContentType, ';')) !== false) {
+            // e.g. text/html; charset=UTF-8
+            $contentType = strtolower(substr($rawContentType, 0, $pos));
+        } else {
+            $contentType = strtolower($rawContentType);
         }
+        // TODO config
+        $parsers = [
+            'application/json' => JsonParser::class,
+            'test/json' => JsonParser::class,
+            'application/xml' => XmlParser::class,
+            'test/xml' => XmlParser::class,
+        ];
 
+        try {
+            if (isset($parsers[$contentType])) {
+                $parser = new $parsers[$contentType]();
+                if (! ($parser instanceof RequestParserInterface)) {
+                    throw new \Hyperf\Server\Exception\InvalidArgumentException("The '{$contentType}' request parser is invalid. It must implement the Hyperf\\HttpMessage\\Server\\RequestParserInterface.");
+                }
+                $data = $parser->parse($request->getBody()->getContents(), $rawContentType);
+            } elseif (isset($parsers['*'])) {
+                $parser = new $parsers['*']();
+                if (! ($parser instanceof RequestParserInterface)) {
+                    throw new \Hyperf\Server\Exception\InvalidArgumentException("The '{$contentType}' request parser is invalid. It must implement the Hyperf\\HttpMessage\\Server\\RequestParserInterface.");
+                }
+                $data = $parser->parse($request->getBody()->getContents(), $rawContentType);
+            }
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
         return $data;
     }
 
@@ -503,7 +531,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $normalized[$key] = self::normalizeFiles($value);
                 continue;
             } else {
-                throw new \InvalidArgumentException('Invalid value in files specification');
+                throw new BadRequestHttpException('Invalid value in files specification');
             }
         }
 

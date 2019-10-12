@@ -15,6 +15,7 @@ namespace Hyperf\HttpServer\Exception\Handler;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -38,7 +39,9 @@ class HttpExceptionHandler extends ExceptionHandler
     {
         $this->logger->warning($this->formatter->format($throwable));
 
-        return $response->withStatus($throwable->getCode())->withBody(new SwooleStream($throwable->getMessage()));
+        if ($throwable instanceof HttpException) {
+            return $response->withStatus($throwable->getStatusCode())->withBody(new SwooleStream($throwable->getMessage()));
+        }
     }
 
     /**
