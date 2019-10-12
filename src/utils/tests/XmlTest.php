@@ -33,7 +33,7 @@ class XmlTest extends TestCase
 
     /**
      * @expectedException \Hyperf\Utils\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid Xml data.
+     * @expectedExceptionMessage Syntax error.
      */
     public function testToArrayException()
     {

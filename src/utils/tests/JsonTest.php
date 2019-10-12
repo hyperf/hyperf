@@ -52,4 +52,20 @@ class JsonTest extends TestCase
         $json = '{"name":"Hyperf}';
         $this->assertSame($data, Json::decode($json));
     }
+
+    public function testJsonEncodeInCoroutine()
+    {
+        $result = null;
+        go(function () use (&$result) {
+            $result = Json::encode([1, 2, 3]);
+        });
+
+        $this->assertSame('[1,2,3]', $result);
+
+        go(function () use (&$result) {
+            $result = Json::decode('[1,2,3]');
+        });
+
+        $this->assertSame([1, 2, 3], $result);
+    }
 }
