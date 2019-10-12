@@ -27,7 +27,7 @@ class XmlParser implements RequestParserInterface
             return Xml::toArray($rawBody) ?? [];
         } catch (InvalidArgumentException $e) {
             if ($this->throwException) {
-                throw new BadRequestHttpException('Invalid JSON data in request body: ' . $e->getMessage());
+                throw new BadRequestHttpException('Invalid XML data in request body: ' . $e->getMessage());
             }
             return [];
         }

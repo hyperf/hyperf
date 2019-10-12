@@ -60,7 +60,7 @@ class Xml
         $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
         libxml_disable_entity_loader($disableLibxmlEntityLoader);
         if ($respObject === false) {
-            throw new InvalidArgumentException('Invalid Xml data.');
+            throw new InvalidArgumentException('Syntax error.');
         }
 
         return json_decode(json_encode($respObject), true);
