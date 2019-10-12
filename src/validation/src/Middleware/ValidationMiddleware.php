@@ -62,6 +62,9 @@ class ValidationMiddleware implements MiddlewareInterface
                 $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
                 $parameters = $reflectionMethod->getParameters();
                 foreach ($parameters as $parameter) {
+                    if ($parameter->getType() === null) {
+                        continue;
+                    }
                     $classname = $parameter->getType()->getName();
                     if ($this->isImplementedValidatesWhenResolved($classname)) {
                         /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */

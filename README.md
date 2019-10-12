@@ -34,35 +34,32 @@ Based on the above characteristics, Hyperf has a lots of possibilities, such as 
 
 If you discover a security vulnerability within Hyperf, please send an e-mail to Hyperf Team via group@hyperf.io. All security vulnerabilities will be promptly addressed.
 
-## Contributors
-
-### Code Contributors
+# Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](https://github.com/hyperf-cloud/hyperf/graphs/contributors)].
 <a href="https://github.com/hyperf-cloud/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
-### Financial Contributors
+# Financial Contributors
 
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/hyperf/contribute)]
+Become a financial contributor and help us sustain our community. [[Contribute](https://hyperf.wiki/#/en/donate)]
 
-#### Individuals
+Support this project with your organization or company. Your logo will show up here with a link to your website. [[Contribute](https://hyperf.wiki/#/en/donate)]
 
-<a href="https://opencollective.com/hyperf"><img src="https://opencollective.com/hyperf/individuals.svg?width=890"></a>
+## Gold Sponsors
 
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/hyperf/contribute)]
-
-<a href="https://opencollective.com/hyperf/organization/0/website"><img src="https://opencollective.com/hyperf/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/1/website"><img src="https://opencollective.com/hyperf/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/2/website"><img src="https://opencollective.com/hyperf/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/3/website"><img src="https://opencollective.com/hyperf/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/4/website"><img src="https://opencollective.com/hyperf/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/5/website"><img src="https://opencollective.com/hyperf/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/6/website"><img src="https://opencollective.com/hyperf/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/7/website"><img src="https://opencollective.com/hyperf/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/8/website"><img src="https://opencollective.com/hyperf/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/hyperf/organization/9/website"><img src="https://opencollective.com/hyperf/organization/9/avatar.svg"></a>
+<!--gold start-->
+<table>
+  <tbody>
+    <tr>
+      <td align="left" valign="middle">
+        <a href="https://1shanghu.com" target="_blank">
+          <img height="80px" src="https://github.com/hyperf-cloud/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
+        </a>
+      </td>
+    </tr><tr></tr>
+  </tbody>
+</table>
+<!--gold end-->
 
 # License
 
