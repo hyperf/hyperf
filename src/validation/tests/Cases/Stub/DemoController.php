@@ -28,4 +28,12 @@ class DemoController
     {
         return $request->all();
     }
+
+    public function info(DemoRequest $request, $id)
+    {
+        return [
+            'id' => (int) $id,
+            'request' => $request->all(),
+        ];
+    }
 }
