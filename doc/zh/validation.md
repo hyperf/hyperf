@@ -14,12 +14,12 @@ composer require hyperf/validation
 
 ### 添加中间件
 
-您需要为使用到验证器组件的 Server 加上一个全局中间件 `Hyperf\Validation\Middleware\ValidationMiddleware` 配置，如下为 `http` Server 加上对应的全局中间件。如没有正确设置全局中间件，可能会导致 `表单请求(FormRequest)` 的使用方式无效。
+您需要为使用到验证器组件的 Server 在 `config/autoload/middlewares.php` 配置文件加上一个全局中间件 `Hyperf\Validation\Middleware\ValidationMiddleware` 的配置，如下为 `http` Server 加上对应的全局中间件的示例：
 
 ```php
 <?php
 return [
-    // http 对应 config/autoload/server.php 内每个 server 的 name 属性对应的值，该配置仅应用在该 Server 中
+    // 下面的 http 字符串对应 config/autoload/server.php 内每个 server 的 name 属性对应的值，意味着对应的中间件配置仅应用在该 Server 中
     'http' => [
         // 数组内配置您的全局中间件，顺序根据该数组的顺序
         \Hyperf\Validation\Middleware\ValidationMiddleware::class
@@ -27,6 +27,8 @@ return [
     ],
 ];
 ```
+
+> 如没有正确设置全局中间件，可能会导致 `表单请求(FormRequest)` 的使用方式无效。
 
 ### 添加异常处理器
 
