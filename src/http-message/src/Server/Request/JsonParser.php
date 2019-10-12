@@ -10,9 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpMessage\Server;
+namespace Hyperf\HttpMessage\Server\Request;
 
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
+use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Json;
 
@@ -33,5 +34,10 @@ class JsonParser implements RequestParserInterface
             }
             return [];
         }
+    }
+
+    public function has(string $contentType): bool
+    {
+        return true;
     }
 }

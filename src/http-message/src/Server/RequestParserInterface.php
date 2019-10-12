@@ -15,4 +15,6 @@ namespace Hyperf\HttpMessage\Server;
 interface RequestParserInterface
 {
     public function parse(string $rawBody, string $contentType): array;
+
+    public function has(string $contentType): bool;
 }

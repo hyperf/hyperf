@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
+use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -486,8 +487,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         try {
-            if ($parser = self::getParser($contentType)) {
-                $data = $parser->parse($request->getBody()->getContents(), $rawContentType);
+            $parser = self::getParser();
+            if ($parser->has($contentType)) {
+                $data = $parser->parse($request->getBody()->getContents(), $contentType);
             }
         } catch (\InvalidArgumentException $exception) {
             throw new BadRequestHttpException($exception->getMessage());
@@ -495,30 +497,14 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         return $data;
     }
 
-    protected static function getParser(string $contentType): ?RequestParserInterface
+    protected static function getParser(): ?RequestParserInterface
     {
-        $parsers = [
-            'application/json' => JsonParser::class,
-            'test/json' => JsonParser::class,
-            'application/xml' => XmlParser::class,
-            'test/xml' => XmlParser::class,
-        ];
-
-        if (! isset($parsers[$contentType])) {
-            return null;
-        }
-
         $parser = null;
-        $class = $parsers[$contentType];
 
-        if (ApplicationContext::hasContainer()) {
-            $parser = ApplicationContext::getContainer()->get($class);
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
+            $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
         } else {
-            $parser = new $class();
-        }
-
-        if (! $parser instanceof RequestParserInterface) {
-            throw new \InvalidArgumentException("The '{$contentType}' request parser is invalid. It must implement the Hyperf\\HttpMessage\\Server\\RequestParserInterface.");
+            $parser = new Parser();
         }
 
         return $parser;

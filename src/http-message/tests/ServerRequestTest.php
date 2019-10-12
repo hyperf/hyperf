@@ -12,12 +12,16 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\HttpMessage\Server\Request\Parser;
+use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Json;
 use Hyperf\Utils\Xml;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -26,8 +30,15 @@ use Psr\Http\Message\RequestInterface;
  */
 class ServerRequestTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testNormalizeParsedBody()
     {
+        $this->getContainer();
+
         $data = ['id' => 1];
         $json = ['name' => 'Hyperf'];
 
@@ -55,6 +66,8 @@ class ServerRequestTest extends TestCase
      */
     public function testNormalizeParsedBodyException()
     {
+        $this->getContainer();
+
         $json = ['name' => 'Hyperf'];
         $request = Mockery::mock(RequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/json; charset=utf-8');
@@ -64,6 +77,8 @@ class ServerRequestTest extends TestCase
 
     public function testNormalizeParsedBodyInvalidContentType()
     {
+        $this->getContainer();
+
         $data = ['id' => 1];
         $json = ['name' => 'Hyperf'];
 
@@ -71,5 +86,16 @@ class ServerRequestTest extends TestCase
         $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
+
+        ApplicationContext::setContainer($container);
+
+        return $container;
     }
 }
