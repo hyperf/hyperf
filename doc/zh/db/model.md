@@ -197,6 +197,7 @@ class User extends Model
 ## 模型查询
 
 ```php
+<?php
 use App\Models\User;
 
 /** @var User $user */
@@ -211,6 +212,7 @@ $user->save();
 你可以使用 `fresh` 和 `refresh` 方法重新加载模型。 `fresh` 方法会重新从数据库中检索模型。现有的模型实例不受影响：
 
 ```php
+<?php
 use App\Models\User;
 
 /** @var User $user */
@@ -222,6 +224,7 @@ $freshUser = $user->fresh();
 `refresh` 方法使用数据库中的新数据重新赋值现有模型。此外，已经加载的关系会被重新加载：
 
 ```php
+<?php
 use App\Models\User;
 
 /** @var User $user */
@@ -250,6 +253,7 @@ $users = $users->reject(function ($user) {
 除了从指定的数据表检索所有记录外，你可以使用 `find` 或 `first` 方法来检索单条记录。这些方法返回单个模型实例，而不是返回模型集合：
 
 ```php
+<?php
 use App\Models\User;
 
 $user = User::query()->where('id', 1)->first();
@@ -262,9 +266,21 @@ $user = User::query()->find(1);
 当然 `find` 的方法不止支持单个模型。
 
 ```php
+<?php
 use App\Models\User;
 
 $users = User::query()->find([1, 2, 3]);
+```
+
+### 『未找到』异常
+
+有时你希望在未找到模型时抛出异常。这在控制器和路由中非常有用。 findOrFail 和 firstOrFail 方法会检索查询的第一个结果，如果未找到，将抛出 Hyperf\Database\Model\ModelNotFoundException 异常：
+
+```php
+<?php
+$model = App\Flight::findOrFail(1);
+
+$model = App\Flight::where('legs', '>', 100)->firstOrFail();
 ```
 
 ### 聚合函数
@@ -272,6 +288,7 @@ $users = User::query()->find([1, 2, 3]);
 你还可以使用 查询构造器 提供的 `count`，`sum`, `max`, 和其他的聚合函数。这些方法只会返回适当的标量值而不是一个模型实例：
 
 ```php
+<?php
 use App\Models\User;
 
 $count = User::query()->where('gender', 1)->count();
@@ -377,6 +394,35 @@ class User extends Model
 {
     protected $guarded = ['gender_show'];
 }
+```
+
+### 其他创建方法
+
+`firstOrCreate` / `firstOrNew`
+
+这里有两个你可能用来批量赋值的方法： `firstOrCreate` 和 `firstOrNew`。`firstOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找不到对应的模型， 则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
+
+`firstOrNew` 方法像 `firstOrCreate` 方法一样尝试通过给定的属性查找数据库中的记录。不同的是，如果 `firstOrNew` 方法找不到对应的模型，会返回一个新的模型实例。注意 `firstOrNew` 返回的模型实例尚未保存到数据库中，你需要手动调用 `save` 方法来保存：
+
+```php
+<?php
+// 通过 name 来查找航班，不存在则创建...
+$flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
+
+// 通过 name 查找航班，不存在则使用 name 和 delayed 属性创建...
+$flight = App\Flight::firstOrCreate(
+    ['name' => 'Flight 10'],
+    ['delayed' => 1, 'arrival_time' => '11:30']
+);
+
+//  通过 name 查找航班，不存在则创建一个实例...
+$flight = App\Flight::firstOrNew(['name' => 'Flight 10']);
+
+// 通过 name 查找航班，不存在则使用 name 和 delayed 属性创建一个实例...
+$flight = App\Flight::firstOrNew(
+    ['name' => 'Flight 10'],
+    ['delayed' => 1, 'arrival_time' => '11:30']
+);
 ```
 
 ### 删除模型
