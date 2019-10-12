@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Di\Container;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
@@ -23,7 +24,6 @@ use Hyperf\Utils\Xml;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -92,11 +92,11 @@ class ServerRequestTest extends TestCase
 
     protected function getContainer()
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
-        $container->shouldReceive('get')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
-        $container->shouldReceive('get')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
+        $container->shouldReceive('make')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
+        $container->shouldReceive('make')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
 
         ApplicationContext::setContainer($container);
 
