@@ -6,7 +6,9 @@
 
 ## Fixed
 
+- [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
 - [#700](https://github.com/hyperf-cloud/hyperf/pull/700) Fixed the `download` method of `Hyperf\HttpServer\Contract\ResponseInterface` does not works as expected.
+- [#704](https://github.com/hyperf-cloud/hyperf/pull/704) Fixed bug that `Call to a member function getName() on null` in `Hyperf\Validation\Middleware\ValidationMiddleware` when the argument of action method does not define the argument type.
 
 # v1.1.1 - 2019-10-08
 
