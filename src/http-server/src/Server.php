@@ -90,7 +90,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = array_merge($config->get('exceptions.handler.' . $serverName, []), $this->getDefaultExceptionHandler());
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void

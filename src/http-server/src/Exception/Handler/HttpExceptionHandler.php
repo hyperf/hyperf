@@ -39,9 +39,12 @@ class HttpExceptionHandler extends ExceptionHandler
     {
         $this->logger->warning($this->formatter->format($throwable));
 
+        $code = $throwable->getCode();
         if ($throwable instanceof HttpException) {
-            return $response->withStatus($throwable->getStatusCode())->withBody(new SwooleStream($throwable->getMessage()));
+            $code = $throwable->getStatusCode();
         }
+
+        return $response->withStatus($code)->withBody(new SwooleStream($throwable->getMessage()));
     }
 
     /**
