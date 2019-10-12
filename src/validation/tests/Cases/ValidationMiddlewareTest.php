@@ -54,6 +54,7 @@ class ValidationMiddlewareTest extends TestCase
         $router->addRoute('POST', '/sign-up', 'HyperfTest\Validation\Cases\Stub\DemoController@signUp');
         $router->addRoute('POST', '/sign-in', 'HyperfTest\Validation\Cases\Stub\DemoController::signIn');
         $router->addRoute('POST', '/sign-out', [\HyperfTest\Validation\Cases\Stub\DemoController::class, 'signOut']);
+        $router->addRoute('POST', '/info/{id:\d}', 'HyperfTest\Validation\Cases\Stub\DemoController::info');
 
         $dispatcher = $factory->getDispatcher('http');
         $middleware = new ValidationMiddleware($container);
@@ -81,6 +82,14 @@ class ValidationMiddlewareTest extends TestCase
         $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
+
+        $request = (new Request('POST', new Uri('/info/1')))
+            ->withParsedBody(['username' => 'Hyperf', 'password' => 'Hyperf']);
+        $routes = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"id":1,"request":{"username":"Hyperf","password":"Hyperf"}}', $response->getBody()->getContents());
     }
 
     public function createContainer()
