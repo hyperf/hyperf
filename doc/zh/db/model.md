@@ -23,7 +23,7 @@ $ php bin/hyperf.php db:model table_name
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -81,7 +81,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -106,7 +106,7 @@ Hyperf 会假设每个数据表都有一个名为 id 的主键列。你可以定
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -123,7 +123,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -142,7 +142,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -163,7 +163,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -182,7 +182,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -198,7 +198,7 @@ class User extends Model
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->where('id', 1)->first();
@@ -213,7 +213,7 @@ $user->save();
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->find(1);
@@ -225,7 +225,7 @@ $freshUser = $user->fresh();
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->where('name','Hyperf')->first();
@@ -254,7 +254,7 @@ $users = $users->reject(function ($user) {
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 $user = User::query()->where('id', 1)->first();
 
@@ -267,7 +267,7 @@ $user = User::query()->find(1);
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 $users = User::query()->find([1, 2, 3]);
 ```
@@ -291,7 +291,7 @@ $model = User::where('age', '>', 18)->firstOrFail();
 
 ```php
 <?php
-use App\Models\User;
+use App\Model\User;
 
 $count = User::query()->where('gender', 1)->count();
 ```
@@ -303,7 +303,7 @@ $count = User::query()->where('gender', 1)->count();
 要往数据库新增一条记录，先创建新模型实例，给实例设置属性，然后调用 `save` 方法：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = new User();
@@ -313,14 +313,14 @@ $user->name = 'Hyperf';
 $user->save();
 ```
 
-在这个示例中，我们赋值给了 `App\Models\User` 模型实例的 `name` 属性。当调用 `save` 方法时，将会插入一条新记录。 `created_at` 和 `updated_at` 时间戳将会自动设置，不需要手动赋值。
+在这个示例中，我们赋值给了 `App\Model\User` 模型实例的 `name` 属性。当调用 `save` 方法时，将会插入一条新记录。 `created_at` 和 `updated_at` 时间戳将会自动设置，不需要手动赋值。
 
 ### 更新
 
 `save` 方法也可以用来更新数据库已经存在的模型。更新模型，你需要先检索出来，设置要更新的属性，然后调用 `save` 方法。同样， `updated_at` 时间戳会自动更新，所以也不需要手动赋值：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->find(1);
@@ -335,7 +335,7 @@ $user->save();
 也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为 `1` 的用户，修改 `gender_show` 为 男性：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 ```
@@ -355,7 +355,7 @@ User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -368,7 +368,7 @@ class User extends Model
 一旦我们设置好了可以批量赋值的属性，就可以通过 `create` 方法插入新数据到数据库中了。 `create` 方法将返回保存的模型实例：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 $user = User::create(['name' => 'Hyperf']);
 ```
@@ -388,7 +388,7 @@ $user->fill(['name' => 'Hyperf']);
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -436,7 +436,7 @@ $user = User::firstOrNew(
 可以在模型实例上调用 `delete` 方法来删除实例：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 $user = User::query()->find(1);
 
@@ -448,7 +448,7 @@ $user->delete();
 您可通过在查询上调用 `delete` 方法来删除模型数据，在这个例子中，我们将删除所有 `gender` 为 `1` 的用户。与批量更新一样，批量删除不会为删除的模型启动任何模型事件：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 // 注意使用 delete 方法时必须建立在某些查询条件基础之上才能安全删除数据，不存在 where 条件，会导致删除整个数据表
 User::query()->where('gender', 1)->delete(); 
@@ -459,7 +459,7 @@ User::query()->where('gender', 1)->delete();
 在上面的例子中，在调用 `delete` 之前需要先去数据库中查找对应的模型。事实上，如果你知道了模型的主键，您可以直接通过 `destroy` 静态方法来删除模型数据，而不用先去数据库中查找。 `destroy` 方法除了接受单个主键作为参数之外，还接受多个主键，或者使用数组，集合来保存多个主键：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 User::destroy(1);
 
@@ -475,14 +475,13 @@ User::destroy([1,2,3]);
 ```php
 <?php
 
-namespace App;
+namespace App\Model;
 
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\SoftDeletes;
 
-class Flight extends Model
+class User extends Model
 {
     use SoftDeletes;
 }
-
 ```
