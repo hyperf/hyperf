@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
+use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\ApplicationContext;
@@ -93,6 +95,8 @@ class ServerRequestTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
+        $container->shouldReceive('get')->with(JsonParser::class)->andReturn(new JsonParser());
+        $container->shouldReceive('get')->with(XmlParser::class)->andReturn(new XmlParser());
 
         ApplicationContext::setContainer($container);
 

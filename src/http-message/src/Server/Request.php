@@ -487,27 +487,20 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         try {
-            $parser = self::getParser();
+            if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
+                $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
+            } else {
+                $parser = new Parser();
+            }
+
             if ($parser->has($contentType)) {
                 $data = $parser->parse($request->getBody()->getContents(), $contentType);
             }
         } catch (\InvalidArgumentException $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
+
         return $data;
-    }
-
-    protected static function getParser(): ?RequestParserInterface
-    {
-        $parser = null;
-
-        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
-            $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
-        } else {
-            $parser = new Parser();
-        }
-
-        return $parser;
     }
 
     /**
