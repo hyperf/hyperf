@@ -274,13 +274,15 @@ $users = User::query()->find([1, 2, 3]);
 
 ### 『未找到』异常
 
-有时你希望在未找到模型时抛出异常。这在控制器和路由中非常有用。 findOrFail 和 firstOrFail 方法会检索查询的第一个结果，如果未找到，将抛出 Hyperf\Database\Model\ModelNotFoundException 异常：
+有时你希望在未找到模型时抛出异常，这在控制器和路由中非常有用。    
+`findOrFail` 和 `firstOrFail` 方法会检索查询的第一个结果，如果未找到，将抛出 `Hyperf\Database\Model\ModelNotFoundException` 异常：
 
 ```php
 <?php
-$model = App\Flight::findOrFail(1);
+use App\Model\User;
 
-$model = App\Flight::where('legs', '>', 100)->firstOrFail();
+$model = User::findOrFail(1);
+$model = User::where('age', '>', 18)->firstOrFail();
 ```
 
 ### 聚合函数
@@ -306,7 +308,7 @@ use App\Models\User;
 /** @var User $user */
 $user = new User();
 
-$user->name = 'Hi Hyperf';
+$user->name = 'Hyperf';
 
 $user->save();
 ```
@@ -330,7 +332,7 @@ $user->save();
 
 ### 批量更新
 
-也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为1的用户，修改 `gender_show` 为 男性：
+也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为 `1` 的用户，修改 `gender_show` 为 男性：
 
 ```php
 use App\Models\User;
@@ -400,28 +402,32 @@ class User extends Model
 
 `firstOrCreate` / `firstOrNew`
 
-这里有两个你可能用来批量赋值的方法： `firstOrCreate` 和 `firstOrNew`。`firstOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找不到对应的模型， 则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
+这里有两个你可能用来批量赋值的方法： `firstOrCreate` 和 `firstOrNew`。
+
+`firstOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找不到对应的模型， 则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
 
 `firstOrNew` 方法像 `firstOrCreate` 方法一样尝试通过给定的属性查找数据库中的记录。不同的是，如果 `firstOrNew` 方法找不到对应的模型，会返回一个新的模型实例。注意 `firstOrNew` 返回的模型实例尚未保存到数据库中，你需要手动调用 `save` 方法来保存：
 
 ```php
 <?php
-// 通过 name 来查找航班，不存在则创建...
-$flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
+use App\Model\User;
 
-// 通过 name 查找航班，不存在则使用 name 和 delayed 属性创建...
-$flight = App\Flight::firstOrCreate(
-    ['name' => 'Flight 10'],
-    ['delayed' => 1, 'arrival_time' => '11:30']
+// 通过 name 来查找用户，不存在则创建...
+$user = User::firstOrCreate(['name' => 'Hyperf']);
+
+// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建...
+$user = User::firstOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
 );
 
-//  通过 name 查找航班，不存在则创建一个实例...
-$flight = App\Flight::firstOrNew(['name' => 'Flight 10']);
+//  通过 name 查找用户，不存在则创建一个实例...
+$user = User::firstOrNew(['name' => 'Hyperf']);
 
-// 通过 name 查找航班，不存在则使用 name 和 delayed 属性创建一个实例...
-$flight = App\Flight::firstOrNew(
-    ['name' => 'Flight 10'],
-    ['delayed' => 1, 'arrival_time' => '11:30']
+// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建一个实例...
+$user = User::firstOrNew(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
 );
 ```
 
