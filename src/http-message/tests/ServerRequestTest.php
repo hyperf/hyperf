@@ -93,12 +93,14 @@ class ServerRequestTest extends TestCase
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
+
         $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
         $container->shouldReceive('make')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
         $container->shouldReceive('make')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
 
         ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
 
         return $container;
     }
