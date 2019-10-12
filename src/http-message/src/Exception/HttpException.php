@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Exception;
 
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Server\Exception\ServerException;
+use RuntimeException;
 
-class HttpException extends ServerException
+class HttpException extends RuntimeException
 {
     /**
      * @var int HTTP status code, such as 403, 404, 500, etc

@@ -10,6 +10,7 @@
         "http-message"
     ],
     "require": {
+        "hyperf/utils": "~1.1.0",
         "psr/http-message": "^1.0",
         "zendframework/zend-mime": "^2.7"
     },
