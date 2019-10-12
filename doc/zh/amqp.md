@@ -48,14 +48,17 @@ return [
 
 ## 投递消息
 
-使用 `generator` 工具新建一个 `producer`
-```
+使用 `gen:producer` 命令创建一个 `producer`
+
+```bash
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在DemoProducer文件中，我们可以修改Producer注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
+在 DemoProducer 文件中，我们可以修改 `@Producer` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最终投递到消息队列中的数据，所以我们可以随意改写 `__construct` 方法，只要最后赋值 `payload` 即可。
 示例如下。
+
+> 使用 `@Producer` 注解时需 `use Hyperf\Amqp\Annotation\Producer;` 命名空间；   
 
 ```php
 <?php
@@ -89,7 +92,7 @@ class DemoProducer extends ProducerMessage
 
 ```
 
-通过container获取Producer实例，即可投递消息。以下实例直接使用ApplicationContext获取Producer其实并不合理，container具体使用请到di模块中查看。
+通过 DI Container 获取 `Hyperf\Amqp\Producer` 实例，即可投递消息。以下实例直接使用 `ApplicationContext` 获取 `Hyperf\Amqp\Producer` 其实并不合理，DI Container 具体使用请到 [依赖注入](zh/di.md) 章节中查看。
 
 ```php
 <?php
@@ -105,14 +108,17 @@ $result = $producer->produce($message);
 
 ## 消费消息
 
-使用 `generator` 工具新建一个 `consumer`。
-```
+使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
+
+```bash
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在DemoConsumer文件中，我们可以修改Consumer注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
-其中 `$data` 就是解析后的元数据。
+在 DemoConsumer 文件中，我们可以修改 `@Consumer` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
+其中 `$data` 就是解析后的消息数据。
 示例如下。
+
+> 使用 `@Consumer` 注解时需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空间；   
 
 ```php
 <?php
@@ -138,4 +144,15 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
-框架会根据Consumer注解自动创建Process进程，进程意外退出后会被重新拉起。
+框架会根据 `@Consumer` 注解自动创建 `Process 进程`，进程意外退出后会被重新拉起。
+
+### 消费结果
+
+框架会根据 `Consumer` 内的 `consume` 方法所返回的结果来决定该消息的响应行为，共有 4 中响应结果，分别为 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每个返回值分别代表如下行为：
+
+| 返回值                         | 行为 |
+|-------------------------------|-----|
+| \Hyperf\Amqp\Result::ACK      | 确认消息正确被消费掉了  |
+| \Hyperf\Amqp\Result::NACK     | 消息没有被正确消费掉，以 `basic_nack` 方法来响应 |
+| \Hyperf\Amqp\Result::REQUEUE  | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列  |
+| \Hyperf\Amqp\Result::DROP     | 消息没有被正确消费掉，以 `basic_reject` 方法来响应  |

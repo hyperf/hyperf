@@ -24,8 +24,6 @@ class ConfigProvider
             'dependencies' => [
                 DataFormatter::class => DataFormatterFactory::class,
             ],
-            'commands' => [
-            ],
             'listeners' => [
                 RegisterProtocolListener::class,
                 value(function () {
@@ -35,9 +33,11 @@ class ConfigProvider
                     return null;
                 }),
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

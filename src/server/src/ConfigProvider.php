@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Server;
 
+use Hyperf\Server\Command\StartServer;
 use Hyperf\Server\Listener\InitProcessTitleListener;
 use Swoole\Server as SwooleServer;
 
@@ -23,14 +24,17 @@ class ConfigProvider
             'dependencies' => [
                 SwooleServer::class => SwooleServerFactory::class,
             ],
-            'commands' => [
-            ],
             'listeners' => [
                 InitProcessTitleListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'commands' => [
+                StartServer::class,
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

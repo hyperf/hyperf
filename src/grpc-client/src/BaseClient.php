@@ -43,7 +43,14 @@ class BaseClient
             $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
             $this->grpcClient->set($hostname, $options);
         }
-        $this->start();
+        if (! $this->start()) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->getGrpcClient()->getErrCode(),
+                $hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
     }
 
     public function __get($name)

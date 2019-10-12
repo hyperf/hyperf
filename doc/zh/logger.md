@@ -177,11 +177,9 @@ class StdoutLoggerFactory
 - 申明依赖, 使用 `StdoutLoggerInterface` 的地方, 由实际依赖的 `StdoutLoggerFactory` 实例化的类来完成
 
 ```php
-// config/dependencies.php
+// config/autoload/dependencies.php
 return [
-    'dependencies' => [
-        \Hyperf\Contract\StdoutLoggerInterface::class => \App\StdoutLoggerFactory::class,
-    ],
+    \Hyperf\Contract\StdoutLoggerInterface::class => \App\StdoutLoggerFactory::class,
 ];
 ```
 

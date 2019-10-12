@@ -19,16 +19,14 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
             'listeners' => [
                 AddConsumerDefinitionListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

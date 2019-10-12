@@ -12,6 +12,7 @@ parameters:
   bootstrap: "bootstrap.php"
   checkFunctionArgumentTypes: true
   checkArgumentsPassedByReference: true
+  reportUnmatchedIgnoredErrors: false
   featureToggles:
     deadCatchesRule: false
     noopRule: false

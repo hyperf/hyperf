@@ -20,11 +20,11 @@ class ConfigProvider
             'dependencies' => [
                 KVInterface::class => KVFactory::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

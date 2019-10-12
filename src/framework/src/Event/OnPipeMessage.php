@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OnPipeMessage
 {
     /**
@@ -29,7 +31,7 @@ class OnPipeMessage
      */
     public $data;
 
-    public function __construct(\Swoole\Server $server, int $fromWorkerId, $data)
+    public function __construct(Server $server, int $fromWorkerId, $data)
     {
         $this->server = $server;
         $this->fromWorkerId = $fromWorkerId;
