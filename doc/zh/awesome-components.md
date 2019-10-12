@@ -62,6 +62,7 @@
 
 - [hyperf/amqp](https://github.com/hyperf-cloud/amqp) Hyperf 官方提供的 AMQP 协程组件
 - [hyperf/async-queue](https://github.com/hyperf-cloud/async-queue) Hyperf 官方提供的简单的基于 Redis 的异步队列组件
+- [hooklife/hyperf-aliyun-amqp](https://github.com/hooklife/hyperf-aliyun-amqp) 使 hyperf/amqp 组件支持阿里云 AMQP
 
 ## 配置中心
 
