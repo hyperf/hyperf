@@ -15,7 +15,7 @@ namespace Hyperf\Contract;
 interface Sendable
 {
     /**
-     * Handle response and send.
+     * Send the response.
      */
     public function send();
 }
