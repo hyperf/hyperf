@@ -95,8 +95,8 @@ class ServerRequestTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
-        $container->shouldReceive('get')->with(JsonParser::class)->andReturn(new JsonParser());
-        $container->shouldReceive('get')->with(XmlParser::class)->andReturn(new XmlParser());
+        $container->shouldReceive('get')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
+        $container->shouldReceive('get')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
 
         ApplicationContext::setContainer($container);
 
