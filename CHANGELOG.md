@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
+- [#704](https://github.com/hyperf-cloud/hyperf/pull/704) Fixed bug that Call to a member function getName() on null in `ValidationMiddleware`.
 
 # v1.1.1 - 2019-10-08
 
