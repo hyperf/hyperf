@@ -88,6 +88,18 @@ class Context
         return $value;
     }
 
+    /**
+     * Retrieve the value and store it if not exists.
+     * @param mixed $value
+     */
+    public static function store(string $id, $value)
+    {
+        if (! self::has($id)) {
+            return self::set($id, value($value));
+        }
+        return self::get($id);
+    }
+
     public static function getContainer()
     {
         if (Coroutine::inCoroutine()) {

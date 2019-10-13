@@ -31,4 +31,18 @@ class ContextTest extends TestCase
 
         $this->assertSame(2, Context::get('override.id'));
     }
+
+    public function testStore()
+    {
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::store('test.store.id', function () {
+            return 1;
+        }));
+        $this->assertSame(1, Context::store('test.store.id', function () {
+            return 2;
+        }));
+
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::store('test.store.id', 1));
+    }
 }

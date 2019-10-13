@@ -51,6 +51,7 @@ class ValidationMiddlewareTest extends TestCase
         Mockery::close();
         Context::set(DemoRequest::class . ':' . ValidatorInterface::class, null);
         Context::set('test.validation.DemoRequest.number', 0);
+        Context::set('http.request.parsedData', null);
     }
 
     public function testProcess()
@@ -103,7 +104,7 @@ class ValidationMiddlewareTest extends TestCase
     public function testGetValidatorInstance()
     {
         $container = $this->createContainer();
-
+        Context::set(ServerRequestInterface::class, new Request('POST', new Uri('/')));
         $request = $container->get(DemoRequest::class);
 
         $request->validated();
