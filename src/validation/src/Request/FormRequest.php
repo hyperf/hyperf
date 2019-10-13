@@ -122,9 +122,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
             $this->withValidator($validator);
         }
 
-        Context::set($validatorKey, $validator);
-
-        return $validator;
+        return Context::set($validatorKey, $validator);
     }
 
     /**
@@ -187,14 +185,12 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     *
-     * Get context validator key
+     * Get context validator key.
      *
      * @return string
-     *
      */
     protected function getContextValidatorKey(): string
     {
-        return sprintf('%s:%s',get_called_class(),ValidatorInterface::class);
+        return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
     }
 }
