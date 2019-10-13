@@ -34,6 +34,9 @@ class Scanner
     {
         $this->parser = new Ast();
         $this->ignoreAnnotations = $ignoreAnnotations;
+        array_walk($this->ignoreAnnotations, function ($value) {
+            AnnotationReader::addGlobalIgnoredName($value);
+        });
 
         // TODO: this method is deprecated and will be removed in doctrine/annotations 2.0
         AnnotationRegistry::registerLoader('class_exists');
@@ -49,9 +52,6 @@ class Scanner
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
 
-        array_walk($this->ignoreAnnotations, function ($value) {
-            AnnotationReader::addGlobalIgnoredName($value);
-        });
         $meta = [];
         foreach ($finder as $file) {
             try {
