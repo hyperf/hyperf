@@ -25,18 +25,16 @@ class Scanner
      */
     private $parser;
 
-    /**
-     * @var array
-     */
-    private $ignoreAnnotations = [];
-
     public function __construct(array $ignoreAnnotations = ['mixin'])
     {
         $this->parser = new Ast();
-        $this->ignoreAnnotations = $ignoreAnnotations;
 
         // TODO: this method is deprecated and will be removed in doctrine/annotations 2.0
         AnnotationRegistry::registerLoader('class_exists');
+
+        foreach ($ignoreAnnotations as $annotation) {
+            AnnotationReader::addGlobalIgnoredName($annotation);
+        }
     }
 
     public function scan(array $paths): array
@@ -49,9 +47,6 @@ class Scanner
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
 
-        array_walk($this->ignoreAnnotations, function ($value) {
-            AnnotationReader::addGlobalIgnoredName($value);
-        });
         $meta = [];
         foreach ($finder as $file) {
             try {
