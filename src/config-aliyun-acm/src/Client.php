@@ -91,6 +91,11 @@ class Client implements ClientInterface
         if ($response->getStatusCode() !== 200) {
             throw new RuntimeException('Get config failed from Aliyun ACM.');
         }
-        return json_decode($response->getBody()->getContents(), true);
+        $contents = $response->getBody()->getContents();
+        $encode = mb_detect_encoding($contents, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
+        if($encode != 'UTF-8'){
+            $contents = mb_convert_encoding($contents, 'UTF-8', $encode);
+        }
+        return json_decode($contents, true);
     }
 }
