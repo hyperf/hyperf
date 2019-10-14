@@ -32,9 +32,9 @@ class Scanner
         // TODO: this method is deprecated and will be removed in doctrine/annotations 2.0
         AnnotationRegistry::registerLoader('class_exists');
 
-        array_walk($ignoreAnnotations, function ($value) {
-            AnnotationReader::addGlobalIgnoredName($value);
-        });
+        foreach ($ignoreAnnotations as $annotation) {
+            AnnotationReader::addGlobalIgnoredName($annotation);
+        }
     }
 
     public function scan(array $paths): array
