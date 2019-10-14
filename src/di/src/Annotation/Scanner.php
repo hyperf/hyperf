@@ -39,7 +39,7 @@ class Scanner
 
     public function scan(array $paths): array
     {
-        if (!$paths) {
+        if (! $paths) {
             return [];
         }
         $paths = $this->normalizeDir($paths);
@@ -52,7 +52,7 @@ class Scanner
             try {
                 $stmts = $this->parser->parse($file->getContents());
                 $className = $this->parser->parseClassByStmts($stmts);
-                if (!$className) {
+                if (! $className) {
                     continue;
                 }
                 $meta[$className] = $stmts;
@@ -72,7 +72,7 @@ class Scanner
         foreach ($classCollection as $className) {
             $reflectionClass = ReflectionManager::reflectClass($className);
             $classAnnotations = $reader->getClassAnnotations($reflectionClass);
-            if (!empty($classAnnotations)) {
+            if (! empty($classAnnotations)) {
                 foreach ($classAnnotations as $classAnnotation) {
                     if ($classAnnotation instanceof AnnotationInterface) {
                         $classAnnotation->collectClass($className);
@@ -84,7 +84,7 @@ class Scanner
             $properties = $reflectionClass->getProperties();
             foreach ($properties as $property) {
                 $propertyAnnotations = $reader->getPropertyAnnotations($property);
-                if (!empty($propertyAnnotations)) {
+                if (! empty($propertyAnnotations)) {
                     foreach ($propertyAnnotations as $propertyAnnotation) {
                         if ($propertyAnnotation instanceof AnnotationInterface) {
                             $propertyAnnotation->collectProperty($className, $property->getName());
@@ -97,7 +97,7 @@ class Scanner
             $methods = $reflectionClass->getMethods();
             foreach ($methods as $method) {
                 $methodAnnotations = $reader->getMethodAnnotations($method);
-                if (!empty($methodAnnotations)) {
+                if (! empty($methodAnnotations)) {
                     foreach ($methodAnnotations as $methodAnnotation) {
                         if ($methodAnnotation instanceof AnnotationInterface) {
                             $methodAnnotation->collectMethod($className, $method->getName());
