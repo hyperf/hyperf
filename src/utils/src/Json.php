@@ -18,23 +18,8 @@ use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Json
 {
-    public static $jsonErrorMessages = [
-        'JSON_ERROR_DEPTH' => 'The maximum stack depth has been exceeded.',
-        'JSON_ERROR_STATE_MISMATCH' => 'Invalid or malformed JSON.',
-        'JSON_ERROR_CTRL_CHAR' => 'Control character error, possibly incorrectly encoded.',
-        'JSON_ERROR_SYNTAX' => 'Syntax error.',
-        'JSON_ERROR_UTF8' => 'Malformed UTF-8 characters, possibly incorrectly encoded.', // PHP 5.3.3
-        'JSON_ERROR_RECURSION' => 'One or more recursive references in the value to be encoded.', // PHP 5.5.0
-        'JSON_ERROR_INF_OR_NAN' => 'One or more NAN or INF values in the value to be encoded', // PHP 5.5.0
-        'JSON_ERROR_UNSUPPORTED_TYPE' => 'A value of a type that cannot be encoded was given', // PHP 5.5.0
-    ];
-
     public static function encode($data, $options = JSON_UNESCAPED_UNICODE)
     {
-        set_error_handler(function () {
-            static::handleJsonError(JSON_ERROR_SYNTAX);
-        }, E_WARNING);
-
         if ($data instanceof Jsonable) {
             return (string) $data;
         }
@@ -45,7 +30,7 @@ class Json
 
         $json = json_encode($data, $options);
         restore_error_handler();
-        static::handleJsonError(json_last_error());
+        static::handleJsonError(json_last_error(), json_last_error_msg());
         return $json;
     }
 
@@ -58,28 +43,15 @@ class Json
             return null;
         }
         $decode = json_decode((string) $json, $asArray);
-        static::handleJsonError(json_last_error());
-
+        static::handleJsonError(json_last_error(), json_last_error_msg());
         return $decode;
     }
 
-    protected static function handleJsonError($lastError)
+    protected static function handleJsonError($lastError, $lastErrorMsg)
     {
         if ($lastError === JSON_ERROR_NONE) {
             return;
         }
-
-        $availableErrors = [];
-        foreach (static::$jsonErrorMessages as $const => $message) {
-            if (defined($const)) {
-                $availableErrors[constant($const)] = $message;
-            }
-        }
-
-        if (isset($availableErrors[$lastError])) {
-            throw new InvalidArgumentException($availableErrors[$lastError], $lastError);
-        }
-
-        throw new InvalidArgumentException('Unknown JSON encoding/decoding error.');
+        throw new InvalidArgumentException($lastErrorMsg, $lastError);
     }
 }

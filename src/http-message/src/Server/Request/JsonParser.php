@@ -19,8 +19,14 @@ use Hyperf\Utils\Json;
 
 class JsonParser implements RequestParserInterface
 {
+    /**
+     * @var bool
+     */
     public $asArray = true;
 
+    /**
+     * @var bool
+     */
     public $throwException = true;
 
     public function parse(string $rawBody, string $contentType): array

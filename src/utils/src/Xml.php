@@ -50,13 +50,7 @@ class Xml
 
     public static function toArray($xml)
     {
-        /*if(!parserXML($resp)){
-            return false;
-         }*/
         $disableLibxmlEntityLoader = libxml_disable_entity_loader(true);
-        // 如果希望使用多个libxml选项，可以使用管道将它们分开，如下所示
-        // 如果不加 LIBXML_NOERROR 选项的话传入错误的xml字符串会抛出错误，加上这个选项会返回 false。或者在函数前面加上 @ 操作符也会返回false
-        // 也可以直接调用上面判断是否是一个标准的xml格式
         $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
         libxml_disable_entity_loader($disableLibxmlEntityLoader);
         if ($respObject === false) {
