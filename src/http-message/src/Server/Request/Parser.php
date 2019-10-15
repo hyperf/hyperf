@@ -25,9 +25,9 @@ class Parser implements RequestParserInterface
 
         $this->parsers = [
             'application/json' => $jsonParser,
-            'test/json' => $jsonParser,
+            'text/json' => $jsonParser,
             'application/xml' => $xmlParser,
-            'test/xml' => $xmlParser,
+            'text/xml' => $xmlParser,
         ];
     }
 
