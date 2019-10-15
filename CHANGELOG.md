@@ -10,7 +10,7 @@
 - [#701](https://github.com/hyperf-cloud/hyperf/pull/701) Fixed the custom process will not restart automatically when throw an uncaptured exception.
 - [#704](https://github.com/hyperf-cloud/hyperf/pull/704) Fixed bug that `Call to a member function getName() on null` in `Hyperf\Validation\Middleware\ValidationMiddleware` when the argument of action method does not define the argument type.
 - [#713](https://github.com/hyperf-cloud/hyperf/pull/713) Fixed `ignoreAnnotations` does not works when cache is used.
-- [#724](https://github.com/hyperf-cloud/hyperf/pull/724) Fixed db:seed without database selected. 
+- [#724](https://github.com/hyperf-cloud/hyperf/pull/724) Fixed `db:seed` command without database selected. 
 
 # v1.1.1 - 2019-10-08
 
