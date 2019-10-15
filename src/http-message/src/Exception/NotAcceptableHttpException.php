@@ -14,12 +14,6 @@ namespace Hyperf\HttpMessage\Exception;
 
 class NotAcceptableHttpException extends HttpException
 {
-    /**
-     * Constructor.
-     * @param string $message error message
-     * @param int $code error code
-     * @param \Exception $previous the previous exception used for the exception chaining
-     */
     public function __construct($message = null, $code = 0, \Exception $previous = null)
     {
         parent::__construct(406, $message, $code, $previous);

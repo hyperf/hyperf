@@ -35,7 +35,7 @@ class HttpException extends RuntimeException
         parent::__construct($message, $code, $previous);
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -43,7 +43,7 @@ class HttpException extends RuntimeException
     /**
      * @return string the user-friendly name of this exception
      */
-    public function getName()
+    public function getName(): string
     {
         if (isset(Response::$httpStatuses[$this->statusCode])) {
             return Response::$httpStatuses[$this->statusCode];
