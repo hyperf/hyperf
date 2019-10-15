@@ -10,6 +10,8 @@
 
 ## Fixed
 
+- [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
+- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) Fixed `validationData` method of `Hyperf\Validation\Request\FormRequest` does not contains the uploaded files.
 - [#700](https://github.com/hyperf-cloud/hyperf/pull/700) Fixed the `download` method of `Hyperf\HttpServer\Contract\ResponseInterface` does not works as expected.
 - [#701](https://github.com/hyperf-cloud/hyperf/pull/701) Fixed the custom process will not restart automatically when throw an uncaptured exception.
 - [#704](https://github.com/hyperf-cloud/hyperf/pull/704) Fixed bug that `Call to a member function getName() on null` in `Hyperf\Validation\Middleware\ValidationMiddleware` when the argument of action method does not define the argument type.
