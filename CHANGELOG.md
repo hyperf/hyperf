@@ -7,7 +7,7 @@
 ## Fixed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table.
-- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) Fixed bug that validationData don't contains uploaded files.
+- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) Fixed `validationData` of `Hyperf\Validation\FormRequest` does not contains the uploaded files.
 - [#700](https://github.com/hyperf-cloud/hyperf/pull/700) Fixed the `download` method of `Hyperf\HttpServer\Contract\ResponseInterface` does not works as expected.
 - [#704](https://github.com/hyperf-cloud/hyperf/pull/704) Fixed bug that `Call to a member function getName() on null` in `Hyperf\Validation\Middleware\ValidationMiddleware` when the argument of action method does not define the argument type.
 
