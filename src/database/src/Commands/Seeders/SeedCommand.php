@@ -64,7 +64,7 @@ class SeedCommand extends BaseCommand
 
         $this->seed->setOutput($this->output);
 
-        if ($this->input->hasOption('database')) {
+        if ($this->input->hasOption('database') && $this->input->getOption('database')) {
             $this->seed->setConnection($this->input->getOption('database'));
         }
 
