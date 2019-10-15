@@ -99,14 +99,17 @@ abstract class AbstractProcess implements ProcessInterface
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
-                $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                try {
+                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
-                $this->process = $process;
-                $this->listen();
-                $this->handle();
+                    $this->process = $process;
+                    $this->listen();
+                    $this->handle();
 
-                $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
-                $this->running = false;
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                } finally {
+                    $this->running = false;
+                }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
