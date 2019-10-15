@@ -76,6 +76,20 @@ class ServerRequestTest extends TestCase
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
     }
 
+    /**
+     * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
+     */
+    public function testXmlNormalizeParsedBodyException()
+    {
+        $this->getContainer();
+
+        $json = ['name' => 'Hyperf'];
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/xml; charset=utf-8');
+        $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
+        $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
+    }
+
     public function testNormalizeParsedBodyInvalidContentType()
     {
         $this->getContainer();
