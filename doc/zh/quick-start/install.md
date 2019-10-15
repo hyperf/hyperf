@@ -9,7 +9,7 @@ Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下�
 当您不想采用 Docker 来作为运行的环境基础时，您需要确保您的运行环境达到了以下的要求：   
 
  - PHP >= 7.2
- - Swoole PHP 扩展 >= 4.3.1，并关闭了 `Short Name`
+ - Swoole PHP 扩展 >= 4.4，并关闭了 `Short Name`
  - OpenSSL PHP 扩展
  - JSON PHP 扩展
  - PDO PHP 扩展 （如需要使用到 MySQL 客户端）

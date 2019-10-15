@@ -20,11 +20,11 @@ class ConfigProvider
             'dependencies' => [
                 RenderInterface::class => Render::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

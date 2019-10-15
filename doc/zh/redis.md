@@ -17,7 +17,6 @@ composer require hyperf/redis
 
 ```php
 <?php
-
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -39,15 +38,16 @@ return [
 
 ## 使用
 
-`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接使用\Redis客户端。
+`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接通过依赖注入容器注入 `\Redis` 来使用 Redis 客户端，实际获得的是 `Hyperf\Redis\Redis` 的一个代理对象。
 
 ```php
 <?php
+use Hyperf\Utils\ApplicationContext;
 
-$redis = $this->container->get(\Redis::class);
+$container = ApplicationContext::getContainer();
 
+$redis = $container->get(\Redis::class);
 $result = $redis->keys('*');
-
 ```
 
 ## 多库配置
@@ -97,7 +97,6 @@ return [
 
 ```php
 <?php
-
 use Hyperf\Redis\Redis;
 
 class FooRedis extends Redis
@@ -119,12 +118,13 @@ $result = $redis->keys('*');
 
 ```php
 <?php
-
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
 
 // 通过 DI 容器获取或直接注入 RedisFactory 类
-$redis = $this->container->get(RedisFactory::class)->get('foo');
-
+$redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 

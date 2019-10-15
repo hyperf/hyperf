@@ -70,7 +70,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 - [hyperf/json-rpc](https://github.com/hyperf-cloud/json-rpc) JSON-RPC protocol component provided by Hyperf officially
 - [hyperf/rate-limit](https://github.com/hyperf-cloud/rate-limit) Token bucket algorithm-based rate limiter component provided by Hyperf officially
 - [hyperf/load-balancer](https://github.com/hyperf-cloud/load-balancer) Load balancer component provided by Hyperf officially
-- [hyperf/service-gevernance](https://github.com/hyperf-cloud/service-gevernance) Service governance component provided by Hyperf officially
+- [hyperf/service-governance](https://github.com/hyperf-cloud/service-governance) Service governance component provided by Hyperf officially
 - [hyperf/tracer](https://github.com/hyperf-cloud/tracer) OpenTracing component provided by Hyperf officially
 - [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) service circuit breaker component provided by Hyperf officially
 

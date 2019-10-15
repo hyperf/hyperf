@@ -35,7 +35,6 @@ class PoolHandler extends CoroutineHandler
         $method = $request['http_method'] ?? 'GET';
         $scheme = $request['scheme'] ?? 'http';
         $ssl = $scheme === 'https';
-        $uri = $request['uri'] ?? '/';
         $body = $request['body'] ?? '';
         $effectiveUrl = Core::url($request);
         $params = parse_url($effectiveUrl);
@@ -73,13 +72,7 @@ class PoolHandler extends CoroutineHandler
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
                 $connection->close();
-                $connection->release();
-                return [
-                    'status' => null,
-                    'reason' => null,
-                    'headers' => [],
-                    'error' => $ex,
-                ];
+                return $this->getErrorResponse($ex, $btime, $effectiveUrl);
             }
 
             $response = $this->getResponse($client, $btime, $effectiveUrl);

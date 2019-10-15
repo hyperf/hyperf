@@ -104,7 +104,6 @@ class IndexController
 }
 ```
 
-
 ## 处理 HTTP 请求
 
 `Hyperf` 是完全开放的，本质上没有规定您必须基于某种模式下去实现请求的处理，您可以采用传统的 `MVC模式`，亦可以采用 `RequestHandler模式` 来进行开发。   
@@ -230,3 +229,49 @@ class IndexController
 
 > Tips: 您也可以将启动 Server 的命令配置在 IDE 上，便可直接通过 IDE 的 `启动/停止` 操作快捷的完成 `启动服务` 或 `重启服务` 的操作。
 > 且非视图开发时可以采用 [TDD(Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369) 测试驱动开发来进行开发，这样不仅可以省略掉服务重启和频繁切换窗口的麻烦，还可保证接口数据的正确性。
+
+## 多端口监听
+
+`Hyperf` 支持监听多个端口，但因为 `callbacks` 中的对象直接从容器中获取，所以相同的 `Hyperf\HttpServer\Server::class` 会在容器中被覆盖。所以我们需要在依赖关系中，重新定义 `Server`，确保对象隔离。
+
+> WebSocket 和 TCP 等 Server 同理。
+
+`config/autoload/dependencies.php`
+
+```php
+<?php
+
+return [
+    'InnerHttp' => Hyperf\HttpServer\Server::class,
+];
+```
+
+`config/autoload/server.php`
+
+```php
+<?php
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+        ],
+        [
+            'name' => 'innerHttp',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => ['InnerHttp', 'onRequest'],
+            ],
+        ],
+    ]
+];
+```

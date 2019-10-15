@@ -31,13 +31,15 @@ class ConfigProvider
             'listeners' => [
                 BootApplicationListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
-                ],
-                'collectors' => [
-                    AnnotationCollector::class,
-                    AspectCollector::class,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                    'collectors' => [
+                        AnnotationCollector::class,
+                        AspectCollector::class,
+                    ],
                 ],
             ],
         ];

@@ -28,8 +28,8 @@ class FinishCallback
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function onFinish(Server $serv, int $taskId, $data)
+    public function onFinish(Server $server, int $taskId, $data)
     {
-        $this->dispatcher->dispatch(new OnFinish($serv, $taskId, $data));
+        $this->dispatcher->dispatch(new OnFinish($server, $taskId, $data));
     }
 }

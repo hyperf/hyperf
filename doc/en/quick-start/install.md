@@ -9,7 +9,7 @@ The various versions of Dockerfile have been prepared for you in the [hyperf-clo
 When you don't want to use Docker as the basis for your running environment, you need to make sure that your operating environment meets the following requirements:  
 
  - PHP >= 7.2
- - Swoole PHP extension >= 4.3.1，and Disabled `Short Name`
+ - Swoole PHP extension >= 4.4，and Disabled `Short Name`
  - OpenSSL PHP extension
  - JSON PHP extension
  - PDO PHP extension （If you need to use MySQL Client）

@@ -12,17 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Tracer\Tracing;
+use OpenTracing\Tracer;
 
 /**
  * Aspect.
  */
 class MethodAspect extends AbstractAspect
 {
+    use SpanStarter;
+
     /**
      * @var array
      */
@@ -31,18 +33,18 @@ class MethodAspect extends AbstractAspect
     ];
 
     /**
-     * @var Tracing
+     * @var Tracer
      */
-    private $tracing;
+    private $tracer;
 
     /**
      * @var SwitchManager
      */
     private $switchManager;
 
-    public function __construct(Tracing $tracing, SwitchManager $switchManager)
+    public function __construct(Tracer $tracer, SwitchManager $switchManager)
     {
-        $this->tracing = $tracing;
+        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
     }
 
@@ -56,8 +58,7 @@ class MethodAspect extends AbstractAspect
         }
 
         $key = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
-        $span = $this->tracing->span($key);
-        $span->start();
+        $span = $this->startSpan($key);
         $result = $proceedingJoinPoint->process();
         $span->finish();
         return $result;

@@ -62,6 +62,7 @@
 
 - [hyperf/amqp](https://github.com/hyperf-cloud/amqp) Hyperf 官方提供的 AMQP 协程组件
 - [hyperf/async-queue](https://github.com/hyperf-cloud/async-queue) Hyperf 官方提供的简单的基于 Redis 的异步队列组件
+- [hooklife/hyperf-aliyun-amqp](https://github.com/hooklife/hyperf-aliyun-amqp) 使 hyperf/amqp 组件支持阿里云 AMQP
 
 ## 配置中心
 
@@ -77,7 +78,7 @@
 
 - [hyperf/rate-limit](https://github.com/hyperf-cloud/rate-limit) Hyperf 官方提供的基于令牌桶算法的限流组件
 - [hyperf/load-balancer](https://github.com/hyperf-cloud/load-balancer) Hyperf 官方提供的负载均衡组件
-- [hyperf/service-gevernance](https://github.com/hyperf-cloud/service-gevernance) Hyperf 官方提供的服务治理组件
+- [hyperf/service-governance](https://github.com/hyperf-cloud/service-governance) Hyperf 官方提供的服务治理组件
 - [hyperf/tracer](https://github.com/hyperf-cloud/tracer) Hyperf 官方提供的 OpenTracing 分布式调用链追踪组件
 - [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) Hyperf 官方提供的服务熔断组件
 
@@ -87,7 +88,7 @@
 
 ## ID 生成器
 
-- [hyperf/snawflake](https://github.com/hyperf-cloud/snawflake) Hyperf 官方提供的 Snowflake ID 生成器组件 (beta)
+- [hyperf/snowflake](https://github.com/hyperf-cloud/snowflake) Hyperf 官方提供的 Snowflake ID 生成器组件 (beta)
 
 ## 文档生成
 
@@ -104,9 +105,16 @@
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一个基于 Go 语言实现的通用热更新组件
 - [remy/nodemon](https://github.com/remy/nodemon) 一个基于 node.js 实现的通用热更新组件
 
+> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
+
 ## Swoole
 
 - - [hyperf/swoole-tracker](https://github.com/hyperf-cloud/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
 - - [hyperf/task](https://github.com/hyperf-cloud/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
 
-> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
+## 第三方 SDK
+
+- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付SDK
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
+- [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
+

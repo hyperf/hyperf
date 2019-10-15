@@ -130,7 +130,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
-            if ($dispatched->isFind()) {
+            if ($dispatched->isFound()) {
                 $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
                 $middlewares = array_merge($middlewares, $registedMiddlewares);
             }
@@ -161,7 +161,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(SwooleServer $server, Frame $frame): void
+    public function onMessage(WebSocketServer $server, Frame $frame): void
     {
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {

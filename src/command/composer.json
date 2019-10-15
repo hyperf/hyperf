@@ -15,6 +15,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Command\\": "tests/"
         }
     },
     "require": {

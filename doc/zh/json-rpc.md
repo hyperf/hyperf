@@ -101,7 +101,7 @@ return [
     'servers' => [
         [
             'name' => 'jsonrpc',
-            'type' => Server::SERVER_TCP,
+            'type' => Server::SERVER_BASE,
             'host' => '0.0.0.0',
             'port' => 9503,
             'sock_type' => SWOOLE_SOCK_TCP,
@@ -136,7 +136,48 @@ return [
 
 ## 定义服务消费者
 
-一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要定义一个类及相关属性即可。
+一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要进行一些鉴定配置即可。
+
+### 自动创建代理消费者类
+
+您可通过在 `config/autoload/services.php` 配置文件内进行一些简单的配置，即可通过动态代理自动创建消费者类。
+
+```php
+<?php
+return [
+    'consumers' => [
+        [
+            // name 需与服务提供者的 name 属性相同
+            'name' => 'CalculatorService',
+            // 服务接口名，可选，默认值等于 name 配置的值，如果 name 直接定义为接口类则可忽略此行配置，如 name 为字符串则需要配置 service 对应到接口类
+            'service' => \App\JsonRpc\CalculatorServiceInterface::class,
+            // 对应容器对象 ID，可选，默认值等于 service 配置的值，用来定义依赖注入的 key
+            'id' => \App\JsonRpc\CalculatorServiceInterface::class,
+            // 服务提供者的服务协议，可选，默认值为 jsonrpc-http
+            'protocol' => 'jsonrpc-http',
+            // 负载均衡算法，可选，默认值为 random
+            'load_balancer' => 'random',
+            // 这个消费者要从哪个服务中心获取节点信息，如不配置则不会从服务中心获取节点信息
+            'registry' => [
+                'protocol' => 'consul',
+                'address' => 'http://127.0.0.1:8500',
+            ],
+            // 如果没有指定上面的 registry 配置，即为直接对指定的节点进行消费，通过下面的 nodes 参数来配置服务提供者的节点信息
+            'nodes' => [
+                ['host' => '127.0.0.1', 'port' => 9504],
+            ],
+        ]
+    ],
+];
+```
+
+在应用启动时会自动创建客户端类的代理对象，并在容器中使用配置项 `id` 的值（如果未设置，会使用配置项 `service` 值代替）来添加绑定关系，这样就和手工编写的客户端类一样，通过注入 `CalculatorServiceInterface` 接口来直接使用客户端。
+
+> 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
+
+### 手动创建消费者类
+
+如您对消费者类有更多的需求，您可通过手动创建一个消费者类来实现，只需要定义一个类及相关属性即可。
 
 ```php
 <?php
@@ -190,44 +231,68 @@ return [
 ```
 
 
-这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/autoload/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
 
 ```php
 return [
-    'dependencies' => [
-        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
-    ],
+    App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
 ];
 ```
 
 这样便可以通过注入 `CalculatorServiceInterface` 接口来使用客户端了。
 
-### 自动创建代理客户端类
+### 配置复用
 
-当服务提供者通过接口类实现服务，在服务消费端可以通过动态代理自动创建客户端类。
+通常来说，一个服务消费者会同时消费多个服务提供者，当我们通过服务中心来发现服务提供者时， `config/autoload/services.php` 配置文件内就可能会重复配置很多次 `registry` 配置，但通常来说，我们的服务中心可能是统一的，也就意味着多个服务消费者配置都是从同样的服务中心去拉取节点信息，此时我们可以通过 `PHP 变量` 或 `循环` 等 PHP 代码来实现配置文件的生成。
 
-只需要在配置文件中加入配置项 `service` 即可：
+#### 通过 PHP 变量生成配置
 
 ```php
 <?php
+$registry = [
+   'protocol' => 'consul',
+   'address' => 'http://127.0.0.1:8500',
+];
 return [
+    // 下面的 FooService 和 BarService 仅示例多服务，并不是在文档示例中真实存在的
     'consumers' => [
         [
-            // 服务接口名，可选，默认值等于 name
-            'service' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // 对应容器对象ID，可选，默认值等于 service
-            'id' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // 服务提供者的服务协议，可选，默认值为 jsonrpc-http
-            'protocol' => 'jsonrpc-http',
-            // 负载均衡算法，可选，默认值为 random
-            'load_balancer' => 'random',
-            // 此处省略其它配置
+            'name' => 'FooService',
+            'registry' => $registry,
+        ],
+        [
+            'name' => 'BarService',
+            'registry' => $registry,
         ]
     ],
 ];
 ```
 
-在应用启动时会自动创建客户端类的代理对象，并在容器中使用配置项 `id` 的值（如果未设置，会使用配置项 `service` 值代替）来添加绑定关系，这样就和手工编写的客户端类一样，通过注入 `CalculatorServiceInterface` 接口来直接使用客户端。
+#### 通过循环生成配置
 
-> 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
+```php
+<?php
+return [
+    'consumers' => value(function () {
+        $consumers = [];
+        // 这里示例自动创建代理消费者类的配置形式，顾存在 name 和 service 两个配置项，这里的做法不是唯一的，仅说明可以通过 PHP 代码来生成配置
+        // 下面的 FooServiceInterface 和 BarServiceInterface 仅示例多服务，并不是在文档示例中真实存在的
+        $services = [
+            'FooService' => App\JsonRpc\FooServiceInterface::class,
+            'BarService' => App\JsonRpc\BarServiceInterface::class,
+        ];
+        foreach ($services as $name => $interface) {
+            $consumers[] = [
+                'name' => $name,
+                'service' => $interface,
+                'registry' => [
+                   'protocol' => 'consul',
+                   'address' => 'http://127.0.0.1:8500',
+                ]
+            ];
+        }
+        return $consumers;
+    }),
+];
+```
 
