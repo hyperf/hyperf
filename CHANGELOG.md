@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#722](https://github.com/hyperf-cloud/hyperf/pull/722) Added config `concurrent.limit` for amqp.
+- [#722](https://github.com/hyperf-cloud/hyperf/pull/722) Added config `concurrent.limit` for AMQP consumer.
 
 ## Changed
 
