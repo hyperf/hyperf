@@ -478,7 +478,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             return $data;
         }
 
-        $rawContentType = $request->getHeaderLine('Content-Type');
+        $rawContentType = $request->getHeaderLine('content-type');
         if (($pos = strpos($rawContentType, ';')) !== false) {
             // e.g. text/html; charset=UTF-8
             $contentType = strtolower(substr($rawContentType, 0, $pos));

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpMessage;
 
-use Hyperf\Di\Container;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
@@ -24,6 +23,7 @@ use Hyperf\Utils\Xml;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -45,26 +45,25 @@ class ServerRequestTest extends TestCase
         $json = ['name' => 'Hyperf'];
 
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('');
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('');
 
         $this->assertSame($data, RequestStub::normalizeParsedBody($data));
         $this->assertSame($data, RequestStub::normalizeParsedBody($data, $request));
 
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/xml; charset=utf-8');
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/xml; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(Xml::toXml($json)));
 
         $this->assertSame($json, RequestStub::normalizeParsedBody($json, $request));
 
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/json; charset=utf-8');
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(Json::encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
     }
 
     /**
      * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Invalid JSON data in request body: Syntax error.
      */
     public function testNormalizeParsedBodyException()
     {
@@ -72,7 +71,7 @@ class ServerRequestTest extends TestCase
 
         $json = ['name' => 'Hyperf'];
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/json; charset=utf-8');
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
     }
@@ -85,14 +84,14 @@ class ServerRequestTest extends TestCase
         $json = ['name' => 'Hyperf'];
 
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/JSON');
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
     }
 
     protected function getContainer()
     {
-        $container = Mockery::mock(Container::class);
+        $container = Mockery::mock(ContainerInterface::class);
 
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('make')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
