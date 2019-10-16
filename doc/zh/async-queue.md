@@ -97,6 +97,8 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 ### 生产消息
 
+#### 传统方式
+
 首先我们定义一个消息类，如下
 
 ```php
@@ -165,6 +167,36 @@ class QueueService
     }
 }
 ```
+
+#### 注解方式
+
+框架除了传统方式投递消息，还提供了注解方式。
+
+让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `push` 方法中，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
+
+class QueueService
+{
+    /**
+     * @AsyncQueueMessage
+     */
+    public function push($params)
+    {
+        var_dump($params);
+    }
+}
+
+```
+
+#### 投递消息
 
 根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
 
