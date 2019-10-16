@@ -275,3 +275,27 @@ return [
     ]
 ];
 ```
+
+## 事件
+
+除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
+
+|            事件名             |                备注                 |
+|:-----------------------------:|:-----------------------------------:|
+|    SwooleEvent::ON_REQUEST    |                                     |
+|     SwooleEvent::ON_START     | 当前时间在 `SWOOLE_BASE` 模式下无效 |
+| SwooleEvent::ON_WORKER_START  |                                     |
+|  SwooleEvent::ON_WORKER_EXIT  |                                     |
+| SwooleEvent::ON_PIPE_MESSAGE  |                                     |
+|    SwooleEvent::ON_RECEIVE    |                                     |
+|    SwooleEvent::ON_CONNECT    |                                     |
+|  SwooleEvent::ON_HAND_SHAKE   |                                     |
+|     SwooleEvent::ON_OPEN      |                                     |
+|    SwooleEvent::ON_MESSAGE    |                                     |
+|     SwooleEvent::ON_CLOSE     |                                     |
+|     SwooleEvent::ON_TASK      |                                     |
+|    SwooleEvent::ON_FINISH     |                                     |
+|   SwooleEvent::ON_SHUTDOWN    |                                     |
+|    SwooleEvent::ON_PACKET     |                                     |
+| SwooleEvent::ON_MANAGER_START |                                     |
+| SwooleEvent::ON_MANAGER_STOP  |                                     |
