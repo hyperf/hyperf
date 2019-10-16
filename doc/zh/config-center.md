@@ -52,6 +52,12 @@ return [
     ],
     // 配置更新间隔（秒）
     'interval' => 5,
+    // 客户端IP
+    'client_ip' => current(swoole_get_local_ip()),
+    // 拉取配置超时时间
+    'pullTimeout' => 10,
+    // 拉取配置间隔
+    'interval_timeout' => 60,
 ];
 ```
 
