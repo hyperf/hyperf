@@ -14,7 +14,7 @@ $ php bin/hyperf.php gen:model table_name
 
 1.0.* 版本：
 ```
-$ php bin/hyperf.php gen:model table_name
+$ php bin/hyperf.php db:model table_name
 ```
 
 创建的模型如下
