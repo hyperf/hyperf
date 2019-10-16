@@ -18,20 +18,22 @@ use RuntimeException;
 class HttpException extends RuntimeException
 {
     /**
-     * @var int HTTP status code, such as 403, 404, 500, etc
+     * @var int HTTP status
      */
     public $statusCode;
 
     /**
-     * Constructor.
-     * @param int $status HTTP status code, such as 404, 500, etc
+     * @param int $status HTTP status
      * @param string $message error message
      * @param int $code error code
-     * @param \Exception $previous the previous exception used for the exception chaining
      */
     public function __construct($status, $message = '', $code = 0, \Exception $previous = null)
     {
         $this->statusCode = $status;
+        if (is_null($message)) {
+            $message = Response::$httpStatuses[$status] ?? '';
+        }
+
         parent::__construct($message, $code, $previous);
     }
 

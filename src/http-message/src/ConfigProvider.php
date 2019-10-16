@@ -23,13 +23,6 @@ class ConfigProvider
             'dependencies' => [
                 RequestParserInterface::class => Parser::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

@@ -14,9 +14,13 @@
         "psr/http-message": "^1.0",
         "zendframework/zend-mime": "^2.7"
     },
+    "suggest": {
+        "psr/container": "Required to replace RequestParserInterface."
+    },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^5.7",
+        "psr/container": "^1.0",
+        "swoft/swoole-ide-helper": "dev-master"
     },
     "autoload": {
         "psr-4": {

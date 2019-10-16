@@ -153,7 +153,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        throw new NotFoundHttpException('');
+        throw new NotFoundHttpException();
     }
 
     /**
