@@ -7,6 +7,7 @@
 ## Changed
 
 - [#678](https://github.com/hyperf-cloud/hyperf/pull/678) Added ignore-tables for `gen:model`, and ignore `migrations` table, and `migrations` table will not generate when execute the `gen:model` command.
+- [#729](https://github.com/hyperf-cloud/hyperf/pull/729) Renamed config `db:model` to `gen:model`.
 
 ## Fixed
 
