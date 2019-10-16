@@ -3,7 +3,7 @@
 ## 简介
 
 Hyperf 默认采用 [hyperf/di](https://github.com/hyperf-cloud/di) 作为框架的依赖注入管理容器，尽管从设计上我们允许您更换其它的依赖注入管理容器，但我们强烈不建议您更换该组件。   
-[hyperf/di](https://github.com/hyperf-cloud/di) 是一个强大的用于管理类的依赖关并完成自动注入的组件，与传统依赖注入容器的区别在于更符合长生命周期的应用使用、提供了 [注解及注解注入](zh/annotation.md) 的支持、提供了无比强大的 [AOP 面向切面编程](zh/aop.md) 能力，这些能力及易用性作为 Hyperf 的核心输出，我们自信的认为该组件是最优秀的。
+[hyperf/di](https://github.com/hyperf-cloud/di) 是一个强大的用于管理类的依赖关系并完成自动注入的组件，与传统依赖注入容器的区别在于更符合长生命周期的应用使用、提供了 [注解及注解注入](zh/annotation.md) 的支持、提供了无比强大的 [AOP 面向切面编程](zh/aop.md) 能力，这些能力及易用性作为 Hyperf 的核心输出，我们自信的认为该组件是最优秀的。
 
 ## 安装
 
