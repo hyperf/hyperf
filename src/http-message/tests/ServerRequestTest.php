@@ -20,6 +20,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Json;
 use Hyperf\Utils\Xml;
+use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +36,7 @@ class ServerRequestTest extends TestCase
     protected function tearDown()
     {
         Mockery::close();
+        RequestStub::setParser(null);
     }
 
     public function testNormalizeParsedBody()
@@ -101,6 +103,21 @@ class ServerRequestTest extends TestCase
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
+    }
+
+    public function testOverrideRequestParser()
+    {
+        $this->getContainer();
+        $this->assertSame(Parser::class, get_class(RequestStub::getParser()));
+
+        RequestStub::setParser(new ParserStub());
+        $json = ['name' => 'Hyperf'];
+
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
+        $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
+        $this->assertSame(['mock' => true], RequestStub::normalizeParsedBody([], $request));
+        $this->assertSame(ParserStub::class, get_class(RequestStub::getParser()));
     }
 
     protected function getContainer()

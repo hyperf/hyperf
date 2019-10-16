@@ -33,6 +33,7 @@ class Parser implements RequestParserInterface
 
     public function parse(string $rawBody, string $contentType): array
     {
+        $contentType = strtolower($contentType);
         if (! array_key_exists($contentType, $this->parsers)) {
             throw new \InvalidArgumentException("The '{$contentType}' request parser is not defined.");
         }
@@ -47,6 +48,6 @@ class Parser implements RequestParserInterface
 
     public function has(string $contentType): bool
     {
-        return array_key_exists($contentType, $this->parsers);
+        return array_key_exists(strtolower($contentType), $this->parsers);
     }
 }

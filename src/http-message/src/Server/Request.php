@@ -30,6 +30,11 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     protected $swooleRequest;
 
     /**
+     * @var RequestParserInterface
+     */
+    protected static $parser;
+
+    /**
      * @var array
      */
     private $attributes = [];
@@ -487,12 +492,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         try {
-            if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
-                $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
-            } else {
-                $parser = new Parser();
-            }
-
+            $parser = static::getParser();
             if ($parser->has($contentType)) {
                 $data = $parser->parse($request->getBody()->getContents(), $contentType);
             }
@@ -501,6 +501,21 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         return $data;
+    }
+
+    protected static function getParser(): RequestParserInterface
+    {
+        if (static::$parser instanceof RequestParserInterface) {
+            return static::$parser;
+        }
+
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
+            $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
+        } else {
+            $parser = new Parser();
+        }
+
+        return static::$parser = $parser;
     }
 
     /**
