@@ -48,7 +48,7 @@ class InfoCommand extends HyperfCommand
 
     protected function configure()
     {
-        $this->setDescription('Delete all message from failed queue.');
+        $this->setDescription('Get all messages from the queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
     }
 }
