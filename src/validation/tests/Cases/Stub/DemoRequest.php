@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Validation\Cases\Stub;
 
+use Hyperf\Utils\Context;
 use Hyperf\Validation\Request\FormRequest;
 
 class DemoRequest extends FormRequest
@@ -42,5 +43,12 @@ class DemoRequest extends FormRequest
     public function getValidationData()
     {
         return parent::validationData();
+    }
+
+    protected function withValidator($request)
+    {
+        Context::override('test.validation.DemoRequest.number', function ($id) {
+            return ++$id;
+        });
     }
 }
