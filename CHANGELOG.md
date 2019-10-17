@@ -18,6 +18,7 @@
 - [#713](https://github.com/hyperf-cloud/hyperf/pull/713) Fixed `ignoreAnnotations` does not works when cache is used.
 - [#717](https://github.com/hyperf-cloud/hyperf/pull/717) Fixed the validator will be created repeatedly in `getValidatorInstance`.
 - [#724](https://github.com/hyperf-cloud/hyperf/pull/724) Fixed `db:seed` command without database selected. 
+- [#737](https://github.com/hyperf-cloud/hyperf/pull/737) Fixed custom process does not enable for tracer.
 
 # v1.1.1 - 2019-10-08
 
