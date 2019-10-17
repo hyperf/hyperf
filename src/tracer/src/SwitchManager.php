@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use Hyperf\Utils\Context;
-use Psr\Http\Message\ServerRequestInterface;
+use OpenTracing\Span;
 
 class SwitchManager
 {
@@ -46,6 +46,6 @@ class SwitchManager
             return false;
         }
 
-        return $this->config[$identifier] && Context::get(ServerRequestInterface::class) instanceof ServerRequestInterface;
+        return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
     }
 }
