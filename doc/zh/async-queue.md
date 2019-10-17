@@ -172,7 +172,7 @@ class QueueService
 
 框架除了传统方式投递消息，还提供了注解方式。
 
-让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `push` 方法中，具体代码如下。
+让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，具体代码如下。
 
 ```php
 <?php
@@ -188,8 +188,9 @@ class QueueService
     /**
      * @AsyncQueueMessage
      */
-    public function push($params)
+    public function example($params)
     {
+        // 需要异步执行的代码逻辑
         var_dump($params);
     }
 }
