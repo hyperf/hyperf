@@ -36,13 +36,11 @@ return [
 
 ```php
 <?php
-use Hyperf\Validation\ValidationExceptionHandler;
-
 return [
     'handler' => [
         // 这里对应您当前的 Server 名称
         'http' => [
-            ValidationExceptionHandler::class,
+            \Hyperf\Validation\ValidationExceptionHandler::class,
         ],
     ],
 ];

@@ -9,6 +9,18 @@ composer require hyperf/amqp
 ```
 
 ## 默认配置
+
+|       配置       |  类型  |  默认值   |      备注      |
+|:----------------:|:------:|:---------:|:--------------:|
+|       host       | string | localhost |      Host      |
+|       port       |  int   |   5672    |     端口号     |
+|       user       | string |   guest   |     用户名     |
+|     password     | string |   guest   |      密码      |
+|      vhost       | string |     /     |     vhost      |
+| concurrent.limit |  int   |     0     | 同时消费的数量 |
+|       pool       | object |           |   连接池配置   |
+|      params      | object |           |    基本配置    |
+
 ```php
 <?php
 
@@ -19,6 +31,9 @@ return [
         'user' => 'guest',
         'password' => 'guest',
         'vhost' => '/',
+        'concurrent' => [
+            'limit' => 1,
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -150,9 +165,9 @@ class DemoConsumer extends ConsumerMessage
 
 框架会根据 `Consumer` 内的 `consume` 方法所返回的结果来决定该消息的响应行为，共有 4 中响应结果，分别为 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每个返回值分别代表如下行为：
 
-| 返回值                         | 行为 |
-|-------------------------------|-----|
-| \Hyperf\Amqp\Result::ACK      | 确认消息正确被消费掉了  |
-| \Hyperf\Amqp\Result::NACK     | 消息没有被正确消费掉，以 `basic_nack` 方法来响应 |
-| \Hyperf\Amqp\Result::REQUEUE  | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列  |
-| \Hyperf\Amqp\Result::DROP     | 消息没有被正确消费掉，以 `basic_reject` 方法来响应  |
+| 返回值                       | 行为                                                                 |
+|------------------------------|----------------------------------------------------------------------|
+| \Hyperf\Amqp\Result::ACK     | 确认消息正确被消费掉了                                               |
+| \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
+| \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
+| \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |

@@ -40,6 +40,11 @@ class DemoRequest extends FormRequest
         ];
     }
 
+    public function getValidationData()
+    {
+        return parent::validationData();
+    }
+
     protected function withValidator($request)
     {
         Context::override('test.validation.DemoRequest.number', function ($id) {

@@ -73,6 +73,7 @@ Router::addGroup(
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
@@ -95,6 +96,7 @@ class IndexController
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -124,6 +126,7 @@ class IndexController
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
