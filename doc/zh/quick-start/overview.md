@@ -280,10 +280,10 @@ return [
 
 除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
 
-|            事件名             |                备注                 |
+|            事件名              |                备注                 |
 |:-----------------------------:|:-----------------------------------:|
 |    SwooleEvent::ON_REQUEST    |                                     |
-|     SwooleEvent::ON_START     | 当前时间在 `SWOOLE_BASE` 模式下无效 |
+|     SwooleEvent::ON_START     |   该事件在 `SWOOLE_BASE` 模式下无效    |
 | SwooleEvent::ON_WORKER_START  |                                     |
 |  SwooleEvent::ON_WORKER_EXIT  |                                     |
 | SwooleEvent::ON_PIPE_MESSAGE  |                                     |
