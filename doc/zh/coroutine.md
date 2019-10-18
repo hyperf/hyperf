@@ -270,3 +270,12 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
     return $request->withAddedHeader('foo', 'bar');
 });
 ```
+
+### Swoole Runtime Hook Level
+
+框架在入口函数中提供了 `SWOOLE_HOOK_FLAGS` 常量，如果您需要修改整个项目的 `Runtime Hook` 等级，比如想要支持 `CURL协程`，可以修改这里的代码，如下。
+
+```php
+<?php
+! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
+``` 

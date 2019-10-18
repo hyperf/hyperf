@@ -90,14 +90,14 @@ class ModelCommand extends Command
 
         $option = new ModelOption();
         $option->setPool($pool)
-            ->setPath($this->getOption('path', 'commands.db:model.path', $pool, 'app/Model'))
+            ->setPath($this->getOption('path', 'commands.gen:model.path', $pool, 'app/Model'))
             ->setPrefix($this->getOption('prefix', 'prefix', $pool, ''))
-            ->setInheritance($this->getOption('inheritance', 'commands.db:model.inheritance', $pool, 'Model'))
-            ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
-            ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
-            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool, []))
-            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.db:model.ignore_tables', $pool, []));
+            ->setInheritance($this->getOption('inheritance', 'commands.gen:model.inheritance', $pool, 'Model'))
+            ->setUses($this->getOption('uses', 'commands.gen:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
+            ->setForceCasts($this->getOption('force-casts', 'commands.gen:model.force_casts', $pool, false))
+            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
+            ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
+            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []));
 
         if ($table) {
             $this->createModel($table, $option);
