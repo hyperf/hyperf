@@ -1,5 +1,9 @@
 # v1.1.3
 
+## Fixed
+
+- [#741](https://github.com/hyperf-cloud/hyperf/pull/741) Fixed `db:seed` without filename.
+
 # v1.1.2 - 2019-10-17
 
 ## Added
