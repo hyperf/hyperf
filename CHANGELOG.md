@@ -1,5 +1,9 @@
 # v1.1.3
 
+## Fixed
+
+- [#741](https://github.com/hyperf-cloud/hyperf/pull/741) Fixed `db:seed` without filename.
+
 # v1.1.2 - 2019-10-17
 
 ## Added
@@ -22,7 +26,6 @@
 - [#717](https://github.com/hyperf-cloud/hyperf/pull/717) Fixed the validator will be created repeatedly in `getValidatorInstance`.
 - [#724](https://github.com/hyperf-cloud/hyperf/pull/724) Fixed `db:seed` command without database selected. 
 - [#737](https://github.com/hyperf-cloud/hyperf/pull/737) Fixed custom process does not enable for tracer.
-- [#741](https://github.com/hyperf-cloud/hyperf/pull/741) Fixed `db:seed` without filename.
 
 # v1.1.1 - 2019-10-08
 
