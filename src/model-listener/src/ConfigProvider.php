@@ -12,18 +12,21 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelListener;
 
+use Hyperf\ModelListener\Collector\ListenerCollector;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                    'collectors' => [
+                        ListenerCollector::class,
+                    ],
                 ],
             ],
         ];

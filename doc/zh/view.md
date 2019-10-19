@@ -12,12 +12,12 @@ composer require hyperf/view
 
 View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可自行创建，以下为相关配置的说明：
 
-|       配置        |  类型  |                 默认值                 |       备注       |
-|:-----------------:|:------:|:--------------------------------------:|:----------------:|
+|       配置        |  类型  |                默认值                 |       备注       |
+|:-----------------:|:------:|:-------------------------------------:|:----------------:|
 |      engine       | string | Hyperf\View\Engine\BladeEngine::class |   视图渲染引擎   |
-|       mode        | string |               Mode::TASK               |   视图渲染模式   |
-| config.view_path  | string |                   无                   | 视图文件默认地址 |
-| config.cache_path | string |                   无                   | 视图文件缓存地址 |
+|       mode        | string |              Mode::TASK               |   视图渲染模式   |
+| config.view_path  | string |                  无                   | 视图文件默认地址 |
+| config.cache_path | string |                  无                   | 视图文件缓存地址 |
 
 配置文件格式示例：
 
@@ -137,7 +137,7 @@ Hello, {{ $name }}. You are using blade template now.
 </html>
 ```
 
-控制器中获取 `Hyperf\View\Render` 示例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
+控制器中获取 `Hyperf\View\Render` 实例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
 
 ```php
 <?php

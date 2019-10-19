@@ -57,7 +57,7 @@ class InitProxyCommand extends Command
     protected function clearRuntime($paths)
     {
         $finder = new Finder();
-        $finder->files()->in($paths)->name('*.php');
+        $finder->files()->in($paths)->name(['*.php', '*.cache']);
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
@@ -91,18 +91,19 @@ class InitProxyCommand extends Command
     {
         $scanDirs = $this->getScanDir();
 
-        $runtime = BASE_PATH . '/runtime/container/proxy/';
+        $runtime = BASE_PATH . '/runtime/container/';
         if (is_dir($runtime)) {
             $this->clearRuntime($runtime);
         }
 
-        $classCollection = $this->scanner->scan($scanDirs);
+        $meta = $this->scanner->scan($scanDirs);
+        $classCollection = array_keys($meta);
 
         foreach ($classCollection as $item) {
             try {
                 $this->container->get($item);
             } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
+                // Entry cannot be resolved.
             }
         }
 
@@ -111,7 +112,7 @@ class InitProxyCommand extends Command
                 try {
                     $this->container->get($key);
                 } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
+                    // Entry cannot be resolved.
                 }
             }
         }

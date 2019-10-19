@@ -214,7 +214,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function getContents()
     {
-        return $this->contents;
+        return $this->getFilename();
     }
 
     /**

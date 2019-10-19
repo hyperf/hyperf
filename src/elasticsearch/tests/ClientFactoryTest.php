@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
+use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -29,5 +30,16 @@ class ClientFactoryTest extends TestCase
         $client = $clientFactory->create();
 
         $this->assertInstanceOf(ClientBuilder::class, $client);
+    }
+
+    public function testHostNotReached()
+    {
+        $this->expectException(NoNodesAvailableException::class);
+
+        $clientFactory = new ClientBuilderFactory();
+
+        $client = $clientFactory->create()->setHosts(['http://127.0.0.1:9201'])->build();
+
+        $client->info();
     }
 }

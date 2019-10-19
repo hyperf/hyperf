@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-\Swoole\Coroutine::create(function () {
+\Swoole\Coroutine\Run(function () {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
             STDERR,
@@ -51,9 +51,8 @@
     require PHPUNIT_COMPOSER_INSTALL;
 
     $code = PHPUnit\TextUI\Command::main(false);
+
     if ($code > 0) {
         exit($code);
     }
-
-    swoole_event_exit();
 });

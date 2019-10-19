@@ -17,18 +17,16 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
             'listeners' => [
                 Listener\InitServerListener::class,
                 Listener\OnFinishListener::class,
                 Listener\OnTaskListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

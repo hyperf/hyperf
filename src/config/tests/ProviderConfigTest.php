@@ -100,7 +100,7 @@ class ProviderConfigTest extends TestCase
 
         $dependencies = $res['dependencies'];
         $commands = $res['commands'];
-        $scanPaths = $res['scan']['paths'];
+        $scanPaths = $res['annotations']['scan']['paths'];
         $publish = $res['publish'];
         $listeners = $res['listeners'];
 

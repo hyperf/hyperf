@@ -23,11 +23,11 @@ class ConfigProvider
             'dependencies' => [
                 ConsulAgent::class => ConsulAgentFactory::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

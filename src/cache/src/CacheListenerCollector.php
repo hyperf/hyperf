@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
-use Hyperf\Utils\Traits\Container;
+use Hyperf\Di\MetadataCollector;
 
-class CacheListenerCollector
+class CacheListenerCollector extends MetadataCollector
 {
-    use Container;
-
     /**
      * @var array
      */

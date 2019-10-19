@@ -22,11 +22,14 @@ class ConfigProvider
             'dependencies' => [
                 CacheInterface::class => Cache::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                    'collectors' => [
+                        CacheListenerCollector::class,
+                    ],
                 ],
             ],
             'publish' => [

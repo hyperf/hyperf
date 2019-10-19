@@ -51,9 +51,6 @@ return PhpCsFixer\Config::create()
             'comment_types' => [
             ],
         ],
-        'list_syntax' => [
-            'syntax' => 'short',
-        ],
         'yoda_style' => [
             'always_move_variable' => false,
             'equal' => false,

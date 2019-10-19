@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Serializer;
 
 use Hyperf\Utils\Serializer\ExceptionNormalizer;
+use HyperfTest\Utils\Stub\FooException;
 use HyperfTest\Utils\Stub\SerializableException;
 use PHPUnit\Framework\TestCase;
 
@@ -40,6 +41,13 @@ class ExceptionNormalizerTest extends TestCase
         $result = $normalizer->normalize($ex);
         $ret = $normalizer->denormalize($result, SerializableException::class);
         $this->assertInstanceOf(SerializableException::class, $ret);
+        $this->assertEquals($ret->getMessage(), $ex->getMessage());
+        $this->assertEquals($ret, $ex);
+
+        $ex = new FooException(1000, 'invalid param foo');
+        $result = $normalizer->normalize($ex);
+        $ret = $normalizer->denormalize($result, FooException::class);
+        $this->assertInstanceOf(FooException::class, $ret);
         $this->assertEquals($ret->getMessage(), $ex->getMessage());
         $this->assertEquals($ret, $ex);
     }

@@ -105,3 +105,20 @@ $client = make(Client::class, [
     ],
 ]);
 ```
+
+另外，框架还提供了 `HandlerStackFactory` 来方便创建上述的 `$stack`。
+
+```php
+<?php
+use Hyperf\Guzzle\HandlerStackFactory;
+use GuzzleHttp\Client;
+
+$factory = new HandlerStackFactory();
+$stack = $factory->create();
+
+$client = make(Client::class, [
+    'config' => [
+        'handler' => $stack,
+    ],
+]);
+```

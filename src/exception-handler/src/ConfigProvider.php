@@ -23,11 +23,11 @@ class ConfigProvider
             'dependencies' => [
                 FormatterInterface::class => DefaultFormatter::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];
