@@ -49,8 +49,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
-                    [$name, $type] = $this->getProperty($column);
-                    $doc .= sprintf(' * @property %s $%s', $type, $name) . PHP_EOL;
+                    [$name, $type, $comment] = $this->getProperty($column);
+                    $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
@@ -97,7 +97,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
         $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
 
-        return [$name, $type];
+        $comment = $this->option->isWithComments() ? $column['column_comment'] ?? '' : '';
+
+        return [$name, $type, $comment];
     }
 
     protected function formatDatabaseType(string $type): ?string

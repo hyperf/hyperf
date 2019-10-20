@@ -97,7 +97,8 @@ class ModelCommand extends Command
             ->setForceCasts($this->getOption('force-casts', 'commands.gen:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
-            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []));
+            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
+            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -119,6 +120,7 @@ class ModelCommand extends Command
         $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
+        $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -228,7 +230,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables'])) {

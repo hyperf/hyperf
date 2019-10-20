@@ -50,6 +50,11 @@ class ModelOption
     protected $refreshFillable;
 
     /**
+     * @var bool
+     */
+    protected $withComments;
+
+    /**
      * @var array
      */
     protected $tableMapping = [];
@@ -159,6 +164,17 @@ class ModelOption
     public function setIgnoreTables(array $ignoreTables): ModelOption
     {
         $this->ignoreTables = $ignoreTables;
+        return $this;
+    }
+
+    public function isWithComments(): bool
+    {
+        return $this->withComments;
+    }
+
+    public function setWithComments(bool $withComments): ModelOption
+    {
+        $this->withComments = $withComments;
         return $this;
     }
 }

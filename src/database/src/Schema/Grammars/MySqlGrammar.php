@@ -52,7 +52,7 @@ class MySqlGrammar extends Grammar
      */
     public function compileColumnListing()
     {
-        return 'select `column_name`, `data_type` from information_schema.columns where `table_schema` = ? and `table_name` = ?';
+        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ?';
     }
 
     /**
