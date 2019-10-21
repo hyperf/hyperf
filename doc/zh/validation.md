@@ -413,7 +413,8 @@ if ($errors->has('foo')) {
 验证字段大小在给定的最小值和最大值之间，字符串、数字、数组和文件都可以像使用 size 规则一样使用该规则：
 
 'name' => 'required|between:1,20'
-boolean
+
+##### boolean
 
 验证字段必须可以被转化为布尔值，接收 true, false, 1, 0, "1" 和 "0" 等输入。
 
