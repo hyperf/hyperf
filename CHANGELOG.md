@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#741](https://github.com/hyperf-cloud/hyperf/pull/741) Fixed `db:seed` without filename.
+- [#748](https://github.com/hyperf-cloud/hyperf/pull/748) Fixed bug that `SymfonyNormalizer` not denormalize result of type `array`.
 
 # v1.1.2 - 2019-10-17
 
