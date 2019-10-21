@@ -49,6 +49,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
             'float',
             'bool',
             'mixed',
+            'array', // TODO: Symfony\Component\Serializer\Normalizer\ArrayDenormalizer not support array, so it denormalized in ScalarNormalizer.
         ]);
     }
 
