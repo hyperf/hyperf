@@ -37,4 +37,9 @@ class CalculatorService implements CalculatorServiceInterface
         }
         return $value / $divider;
     }
+
+    public function array(int $a, int $b): array
+    {
+        return ['params' => [$a, $b], 'sum' => $a + $b];
+    }
 }
