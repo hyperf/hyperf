@@ -1,4 +1,7 @@
 # v1.1.3
+## Added
+
+- [#747](https://github.com/hyperf/hyperf/pull/747) Added `AfterConsume`,`BeforeConsume`,`FailToConsume` events for AMQP consumer. 
 
 ## Added
 
