@@ -18,12 +18,13 @@ class SerializePacker implements ProtocolPackerInterface
 {
     public function pack($data): string
     {
-        return pack('N', strlen($data)) . serialize($data);
+        $string = serialize($data);
+        return pack('N', strlen($string)) . $string;
     }
 
     public function unpack(string $data)
     {
-        return unserialize($data);
+        return unserialize(substr($data, 4));
     }
 
     public function length(string $head): int
