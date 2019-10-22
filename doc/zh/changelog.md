@@ -1,5 +1,37 @@
 # 版本更新记录
 
+# v1.1.2 - 2019-10-17
+
+## 新增
+
+- [#722](https://github.com/hyperf-cloud/hyperf/pull/722) 为 AMQP Consumer 新增 `concurrent.limit` 配置来对协程消费进行速率限制；
+
+## 变更
+
+- [#678](https://github.com/hyperf-cloud/hyperf/pull/678) 为 `gen:model` 命令增加 `ignore-tables` 参数，同时默认屏蔽 `migrations` 表，即 `migrations` 表对应的模型在执行 `gen:model` 命令时不会生成；
+
+## 修复
+
+- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) 修复 `Hyperf\Validation\Request\FormRequest` 的 `validationData` 方法不包含上传的文件的问题；
+- [#700](https://github.com/hyperf-cloud/hyperf/pull/700) 修复 `Hyperf\HttpServer\Contract\ResponseInterface` 的 `download` 方法不能按预期运行的问题；
+- [#701](https://github.com/hyperf-cloud/hyperf/pull/701) 修复自定义进程在出现未捕获的异常时不会自动重启的问题；
+- [#704](https://github.com/hyperf-cloud/hyperf/pull/704) 修复 `Hyperf\Validation\Middleware\ValidationMiddleware` 在 action 参数没有定义参数类型时会报错的问题；
+- [#713](https://github.com/hyperf-cloud/hyperf/pull/713) 修复当开启了注解缓存功能是，`ignoreAnnotations` 不能按预期工作的问题；
+- [#717](https://github.com/hyperf-cloud/hyperf/pull/717) 修复 `getValidatorInstance` 方法会重复创建验证器对象的问题；
+- [#724](https://github.com/hyperf-cloud/hyperf/pull/724) 修复 `db:seed` 命令在没有传 `database` 参数时会报错的问题； 
+- [#729](https://github.com/hyperf-cloud/hyperf/pull/729) 修正组件配置项 `db:model` 为 `gen:model`；
+- [#737](https://github.com/hyperf-cloud/hyperf/pull/737) 修复非 Worker 进程下无法使用 Tracer 组件来追踪调用链的问题；
+
+# v1.1.1 - 2019-10-08
+
+## Fixed
+
+- [#664](https://github.com/hyperf/hyperf/pull/664) 调整通过 `gen:request` 命令生成 FormRequest 时 `authorize` 方法的默认返回值；
+- [#665](https://github.com/hyperf/hyperf/pull/665) 修复启动时永远会自动生成代理类的问题；
+- [#667](https://github.com/hyperf/hyperf/pull/667) 修复当访问一个不存在的路由时 `Hyperf\Validation\Middleware\ValidationMiddleware` 会抛出异常的问题；
+- [#672](https://github.com/hyperf/hyperf/pull/672) 修复当 Action 方法上的参数类型为非对象类型时 `Hyperf\Validation\Middleware\ValidationMiddleware` 会抛出一个未捕获的异常的问题；
+- [#674](https://github.com/hyperf/hyperf/pull/674) 修复使用 `gen:model` 命令从数据库生成模型时模型表名错误的问题；
+
 # v1.1.0 - 2019-10-08
 
 ## 新增
