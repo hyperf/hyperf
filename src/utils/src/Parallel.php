@@ -12,12 +12,26 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
+use Swoole\Coroutine\Channel;
+
 class Parallel
 {
     /**
      * @var callable[]
      */
     private $callbacks = [];
+
+    /**
+     * @var Channel|null
+     */
+    private $concurrentChannel;
+
+    public function __construct(int $concurrent = 0)
+    {
+        if ($concurrent > 0) {
+            $this->concurrentChannel = new Channel($concurrent);
+        }
+    }
 
     public function add(callable $callable, $key = null)
     {
@@ -34,8 +48,10 @@ class Parallel
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
+            $this->concurrentChannel && $this->concurrentChannel->push(true);
             Coroutine::create(function () use ($callback, $key, $wg, &$result) {
                 $result[$key] = call($callback);
+                $this->concurrentChannel && $this->concurrentChannel->pop();
                 $wg->done();
             });
         }
