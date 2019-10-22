@@ -1,10 +1,10 @@
 [English](./README.md) | 中文
 
-[![Build Status](https://travis-ci.org/hyperf-cloud/hyperf.svg?branch=master)](https://travis-ci.org/hyperf-cloud/hyperf)
+[![Build Status](https://travis-ci.org/hyperf/hyperf.svg?branch=master)](https://travis-ci.org/hyperf/hyperf)
 <a href="https://packagist.org/packages/hyperf/hyperf"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable.svg" alt="Latest Stable Version"></a>
 [![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
-[![Hyperf License](https://img.shields.io/github/license/hyperf-cloud/hyperf.svg?maxAge=2592000)](https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE)
+[![Hyperf License](https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000)](https://github.com/hyperf/hyperf/blob/master/LICENSE)
 
 # 介绍
 
@@ -48,8 +48,8 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 # 代码贡献者
 
-感谢所有参与 Hyperf 开发的代码贡献者。 [[contributors](https://github.com/hyperf-cloud/hyperf/graphs/contributors)]
-<a href="https://github.com/hyperf-cloud/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
+感谢所有参与 Hyperf 开发的代码贡献者。 [[contributors](https://github.com/hyperf/hyperf/graphs/contributors)]
+<a href="https://github.com/hyperf/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
 # 资金赞助方
 
@@ -65,7 +65,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
     <tr>
       <td align="left" valign="middle">
         <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf-cloud/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
+          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>
@@ -75,4 +75,4 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 # 开源协议
 
-Hyperf 是一个基于 [MIT 协议](https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE) 开源的软件。
+Hyperf 是一个基于 [MIT 协议](https://github.com/hyperf/hyperf/blob/master/LICENSE) 开源的软件。

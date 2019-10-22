@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server\Command;
@@ -79,7 +79,7 @@ class StartServer extends Command
          * swoole.use_shortname = 00         => string(2) "00"    => disabled
          * swoole.use_shortname = "00"       => string(2) "00"    => disabled
          * swoole.use_shortname = ""         => string(0) ""      => disabled
-         * swoole.use_shortname = " "        => string(1) " "     => disabled
+         * swoole.use_shortname = " "        => string(1) " "     => disabled.
          */
         $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));

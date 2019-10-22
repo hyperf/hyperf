@@ -8,7 +8,7 @@ Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作为默�
 不仅如此，框架还提供了极其强大和方便灵活的`注解路由`功能，关于路由的详情文档请查阅 [路由](zh/router.md) 章节
 
 ### 通过配置文件定义路由
-路由的文件位于 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
+路由的文件位于 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;

@@ -1,7 +1,7 @@
 Hyperf provides you with external configuration support for distributed systems, which is adapted by default:
 
-- [ctripcorp/apollo](https://github.com/ctripcorp/apollo) An open source project by Ctrip, by [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) component Provide functional support.
-- Aliyun provides a free configuration center service [ACM (Application Config Manager)](https://help.aliyun.com/product/59604.html) by [hyper/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) component provides feature support.
+- [ctripcorp/apollo](https://github.com/ctripcorp/apollo) An open source project by Ctrip, by [hyper/config-apollo](https://github.com/hyperf/config-apollo) component Provide functional support.
+- Aliyun provides a free configuration center service [ACM (Application Config Manager)](https://help.aliyun.com/product/59604.html) by [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) component provides feature support.
 
 ## Why use the Configuration Center?
 
@@ -29,8 +29,8 @@ composer require hyperf/config-aliyun-acm
 
 ## Use Apollo
 
-If you have not replace the default configuration component, still use [hyperf/config](https://github.com/hyperf-cloud/config) component, adapte the Apollo Configuration Center is a breeze.
-- By composer [hyperf/config-apollo](https://github.com/hyperf-cloud/config-apollo) , execute the command `composer require hyperf/config-apollo`
+If you have not replace the default configuration component, still use [hyperf/config](https://github.com/hyperf/config) component, adapte the Apollo Configuration Center is a breeze.
+- By composer [hyperf/config-apollo](https://github.com/hyperf/config-apollo) , execute the command `composer require hyperf/config-apollo`
 - Add a `apollo.php` configuration file to the `config/autoload` folder. The configuration is as follows:
 
 ```php
@@ -56,7 +56,7 @@ return [
 ## Use Aliyun ACM
 
 Accessing the Aliyun ACM Configuration Center is as easy as Apollo, just two steps.
-- Execute the command `composer require hyperf/config-aliyun-acm` by Composer to install [hyperf/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm)
+- Execute the command `composer require hyperf/config-aliyun-acm` by Composer to install [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm)
 - Add a `aliyun_acm.php` configuration file to the `config/autoload` folder. The configuration is as follows:
 
 ```php
