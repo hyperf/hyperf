@@ -26,6 +26,9 @@ class Parallel
      */
     private $concurrentChannel;
 
+    /**
+     * @param int $concurrent If $concurrent is equal to 0, that means unlimit.
+     */
     public function __construct(int $concurrent = 0)
     {
         if ($concurrent > 0) {
