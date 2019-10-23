@@ -45,9 +45,9 @@ class Socket implements SocketInterface
     {
         $string = $this->packer->pack($data);
 
-        $len = $this->socket->sendAll($string, $timeout);
+        $length = $this->socket->sendAll($string, $timeout);
 
-        if ($len !== strlen($string)) {
+        if ($length !== strlen($string)) {
             throw new SocketException('Send failed: ' . $this->socket->errMsg);
         }
 
@@ -71,18 +71,18 @@ class Socket implements SocketInterface
         }
 
         if (strlen($head) !== $this->packer::HEAD_LENGTH) {
-            throw new SocketException('Recv head failed: ' . $this->socket->errMsg);
+            throw new SocketException('Receive head failed: ' . $this->socket->errMsg);
         }
 
-        $len = $this->packer->length($head);
+        $length = $this->packer->length($head);
 
-        if ($len === 0) {
+        if ($length === 0) {
             throw new SocketException('Recv body failed: body length is zero.');
         }
 
-        $body = $this->socket->recvAll($len, $timeout);
-        if (strlen($body) !== $len) {
-            throw new SocketException('Recv body failed: ' . $this->socket->errMsg);
+        $body = $this->socket->recvAll($length, $timeout);
+        if ($length !== strlen($body)) {
+            throw new SocketException('Receive body failed: ' . $this->socket->errMsg);
         }
 
         return $this->packer->unpack($head . $body);
@@ -96,7 +96,7 @@ class Socket implements SocketInterface
         }
 
         if (strlen($body) === 0) {
-            throw new SocketException('Recv body failed: body length is zero.');
+            throw new SocketException('Receive body failed: body length is zero.');
         }
 
         return $this->packer->unpack($body);
