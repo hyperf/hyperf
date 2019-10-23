@@ -24,7 +24,7 @@ class SerializePacker implements ProtocolPackerInterface
 
     public function unpack(string $data)
     {
-        return unserialize(substr($data, 4));
+        return unserialize(substr($data, self::HEAD_LENGTH));
     }
 
     public function length(string $head): int

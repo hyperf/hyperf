@@ -10,13 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Socket;
+namespace Hyperf\Socket\Exception;
 
-interface SocketInterface
+class SocketException
 {
-    const RECV_MAX_LENGTH = 1024;
-
-    public function send($data, float $timeout = -1);
-
-    public function recv(float $timeout = -1);
 }

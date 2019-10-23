@@ -10,13 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Socket;
+namespace HyperfTest\Socket\Stub;
 
-interface SocketInterface
+class BigDemoStub
 {
-    const RECV_MAX_LENGTH = 1024;
+    public $data;
 
-    public function send($data, float $timeout = -1);
-
-    public function recv(float $timeout = -1);
+    public function __construct()
+    {
+        for ($i = 0; $i < 70000; ++$i) {
+            $this->data .= '1';
+        }
+    }
 }
