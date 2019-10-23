@@ -18,8 +18,6 @@ class BigDemoStub
 
     public function __construct()
     {
-        for ($i = 0; $i < 70000; ++$i) {
-            $this->data .= '1';
-        }
+        $this->data = str_repeat('1', 70000);
     }
 }

@@ -14,8 +14,6 @@ namespace Hyperf\Socket;
 
 interface SocketInterface
 {
-    const RECV_MAX_LENGTH = 1024;
-
     public function send($data, float $timeout = -1);
 
     public function recv(float $timeout = -1);
