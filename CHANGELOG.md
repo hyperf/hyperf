@@ -1,5 +1,9 @@
 # v1.1.3
 
+## Added
+
+- [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
+
 ## Fixed
 
 - [#741](https://github.com/hyperf/hyperf/pull/741) Fixed `db:seed` without filename.
