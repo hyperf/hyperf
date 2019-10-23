@@ -3,11 +3,11 @@
 ## Added
 
 - [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
-- [#769](https://github.com/hyperf/hyperf/pull/769) Fixed invalid response exception throwed when result/error of jsonrpc response is null.
 
 ## Fixed
 
 - [#741](https://github.com/hyperf/hyperf/pull/741) Fixed `db:seed` without filename.
+- [#769](https://github.com/hyperf/hyperf/pull/769) Fixed invalid response exception throwed when result/error of jsonrpc response is null.
 
 # v1.1.2 - 2019-10-17
 
