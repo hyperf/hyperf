@@ -22,12 +22,12 @@ class Parallel
     private $callbacks = [];
 
     /**
-     * @var Channel|null
+     * @var null|Channel
      */
     private $concurrentChannel;
 
     /**
-     * @param int $concurrent If $concurrent is equal to 0, that means unlimit.
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
     public function __construct(int $concurrent = 0)
     {

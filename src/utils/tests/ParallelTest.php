@@ -45,6 +45,36 @@ class ParallelTest extends TestCase
         $this->assertSame([$id, $id + 1, $id + 2], $result);
     }
 
+    public function testParallelConcurrent()
+    {
+        $parallel = new Parallel();
+        $num = 0;
+        $callback = function () use (&$num) {
+            ++$num;
+            Coroutine::sleep(0.01);
+            return $num;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $this->assertSame([4, 4, 4, 4], array_values($res));
+
+        $parallel = new Parallel(2);
+        $num = 0;
+        $callback = function () use (&$num) {
+            ++$num;
+            Coroutine::sleep(0.01);
+            return $num;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        sort($res);
+        $this->assertSame([2, 3, 4, 4], array_values($res));
+    }
+
     public function returnCoId()
     {
         return Coroutine::id();
