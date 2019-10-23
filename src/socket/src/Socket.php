@@ -28,10 +28,17 @@ class Socket implements SocketInterface
      */
     protected $packer;
 
-    public function __construct(CoSocket $socket, ProtocolPackerInterface $packer)
+    /**
+     * SOCK_STREAM | SOCK_DGRAM.
+     * @var int
+     */
+    protected $pipeType;
+
+    public function __construct(CoSocket $socket, ProtocolPackerInterface $packer, int $pipeType = SOCK_STREAM)
     {
         $this->socket = $socket;
         $this->packer = $packer;
+        $this->pipeType = $pipeType;
     }
 
     public function send($data, float $timeout = -1)
@@ -48,6 +55,15 @@ class Socket implements SocketInterface
     }
 
     public function recv(float $timeout = -1)
+    {
+        if ($this->pipeType === SOCK_DGRAM) {
+            return $this->recvDgram($timeout);
+        }
+
+        return $this->recvStream($timeout);
+    }
+
+    protected function recvStream(float $timeout)
     {
         $head = $this->socket->recvAll($this->packer::HEAD_LENGTH, $timeout);
         if ($head === false) {
@@ -70,5 +86,19 @@ class Socket implements SocketInterface
         }
 
         return $this->packer->unpack($head . $body);
+    }
+
+    protected function recvDgram(float $timeout)
+    {
+        $body = $this->socket->recv(65536, $timeout);
+        if ($body === false) {
+            return false;
+        }
+
+        if (strlen($body) === 0) {
+            throw new SocketException('Recv body failed: body length is zero.');
+        }
+
+        return $this->packer->unpack($body);
     }
 }

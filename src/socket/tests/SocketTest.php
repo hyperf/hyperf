@@ -65,7 +65,7 @@ class SocketTest extends TestCase
     /**
      * @group NonCoroutine
      */
-    public function testProcessSocket()
+    public function testProcessStreamSocket()
     {
         $demo = new DemoStub();
         $process = new Process(function (Process $process) use ($demo) {
@@ -79,6 +79,30 @@ class SocketTest extends TestCase
 
         run(function () use ($process, $demo) {
             $socket = new Socket($process->exportSocket(), new SerializePacker());
+            $ret = $socket->send($demo);
+            $this->assertSame(81, $ret);
+            $ret = $socket->recv();
+            $this->assertSame('end', $ret);
+        });
+    }
+
+    /**
+     * @group NonCoroutine
+     */
+    public function testProcessDgramSocket()
+    {
+        $demo = new DemoStub();
+        $process = new Process(function (Process $process) use ($demo) {
+            $socket = new Socket($process->exportSocket(), new SerializePacker(), SOCK_DGRAM);
+            $ret = $socket->recv();
+            $this->assertSame($demo->unique, $ret->unique);
+            $socket->send('end');
+        }, false, SOCK_DGRAM, true);
+
+        $process->start();
+
+        run(function () use ($process, $demo) {
+            $socket = new Socket($process->exportSocket(), new SerializePacker(), SOCK_DGRAM);
             $ret = $socket->send($demo);
             $this->assertSame(81, $ret);
             $ret = $socket->recv();
