@@ -29,6 +29,6 @@ class SerializePacker implements ProtocolPackerInterface
 
     public function length(string $head): int
     {
-        return unpack('N', $head)[1];
+        return unpack('Nlen', $head)['len'];
     }
 }

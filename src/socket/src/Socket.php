@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Socket;
 
 use Hyperf\Protocol\ProtocolPackerInterface;
+use Hyperf\Socket\Exception\SocketException;
 use Swoole\Coroutine\Socket as CoSocket;
 
 class Socket implements SocketInterface
@@ -37,25 +38,37 @@ class Socket implements SocketInterface
     {
         $string = $this->packer->pack($data);
 
-        return $this->socket->sendAll($string, $timeout);
+        $len = $this->socket->sendAll($string, $timeout);
+
+        if ($len !== strlen($string)) {
+            throw new SocketException('Send failed: ' . $this->socket->errMsg);
+        }
+
+        return $len;
     }
 
     public function recv(float $timeout = -1)
     {
-        $string = $this->socket->recvAll($this->packer::HEAD_LENGTH, $timeout);
-        $len = $this->packer->length($string);
-
-        $count = intval($len / self::RECV_MAX_LENGTH);
-        $left = intval($len % self::RECV_MAX_LENGTH);
-
-        for ($i = 0; $i < $count; ++$i) {
-            $string .= $this->socket->recvAll(self::RECV_MAX_LENGTH, $timeout);
+        $head = $this->socket->recvAll($this->packer::HEAD_LENGTH, $timeout);
+        if ($head === false) {
+            return false;
         }
 
-        if ($left > 0) {
-            $string .= $this->socket->recvAll($left, $timeout);
+        if (strlen($head) !== $this->packer::HEAD_LENGTH) {
+            throw new SocketException('Recv head failed: ' . $this->socket->errMsg);
         }
 
-        return $this->packer->unpack($string);
+        $len = $this->packer->length($head);
+
+        if ($len === 0) {
+            throw new SocketException('Recv body failed: body length is zero.');
+        }
+
+        $body = $this->socket->recvAll($len, $timeout);
+        if (strlen($body) !== $len) {
+            throw new SocketException('Recv body failed: ' . $this->socket->errMsg);
+        }
+
+        return $this->packer->unpack($head . $body);
     }
 }

@@ -12,10 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Protocol;
 
+use Hyperf\Protocol\Packer\SerializePacker;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
-        return [];
+        return [
+            'dependencies' => [
+                ProtocolPackerInterface::class => SerializePacker::class,
+            ],
+        ];
     }
 }
