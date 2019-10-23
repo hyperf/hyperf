@@ -3,6 +3,7 @@
   * [项目介绍](zh/README.md)
   * [线上交流](zh/communication.md)
   * [捐献及赞助](zh/donate.md)
+  * [版本更新记录](zh/changelog.md)
 
 * 快速入门
 
@@ -36,6 +37,7 @@
   * [自动化测试](zh/testing.md)
   * [视图](zh/view.md)
   * [国际化](zh/translation.md)
+  * [验证器](zh/validation.md)
   
 * 数据库模型
 
@@ -98,3 +100,7 @@
   * [指南前言](zh/component-guide/intro.md)
   * [创建新的组件](zh/component-guide/create.md)
   * [ConfigProvider 机制](zh/component-guide/configprovider.md)
+
+* 版本升级指南
+  
+  * [1.1 升级指南](zh/upgrade/1.1.md)

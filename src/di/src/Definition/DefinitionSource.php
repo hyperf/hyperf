@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Definition;
@@ -16,15 +16,15 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\MetadataCacheCollector;
+use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Str;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use Symfony\Component\Finder\Finder;
 use function class_exists;
 use function count;
 use function explode;
-use function fclose;
 use function feof;
 use function fgets;
 use function file_exists;
@@ -56,7 +56,7 @@ class DefinitionSource implements DefinitionSourceInterface
      *
      * @var string
      */
-    private $cachePath = BASE_PATH . '/runtime/container/annotations.cache';
+    private $cachePath = BASE_PATH . '/runtime/container/annotations';
 
     /**
      * @var array
@@ -216,26 +216,65 @@ class DefinitionSource implements DefinitionSourceInterface
 
     private function scan(array $paths, array $collectors): bool
     {
+        $appPaths = $vendorPaths = [];
+
+        /**
+         * If you are a hyperf developer
+         * this value will be your local path, like hyperf/src.
+         * @var string
+         */
+        $ident = 'vendor';
+        $isDefinedBasePath = defined('BASE_PATH');
+
+        foreach ($paths as $path) {
+            if ($isDefinedBasePath) {
+                if (Str::startsWith($path, BASE_PATH . '/' . $ident)) {
+                    $vendorPaths[] = $path;
+                } else {
+                    $appPaths[] = $path;
+                }
+            } else {
+                if (strpos($path, $ident) !== false) {
+                    $vendorPaths[] = $path;
+                } else {
+                    $appPaths[] = $path;
+                }
+            }
+        }
+
+        $this->loadMetadata($appPaths, 'app');
+        $this->loadMetadata($vendorPaths, 'vendor');
+
+        return true;
+    }
+
+    private function loadMetadata(array $paths, $type)
+    {
         if (empty($paths)) {
             return true;
         }
+        $cachePath = $this->cachePath . '.' . $type . '.cache';
         $pathsHash = md5(implode(',', $paths));
-        $cacher = new MetadataCacheCollector($collectors);
-        if ($this->hasAvailableCache($paths, $pathsHash, $this->cachePath)) {
-            $this->printLn('Detected an available cache, skip the scan process.');
-            [, $serialized] = explode(PHP_EOL, file_get_contents($this->cachePath));
-            $cacher->unserialize($serialized);
+        if ($this->hasAvailableCache($paths, $pathsHash, $cachePath)) {
+            $this->printLn('Detected an available cache, skip the ' . $type . ' scan process.');
+            [, $serialized] = explode(PHP_EOL, file_get_contents($cachePath));
+            $this->scanner->collect(unserialize($serialized));
             return false;
         }
-        $this->printLn('Scanning ...');
-        $this->scanner->scan($paths);
-        $this->printLn('Scan completed.');
+        $this->printLn('Scanning ' . $type . ' ...');
+        $startTime = microtime(true);
+        $meta = $this->scanner->scan($paths);
+        foreach ($meta as $className => $stmts) {
+            AstCollector::set($className, $stmts);
+        }
+        $useTime = microtime(true) - $startTime;
+        $this->printLn('Scan ' . $type . ' completed, took ' . $useTime * 1000 . ' milliseconds.');
         if (! $this->enableCache) {
             return true;
         }
         // enableCache: set cache
-        if (! file_exists($this->cachePath)) {
-            $exploded = explode('/', $this->cachePath);
+        if (! file_exists($cachePath)) {
+            $exploded = explode('/', $cachePath);
             unset($exploded[count($exploded) - 1]);
             $dirPath = implode('/', $exploded);
             if (! is_dir($dirPath)) {
@@ -243,8 +282,8 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        $data = implode(PHP_EOL, [$pathsHash, $cacher->serialize()]);
-        file_put_contents($this->cachePath, $data);
+        $data = implode(PHP_EOL, [$pathsHash, serialize(array_keys($meta))]);
+        file_put_contents($cachePath, $data);
         return true;
     }
 
@@ -264,7 +303,6 @@ class DefinitionSource implements DefinitionSourceInterface
             }
             break;
         }
-        fclose($handler);
         $cacheLastModified = filemtime($filename) ?? 0;
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');

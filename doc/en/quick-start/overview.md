@@ -10,7 +10,7 @@ Not only that，Hyperf also provides an extremely powerful and convenient "Annot
 
 ### Define routes by file configuration
 
-The routes file is located in `config/routes.php` of the [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) project . Below are some common usage examples.
+The routes file is located in `config/routes.php` of the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project . Below are some common usage examples.
 
 ```php
 <?php

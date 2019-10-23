@@ -14,12 +14,16 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|     配置      |   类型    |                   默认值                    |        备注        |
-|:-------------:|:---------:|:-------------------------------------------:|:------------------:|
-|    driver     |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |         无         |
-|    channel    |  string   |                    queue                    |      队列前缀      |
-| retry_seconds | int,array |                      5                      | 失败后重新尝试间隔 |
-|   processes   |    int    |                      1                      |     消费进程数     |
+|       配置       |   类型    |                   默认值                    |                  备注                   |
+|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+|      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
+|     channel      |  string   |                    queue                    |                队列前缀                 |
+|     timeout      |    int    |                      2                      |            pop消息的超时时间            |
+|  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
+|  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
+|    processes     |    int    |                      1                      |               消费进程数                |
+| concurrent.limit |    int    |                      1                      |             同时处理消息数              |
+|   max_messages   |    int    |                      0                      | 进程重启所需最大处理的消息数 默认不重启 |
 
 ```php
 <?php
@@ -28,8 +32,13 @@ return [
     'default' => [
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
+        'timeout' => 2,
         'retry_seconds' => 5,
+        'handle_timeout' => 10,
         'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
     ],
 ];
 
@@ -87,6 +96,8 @@ class AsyncQueueConsumer extends ConsumerProcess
 ```
 
 ### 生产消息
+
+#### 传统方式
 
 首先我们定义一个消息类，如下
 
@@ -156,6 +167,37 @@ class QueueService
     }
 }
 ```
+
+#### 注解方式
+
+框架除了传统方式投递消息，还提供了注解方式。
+
+让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
+
+class QueueService
+{
+    /**
+     * @AsyncQueueMessage
+     */
+    public function example($params)
+    {
+        // 需要异步执行的代码逻辑
+        var_dump($params);
+    }
+}
+
+```
+
+#### 投递消息
 
 根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
 

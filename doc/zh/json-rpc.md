@@ -1,6 +1,6 @@
 # JSON RPC 服务
 
-JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使用和阅读。在 Hyperf 里由 [hyperf/json-rpc](https://github.com/hyperf-cloud/json-rpc) 组件来实现，可自定义基于 HTTP 协议来传输，或直接基于 TCP 协议来传输。
+JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使用和阅读。在 Hyperf 里由 [hyperf/json-rpc](https://github.com/hyperf/json-rpc) 组件来实现，可自定义基于 HTTP 协议来传输，或直接基于 TCP 协议来传输。
 
 # 安装
 
@@ -8,7 +8,7 @@ JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使
 composer require hyperf/json-rpc
 ```
 
-该组件只是 JSON RPC 的协议处理的组件，通常来说，您仍需配合 [hyperf/rpc-server](https://github.com/hyperf-cloud/rpc-server) 或 [hyperf/rpc-client](https://github.com/hyperf-cloud/rpc-client) 来满足 服务端 和 客户端的场景，如同时使用则都需要安装：   
+该组件只是 JSON RPC 的协议处理的组件，通常来说，您仍需配合 [hyperf/rpc-server](https://github.com/hyperf/rpc-server) 或 [hyperf/rpc-client](https://github.com/hyperf/rpc-client) 来满足 服务端 和 客户端的场景，如同时使用则都需要安装：   
 
 要使用 JSON RPC 服务端：
 
@@ -57,7 +57,7 @@ class CalculatorService implements CalculatorServiceInterface
 `name` 属性为定义该服务的名称，这里定义一个全局唯一的名字即可，Hyperf 会根据该属性生成对应的 ID 注册到服务中心去；   
 `protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc` 和 `jsonrpc-http`，分别对应于 TCP 协议和 HTTP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，这两个本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`，我们下一章节具体阐述这里应该怎样去处理；   
-`publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](./consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf-cloud/service-governance) 组件，具体可参考 [服务注册](./service-register.md) 章节；
+`publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](./consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件，具体可参考 [服务注册](zh/service-register.md) 章节；
 
 > 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
 
@@ -231,13 +231,11 @@ return [
 ```
 
 
-这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
+这样我们便可以通过 `CalculatorService` 类来实现对服务的消费了，为了让这里的关系逻辑更加的合理，还应该在 `config/autoload/dependencies.php` 内定义 `CalculatorServiceInterface` 和 `CalculatorServiceConsumer` 的关系，示例如下：
 
 ```php
 return [
-    'dependencies' => [
-        App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
-    ],
+    App\JsonRpc\CalculatorServiceInterface::class => App\JsonRpc\CalculatorServiceConsumer::class,
 ];
 ```
 
