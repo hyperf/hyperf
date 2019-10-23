@@ -39,4 +39,5 @@ before_script:
   
 script:
   - composer analyse src/di src/json-rpc src/tracer
-  - composer test
+  - composer test -- --exclude-group NonCoroutine
+  - vendor/bin/phpunit --group NonCoroutine

@@ -18,6 +18,7 @@ use HyperfTest\Socket\Stub\DemoStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Socket as CoSocket;
+use Swoole\Process;
 
 /**
  * @internal
@@ -25,6 +26,11 @@ use Swoole\Coroutine\Socket as CoSocket;
  */
 class SocketTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testSocketSend()
     {
         $cosocket = Mockery::mock(CoSocket::class);
@@ -43,7 +49,7 @@ class SocketTest extends TestCase
         $cosocket = Mockery::mock(CoSocket::class);
         $packer = new SerializePacker();
         $demo = new DemoStub();
-        $cosocket->shouldReceive('recvAll')->once()->with(Mockery::any(), Mockery::any())->andReturnUsing(function ($length, $timeout) use ($demo) {
+        $cosocket->shouldReceive('recvAll')->twice()->with(Mockery::any(), Mockery::any())->andReturnUsing(function ($length, $timeout) use ($demo) {
             $this->assertEquals(10, $timeout);
             if ($length == SerializePacker::HEAD_LENGTH) {
                 return pack('N', strlen(serialize($demo)));
@@ -54,5 +60,29 @@ class SocketTest extends TestCase
         $socket = new Socket($cosocket, $packer);
         $res = $socket->recv(10.0);
         $this->assertEquals($demo, $res);
+    }
+
+    /**
+     * @group NonCoroutine
+     */
+    public function testProcessSocket()
+    {
+        $demo = new DemoStub();
+        $process = new Process(function (Process $process) use ($demo) {
+            $socket = new Socket($process->exportSocket(), new SerializePacker());
+            $ret = $socket->recv();
+            $this->assertSame($demo->unique, $ret->unique);
+            $socket->send('end');
+        }, false, SOCK_STREAM, true);
+
+        $process->start();
+
+        run(function () use ($process, $demo) {
+            $socket = new Socket($process->exportSocket(), new SerializePacker());
+            $ret = $socket->send($demo);
+            $this->assertSame(81, $ret);
+            $ret = $socket->recv();
+            $this->assertSame('end', $ret);
+        });
     }
 }
