@@ -3,6 +3,7 @@
 ## Added
 
 - [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
+- [#769](https://github.com/hyperf/hyperf/pull/769) Fixed invalid response exception throwed when result/error of jsonrpc response is null.
 
 ## Fixed
 
