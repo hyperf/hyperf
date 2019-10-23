@@ -3,7 +3,7 @@
 ## Foreword
 
 The event mode have to be implemented based on [PSR-14](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-14-event-dispatcher.md).
-Hyperf's event manager is implemented by [hyperf/event](https://github.com/hyperf-cloud/event) by default. This component can also be used in other frameworks or applications, just by introducing it to Composer.
+Hyperf's event manager is implemented by [hyperf/event](https://github.com/hyperf/event) by default. This component can also be used in other frameworks or applications, just by introducing it to Composer.
 
 ```bash
 composer require hyperf/event

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\AsyncQueue\Command;
@@ -48,7 +48,7 @@ class InfoCommand extends HyperfCommand
 
     protected function configure()
     {
-        $this->setDescription('Delete all message from failed queue.');
+        $this->setDescription('Get all messages from the queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
     }
 }

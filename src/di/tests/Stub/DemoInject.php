@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Di\Stub;
@@ -23,7 +23,7 @@ class DemoInject
     private $demo;
 
     /**
-     * @Inject(require=false)
+     * @Inject(required=false)
      * @var Demo1
      */
     private $demo1;

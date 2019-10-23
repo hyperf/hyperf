@@ -1,6 +1,6 @@
 # Cache
 
-[hyperf/cache](https://github.com/hyperf-cloud/cache) 提供了基于 `Aspect` 实现的切面缓存，也提供了实现 `Psr\SimpleCache\CacheInterface` 的缓存类。
+[hyperf/cache](https://github.com/hyperf/cache) 提供了基于 `Aspect` 实现的切面缓存，也提供了实现 `Psr\SimpleCache\CacheInterface` 的缓存类。
 
 ## 安装
 ```
@@ -29,20 +29,20 @@ return [
 
 ## 使用
 
-### SimpleCache 方式
+### Simple Cache 方式
 
-如果您只想使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如重写 `EasyWeChat` 缓存模块，可以很方便的从 `Container` 中获取相应对象。
+Simple Cache 也就是 [PSR-16](https://www.php-fig.org/psr/psr-16/) 规范，本组件适配了该规范，如果您希望使用实现 `Psr\SimpleCache\CacheInterface` 缓存类，比如要重写 `EasyWeChat` 的缓存模块，可以直接从依赖注入容器中获取 `Psr\SimpleCache\CacheInterface` 即可，如下所示：
 
 ```php
 
-$cache = $container->get(Psr\SimpleCache\CacheInterface::class);
+$cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 
 ```
 
 ### 注解方式
 
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
-例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 9000 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
+例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 `9000` 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
 
 > 缓存注解基于 [aop](zh/aop.md) 和 [di](zh/di.md)，所以只有在 `Container` 中获取到的对象实例才有效，比如通过 `$container->get` 和 `make` 方法所获得的对象，直接 `new` 出来的对象无法使用。
 
@@ -72,7 +72,7 @@ class UserService
 }
 ```
 
-### 清理注解缓存
+### 清理 `@Cacheable` 生成的缓存
 
 当然，如果我们数据库中的数据改变了，如何删除缓存呢？这里就需要用到后面的监听器。下面新建一个 Service 提供一方法，来帮我们处理缓存。
 
@@ -108,7 +108,7 @@ class SystemService
 
 ### Cacheable
 
-例如以下配置，缓存前缀为 user, 超时时间为 7200, 删除事件名为 USER_CACHE。生成对应缓存 KEY 为 `c:user:1`。
+例如以下配置，缓存前缀为 `user`, 超时时间为 `7200`, 删除事件名为 `USER_CACHE`。生成对应缓存 KEY 为 `c:user:1`。
 
 ```php
 use App\Models\User;
@@ -128,7 +128,7 @@ public function user(int $id): array
 }
 ```
 
-当设置 value 后，框架会根据设置的规则，进行缓存 KEY 键命名。如下实例，当 $user->id = 1 时，缓存 KEY 为 `c:userBook:_1`
+当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
 
 ```php
 use App\Models\User;
@@ -148,7 +148,7 @@ public function userBook(User $user): array
 
 ### CachePut
 
-CachePut 不同于 Cacheable，它每次调用都会执行函数体，然后再对缓存进行重写。所以当我们想更新缓存时，可以调用相关方法。
+`CachePut` 不同于 `Cacheable`，它每次调用都会执行函数体，然后再对缓存进行重写。所以当我们想更新缓存时，可以调用相关方法。
 
 ```php
 use App\Models\User;
@@ -211,10 +211,8 @@ class Demo {
 
     /**
      * @Cacheable(prefix="test", group="co")
-     * @param int $userId
-     * @return array
      */
-    public function getArray($userId)
+    public function getArray(int $userId): array
     {
         return $this->redis->hGetAll($userId);
     }

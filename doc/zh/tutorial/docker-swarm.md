@@ -152,7 +152,7 @@ docker service create \
 
 ## 创建一个Demo项目
 
-登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
 
 
 ## 配置镜像仓库
