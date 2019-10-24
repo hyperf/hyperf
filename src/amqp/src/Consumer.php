@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Event\AfterConsume;
+use Hyperf\Amqp\Event\BeforeConsume;
+use Hyperf\Amqp\Event\FailToConsume;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
@@ -22,6 +25,7 @@ use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -31,6 +35,11 @@ class Consumer extends Builder
      * @var bool
      */
     protected $status = true;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var LoggerInterface
@@ -44,6 +53,9 @@ class Consumer extends Builder
     ) {
         parent::__construct($container, $poolFactory);
         $this->logger = $logger;
+        if ($container->has(EventDispatcherInterface::class)) {
+            $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function consume(ConsumerMessageInterface $consumerMessage): void
@@ -125,8 +137,11 @@ class Consumer extends Builder
             $deliveryTag = $message->delivery_info['delivery_tag'];
 
             try {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
                 $result = $consumerMessage->consume($data);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
                 if ($this->container->has(FormatterInterface::class)) {
                     $formatter = $this->container->get(FormatterInterface::class);
                     $this->logger->error($formatter->format($exception));

@@ -3,6 +3,7 @@
 ## Added
 
 - [#745](https://github.com/hyperf/hyperf/pull/745) Added option `with-comments` for command `gen:model`.
+- [#747](https://github.com/hyperf/hyperf/pull/747) Added `AfterConsume`,`BeforeConsume`,`FailToConsume` events for AMQP consumer. 
 - [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
 
 ## Fixed
