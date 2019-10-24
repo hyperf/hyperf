@@ -29,6 +29,7 @@ $ php bin/hyperf.php db:model table_name
 | --refresh-fillable |  bool  |      `false`      |            是否刷新 `fillable` 参数             |
 |  --table-mapping   | array  |       `[]`        | 为表名->模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
+|  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
 
 对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
 

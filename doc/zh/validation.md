@@ -2,7 +2,7 @@
 
 ## 前言
 
-> [hyperf/validation](https://github.com/hyperf-cloud/validation) 衍生于 [illuminate/validation](https://github.com/illuminate/validation)，我们对它进行了一些改造，但保持了验证规则的相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的验证器组件。
+> [hyperf/validation](https://github.com/hyperf/validation) 衍生于 [illuminate/validation](https://github.com/illuminate/validation)，我们对它进行了一些改造，但保持了验证规则的相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的验证器组件。
 
 ## 安装
 
@@ -48,7 +48,7 @@ return [
 
 ### 发布验证器语言文件
 
-由于存在多语言的功能，故该组件依赖 [hyperf/translation](https://github.com/hyperf-cloud/translation) 组件，如您未曾添加过 Translation 组件的配置文件，请先执行下面的命令来发布 Translation 组件的配置文件，如您已经发布过或手动添加过，只需发布验证器组件的语言文件即可：
+由于存在多语言的功能，故该组件依赖 [hyperf/translation](https://github.com/hyperf/translation) 组件，如您未曾添加过 Translation 组件的配置文件，请先执行下面的命令来发布 Translation 组件的配置文件，如您已经发布过或手动添加过，只需发布验证器组件的语言文件即可：
 
 发布 Translation 组件的文件：
 
@@ -413,7 +413,8 @@ if ($errors->has('foo')) {
 验证字段大小在给定的最小值和最大值之间，字符串、数字、数组和文件都可以像使用 size 规则一样使用该规则：
 
 'name' => 'required|between:1,20'
-boolean
+
+##### boolean
 
 验证字段必须可以被转化为布尔值，接收 true, false, 1, 0, "1" 和 "0" 等输入。
 

@@ -1,6 +1,6 @@
 # 中间件
 
-这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf-cloud/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
+这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
 
 ## 原理
 
@@ -42,20 +42,20 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 // 每个路由定义方法都可接收一个 $options 参数
-Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
+Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 
 // 该 Group 下的所有路由都将应用配置的中间件
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
     },
-    ['middleware' => [ForMiddleware::class]]
+    ['middleware' => [FooMiddleware::class]]
 );
 
 ```
