@@ -1,6 +1,6 @@
 # Middleware
 
-The middleware here refers to the `middleware mode`, which is a main function in the [hyperf/http-server](https://github.com/hyperf-cloud/http-server) component. It is mainly used to weave the entire process from `Request` to `Response`. Based on [PSR-15](https://www.php-fig.org/psr/psr-15/) implementation.
+The middleware here refers to the `middleware mode`, which is a main function in the [hyperf/http-server](https://github.com/hyperf/http-server) component. It is mainly used to weave the entire process from `Request` to `Response`. Based on [PSR-15](https://www.php-fig.org/psr/psr-15/) implementation.
 
 ## Principle
 

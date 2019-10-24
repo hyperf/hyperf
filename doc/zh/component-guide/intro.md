@@ -9,14 +9,14 @@
 # 组件开发准备工作
 
 这里所指的开发准备工作，除了 Hyperf 的基础运行条件外，这里关注的更多是如何更加便捷的组织代码的结构以便于组件的开发工作，注意以下方式可能会由于 *软连接无法跳转的问题* 而并不适用于 Windows for Docker 下的开发环境。   
-在代码组织上，我们建议在同一个目录下 Clone [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目骨架和 [hyperf-cloud/hyperf](https://github.com/hyperf-cloud/hyperf) 项目组件库两个项目。进行下面的操作并呈以下结构：
+在代码组织上，我们建议在同一个目录下 Clone [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目骨架和 [hyperf/hyperf](https://github.com/hyperf/hyperf) 项目组件库两个项目。进行下面的操作并呈以下结构：
 
 ```bash
 // 安装 skeleton，并配置完成
 composer create-project hyperf/hyperf-skeleton 
 
-// 克隆 hyperf 组件库项目，这里记得要替换 hyperf-cloud 为您的 Github ID，也就是克隆您所 Fork 的项目
-git clone git@github.com:hyperf-cloud/hyperf.git
+// 克隆 hyperf 组件库项目，这里记得要替换 hyperf 为您的 Github ID，也就是克隆您所 Fork 的项目
+git clone git@github.com:hyperf/hyperf.git
 ```
 
 呈以下结构：

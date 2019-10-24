@@ -1,7 +1,7 @@
 # 调用链追踪
 
 在微服务场景下，我们会拆分出来很多的服务，也就意味着一个业务请求，少则跨越 3-4 个服务，多则几十个甚至更多，在这种架构下我们需要对某一个问题进行 Debug 的时候是极其困难的一件事情，那么我们就需要一个调用链追踪系统来帮助我们动态地展示服务调用的链路，以便我们可以快速地对问题点进行定位，亦可根据链路信息对服务进行调优。   
-在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据 OpenTracing 协议定制实现。
+在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据 OpenTracing 协议定制实现。
 
 ## 安装
 
@@ -11,7 +11,7 @@
 composer require hyperf/tracer
 ```
 
-[hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件默认安装了 [Zipkin](https://zipkin.io/) 相关依赖。如果要使用 [Jaeger](https://www.jaegertracing.io/)，还需要执行下面的命令安装对应的依赖：
+[hyperf/tracer](https://github.com/hyperf/tracer) 组件默认安装了 [Zipkin](https://zipkin.io/) 相关依赖。如果要使用 [Jaeger](https://www.jaegertracing.io/)，还需要执行下面的命令安装对应的依赖：
 
 ```bash
 composer require jonahgeorge/jaeger-client-php

@@ -24,7 +24,7 @@
  - 所有生成的 `ID` 按时间趋势递增。
  - 整个分布式系统内不会产生重复 `ID`（因为有 `DatacenterId (5 bits)` 和 `WorkerId (5 bits)` 来做区分）。
  
-Hyperf 的 [hyperf/snowflake](https://github.com/hyperf-cloud/snowflake) 组件在设计上提供了很好的可扩展性，允许您通过简单的扩展就能实现其它基于 Snowflake 的变体算法。
+Hyperf 的 [hyperf/snowflake](https://github.com/hyperf/snowflake) 组件在设计上提供了很好的可扩展性，允许您通过简单的扩展就能实现其它基于 Snowflake 的变体算法。
 
 ## 安装
 
