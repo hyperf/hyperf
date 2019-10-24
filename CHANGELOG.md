@@ -1,8 +1,15 @@
 # v1.1.3
 
+## Added
+
+- [#745](https://github.com/hyperf/hyperf/pull/745) Added option `with-comments` for command `gen:model`.
+- [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
+
 ## Fixed
 
 - [#741](https://github.com/hyperf/hyperf/pull/741) Fixed `db:seed` without filename.
+- [#748](https://github.com/hyperf/hyperf/pull/748) Fixed bug that `SymfonyNormalizer` not denormalize result of type `array`.
+- [#769](https://github.com/hyperf/hyperf/pull/769) Fixed invalid response exception throwed when result/error of jsonrpc response is null.
 
 # v1.1.2 - 2019-10-17
 

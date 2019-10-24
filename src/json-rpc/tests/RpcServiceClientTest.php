@@ -67,6 +67,23 @@ class RpcServiceClientTest extends TestCase
         $this->assertEquals(3, $ret);
     }
 
+    public function testServiceClientReturnArray()
+    {
+        $container = $this->createContainer();
+
+        /** @var MockInterface $transporter */
+        $transporter = $container->get(JsonRpcTransporter::class);
+        $transporter->shouldReceive('setLoadBalancer')
+            ->andReturnSelf();
+        $transporter->shouldReceive('send')
+            ->andReturn(json_encode([
+                'result' => ['params' => [1, 2], 'sum' => 3],
+            ]));
+        $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
+        $ret = $service->array(1, 2);
+        $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret);
+    }
+
     public function testProxyFactory()
     {
         $container = $this->createContainer();
