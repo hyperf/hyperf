@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#745](https://github.com/hyperf-cloud/hyperf/pull/745) Added option `with-comments` for command `gen:model`.
 - [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
 
 ## Fixed
