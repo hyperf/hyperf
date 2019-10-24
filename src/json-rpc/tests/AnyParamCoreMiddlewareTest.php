@@ -78,6 +78,29 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $this->assertEquals(['value' => 3], $ret['result']);
     }
 
+    public function testArray()
+    {
+        $container = $this->createContainer();
+        $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
+        $router->addRoute('/CalculatorService/array', [
+            CalculatorService::class, 'array',
+        ]);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
+        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $request = (new Request('POST', new Uri('/CalculatorService/array')))
+            ->withParsedBody([1, 2]);
+
+        $request = $middleware->dispatch($request);
+        Context::set(ResponseInterface::class, new Response());
+
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(200, $response->getStatusCode());
+        $ret = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('result', $ret);
+        $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret['result']);
+    }
+
     public function testException()
     {
         $container = $this->createContainer();
