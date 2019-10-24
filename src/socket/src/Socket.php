@@ -51,7 +51,7 @@ class Socket implements SocketInterface
             throw new SocketException('Send failed: ' . $this->socket->errMsg);
         }
 
-        return $len;
+        return $length;
     }
 
     public function recv(float $timeout = -1)
