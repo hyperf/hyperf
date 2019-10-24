@@ -19,4 +19,6 @@ interface CalculatorServiceInterface
     public function sum(IntegerValue $a, IntegerValue $b): IntegerValue;
 
     public function divide($value, $divider);
+
+    public function array(int $a, int $b): array;
 }
