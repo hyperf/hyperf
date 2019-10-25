@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Adapter\StatsD;
 
-use Domnikl\StatsD\Client;
+use Domnikl\Statsd\Client;
 use Hyperf\Metric\Contract\HistogramInterface;
 
 class Histogram implements HistogramInterface
 {
     /**
-     * @var \Domnikl\StatsD\Client
+     * @var \Domnikl\Statsd\Client
      */
     protected $client;
 
