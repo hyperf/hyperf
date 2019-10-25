@@ -19,6 +19,13 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
+        $translationPath = BASE_PATH . '/storage/languages';
+        $translationConfigFile = BASE_PATH . '/config/autoload/translation.php';
+        if (file_exists($translationConfigFile)) {
+            $translationConfig = include $translationConfigFile;
+            $translationPath = $translationConfig['path'] ?? $translationPath;
+        }
+
         return [
             'dependencies' => [
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
@@ -34,13 +41,13 @@ class ConfigProvider
                     'id' => 'zh_CN',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/zh_CN/validation.php',
-                    'destination' => BASE_PATH . '/storage/languages/zh_CN/validation.php',
+                    'destination' => $translationPath . '/zh_CN/validation.php',
                 ],
                 [
                     'id' => 'en',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/en/validation.php',
-                    'destination' => BASE_PATH . '/storage/languages/en/validation.php',
+                    'destination' => $translationPath . '/en/validation.php',
                 ],
             ],
         ];
