@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Aspect;
@@ -46,11 +46,12 @@ class HistogramAnnotationAspect implements AroundInterface
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
+        $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         /** @var Histogram $annotation */
         if ($annotation = $metadata->method[Histogram::class] ?? null) {
-            $name = $annotation->name;
+            $name = $annotation->name ?: $source;
         } else {
-            $name = $proceedingJoinPoint->methodName;
+            $name = $source;
         }
         /** @var Timer $timer */
         $timer = new Timer($this
@@ -61,5 +62,15 @@ class HistogramAnnotationAspect implements AroundInterface
                 $proceedingJoinPoint->methodName
             ));
         return $proceedingJoinPoint->process();
+    }
+
+    private function fromCamelCase(string $input): string
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
 }

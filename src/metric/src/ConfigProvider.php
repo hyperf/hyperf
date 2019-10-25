@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric;
@@ -15,6 +15,8 @@ namespace Hyperf\Metric;
 use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use InfluxDB\Driver\DriverInterface;
+use InfluxDB\Driver\Guzzle;
 use Prometheus\Storage\Adapter;
 use Prometheus\Storage\InMemory;
 
@@ -27,6 +29,7 @@ class ConfigProvider
                 MetricFactoryInterface::class => MetricFactoryPicker::class,
                 Adapter::class => InMemory::class,
                 Connection::class => UdpSocket::class,
+                DriverInterface::class => Guzzle::class,
             ],
             'annotations' => [
                 'scan' => [

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 use Hyperf\Metric\Adapter\Prometheus\Constants;
@@ -46,6 +46,7 @@ return [
             'password' => env('INFLUXDB_PASSWORD', ''),
             'dbname' => env('INFLUXDB_DBNAME', true),
             'push_inteval' => env('INFLUXDB_PUSH_INTEVAL', 5),
+            'auto_create_db' => env('INFLUXDB_AUTO_CREATE_DB', true),
         ],
     ],
 ];

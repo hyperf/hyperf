@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\Statsd;
@@ -58,7 +58,7 @@ class Gauge implements GaugeInterface
 
     public function set(float $value)
     {
-        $this->client->gauge($this->name, (int)$value, array_combine($this->labelNames, $this->labelValues));
+        $this->client->gauge($this->name, (int) $value, array_combine($this->labelNames, $this->labelValues));
     }
 
     public function add(float $delta)
@@ -66,6 +66,6 @@ class Gauge implements GaugeInterface
         if ($delta >= 0) {
             $delta = '+' + $delta;
         }
-        $this->client->gauge($this->name, (int)$delta, array_combine($this->labelNames, $this->labelValues));
+        $this->client->gauge($this->name, (int) $delta, array_combine($this->labelNames, $this->labelValues));
     }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Aspect;
@@ -45,11 +45,12 @@ class CounterAnnotationAspect implements AroundInterface
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
+        $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         /** @var Counter $annotation */
         if ($annotation = $metadata->method[Counter::class] ?? null) {
-            $name = $annotation->name;
+            $name = $annotation->name ?: $source;
         } else {
-            $name = $proceedingJoinPoint->methodName;
+            $name = $source;
         }
         $counter = $this->factory->makeCounter($name, ['class', 'method']);
         $result = $proceedingJoinPoint->process();
@@ -60,5 +61,15 @@ class CounterAnnotationAspect implements AroundInterface
             )
             ->add(1);
         return $result;
+    }
+
+    private function fromCamelCase(string $input): string
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
 }
