@@ -1,5 +1,9 @@
 # v1.1.4 - TBD
 
+## Added
+
+- [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+
 # v1.1.3 - 2019-10-24
 
 ## Added
