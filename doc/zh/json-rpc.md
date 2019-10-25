@@ -1,14 +1,14 @@
 # JSON RPC 服务
 
-JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使用和阅读。在 Hyperf 里由 [hyperf/json-rpc](https://github.com/hyperf-cloud/json-rpc) 组件来实现，可自定义基于 HTTP 协议来传输，或直接基于 TCP 协议来传输。
+JSON RPC 是一种基于 JSON 格式的轻量级的 RPC 协议标准，易于使用和阅读。在 Hyperf 里由 [hyperf/json-rpc](https://github.com/hyperf/json-rpc) 组件来实现，可自定义基于 HTTP 协议来传输，或直接基于 TCP 协议来传输。
 
-# 安装
+## 安装
 
 ```bash
 composer require hyperf/json-rpc
 ```
 
-该组件只是 JSON RPC 的协议处理的组件，通常来说，您仍需配合 [hyperf/rpc-server](https://github.com/hyperf-cloud/rpc-server) 或 [hyperf/rpc-client](https://github.com/hyperf-cloud/rpc-client) 来满足 服务端 和 客户端的场景，如同时使用则都需要安装：   
+该组件只是 JSON RPC 的协议处理的组件，通常来说，您仍需配合 [hyperf/rpc-server](https://github.com/hyperf/rpc-server) 或 [hyperf/rpc-client](https://github.com/hyperf/rpc-client) 来满足 服务端 和 客户端的场景，如同时使用则都需要安装：   
 
 要使用 JSON RPC 服务端：
 
@@ -22,11 +22,11 @@ composer require hyperf/rpc-server
 composer require hyperf/rpc-client
 ```
 
-# 使用
+## 使用
 
 服务有两种角色，一种是 `服务提供者(ServiceProvider)`，即为其它服务提供服务的服务，另一种是 `服务消费者(ServiceConsumer)`，即依赖其它服务的服务，一个服务既可能是 `服务提供者(ServiceProvider)`，同时又是 `服务消费者(ServiceConsumer)`。而两者直接可以通过 `服务契约` 来定义和约束接口的调用，在 Hyperf 里，可直接理解为就是一个 `接口类(Interface)`，通常来说这个接口类会同时出现在提供者和消费者下。
 
-## 定义服务提供者
+### 定义服务提供者
 
 目前仅支持通过注解的形式来定义 `服务提供者(ServiceProvider)`，后续迭代会增加配置的形式。   
 我们可以直接通过 `@RpcService` 注解对一个类进行定义即可发布这个服务了：
@@ -57,11 +57,11 @@ class CalculatorService implements CalculatorServiceInterface
 `name` 属性为定义该服务的名称，这里定义一个全局唯一的名字即可，Hyperf 会根据该属性生成对应的 ID 注册到服务中心去；   
 `protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc` 和 `jsonrpc-http`，分别对应于 TCP 协议和 HTTP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，这两个本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`，我们下一章节具体阐述这里应该怎样去处理；   
-`publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](./consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf-cloud/service-governance) 组件，具体可参考 [服务注册](zh/service-register.md) 章节；
+`publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](zh/consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件，具体可参考 [服务注册](zh/service-register.md) 章节；
 
 > 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
 
-### 定义 JSON RPC Server
+#### 定义 JSON RPC Server
 
 HTTP Server (适配 `jsonrpc-http` 协议)
 
@@ -117,7 +117,7 @@ return [
 ];
 ```
 
-## 发布到服务中心
+### 发布到服务中心
 
 目前仅支持发布服务到 `consul`，后续会增加其它服务中心。   
 发布服务到 `consul` 在 Hyperf 也是非常容易的一件事情，通过 `composer require hyperf/consul` 加载 Consul 组件（如果已安装则可忽略该步骤），然后再在 `config/autoload/consul.php` 配置文件内配置您的 `Consul` 配置即可，示例如下：
@@ -134,11 +134,11 @@ return [
 
 > 目前仅支持 `jsonrpc` 和 `jsonrpc-http` 协议发布到服务中心去，其它协议尚未实现服务注册
 
-## 定义服务消费者
+### 定义服务消费者
 
 一个 `服务消费者(ServiceConsumer)` 可以理解为就是一个客户端类，但在 Hyperf 里您无需处理连接和请求相关的事情，只需要进行一些鉴定配置即可。
 
-### 自动创建代理消费者类
+#### 自动创建代理消费者类
 
 您可通过在 `config/autoload/services.php` 配置文件内进行一些简单的配置，即可通过动态代理自动创建消费者类。
 
@@ -175,7 +175,7 @@ return [
 
 > 当服务提供者使用接口类名发布服务名，在服务消费端只需要设置配置项 `name` 值为接口类名，不需要重复设置配置项 `id` 和 `service`。
 
-### 手动创建消费者类
+#### 手动创建消费者类
 
 如您对消费者类有更多的需求，您可通过手动创建一个消费者类来实现，只需要定义一个类及相关属性即可。
 
@@ -241,11 +241,11 @@ return [
 
 这样便可以通过注入 `CalculatorServiceInterface` 接口来使用客户端了。
 
-### 配置复用
+#### 配置复用
 
 通常来说，一个服务消费者会同时消费多个服务提供者，当我们通过服务中心来发现服务提供者时， `config/autoload/services.php` 配置文件内就可能会重复配置很多次 `registry` 配置，但通常来说，我们的服务中心可能是统一的，也就意味着多个服务消费者配置都是从同样的服务中心去拉取节点信息，此时我们可以通过 `PHP 变量` 或 `循环` 等 PHP 代码来实现配置文件的生成。
 
-#### 通过 PHP 变量生成配置
+##### 通过 PHP 变量生成配置
 
 ```php
 <?php
@@ -268,7 +268,7 @@ return [
 ];
 ```
 
-#### 通过循环生成配置
+##### 通过循环生成配置
 
 ```php
 <?php
@@ -295,4 +295,64 @@ return [
     }),
 ];
 ```
+
+### 返回PHP对象
+
+当框架导入 `symfony/serialize (^4.3)` 和 `symfony/property-access (^4.3)` 后，`Hyperf\Contract\NormalizerInterface` 的实现会自动使用 `Hyperf\Utils\Serializer\SymfonyNormalizer` 而非 `Hyperf\Utils\Serializer\SimpleNormalizer`。
+`SymfonyNormalizer` 支持对象的序列化和反序列化。暂时不支持这种 `MathValue[]` 对象数组。
+
+> 虽然 SymfonyNormalizer 兼容 SimpleNormalizer 的实现，但真实使用时，最好自己规定好使用 SymfonyNormalizer 还是 SimpleNormalizer，而不是交给框架自己选择，因为线上项目可能意外导入相关包，导致相关项目的实现不一致，使得出现问题。
+
+定义返回对象
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\JsonRpc;
+
+class MathValue
+{
+    public $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+}
+```
+
+改写接口文件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\JsonRpc;
+
+interface CalculatorServiceInterface
+{
+    public function sum(MathValue $v1, MathValue $v2): MathValue;
+}
+```
+
+控制器中调用
+
+```php
+<?php
+
+use Hyperf\Utils\ApplicationContext;
+use App\JsonRpc\CalculatorServiceInterface;
+use App\JsonRpc\MathValue;
+
+$client = ApplicationContext::getContainer()->get(CalculatorServiceInterface::class);
+
+/** @var MathValue $result */
+$result = $client->sum(new MathValue(1), new MathValue(2));
+
+var_dump($result->value);
+```
+
 

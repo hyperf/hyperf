@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Process;
@@ -44,7 +44,7 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * @var int
      */
-    public $pipeType = 2;
+    public $pipeType = SOCK_DGRAM;
 
     /**
      * @var bool
@@ -79,7 +79,7 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * @var bool
      */
-    private $running = true;
+    protected $listening = true;
 
     public function __construct(ContainerInterface $container)
     {
@@ -108,7 +108,7 @@ abstract class AbstractProcess implements ProcessInterface
 
                     $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 } finally {
-                    $this->running = false;
+                    $this->listening = false;
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
@@ -125,7 +125,7 @@ abstract class AbstractProcess implements ProcessInterface
     protected function listen()
     {
         go(function () {
-            while ($this->running) {
+            while ($this->listening) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();

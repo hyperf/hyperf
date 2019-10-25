@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\RpcClient;
@@ -108,10 +108,10 @@ abstract class AbstractServiceClient
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
-            if (isset($response['result'])) {
+            if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
-            if (isset($response['error'])) {
+            if (array_key_exists('error', $response)) {
                 return $response['error'];
             }
         }
