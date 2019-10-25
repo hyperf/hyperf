@@ -4,6 +4,10 @@
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
 
+## Fixed
+
+- [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
+
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
