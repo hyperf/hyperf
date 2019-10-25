@@ -51,7 +51,7 @@ return [
     'exists' => '选定的 :attribute 是无效的',
     'file' => ':attribute 必须是一个文件',
     'filled' => ':attribute 的字段是必填的',
-    'image' => ':attribute 必须是 jpeg, png, bmp 或者 gif 格式的图片',
+    'image' => ':attribute 必须是 jpg, jpeg, png, bmp 或者 gif 格式的图片',
     'in' => '选定的 :attribute 是无效的',
     'in_array' => ':attribute 字段不存在于 :other',
     'integer' => ':attribute 必须是个整数',
