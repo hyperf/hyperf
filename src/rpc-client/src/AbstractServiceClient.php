@@ -108,10 +108,10 @@ abstract class AbstractServiceClient
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
-            if (isset($response['result'])) {
+            if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
-            if (isset($response['error'])) {
+            if (array_key_exists('error', $response)) {
                 return $response['error'];
             }
         }
