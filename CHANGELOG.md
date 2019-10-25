@@ -4,6 +4,10 @@
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
 
+## Optimized
+
+- [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+
 # v1.1.3 - 2019-10-24
 
 ## Added
