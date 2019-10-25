@@ -1,5 +1,23 @@
 # 版本更新记录
 
+# v1.1.3 - 2019-10-24
+
+## 新增
+
+- [#745](https://github.com/hyperf/hyperf/pull/745) 为 `gen:model` 命令增加 `with-comments` 选项，以标记是否生成字段注释；
+- [#747](https://github.com/hyperf/hyperf/pull/747) 为 AMQP 消费者增加 `AfterConsume`, `BeforeConsume`, `FailToConsume` 事件； 
+- [#762](https://github.com/hyperf/hyperf/pull/762) 为 Parallel 特性增加协程控制功能；
+
+## 变更
+
+- [#767](https://github.com/hyperf/hyperf/pull/767) 重命名 `AbstractProcess` 的 `running` 属性名为 `listening`；
+
+## 修复
+
+- [#741](https://github.com/hyperf/hyperf/pull/741) 修复执行 `db:seed` 命令缺少文件名报错的问题；
+- [#748](https://github.com/hyperf/hyperf/pull/748) 修复 `SymfonyNormalizer` 不处理 `array` 类型数据的问题；
+- [#769](https://github.com/hyperf/hyperf/pull/769) 修复当 JSON RPC 响应的结果的 result 和 error 属性为 null 时会抛出一个无效请求的问题；
+
 # v1.1.2 - 2019-10-17
 
 ## 新增
