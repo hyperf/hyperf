@@ -19,11 +19,11 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        $translationPath = BASE_PATH . '/storage/languages';
+        $languagesPath = BASE_PATH . '/storage/languages';
         $translationConfigFile = BASE_PATH . '/config/autoload/translation.php';
         if (file_exists($translationConfigFile)) {
             $translationConfig = include $translationConfigFile;
-            $translationPath = $translationConfig['path'] ?? $translationPath;
+            $languagesPath = $translationConfig['path'] ?? $languagesPath;
         }
 
         return [
@@ -41,13 +41,13 @@ class ConfigProvider
                     'id' => 'zh_CN',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/zh_CN/validation.php',
-                    'destination' => $translationPath . '/zh_CN/validation.php',
+                    'destination' => $languagesPath . '/zh_CN/validation.php',
                 ],
                 [
                     'id' => 'en',
                     'description' => 'The message bag for validation.',
                     'source' => __DIR__ . '/../publish/en/validation.php',
-                    'destination' => $translationPath . '/en/validation.php',
+                    'destination' => $languagesPath . '/en/validation.php',
                 ],
             ],
         ];
