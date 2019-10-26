@@ -24,7 +24,7 @@
  - 所有生成的 `ID` 按时间趋势递增。
  - 整个分布式系统内不会产生重复 `ID`（因为有 `DatacenterId (5 bits)` 和 `WorkerId (5 bits)` 来做区分）。
  
-Hyperf 的 [hyperf/snowflake](https://github.com/hyperf-cloud/snowflake) 组件在设计上提供了很好的可扩展性，允许您通过简单的扩展就能实现其它基于 Snowflake 的变体算法。
+Hyperf 的 [hyperf/snowflake](https://github.com/hyperf/snowflake) 组件在设计上提供了很好的可扩展性，允许您通过简单的扩展就能实现其它基于 Snowflake 的变体算法。
 
 ## 安装
 
@@ -36,7 +36,8 @@ composer require hyperf/snowflake
 
 框架提供了 `MetaGeneratorInterface` 和 `IdGeneratorInterface`，`MetaGeneratorInterface` 会生成 `ID` 的 `Meta` 文件，`IdGeneratorInterface` 则会根据对应的 `Meta` 文件生成 `分布式ID`。
 
-框架默认使用的 `MetaGeneratorInterface` 是基于 `Redis` 实现的 `毫秒级别生成器`。配置如下：
+框架默认使用的 `MetaGeneratorInterface` 是基于 `Redis` 实现的 `毫秒级别生成器`。    
+配置文件位于 `config/autoload/snowflake.php`，如配置文件不存在可通过执行 `php bin/hyperf.php vendor:publish hyperf/snowflake` 命令创建默认配置，配置文件内容如下：
 
 ```php
 <?php
@@ -83,7 +84,7 @@ $meta = $generator->degenerate($id);
 
 ## 重写 `Meta` 生成器
 
-`分布式ID` 的实现方式多种多样，虽然都是 `Snowflake` 算法，但也不尽相同。比如有人可能会根据 `UserId` 生成 `Meta`，而非 `WorkerId`。接下来，让我们实现一个简单的 `MetaGenerator`。
+`分布式全局唯一 ID` 的实现方式多种多样，也有很多基于 `Snowflake` 算法的变体算法，虽然都是 `Snowflake` 算法，但也不尽相同。比如有人可能会根据 `UserId` 生成 `Meta`，而非 `WorkerId`。接下来，让我们实现一个简单的 `MetaGenerator`。
 简单的来讲，`UserId` 绝对会超过 `10 bit`，所以默认的 `DataCenterId` 和 `WorkerId` 肯定是装不过来的，所以就需要对 `UserId` 取模。
 
 ```php

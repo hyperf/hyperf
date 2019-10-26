@@ -8,7 +8,7 @@ composer require hyperf/circuit-breaker
 
 ## 为什么要熔断？
 
-分布式系统中经常会出现由于某个基础服务不可用造成整个系统不可用的情况，这种现象被称为服务雪崩效应。为了应对服务雪崩，一种常见的做法是服务降级。而 [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) 组件，就是为了来解决这个问题的。
+分布式系统中经常会出现由于某个基础服务不可用造成整个系统不可用的情况，这种现象被称为服务雪崩效应。为了应对服务雪崩，一种常见的做法是服务降级。而 [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) 组件，就是为了来解决这个问题的。
 
 ## 使用熔断器
 

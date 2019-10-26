@@ -7,19 +7,25 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Event\AfterConsume;
+use Hyperf\Amqp\Event\BeforeConsume;
+use Hyperf\Amqp\Event\FailToConsume;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -29,6 +35,11 @@ class Consumer extends Builder
      * @var bool
      */
     protected $status = true;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var LoggerInterface
@@ -42,6 +53,9 @@ class Consumer extends Builder
     ) {
         parent::__construct($container, $poolFactory);
         $this->logger = $logger;
+        if ($container->has(EventDispatcherInterface::class)) {
+            $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function consume(ConsumerMessageInterface $consumerMessage): void
@@ -52,6 +66,7 @@ class Consumer extends Builder
         $channel = $connection->getConfirmChannel();
 
         $this->declare($consumerMessage, $channel);
+        $concurrent = $this->getConcurrent();
 
         $channel->basic_consume(
             $consumerMessage->getQueue(),
@@ -60,37 +75,13 @@ class Consumer extends Builder
             false,
             false,
             false,
-            function (AMQPMessage $message) use ($consumerMessage) {
-                $data = $consumerMessage->unserialize($message->getBody());
-                /** @var AMQPChannel $channel */
-                $channel = $message->delivery_info['channel'];
-                $deliveryTag = $message->delivery_info['delivery_tag'];
-                [$result] = parallel([function () use ($consumerMessage, $data) {
-                    try {
-                        return $consumerMessage->consume($data);
-                    } catch (Throwable $exception) {
-                        if ($this->container->has(FormatterInterface::class)) {
-                            $formatter = $this->container->get(FormatterInterface::class);
-                            $this->logger->error($formatter->format($exception));
-                        } else {
-                            $this->logger->error($exception->getMessage());
-                        }
-
-                        return Result::DROP;
-                    }
-                }]);
-
-                if ($result === Result::ACK) {
-                    $this->logger->debug($deliveryTag . ' acked.');
-                    return $channel->basic_ack($deliveryTag);
-                }
-                if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
-                    $this->logger->debug($deliveryTag . ' requeued.');
-                    return $channel->basic_reject($deliveryTag, true);
+            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+                $callback = $this->getCallback($consumerMessage, $message);
+                if (! $concurrent instanceof Concurrent) {
+                    return parallel([$callback]);
                 }
 
-                $this->logger->debug($deliveryTag . ' rejected.');
-                $channel->basic_reject($deliveryTag, false);
+                return $concurrent->create($callback);
             }
         );
 
@@ -124,5 +115,58 @@ class Consumer extends Builder
         foreach ($routineKeys as $routingKey) {
             $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
         }
+    }
+
+    protected function getConcurrent(): ?Concurrent
+    {
+        $config = $this->container->get(ConfigInterface::class);
+        $concurrent = (int) $config->get('amqp.' . $this->name . '.concurrent.limit', 0);
+        if ($concurrent > 1) {
+            return new Concurrent($concurrent);
+        }
+
+        return null;
+    }
+
+    protected function getCallback(ConsumerMessageInterface $consumerMessage, AMQPMessage $message)
+    {
+        return function () use ($consumerMessage, $message) {
+            $data = $consumerMessage->unserialize($message->getBody());
+            /** @var AMQPChannel $channel */
+            $channel = $message->delivery_info['channel'];
+            $deliveryTag = $message->delivery_info['delivery_tag'];
+
+            try {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
+                $result = $consumerMessage->consume($data);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
+            } catch (Throwable $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
+                if ($this->container->has(FormatterInterface::class)) {
+                    $formatter = $this->container->get(FormatterInterface::class);
+                    $this->logger->error($formatter->format($exception));
+                } else {
+                    $this->logger->error($exception->getMessage());
+                }
+
+                $result = Result::DROP;
+            }
+
+            if ($result === Result::ACK) {
+                $this->logger->debug($deliveryTag . ' acked.');
+                return $channel->basic_ack($deliveryTag);
+            }
+            if ($result === Result::NACK) {
+                $this->logger->debug($deliveryTag . ' uacked.');
+                return $channel->basic_nack($deliveryTag);
+            }
+            if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
+                $this->logger->debug($deliveryTag . ' requeued.');
+                return $channel->basic_reject($deliveryTag, true);
+            }
+
+            $this->logger->debug($deliveryTag . ' rejected.');
+            return $channel->basic_reject($deliveryTag, false);
+        };
     }
 }

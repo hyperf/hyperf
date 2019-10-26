@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Command;
@@ -96,13 +96,14 @@ class InitProxyCommand extends Command
             $this->clearRuntime($runtime);
         }
 
-        $classCollection = $this->scanner->scan($scanDirs);
+        $meta = $this->scanner->scan($scanDirs);
+        $classCollection = array_keys($meta);
 
         foreach ($classCollection as $item) {
             try {
                 $this->container->get($item);
             } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
+                // Entry cannot be resolved.
             }
         }
 
@@ -111,7 +112,7 @@ class InitProxyCommand extends Command
                 try {
                     $this->container->get($key);
                 } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
+                    // Entry cannot be resolved.
                 }
             }
         }

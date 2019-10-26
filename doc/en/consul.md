@@ -1,6 +1,6 @@
 # Consul Client
 
-Hyperf provides a coroutine [Consul] (https://www.consul.io/api/index.html) client. Since Consul's own API is relatively simple and supports HTTP request methods, this component is only make some abstraction for The Consul API, and the coroutine HTTP client support provided by [hyperf/guzzle] (https://github.com/hyperf-cloud/guzzle).
+Hyperf provides a coroutine [Consul] (https://www.consul.io/api/index.html) client. Since Consul's own API is relatively simple and supports HTTP request methods, this component is only make some abstraction for The Consul API, and the coroutine HTTP client support provided by [hyperf/guzzle] (https://github.com/hyperf/guzzle).
 
 > `ConsulResponse` means `Hyperf\Consul\ConsulResponse`
 

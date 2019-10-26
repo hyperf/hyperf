@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpMessage\Upload;
@@ -62,6 +62,11 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     private $size;
 
     /**
+     * @var string
+     */
+    private $mimeType;
+
+    /**
      * @param string $tmpFile
      * @param null|int $size
      * @param int $errorStatus
@@ -96,6 +101,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
         return end($segments) ?? null;
+    }
+
+    public function getMimeType(): string
+    {
+        if (is_string($this->mimeType)) {
+            return $this->mimeType;
+        }
+        return $this->mimeType = mime_content_type($this->tmpFile);
     }
 
     /**

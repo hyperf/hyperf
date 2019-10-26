@@ -1,6 +1,6 @@
 # 配置
 
-当您使用的是 [hyperf-cloud/hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目创建的项目时，Hyperf 的所有配置文件均处于根目录下的 `config` 文件夹内，每个选项都有说明，您可以随时查看并熟悉有哪些选项可以使用。
+当您使用的是 [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目创建的项目时，Hyperf 的所有配置文件均处于根目录下的 `config` 文件夹内，每个选项都有说明，您可以随时查看并熟悉有哪些选项可以使用。
 
 # 安装
 
@@ -64,11 +64,11 @@ return [
 
 ## 使用 Hyperf Config 组件
 
-该组件是官方提供的默认的配置组件，是面向 `Hyperf\Contract\ConfigInterface` 接口实现的，由 [hyperf/config](https://github.com/hyperf-cloud/config) 组件内的 `ConfigProvider` 将 `Hyperf\Config\Config` 对象绑定到接口上。   
+该组件是官方提供的默认的配置组件，是面向 `Hyperf\Contract\ConfigInterface` 接口实现的，由 [hyperf/config](https://github.com/hyperf/config) 组件内的 `ConfigProvider` 将 `Hyperf\Config\Config` 对象绑定到接口上。   
 
 ### 设置配置
 
-只需在 `config/config.php` 与 `config/server.php` 与 `autoload` 文件夹内的配置，都能在服务启动时被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，这个流程是由 `Hyperf\Config\ConfigFactory` 在 Config 对象实例化时完成的。
+只需在 `config/config.php` 与 `config/autoload/server.php` 与 `autoload` 文件夹内的配置，都能在服务启动时被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，这个流程是由 `Hyperf\Config\ConfigFactory` 在 Config 对象实例化时完成的。
 
 ### 获取配置
 
@@ -88,7 +88,7 @@ $config->get($key，$default);
 
 #### 通过 `@Value` 注解获取配置
 
-这种方式要求注解的应用对象必须是通过 [hyperf/di](https://github.com/hyperf-cloud/di) 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 `Controller` 类，`Controller` 类一定是由 `DI` 容器创建出来的；   
+这种方式要求注解的应用对象必须是通过 [hyperf/di](https://github.com/hyperf/di) 组件创建的，注入实例的细节可查阅 [依赖注入](zh/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 `Controller` 类，`Controller` 类一定是由 `DI` 容器创建出来的；   
 `@Value()` 内的字符串则对应到 `$config->get($key)` 内的 `$key` 参数，在创建该对象实例时，对应的配置会自动注入到定义的类属性中。
 
 ```php
@@ -110,7 +110,7 @@ class IndexController
 
 #### 通过 config 函数获取
 
-在任意地方可以通过 `config(string $key, $default)` 函数获取对应的配置，但这样的使用方式也就意味着您对 [hyperf/config](https://github.com/hyperf-cloud/config) 和 [hyperf/utils](https://github.com/hyperf-cloud/utils) 组件是强依赖的。
+在任意地方可以通过 `config(string $key, $default)` 函数获取对应的配置，但这样的使用方式也就意味着您对 [hyperf/config](https://github.com/hyperf/config) 和 [hyperf/utils](https://github.com/hyperf/utils) 组件是强依赖的。
 
 ### 判断配置是否存在
 
@@ -169,7 +169,7 @@ return [
 
 ## 配置中心
 
-Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。   
+Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。   
 关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。
 
 

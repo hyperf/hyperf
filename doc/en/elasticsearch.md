@@ -1,6 +1,6 @@
 # Elasticsearch
 
-[hyperf/elasticsearch](https://github.com/hyperf-cloud/elasticsearch) is a factory for client object creation for [elasticsearch-php](https://github.com/elastic/elasticsearch-php), defaults handler is `Guzzle Ring` client, at [hyperf/guzzle](https://github.com/hyperf-cloud/guzzle) we implemented the `Handler` of the coroutine version, so we can create a new `Builder` directly via `Hyperf\Elasticsearch\ClientBuilderFactory`.
+[hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) is a factory for client object creation for [elasticsearch-php](https://github.com/elastic/elasticsearch-php), defaults handler is `Guzzle Ring` client, at [hyperf/guzzle](https://github.com/hyperf/guzzle) we implemented the `Handler` of the coroutine version, so we can create a new `Builder` directly via `Hyperf\Elasticsearch\ClientBuilderFactory`.
 
 ## Installation
 

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\RpcClient;
@@ -25,6 +25,11 @@ class ServiceClient extends AbstractServiceClient
      * @var MethodDefinitionCollectorInterface
      */
     protected $methodDefinitionCollector;
+
+    /**
+     * @var string
+     */
+    protected $serviceInterface;
 
     /**
      * @var NormalizerInterface
@@ -52,7 +57,7 @@ class ServiceClient extends AbstractServiceClient
         }
 
         if (isset($response['result'])) {
-            $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
+            $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }
 
@@ -81,6 +86,8 @@ class ServiceClient extends AbstractServiceClient
 
     protected function setOptions(array $options): void
     {
+        $this->serviceInterface = $options['service_interface'] ?? $this->serviceName;
+
         if (isset($options['load_balancer'])) {
             $this->loadBalancer = $options['load_balancer'];
         }

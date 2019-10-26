@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Process;
@@ -44,7 +44,7 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * @var int
      */
-    public $pipeType = 2;
+    public $pipeType = SOCK_DGRAM;
 
     /**
      * @var bool
@@ -66,6 +66,21 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $process;
 
+    /**
+     * @var int
+     */
+    protected $recvLength = 65535;
+
+    /**
+     * @var float
+     */
+    protected $recvTimeout = 10.0;
+
+    /**
+     * @var bool
+     */
+    protected $listening = true;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -84,13 +99,17 @@ abstract class AbstractProcess implements ProcessInterface
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
-                $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                try {
+                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
-                $this->process = $process;
-                $this->listen();
-                $this->handle();
+                    $this->process = $process;
+                    $this->listen();
+                    $this->handle();
 
-                $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                } finally {
+                    $this->listening = false;
+                }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
@@ -106,12 +125,12 @@ abstract class AbstractProcess implements ProcessInterface
     protected function listen()
     {
         go(function () {
-            while (true) {
+            while ($this->listening) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();
-                    $recv = $sock->recv();
-                    if ($this->event && $data = unserialize($recv)) {
+                    $recv = $sock->recv($this->recvLength, $this->recvTimeout);
+                    if ($this->event && $recv !== false && $data = unserialize($recv)) {
                         $this->event->dispatch(new PipeMessage($data));
                     }
                 } catch (\Throwable $exception) {

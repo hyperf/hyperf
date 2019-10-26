@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
@@ -43,7 +43,14 @@ class BaseClient
             $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
             $this->grpcClient->set($hostname, $options);
         }
-        $this->start();
+        if (! $this->start()) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->getGrpcClient()->getErrCode(),
+                $hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
     }
 
     public function __get($name)

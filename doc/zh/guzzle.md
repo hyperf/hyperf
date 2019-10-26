@@ -1,6 +1,6 @@
 # Guzzle HTTP 客户端
 
-[hyperf/guzzle](https://github.com/hyperf-cloud/guzzle) 组件基于 Guzzle 进行协程处理，通过 Swoole HTTP 客户端作为协程驱动替换到 Guzzle 内，以达到 HTTP 客户端的协程化。
+[hyperf/guzzle](https://github.com/hyperf/guzzle) 组件基于 Guzzle 进行协程处理，通过 Swoole HTTP 客户端作为协程驱动替换到 Guzzle 内，以达到 HTTP 客户端的协程化。
 
 ## 安装
 
@@ -98,6 +98,23 @@ $retry = make(RetryMiddleware::class, [
 
 $stack = HandlerStack::create($handler);
 $stack->push($retry->getMiddleware(), 'retry');
+
+$client = make(Client::class, [
+    'config' => [
+        'handler' => $stack,
+    ],
+]);
+```
+
+另外，框架还提供了 `HandlerStackFactory` 来方便创建上述的 `$stack`。
+
+```php
+<?php
+use Hyperf\Guzzle\HandlerStackFactory;
+use GuzzleHttp\Client;
+
+$factory = new HandlerStackFactory();
+$stack = $factory->create();
 
 $client = make(Client::class, [
     'config' => [

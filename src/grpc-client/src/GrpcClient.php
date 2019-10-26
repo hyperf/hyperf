@@ -7,12 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
 
 use BadMethodCallException;
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
@@ -231,6 +233,9 @@ class GrpcClient
         } else {
             $streamId = $this->getHttpClient()->send($request);
         }
+        if ($streamId === false) {
+            throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
+        }
         if ($streamId > 0) {
             $this->recvChannelMap[$streamId] = $this->channelPool->get();
         }
@@ -255,6 +260,11 @@ class GrpcClient
         }
 
         return false;
+    }
+
+    public function getErrCode(): int
+    {
+        return $this->httpClient ? $this->httpClient->errCode : 0;
     }
 
     /**
