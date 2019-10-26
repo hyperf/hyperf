@@ -39,13 +39,14 @@ class Timer
 
     public function __destruct()
     {
-        if (! $this->observed) {
-            $this->observeDuration();
-        }
+        $this->observeDuration();
     }
 
-    public function observeDuration()
+    public function observeDuration(): void
     {
+        if ($this->observed){
+            return;
+        }
         $d = (float) microtime(true) - $this->time;
         if ($d < 0) {
             $d = (float) 0;
