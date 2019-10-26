@@ -43,13 +43,12 @@ class Gauge implements GaugeInterface
         return $this;
     }
 
-    public function set(float $value)
+    public function set(float $value): void
     {
         $this->gauge->set($value, $this->labelValues);
-        return $this;
     }
 
-    public function add(float $delta)
+    public function add(float $delta): void
     {
         $this->gauge->incBy($delta, $this->labelValues);
     }

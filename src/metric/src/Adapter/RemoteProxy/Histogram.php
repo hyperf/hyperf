@@ -54,7 +54,7 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function observe(float $value)
+    public function observe(float $value): void
     {
         $this->value = $value;
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];

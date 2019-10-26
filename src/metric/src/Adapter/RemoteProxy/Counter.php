@@ -54,7 +54,7 @@ class Counter implements CounterInterface
         return $this;
     }
 
-    public function add(int $delta)
+    public function add(int $delta): void
     {
         $this->delta = $delta;
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];

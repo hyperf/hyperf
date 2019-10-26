@@ -59,7 +59,7 @@ class Gauge implements GaugeInterface
         return $this;
     }
 
-    public function set(float $value)
+    public function set(float $value): void
     {
         $this->value = $value;
         $this->delta = null;
@@ -67,7 +67,7 @@ class Gauge implements GaugeInterface
         $process->write(serialize($this));
     }
 
-    public function add(float $delta)
+    public function add(float $delta): void
     {
         $this->delta = $delta;
         $this->value = null;

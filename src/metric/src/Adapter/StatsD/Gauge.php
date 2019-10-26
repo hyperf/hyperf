@@ -56,7 +56,7 @@ class Gauge implements GaugeInterface
         return $this;
     }
 
-    public function set(float $value)
+    public function set(float $value): void
     {
         if ($value < 0) {
             // StatsD gauge doesn't support negative values.
@@ -65,7 +65,7 @@ class Gauge implements GaugeInterface
         $this->client->gauge($this->name, (string) $value, array_combine($this->labelNames, $this->labelValues));
     }
 
-    public function add(float $delta)
+    public function add(float $delta): void
     {
         if ($delta >= 0) {
             $deltaStr = '+' . $delta;

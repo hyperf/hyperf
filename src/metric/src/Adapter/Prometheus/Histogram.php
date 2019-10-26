@@ -44,7 +44,7 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function observe(float $value)
+    public function observe(float $value): void
     {
         $this->histogram->observe($value, $this->labelValues);
     }

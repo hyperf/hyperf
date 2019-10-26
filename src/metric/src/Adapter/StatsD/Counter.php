@@ -56,7 +56,7 @@ class Counter implements CounterInterface
         return $this;
     }
 
-    public function add(int $delta)
+    public function add(int $delta): void
     {
         $this->client->count($this->name, $delta, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
     }

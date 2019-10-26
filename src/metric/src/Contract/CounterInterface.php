@@ -20,5 +20,5 @@ interface CounterInterface
 {
     public function with(string ...$labelValues): self;
 
-    public function add(int $delta);
+    public function add(int $delta): void;
 }

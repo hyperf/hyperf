@@ -44,7 +44,7 @@ class Counter implements CounterInterface
         return $this;
     }
 
-    public function add(int $delta)
+    public function add(int $delta): void
     {
         $this->counter->incBy($delta, $this->labelValues);
     }
