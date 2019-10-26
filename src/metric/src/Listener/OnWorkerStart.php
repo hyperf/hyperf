@@ -16,9 +16,9 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
-use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\StatsSetter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -29,6 +29,8 @@ use Swoole\Timer;
  */
 class OnWorkerStart implements ListenerInterface
 {
+    use StatsSetter;
+
     /**
      * @var ContainerInterface
      */
@@ -96,36 +98,45 @@ class OnWorkerStart implements ListenerInterface
 
         // The following metrics MUST be collected in worker.
         $metrics = $this->factoryMetrics(
-            $workerId,
+            ['worker' => (string) $workerId],
             'worker_request_count',
-            'worker_dispatch_count'
+            'worker_dispatch_count',
+            'memory_usage',
+            'memory_peak_usage',
+            'gc_runs',
+            'gc_collected',
+            'gc_threshold',
+            'gc_roots',
+            'ru_oublock',
+            'ru_inblock',
+            'ru_msgsnd',
+            'ru_msgrcv',
+            'ru_maxrss',
+            'ru_ixrss',
+            'ru_idrss',
+            'ru_minflt',
+            'ru_majflt',
+            'ru_nsignals',
+            'ru_nvcsw',
+            'ru_nivcsw',
+            'ru_nswap',
+            'ru_utime_tv_usec',
+            'ru_utime_tv_sec',
+            'ru_stime_tv_usec',
+            'ru_stime_tv_sec'
         );
 
         $server = $this->container->get(Server::class);
 
         Timer::tick(5000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
+            $this->trySet('gc_', $metrics, gc_status());
+            $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
+            $metrics['memory_usage']->set(\memory_get_usage());
+            $metrics['memory_peak_usage']->set(\memory_get_peak_usage());
         });
-    }
-
-    /**
-     * Create an array of gauges.
-     * @param int $workerId
-     * @param array<int, string> $names
-     * @return GaugeInterface[]
-     */
-    private function factoryMetrics(int $workerId, string ...$names): array
-    {
-        $out = [];
-        foreach ($names as $name) {
-            $out[$name] = $this
-                ->factory
-                ->makeGauge($name, ['worker_id'])
-                ->with((string) $workerId);
-        }
-        return $out;
     }
 
     private function shouldFireMetricFactoryReadyEvent(int $workerId): bool

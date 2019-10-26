@@ -146,7 +146,7 @@ class MetricFactory implements MetricFactoryInterface
 
     private function doRequest(string $address, string $job, string $method)
     {
-        $url = 'http://' . $address . '/metrics/job/' . $job;
+        $url = 'http://' . $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
         $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [
