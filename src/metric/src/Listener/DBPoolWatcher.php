@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Listener;
 
+use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Redis\Pool\PoolFactory;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
 
@@ -24,7 +24,7 @@ use Swoole\Timer;
  * This listener is not auto enabled.Tweak it to fit your
  * own need.
  */
-class WatchRedisConnections implements ListenerInterface
+class DBPoolWatcher implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -59,7 +59,7 @@ class WatchRedisConnections implements ListenerInterface
         $gauge = $this
             ->container
             ->get(MetricFactoryInterface::class)
-            ->makeGauge('redis_connections_in_use', ['pool', 'worker'])
+            ->makeGauge('mysql_connections_in_use', ['pool', 'worker'])
             ->with('default', (string) $workerId);
 
         Timer::tick(5000, function () use ($gauge, $pool) {

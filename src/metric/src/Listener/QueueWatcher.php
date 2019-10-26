@@ -19,11 +19,11 @@ use Psr\Container\ContainerInterface;
 use Swoole\Timer;
 
 /**
- * A simple redis connection watcher served as an example.
+ * A simple redis queue watcher served as an example.
  * This listener is not auto enabled.Tweak it to fit your
  * own need.
  */
-class WatchQueues implements ListenerInterface
+class QueueWatcher implements ListenerInterface
 {
     /**
      * @var ContainerInterface
