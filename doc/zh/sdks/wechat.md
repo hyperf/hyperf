@@ -51,3 +51,24 @@ AbstractProvider::setGuzzleOptions([
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
 
 ```
+
+## 如何使用 EasyWeChat
+
+`EasyWeChat` 是为 `FPM` 框架设计的，所以在某些地方需要适配修改，才能达到效果。下面我们以支付回调为例进行讲解。
+
+1. `EasyWeChat` 中自带了 `XML` 解析，所以我们获取到原始 `XML` 即可。
+
+```php
+$xml = $this->request->getBody()->getContents();
+```
+
+2. 将 XML 数据放到 `EasyWeChat` 的 `Request` 中。
+
+```php
+<?php
+use Symfony\Component\HttpFoundation\Request;
+
+$app['request'] = new Request([],[],[],[],[],[],$xml);
+
+// Do something...
+```
