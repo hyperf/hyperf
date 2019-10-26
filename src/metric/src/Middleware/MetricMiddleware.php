@@ -41,6 +41,8 @@ class MetricMiddleware implements MiddlewareInterface
     {
         $histogram = $this->factory->makeHistogram('request_latency', ['request_status', 'request_path', 'request_method']);
         $timer = new Timer($histogram);
+        // In case uncaught execptions occured in handler, the timer should be able to report 500 to the collector
+        $timer->with((string) '500', (string) $request->getRequestTarget(), $request->getMethod());
         $response = $handler->handle($request);
         $timer->with((string) $response->getStatusCode(), (string) $request->getRequestTarget(), $request->getMethod());
         return $response;

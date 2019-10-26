@@ -36,6 +36,7 @@ class TimerTest extends TestCase
         $timer->observeDuration();
         $this->assertTrue(true);
     }
+
     public function testObserveDurationCalledTwice()
     {
         $histogram = Mockery::mock(HistogramInterface::class);
@@ -45,6 +46,7 @@ class TimerTest extends TestCase
         $timer2->observeDuration();
         $this->assertTrue(true);
     }
+
     public function testObserveDurationNotCalled()
     {
         $histogram = Mockery::mock(HistogramInterface::class);

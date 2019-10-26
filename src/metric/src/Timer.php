@@ -44,7 +44,7 @@ class Timer
 
     public function observeDuration(): void
     {
-        if ($this->observed){
+        if ($this->observed) {
             return;
         }
         $d = (float) microtime(true) - $this->time;
