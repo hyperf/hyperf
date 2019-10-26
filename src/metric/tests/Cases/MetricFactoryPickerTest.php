@@ -125,7 +125,8 @@ class MetricFactoryPickerTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(PrometheusFactory::class)->andReturn(Mockery::mock(PrometheusFactory::class));
 
-        $picker = new MetricFactoryPicker(true);
+        MetricFactoryPicker::$inMetricProcess = true;
+        $picker = new MetricFactoryPicker();
 
         $this->assertInstanceOf(PrometheusFactory::class, $picker($container));
     }

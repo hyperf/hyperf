@@ -43,10 +43,8 @@ class MetricProcess extends AbstractProcess
 
     public function handle(): void
     {
-        $this->factory = make(
-            MetricFactoryPicker::class,
-            ['inMetricProcess' => true]
-        )($this->container);
+        MetricFactoryPicker::$inMetricProcess = true;
+        $this->factory = make(MetricFactoryInterface::class);
         $this
             ->container
             ->get(EventDispatcherInterface::class)

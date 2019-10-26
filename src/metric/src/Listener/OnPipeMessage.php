@@ -18,9 +18,7 @@ use Hyperf\Metric\Adapter\RemoteProxy\Counter;
 use Hyperf\Metric\Adapter\RemoteProxy\Gauge;
 use Hyperf\Metric\Adapter\RemoteProxy\Histogram;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Process\Event\PipeMessage;
-use Psr\Container\ContainerInterface;
 
 /**
  * @Listener
@@ -31,14 +29,6 @@ class OnPipeMessage implements ListenerInterface
      * @var MetricFactoryInterface
      */
     private $factory;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->factory = make(
-            MetricFactoryPicker::class,
-            ['inMetricProcess' => true]
-        )($container);
-    }
 
     /**
      * @return string[] returns the events that you want to listen
@@ -56,6 +46,7 @@ class OnPipeMessage implements ListenerInterface
      */
     public function process(object $event)
     {
+        $this->factory = make(MetricFactoryInterface::class);
         if (property_exists($event, 'data') && $event instanceof PipeMessage) {
             $inner = $event->data;
             switch (true) {
