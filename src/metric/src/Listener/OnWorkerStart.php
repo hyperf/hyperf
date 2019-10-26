@@ -18,7 +18,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
-use Hyperf\Metric\StatsSetter;
+use Hyperf\Metric\MetricSetter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -29,7 +29,7 @@ use Swoole\Timer;
  */
 class OnWorkerStart implements ListenerInterface
 {
-    use StatsSetter;
+    use MetricSetter;
 
     /**
      * @var ContainerInterface

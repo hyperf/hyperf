@@ -17,7 +17,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
-use Hyperf\Metric\StatsSetter;
+use Hyperf\Metric\MetricSetter;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -28,7 +28,7 @@ use Swoole\Timer;
  */
 class OnMetricFactoryReady implements ListenerInterface
 {
-    use StatsSetter;
+    use MetricSetter;
 
     /**
      * @var ContainerInterface

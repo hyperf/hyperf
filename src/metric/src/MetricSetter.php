@@ -17,7 +17,7 @@ use Hyperf\Metric\Contract\GaugeInterface;
 /**
  * A Helper trait to set stats from swoole and kernal.
  */
-trait StatsSetter
+trait MetricSetter
 {
     /**
      * Try to set every stats available to the gauge.
