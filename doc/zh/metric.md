@@ -83,14 +83,13 @@ Prometheus 有两种工作模式，爬模式与推模式，本组件均可支持
 ```
 并配置爬取地址`scrape_host`、爬取端口`scrape_port`、爬取路径`scrape_path`。Prometheus可以在对应配置下以HTTP访问形式拉取全部指标。
 
+> 注意：爬模式下，必须启用独立进程，即use_standalone_process = true。
 
 使用推模式时需设置：
 ```php
     'mode' => Constants::PUSH_MODE
 ```
 并配置推送地址`push_host`、推送端口`push_port`、推送间隔`push_inteval`。
-
-注意：爬模式下，必须启用独立进程，即use_standalone_process = true。
 
 #### 配置 StatsD
 
@@ -279,18 +278,20 @@ class OnMetricFactoryReady implements ListenerInterface
     public function process(object $event)
     {
         $redis = $this->container->get(Redis::class);
+        $gauge = $event
+                    ->factory
+                    ->makeGauge('queue_length', ['driver'])
+                    ->with('redis');
         while (true) {
             $length = $redis->llen('queue');
-            $event
-                ->factory
-                ->makeGauge('queue_length', ['driver'])
-                ->with('redis')
-                ->set($length);
+            $gauge->set($length);
             sleep(1);
         }
     }
 }
 ```
+
+> 工程上讲，直接从redis查询队列长度不太合适，应该通过队列驱动`DriverInterface`接口下的info()方法来获取队列长度。这里只做简易演示。您可以在本组件源码的src/Listener文件夹下找到完整例子。
 
 ### 注解
 
