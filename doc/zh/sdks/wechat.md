@@ -79,3 +79,18 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 // Do something...
 ```
+
+## 如何替换缓存
+
+`EasyWeChat` 默认使用 文件缓存，而现实场景是 `Redis` 缓存居多，所以这里可以替换成 `Hyperf` 提供的 缓存组件
+
+```php
+<?php
+use Hyperf\Cache\CacheInterface;
+use Hyperf\Utils\ApplicationContext;
+use EasyWeChat\Factory;
+
+$app = Factory::miniProgram([]);
+$app['cache'] = ApplicationContext::getContainer()->get(CacheInterface::class);
+
+```
