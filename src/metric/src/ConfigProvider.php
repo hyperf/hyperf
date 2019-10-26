@@ -15,6 +15,9 @@ namespace Hyperf\Metric;
 use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Metric\Listener\OnMetricFactoryReady;
+use Hyperf\Metric\Listener\OnPipeMessage;
+use Hyperf\Metric\Listener\OnWorkerStart;
 use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Driver\Guzzle;
 use Prometheus\Storage\Adapter;
@@ -45,6 +48,11 @@ class ConfigProvider
                     'source' => __DIR__ . '/../publish/metric.php',
                     'destination' => BASE_PATH . '/config/autoload/metric.php',
                 ],
+            ],
+            'listeners' => [
+                OnPipeMessage::class,
+                OnMetricFactoryReady::class,
+                OnWorkerStart::class,
             ],
         ];
     }

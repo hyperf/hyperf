@@ -49,6 +49,10 @@ php bin/hyperf.php vendor:publish hyperf/metric
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
+* `default_metric_inteval`: 默认指标推送周期，单位为秒，下同。
+```php
+'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
+```
 #### 配置 Prometheus
 
 使用 Prometheus 时，在配置文件中的 `metric` 项增加 Prometheus 的具体配置。
@@ -60,6 +64,7 @@ return [
     'default' => env('TELEMETRY_DRIVER', 'prometheus'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
+    'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
     'metric' => [
         'prometheus' => [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,

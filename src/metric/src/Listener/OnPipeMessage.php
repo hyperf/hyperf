@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Adapter\RemoteProxy\Counter;
 use Hyperf\Metric\Adapter\RemoteProxy\Gauge;
@@ -21,7 +20,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Process\Event\PipeMessage;
 
 /**
- * @Listener
+ * Receives messages in metric process.
  */
 class OnPipeMessage implements ListenerInterface
 {

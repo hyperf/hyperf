@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
@@ -62,7 +63,9 @@ class DBPoolWatcher implements ListenerInterface
             ->makeGauge('mysql_connections_in_use', ['pool', 'worker'])
             ->with('default', (string) $workerId);
 
-        Timer::tick(5000, function () use ($gauge, $pool) {
+        $config = $this->container->get(ConfigInterface::class);
+        $timerInteval = $config->get('metric.default_metric_inteval', 5);
+        Timer::tick($timerInteval * 1000, function () use ($gauge, $pool) {
             $gauge->set((float) $pool->getCurrentConnections());
         });
     }

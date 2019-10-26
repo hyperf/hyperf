@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -25,11 +24,11 @@ use Swoole\Server;
 use Swoole\Timer;
 use function gc_status;
 use function getrusage;
-use function memory_get_usage;
 use function memory_get_peak_usage;
+use function memory_get_usage;
 
 /**
- * @Listener
+ * Collect and handle metrics before worker start.
  */
 class OnWorkerStart implements ListenerInterface
 {
@@ -131,10 +130,12 @@ class OnWorkerStart implements ListenerInterface
         );
 
         $server = $this->container->get(Server::class);
-
-        Timer::tick(5000, function () use ($metrics, $server) {
+        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
+        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
-            $this->trySet('gc_', $metrics, gc_status());
+            if (function_exists('gc_status')) {
+                $this->trySet('gc_', $metrics, gc_status());
+            }
             $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);

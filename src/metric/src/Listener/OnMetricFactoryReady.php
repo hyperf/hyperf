@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
@@ -24,7 +23,7 @@ use Swoole\Server;
 use Swoole\Timer;
 
 /**
- * @Listener
+ * Similar to OnWorkerStart, but this only runs in one process.
  */
 class OnMetricFactoryReady implements ListenerInterface
 {
@@ -81,7 +80,6 @@ class OnMetricFactoryReady implements ListenerInterface
             'coroutine_num',
             'coroutine_peak_num',
             'coroutine_last_cid',
-            'start_time',
             'connection_num',
             'accept_count',
             'close_count',
@@ -94,8 +92,8 @@ class OnMetricFactoryReady implements ListenerInterface
         );
 
         $server = $this->container->get(Server::class);
-
-        Timer::tick(5000, function () use ($metrics, $server) {
+        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
+        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();
@@ -103,7 +101,7 @@ class OnMetricFactoryReady implements ListenerInterface
             $this->trySet('', $metrics, $coroutineStats);
             $this->trySet('timer_', $metrics, $timerStats);
             $load = sys_getloadavg();
-            $metrics['sys_load']->set($load[0] / \swoole_cpu_num());
+            $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
         });
     }
 }

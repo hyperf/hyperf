@@ -16,6 +16,7 @@ return [
     'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('METRIC_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('METRIC_ENABLE_DEFAULT_METRIC', true),
+    'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
     'metric' => [
         'prometheus' => [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,

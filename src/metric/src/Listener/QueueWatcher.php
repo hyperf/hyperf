@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Psr\Container\ContainerInterface;
@@ -68,7 +69,9 @@ class QueueWatcher implements ListenerInterface
             ->makeGauge('queue_timeout', ['queue'])
             ->with('default');
 
-        Timer::tick(5000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
+        $config = $this->container->get(ConfigInterface::class);
+        $timerInteval = $config->get('metric.default_metric_inteval', 5);
+        Timer::tick($timerInteval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
             $info = $queue->info();
             $waiting->set((float) $info['waiting']);
             $delayed->set((float) $info['delayed']);

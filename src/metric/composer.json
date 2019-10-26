@@ -12,28 +12,30 @@
     "description": "hyperf metric component",
     "require": {
         "php": ">=7.2",
+        "psr/http-message": "^1.0",
         "endclothing/prometheus_client_php": "^0.9.1",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "hyperf/contract": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/utils": "~1.1.0",
+        "hyperf/guzzle": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "hyperf/config": "~1.1.0",
-        "hyperf/event": "~1.1.0",
-        "hyperf/framework": "~1.1.0",
-        "hyperf/process": "~1.1.0",
         "friendsofphp/php-cs-fixer": "^2.9",
         "influxdb/influxdb-php": "^1.15.0",
         "domnikl/statsd": "^3.0.1"
     },
     "suggest": {
         "domnikl/statsd": "Required to use StatdD driver.",
-        "influxdb/influxdb-php": "Required to use InfluxDB driver."
+        "influxdb/influxdb-php": "Required to use InfluxDB driver.",
+        "hyperf/config": "Required to use annotations.",
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
+        "hyperf/process": "Required to use standalone process, or you have to roll your own",
     },
     "autoload": {
         "psr-4": {
