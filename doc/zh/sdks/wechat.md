@@ -54,7 +54,7 @@ AbstractProvider::setGuzzleOptions([
 
 ## 如何使用 EasyWeChat
 
-`EasyWeChat` 是为 `FPM` 框架设计的，所以在某些地方需要适配修改，才能达到效果。下面我们以支付回调为例进行讲解。
+`EasyWeChat` 是为 `PHP-FPM` 架构设计的，所以在某些地方需要修改下才能在 Hyperf 下使用。下面我们以支付回调为例进行讲解。
 
 1. `EasyWeChat` 中自带了 `XML` 解析，所以我们获取到原始 `XML` 即可。
 
@@ -82,7 +82,7 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 ## 如何替换缓存
 
-`EasyWeChat` 默认使用 文件缓存，而现实场景是 `Redis` 缓存居多，所以这里可以替换成 `Hyperf` 提供的 缓存组件
+`EasyWeChat` 默认使用 `文件缓存`，而现实场景是 `Redis` 缓存居多，所以这里可以替换成 `Hyperf` 提供的 `hyperf/cache` 缓存组件，如您当前没有安装该组件，请执行 `composer require hyperf/cache` 引入，使用示例如下：
 
 ```php
 <?php
