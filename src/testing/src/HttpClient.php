@@ -15,6 +15,7 @@ namespace Hyperf\Testing;
 use GuzzleHttp\Client;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
@@ -45,13 +46,33 @@ class HttpClient
         ]);
     }
 
+    public function getHeader()
+    {
+        $response = Context::get('response');
+        return $response->getHeaders();
+    }
+
+    public function getStatusCode()
+    {
+        $response = Context::get('response');
+        return $response->getStatusCode();
+    }
+
+    public function getContent()
+    {
+        $response = Context::get('response');
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
     public function get($uri, $data = [], $headers = [])
     {
         $response = $this->client->get($uri, [
             'headers' => $headers,
             'query' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+
+        Context::set('response', $response);
+        return $this;
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -61,7 +82,8 @@ class HttpClient
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -72,7 +94,8 @@ class HttpClient
             'headers' => $headers,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -98,6 +121,7 @@ class HttpClient
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 }

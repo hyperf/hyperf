@@ -56,6 +56,24 @@ class Client extends Server
         $this->initCoreMiddleware($server);
     }
 
+    public function getHeader()
+    {
+        $response = Context::get('response');
+        return $response->getHeaders();
+    }
+
+    public function getStatusCode()
+    {
+        $response = Context::get('response');
+        return $response->getStatusCode();
+    }
+
+    public function getContent()
+    {
+        $response = Context::get('response');
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
     public function get($uri, $data = [], $headers = [])
     {
         $response = $this->request('GET', $uri, [
@@ -63,7 +81,8 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -73,7 +92,8 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function put($uri, $data = [], $headers = [])
@@ -83,7 +103,8 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function delete($uri, $data = [], $headers = [])
@@ -93,7 +114,8 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -103,7 +125,9 @@ class Client extends Server
             'headers' => $headers,
             'json' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+
+        Context::set('response', $response);
+        return $this;
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -129,7 +153,8 @@ class Client extends Server
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        Context::set('response', $response);
+        return $this;
     }
 
     public function request(string $method, string $path, array $options = [])
