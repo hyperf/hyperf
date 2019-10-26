@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
+- [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
 
 ## Optimized
 
