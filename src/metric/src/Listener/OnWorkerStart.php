@@ -23,6 +23,10 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
+use function gc_status;
+use function getrusage;
+use function memory_get_usage;
+use function memory_get_peak_usage;
 
 /**
  * @Listener
@@ -134,8 +138,8 @@ class OnWorkerStart implements ListenerInterface
             $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
-            $metrics['memory_usage']->set(\memory_get_usage());
-            $metrics['memory_peak_usage']->set(\memory_get_peak_usage());
+            $metrics['memory_usage']->set(memory_get_usage());
+            $metrics['memory_peak_usage']->set(memory_get_peak_usage());
         });
     }
 
