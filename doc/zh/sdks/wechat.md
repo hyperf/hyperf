@@ -68,7 +68,14 @@ $xml = $this->request->getBody()->getContents();
 <?php
 use Symfony\Component\HttpFoundation\Request;
 
-$app['request'] = new Request([],[],[],[],[],[],$xml);
+$get = $this->request->getQueryParams();
+$post = $this->request->getParsedBody();
+$cookie = $this->request->getCookieParams();
+$files = $this->request->getUploadedFiles();
+$server = $this->request->getServerParams();
+$xml = $this->request->getBody()->getContents();
+
+$app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 // Do something...
 ```
