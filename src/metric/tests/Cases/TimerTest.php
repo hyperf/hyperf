@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Cases;
 
+use Hyperf\Di\Container;
 use Hyperf\Metric\Contract\HistogramInterface;
+use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Timer;
+use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -28,31 +31,43 @@ class TimerTest extends TestCase
         Mockery::close();
     }
 
-    public function testObserveDuration()
+    public function testEnd()
     {
-        $histogram = Mockery::mock(HistogramInterface::class);
-        $histogram->shouldReceive('observe')->once();
-        $timer = new Timer($histogram);
-        $timer->observeDuration();
+        $this->mockContainer();
+        $timer = new Timer('test');
+        $timer->end();
         $this->assertTrue(true);
     }
 
-    public function testObserveDurationCalledTwice()
+    public function testEndCalledTwice()
     {
-        $histogram = Mockery::mock(HistogramInterface::class);
-        $histogram->shouldReceive('observe')->once();
-        $timer2 = new Timer($histogram);
-        $timer2->observeDuration();
-        $timer2->observeDuration();
+        $this->mockContainer();
+        $timer2 = new Timer('test');
+        $timer2->end();
+        $timer2->end();
         $this->assertTrue(true);
     }
 
-    public function testObserveDurationNotCalled()
+    public function testEndNotCalled()
     {
-        $histogram = Mockery::mock(HistogramInterface::class);
-        $histogram->shouldReceive('observe')->once();
-        $timer3 = new Timer($histogram);
+        $this->mockContainer();
+        $timer3 = new Timer('test');
         unset($timer3);
         $this->assertTrue(true);
+    }
+
+    private function mockContainer()
+    {
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->with(MetricFactoryInterface::class, [])->andReturn(new class() {
+            public function makeHistogram($name, $labels)
+            {
+                $histogram = Mockery::mock(HistogramInterface::class);
+                $histogram->shouldReceive('with')->andReturn($histogram);
+                $histogram->shouldReceive('observe')->once();
+                return $histogram;
+            }
+        });
+        ApplicationContext::setContainer($container);
     }
 }

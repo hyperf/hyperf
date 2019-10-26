@@ -16,7 +16,6 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Metric\Annotation\Histogram;
-use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Timer;
 
 /**
@@ -31,16 +30,6 @@ class HistogramAnnotationAspect implements AroundInterface
     ];
 
     /**
-     * @var MetricFactoryInterface
-     */
-    private $factory;
-
-    public function __construct(MetricFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
-    /**
      * @return mixed return the value from process method of ProceedingJoinPoint, or the value that you handled
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -53,14 +42,13 @@ class HistogramAnnotationAspect implements AroundInterface
         } else {
             $name = $source;
         }
-        /** @var Timer $timer */
-        $timer = new Timer($this
-            ->factory
-            ->makeHistogram($name, ['class', 'method'])
-            ->with(
-                $proceedingJoinPoint->className,
-                $proceedingJoinPoint->methodName
-            ));
+        $timer = new Timer(
+            $name,
+            [
+                'class' => $proceedingJoinPoint->className,
+                'method' => $proceedingJoinPoint->methodName,
+            ]
+        );
         return $proceedingJoinPoint->process();
     }
 

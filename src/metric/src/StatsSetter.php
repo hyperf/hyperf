@@ -15,7 +15,7 @@ namespace Hyperf\Metric;
 use Hyperf\Metric\Contract\GaugeInterface;
 
 /**
- * A Helper trait to set stats.
+ * A Helper trait to set stats from swoole and kernal.
  */
 trait StatsSetter
 {
@@ -31,7 +31,7 @@ trait StatsSetter
     {
         foreach (array_keys($stats) as $key) {
             $metricsKey = \str_replace('.', '_', $prefix . $key);
-            if (key_exists($metricsKey, $metrics)) {
+            if (array_key_exists($metricsKey, $metrics)) {
                 $metrics[$metricsKey]->set($stats[$key]);
             }
         }

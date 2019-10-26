@@ -12,14 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric;
 
-use Hyperf\Metric\Contract\HistogramInterface;
+use Hyperf\Metric\Contract\MetricFactoryInterface;
 
+/**
+ * Syntax sugar class to handle time.
+ */
 class Timer
 {
     /**
-     * @var HistogramInterface
+     * @var string
      */
-    protected $histogram;
+    protected $name;
+
+    /**
+     * @var array<string,string>
+     */
+    protected $labels;
 
     /**
      * @var float
@@ -31,33 +39,36 @@ class Timer
      */
     private $observed = false;
 
-    public function __construct(HistogramInterface $histogram)
+    public function __construct(string $name, ?array $default = [])
     {
-        $this->histogram = $histogram;
+        $this->name = $name;
+        $this->labels = $default;
         $this->time = microtime(true);
     }
 
     public function __destruct()
     {
-        $this->observeDuration();
+        $this->end();
     }
 
-    public function observeDuration(): void
+    public function end(?array $labels = []): void
     {
         if ($this->observed) {
             return;
         }
+        foreach ($labels as $key => $value) {
+            if (array_key_exists($key, $this->labels)) {
+                $this->labels[$key] = $value;
+            }
+        }
+        $histogram = make(MetricFactoryInterface::class)
+            ->makeHistogram($this->name, array_keys($this->labels))
+            ->with(...array_values($this->labels));
         $d = (float) microtime(true) - $this->time;
         if ($d < 0) {
             $d = (float) 0;
         }
-        $this->histogram->observe($d);
+        $histogram->observe($d);
         $this->observed = true;
-    }
-
-    public function with(string ...$labelValues): self
-    {
-        $this->histogram->with(...$labelValues);
-        return $this;
     }
 }
