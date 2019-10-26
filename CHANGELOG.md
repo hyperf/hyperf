@@ -12,6 +12,10 @@
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
 
+## Changed
+
+- [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
+
 # v1.1.3 - 2019-10-24
 
 ## Added
