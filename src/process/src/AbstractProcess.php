@@ -20,6 +20,7 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine as SwooleCoroutine;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -77,6 +78,11 @@ abstract class AbstractProcess implements ProcessInterface
     protected $recvTimeout = 10.0;
 
     /**
+     * @var int
+     */
+    protected $restartInterval = 5;
+
+    /**
      * @var bool
      */
     protected $listening = true;
@@ -103,12 +109,15 @@ abstract class AbstractProcess implements ProcessInterface
                     $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
                     $this->process = $process;
-                    $this->listen();
+                    if ($this->enableCoroutine) {
+                        $this->listen();
+                    }
                     $this->handle();
 
                     $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 } finally {
                     $this->listening = false;
+                    sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
@@ -139,6 +148,8 @@ abstract class AbstractProcess implements ProcessInterface
                         $formatter = $this->container->get(FormatterInterface::class);
                         $logger->error($formatter->format($exception));
                     }
+                } finally {
+                    SwooleCoroutine::sleep(0.001);
                 }
             }
         });
