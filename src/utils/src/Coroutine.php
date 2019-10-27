@@ -16,6 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
+use Swoole\Event;
 use Throwable;
 
 /**
@@ -84,6 +85,18 @@ class Coroutine
             }
         });
         return is_int($result) ? $result : -1;
+    }
+
+    /**
+     * Yield current coroutine, then resume it in the ending of EventLoop.
+     */
+    public static function yieldResume(): void
+    {
+        $id = SwooleCoroutine::getCid();
+        Event::defer(function () use ($id) {
+            SwooleCoroutine::resume($id);
+        });
+        SwooleCoroutine::yield();
     }
 
     public static function inCoroutine(): bool
