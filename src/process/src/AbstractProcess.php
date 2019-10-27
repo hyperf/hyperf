@@ -82,6 +82,11 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $restartInterval = 5;
 
+    /**
+     * @var bool
+     */
+    protected $listening = true;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -104,7 +109,7 @@ abstract class AbstractProcess implements ProcessInterface
                     $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
                     $this->process = $process;
-                    if ($this->enableCoroutine) {
+                    if ($this->enableCoroutine && $this->listening) {
                         $quit = new Channel(1);
                         $this->listen($quit);
                     }

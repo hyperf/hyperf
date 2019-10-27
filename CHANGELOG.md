@@ -14,6 +14,7 @@
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
 
 ## Changed
 
