@@ -7,23 +7,26 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
@@ -39,20 +42,26 @@ class TcpServer extends Server
     protected $packer;
 
     public function __construct(
-        string $serverName,
-        string $coreHandler,
         ContainerInterface $container,
-        $dispatcher,
-        LoggerInterface $logger,
-        ProtocolManager $protocolManager
+        RequestDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionDispatcher,
+        ProtocolManager $protocolManager,
+        StdoutLoggerInterface $logger
     ) {
         $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
-        parent::__construct($serverName, $coreHandler, $container, $protocol, $dispatcher, $logger);
+
+        parent::__construct($container, $dispatcher, $exceptionDispatcher, $protocol, $logger);
+
         $this->packer = $protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
             'dataFormatter' => $protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
+    }
+
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
+    {
+        return new CoreMiddleware($this->container, $this->protocol, $this->serverName);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface

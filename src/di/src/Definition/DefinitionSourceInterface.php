@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Definition;
@@ -20,7 +20,7 @@ interface DefinitionSourceInterface
      * Returns the DI definition for the entry name.
      *
      * @throws InvalidDefinitionException an invalid definition was found
-     * @return null|array
+     * @return null|DefinitionInterface
      */
     public function getDefinition(string $name);
 

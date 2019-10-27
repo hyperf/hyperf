@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Amqp\Connection;
@@ -158,7 +158,6 @@ class SwooleIO extends AbstractIO
     public function read($len)
     {
         $this->check_heartbeat();
-        $count = 0;
         do {
             if ($len <= strlen($this->buffer)) {
                 $data = substr($this->buffer, 0, $len);
@@ -178,10 +177,7 @@ class SwooleIO extends AbstractIO
             }
 
             if ($read_buffer === '') {
-                if (5 < $count++) {
-                    throw new AMQPRuntimeException('The receiving data is empty, errno=' . $this->sock->errCode);
-                }
-                continue;
+                throw new AMQPRuntimeException('Connection is closed.');
             }
 
             $this->buffer .= $read_buffer;
@@ -192,8 +188,8 @@ class SwooleIO extends AbstractIO
 
     /**
      * @param string $data
-     * @throws AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPRuntimeException
      * @return mixed|void
      */
     public function write($data)
@@ -202,10 +198,6 @@ class SwooleIO extends AbstractIO
 
         if ($buffer === false) {
             throw new AMQPRuntimeException('Error sending data');
-        }
-
-        if ($buffer === 0 && ! $this->sock->connected) {
-            throw new AMQPRuntimeException('Broken pipe or closed connection');
         }
 
         $this->lastWrite = microtime(true);

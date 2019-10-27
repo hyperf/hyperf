@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer;
@@ -322,9 +322,9 @@ class Request implements RequestInterface
      * Retrieve a file from the request.
      *
      * @param null|mixed $default
-     * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
+     * @return null|UploadedFile|UploadedFile[]
      */
-    public function file(string $key, $default = null): ?UploadedFile
+    public function file(string $key, $default = null)
     {
         return Arr::get($this->getUploadedFiles(), $key, $default);
     }
@@ -564,11 +564,7 @@ class Request implements RequestInterface
     {
         return $this->storeParsedData(function () {
             $request = $this->getRequest();
-            $contentType = $request->getHeaderLine('Content-Type');
-            if ($contentType && Str::startsWith($contentType, 'application/json')) {
-                $body = $request->getBody();
-                $data = json_decode($body->getContents(), true) ?? [];
-            } elseif (is_array($request->getParsedBody())) {
+            if (is_array($request->getParsedBody())) {
                 $data = $request->getParsedBody();
             } else {
                 $data = [];

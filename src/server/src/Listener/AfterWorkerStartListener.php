@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server\Listener;
@@ -18,6 +18,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
+use Swoole\Server\Port;
 
 /**
  * @Listener
@@ -52,11 +53,12 @@ class AfterWorkerStartListener implements ListenerInterface
     {
         /** @var AfterWorkerStart $event */
         if ($event->workerId === 0) {
+            /** @var Port $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type) {
                     switch ($type) {
-                        case Server::SERVER_TCP:
+                        case Server::SERVER_BASE:
                             return 'TCP';
                             break;
                         case Server::SERVER_WEBSOCKET:

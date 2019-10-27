@@ -7,19 +7,22 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
 use Hyperf\Guzzle\CoroutineHandler;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Swoole\Coroutine\Http\Client as SwooleHttpClient;
 
 /**
  * @internal
@@ -148,6 +151,70 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame('pass', $setting['http_proxy_password']);
     }
 
+    public function testProxyArrayHttpScheme()
+    {
+        $client = new Client([
+            'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertSame('127.0.0.1', $setting['http_proxy_host']);
+        $this->assertSame(12333, $setting['http_proxy_port']);
+        $this->assertArrayNotHasKey('http_proxy_user', $setting);
+        $this->assertArrayNotHasKey('http_proxy_password', $setting);
+    }
+
+    public function testProxyArrayHttpsScheme()
+    {
+        $client = new Client([
+            'base_uri' => 'https://www.baidu.com',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertSame('127.0.0.1', $setting['http_proxy_host']);
+        $this->assertSame(12334, $setting['http_proxy_port']);
+        $this->assertArrayNotHasKey('http_proxy_user', $setting);
+        $this->assertArrayNotHasKey('http_proxy_password', $setting);
+    }
+
+    public function testProxyArrayHostInNoproxy()
+    {
+        $client = new Client([
+            'base_uri' => 'https://www.baidu.cn',
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'proxy' => [
+                'http' => 'http://127.0.0.1:12333',
+                'https' => 'http://127.0.0.1:12334',
+                'no' => ['.cn'],
+            ],
+        ]);
+
+        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+
+        $setting = $json['setting'];
+
+        $this->assertArrayNotHasKey('http_proxy_host', $setting);
+        $this->assertArrayNotHasKey('http_proxy_port', $setting);
+    }
+
     public function testSslKeyAndCert()
     {
         $client = new Client([
@@ -186,6 +253,31 @@ class CoroutineHandlerTest extends TestCase
         $json = json_decode($content, true);
 
         $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
+    }
+
+    public function testStatusCode()
+    {
+        $client = new SwooleHttpClient('127.0.0.1', 80);
+        $client->statusCode = -1;
+        $request = \Mockery::mock(RequestInterface::class);
+        $handler = new CoroutineHandlerStub();
+        $ex = $handler->checkStatusCode($client, $request);
+        $this->assertInstanceOf(ConnectException::class, $ex);
+
+        $client = new SwooleHttpClient('127.0.0.1', 80);
+        $client->statusCode = -2;
+        $request = \Mockery::mock(RequestInterface::class);
+        $handler = new CoroutineHandlerStub();
+        $ex = $handler->checkStatusCode($client, $request);
+        $this->assertInstanceOf(RequestException::class, $ex);
+
+        $client = new SwooleHttpClient('127.0.0.1', 80);
+        $client->statusCode = -3;
+        $request = \Mockery::mock(RequestInterface::class);
+        $handler = new CoroutineHandlerStub();
+        $ex = $handler->checkStatusCode($client, $request);
+        $this->assertInstanceOf(RequestException::class, $ex);
+        $this->assertSame('Server reset', $ex->getMessage());
     }
 
     protected function getHandler($options = [])

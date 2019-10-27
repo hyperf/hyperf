@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer\Contract;
@@ -158,9 +158,9 @@ interface RequestInterface extends ServerRequestInterface
      * Retrieve a file from the request.
      *
      * @param null|mixed $default
-     * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
+     * @return null|UploadedFile|UploadedFile[]
      */
-    public function file(string $key, $default = null): ?UploadedFile;
+    public function file(string $key, $default = null);
 
     /**
      * Determine if the uploaded data contains a file.

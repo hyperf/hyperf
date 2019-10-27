@@ -7,12 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
 
 use Closure;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,12 +35,12 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         ]);
     }
 
-    protected function handleFound(array $routes, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
     {
-        if ($routes[1] instanceof Closure) {
-            $response = call($routes[1]);
+        if ($dispatched->handler->callback instanceof Closure) {
+            $response = call($dispatched->handler->callback);
         } else {
-            [$controller, $action] = $this->prepareHandler($routes[1]);
+            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.

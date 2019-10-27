@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Annotation;
@@ -28,8 +28,8 @@ class AspectCollector extends MetadataCollector
 
     public static function setAround(string $aspect, array $classes, array $annotations): void
     {
-        $classes && static::set('classes.' . $aspect, $classes);
-        $annotations && static::set('annotations.' . $aspect, $annotations);
+        static::set('classes.' . $aspect, $classes);
+        static::set('annotations.' . $aspect, $annotations);
         static::$aspectRules[$aspect] = [
             'classes' => $classes,
             'annotations' => $annotations,

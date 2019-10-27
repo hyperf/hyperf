@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 use Hyperf\Utils\ApplicationContext;
@@ -422,14 +422,19 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        if (version_compare(swoole_version(), '4.4.0', '>=')) {
-            $result = \Swoole\Coroutine\Run($callback);
-        } else {
-            go($callback);
-            $result = true;
-        }
+        $result = \Swoole\Coroutine\Run($callback);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
+    }
+}
+
+if (! function_exists('swoole_hook_flags')) {
+    /**
+     * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
+     */
+    function swoole_hook_flags(): int
+    {
+        return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
     }
 }

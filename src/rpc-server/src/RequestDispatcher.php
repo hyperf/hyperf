@@ -7,18 +7,18 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\RpcServer;
 
-use Hyperf\Dispatcher\AbstractDispatcher;
+use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Dispatcher\HttpRequestHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestDispatcher extends AbstractDispatcher
+class RequestDispatcher extends HttpDispatcher
 {
     /**
      * @var ContainerInterface

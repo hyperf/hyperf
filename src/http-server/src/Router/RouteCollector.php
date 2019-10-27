@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer\Router;
@@ -74,8 +74,8 @@ class RouteCollector
         foreach ((array) $httpMethod as $method) {
             $method = strtoupper($method);
             foreach ($routeDatas as $routeData) {
-                $this->dataGenerator->addRoute($method, $routeData, $handler);
-                MiddlewareManager::addMiddlewares($this->server, $routeData[0], $method, $options['middleware'] ?? []);
+                $this->dataGenerator->addRoute($method, $routeData, new Handler($handler, $route));
+                MiddlewareManager::addMiddlewares($this->server, $route, $method, $options['middleware'] ?? []);
             }
         }
     }

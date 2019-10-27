@@ -1,6 +1,6 @@
 # Middleware
 
-The middleware here refers to the `middleware mode`, which is a main function in the [hyperf/http-server](https://github.com/hyperf-cloud/http-server) component. It is mainly used to weave the entire process from `Request` to `Response`. Based on [PSR-15](https://www.php-fig.org/psr/psr-15/) implementation.
+The middleware here refers to the `middleware mode`, which is a main function in the [hyperf/http-server](https://github.com/hyperf/http-server) component. It is mainly used to weave the entire process from `Request` to `Response`. Based on [PSR-15](https://www.php-fig.org/psr/psr-15/) implementation.
 
 ## Principle
 
@@ -18,7 +18,7 @@ The global middleware can ONLY be configured through the configuration file. The
 ```php
 <?php
 return [
-    // `http` corresponds to the value corresponding to the name attribute of each server in config/server.php. This configuration is only applied to the server you configured.
+    // `http` corresponds to the value corresponding to the name attribute of each server in config/autoload/server.php. This configuration is only applied to the server you configured.
     'http' => [
         // Configure your global middleware in an array, in order according to the order of the array
         YourMiddleware::class

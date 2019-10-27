@@ -4,9 +4,9 @@
 
 AOP 为 `Aspect Oriented Programming` 的缩写，意为：`面向切面编程`，通过动态代理等技术实现程序功能的统一维护的一种技术。AOP 是 OOP 的延续，也是 Hyperf 中的一个重要内容，是函数式编程的一种衍生范型。利用 AOP 可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。   
 
-用通俗的话来讲，就是在 Hyperf 里可以通过 `切面(Aspect)` 介入到由 [hyperf/di](https://github.com/hyperf-cloud/di) 管理的任意类的任意方法的执行流程中去，从而改变或加强原方法的功能，这就是 AOP。
+用通俗的话来讲，就是在 Hyperf 里可以通过 `切面(Aspect)` 介入到由 [hyperf/di](https://github.com/hyperf/di) 管理的任意类的任意方法的执行流程中去，从而改变或加强原方法的功能，这就是 AOP。
 
-> 使用 AOP 功能必须使用 [hyperf/di](https://github.com/hyperf-cloud/di) 来作为依赖注入容器
+> 使用 AOP 功能必须使用 [hyperf/di](https://github.com/hyperf/di) 来作为依赖注入容器
 
 ## 介绍
 
@@ -17,7 +17,7 @@ AOP 为 `Aspect Oriented Programming` 的缩写，意为：`面向切面编程`�
 
 ## 定义切面(Aspect)
 
-每个 `切面(Aspect)` 必须实现 `Hyperf\Di\Aop\ArroundInterface` 接口，并提供 `public` 的 `$classes` 和 `$annotations` 属性，为了方便使用，我们可以通过继承 `Hyperf\Di\Aop\AbstractAspect` 来简化定义过程，我们通过代码来描述一下。
+每个 `切面(Aspect)` 必须实现 `Hyperf\Di\Aop\AroundInterface` 接口，并提供 `public` 的 `$classes` 和 `$annotations` 属性，为了方便使用，我们可以通过继承 `Hyperf\Di\Aop\AbstractAspect` 来简化定义过程，我们通过代码来描述一下。
 
 ```php
 <?php
@@ -64,7 +64,7 @@ class FooAspect extends AbstractAspect
 
 ## 代理类缓存
 
-所有被 AOP 影响的类，都会在 `./runtime/container/proxy/` 文件夹内生成对应的 `代理类缓存`，服务启动时，如果类所对应的代理类缓存存在，则不会重新生成直接使用缓存，即时 `Aspect` 的切入范围发生了改变。不存在时，则会自动重新生成新的代理类缓存。   
+所有被 AOP 影响的类，都会在 `./runtime/container/proxy/` 文件夹内生成对应的 `代理类缓存`，服务启动时，如果类所对应的代理类缓存存在，则不会重新生成直接使用缓存，即使 `Aspect` 的切入范围发生了改变。不存在时，则会自动重新生成新的代理类缓存。   
 
 在部署生产环境时，我们可能会希望 Hyperf 提前将所有代理类提前生成，而不是使用时动态的生成，可以通过 `php bin/hyperf.php di:init-proxy` 命令来生成所有代理类，该命令会忽视现有的代理类缓存，全部重新生成。   
 

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\JsonRpc;
@@ -16,9 +16,9 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\JsonRpc\DataFormatter;
@@ -65,6 +65,23 @@ class RpcServiceClientTest extends TestCase
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->add(1, 2);
         $this->assertEquals(3, $ret);
+    }
+
+    public function testServiceClientReturnArray()
+    {
+        $container = $this->createContainer();
+
+        /** @var MockInterface $transporter */
+        $transporter = $container->get(JsonRpcTransporter::class);
+        $transporter->shouldReceive('setLoadBalancer')
+            ->andReturnSelf();
+        $transporter->shouldReceive('send')
+            ->andReturn(json_encode([
+                'result' => ['params' => [1, 2], 'sum' => 3],
+            ]));
+        $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
+        $ret = $service->array(1, 2);
+        $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret);
     }
 
     public function testProxyFactory()
@@ -142,7 +159,7 @@ class RpcServiceClientTest extends TestCase
             JsonRpcTransporter::class => function () use ($transporter) {
                 return $transporter;
             },
-        ], [], new Scanner()));
+        ], new ScanConfig()));
         ApplicationContext::setContainer($container);
         return $container;
     }

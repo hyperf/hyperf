@@ -86,7 +86,7 @@ use Hyperf\RateLimit\Annotation\RateLimit;
 
 /**
  * @Controller(prefix="rate-limit")
- * @RateLimit(limitCallback={RateLimitController::class, 'limitCallback'})
+ * @RateLimit(limitCallback={RateLimitController::class, "limitCallback"})
  */
 class RateLimitController
 {

@@ -1,6 +1,6 @@
 # 中间件
 
-这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf-cloud/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
+这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
 
 ## 原理
 
@@ -18,7 +18,7 @@
 ```php
 <?php
 return [
-    // http 对应 config/server.php 内每个 server 的 name 属性对应的值，该配置仅应用在该 Server 中
+    // http 对应 config/autoload/server.php 内每个 server 的 name 属性对应的值，该配置仅应用在该 Server 中
     'http' => [
         // 数组内配置您的全局中间件，顺序根据该数组的顺序
         YourMiddleware::class
@@ -42,20 +42,20 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 // 每个路由定义方法都可接收一个 $options 参数
-Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
+Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 
 // 该 Group 下的所有路由都将应用配置的中间件
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
     },
-    ['middleware' => [ForMiddleware::class]]
+    ['middleware' => [FooMiddleware::class]]
 );
 
 ```
@@ -65,7 +65,7 @@ Router::addGroup(
 在通过注解定义路由时，我们推荐通过注解的方式来定义中间件，对中间件的定义有两个注解，分别为：   
   - `@Middleware` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
   - `@Middlewares` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `@Middleware` 注解实现多个中间件的定义
-  
+
 > 使用 `@Middleware` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `@Middlewares` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
@@ -73,6 +73,7 @@ Router::addGroup(
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
@@ -95,6 +96,7 @@ class IndexController
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -120,10 +122,11 @@ class IndexController
 #### 定义方法级别的中间件
 
 在通过配置文件的方式配置中间件时定义到方法级别上很简单，那么要通过注解的形式定义到方法级别呢？您只需将注解直接定义到方法上即可。   
-方法级别上的中间件会优先于类级别的中间件，我们通过代码来举例一下：   
+类级别上的中间件会优先于方法级别的中间件，我们通过代码来举例一下：   
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -221,7 +224,7 @@ class FooMiddleware implements MiddlewareInterface
 
 ## 中间件的执行顺序
 
-我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 方法级别中间件 -> 类级别中间件`。
+我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 类级别中间件 -> 方法级别中间件`。
 
 ## 全局更改请求和响应对象
 
@@ -235,6 +238,60 @@ use Psr\Http\Message\ServerRequestInterface;
 \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
 \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```
+
+## 自定义 CoreMiddleWare 的行为
+
+默认情况下，Hyperf 在处理路由找不到或 HTTP 方法不允许时，即 HTTP 状态码为 `404` `405` 的时候，是由 `CoreMiddleware` 直接处理并返回对应的响应对象的，得益于 Hyperf 依赖注入的设计，您可以通过替换对象的方式来把 `CoreMiddleware` 指向由您自己实现的 `CoreMiddleware` 去。
+
+比如我们希望定义一个 `App\Middleware\CoreMiddleware` 类来重写默认的行为，我们可以先定义一个 `App\Middleware\CoreMiddleware` 类如下，这里我们仅以 HTTP Server 为例，其它 Server 也可采用同样的做法来达到同样的目的。
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Utils\Contracts\Arrayable;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
+{
+    /**
+     * Handle the response when cannot found any routes.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        // 重写路由找不到的处理逻辑
+        return $this->response()->withStatus(404);
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    {
+        // 重写 HTTP 方法不允许的处理逻辑
+        return $this->response()->withStatus(405);
+    }
+}
+```
+
+然后再在 `config/autoload/dependencies.php` 定义对象关系重写 CoreMiddleware 对象：
+
+```php
+<?php
+return [
+    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
+];
+```
+
+> 这里直接重写 CoreMiddleware 的做法需要在 1.1.0+ 版本上才有效，1.0.x 版本仍需要你再将 CoreMiddleware 的上层调用通过 DI 进行重写，然后替换 CoreMiddleware 的传值为您定义的中间件类。
 
 ## 常用中间件
 

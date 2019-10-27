@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Framework\Bootstrap;
@@ -36,7 +36,7 @@ class TaskCallback
         $this->taskEnableCoroutine = $config->get('server.settings.task_enable_coroutine', false);
     }
 
-    public function onTask(Server $serv, ...$arguments)
+    public function onTask(Server $server, ...$arguments)
     {
         if ($this->taskEnableCoroutine) {
             $task = $arguments[0];
@@ -48,13 +48,13 @@ class TaskCallback
             $task->data = $data;
         }
 
-        $event = $this->dispatcher->dispatch(new OnTask($serv, $task));
+        $event = $this->dispatcher->dispatch(new OnTask($server, $task));
 
         if ($event instanceof OnTask && ! is_null($event->result)) {
             if ($this->taskEnableCoroutine) {
                 $task->finish($event->result);
             } else {
-                $serv->finish($event->result);
+                $server->finish($event->result);
             }
         }
     }

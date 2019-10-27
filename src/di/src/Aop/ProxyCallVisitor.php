@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Aop;
@@ -52,7 +52,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         ];
 
     /**
-     * @var Identifier
+     * @var null|Identifier
      */
     private $class;
 
@@ -78,7 +78,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 continue;
             }
             if (! $namespace instanceof Namespace_) {
-                return;
+                break;
             }
             // Add current class namespace.
             $usedNamespace = [
@@ -112,6 +112,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
             }
         }
+
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -134,7 +136,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 break;
             case $node instanceof StaticPropertyFetch && $this->extends:
                 // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
-                if ($node->class && $node->class->toString() === 'parent') {
+                if ($node->class instanceof Node\Name && $node->class->toString() === 'parent') {
                     $node->class = new Name($this->extends->toCodeString());
                     return $node;
                 }
@@ -225,17 +227,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         $class = $this->class->toString();
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // OriginalClass::class
-            new ClassConstFetch(new Name($class), new Identifier('class')),
+            new Node\Arg(new ClassConstFetch(new Name($class), new Identifier('class'))),
             // __FUNCTION__
-            new MagicConstFunction(),
+            new Node\Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
-            new StaticCall(new Name('self'), 'getParamsMap', [
-                new ClassConstFetch(new Name($class), new Identifier('class')),
-                new MagicConstFunction(),
-                new FuncCall(new Name('func_get_args')),
-            ]),
+            new Node\Arg(new StaticCall(new Name('self'), 'getParamsMap', [
+                new Node\Arg(new ClassConstFetch(new Name($class), new Identifier('class'))),
+                new Node\Arg(new MagicConstFunction()),
+                new Node\Arg(new FuncCall(new Name('func_get_args'))),
+            ])),
             // A closure that wrapped original method code.
-            new Closure([
+            new Node\Arg(new Closure([
                 'params' => value(function () use ($node) {
                     // Transfer the variadic variable to normal variable at closure argument. ...$params => $parms
                     $params = $node->getParams();
@@ -253,7 +255,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Variable('__method__'),
                 ],
                 'stmts' => $node->stmts,
-            ]),
+            ])),
         ]);
         $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new Node\Scalar\MagicConst\Function_()));
         $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new Node\Scalar\MagicConst\Method()));

@@ -15,16 +15,17 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Testing\\": "tests/"
         }
     },
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
         "phpunit/phpunit": "^7.0",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/http-message": "~1.0.0",
-        "hyperf/http-server": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/contract": "~1.1.0",
+        "hyperf/http-message": "~1.1.0",
+        "hyperf/http-server": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -35,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         }
     },
     "bin": [

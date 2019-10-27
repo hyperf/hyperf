@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server;
@@ -51,11 +51,14 @@ class Port
 
     public static function build(array $config)
     {
+        $config = self::filter($config);
+
         $port = new static();
         isset($config['name']) && $port->setName($config['name']);
         isset($config['type']) && $port->setType($config['type']);
         isset($config['host']) && $port->setHost($config['host']);
         isset($config['port']) && $port->setPort($config['port']);
+        isset($config['sock_type']) && $port->setSockType($config['sock_type']);
         isset($config['callbacks']) && $port->setCallbacks($config['callbacks']);
         isset($config['settings']) && $port->setSettings($config['settings']);
 
@@ -137,5 +140,19 @@ class Port
     {
         $this->settings = $settings;
         return $this;
+    }
+
+    private static function filter(array $config): array
+    {
+        if ((int) $config['type'] === ServerInterface::SERVER_BASE) {
+            $default = [
+                'open_http2_protocol' => false,
+                'open_http_protocol' => false,
+            ];
+
+            $config['settings'] = array_merge($default, $config['settings'] ?? []);
+        }
+
+        return $config;
     }
 }

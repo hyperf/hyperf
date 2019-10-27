@@ -7,12 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Command;
 
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -55,7 +56,12 @@ abstract class Command extends SymfonyCommand
      *
      * @var bool
      */
-    protected $coroutine = false;
+    protected $coroutine = true;
+
+    /**
+     * @var int
+     */
+    protected $hookFlags;
 
     /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
@@ -76,6 +82,11 @@ abstract class Command extends SymfonyCommand
         if (! $name && $this->name) {
             $name = $this->name;
         }
+
+        if (! is_int($this->hookFlags)) {
+            $this->hookFlags = swoole_hook_flags();
+        }
+
         parent::__construct($name);
     }
 
@@ -370,10 +381,10 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->coroutine) {
+        if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run(function () {
                 call([$this, 'handle']);
-            });
+            }, $this->hookFlags);
 
             return 0;
         }

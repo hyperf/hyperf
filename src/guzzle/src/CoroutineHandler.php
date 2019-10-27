@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Guzzle;
@@ -19,6 +19,7 @@ use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client;
+use function GuzzleHttp\is_host_in_noproxy;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
@@ -132,13 +133,27 @@ class CoroutineHandler
 
         // Proxy
         if (isset($options['proxy'])) {
-            $uri = new Uri($options['proxy']);
-            $settings['http_proxy_host'] = $uri->getHost();
-            $settings['http_proxy_port'] = $uri->getPort();
-            if ($uri->getUserInfo()) {
-                [$user, $password] = explode(':', $uri->getUserInfo());
-                $settings['http_proxy_user'] = $user;
-                $settings['http_proxy_password'] = $password;
+            $uri = null;
+            if (is_array($options['proxy'])) {
+                $scheme = $request->getUri()->getScheme();
+                if (isset($options['proxy'][$scheme])) {
+                    $host = $request->getUri()->getHost();
+                    if (! isset($options['proxy']['no']) || ! is_host_in_noproxy($host, $options['proxy']['no'])) {
+                        $uri = new Uri($options['proxy'][$scheme]);
+                    }
+                }
+            } else {
+                $uri = new Uri($options['proxy']);
+            }
+
+            if ($uri) {
+                $settings['http_proxy_host'] = $uri->getHost();
+                $settings['http_proxy_port'] = $uri->getPort();
+                if ($uri->getUserInfo()) {
+                    [$user, $password] = explode(':', $uri->getUserInfo());
+                    $settings['http_proxy_user'] = $user;
+                    $settings['http_proxy_password'] = $password;
+                }
             }
         }
 
@@ -175,11 +190,16 @@ class CoroutineHandler
             'errCode' => $errCode,
         ];
 
-        if ($statusCode === -1) {
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
             return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
         }
-        if ($statusCode === -2) {
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
             return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
+        }
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
+            return new RequestException('Server reset', $request, null, null, $ctx);
         }
 
         return true;

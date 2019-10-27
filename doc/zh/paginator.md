@@ -1,7 +1,7 @@
 # 分页器
 
-在您需要对数据进行分页处理时，可以借助 [hyperf/paginator](https://github.com/hyperf-cloud/paginator) 组件很方便的解决您的问题，您可对您的数据查询进行一定的封装处理，以便更好的使用分页功能，该组件也可用于其它框架上。   
-通常情况下，您对分页器的需求可能都是存在于数据库查询上，[hyperf/database](https://github.com/hyperf-cloud/database) 数据库组件已经与分页器组件进行了结合，您可以在进行数据查询时很方便的调用分页器来实现分页，具体可查阅 [数据库模型-分页](zh/db/paginator.md) 章节。
+在您需要对数据进行分页处理时，可以借助 [hyperf/paginator](https://github.com/hyperf/paginator) 组件很方便的解决您的问题，您可对您的数据查询进行一定的封装处理，以便更好的使用分页功能，该组件也可用于其它框架上。   
+通常情况下，您对分页器的需求可能都是存在于数据库查询上，[hyperf/database](https://github.com/hyperf/database) 数据库组件已经与分页器组件进行了结合，您可以在进行数据查询时很方便的调用分页器来实现分页，具体可查阅 [数据库模型-分页](zh/db/paginator.md) 章节。
 
 # 安装
 
@@ -81,7 +81,7 @@ if ($paginator->hasMorePages()) {
 }
 ```
 
-## 获取上一页和下一页的 URL
+## 获取对应分页的 URL
 
 ```php
 <?php
@@ -89,12 +89,34 @@ if ($paginator->hasMorePages()) {
 $nextPageUrl = $paginator->nextPageUrl();
 // 上一页的 URL
 $previousPageUrl = $paginator->previousPageUrl();
+// 获取指定 $page 页数的 URL
+$url = $paginator->url($page);
 ```
 
-## 获取指定页数的 URL
+## 是否处于第一页
 
 ```php
 <?php
-// 获取指定 $page 页数的 URL
-$url = $paginator->url($page);
+$onFirstPage = $paginator->onFirstPage();
+```
+
+## 是否有更多分页
+
+```php
+<?php
+$hasMorePages = $paginator->hasMorePages();
+```
+
+## 每页的数据条数
+
+```php
+<?php
+$perPage = $paginator->perPage();
+```
+
+## 数据总数
+
+```php
+<?php
+$total = $paginator->total();
 ```

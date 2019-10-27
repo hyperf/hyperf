@@ -3,6 +3,7 @@
   * [项目介绍](zh/README.md)
   * [线上交流](zh/communication.md)
   * [捐献及赞助](zh/donate.md)
+  * [版本更新记录](zh/changelog.md)
 
 * 快速入门
 
@@ -35,6 +36,8 @@
   * [命令行](zh/command.md)
   * [自动化测试](zh/testing.md)
   * [视图](zh/view.md)
+  * [国际化](zh/translation.md)
+  * [验证器](zh/validation.md)
   
 * 数据库模型
 
@@ -74,10 +77,11 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
-  * [Swoole Enterprise](zh/swoole-enterprise.md)
+  * [Swoole Tracker](zh/swoole-tracker.md)
   * [定时任务](zh/crontab.md)
   * [Task 机制](zh/task.md)
   * [枚举类](zh/constants.md)
+  * [Snowflake](zh/snowflake.md)
 
 * 应用部署
 
@@ -85,6 +89,7 @@
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
   * [Nginx 反向代理](zh/tutorial/nginx.md)
+  * [阿里云日志服务](zh/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
@@ -94,4 +99,8 @@
 
   * [指南前言](zh/component-guide/intro.md)
   * [创建新的组件](zh/component-guide/create.md)
-  * Hyperf 框架流程介入
+  * [ConfigProvider 机制](zh/component-guide/configprovider.md)
+
+* 版本升级指南
+  
+  * [1.1 升级指南](zh/upgrade/1.1.md)

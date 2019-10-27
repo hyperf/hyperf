@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Aop;
@@ -35,7 +35,7 @@ class ProxyClassNameVisitor extends NodeVisitorAbstract
     {
         // Rewirte the class name and extends the original class.
         if ($node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) {
-            $node->extends = $node->name;
+            $node->extends = new Node\Name($node->name->name);
             $node->name = new Node\Identifier($this->proxyClassName);
             return $node;
         }

@@ -7,23 +7,25 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Server;
 use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -35,7 +37,7 @@ class HttpServer extends Server
     protected $protocol;
 
     /**
-     * @var \Hyperf\Rpc\Contract\PackerInterface
+     * @var \Hyperf\Contract\PackerInterface
      */
     protected $packer;
 
@@ -45,13 +47,12 @@ class HttpServer extends Server
     protected $responseBuilder;
 
     public function __construct(
-        string $serverName,
-        string $coreHandler,
         ContainerInterface $container,
-        $dispatcher,
+        RequestDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         ProtocolManager $protocolManager
     ) {
-        parent::__construct($serverName, $coreHandler, $container, $dispatcher);
+        parent::__construct($container, $dispatcher, $exceptionHandlerDispatcher);
         $this->protocol = new Protocol($container, $protocolManager, 'jsonrpc-http');
         $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
@@ -67,10 +68,9 @@ class HttpServer extends Server
         ];
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->protocol, $this->serverName);
+        return new HttpCoreMiddleware($this->container, $this->protocol, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

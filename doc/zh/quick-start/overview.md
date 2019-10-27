@@ -8,7 +8,7 @@ Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作为默�
 不仅如此，框架还提供了极其强大和方便灵活的`注解路由`功能，关于路由的详情文档请查阅 [路由](zh/router.md) 章节
 
 ### 通过配置文件定义路由
-路由的文件位于 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
+路由的文件位于 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
@@ -103,7 +103,6 @@ class IndexController
     }
 }
 ```
-
 
 ## 处理 HTTP 请求
 
@@ -222,10 +221,81 @@ class IndexController
 ## 启动 Hyperf 服务
 
 由于 `Hyperf` 内置了协程服务器，也就意味着 `Hyperf` 将以 `CLI` 的形式去运行，所以在定义好路由及实际的逻辑代码之后，我们需要在项目根目录并通过命令行运行 `php bin/hyperf.php start` 来启动服务。   
-当 `Console` 界面显示服务启动后便可通过 `cURL` 或 浏览器对服务正常发起访问了，默认情况下上面的例子是访问 `http://127.0.0.1:9501/index/info?id=1`。
+当 `Console` 界面显示服务启动后便可通过 `cURL` 或 浏览器对服务正常发起访问了，默认服务会提供一个首页 `http://127.0.0.1:9501/`，对于本章示例引导的情况下，也就是上面的例子所对应的访问地址为 `http://127.0.0.1:9501/index/info?id=1`。
 
 ## 重新加载代码
 
 由于 `Hyperf` 是持久化的 `CLI` 应用，也就意味着一旦进程启动，已解析的 `PHP` 代码会持久化在进程中，也就意味着启动服务后您再修改的 `PHP` 代码不会改变已启动的服务，如您希望服务重新加载您修改后的代码，您需要通过在启动的 `Console` 中键入 `CTRL + C` 终止服务，再重新执行启动命令完成重启和重新加载。
 
 > Tips: 您也可以将启动 Server 的命令配置在 IDE 上，便可直接通过 IDE 的 `启动/停止` 操作快捷的完成 `启动服务` 或 `重启服务` 的操作。
+> 且非视图开发时可以采用 [TDD(Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369) 测试驱动开发来进行开发，这样不仅可以省略掉服务重启和频繁切换窗口的麻烦，还可保证接口数据的正确性。
+
+## 多端口监听
+
+`Hyperf` 支持监听多个端口，但因为 `callbacks` 中的对象直接从容器中获取，所以相同的 `Hyperf\HttpServer\Server::class` 会在容器中被覆盖。所以我们需要在依赖关系中，重新定义 `Server`，确保对象隔离。
+
+> WebSocket 和 TCP 等 Server 同理。
+
+`config/autoload/dependencies.php`
+
+```php
+<?php
+
+return [
+    'InnerHttp' => Hyperf\HttpServer\Server::class,
+];
+```
+
+`config/autoload/server.php`
+
+```php
+<?php
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+        ],
+        [
+            'name' => 'innerHttp',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => ['InnerHttp', 'onRequest'],
+            ],
+        ],
+    ]
+];
+```
+
+## 事件
+
+除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
+
+|            事件名              |                备注                 |
+|:-----------------------------:|:-----------------------------------:|
+|    SwooleEvent::ON_REQUEST    |                                     |
+|     SwooleEvent::ON_START     |   该事件在 `SWOOLE_BASE` 模式下无效    |
+| SwooleEvent::ON_WORKER_START  |                                     |
+|  SwooleEvent::ON_WORKER_EXIT  |                                     |
+| SwooleEvent::ON_PIPE_MESSAGE  |                                     |
+|    SwooleEvent::ON_RECEIVE    |                                     |
+|    SwooleEvent::ON_CONNECT    |                                     |
+|  SwooleEvent::ON_HAND_SHAKE   |                                     |
+|     SwooleEvent::ON_OPEN      |                                     |
+|    SwooleEvent::ON_MESSAGE    |                                     |
+|     SwooleEvent::ON_CLOSE     |                                     |
+|     SwooleEvent::ON_TASK      |                                     |
+|    SwooleEvent::ON_FINISH     |                                     |
+|   SwooleEvent::ON_SHUTDOWN    |                                     |
+|    SwooleEvent::ON_PACKET     |                                     |
+| SwooleEvent::ON_MANAGER_START |                                     |
+| SwooleEvent::ON_MANAGER_STOP  |                                     |

@@ -7,13 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
+use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
 
 class TaskExecutor
@@ -29,13 +30,19 @@ class TaskExecutor
     protected $factory;
 
     /**
+     * @var ExceptionNormalizer
+     */
+    protected $normalizer;
+
+    /**
      * @var bool
      */
     protected $isTaskEnvironment = false;
 
-    public function __construct(ChannelFactory $factory)
+    public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
     {
         $this->factory = $factory;
+        $this->normalizer = $normalizer;
     }
 
     public function setServer(Server $server): void
@@ -53,7 +60,14 @@ class TaskExecutor
             throw new TaskExecuteException('Task execute failed.');
         }
 
-        return $this->factory->pop($taskId, $timeout);
+        $result = $this->factory->pop($taskId, $timeout);
+
+        if ($result instanceof Exception) {
+            $exception = $this->normalizer->denormalize($result->attributes, $result->class);
+            throw $exception;
+        }
+
+        return $result;
     }
 
     public function isTaskEnvironment(): bool

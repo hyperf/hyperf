@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Di;
 
-use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
@@ -29,7 +29,7 @@ class MakeTest extends TestCase
 {
     public function setUp()
     {
-        $container = new Container(new DefinitionSource([], [], new Scanner()));
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
         ApplicationContext::setContainer($container);
     }
 

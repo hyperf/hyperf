@@ -1,10 +1,10 @@
 # Command
 
-The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf-cloud/command) component，And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
+The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component，And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
 
 # Installation
 
-This component usually exists by default, but if you want to use it for non-Hyperf projects, you can also rely on the [hyperf/command](https://github.com/hyperf-cloud/command) component with the following command:
+This component usually exists by default, but if you want to use it for non-Hyperf projects, you can also rely on the [hyperf/command](https://github.com/hyperf/command) component with the following command:
 
 ```bash
 composer require hyperf/command
@@ -18,7 +18,7 @@ Run `php bin/hyperf.php` without any arguments directly is to display the comman
 
 ## Generate a Command
 
-If you have the [hyperf/devtool](https://github.com/hyperf-cloud/devtool) component installed, you can generate a custom command with the `gen:command` command:
+If you have the [hyperf/devtool](https://github.com/hyperf/devtool) component installed, you can generate a custom command with the `gen:command` command:
 
 ```bash
 php bin/hyperf.php gen:command FooCommand
@@ -130,6 +130,7 @@ namespace App\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * @Command

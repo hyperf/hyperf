@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpMessage\Server;
@@ -15,6 +15,7 @@ namespace Hyperf\HttpMessage\Server;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -80,7 +81,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         $request->cookieParams = ($swooleRequest->cookie ?? []);
         $request->queryParams = ($swooleRequest->get ?? []);
         $request->serverParams = ($server ?? []);
-        $request->parsedBody = ($swooleRequest->post ?? []);
+        $request->parsedBody = self::normalizeParsedBody($swooleRequest->post ?? [], $request);
         $request->uploadedFiles = self::normalizeFiles($swooleRequest->files ?? []);
         $request->swooleRequest = $swooleRequest;
         return $request;
@@ -349,10 +350,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * This method obviates the need for a hasAttribute() method, as it allows
      * specifying a default value to return if the attribute is not found.
      *
-     * @see getAttributes()
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
      * @return mixed
+     * @see getAttributes()
      */
     public function getAttribute($name, $default = null)
     {
@@ -367,10 +368,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * immutability of the message, and MUST return an instance that has the
      * updated attribute.
      *
-     * @see getAttributes()
      * @param string $name the attribute name
      * @param mixed $value the value of the attribute
      * @return static
+     * @see getAttributes()
      */
     public function withAttribute($name, $value)
     {
@@ -387,9 +388,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * immutability of the message, and MUST return an instance that removes
      * the attribute.
      *
-     * @see getAttributes()
      * @param string $name the attribute name
      * @return static
+     * @see getAttributes()
      */
     public function withoutAttribute($name)
     {
@@ -466,6 +467,20 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     {
         $this->swooleRequest = $swooleRequest;
         return $this;
+    }
+
+    protected static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null)
+    {
+        if (! $request) {
+            return $data;
+        }
+
+        $contentType = strtolower($request->getHeaderLine('Content-Type'));
+        if (strpos($contentType, 'application/json') === 0) {
+            $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        }
+
+        return $data;
     }
 
     /**

@@ -1,10 +1,10 @@
 # 命令行
 
-Hyperf 的命令行默认由 [hyperf/command](https://github.com/hyperf-cloud/command) 组件提供，而该组件本身也是基于 [symfony/console](https://github.com/symfony/console) 的抽象。
+Hyperf 的命令行默认由 [hyperf/command](https://github.com/hyperf/command) 组件提供，而该组件本身也是基于 [symfony/console](https://github.com/symfony/console) 的抽象。
 
 # 安装
 
-通常来说该组件会默认存在，但如果您希望用于非 Hyperf 项目，也可通过下面的命令依赖 [hyperf/command](https://github.com/hyperf-cloud/command) 组件：
+通常来说该组件会默认存在，但如果您希望用于非 Hyperf 项目，也可通过下面的命令依赖 [hyperf/command](https://github.com/hyperf/command) 组件：
 
 ```bash
 composer require hyperf/command
@@ -18,7 +18,7 @@ composer require hyperf/command
 
 ## 生成命令
 
-如果你有安装 [hyperf/devtool](https://github.com/hyperf-cloud/devtool) 组件的话，可以通过 `gen:command` 命令来生成一个自定义命令：
+如果你有安装 [hyperf/devtool](https://github.com/hyperf/devtool) 组件的话，可以通过 `gen:command` 命令来生成一个自定义命令：
 
 ```bash
 php bin/hyperf.php gen:command FooCommand
@@ -130,6 +130,7 @@ namespace App\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * @Command

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Redis;
@@ -34,6 +34,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'auth' => null,
         'db' => 0,
         'timeout' => 0.0,
+        'options' => [],
     ];
 
     /**
@@ -81,7 +82,14 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             throw new ConnectionException('Connection reconnect failed.');
         }
 
-        if (isset($auth)) {
+        $options = $this->config['options'] ?? [];
+
+        foreach ($options as $name => $value) {
+            // The name is int, value is string.
+            $redis->setOption($name, $value);
+        }
+
+        if (isset($auth) && $auth !== '') {
             $redis->auth($auth);
         }
 
@@ -98,6 +106,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function close(): bool
     {
+        unset($this->connection);
+
         return true;
     }
 

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
@@ -21,12 +21,12 @@ class Request extends BaseRequest
 {
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
-    public function __construct(string $method, Message $argument, $headers = [])
+    public function __construct(string $method, Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
         $this->headers = array_replace($this->getDefaultHeaders(), $headers);
         $this->path = $method;
-        $this->data = Parser::serializeMessage($argument);
+        $argument && $this->data = Parser::serializeMessage($argument);
     }
 
     public function getDefaultHeaders(): array

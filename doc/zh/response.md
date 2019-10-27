@@ -70,7 +70,7 @@ class IndexController
 
 ## 返回视图
 
-请参考 [视图](view.md) 部分文档
+请参考 [视图](zh/view.md) 部分文档
 
 ## 重定向
 
@@ -78,11 +78,11 @@ class IndexController
 
 `redirect` 方法：   
 
-|        参数          | 类型   |      默认值      |        备注        |
-|:-------------------:|:------:|:---------------:|:------------------:|
-|        toUrl        | string |       无        |     如果参数不存在 `http://` 或 `https://` 则根据当前服务的 Host 自动拼接对应的 URL，且根据 `$schema` 参数拼接协议     |
-|        status       | int    |       302       |     响应状态码     |
-|        schema       | string |       http      |    当 `$toUrl` 不存在 `http://` 或 `https://` 时生效，仅可传递 `http` 或 `https`    |
+|  参数  |  类型  | 默认值 |                                                      备注                                                      |
+|:------:|:------:|:------:|:--------------------------------------------------------------------------------------------------------------:|
+| toUrl  | string |   无   | 如果参数不存在 `http://` 或 `https://` 则根据当前服务的 Host 自动拼接对应的 URL，且根据 `$schema` 参数拼接协议 |
+| status |  int   |  302   |                                                   响应状态码                                                   |
+| schema | string |  http  |                 当 `$toUrl` 不存在 `http://` 或 `https://` 时生效，仅可传递 `http` 或 `https`                  |
 
 ```php
 <?php
@@ -125,4 +125,31 @@ class IndexController
 
 ## 分块传输编码 Chunk
 
-## 返回文件下载
+## 文件下载
+
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `download(string $file, string $name = '')`  返回一个已设置下载文件状态的 `Psr7ResponseInterface` 对象。   
+如果请求中带有 `if-match` 或 `if-none-match` 的请求头，Hyperf 也会根据协议标准与 `ETag` 进行比较，如果一致则会返回一个 `304` 状态码的响应。
+
+`download` 方法：   
+
+| 参数 |  类型  | 默认值 |                                备注                                 |
+|:----:|:------:|:------:|:-------------------------------------------------------------------:|
+| file | string |   无   | 要返回下载文件的绝对路径，同通过 BASE_PATH 常量来定位到项目的根目录 |
+| name | string |   无   |         客户端下载文件的文件名，为空则会使用下载文件的原名          |
+
+
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
+
+class IndexController
+{
+    public function index(ResponseInterface $response): Psr7ResponseInterface
+    {
+        return $response->download(BASE_PATH . '/public/file.csv', 'filename.csv');
+    }
+}
+```

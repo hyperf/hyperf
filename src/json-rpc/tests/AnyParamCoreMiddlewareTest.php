@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\JsonRpc;
@@ -24,6 +24,7 @@ use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\JsonRpc\CoreMiddleware;
 use Hyperf\JsonRpc\DataFormatter;
+use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\NormalizeDataFormatter;
 use Hyperf\JsonRpc\PathGenerator;
@@ -31,6 +32,7 @@ use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -65,6 +67,8 @@ class AnyParamCoreMiddlewareTest extends TestCase
                 ['value' => 1],
                 ['value' => 2],
             ]);
+
+        $request = $middleware->dispatch($request);
         Context::set(ResponseInterface::class, new Response());
 
         $response = $middleware->process($request, $handler);
@@ -72,6 +76,29 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('result', $ret);
         $this->assertEquals(['value' => 3], $ret['result']);
+    }
+
+    public function testArray()
+    {
+        $container = $this->createContainer();
+        $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
+        $router->addRoute('/CalculatorService/array', [
+            CalculatorService::class, 'array',
+        ]);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
+        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $request = (new Request('POST', new Uri('/CalculatorService/array')))
+            ->withParsedBody([1, 2]);
+
+        $request = $middleware->dispatch($request);
+        Context::set(ResponseInterface::class, new Response());
+
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(200, $response->getStatusCode());
+        $ret = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('result', $ret);
+        $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret['result']);
     }
 
     public function testException()
@@ -88,6 +115,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
 
+        $request = $middleware->dispatch($request);
         try {
             $response = $middleware->process($request, $handler);
         } catch (\Throwable $exception) {
@@ -119,6 +147,12 @@ class AnyParamCoreMiddlewareTest extends TestCase
                         'path-generator' => PathGenerator::class,
                         'data-formatter' => DataFormatter::class,
                     ],
+                    'jsonrpc-http' => [
+                        'packer' => JsonPacker::class,
+                        'transporter' => JsonRpcHttpTransporter::class,
+                        'path-generator' => PathGenerator::class,
+                        'data-formatter' => DataFormatter::class,
+                    ],
                 ],
             ]));
         $container->shouldReceive('has')->andReturn(true);
@@ -146,6 +180,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->andReturnUsing(function ($class, $args) {
                 return new ResponseBuilder(...array_values($args));
             });
+        $container->shouldReceive('get')->with(RequestDispatcher::class)->andReturn(new RequestDispatcher($container));
 
         ApplicationContext::setContainer($container);
         return $container;

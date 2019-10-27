@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\AsyncQueue\Driver;
@@ -39,7 +39,7 @@ class RedisDriver extends Driver
 
     /**
      * Retry delay time.
-     * @var int
+     * @var array|int
      */
     protected $retrySeconds;
 
@@ -71,20 +71,6 @@ class RedisDriver extends Driver
             return (bool) $this->redis->lPush($this->channel->getWaiting(), $data);
         }
 
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
-    }
-
-    /**
-     * @deprecated v1.1
-     */
-    public function delay(JobInterface $job, int $delay = 0): bool
-    {
-        if ($delay === 0) {
-            return $this->push($job);
-        }
-
-        $message = new Message($job);
-        $data = $this->packer->pack($message);
         return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
     }
 
@@ -171,7 +157,23 @@ class RedisDriver extends Driver
     protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $this->retrySeconds, $data) > 0;
+
+        $delay = time() + $this->getRetrySeconds($message->getAttempts());
+
+        return $this->redis->zAdd($this->channel->getDelayed(), $delay, $data) > 0;
+    }
+
+    protected function getRetrySeconds(int $attempts): int
+    {
+        if (! is_array($this->retrySeconds)) {
+            return $this->retrySeconds;
+        }
+
+        if (empty($this->retrySeconds)) {
+            return 10;
+        }
+
+        return $this->retrySeconds[$attempts - 1] ?? end($this->retrySeconds);
     }
 
     /**

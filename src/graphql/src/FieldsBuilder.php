@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GraphQL;
@@ -246,7 +246,7 @@ class FieldsBuilder
         if ($annotationName === Field::class) {
             $parent = get_parent_class($refClass->getName());
             if ($parent !== null) {
-                $closestMatchingTypeClass = $this->typeMapper->findClosestMatchingParent((string)$parent);
+                $closestMatchingTypeClass = $this->typeMapper->findClosestMatchingParent((string) $parent);
             }
         }
 
@@ -719,7 +719,7 @@ class FieldsBuilder
                 case '\\' . ID::class:
                     return GraphQLType::id();
                 default:
-                    $className = ltrim((string)$type->getFqsen(), '\\');
+                    $className = ltrim((string) $type->getFqsen(), '\\');
                     if ($mapToInputType) {
                         return $this->typeMapper->mapClassToInputType($className);
                     }

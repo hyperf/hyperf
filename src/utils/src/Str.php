@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils;
@@ -324,7 +324,7 @@ class Str
     /**
      * Replace the first occurrence of a given value in the string.
      */
-    public static function replaceFirst(string $search, string  $replace, string $subject): string
+    public static function replaceFirst(string $search, string $replace, string $subject): string
     {
         if ($search == '') {
             return $subject;
@@ -342,7 +342,7 @@ class Str
     /**
      * Replace the last occurrence of a given value in the string.
      */
-    public static function replaceLast(string $search, string  $replace, string $subject): string
+    public static function replaceLast(string $search, string $replace, string $subject): string
     {
         $position = strrpos($subject, $search);
 

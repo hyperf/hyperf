@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server;
@@ -112,6 +112,9 @@ class Server implements ServerInterface
             } else {
                 /** @var \Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
+                if (! $slaveServer) {
+                    throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
+                }
                 $server->getSettings() && $slaveServer->set($server->getSettings());
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
                 ServerManager::add($name, [$type, $slaveServer]);
@@ -169,7 +172,7 @@ class Server implements ServerInterface
                 return new SwooleHttpServer($host, $port, $mode, $sockType);
             case ServerInterface::SERVER_WEBSOCKET:
                 return new SwooleWebSocketServer($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_TCP:
+            case ServerInterface::SERVER_BASE:
                 return new SwooleServer($host, $port, $mode, $sockType);
         }
 
@@ -177,7 +180,7 @@ class Server implements ServerInterface
     }
 
     /**
-     * @param Port|SwooleServer $server
+     * @param \Swoole\Server\Port|SwooleServer $server
      */
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {

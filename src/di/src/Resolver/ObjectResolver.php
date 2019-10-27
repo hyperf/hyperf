@@ -7,12 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Resolver;
 
-use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyInjection;
@@ -48,14 +47,12 @@ class ObjectResolver implements ResolverInterface
 
     /**
      * ObjectResolver constructor.
-     *
-     * @param Container $container
      */
     public function __construct(ContainerInterface $container, ResolverInterface $definitionResolver)
     {
         $this->container = $container;
         $this->definitionResolver = $definitionResolver;
-        $this->proxyFactory = $container->getProxyFactory();
+        $this->proxyFactory = $container->get(ProxyFactory::class);
         $this->parameterResolver = new ParameterResolver($definitionResolver);
     }
 
@@ -64,12 +61,18 @@ class ObjectResolver implements ResolverInterface
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
-     * @throws DependencyException
      * @throws InvalidDefinitionException
+     * @throws DependencyException
      * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
+        if (! $definition instanceof ObjectDefinition) {
+            throw InvalidDefinitionException::create(
+                $definition,
+                sprintf('Entry "%s" cannot be resolved: the class is not instanceof ObjectDefinition', $definition->getName())
+            );
+        }
         return $this->createInstance($definition, $parameters);
     }
 

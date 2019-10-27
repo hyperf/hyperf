@@ -7,12 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
 
 use BadMethodCallException;
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
@@ -145,7 +147,7 @@ class GrpcClient
         }
         $this->mainCoroutineId = Coroutine::id();
         if ($this->mainCoroutineId <= 0) {
-            throw new BadMethodCallException('You must start it in an alone coroutine.');
+            throw new BadMethodCallException('You have to start it in an alone coroutine.');
         }
         if (! $this->getHttpClient()->connect()) {
             return false;
@@ -168,6 +170,10 @@ class GrpcClient
             $shouldKill = true;
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
+            if ($shouldKill) {
+                // Set `connected` of http client to `false`
+                $this->getHttpClient()->close();
+            }
         }
         // Clear the receive channel map
         if (! empty($this->recvChannelMap)) {
@@ -206,14 +212,11 @@ class GrpcClient
     /**
      * Open a stream and return the id.
      */
-    public function openStream(string $path, string $data = null, string $method = 'POST'): int
+    public function openStream(string $path, string $data = null): int
     {
-        $request = new Request();
-        $request->method = $method;
-        $request->path = $path;
-        if ($data) {
-            $request->data = $data;
-        }
+        $request = new Request($path);
+        $data && $request->data = $data;
+
         $request->pipeline = true;
 
         return $this->send($request);
@@ -229,6 +232,9 @@ class GrpcClient
             $streamId = $this->sendResultChannel->pop();
         } else {
             $streamId = $this->getHttpClient()->send($request);
+        }
+        if ($streamId === false) {
+            throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
         }
         if ($streamId > 0) {
             $this->recvChannelMap[$streamId] = $this->channelPool->get();
@@ -256,6 +262,11 @@ class GrpcClient
         return false;
     }
 
+    public function getErrCode(): int
+    {
+        return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
+
     /**
      * @param bool|float $yield
      */
@@ -278,9 +289,7 @@ class GrpcClient
 
     private function sendCloseRequest(): int
     {
-        $closeRequest = new Request();
-        $closeRequest->method = 'GET';
-        $closeRequest->path = Status::CLOSE_KEYWORD;
+        $closeRequest = new Request(Status::CLOSE_KEYWORD);
 
         return $this->send($closeRequest);
     }
@@ -330,7 +339,7 @@ class GrpcClient
                     }
                 } else {
                     // If no response, then close all the connection.
-                    if (! $this->isConnected() && $this->closeRecv()) {
+                    if ($this->closeRecv()) {
                         break;
                     }
                 }

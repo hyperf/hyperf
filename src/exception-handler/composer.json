@@ -15,15 +15,16 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\ExceptionHandler\\": "tests/"
         }
     },
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0",
-        "hyperf/contract": "~1.0.0",
-        "hyperf/dispatcher": "~1.0.0",
-        "hyperf/utils": "~1.0.0"
+        "hyperf/contract": "~1.1.0",
+        "hyperf/dispatcher": "~1.1.0",
+        "hyperf/utils": "~1.1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -35,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ExceptionHandler\\ConfigProvider"

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DbConnection;
@@ -21,6 +21,8 @@ use Hyperf\Database\Commands\Migrations\ResetCommand;
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
 use Hyperf\Database\Commands\Migrations\StatusCommand;
 use Hyperf\Database\Commands\ModelCommand;
+use Hyperf\Database\Commands\Seeders\GenSeederCommand;
+use Hyperf\Database\Commands\Seeders\SeedCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
@@ -49,10 +51,14 @@ class ConfigProvider
                 ResetCommand::class,
                 RollbackCommand::class,
                 StatusCommand::class,
+                GenSeederCommand::class,
+                SeedCommand::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

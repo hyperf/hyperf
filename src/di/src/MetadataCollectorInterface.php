@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di;
@@ -35,4 +35,9 @@ interface MetadataCollectorInterface
      * Deserialize the serialized metadata and set the metadata to holder.
      */
     public static function deserialize(string $metadata): bool;
+
+    /**
+     * Return all metadata array.
+     */
+    public static function list(): array;
 }
