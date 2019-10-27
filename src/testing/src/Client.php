@@ -76,6 +76,26 @@ class Client extends Server
         return $this->packer->unpack($response->getBody()->getContents());
     }
 
+    public function put($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('PUT', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
+    public function delete($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('DELETE', $uri, [
+            'headers' => $headers,
+            'query' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
     public function json($uri, $data = [], $headers = [])
     {
         $headers['Content-Type'] = 'application/json';

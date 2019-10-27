@@ -1,8 +1,39 @@
-# v1.1.3
+# v1.1.4 - TBD
+
+## Added
+
+- [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+
+## Fixed
+
+- [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
+- [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
+
+## Optimized
+
+- [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+
+## Changed
+
+- [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
+
+# v1.1.3 - 2019-10-24
+
+## Added
+
+- [#745](https://github.com/hyperf/hyperf/pull/745) Added option `with-comments` for command `gen:model`.
+- [#747](https://github.com/hyperf/hyperf/pull/747) Added `AfterConsume`,`BeforeConsume`,`FailToConsume` events for AMQP consumer. 
+- [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
 
 ## Fixed
 
 - [#741](https://github.com/hyperf/hyperf/pull/741) Fixed `db:seed` without filename.
+- [#748](https://github.com/hyperf/hyperf/pull/748) Fixed bug that `SymfonyNormalizer` not denormalize result of type `array`.
+- [#769](https://github.com/hyperf/hyperf/pull/769) Fixed invalid response exception throwed when result/error of jsonrpc response is null.
+
+# Changed
+
+- [#767](https://github.com/hyperf/hyperf/pull/767) Renamed property `running` to `listening` for `AbstractProcess`.
 
 # v1.1.2 - 2019-10-17
 
