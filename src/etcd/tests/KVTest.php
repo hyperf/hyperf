@@ -14,8 +14,13 @@ namespace HyperfTest\Etcd;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Container;
 use Hyperf\Etcd\KVFactory;
 use Hyperf\Etcd\KVInterface;
+use Hyperf\Etcd\V3\KV;
+use Hyperf\Guzzle\HandlerStackFactory;
+use Hyperf\Guzzle\PoolHandler;
+use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -43,8 +48,17 @@ class KVTest extends TestCase
             ],
         ]);
 
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            var_dump($class, $args);
+        });
+        $container->shouldReceive('make')->with(KV::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new KV(...array_values($args));
+        });
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
+        $container->shouldReceive('get')->with(HandlerStackFactory::class)->andReturn(new HandlerStackFactory());
 
         $factory = new KVFactory();
         $kv = $factory($container);
