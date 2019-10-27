@@ -14,6 +14,7 @@
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd. 
 
 ## Changed
 
