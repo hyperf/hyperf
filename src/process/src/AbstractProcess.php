@@ -18,9 +18,9 @@ use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine as SwooleCoroutine;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -149,7 +149,7 @@ abstract class AbstractProcess implements ProcessInterface
                         $logger->error($formatter->format($exception));
                     }
                 } finally {
-                    Coroutine::yieldResume();
+                    SwooleCoroutine::sleep(0.001);
                 }
             }
         });
