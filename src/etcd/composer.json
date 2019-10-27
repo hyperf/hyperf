@@ -20,7 +20,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/guzzle": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "start-point/etcd-php": "^1.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
@@ -28,8 +30,6 @@
         "swoft/swoole-ide-helper": "dev-master"
     },
     "suggest": {
-        "start-point/etcd-php": "Etcd v3 http client.",
-        "linkorb/etcd-php": "Etcd v2 http client."
     },
     "config": {
         "sort-packages": true
