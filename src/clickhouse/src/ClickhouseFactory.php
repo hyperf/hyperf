@@ -35,7 +35,7 @@ class ClickhouseFactory
         $settings = $config['settings'] ?? [];
 
         if (method_exists(Runtime::class, 'getHookFlags')) {
-            if (! (Runtime::getHookFlags & SWOOLE_HOOK_CURL)) {
+            if (! (Runtime::getHookFlags() & SWOOLE_HOOK_CURL)) {
                 throw new NotHookException('The swoole hook flags not support CURL.');
             }
         }
