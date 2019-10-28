@@ -37,7 +37,7 @@ class Timer
     /**
      * @var bool
      */
-    private $observed = false;
+    private $ended = false;
 
     public function __construct(string $name, ?array $default = [])
     {
@@ -53,7 +53,7 @@ class Timer
 
     public function end(?array $labels = []): void
     {
-        if ($this->observed) {
+        if ($this->ended) {
             return;
         }
         foreach ($labels as $key => $value) {
@@ -68,7 +68,7 @@ class Timer
         if ($d < 0) {
             $d = (float) 0;
         }
-        $histogram->observe($d);
-        $this->observed = true;
+        $histogram->put($d);
+        $this->ended = true;
     }
 }

@@ -32,9 +32,8 @@
     "suggest": {
         "domnikl/statsd": "Required to use StatdD driver.",
         "influxdb/influxdb-php": "Required to use InfluxDB driver.",
-        "hyperf/config": "Required to use annotations.",
-        "hyperf/event": "~1.1.0",
-        "hyperf/framework": "~1.1.0",
+        "hyperf/di": "Required to use annotations.",
+        "hyperf/event": "Required to use listeners for default metrics.",
         "hyperf/process": "Required to use standalone process, or you have to roll your own",
     },
     "autoload": {

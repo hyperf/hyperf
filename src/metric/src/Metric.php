@@ -41,7 +41,7 @@ class Metric
         make(MetricFactoryInterface::class)
             ->makeHistogram($name, array_keys($labels))
             ->with(...array_values($labels))
-            ->observe($delta);
+            ->put($delta);
     }
 
     public static function time(string $name, callable $func, ?array $args = [], ?array $labels = [])

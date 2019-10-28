@@ -63,7 +63,7 @@ class OnPipeMessage implements ListenerInterface
                     break;
                 case $inner instanceof Histogram:
                     $histogram = $this->factory->makeHistogram($inner->name, $inner->labelNames);
-                    $histogram->with(...$inner->labelValues)->observe($inner->value);
+                    $histogram->with(...$inner->labelValues)->put($inner->value);
                     break;
                 default:
                     // Nothing to do

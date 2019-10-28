@@ -18,6 +18,7 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -82,7 +83,7 @@ class OnWorkerStart implements ListenerInterface
          * If no standalone process is started, we have to do handle metrics on worker.
          */
         if (! $this->config->get('metric.use_standalone_process', true)) {
-            go(function () {
+            Coroutine::create(function () {
                 $this->factory->handle();
             });
         }

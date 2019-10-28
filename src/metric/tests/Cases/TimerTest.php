@@ -64,7 +64,7 @@ class TimerTest extends TestCase
             {
                 $histogram = Mockery::mock(HistogramInterface::class);
                 $histogram->shouldReceive('with')->andReturn($histogram);
-                $histogram->shouldReceive('observe')->once();
+                $histogram->shouldReceive('put')->once();
                 return $histogram;
             }
         });
