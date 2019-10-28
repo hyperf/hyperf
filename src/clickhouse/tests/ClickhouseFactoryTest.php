@@ -24,7 +24,38 @@ use PHPUnit\Framework\TestCase;
  */
 class ClickhouseFactoryTest extends TestCase
 {
+    /**
+     * @group NonCoroutine
+     */
     public function testNotHookCurl()
+    {
+        run(function () {
+            $config = new Config([
+                'clickhouse' => [
+                    'default' => [
+                        'host' => 'localhost',
+                        'port' => '8123',
+                        'username' => 'default',
+                        'password' => '',
+                        'settings' => [
+                            'database' => 'default',
+                        ],
+                    ],
+                ],
+            ]);
+
+            $factory = new ClickhouseFactory($config);
+
+            $db = $factory->create();
+
+            $this->assertInstanceOf(Client::class, $db);
+        }, SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
+    }
+
+    /**
+     * @requires extension swoole 4.4.9
+     */
+    public function testNotHookException()
     {
         $config = new Config([
             'clickhouse' => [
@@ -42,22 +73,8 @@ class ClickhouseFactoryTest extends TestCase
 
         $factory = new ClickhouseFactory($config);
 
-        // $this->expectException(NotHookException::class);
+        $this->expectException(NotHookException::class);
 
-        $db = $factory->create();
-
-        $this->assertInstanceOf(Client::class, $db);
-    }
-
-    public function testEnable()
-    {
-        $flag = SWOOLE_HOOK_ALL;
-        $this->assertTrue(($flag & SWOOLE_HOOK_CURL) === 0);
-
-        $flag = SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL;
-        $this->assertTrue(($flag & SWOOLE_HOOK_CURL) !== 0);
-
-        $flag = SWOOLE_HOOK_ALL | SWOOLE_HOOK_BLOCKING_FUNCTION;
-        $this->assertTrue(($flag & SWOOLE_HOOK_CURL) === 0);
+        $factory->create();
     }
 }
