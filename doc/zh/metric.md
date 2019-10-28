@@ -81,7 +81,7 @@ return [
 ];
 ```
 
-Prometheus 有两种工作模式，爬模式与推模式，本组件均可支持。
+Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pushgateway ），本组件均可支持。
 
 使用爬模式（Prometheus 官方推荐）时需设置：
 
@@ -99,7 +99,7 @@ Prometheus 有两种工作模式，爬模式与推模式，本组件均可支持
 'mode' => Constants::PUSH_MODE
 ```
 
-并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_inteval`。
+并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_inteval`。只建议离线任务使用推模式。
 
 #### 配置 StatsD
 
