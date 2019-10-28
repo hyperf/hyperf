@@ -189,7 +189,7 @@ interface HistogramInterface
 {
     public function with(string ...$labelValues): self;
 
-    public function observe(float $delta);
+    public function put(float $delta);
 }
 ```
 
