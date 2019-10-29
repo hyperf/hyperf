@@ -166,7 +166,7 @@ class UserService
 
 因为 `EventDispatcherInterface` 依赖于 `ListenerProviderInterface`，而 `ListenerProviderInterface` 初始化的同时，会收集所有的 `Listener`。
 
-而如果 `Listener` 又依赖了 `EventDispatcherInterface`，就会导致循坏依赖，进而导致 内存溢出。
+而如果 `Listener` 又依赖了 `EventDispatcherInterface`，就会导致循坏依赖，进而导致内存溢出。
 
 ### 最好只在 `Listener` 中注入 `ContainerInterface`。
 
@@ -175,8 +175,8 @@ class UserService
 框架启动开始时，会实例化 `EventDispatcherInterface`，如果 `Listener` 中注入了其他组件，可能会导致以下情况。
 
 1. 这个时候还不是协程环境，如果 `Listener` 中注入了可能会触发协程切换的类，就会导致框架启动失败。
-2. 运行 `di:init-proxy` 脚本时，因为实例化了 `EventDispatcherInterface`，进而导致所有的 `Listener` 实例化，一旦这个过程生成了代理对象(.proxy.php 扩展名的类)，而脚本内部又有删除代理类的逻辑，就会代理类生成有误。
-3. 条件与上述一致，只不过代理类又配置了别名，会导致生成这个别名对象时，因为判断代理类不存在，这会重新生成，但 `Ast` 已经生成了注解树，并被修改为代理类的注解树（Ast注解树内部节点使用了引用），则会导致代理类生成有误。【上述两个问题会在后面的版本修复，修改 `di:init-proxy` 脚本不再删除缓存】
+2. 运行 `di:init-proxy` 脚本时，因为实例化了 `EventDispatcherInterface`，进而导致所有的 `Listener` 实例化，一旦这个过程生成了代理对象(.proxy.php 扩展名的类)，而脚本内部又有删除代理类的逻辑，就会导致代理类生成有误。
+3. 条件与上述一致，只不过代理类又配置了别名，会导致生成这个别名对象时，因为判断代理类不存在，则会重新生成，但 `Ast` 已经生成了注解树，并被修改为代理类的注解树（Ast注解树内部节点使用了引用），则会导致代理类生成有误。【上述两个问题会在后面的版本修复，修改 `di:init-proxy` 脚本不再删除缓存】
 
 ### `BootApplication` 事件尽量避免 IO 操作 
 
