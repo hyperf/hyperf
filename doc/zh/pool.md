@@ -26,7 +26,7 @@ use Hyperf\Pool\Pool;
 
 class MyConnectionPool extends Pool
 {
-    public function createConnection(): ConnectionInteface
+    public function createConnection(): ConnectionInterface
     {
         return new MyConnection();
     }
