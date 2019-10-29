@@ -40,7 +40,7 @@ class Histogram implements HistogramInterface
     /**
      * @var float
      */
-    public $value;
+    public $sample;
 
     public function __construct(string $name, array $labelNames)
     {
@@ -54,9 +54,9 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function put(float $value): void
+    public function put(float $sample): void
     {
-        $this->value = $value;
+        $this->sample = $sample;
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
         $process->write(serialize($this));
     }

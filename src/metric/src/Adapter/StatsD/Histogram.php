@@ -56,8 +56,8 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function put(float $delta): void
+    public function put(float $sample): void
     {
-        $this->client->timing($this->name, $delta, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
+        $this->client->timing($this->name, $sample, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
     }
 }

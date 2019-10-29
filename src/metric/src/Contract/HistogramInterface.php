@@ -22,5 +22,5 @@ interface HistogramInterface
 {
     public function with(string ...$labelValues): self;
 
-    public function put(float $delta): void;
+    public function put(float $sample): void;
 }
