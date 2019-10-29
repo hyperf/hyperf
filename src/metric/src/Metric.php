@@ -28,20 +28,28 @@ class Metric
             ->add($delta);
     }
 
-    public static function gauge(string $name, float $delta, ?array $labels = [])
+    public static function gauge(string $name, float $value, ?array $labels = [])
     {
         make(MetricFactoryInterface::class)
             ->makeGauge($name, array_keys($labels))
             ->with(...array_values($labels))
-            ->set($delta);
+            ->set($value);
     }
 
-    public static function histogram(string $name, float $delta, ?array $labels = [])
+    public static function shift(string $name, float $delta, ?array $labels = [])
+    {
+        make(MetricFactoryInterface::class)
+            ->makeGauge($name, array_keys($labels))
+            ->with(...array_values($labels))
+            ->add($delta);
+    }
+
+    public static function put(string $name, float $sample, ?array $labels = [])
     {
         make(MetricFactoryInterface::class)
             ->makeHistogram($name, array_keys($labels))
             ->with(...array_values($labels))
-            ->put($delta);
+            ->put($sample);
     }
 
     public static function time(string $name, callable $func, ?array $args = [], ?array $labels = [])
