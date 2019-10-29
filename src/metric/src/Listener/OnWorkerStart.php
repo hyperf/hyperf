@@ -80,7 +80,7 @@ class OnWorkerStart implements ListenerInterface
         }
 
         /*
-         * If no standalone process is started, we have to do handle metrics on worker.
+         * If no standalone process is started, we have to handle metrics on worker.
          */
         if (! $this->config->get('metric.use_standalone_process', true)) {
             Coroutine::create(function () {
