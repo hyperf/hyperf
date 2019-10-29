@@ -13,9 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
+use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\LoggerInterface;
+use Hyperf\Crontab\Mutex\RedisTaskMutex;
+use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -54,7 +57,7 @@ class Executor
                 $parameters = $crontab->getCallback()[2] ?? null;
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
                     $callback = function () use ($class, $method, $parameters, $crontab) {
-                        Coroutine::create(function () use ($class, $method, $parameters, $crontab) {
+                        $runable = function () use ($class, $method, $parameters, $crontab) {
                             try {
                                 $result = true;
                                 $instance = make($class);
@@ -74,7 +77,13 @@ class Executor
                                     }
                                 }
                             }
-                        });
+                        };
+
+                        if ($crontab->getSingleton()) {
+                            $runable = $this->runInSingleton($crontab, $runable);
+                        }
+
+                        Coroutine::create($runable);
                     };
                 }
                 break;
@@ -87,5 +96,25 @@ class Executor
                 break;
         }
         $callback && swoole_timer_after($diff > 0 ? $diff * 1000 : 1, $callback);
+    }
+
+    protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure
+    {
+        return function () use ($crontab, $runnable) {
+            $taskMutex = $this->container->has(TaskMutex::class)
+                ? $this->container->get(TaskMutex::class)
+                : $this->container->get(RedisTaskMutex::class);
+
+            if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
+                $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                return;
+            }
+
+            try {
+                $runnable();
+            } finally {
+                $taskMutex->remove($crontab);
+            }
+        };
     }
 }
