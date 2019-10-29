@@ -3,6 +3,7 @@
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+- [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
 
 ## Fixed
 
