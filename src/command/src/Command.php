@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
-use Hyperf\Command\Event\AfterHandle;
-use Hyperf\Command\Event\BeforeHandle;
-use Hyperf\Command\Event\FailToHandle;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
@@ -392,15 +389,15 @@ abstract class Command extends SymfonyCommand
     {
         $callback = function () {
             try {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeHandle($this));
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
                 call([$this, 'handle']);
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterHandle($this));
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
             } catch (\Throwable $exception) {
                 if (! $this->eventDispatcher) {
                     throw $exception;
                 }
 
-                $this->eventDispatcher->dispatch(new FailToHandle($this, $exception));
+                $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
             }
         };
 

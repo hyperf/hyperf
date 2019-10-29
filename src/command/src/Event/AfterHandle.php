@@ -12,17 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Command\Event;
 
-use Hyperf\Command\Command;
-
-class AfterHandle
+class AfterHandle extends Event
 {
-    /**
-     * @var Command
-     */
-    protected $command;
-
-    public function __construct(Command $command)
-    {
-        $this->command = $command;
-    }
 }

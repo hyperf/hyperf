@@ -13,24 +13,21 @@ declare(strict_types=1);
 namespace Hyperf\Command\Event;
 
 use Hyperf\Command\Command;
-use Throwable;
 
-class FailToHandle extends Event
+abstract class Event
 {
     /**
-     * @var Throwable
+     * @var Command
      */
-    protected $throwable;
+    protected $command;
 
-    public function __construct(Command $command, Throwable $throwable)
+    public function __construct(Command $command)
     {
-        parent::__construct($command);
-
-        $this->throwable = $throwable;
+        $this->command = $command;
     }
 
-    public function getThrowable(): Throwable
+    public function getCommand(): Command
     {
-        return $this->throwable;
+        return $this->command;
     }
 }
