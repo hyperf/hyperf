@@ -324,7 +324,7 @@ Db::table('users')
 
 ### 子连接查询
 
-你可以使用 `joinSub``，leftJoinSub` 和 `rightJoinSub` 方法关联一个查询作为子查询。他们每一种方法都会接收三个参数：子查询，表别名和定义关联字段的闭包：
+你可以使用 `joinSub`，`leftJoinSub` 和 `rightJoinSub` 方法关联一个查询作为子查询。他们每一种方法都会接收三个参数：子查询，表别名和定义关联字段的闭包：
 
 ```php
 $latestPosts = Db::table('posts')

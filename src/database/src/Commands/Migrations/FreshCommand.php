@@ -118,7 +118,6 @@ class FreshCommand extends Command
     {
         $this->call('db:seed', array_filter([
             '--database' => $database,
-            '--class' => $this->input->getOption('seeder') ?: 'DatabaseSeeder',
             '--force' => true,
         ]));
     }
