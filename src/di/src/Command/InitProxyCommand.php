@@ -18,8 +18,6 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {
@@ -49,6 +47,8 @@ class InitProxyCommand extends Command
 
     public function handle()
     {
+        $this->warn('This command does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.');
+
         $this->createAopProxies();
 
         $this->output->writeln('<info>Proxy class create success.</info>');
