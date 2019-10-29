@@ -128,3 +128,67 @@ $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
+## 附 phpRedis 常用Api函数列表  
+```phpRedis
+# 基本的键值操作  
+$redis->keys('*');                                            //取出所有的键名 
+$redis->setex('key',$value,$second);                          //设置键 key = $value，有效期为 $second 秒, [true]
+$redis->set('key',$value);                                    //设置 key = $value, [true]
+$redis->get('key');                                           //获取 key, [value]
+$redis->mset(array('key'=>'value1','key2'=>'value2'));        //设置一个或多个键值, [true]
+$redis->mget(array('key','key2'));                            //返回所查询键的值, [array]
+$redis->setnx('key','value');                                 //键不存在时设置值，存在键则无效
+$redis->strlen('key');                                        //获取键 key 对应值的长度
+$redis->incr('key');                                          //自增1，如不存在 key ,赋值为1，返回最终值
+$redis->decr('key');                                          //自减1，如不存在 key ,赋值为-1，返回最终值
+$redis->incrby('key',$num);                                   //自增 $num, 不存在为赋值
+$redis->decrby('key',$num);                                   //自减 $num, 不存在则赋值为 -$sum
+$redis->append('key','string');                               //把string追加到 key 现有的value中 [追加后的个数]
+$redis->del('key');                                           //删除 key，[del_num]
+$redis->del(array('key1','key2','key3'));                     //删除 key,[del_num]
+$redis->getset('key','new_value');                            //先获得 key 的旧值，然后重新赋值,[ old_value ]
+
+# 列表List操作  
+$redis->lPush('L_key','value');                               // 将 value 添加至列表 L_key 的左侧, [列表元素总个数] 
+$redis->rPop('L_key');                                        // 从列表 L_key 的右侧弹出一个元素, [最右侧元素值]  
+$redis->rPush('L_key','value');                               // 将 value 添加至列表 L_key 的右侧, [列表元素总个数]  
+$redis->lPop('L_key');                                        // 从列表 L_key 的左侧弹出一个元素, [最左侧元素值]  
+$redis->lLen('L_key');                                        // 返回列表 L_key 的个数，不存在 L_key ,返回 0  
+$redis->lIndex('L_key',index);                                // 返回列表 L_key 索引为 index 的值  
+$redis->lSet('L_key',index,new_value);                        // 赋值列表 L_key 索引为 index 的的元素值为 new_value, 成功返回 1   
+$redis->lRem('L_key','del_value',n);                          // 移除列表 L_key 中，值为 del_value 的元素,第三个参数 n, 0表示全部, >0 表示从列表头开始删除 n 个, <0 反向删除 n 的绝对值个元素,成功返回 1   
+
+# Hash列表操作  
+$redis->hSet('H_key','key','value');                          // 设置主键 H_key 下，子键 key 的值为 value, [1]  
+$redis->hGet('H_key','key');                                  // 获取主键 H_key 下，子键 key 的值, [相关值]    
+$redis->hMSet('H_key',array('key1'=>'value1','key2'=>'v2'));  // 批量设置主键 H_key 下，子键值对的值, [true]    
+$redis->hMGet('H_key',array('key1','key2'));                  // 批量获取主键 H_key 下，子键值 key1、key2的值, [array]       
+$redis->hKey('H_key');                                        // 获取主键 H_key 下，全部的子键, [array]       
+$redis->hExists('H_key','key1');                              // 判断主键 H_key 下，子键 key1 是否存在, [true]       
+$redis->hGetAll('H_key');                                     // 判断主键 H_key 下，全部子键值对, [array]       
+$redis->hDel('H_key','key1','key2');                          // 删除主键 H_key 下，子键 key1、key2, [陈宫删除子键的个数]       
+
+# 集合Set操作,集合中元素不能重复    
+$redis->sAdd('S_key','value1','value2');                      // 给集合键 S_key 添加成员值 value1、value2, 重复元素不添加 [成功添加的个数]       
+$redis->sCard('S_key');                                       // 获取集合键 S_key 成员数目, [成员总数目]       
+$redis->sMembers('S_key');                                    // 获取集合键 S_key 的全部成员, [array]       
+$redis->sIsMember('S_key','value1');                          // 判断集合键 S_key 中全部成员值 value1 是否存在, [true]       
+$redis->sPop('S_key');                                        // 随机删除集合键 S_key 中的一个成员值,, [删除的成员值]            
+$redis->sRandMember('S_key',num);                             // 随机获取集合键 S_key 中的 num 个成员值,, [array]       
+$redis->sinter('S_key1','S_key2');                            // 获取集合键 S_key1、S_key2 的交集, [array]  
+$redis->sunion('S_key1','S_key2');                            // 获取集合键 S_key1、S_key2 的并集, [array]  
+$redis->sdiff('S_key1','S_key2');                             // 获取集合键 S_key1、S_key2 的差集（S_key1中有，S_key2中没有的成员）, [array]  
+$redis->sMove('S_key1','S_key2','value1');                    // 将集合键 S_key1 中 的成员 value1, 移动到S_key2中, [true]
+
+# 有序集合ZSet操作,有序集合中元素不能重复   
+$redis->zAdd('Z_key',$score1,$member1,$scoreN,$memberN);      //将一个或多个member元素及其score值加入到有序集 Z_key 当中, [num]
+$redis->zrem('Z_key','member1','membern');                    //删，移除有序集 Z_key 中的一个或多个成员，不存在的成员将被忽略, [del_num]
+$redis->zrange('Z_key',startScore,stopScore);;                //通过 score 从小到大拿member值, [array]
+$redis->zrevrange('Z_key',startScore,stopScore);;             //通过 score 从大到小拿member值, [array]
+$redis->zrank('Z_key','member1');;                            //获取集合键 Z_key 中成员 member1 的排名（按照分数从低到高）, [排名序号,从 0 开始]
+$redis->zrevrank('Z_key','member1');;                         //获取集合键 Z_key 中成员 member1 的排名（按照分数从高到低）, [排名序号,从 0 开始]
+$redis->zcard('Z_key');;                                      //获取集合键 Z_key 中成员数量, [成员个数]
+$redis->zcount('Z_key',min,max);                              //获取集合键 Z_key 中成员权重分在min，max闭区间范围内的数量, [成员个数]
+$redis->ZINTERSTORE();                                        //交集
+$redis->ZUNIONSTORE();                                        //差集
+```

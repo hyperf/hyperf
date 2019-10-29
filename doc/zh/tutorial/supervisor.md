@@ -18,7 +18,7 @@ yum install -y supervisor
 cp /etc/supervisord.conf /etc/supervisord.d/supervisord.conf
 ```
 
-编辑新复制出来的配置文件 `/etc/supervisord.d/supervisord.conf`，并在文件结尾处添加以下内容后保存文件：
+编辑新复制出来的配置文件 `/etc/supervisord.d/supervisord.conf`，并在文件结尾处添加以下内容后保存文件（如果带注释复制，配置文件的 # 必须替换为分号 ; ）：
 
 ```ini
 # 新建一个应用并设置一个名称，这里设置为 hyperf
