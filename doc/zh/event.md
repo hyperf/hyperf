@@ -159,3 +159,25 @@ class UserService
     }
 }
 ```
+
+## 注意事项
+
+### 不要在 `Listener` 中注入 `EventDispatcherInterface`
+
+因为 `EventDispatcherInterface` 依赖于 `ListenerProviderInterface`，而 `ListenerProviderInterface` 初始化的同时，会收集所有的 `Listener`。
+
+而如果 `Listener` 又依赖了 `EventDispatcherInterface`，就会导致循坏依赖，进而导致 内存溢出。
+
+### 最好只在 `Listener` 中注入 `ContainerInterface`。
+
+最好只在 `Listener` 中注入 `ContainerInterface`，而其他的组件在 `process` 中通过 `container` 获取。
+
+框架启动开始时，会实例化 `EventDispatcherInterface`，如果 `Listener` 中注入了其他组件，可能会导致以下情况。
+
+1. 这个时候还不是协程环境，如果 `Listener` 中注入了可能会触发协程切换的类，就会导致框架启动失败。
+2. 运行 `di:init-proxy` 脚本时，因为实例化了 `EventDispatcherInterface`，进而导致所有的 `Listener` 实例化，一旦这个过程生成了代理对象(.proxy.php 扩展名的类)，会在脚本内部删除，进而导致重新生成，导致代理类 生成有误。【这个问题会在 1.2 版本修复，修改 `di:init-proxy` 脚本不再删除缓存】
+
+### `BootApplication` 事件尽量避免 IO 操作 
+
+因为 `BootApplication` 是在 `Command` 初始化 和 `Server` 启动前触发，所以当前环境一定是非协程环境，一旦使用了协程 `API`，则会导致启动失败。
+
