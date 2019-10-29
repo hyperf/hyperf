@@ -56,7 +56,7 @@ $connection = $pool->get();
 
 $client = $connection->getConnection(); // 即上述 Client.
 
-// Do somethind.
+// Do something.
 
 $connection->release();
 
