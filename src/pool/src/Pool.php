@@ -98,7 +98,7 @@ abstract class Pool implements PoolInterface
         return $this->option;
     }
 
-    protected function getConnectionsInChannel(): int
+    public function getConnectionsInChannel(): int
     {
         return $this->channel->length();
     }
