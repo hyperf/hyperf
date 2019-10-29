@@ -54,18 +54,6 @@ class InitProxyCommand extends Command
         $this->output->writeln('<info>Proxy class create success.</info>');
     }
 
-    protected function clearRuntime($paths)
-    {
-        $finder = new Finder();
-        $finder->files()->in($paths)->name(['*.php', '*.cache']);
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $path = $file->getRealPath();
-            @unlink($path);
-        }
-    }
-
     protected function getScanDir()
     {
         if (! defined('BASE_PATH')) {
@@ -90,11 +78,6 @@ class InitProxyCommand extends Command
     private function createAopProxies()
     {
         $scanDirs = $this->getScanDir();
-
-        $runtime = BASE_PATH . '/runtime/container/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
 
         $meta = $this->scanner->scan($scanDirs);
         $classCollection = array_keys($meta);
