@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Cases;
+namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -42,6 +42,7 @@ class OnWorkerStartTest extends TestCase
                 'enable_default_metrics' => false,
             ],
         ]);
+
         $factory = Mockery::mock(PrometheusFactory::class);
         $factory->shouldReceive('handle')->atLeast()->times(1);
         $container = Mockery::mock(Container::class);
@@ -49,9 +50,11 @@ class OnWorkerStartTest extends TestCase
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
 
         $l = new OnWorkerStart($container);
+
         $l->process(new class() {
             public $workerId = 1;
         });
+
         $this->assertTrue(true);
     }
 

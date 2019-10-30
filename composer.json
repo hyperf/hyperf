@@ -267,6 +267,7 @@
                 "Hyperf\\LoadBalancer\\ConfigProvider",
                 "Hyperf\\Logger\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
+                "Hyperf\\Metric\\ConfigProvider",
                 "Hyperf\\ModelCache\\ConfigProvider",
                 "Hyperf\\ModelListener\\ConfigProvider",
                 "Hyperf\\Paginator\\ConfigProvider",

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Cases;
+namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
