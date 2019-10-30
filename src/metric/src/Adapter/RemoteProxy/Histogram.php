@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\RemoteProxy;
@@ -40,7 +40,7 @@ class Histogram implements HistogramInterface
     /**
      * @var float
      */
-    public $value;
+    public $sample;
 
     public function __construct(string $name, array $labelNames)
     {
@@ -54,9 +54,9 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function observe(float $value)
+    public function put(float $sample): void
     {
-        $this->value = $value;
+        $this->sample = $sample;
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
         $process->write(serialize($this));
     }

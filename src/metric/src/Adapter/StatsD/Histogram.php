@@ -7,10 +7,10 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Metric\Adapter\Statsd;
+namespace Hyperf\Metric\Adapter\StatsD;
 
 use Domnikl\Statsd\Client;
 use Hyperf\Metric\Contract\HistogramInterface;
@@ -56,8 +56,8 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function observe(float $delta)
+    public function put(float $sample): void
     {
-        $this->client->timing($this->name, $delta, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
+        $this->client->timing($this->name, $sample, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
     }
 }

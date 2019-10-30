@@ -7,10 +7,10 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Metric\Adapter\Statsd;
+namespace Hyperf\Metric\Adapter\StatsD;
 
 use Domnikl\Statsd\Client;
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -56,16 +56,22 @@ class Gauge implements GaugeInterface
         return $this;
     }
 
-    public function set(float $value)
+    public function set(float $value): void
     {
-        $this->client->gauge($this->name, (int)$value, array_combine($this->labelNames, $this->labelValues));
+        if ($value < 0) {
+            // StatsD gauge doesn't support negative values.
+            $value = 0;
+        }
+        $this->client->gauge($this->name, (string) $value, array_combine($this->labelNames, $this->labelValues));
     }
 
-    public function add(float $delta)
+    public function add(float $delta): void
     {
         if ($delta >= 0) {
-            $delta = '+' + $delta;
+            $deltaStr = '+' . $delta;
+        } else {
+            $deltaStr = (string) $delta;
         }
-        $this->client->gauge($this->name, (int)$delta, array_combine($this->labelNames, $this->labelValues));
+        $this->client->gauge($this->name, $deltaStr, array_combine($this->labelNames, $this->labelValues));
     }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\StatsD;
@@ -56,7 +56,7 @@ class Counter implements CounterInterface
         return $this;
     }
 
-    public function add(int $delta)
+    public function add(int $delta): void
     {
         $this->client->count($this->name, $delta, $this->sampleRate, array_combine($this->labelNames, $this->labelValues));
     }

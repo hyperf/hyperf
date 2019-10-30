@@ -1,4 +1,4 @@
-# 遥测与监控
+# 服务监控
 
 微服务治理的一个核心需求便是服务可观察性。作为微服务的牧羊人，要做到时刻掌握各项服务的健康状态，并非易事。云原生时代这一领域内涌现出了诸多解决方案。本组件对可观察性当中的重要支柱遥测与监控进行了抽象，方便使用者与既有基础设施快速结合，同时避免供应商锁定。
 
@@ -10,12 +10,12 @@
 composer require hyperf/metric
 ```
 
-[hyperf/metric](https://github.com/hyperf/metric) 组件默认安装了[Prometheus](https://prometheus.io/) 相关依赖。如果要使用[StatsD](https://github.com/statsd/statsd)或[InfluxDB](http://influxdb.com)，还需要执行下面的命令安装对应的依赖：
+[hyperf/metric](https://github.com/hyperf/metric) 组件默认安装了 [Prometheus](https://prometheus.io/) 相关依赖。如果要使用 [StatsD](https://github.com/statsd/statsd) 或 [InfluxDB](http://influxdb.com)，还需要执行下面的命令安装对应的依赖：
 
 ```bash
-#StatsD 所需依赖
+# StatsD 所需依赖
 composer require domnikl/statsd
-#InfluxDB 所需依赖 
+# InfluxDB 所需依赖 
 composer require influxdb/influxdb-php 
 ```
 
@@ -36,19 +36,23 @@ php bin/hyperf.php vendor:publish hyperf/metric
 * `default`：配置文件内的 `default` 对应的值则为使用的驱动名称。驱动的具体配置在 `metric` 项下定义，使用与 `key` 相同的驱动。
 
 ```php
-    'default' => env('TELEMETRY_DRIVER', 'prometheus'),
+'default' => env('TELEMETRY_DRIVER', 'prometheus'),
 ```
 
-* `use_standalone_process`: 是否使用独立监控进程。推荐开启。关闭后将在Worker进程中处理指标收集与上报。
+* `use_standalone_process`: 是否使用 `独立监控进程`。推荐开启。关闭后将在 `Worker进程` 中处理指标收集与上报。
 ```php
-    'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
+'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
 ```
 
-* `enable_default_metric`: 是否统计默认指标。默认指标包括内存占用、系统CPU负载以及Swoole Server指标和Swoole Coroutine指标。
+* `enable_default_metric`: 是否统计默认指标。默认指标包括内存占用、系统 CPU 负载以及Swoole Server 指标和 Swoole Coroutine 指标。
 ```php
-    'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
+'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
+* `default_metric_inteval`: 默认指标推送周期，单位为秒，下同。
+```php
+'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
+```
 #### 配置 Prometheus
 
 使用 Prometheus 时，在配置文件中的 `metric` 项增加 Prometheus 的具体配置。
@@ -60,6 +64,7 @@ return [
     'default' => env('TELEMETRY_DRIVER', 'prometheus'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
+    'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
     'metric' => [
         'prometheus' => [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
@@ -75,22 +80,26 @@ return [
     ],
 ];
 ```
-Prometheus 有两种工作模式，爬模式与拉模式，本组件均可支持。
 
-使用爬模式（Prometheus官方推荐）时需设置：
+Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pushgateway ），本组件均可支持。
+
+使用爬模式（Prometheus 官方推荐）时需设置：
+
 ```php
-    'mode' => Constants::SCRAPE_MODE
+'mode' => Constants::SCRAPE_MODE
 ```
-并配置爬取地址`scrape_host`、爬取端口`scrape_port`、爬取路径`scrape_path`。Prometheus可以在对应配置下以HTTP访问形式拉取全部指标。
 
+并配置爬取地址 `scrape_host`、爬取端口 `scrape_port`、爬取路径 `scrape_path`。Prometheus 可以在对应配置下以HTTP访问形式拉取全部指标。
+
+> 注意：爬模式下，必须启用独立进程，即 use_standalone_process = true。
 
 使用推模式时需设置：
-```php
-    'mode' => Constants::PUSH_MODE
-```
-并配置推送地址`push_host`、推送端口`push_port`、推送间隔`push_inteval`。
 
-注意：爬模式下，必须启用独立进程，即use_standalone_process = true。
+```php
+'mode' => Constants::PUSH_MODE
+```
+
+并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_inteval`。只建议离线任务使用推模式。
 
 #### 配置 StatsD
 
@@ -115,7 +124,7 @@ return [
 ];
 ```
 
-StatsD 目前只支持UDP模式，需要配置UDP地址`udp_host`，UDP端口`udp_port`、是否批量推送`enable_batch`（减少请求次数）、批量推送间隔`push_inteval`以及采样率`sample_rate`。
+StatsD 目前只支持 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 端口 `udp_port`、是否批量推送 `enable_batch`（减少请求次数）、批量推送间隔 `push_inteval` 以及采样率`sample_rate`。
 
 #### 配置 InfluxDB
 
@@ -141,7 +150,7 @@ return [
 ];
 ```
 
-InfluxDB 使用默认的HTTP模式，需要配置地址`host`，UDP端口`port`、用户名`username`、密码`password`、`dbname`数据表以及批量推送间隔`push_inteval`。
+InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP端口 `port`、用户名  `username`、密码 `password`、`dbname` 数据表以及批量推送间隔 `push_inteval`。
 
 ### 基本抽象
 
@@ -149,7 +158,7 @@ InfluxDB 使用默认的HTTP模式，需要配置地址`host`，UDP端口`port`�
 
 三种类型分别为：
 
-* 计数器(Counter): 用于描述单向递增的某种指标。如HTTP请求计数。
+* 计数器(Counter): 用于描述单向递增的某种指标。如 HTTP 请求计数。
 
 ```php
 interface CounterInterface
@@ -180,14 +189,14 @@ interface HistogramInterface
 {
     public function with(string ...$labelValues): self;
 
-    public function observe(float $delta);
+    public function put(float $sample);
 }
 ```
 
 ### 配置中间件
 
-配置完驱动之后，只需配置一下中间件就能启用请求Histogram统计功能。
-打开 `config/autoload/middlewares.php` 文件，在 `http` 节点启用中间件。
+配置完驱动之后，只需配置一下中间件就能启用请求 Histogram 统计功能。
+打开 `config/autoload/middlewares.php` 文件，示例为在 `http` Server 中启用中间件。
 
 ```php
 <?php
@@ -203,7 +212,7 @@ return [
 
 ### 自定义使用
 
-通过HTTP中间件遥测仅仅是本组件用途的冰山一角，您可以注入`Hyperf\Metric\Contract\MetricFactoryInterface`类来自行遥测业务数据。比如：创建的订单数量、广告的点击数量等。
+通过HTTP中间件遥测仅仅是本组件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 类来自行遥测业务数据。比如：创建的订单数量、广告的点击数量等。
 
 ```php
 <?php
@@ -233,17 +242,17 @@ class IndexController extends AbstractController
 }
 ```
 
-`MetricFactoryInterface`中包含如下工厂方法来生成对应的三种基本统计类型。
+`MetricFactoryInterface` 中包含如下工厂方法来生成对应的三种基本统计类型。
 
 ```php
-    public function makeCounter($name, $labelNames): CounterInterface;
+public function makeCounter($name, $labelNames): CounterInterface;
 
-    public function makeGauge($name, $labelNames): GaugeInterface;
+public function makeGauge($name, $labelNames): GaugeInterface;
 
-    public function makeHistogram($name, $labelNames): HistogramInterface;
+public function makeHistogram($name, $labelNames): HistogramInterface;
 ```
 
-上述例子是统计请求范围内的产生的指标。有时候我们需要统计的指标是面向完整生命周期的，比如统计异步队列长度或库存商品数量。此种场景下可以监听`MetricFactoryReady`事件。
+上述例子是统计请求范围内的产生的指标。有时候我们需要统计的指标是面向完整生命周期的，比如统计异步队列长度或库存商品数量。此种场景下可以监听 `MetricFactoryReady` 事件。
 
 ```php
 <?php
@@ -253,7 +262,7 @@ declare(strict_types=1);
 namespace App\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Metric\Listener\OnMetricFactoryReady;
+use Hyperf\Metric\Event\MetricFactoryReady;
 use Psr\Container\ContainerInterface;
 use Redis;
 
@@ -279,21 +288,23 @@ class OnMetricFactoryReady implements ListenerInterface
     public function process(object $event)
     {
         $redis = $this->container->get(Redis::class);
+        $gauge = $event
+                    ->factory
+                    ->makeGauge('queue_length', ['driver'])
+                    ->with('redis');
         while (true) {
             $length = $redis->llen('queue');
-            $event
-                ->factory
-                ->makeGauge('queue_length', ['driver'])
-                ->with('redis')
-                ->set($length);
+            $gauge->set($length);
             sleep(1);
         }
     }
 }
 ```
 
+> 工程上讲，直接从 Redis 查询队列长度不太合适，应该通过队列驱动 `DriverInterface` 接口下的 `info()` 方法来获取队列长度。这里只做简易演示。您可以在本组件源码的`src/Listener` 文件夹下找到完整例子。
+
 ### 注解
 
-您可以使用`@Counter(name="stat_name_here")`和`@Histogram(name="stat_name_here")`来统计切面的调用次数和运行时间。
+您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 来统计切面的调用次数和运行时间。
 
 关于注解的使用请参阅[注解章节](https://doc.hyperf.io/#/zh/annotation)。

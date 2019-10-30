@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric;
@@ -24,19 +24,14 @@ class MetricFactoryPicker
     /**
      * @var bool
      */
-    protected $inMetricProcess = false;
-
-    public function __construct(?bool $inMetricProcess = false)
-    {
-        $this->inMetricProcess = $inMetricProcess;
-    }
+    public static $inMetricProcess = false;
 
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
         $useStandaloneProcess = $config->get('metric.use_standalone_process');
         // Return a proxy object for workers if user wants to use a dedicated metric process.
-        if ($useStandaloneProcess && ! $this->inMetricProcess) {
+        if ($useStandaloneProcess && ! static::$inMetricProcess) {
             return $container->get(RemoteFactory::class);
         }
 

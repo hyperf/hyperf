@@ -7,12 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Adapter\RemoteProxy\Counter;
 use Hyperf\Metric\Adapter\RemoteProxy\Gauge;
@@ -21,7 +20,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Process\Event\PipeMessage;
 
 /**
- * @Listener
+ * Receives messages in metric process.
  */
 class OnPipeMessage implements ListenerInterface
 {
@@ -64,7 +63,7 @@ class OnPipeMessage implements ListenerInterface
                     break;
                 case $inner instanceof Histogram:
                     $histogram = $this->factory->makeHistogram($inner->name, $inner->labelNames);
-                    $histogram->with(...$inner->labelValues)->observe($inner->value);
+                    $histogram->with(...$inner->labelValues)->put($inner->sample);
                     break;
                 default:
                     // Nothing to do

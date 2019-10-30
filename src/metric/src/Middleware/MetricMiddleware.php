@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Middleware;
@@ -39,10 +39,15 @@ class MetricMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $histogram = $this->factory->makeHistogram('request_latency', ['request_status', 'request_path', 'request_method']);
-        $timer = new Timer($histogram);
+        $labels = [
+            'request_status' => '500', //default to 500 incase uncaught exception occur
+            'request_path' => $request->getRequestTarget(),
+            'request_method' => $request->getMethod(),
+        ];
+        $timer = new Timer('http_requests', $labels);
         $response = $handler->handle($request);
-        $timer->with((string) $response->getStatusCode(), (string) $request->getRequestTarget(), $request->getMethod());
+        $labels['request_status'] = (string) $response->getStatusCode();
+        $timer->end($labels);
         return $response;
     }
 }

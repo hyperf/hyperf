@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\Prometheus;
@@ -43,13 +43,12 @@ class Gauge implements GaugeInterface
         return $this;
     }
 
-    public function set(float $value)
+    public function set(float $value): void
     {
         $this->gauge->set($value, $this->labelValues);
-        return $this;
     }
 
-    public function add(float $delta)
+    public function add(float $delta): void
     {
         $this->gauge->incBy($delta, $this->labelValues);
     }

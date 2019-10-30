@@ -3,7 +3,7 @@
 
 ## 自定义监听器
 
-得益于 [hyperf/event](https://github.com/hyperf-cloud/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
+得益于 [hyperf/event](https://github.com/hyperf/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
 例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
 接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
 首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：
@@ -68,7 +68,7 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ## 模型事件
 
-模型事件与 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 监听模型事件。`Hyperf` 直接使用 `钩子函数` 来处理对应的事件。如果你还是喜欢 `Observer` 的方式，可以通过 `事件监听`，自己实现。当然，你也可以在 [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2) 下面告诉我们。
+模型事件与 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 监听模型事件。`Hyperf` 直接使用 `钩子函数` 来处理对应的事件。如果你还是喜欢 `Observer` 的方式，可以通过 `事件监听`，自己实现。当然，你也可以在 [issue#2](https://github.com/hyperf/hyperf/issues/2) 下面告诉我们。
 
 ### 钩子函数
 

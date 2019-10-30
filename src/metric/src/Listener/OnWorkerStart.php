@@ -7,28 +7,34 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
-use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
+use function gc_status;
+use function getrusage;
+use function memory_get_peak_usage;
+use function memory_get_usage;
 
 /**
- * @Listener
+ * Collect and handle metrics before worker start.
  */
 class OnWorkerStart implements ListenerInterface
 {
+    use MetricSetter;
+
     /**
      * @var ContainerInterface
      */
@@ -74,10 +80,10 @@ class OnWorkerStart implements ListenerInterface
         }
 
         /*
-         * If no standalone process is started, we have to do handle metrics on worker.
+         * If no standalone process is started, we have to handle metrics on worker.
          */
         if (! $this->config->get('metric.use_standalone_process', true)) {
-            go(function () {
+            Coroutine::create(function () {
                 $this->factory->handle();
             });
         }
@@ -96,36 +102,47 @@ class OnWorkerStart implements ListenerInterface
 
         // The following metrics MUST be collected in worker.
         $metrics = $this->factoryMetrics(
-            $workerId,
+            ['worker' => (string) $workerId],
             'worker_request_count',
-            'worker_dispatch_count'
+            'worker_dispatch_count',
+            'memory_usage',
+            'memory_peak_usage',
+            'gc_runs',
+            'gc_collected',
+            'gc_threshold',
+            'gc_roots',
+            'ru_oublock',
+            'ru_inblock',
+            'ru_msgsnd',
+            'ru_msgrcv',
+            'ru_maxrss',
+            'ru_ixrss',
+            'ru_idrss',
+            'ru_minflt',
+            'ru_majflt',
+            'ru_nsignals',
+            'ru_nvcsw',
+            'ru_nivcsw',
+            'ru_nswap',
+            'ru_utime_tv_usec',
+            'ru_utime_tv_sec',
+            'ru_stime_tv_usec',
+            'ru_stime_tv_sec'
         );
 
         $server = $this->container->get(Server::class);
-
-        Timer::tick(5000, function () use ($metrics, $server) {
+        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
+        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
+            if (function_exists('gc_status')) {
+                $this->trySet('gc_', $metrics, gc_status());
+            }
+            $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
+            $metrics['memory_usage']->set(memory_get_usage());
+            $metrics['memory_peak_usage']->set(memory_get_peak_usage());
         });
-    }
-
-    /**
-     * Create an array of gauges.
-     * @param int $workerId
-     * @param array<int, string> $names
-     * @return GaugeInterface[]
-     */
-    private function factoryMetrics(int $workerId, string ...$names): array
-    {
-        $out = [];
-        foreach ($names as $name) {
-            $out[$name] = $this
-                ->factory
-                ->makeGauge($name, ['worker_id'])
-                ->with((string) $workerId);
-        }
-        return $out;
     }
 
     private function shouldFireMetricFactoryReadyEvent(int $workerId): bool

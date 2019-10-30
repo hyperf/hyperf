@@ -1,6 +1,6 @@
 # Configuration
 
-When you are using a project created by the hyperf-cloud/hyperf-skeleton project, all of Hyperf's configuration files are in the config folder under the root directory, and each option has Instructions, you can always check and be familiar with the options available.
+When you are using a project created by the hyperf/hyperf-skeleton project, all of Hyperf's configuration files are in the config folder under the root directory, and each option has Instructions, you can always check and be familiar with the options available.
 
 # Installation
 
@@ -67,7 +67,7 @@ return [
 
 ## Use Config Component of Hyperf
 
-This component is the official default configuration component that is implemented for the `Hyperf\Contract\ConfigInterface` interface, which is defined by the [hyperf/config](https://github.com/hyperf-cloud/config) component. ` Bind the `Hyperf\Config\Config` object to the interface by the ConfigProvider of the component.
+This component is the official default configuration component that is implemented for the `Hyperf\Contract\ConfigInterface` interface, which is defined by the [hyperf/config](https://github.com/hyperf/config) component. ` Bind the `Hyperf\Config\Config` object to the interface by the ConfigProvider of the component.
 
 ### Set configuration value
 
@@ -91,7 +91,7 @@ $config->get($key，$default);
 
 #### Get Configuration by `@Value` Annotation
 
-This way requires the object must be created by the [hyperf/di](https://github.com/hyperf-cloud/di) component. The details of the injection instance can be found in [Dependency Injection](en/di.md) chapter, in the example we assume that `IndexController` is an already defined `Controller` class, and the `Controller` class must be created by the `DI` container;
+This way requires the object must be created by the [hyperf/di](https://github.com/hyperf/di) component. The details of the injection instance can be found in [Dependency Injection](en/di.md) chapter, in the example we assume that `IndexController` is an already defined `Controller` class, and the `Controller` class must be created by the `DI` container;
 The string in `@Value()` corresponds to the `$key` parameter in `$config->get($key)`. When the object instance is created, the corresponding configuration is automatically injected into the defined class property.
 
 ```php
@@ -113,7 +113,7 @@ class IndexController
 
 #### Get Configuration by config() function
 
-The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf-cloud/config) and [hyperf/utils](https://github.com/hyperf-cloud/utils) components are strongly dependent for your application.
+The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/utils](https://github.com/hyperf/utils) components are strongly dependent for your application.
 
 ### Determine if the configuration exists
 
@@ -172,7 +172,7 @@ return [
 
 ## Configuration Center
 
-Hyperf provides you with external configuration support for distributed systems, by default we offer an open source project by Ctrip namely [ctripcorp/apollo](https://github.com/ctripcorp/apollo), by [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) component provides functional support.
+Hyperf provides you with external configuration support for distributed systems, by default we offer an open source project by Ctrip namely [ctripcorp/apollo](https://github.com/ctripcorp/apollo), by [hyper/config-apollo](https://github.com/hyperf/config-apollo) component provides functional support.
 Details on the usage of the configuration center are explained in the [Configuration Center](en/config-center.md) chapter.
 
 

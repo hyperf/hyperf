@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Process;
@@ -43,10 +43,8 @@ class MetricProcess extends AbstractProcess
 
     public function handle(): void
     {
-        $this->factory = make(
-            MetricFactoryPicker::class,
-            ['inMetricProcess' => true]
-        )($this->container);
+        MetricFactoryPicker::$inMetricProcess = true;
+        $this->factory = make(MetricFactoryInterface::class);
         $this
             ->container
             ->get(EventDispatcherInterface::class)

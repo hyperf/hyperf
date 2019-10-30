@@ -1,6 +1,6 @@
 # Cache
 
-[hyperf/cache](https://github.com/hyperf-cloud/cache) 提供了基于 `Aspect` 实现的切面缓存，也提供了实现 `Psr\SimpleCache\CacheInterface` 的缓存类。
+[hyperf/cache](https://github.com/hyperf/cache) 提供了基于 `Aspect` 实现的切面缓存，也提供了实现 `Psr\SimpleCache\CacheInterface` 的缓存类。
 
 ## 安装
 ```

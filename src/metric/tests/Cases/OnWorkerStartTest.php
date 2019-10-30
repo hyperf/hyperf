@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Cases;
@@ -66,6 +66,7 @@ class OnWorkerStartTest extends TestCase
         ]);
         $factory = Mockery::mock(PrometheusFactory::class);
         $container = Mockery::mock(Container::class);
+        $factory->shouldReceive('handle')->twice();
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(
@@ -75,7 +76,7 @@ class OnWorkerStartTest extends TestCase
                     return true;
                 }
             }
-        );
+        )->once();
         $l = new OnWorkerStart($container);
         $l->process(new class() {
             public $workerId = 0;

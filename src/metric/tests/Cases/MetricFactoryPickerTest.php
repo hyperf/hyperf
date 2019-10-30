@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Cases;
@@ -125,7 +125,8 @@ class MetricFactoryPickerTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(PrometheusFactory::class)->andReturn(Mockery::mock(PrometheusFactory::class));
 
-        $picker = new MetricFactoryPicker(true);
+        MetricFactoryPicker::$inMetricProcess = true;
+        $picker = new MetricFactoryPicker();
 
         $this->assertInstanceOf(PrometheusFactory::class, $picker($container));
     }

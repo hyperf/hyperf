@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\Prometheus;
@@ -44,8 +44,8 @@ class Histogram implements HistogramInterface
         return $this;
     }
 
-    public function observe(float $value)
+    public function put(float $sample): void
     {
-        $this->histogram->observe($value, $this->labelValues);
+        $this->histogram->observe($sample, $this->labelValues);
     }
 }

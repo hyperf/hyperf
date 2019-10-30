@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\RemoteProxy;
@@ -38,7 +38,7 @@ class Counter implements CounterInterface
     public $labelValues = [];
 
     /**
-     * @var float
+     * @var int
      */
     public $delta;
 
@@ -54,7 +54,7 @@ class Counter implements CounterInterface
         return $this;
     }
 
-    public function add(int $delta)
+    public function add(int $delta): void
     {
         $this->delta = $delta;
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];

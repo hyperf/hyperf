@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\InfluxDB;
@@ -21,14 +21,14 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Swoole\Coroutine;
 use InfluxDB\Client;
 use InfluxDB\Database;
 use InfluxDB\Database\RetentionPolicy;
-use InfluxDB\Driver\Guzzle;
+use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
+use Swoole\Coroutine;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -109,7 +109,7 @@ class MetricFactory implements MetricFactoryInterface
             'base_uri' => $client->getBaseURI(),
             'verify' => $client->getVerifySSL(),
         ]);
-        $client->setDriver(new Guzzle($guzzleClient));
+        $client->setDriver(make(DriverInterface::class, ['client' => $guzzleClient]));
         $database = $client->selectDB($dbname);
         if (! $database->exists() && $create) {
             $database->create(new RetentionPolicy($dbname, '1d', 1, true));

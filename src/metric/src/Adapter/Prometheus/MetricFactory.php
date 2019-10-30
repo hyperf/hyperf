@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Metric\Adapter\Prometheus;
@@ -146,7 +146,7 @@ class MetricFactory implements MetricFactoryInterface
 
     private function doRequest(string $address, string $job, string $method)
     {
-        $url = 'http://' . $address . '/metrics/job/' . $job;
+        $url = 'http://' . $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
         $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [
