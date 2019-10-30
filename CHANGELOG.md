@@ -11,10 +11,12 @@
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
 - [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
 - [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception. 
+- [#796](https://github.com/hyperf/hyperf/pull/796) Fixed `config_etcd.enable` does not works. 
 
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd. 
 - [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
 
 ## Changed
