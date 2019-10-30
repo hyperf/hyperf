@@ -43,7 +43,7 @@ class OnWorkerStartTest extends TestCase
             ],
         ]);
         $factory = Mockery::mock(PrometheusFactory::class);
-        $factory->shouldReceive('handle')->once();
+        $factory->shouldReceive('handle')->atLeast()->times(1);
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
@@ -66,7 +66,7 @@ class OnWorkerStartTest extends TestCase
         ]);
         $factory = Mockery::mock(PrometheusFactory::class);
         $container = Mockery::mock(Container::class);
-        $factory->shouldReceive('handle')->twice();
+        $factory->shouldReceive('handle')->atLeast()->times(1);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(
