@@ -23,6 +23,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
+use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -83,9 +84,7 @@ class OnWorkerStart implements ListenerInterface
          * If no standalone process is started, we have to handle metrics on worker.
          */
         if (! $this->config->get('metric.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $this->factory->handle();
-            });
+            $this->spawnHandle();
         }
 
         /*
@@ -149,5 +148,17 @@ class OnWorkerStart implements ListenerInterface
     {
         return (! $this->config->get('metric.use_standalone_process'))
             && $workerId == 0;
+    }
+
+    private function spawnHandle()
+    {
+        Coroutine::create(function () {
+            try {
+                $this->factory->handle();
+            } catch (Throwable $t) {
+                $this->spawnHandle();
+                throw $t;
+            }
+        });
     }
 }
