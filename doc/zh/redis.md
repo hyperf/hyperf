@@ -191,4 +191,20 @@ $redis->zcard('Z_key');;                                      //获取集合键 
 $redis->zcount('Z_key',min,max);                              //获取集合键 Z_key 中成员权重分在min，max闭区间范围内的数量, [成员个数]
 $redis->ZINTERSTORE();                                        //交集
 $redis->ZUNIONSTORE();                                        //差集
+
+# 其他命令  
+$redis->auth('password');                                    //登录数据库 [true]
+$redis->select(db_index);                                    //按照索引选择数据库, 索引从 0 开始 [true]
+$redis->expire('key',10);                                    //设置 key 失效时间为10秒之后 [true]
+$redis->ttl('key');                                          //查看 key 的剩余有效时间，单位：秒, [剩余有效秒数]
+$redis->flushDB();                                           //清空当前数据库所有数据   [true]
+$redis->flushAll();                                          //清空所有数据库数据   [true]
+$redis->move('key',db_index);                                //移动 key 到索引为 db_index 的数据库，索引从 0 开始  [true]
+$redis->save();                                              //当前数据库数据保存在硬盘    [true]
+$redis->bgsave();                                            //当前数据库数据异步保存在硬盘 [true]
+$redis->info();                                              //查询当前redis信息（版本信息、各种配置信息...） [array]    
+$redis->watch('key1','key2');                                //监视key1, key2, 必须在事务开启之前监视, 进入事务执行过程 key1, key2 被其他命令所修改，那么事务结果将返回 false [true]   
+$redis->unwatch('key1','key2');                              //取消监视key1, key2         
+$redis->multi();                                             //开启事务，事务块内的多条命令会按照先后顺序被放进一个队列当中，最后由 exec 命令在一个原子时间内执行。 [object]       
+$redis->exec();                                              //执行、提交所有事务块内的命令, [事务块内所有命令执行成功，返回数组，包含每条命令执行结果; 有一条失败返回 false }       
 ```
