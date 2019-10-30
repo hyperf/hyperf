@@ -12,10 +12,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~1.1.0",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/di": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/command": "~1.2.0",
+        "hyperf/contract": "~1.2.0",
+        "hyperf/di": "~1.2.0",
+        "hyperf/utils": "~1.2.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -39,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "1.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Devtool\\ConfigProvider"
