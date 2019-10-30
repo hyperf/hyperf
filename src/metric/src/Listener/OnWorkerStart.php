@@ -23,6 +23,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
+use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -154,8 +155,10 @@ class OnWorkerStart implements ListenerInterface
         Coroutine::create(function () {
             try {
                 $this->factory->handle();
-            } finally {
+
+            } catch (Throwable $t) {
                 $this->spawnHandle();
+                throw $t;
             }
         });
     }
