@@ -3,6 +3,7 @@
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+- [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
 - [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
 
 ## Fixed
