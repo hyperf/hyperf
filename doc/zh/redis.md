@@ -129,7 +129,8 @@ $result = $redis->keys('*');
 ```
 
 ## 附 phpRedis 常用Api函数列表  
-```phpRedis
+```php
+
 # 基本的键值操作  
 $redis->keys('*');                                            //取出所有的键名 
 $redis->setex('key',$value,$second);                          //设置键 key = $value，有效期为 $second 秒, [true]
@@ -166,7 +167,7 @@ $redis->hMGet('H_key',array('key1','key2'));                  // 批量获取主
 $redis->hKey('H_key');                                        // 获取主键 H_key 下，全部的子键, [array]       
 $redis->hExists('H_key','key1');                              // 判断主键 H_key 下，子键 key1 是否存在, [true]       
 $redis->hGetAll('H_key');                                     // 判断主键 H_key 下，全部子键值对, [array]       
-$redis->hDel('H_key','key1','key2');                          // 删除主键 H_key 下，子键 key1、key2, [陈宫删除子键的个数]       
+$redis->hDel('H_key','key1','key2');                          // 删除主键 H_key 下，子键 key1、key2, [成功删除子键的个数]       
 
 # 集合Set操作,集合中元素不能重复    
 $redis->sAdd('S_key','value1','value2');                      // 给集合键 S_key 添加成员值 value1、value2, 重复元素不添加 [成功添加的个数]       
