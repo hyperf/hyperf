@@ -31,6 +31,7 @@
             <directory suffix="Test.php">./src/http-server/tests</directory>
             <directory suffix="Test.php">./src/json-rpc/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
+            <directory suffix="Test.php">./src/metric/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/pool/tests</directory>

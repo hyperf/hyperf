@@ -24,7 +24,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var RedisPool[]
      */
     protected $pools = [];
 
