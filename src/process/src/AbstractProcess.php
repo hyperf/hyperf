@@ -20,6 +20,7 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -77,9 +78,9 @@ abstract class AbstractProcess implements ProcessInterface
     protected $recvTimeout = 10.0;
 
     /**
-     * @var bool
+     * @var int
      */
-    protected $listening = true;
+    protected $restartInterval = 5;
 
     public function __construct(ContainerInterface $container)
     {
@@ -103,12 +104,18 @@ abstract class AbstractProcess implements ProcessInterface
                     $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
                     $this->process = $process;
-                    $this->listen();
+                    if ($this->enableCoroutine) {
+                        $quit = new Channel(1);
+                        $this->listen($quit);
+                    }
                     $this->handle();
 
                     $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 } finally {
-                    $this->listening = false;
+                    if (isset($quit)) {
+                        $quit->push(true);
+                    }
+                    sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
@@ -122,10 +129,10 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * Added event for listening data from worker/task.
      */
-    protected function listen()
+    protected function listen(Channel $quit)
     {
-        go(function () {
-            while ($this->listening) {
+        go(function () use ($quit) {
+            while ($quit->pop(0.001) !== true) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();
@@ -141,6 +148,7 @@ abstract class AbstractProcess implements ProcessInterface
                     }
                 }
             }
+            $quit->close();
         });
     }
 }

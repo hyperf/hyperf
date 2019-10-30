@@ -4,14 +4,22 @@
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
 - [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
+- [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
 
 ## Fixed
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
+- [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
+- [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception. 
 
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
+
+## Changed
+
+- [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
 
 # v1.1.3 - 2019-10-24
 

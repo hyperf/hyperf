@@ -223,9 +223,26 @@ class QueueController extends Controller
      */
     protected $service;
 
+    /**
+     * 传统模式投递消息
+     */
     public function index()
     {
         $this->service->push([
+            'group@hyperf.io',
+            'https://doc.hyperf.io',
+            'https://www.hyperf.io',
+        ]);
+
+        return 'success';
+    }
+
+    /**
+     * 注解模式投递消息
+     */
+    public function example()
+    {
+        $this->service->example([
             'group@hyperf.io',
             'https://doc.hyperf.io',
             'https://www.hyperf.io',
