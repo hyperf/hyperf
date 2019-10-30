@@ -155,7 +155,6 @@ class OnWorkerStart implements ListenerInterface
         Coroutine::create(function () {
             try {
                 $this->factory->handle();
-
             } catch (Throwable $t) {
                 $this->spawnHandle();
                 throw $t;
