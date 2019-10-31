@@ -115,6 +115,7 @@
         "files": [
             "src/config/src/Functions.php",
             "src/di/src/Functions.php",
+            "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php"
         ],

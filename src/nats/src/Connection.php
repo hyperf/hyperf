@@ -207,7 +207,7 @@ class Connection
                     $timeout = number_format($seconds, 3);
                     $seconds = floor($timeout);
                     $microseconds = (($timeout - $seconds) * 1000);
-                    return stream_set_timeout($this->streamSocket, (int) $seconds, (int) $microseconds);
+                    return stream_set_timeout($this->streamSocket, $seconds, $microseconds);
                 } catch (\Exception $e) {
                     return false;
                 }
@@ -472,13 +472,7 @@ class Connection
         $errno = null;
         $errstr = null;
 
-        set_error_handler(
-            function () {
-                return true;
-            }
-        );
         $fp = stream_socket_client($address, $errno, $errstr, $timeout, STREAM_CLIENT_CONNECT);
-        restore_error_handler();
 
         if ($fp === false) {
             throw Exception::forStreamSocketClientError($errstr, $errno);
@@ -487,7 +481,7 @@ class Connection
         $timeout = number_format($timeout, 3);
         $seconds = floor($timeout);
         $microseconds = (($timeout - $seconds) * 1000);
-        stream_set_timeout($fp, (int) $seconds, (int) $microseconds);
+        stream_set_timeout($fp, $seconds, $microseconds);
 
         return $fp;
     }
