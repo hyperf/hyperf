@@ -130,8 +130,8 @@ class OnWorkerStart implements ListenerInterface
         );
 
         $server = $this->container->get(Server::class);
-        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
-        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             if (function_exists('gc_status')) {
                 $this->trySet('gc_', $metrics, gc_status());
