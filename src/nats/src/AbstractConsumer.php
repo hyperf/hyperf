@@ -46,7 +46,7 @@ abstract class AbstractConsumer
         $this->container = $container;
     }
 
-    abstract public function handle(Message $payload);
+    abstract public function consume(Message $payload);
 
     public function getSubject(): string
     {

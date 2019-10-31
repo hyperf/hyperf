@@ -80,7 +80,7 @@ class ConsumerManager
             public function handle(): void
             {
                 $this->subscriber->subscribe($this->consumer->getSubject(), function ($data) {
-                    $this->consumer->handle($data);
+                    $this->consumer->consume($data);
                 });
 
                 $this->subscriber->wait();
