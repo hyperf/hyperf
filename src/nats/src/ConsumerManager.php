@@ -82,8 +82,6 @@ class ConsumerManager
                 $this->subscriber->subscribe($this->consumer->getSubject(), function ($data) {
                     $this->consumer->consume($data);
                 });
-
-                $this->subscriber->wait();
             }
         };
     }
