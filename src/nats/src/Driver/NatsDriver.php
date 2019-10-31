@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Driver;
 
 use Closure;
+use Hyperf\Nats\ConnectionOptions;
+use Hyperf\Nats\EncodedConnection;
+use Hyperf\Nats\Encoders\JSONEncoder;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Nats\ConnectionOptions;
-use Nats\EncodedConnection;
-use Nats\Encoders\JSONEncoder;
 use Psr\Container\ContainerInterface;
 
 class NatsDriver extends AbstractDriver

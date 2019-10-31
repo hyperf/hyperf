@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Nats;
 
-use Nats\Message;
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractConsumer

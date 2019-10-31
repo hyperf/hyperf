@@ -36,7 +36,7 @@ class DriverFactory
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->config = $container->get(ConfigInterface::class)->get('squeue', []);
+        $this->config = $container->get(ConfigInterface::class)->get('nats', []);
     }
 
     public function get($pool = 'default'): DriverInterface
