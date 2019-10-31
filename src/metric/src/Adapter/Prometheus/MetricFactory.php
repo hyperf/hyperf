@@ -121,11 +121,11 @@ class MetricFactory implements MetricFactoryInterface
     protected function pushHandle()
     {
         while (true) {
-            $inteval = (float) $this->config->get("metric.metric.{$this->name}.push_inteval", 5);
+            $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
             $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
-            Coroutine::sleep($inteval);
+            Coroutine::sleep($interval);
         }
     }
 

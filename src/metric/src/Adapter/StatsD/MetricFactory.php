@@ -81,13 +81,13 @@ class MetricFactory implements MetricFactoryInterface
     public function handle(): void
     {
         $name = $this->config->get('metric.default');
-        $inteval = (float) $this->config->get("metric.metric.{$name}.push_inteval", 5);
+        $interval = (float) $this->config->get("metric.metric.{$name}.push_interval", 5);
         $batchEnabled = $this->config->get("metric.metric.{$name}.enable_batch") == true;
         // Block handle from returning.
         do {
             if ($batchEnabled) {
                 $this->client->startBatch();
-                Coroutine::sleep((int) $inteval);
+                Coroutine::sleep((int) $interval);
                 $this->client->endBatch();
             } else {
                 Coroutine::sleep(5000);
