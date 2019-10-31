@@ -169,7 +169,7 @@ interface CounterInterface
 }
 ```
 
-* 測量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
+* 测量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
 
 ```php
 interface GaugeInterface
