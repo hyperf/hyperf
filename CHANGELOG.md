@@ -1,10 +1,13 @@
-# v1.1.4 - TBD
+# v1.1.5 - TBD
+
+# v1.1.4 - 2019-10-31
 
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
 - [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
 - [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
+- [#804](https://github.com/hyperf/hyperf/pull/804) Added `BeforeHandle` `AfterHandle` and `FailToHandle` for command.
 
 ## Fixed
 
@@ -22,6 +25,7 @@
 ## Changed
 
 - [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
+- [#811](https://github.com/hyperf/hyperf/pull/811) Command `di:init-proxy` does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.
 
 # v1.1.3 - 2019-10-24
 

@@ -49,9 +49,9 @@ php bin/hyperf.php vendor:publish hyperf/metric
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
-* `default_metric_inteval`: 默认指标推送周期，单位为秒，下同。
+* `default_metric_interval`: 默认指标推送周期，单位为秒，下同。
 ```php
-'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
+'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
 ```
 #### 配置 Prometheus
 
@@ -64,7 +64,7 @@ return [
     'default' => env('TELEMETRY_DRIVER', 'prometheus'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
-    'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
+    'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
     'metric' => [
         'prometheus' => [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
@@ -75,7 +75,7 @@ return [
             'scrape_path' => env('PROMETHEUS_SCRAPE_PATH', '/metrics'),
             'push_host' => env('PROMETHEUS_PUSH_HOST', '0.0.0.0'),
             'push_port' => env('PROMETHEUS_PUSH_PORT', '9091'),
-            'push_inteval' => env('PROMETHEUS_PUSH_INTEVAL', 5),
+            'push_interval' => env('PROMETHEUS_PUSH_INTERVAL', 5),
         ],
     ],
 ];
@@ -99,7 +99,7 @@ Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pus
 'mode' => Constants::PUSH_MODE
 ```
 
-并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_inteval`。只建议离线任务使用推模式。
+并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_interval`。只建议离线任务使用推模式。
 
 #### 配置 StatsD
 
@@ -117,14 +117,14 @@ return [
             'udp_host' => env('STATSD_UDP_HOST', '127.0.0.1'),
             'udp_port' => env('STATSD_UDP_PORT', '8125'),
             'enable_batch' => env('STATSD_ENABLE_BATCH', true),
-            'push_inteval' => env('STATSD_PUSH_INTEVAL', 5),
+            'push_interval' => env('STATSD_PUSH_INTERVAL', 5),
             'sample_rate' => env('STATSD_SAMPLE_RATE', 1.0),
         ],
     ],
 ];
 ```
 
-StatsD 目前只支持 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 端口 `udp_port`、是否批量推送 `enable_batch`（减少请求次数）、批量推送间隔 `push_inteval` 以及采样率`sample_rate`。
+StatsD 目前只支持 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 端口 `udp_port`、是否批量推送 `enable_batch`（减少请求次数）、批量推送间隔 `push_interval` 以及采样率`sample_rate`。
 
 #### 配置 InfluxDB
 
@@ -144,13 +144,13 @@ return [
             'username' => env('INFLUXDB_USERNAME', ''),
             'password' => env('INFLUXDB_PASSWORD', ''),
             'dbname' => env('INFLUXDB_DBNAME', true),
-            'push_inteval' => env('INFLUXDB_PUSH_INTEVAL', 5),
+            'push_interval' => env('INFLUXDB_PUSH_INTERVAL', 5),
         ],
     ],
 ];
 ```
 
-InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP端口 `port`、用户名  `username`、密码 `password`、`dbname` 数据表以及批量推送间隔 `push_inteval`。
+InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP端口 `port`、用户名  `username`、密码 `password`、`dbname` 数据表以及批量推送间隔 `push_interval`。
 
 ### 基本抽象
 
@@ -169,7 +169,7 @@ interface CounterInterface
 }
 ```
 
-* 測量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
+* 测量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
 
 ```php
 interface GaugeInterface
