@@ -17,7 +17,7 @@ class Backoff
     /**
      * Max backoff.
      */
-    private const CAP = 60 * 1000; //1 minute
+    private const CAP = 60 * 1000; // 1 minute
 
     /**
      * @var int
@@ -62,9 +62,11 @@ class Backoff
         if ($this->currentMs === 0) {
             return;
         }
+
         usleep($this->currentMs * 1000);
-        //update backoff using Decorrelated Jitter
-        //see: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+
+        // update backoff using Decorrelated Jitter
+        // see: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
         $this->currentMs = rand($this->firstMs, $this->currentMs * 3);
 
         if ($this->currentMs > self::CAP) {
