@@ -1,5 +1,13 @@
 <?php
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\DB;
 
@@ -101,5 +109,47 @@ class SwooleMySQLConnection extends AbstractConnection
         unset($this->connection);
 
         return true;
+    }
+
+
+    public function beginTransaction()
+    {
+        $this->connection->begin();
+    }
+
+    public function commit()
+    {
+        $this->connection->commit();
+    }
+
+    public function rollback()
+    {
+        $this->connection->rollback();
+    }
+
+    public function getErrorCode()
+    {
+        return $this->connection->errno;
+    }
+
+    public function getErrorInfo()
+    {
+        return $this->connection->error;
+    }
+
+    public function getLastInsertId()
+    {
+        return $this->connection->insert_id;
+    }
+
+
+    public function prepare(string $sql, array $data = [], array $options = []): bool
+    {
+        return $this->connection->prepare($sql)->execute($data);
+    }
+
+    public function query(string $sql): ?array
+    {
+        return $this->connection->query($sql);
     }
 }

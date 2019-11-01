@@ -29,12 +29,42 @@ class PDODriverTest extends AbstractTestCase
     public function testPDO()
     {
         $connect = $this->getPDODB();
-        $result = $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)")->execute([1, 2, 3]);
-
-        $this->assertSame(true, $result);
+        $stmt = $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [1, 2, 3]);
+        $this->assertSame(true, $stmt);
 
         $testList = $connect->query("SELECT * FROM `test`");
         $this->assertNotNull($testList);
+
+        // rollback test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [9, 9, 9]);
+
+        $connect->rollback();
+
+        // commit test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [8, 8, 8]);
+
+        $connect->commit();
+
+
+        // transaction Nesting test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [6, 6, 6]);
+
+        $connect->beginTransaction();
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [7, 7, 7]);
+        $connect->rollback();
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [5, 5, 5]);
+
+        $connect->commit();
+
+        var_dump($connect->getLastInsertId());
+        var_dump($connect->getErrorCode());
+        var_dump($connect->getErrorInfo());
     }
 
     public function getPDODB()

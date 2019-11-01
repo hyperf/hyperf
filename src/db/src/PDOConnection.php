@@ -1,5 +1,13 @@
 <?php
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\DB;
 
@@ -102,5 +110,47 @@ class PDOConnection extends AbstractConnection
         unset($this->connection);
 
         return true;
+    }
+
+    public function beginTransaction(float $timeout = null)
+    {
+        $this->connection->beginTransaction();
+    }
+
+    public function commit(float $timeout = null)
+    {
+        $this->connection->commit();
+    }
+
+    public function rollback(float $timeout = null)
+    {
+        $this->connection->rollBack();
+    }
+
+    public function getErrorCode()
+    {
+        $errorCode = $this->connection->errorCode();
+        return $errorCode == '00000' ? 0 : $errorCode;
+    }
+
+    public function getErrorInfo()
+    {
+        $message = $this->connection->errorInfo()[2];
+        return empty($message) ? '' : $message;
+    }
+
+    public function getLastInsertId()
+    {
+        return $this->connection->lastInsertId();
+    }
+
+    public function prepare(string $sql, array $data = [], array $options = []): bool
+    {
+        return $this->connection->prepare($sql, $options)->execute($data);
+    }
+
+    public function query(string $sql): ?array
+    {
+        return $this->connection->query($sql)->fetchAll();
     }
 }

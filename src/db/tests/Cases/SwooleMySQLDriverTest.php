@@ -25,19 +25,53 @@ use Mockery;
  * @internal
  * @coversNothing
  */
-class SwooleMySqlDriverTest extends AbstractTestCase
+class SwooleMySQLDriverTest extends AbstractTestCase
 {
     public function testSwooleMySQL()
     {
         $connect = $this->getSwooleMySqlDB();
-        $stmt = $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)");
-        $result = $stmt->execute([1, 2, 3]);
-        $this->assertSame(true, $result);
+        $stmt = $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [1, 2, 3]);
+        $this->assertSame(true, $stmt);
 
         $testList = $connect->query("SELECT * FROM `test`");
         $this->assertNotNull($testList);
+
+        // rollback test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [9, 9, 9]);
+
+        $connect->rollback();
+
+        // commit test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [8, 8, 8]);
+
+        $connect->commit();
+
+        // transaction Nesting test
+        $connect->beginTransaction();
+
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [6, 6, 6]);
+
+        $connect->beginTransaction();
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [7, 7, 7]);
+        $connect->rollback();
+        $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)", [5, 5, 5]);
+
+        $connect->commit();
+
+        var_dump($connect->getLastInsertId());
+        var_dump($connect->getErrorCode());
+        var_dump($connect->getErrorInfo());
+
+
     }
 
+    /**
+     * @return DB
+     */
     public function getSwooleMySQLDB()
     {
         $container = Mockery::mock(Container::class);
