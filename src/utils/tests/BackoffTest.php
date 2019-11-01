@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Utils\Parallel
+ * @covers \Hyperf\Utils\Backoff
  */
 class BackoffTest extends TestCase
 {
