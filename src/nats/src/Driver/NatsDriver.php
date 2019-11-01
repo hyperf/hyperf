@@ -13,12 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Driver;
 
 use Closure;
+use Hyperf\Nats\Connection as NatsConnection;
 use Hyperf\Nats\ConnectionOptions;
 use Hyperf\Nats\EncodedConnection;
 use Hyperf\Nats\Encoders\JSONEncoder;
+use Hyperf\Nats\Message;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
+use Swoole\Coroutine\Channel;
 
 class NatsDriver extends AbstractDriver
 {
@@ -34,7 +37,7 @@ class NatsDriver extends AbstractDriver
         $factory = $this->container->get(PoolFactory::class);
         $poolConfig = $config['pool'] ?? [];
 
-        $this->pool = $factory->get('squeue' . $this->name, function () use ($config) {
+        $this->pool = $factory->get('nats' . $this->name, function () use ($config) {
             $option = new ConnectionOptions($config['options'] ?? []);
             $encoder = make($config['encoder'] ?? JSONEncoder::class);
             $conn = make(EncodedConnection::class, [$option, $encoder]);
@@ -48,7 +51,7 @@ class NatsDriver extends AbstractDriver
         try {
             /** @var Connection $connection */
             $connection = $this->pool->get();
-            /** @var \Nats\Connection $client */
+            /** @var NatsConnection $client */
             $client = $connection->getConnection();
             $client->publish($subject, $payload, $inbox);
         } finally {
@@ -61,9 +64,27 @@ class NatsDriver extends AbstractDriver
         try {
             /** @var Connection $connection */
             $connection = $this->pool->get();
-            /** @var \Nats\Connection $client */
+            /** @var NatsConnection $client */
             $client = $connection->getConnection();
             $client->request($subject, $payload, $callback);
+        } finally {
+            $connection->release();
+        }
+    }
+
+    public function requestSync(string $subject, $payload, float $timeout = 10.0): Message
+    {
+        try {
+            /** @var Connection $connection */
+            $connection = $this->pool->get();
+            /** @var NatsConnection $client */
+            $client = $connection->getConnection();
+            $channel = new Channel(1);
+            $client->request($subject, $payload, function (Message $message) use ($channel) {
+                $channel->push($message);
+            });
+
+            return $channel->pop($timeout);
         } finally {
             $connection->release();
         }
@@ -74,7 +95,7 @@ class NatsDriver extends AbstractDriver
         try {
             /** @var Connection $connection */
             $connection = $this->pool->get();
-            /** @var \Nats\Connection $client */
+            /** @var NatsConnection $client */
             $client = $connection->getConnection();
             $client->subscribe($subject, $callback);
             $client->wait();

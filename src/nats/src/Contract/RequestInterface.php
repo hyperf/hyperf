@@ -17,4 +17,6 @@ use Closure;
 interface RequestInterface
 {
     public function request(string $subject, $payload, Closure $callback);
+
+    public function requestSync(string $subject, $payload): Message;
 }
