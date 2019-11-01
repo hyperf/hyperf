@@ -23,6 +23,7 @@ use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -459,27 +460,13 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
      */
     protected function toJson($data): string
     {
-        if (is_array($data)) {
-            $jsonRet = json_encode($data, JSON_UNESCAPED_UNICODE);
-            if($jsonRet == false){
-                throw new EncodingException(json_last_error_msg());
-            }
-            return $jsonRet;
+        try {
+            $result = Json::encode($data);
+        } catch (\Throwable $exception) {
+            throw new EncodingException($exception->getMessage(), $exception->getCode());
         }
 
-        if ($data instanceof Jsonable) {
-            return (string) $data;
-        }
-
-        if ($data instanceof Arrayable) {
-            $jsonRet = json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
-            if($jsonRet == false){
-                throw new EncodingException(json_last_error_msg());
-            }
-            return $jsonRet;
-        }
-
-        throw new EncodingException('Error encoding response data to JSON.');
+        return $result;
     }
 
     /**
