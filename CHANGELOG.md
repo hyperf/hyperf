@@ -1,5 +1,13 @@
 # v1.1.5 - TBD
 
+## Added
+
+- [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
+
+## Optimized
+
+- [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+
 # v1.1.4 - 2019-10-31
 
 ## Added
