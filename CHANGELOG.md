@@ -1,5 +1,9 @@
 # v1.1.5 - TBD
 
+## Fixed
+
+- [#831](https://github.com/hyperf/hyperf/pull/831) Fixed redis not reconnect after redis server restarted.
+
 # v1.1.4 - 2019-10-31
 
 ## Added
