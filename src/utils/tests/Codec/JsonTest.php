@@ -39,6 +39,15 @@ class JsonTest extends TestCase
         $this->assertSame($data, Json::decode($json));
     }
 
+    public function testDecodeToObject()
+    {
+        $data = [
+            'name' => 'Hyperf',
+        ];
+        $json = '{"name":"Hyperf"}';
+        $this->assertEquals((object) $data, Json::decode($json, false));
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Control character error, possibly incorrectly encoded

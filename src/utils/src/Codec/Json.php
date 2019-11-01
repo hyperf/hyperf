@@ -35,9 +35,9 @@ class Json
         return $json;
     }
 
-    public static function decode(string $json, $asArray = true): array
+    public static function decode(string $json, $assoc = true)
     {
-        $decode = json_decode($json, $asArray);
+        $decode = json_decode($json, $assoc);
 
         static::handleJsonError(json_last_error(), json_last_error_msg());
 
