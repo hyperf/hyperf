@@ -460,7 +460,11 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
     protected function toJson($data): string
     {
         if (is_array($data)) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE);
+            $jsonRet = json_encode($data, JSON_UNESCAPED_UNICODE);
+            if($jsonRet == false){
+                throw new EncodingException(json_last_error_msg());
+            }
+            return $jsonRet;
         }
 
         if ($data instanceof Jsonable) {
@@ -468,7 +472,11 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
         }
 
         if ($data instanceof Arrayable) {
-            return json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
+            $jsonRet = json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
+            if($jsonRet == false){
+                throw new EncodingException(json_last_error_msg());
+            }
+            return $jsonRet;
         }
 
         throw new EncodingException('Error encoding response data to JSON.');
