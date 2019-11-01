@@ -3,12 +3,9 @@
 namespace Hyperf\DB;
 
 
-use Hyperf\DB\Pool\AbstractPool;
 use Hyperf\DB\Pool\PoolFactory;
-use Hyperf\DB\Pool\SwooleMySqlPool;
 use Hyperf\Pool\Connection;
 use Hyperf\Utils\Context;
-use Swoole\Coroutine\MySQL;
 
 class DB
 {
@@ -41,7 +38,7 @@ class DB
 
 
     /**
-     * Get a connection from coroutine context, or from redis connectio pool.
+     * Get a connection from coroutine context, or from mysql connectio pool.
      * @param mixed $hasContextConnection
      */
     private function getConnection($hasContextConnection): Connection

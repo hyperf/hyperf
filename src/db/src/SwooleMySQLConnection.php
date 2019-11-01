@@ -3,18 +3,16 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
-use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
 
-class SwooleMysqlConnection extends BaseConnection implements ConnectionInterface
+class SwooleMySQLConnection extends AbstractConnection
 {
 
     /**
-     * @var PDO
+     * @var MySQL
      */
     protected $connection;
 
@@ -41,7 +39,7 @@ class SwooleMysqlConnection extends BaseConnection implements ConnectionInterfac
     ];
 
     /**
-     * Current redis database.
+     * Current mysql database.
      * @var null|int
      */
     protected $database;

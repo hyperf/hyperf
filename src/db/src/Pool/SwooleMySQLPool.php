@@ -7,12 +7,11 @@ namespace Hyperf\DB\Pool;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Frequency;
-use Hyperf\DB\PDOConnection;
-use Hyperf\DB\SwooleMysqlConnection;
+use Hyperf\DB\SwooleMySQLConnection;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
-class SwooleMySqlPool extends AbstractPool
+class SwooleMySQLPool extends AbstractPool
 {
 
     /**
@@ -51,7 +50,7 @@ class SwooleMySqlPool extends AbstractPool
 
     protected function createConnection(): ConnectionInterface
     {
-        return new SwooleMysqlConnection($this->container, $this, $this->config);
+        return new SwooleMySQLConnection($this->container, $this, $this->config);
     }
 
 }

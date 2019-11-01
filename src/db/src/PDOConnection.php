@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
-use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use PDO;
 use Psr\Container\ContainerInterface;
 
-class PDOConnection extends BaseConnection implements ConnectionInterface
+class PDOConnection extends AbstractConnection
 {
 
     /**
@@ -41,7 +39,7 @@ class PDOConnection extends BaseConnection implements ConnectionInterface
     ];
 
     /**
-     * Current redis database.
+     * Current mysql database.
      * @var null|int
      */
     protected $database;

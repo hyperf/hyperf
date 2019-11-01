@@ -18,7 +18,6 @@ use Hyperf\DB\Pool\PDOPool;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
-use HyperfTest\Cases\Stub\PDOPoolStud;
 use Mockery;
 
 /**

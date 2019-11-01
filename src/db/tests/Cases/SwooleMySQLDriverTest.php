@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -28,7 +27,7 @@ use Mockery;
  */
 class SwooleMySqlDriverTest extends AbstractTestCase
 {
-    public function testSwooleMySql()
+    public function testSwooleMySQL()
     {
         $connect = $this->getSwooleMySqlDB();
         $stmt = $connect->prepare("INSERT INTO `test`(`a`,`b`,`c`) VALUES (?,?,?)");
@@ -39,7 +38,7 @@ class SwooleMySqlDriverTest extends AbstractTestCase
         $this->assertNotNull($testList);
     }
 
-    public function getSwooleMySqlDB()
+    public function getSwooleMySQLDB()
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
@@ -65,8 +64,8 @@ class SwooleMySqlDriverTest extends AbstractTestCase
                 ],
             ],
         ]));
-        $pool = new SwooleMySqlPool($container, 'default');
-        $container->shouldReceive('make')->once()->with(SwooleMySqlPool::class, ['name' => 'default'])->andReturn($pool);
+        $pool = new SwooleMySQLPool($container, 'default');
+        $container->shouldReceive('make')->once()->with(SwooleMySQLPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
         $factory = new PoolFactory($container);
