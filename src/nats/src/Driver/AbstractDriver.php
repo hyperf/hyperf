@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractDriver implements DriverInterface
@@ -45,14 +44,5 @@ abstract class AbstractDriver implements DriverInterface
         $this->config = $config;
 
         $this->logger = $container->get(StdoutLoggerInterface::class);
-    }
-
-    protected function formatThrowable(\Throwable $throwable): string
-    {
-        if ($this->container->has(FormatterInterface::class)) {
-            return $this->container->get(FormatterInterface::class)->format($throwable);
-        }
-
-        return $throwable->getMessage();
     }
 }
