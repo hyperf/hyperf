@@ -39,6 +39,8 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $this->config['db'];
         $this->timeout = $this->config['timeout'];
 
+        $this->lastUseTime = microtime(true);
+
         return true;
     }
 
