@@ -90,14 +90,18 @@ class NatsDriver extends AbstractDriver
         }
     }
 
-    public function subscribe(string $subject, Closure $callback): void
+    public function subscribe(string $subject, string $queue, Closure $callback): void
     {
         try {
             /** @var Connection $connection */
             $connection = $this->pool->get();
             /** @var NatsConnection $client */
             $client = $connection->getConnection();
-            $client->subscribe($subject, $callback);
+            if (empty($queue)) {
+                $client->subscribe($subject, $callback);
+            } else {
+                $client->queueSubscribe($subject, $queue, $callback);
+            }
             $client->wait();
         } finally {
             $connection->release();

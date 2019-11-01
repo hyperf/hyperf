@@ -29,6 +29,11 @@ abstract class AbstractConsumer
     /**
      * @var string
      */
+    protected $queue = '';
+
+    /**
+     * @var string
+     */
     protected $name = 'NatsConsumer';
 
     /**
@@ -56,6 +61,17 @@ abstract class AbstractConsumer
     public function setSubject(string $subject): self
     {
         $this->subject = $subject;
+        return $this;
+    }
+
+    public function getQueue(): string
+    {
+        return $this->queue;
+    }
+
+    public function setQueue(string $queue): self
+    {
+        $this->queue = $queue;
         return $this;
     }
 

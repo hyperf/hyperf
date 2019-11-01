@@ -16,5 +16,5 @@ use Closure;
 
 interface SubscribeInterface
 {
-    public function subscribe(string $subject, Closure $callback): void;
+    public function subscribe(string $subject, string $queue, Closure $callback): void;
 }

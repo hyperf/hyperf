@@ -44,6 +44,7 @@ class ConsumerManager
                 continue;
             }
             $annotation->subject && $instance->setSubject($annotation->subject);
+            $annotation->queue && $instance->setQueue($annotation->queue);
             $annotation->name && $instance->setName($annotation->name);
             $annotation->pool && $instance->setName($annotation->pool);
 
@@ -79,9 +80,13 @@ class ConsumerManager
 
             public function handle(): void
             {
-                $this->subscriber->subscribe($this->consumer->getSubject(), function ($data) {
-                    $this->consumer->consume($data);
-                });
+                $this->subscriber->subscribe(
+                    $this->consumer->getSubject(),
+                    $this->consumer->getQueue(),
+                    function ($data) {
+                        $this->consumer->consume($data);
+                    }
+                );
             }
         };
     }
