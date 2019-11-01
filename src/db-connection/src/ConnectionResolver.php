@@ -64,6 +64,7 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             $pool = $this->factory->getPool($name);
+            // FIXME: Mysql connect failed, it does not release.
             $connection = $pool->get()->getConnection();
             Context::set($id, $connection);
             if (Coroutine::inCoroutine()) {
