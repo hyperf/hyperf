@@ -93,7 +93,6 @@ class Request implements RequestInterface
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
-        $result = $default ?? [];
 
         foreach ($keys as $key) {
             $result[$key] = data_get($data, $key, $default[$key] ?? null);
