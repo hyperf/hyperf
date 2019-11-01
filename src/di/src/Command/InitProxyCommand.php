@@ -18,8 +18,6 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {
@@ -49,21 +47,11 @@ class InitProxyCommand extends Command
 
     public function handle()
     {
+        $this->warn('This command does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.');
+
         $this->createAopProxies();
 
         $this->output->writeln('<info>Proxy class create success.</info>');
-    }
-
-    protected function clearRuntime($paths)
-    {
-        $finder = new Finder();
-        $finder->files()->in($paths)->name(['*.php', '*.cache']);
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $path = $file->getRealPath();
-            @unlink($path);
-        }
     }
 
     protected function getScanDir()
@@ -90,11 +78,6 @@ class InitProxyCommand extends Command
     private function createAopProxies()
     {
         $scanDirs = $this->getScanDir();
-
-        $runtime = BASE_PATH . '/runtime/container/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
 
         $meta = $this->scanner->scan($scanDirs);
         $classCollection = array_keys($meta);

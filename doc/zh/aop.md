@@ -68,4 +68,4 @@ class FooAspect extends AbstractAspect
 
 在部署生产环境时，我们可能会希望 Hyperf 提前将所有代理类提前生成，而不是使用时动态的生成，可以通过 `php bin/hyperf.php di:init-proxy` 命令来生成所有代理类，该命令会忽视现有的代理类缓存，全部重新生成。   
 
-基于以上，我们可以将生成代理类的命令和启动服务的命令结合起来，`php bin/hyperf.php di:init-proxy && php bin/hyperf.php start` 来达到自动重新生成所有代理类缓存然后启动服务的目的。
+基于以上，我们可以将生成代理类的命令和启动服务的命令结合起来，`vendor/bin/init-proxy.sh && php bin/hyperf.php start` 来达到自动重新生成所有代理类缓存然后启动服务的目的。
