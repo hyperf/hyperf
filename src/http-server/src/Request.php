@@ -96,7 +96,7 @@ class Request implements RequestInterface
         $result = $default ?? [];
 
         foreach ($keys as $key) {
-            $result[$key] = data_get($data, $key);
+            $result[$key] = data_get($data, $key, $default[$key] ?? null);
         }
 
         return $result;
