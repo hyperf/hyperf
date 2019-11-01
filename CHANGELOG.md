@@ -4,6 +4,10 @@
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 
+## Fixed
+
+- [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
+
 ## Optimized
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
