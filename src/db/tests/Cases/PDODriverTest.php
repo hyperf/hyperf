@@ -60,9 +60,6 @@ class PDODriverTest extends AbstractTestCase
 
         $connect->rollback();
 
-        var_dump($connect->getLastInsertId());
-        var_dump($connect->getErrorCode());
-        var_dump($connect->getErrorInfo());
     }
 
     public function getPDODB()

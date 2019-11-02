@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
+use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
@@ -28,7 +29,7 @@ class MySQLConnection extends AbstractConnection
      * @var array
      */
     protected $config = [
-        'driver' => 'mysql',
+        'driver' => 'swoole_mysql',
         'host' => 'localhost',
         'database' => 'hyperf',
         'username' => 'root',
@@ -64,7 +65,7 @@ class MySQLConnection extends AbstractConnection
             return $this;
         }
 
-        if (! $this->reconnect()) {
+        if (!$this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -104,6 +105,7 @@ class MySQLConnection extends AbstractConnection
         return true;
     }
 
+
     public function beginTransaction()
     {
         $this->connection->begin();
@@ -134,9 +136,20 @@ class MySQLConnection extends AbstractConnection
         return $this->connection->insert_id;
     }
 
-    public function prepare(string $sql, array $data = [], array $options = []): bool
+
+    public function prepare(string $sql, ?array $data = null, array $options = []): bool
     {
-        return $this->connection->prepare($sql)->execute($data);
+
+        if (strstr($sql, 'SAVEPOINT')) {
+            return $this->connection->query($sql);
+        } else {
+            $result = $this->connection->prepare($sql);
+            if ($result === false) {
+                throw new RuntimeException($this->getErrorInfo());
+            }
+            return $result->execute($data);
+        }
+
     }
 
     public function query(string $sql): ?array

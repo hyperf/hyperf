@@ -48,7 +48,6 @@ class DB
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
-        var_dump($name);
         switch ($name) {
             case 'beginTransaction':
                 Context::set($this->getContextKey(), $connection);
