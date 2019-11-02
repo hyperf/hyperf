@@ -21,6 +21,7 @@ return [
         'charset' => env('DB_CHARSET', 'utf8mb4'),
         'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
         'prefix' => env('DB_PREFIX', ''),
+        'fetch_mode' => PDO::FETCH_ASSOC,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -30,7 +31,11 @@ return [
             'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ],
     ],
 ];
