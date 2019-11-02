@@ -14,8 +14,6 @@ namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
-use Hyperf\Di\Container;
-use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
@@ -40,13 +38,7 @@ class PoolFactory
         $driver = $config->get(sprintf('db.%s.driver', $name), 'pdo');
         $class = $this->getPoolName($driver);
 
-        if ($this->container instanceof Container) {
-            $pool = $this->container->make($class, ['name' => $name]);
-        } else {
-            $pool = new $class($this->container, $name);
-        }
-
-        return $this->pools[$name] = $pool;
+        return $this->pools[$name] = make($class, [$this->container, $name]);
     }
 
     protected function getPoolName(string $driver)

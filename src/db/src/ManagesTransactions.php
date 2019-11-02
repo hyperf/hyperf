@@ -80,14 +80,6 @@ trait ManagesTransactions
     }
 
     /**
-     * Compile the SQL statement to define a savepoint.
-     */
-    public function compileSavepoint(string $name): string
-    {
-        return 'SAVEPOINT ' . $name;
-    }
-
-    /**
      * Create a transaction within the database.
      */
     protected function createTransaction()
@@ -157,6 +149,14 @@ trait ManagesTransactions
         }
 
         throw $e;
+    }
+
+    /**
+     * Compile the SQL statement to define a savepoint.
+     */
+    protected function compileSavepoint(string $name): string
+    {
+        return 'SAVEPOINT ' . $name;
     }
 
     /**
