@@ -50,4 +50,9 @@ abstract class Pool extends HyperfPool
     {
         return $this->name;
     }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
 }

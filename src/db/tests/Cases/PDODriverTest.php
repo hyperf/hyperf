@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Cases;
+namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -27,39 +27,127 @@ use Mockery;
  */
 class PDODriverTest extends AbstractTestCase
 {
-    public function testPDO()
+    public function testFetch()
     {
-        $connect = $this->getPDODB();
-        $stmt = $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['insert']);
-        $this->assertSame(true, $stmt);
+        $db = $this->getContainer()->get(DB::class);
 
-        $testList = $connect->query('SELECT * FROM `log`');
-        $this->assertNotNull($testList);
-        // rollback test
-        $connect->beginTransaction();
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [2]);
 
-        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert rollback']);
-
-        $connect->rollback();
-
-        // commit test
-        $connect->beginTransaction();
-
-        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert commit']);
-
-        $connect->commit();
-
-        // transaction Nesting test
-        $connect->beginTransaction();
-
-        $connect->beginTransaction();
-        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?) ', ['transaction Nesting test rollback 1']);
-        $connect->commit();
-
-        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test INSERT 2']);
-
-        $connect->rollback();
+        $this->assertSame('Hyperflex', $res['name']);
     }
+
+    public function testQuery()
+    {
+        $db = $this->getContainer()->get(DB::class);
+
+        $res = $db->query('SELECT * FROM `user` WHERE id = ?;', [2]);
+
+        $this->assertSame('Hyperflex', $res[0]['name']);
+    }
+
+    public function testInsertAndExecute()
+    {
+        $db = $this->getContainer()->get(DB::class);
+
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $this->assertTrue($id > 0);
+
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
+        $this->assertSame($name, $res['name']);
+        $this->assertSame($gender, $res['gender']);
+
+        $res = $db->execute('UPDATE `user` SET `name` = ? WHERE id = ?', [$name = uniqid(), $id]);
+        $this->assertTrue($res > 0);
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
+        $this->assertSame($name, $res['name']);
+    }
+
+    public function testTransaction()
+    {
+        $db = $this->getContainer()->get(DB::class);
+        $db->beginTransaction();
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $this->assertTrue($id > 0);
+        $db->commit();
+
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
+        $this->assertSame($name, $res['name']);
+        $this->assertSame($gender, $res['gender']);
+
+        $db->beginTransaction();
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $this->assertTrue($id > 0);
+        $db->rollBack();
+
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
+        $this->assertNull($res);
+    }
+
+    public function testConfig()
+    {
+        $factory = $this->getContainer()->get(PoolFactory::class);
+        $pool = $factory->getPool('default');
+
+        $this->assertSame('hyperf', $pool->getConfig()['database']);
+        $this->assertSame([], $pool->getConfig()['options']);
+
+        $connection = $pool->get();
+        $this->assertSame(5, count($connection->getConfig()['options']));
+        $this->assertSame(6, count($connection->getConfig()['pool']));
+        $this->assertSame(20, $connection->getConfig()['pool']['max_connections']);
+    }
+
+    public function testMultiTransaction()
+    {
+        $db = $this->getContainer()->get(DB::class);
+        $db->beginTransaction();
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = 'trans' . uniqid(), $gender = rand(0, 2)]);
+        $this->assertTrue($id > 0);
+        $db->beginTransaction();
+        $id2 = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', ['rollback' . uniqid(), rand(0, 2)]);
+        $this->assertTrue($id2 > 0);
+        $db->rollBack();
+        $db->commit();
+
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id2]);
+        $this->assertNull($res);
+        $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
+        $this->assertNotNull($res);
+    }
+
+    // public function testPDO()
+    // {
+    //     $connect = $this->getPDODB();
+    //     $stmt = $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['insert']);
+    //     $this->assertSame(true, $stmt);
+    //
+    //     $testList = $connect->query('SELECT * FROM `log`');
+    //     $this->assertNotNull($testList);
+    //     // rollback test
+    //     $connect->beginTransaction();
+    //
+    //     $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert rollback']);
+    //
+    //     $connect->rollback();
+    //
+    //     // commit test
+    //     $connect->beginTransaction();
+    //
+    //     $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert commit']);
+    //
+    //     $connect->commit();
+    //
+    //     // transaction Nesting test
+    //     $connect->beginTransaction();
+    //
+    //     $connect->beginTransaction();
+    //     $connect->prepare('INSERT INTO `log`(`content`) VALUES (?) ', ['transaction Nesting test rollback 1']);
+    //     $connect->commit();
+    //
+    //     $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test INSERT 2']);
+    //
+    //     $connect->rollback();
+    // }
 
     public function getPDODB()
     {

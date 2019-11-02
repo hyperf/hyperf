@@ -15,12 +15,11 @@ namespace Hyperf\DB;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use PDO;
+use PDOStatement;
 use Psr\Container\ContainerInterface;
 
 class PDOConnection extends AbstractConnection
 {
-    use ManagesTransactions;
-
     /**
      * @var PDO
      */
@@ -73,30 +72,16 @@ class PDOConnection extends AbstractConnection
         return $this->connection->{$name}(...$arguments);
     }
 
-    public function getActiveConnection()
-    {
-        if ($this->check()) {
-            return $this;
-        }
-
-        if (! $this->reconnect()) {
-            throw new ConnectionException('Connection reconnect failed.');
-        }
-
-        return $this;
-    }
-
     /**
      * Reconnect the connection.
      */
     public function reconnect(): bool
     {
-        $dbms = $this->config['driver'];
         $host = $this->config['host'];
         $dbName = $this->config['database'];
         $username = $this->config['username'];
         $password = $this->config['password'];
-        $dsn = "{$dbms}:host={$host};dbname={$dbName}";
+        $dsn = "mysql:host={$host};dbname={$dbName}";
         try {
             $pdo = new \PDO($dsn, $username, $password, $this->config['options']);
         } catch (\Throwable $e) {
@@ -133,7 +118,7 @@ class PDOConnection extends AbstractConnection
         return $statement->fetchAll();
     }
 
-    public function fetch(string $query, array $bindings = []): array
+    public function fetch(string $query, array $bindings = [])
     {
         $records = $this->query($query, $bindings);
 

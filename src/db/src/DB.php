@@ -14,9 +14,9 @@ namespace Hyperf\DB;
 
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\Context;
+use Throwable;
 
 /**
- * Class DB.
  * @method beginTransaction()
  * @method commit()
  * @method rollback()
@@ -36,41 +36,51 @@ class DB
     /**
      * @var string
      */
-    protected $poolName = 'default';
+    protected $poolName;
 
-    public function __construct(PoolFactory $factory)
+    public function __construct(PoolFactory $factory, string $poolName = 'default')
     {
         $this->factory = $factory;
+        $this->poolName = $poolName;
     }
 
     public function __call($name, $arguments)
     {
-        // Get a connection from coroutine context or connection pool.
-        $hasContextConnection = Context::has($this->getContextKey());
+        $hasContextConnection = $this->hasContextConnection($name);
         $connection = $this->getConnection($hasContextConnection);
-        switch ($name) {
-            case 'beginTransaction':
-                Context::set($this->getContextKey(), $connection);
-                $transctionManager = new TransactionManager();
-                $result = $transctionManager->beginTransaction();
-                break;
-            case 'commit':
-            case 'rollback':
-                $transctionManager = new TransactionManager();
-                $result = $transctionManager->{$name}();
-                break;
-            default:
-                $result = $connection->{$name}(...$arguments);
+
+        try {
+            $connection = $connection->getConnection();
+            $result = $connection->{$name}(...$arguments);
+        } catch (Throwable $exception) {
+            $result = $connection->retry($exception, $name, $arguments);
+        } finally {
+            if (! $hasContextConnection) {
+                $connection->release();
+            }
         }
 
         return $result;
     }
 
+    protected function hasContextConnection($name): bool
+    {
+        $hasContextConnection = Context::has($this->getContextKey());
+        if (! $hasContextConnection) {
+            if (in_array($name, ['beginTransaction', 'commit', 'rollBack'])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Get a connection from coroutine context, or from mysql connectio pool.
-     * @param mixed $hasContextConnection
      */
-    private function getConnection($hasContextConnection): AbstractConnection
+    protected function getConnection(bool $hasContextConnection): AbstractConnection
     {
         $connection = null;
         if ($hasContextConnection) {
@@ -78,8 +88,13 @@ class DB
         }
         if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->poolName);
-            Context::set('poolId', $pool->getCurrentConnections());
-            $connection = $pool->get()->getConnection();
+            $connection = $pool->get();
+            if ($hasContextConnection) {
+                Context::set($this->getContextKey(), $connection);
+                defer(function () use ($connection) {
+                    $connection->release();
+                });
+            }
         }
         return $connection;
     }
@@ -89,11 +104,6 @@ class DB
      */
     private function getContextKey(): string
     {
-        return sprintf('database.%s', $this->poolName);
-    }
-
-    private function getPoolId()
-    {
-        return Context::get('poolId');
+        return sprintf('db.connection.%s', $this->poolName);
     }
 }

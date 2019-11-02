@@ -27,7 +27,7 @@ interface ConnectionInterface
     /**
      * Rollback the active database transaction.
      */
-    public function rollBack(): void;
+    public function rollBack(?int $toLevel = null): void;
 
     /**
      * Run an insert statement against the database.
@@ -58,5 +58,5 @@ interface ConnectionInterface
     /**
      * Run a select statement and return a single result.
      */
-    public function fetch(string $query, array $bindings = []): array;
+    public function fetch(string $query, array $bindings = []);
 }

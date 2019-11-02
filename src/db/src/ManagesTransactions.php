@@ -53,7 +53,7 @@ trait ManagesTransactions
      *
      * @throws Throwable
      */
-    public function rollBack($toLevel = null): void
+    public function rollBack(?int $toLevel = null): void
     {
         // We allow developers to rollback to a certain transaction level. We will verify
         // that this given transaction level is valid before attempting to rollback to
