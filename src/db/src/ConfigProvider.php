@@ -28,6 +28,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'db',
+                    'description' => 'The config for db.',
+                    'source' => __DIR__ . '/../publish/db.php',
+                    'destination' => BASE_PATH . '/config/autoload/db.php',
+                ],
+            ],
         ];
     }
 }
