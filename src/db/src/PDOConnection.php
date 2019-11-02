@@ -132,28 +132,6 @@ class PDOConnection extends AbstractConnection
         $this->connection->rollBack();
     }
 
-    public function getErrorCode()
-    {
-        $errorCode = $this->connection->errorCode();
-        return $errorCode == '00000' ? 0 : $errorCode;
-    }
-
-    public function getErrorInfo()
-    {
-        $message = $this->connection->errorInfo()[2];
-        return empty($message) ? '' : $message;
-    }
-
-    public function getLastInsertId()
-    {
-        return $this->connection->lastInsertId();
-    }
-
-    public function prepare(string $sql, ?array $data = null, array $options = []): bool
-    {
-        return $this->connection->prepare($sql, $options)->execute($data);
-    }
-
     public function query(string $query, array $bindings = []): array
     {
         // For select statements, we'll simply execute the query and return an array
