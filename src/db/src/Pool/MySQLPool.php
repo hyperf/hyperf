@@ -34,13 +34,13 @@ class MySQLPool extends Pool
 
     public function __construct(ContainerInterface $container, string $name)
     {
-        $this->name = $name;
         $config = $container->get(ConfigInterface::class);
-        $key = sprintf('db.%s', $this->name);
+        $key = sprintf('db.%s', $name);
         if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
+        $this->name = $name;
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
         $this->frequency = make(Frequency::class);
@@ -48,9 +48,6 @@ class MySQLPool extends Pool
         parent::__construct($container, $options);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;

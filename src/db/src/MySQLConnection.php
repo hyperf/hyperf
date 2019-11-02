@@ -30,11 +30,11 @@ class MySQLConnection extends AbstractConnection
     protected $config = [
         'driver' => 'mysql',
         'host' => 'localhost',
-        'database' => 'test',
+        'database' => 'hyperf',
         'username' => 'root',
-        'password' => 'root',
-        'charset' => 'utf8',
-        'collation' => 'utf8_unicode_ci',
+        'password' => '',
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
         'pool' => [
             'min_connections' => 1,
@@ -42,21 +42,14 @@ class MySQLConnection extends AbstractConnection
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
-            'max_idle_time' => '60',
+            'max_idle_time' => 60.0,
         ],
     ];
-
-    /**
-     * Current mysql database.
-     * @var null|int
-     */
-    protected $database;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
-        $this->config = array_replace($this->config, $config);
-
+        $this->config = array_replace_recursive($this->config, $config);
         $this->reconnect();
     }
 
