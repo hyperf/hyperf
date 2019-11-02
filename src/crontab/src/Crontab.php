@@ -34,17 +34,17 @@ class Crontab
     /**
      * @var bool
      */
-    public $singleton = false;
+    protected $singleton = false;
 
     /**
      * @var string
      */
-    public $mutexPool = 'default';
+    protected $mutexPool = 'default';
 
     /**
      * @var int
      */
-    public $mutexExpires = 3600;
+    protected $mutexExpires = 3600;
 
     /**
      * @var mixed
@@ -83,7 +83,7 @@ class Crontab
         return $this;
     }
 
-    public function getSingleton(): bool
+    public function isSingleton(): bool
     {
         return $this->singleton;
     }

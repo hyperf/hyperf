@@ -79,7 +79,7 @@ class Executor
                             }
                         };
 
-                        if ($crontab->getSingleton()) {
+                        if ($crontab->isSingleton()) {
                             $runable = $this->runInSingleton($crontab, $runable);
                         }
 

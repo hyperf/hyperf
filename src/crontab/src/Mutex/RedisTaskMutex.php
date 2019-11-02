@@ -13,34 +13,34 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Crontab\Crontab;
-use Hyperf\Di\Annotation\Inject;
+use Hyperf\Redis\RedisFactory;
 
 class RedisTaskMutex implements TaskMutex
 {
     /**
-     * @Inject()
-     * @var \Hyperf\Redis\RedisFactory
+     * @var RedisFactory
      */
     private $redisFactory;
 
+    public function __construct(RedisFactory $redisFactory)
+    {
+        $this->redisFactory = $redisFactory;
+    }
+
     /**
      * Attempt to obtain a task mutex for the given crontab.
-     *
-     * @param \Hyperf\Crontab\Crontab $crontab
-     * @return bool
      */
     public function create(Crontab $crontab): bool
     {
         return (bool) $this->redisFactory->get($crontab->getMutexPool())->set(
-            $this->getMutexName($crontab), $crontab->getName(), ['NX', 'EX' => $crontab->getMutexExpires()]
+            $this->getMutexName($crontab),
+            $crontab->getName(),
+            ['NX', 'EX' => $crontab->getMutexExpires()]
         );
     }
 
     /**
      * Determine if a task mutex exists for the given crontab.
-     *
-     * @param \Hyperf\Crontab\Crontab $crontab
-     * @return bool
      */
     public function exists(Crontab $crontab): bool
     {
@@ -51,8 +51,6 @@ class RedisTaskMutex implements TaskMutex
 
     /**
      * Clear the task mutex for the given crontab.
-     *
-     * @param \Hyperf\Crontab\Crontab $crontab
      */
     public function remove(Crontab $crontab)
     {
@@ -63,6 +61,6 @@ class RedisTaskMutex implements TaskMutex
 
     protected function getMutexName(Crontab $crontab)
     {
-        return 'framework'.DIRECTORY_SEPARATOR.'crontab-'.sha1($crontab->getName().$crontab->getRule());
+        return 'framework' . DIRECTORY_SEPARATOR . 'crontab-' . sha1($crontab->getName() . $crontab->getRule());
     }
 }
