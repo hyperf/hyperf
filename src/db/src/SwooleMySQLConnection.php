@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -14,13 +15,11 @@ namespace Hyperf\DB;
 use Hyperf\DB\Exception\QueryException;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
 
 class SwooleMySQLConnection extends AbstractConnection
 {
-
     /**
      * @var MySQL
      */
@@ -73,7 +72,7 @@ class SwooleMySQLConnection extends AbstractConnection
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -113,7 +112,6 @@ class SwooleMySQLConnection extends AbstractConnection
         return true;
     }
 
-
     public function beginTransaction()
     {
         $this->connection->begin();
@@ -144,20 +142,16 @@ class SwooleMySQLConnection extends AbstractConnection
         return $this->connection->insert_id;
     }
 
-
     public function prepare(string $sql, ?array $data = null, array $options = []): bool
     {
-
         if (strstr($sql, 'SAVEPOINT')) {
             return $this->connection->query($sql);
-        } else {
-            $result = $this->connection->prepare($sql);
-            if ($result === false) {
-                throw new QueryException($this->getErrorInfo());
-            }
-            return $result->execute($data);
         }
-
+        $result = $this->connection->prepare($sql);
+        if ($result === false) {
+            throw new QueryException($this->getErrorInfo());
+        }
+        return $result->execute($data);
     }
 
     public function query(string $sql): ?array

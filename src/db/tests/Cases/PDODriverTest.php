@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -29,34 +30,33 @@ class PDODriverTest extends AbstractTestCase
     public function testPDO()
     {
         $connect = $this->getPDODB();
-        $stmt = $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['insert']);
+        $stmt = $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['insert']);
         $this->assertSame(true, $stmt);
 
-        $testList = $connect->query("SELECT * FROM `log`");
+        $testList = $connect->query('SELECT * FROM `log`');
         $this->assertNotNull($testList);
         // rollback test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert rollback']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert rollback']);
 
         $connect->rollback();
 
         // commit test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert commit']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert commit']);
 
         $connect->commit();
-
 
         // transaction Nesting test
         $connect->beginTransaction();
 
         $connect->beginTransaction();
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?) ", ['transaction Nesting test rollback 1']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?) ', ['transaction Nesting test rollback 1']);
         $connect->commit();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test INSERT 2']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test INSERT 2']);
 
         $connect->rollback();
 
@@ -86,7 +86,7 @@ class PDODriverTest extends AbstractTestCase
                         'connect_timeout' => 10.0,
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
-                        'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
+                        'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
                     ],
                 ],
             ],

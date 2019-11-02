@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -15,7 +16,7 @@ use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
 /**
- * Class DB
+ * Class DB.
  * @method beginTransaction()
  * @method commit()
  * @method rollback()
@@ -57,7 +58,7 @@ class DB
             case 'commit':
             case 'rollback':
                 $transctionManager = new TransactionManager();
-                $result = $transctionManager->$name();
+                $result = $transctionManager->{$name}();
                 break;
             default:
                 $result = $connection->{$name}(...$arguments);
@@ -65,7 +66,6 @@ class DB
 
         return $result;
     }
-
 
     /**
      * Get a connection from coroutine context, or from mysql connectio pool.
@@ -77,7 +77,7 @@ class DB
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if (!$connection instanceof AbstractConnection) {
+        if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->poolName);
             Context::set('poolId', $pool->getCurrentConnections());
             $connection = $pool->get()->getConnection();
@@ -97,6 +97,4 @@ class DB
     {
         return Context::get('poolId');
     }
-
-
 }

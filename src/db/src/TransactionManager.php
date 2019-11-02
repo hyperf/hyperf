@@ -1,8 +1,16 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace Hyperf\DB;
-
 
 use Exception;
 use Hyperf\DB\Exception\QueryException;
@@ -10,8 +18,6 @@ use Hyperf\Utils\Context;
 
 class TransactionManager
 {
-
-
     /**
      * @var string
      */
@@ -20,9 +26,8 @@ class TransactionManager
     public function beginTransaction()
     {
         $this->createTransaction();
-        Context::set('transactions', (int)Context::get('transactions') + 1);
+        Context::set('transactions', (int) Context::get('transactions') + 1);
     }
-
 
     public function rollback(?int $toLevel = null)
     {
@@ -49,18 +54,26 @@ class TransactionManager
         }
 
         Context::set('transactions', max(0, $transactions - 1));
+    }
 
+    /**
+     * Compile the SQL statement to execute a savepoint rollback.
+     *
+     * @param mixed $name
+     * @return string
+     */
+    public function compileSavepointRollBack($name)
+    {
+        return 'ROLLBACK TO SAVEPOINT ' . $name;
     }
 
     /**
      * Create a transaction within the database.
-     *
-     * @return void
      */
     protected function createTransaction()
     {
         $transactions = Context::get('transactions');
-        if (!Context::has('transactions') || $transactions == 0) {
+        if (! Context::has('transactions') || $transactions == 0) {
             try {
                 $connection = Context::get($this->getContextKey());
                 $connection->beginTransaction();
@@ -79,7 +92,6 @@ class TransactionManager
         $connection->prepare($this->compileSavepoint('trans' . (Context::get('transactions') + 1)), $data);
     }
 
-
     protected function performRollBack(?int $toLevel = null)
     {
         $connection = Context::get($this->getContextKey());
@@ -94,16 +106,6 @@ class TransactionManager
     protected function compileSavepoint($name)
     {
         return 'SAVEPOINT ' . $name;
-    }
-
-    /**
-     * Compile the SQL statement to execute a savepoint rollback.
-     *
-     * @return string
-     */
-    public function compileSavepointRollBack($name)
-    {
-        return 'ROLLBACK TO SAVEPOINT ' . $name;
     }
 
     /**

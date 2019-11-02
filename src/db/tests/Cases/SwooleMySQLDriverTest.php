@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -10,7 +11,6 @@ declare(strict_types=1);
  */
 
 namespace HyperfTest\Cases;
-
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -30,34 +30,33 @@ class SwooleMySQLDriverTest extends AbstractTestCase
     public function testSwooleMySQL()
     {
         $connect = $this->getSwooleMySqlDB();
-        $stmt = $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['insert']);
+        $stmt = $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['insert']);
         $this->assertSame(true, $stmt);
 
-        $testList = $connect->query("SELECT * FROM `log`");
+        $testList = $connect->query('SELECT * FROM `log`');
         $this->assertNotNull($testList);
         // rollback test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert rollback']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert rollback']);
 
         $connect->rollback();
 
         // commit test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert commit']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert commit']);
 
         $connect->commit();
-
 
         // transaction Nesting test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test insert 0']);
-        
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test insert 0']);
+
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test rollback 1']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test rollback 1']);
 
         $connect->rollback();
 
@@ -66,8 +65,6 @@ class SwooleMySQLDriverTest extends AbstractTestCase
 //        var_dump($connect->getLastInsertId());
 //        var_dump($connect->getErrorCode());
 //        var_dump($connect->getErrorInfo());
-
-
     }
 
     /**
@@ -94,7 +91,7 @@ class SwooleMySQLDriverTest extends AbstractTestCase
                         'connect_timeout' => 10.0,
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
-                        'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
+                        'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
                     ],
                 ],
             ],
