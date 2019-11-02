@@ -37,7 +37,7 @@ require BASE_PATH . '/config/container.php';
 
 ```
 # 重新生成代理类
-php bin/hyperf.php di:init-proxy
+vendor/bin/init-proxy.sh
 # 运行单元测试
 composer test
 ```
