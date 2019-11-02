@@ -74,6 +74,10 @@ class BootProcessListener implements ListenerInterface
 
     public function process(object $event)
     {
+        if (! $this->config->get('config_etcd.enable', false)) {
+            return;
+        }
+
         if ($config = $this->client->pull()) {
             $configurations = $this->format($config);
             foreach ($configurations as $kv) {
