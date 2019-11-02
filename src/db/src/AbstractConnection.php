@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -31,6 +32,4 @@ abstract class AbstractConnection extends BaseConnection implements ConnectionIn
     abstract public function prepare(string $sql, array $data = [], array $options = []): bool;
 
     abstract public function query(string $sql): ?array;
-
-
 }

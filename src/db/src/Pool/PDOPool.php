@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\DB\Pool;
 
-
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Frequency;
@@ -21,7 +21,6 @@ use Psr\Container\ContainerInterface;
 
 class PDOPool extends AbstractPool
 {
-
     /**
      * @var string
      */
@@ -60,5 +59,4 @@ class PDOPool extends AbstractPool
     {
         return new PDOConnection($this->container, $this, $this->config);
     }
-
 }

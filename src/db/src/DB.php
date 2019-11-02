@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -11,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
-
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
 /**
- * Class DB
+ * Class DB.
  * @method beginTransaction()
  * @method commit()
  * @method rollback()
@@ -49,18 +49,15 @@ class DB
         $count = 0;
         if (Context::has('transactionConnection')) {
             $connection = Context::get('transactionConnection');
-
         } else {
             $hasContextConnection = Context::has($this->getContextKey());
             $connection = $this->getConnection($hasContextConnection);
         }
 
-
         if ($name == 'beginTransaction') {
             Context::set('transactionConnection', $connection);
             $count = $this->addTransactionConnectionCount();
         }
-
 
         if ($name == 'commit' || $name == 'rollback') {
             $count = $this->cutTransactionConnectionCount();
@@ -77,7 +74,6 @@ class DB
         return $result;
     }
 
-
     /**
      * Get a connection from coroutine context, or from mysql connectio pool.
      * @param mixed $hasContextConnection
@@ -88,7 +84,7 @@ class DB
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if (!$connection instanceof AbstractConnection) {
+        if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get()->getConnection();
         }

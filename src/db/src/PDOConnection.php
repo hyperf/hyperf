@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,7 +19,6 @@ use Psr\Container\ContainerInterface;
 
 class PDOConnection extends AbstractConnection
 {
-
     /**
      * @var PDO
      */
@@ -71,7 +71,7 @@ class PDOConnection extends AbstractConnection
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -88,7 +88,7 @@ class PDOConnection extends AbstractConnection
         $dbName = $this->config['database'];
         $username = $this->config['username'];
         $password = $this->config['password'];
-        $dsn = "$dbms:host=$host;dbname=$dbName";
+        $dsn = "{$dbms}:host={$host};dbname={$dbName}";
         try {
             $pdo = new \PDO($dsn, $username, $password, [PDO::ATTR_PERSISTENT => true]);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

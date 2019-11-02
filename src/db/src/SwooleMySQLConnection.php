@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -18,7 +19,6 @@ use Swoole\Coroutine\MySQL;
 
 class SwooleMySQLConnection extends AbstractConnection
 {
-
     /**
      * @var MySQL
      */
@@ -71,7 +71,7 @@ class SwooleMySQLConnection extends AbstractConnection
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -111,7 +111,6 @@ class SwooleMySQLConnection extends AbstractConnection
         return true;
     }
 
-
     public function beginTransaction()
     {
         $this->connection->begin();
@@ -141,7 +140,6 @@ class SwooleMySQLConnection extends AbstractConnection
     {
         return $this->connection->insert_id;
     }
-
 
     public function prepare(string $sql, array $data = [], array $options = []): bool
     {
