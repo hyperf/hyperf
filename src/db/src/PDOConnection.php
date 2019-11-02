@@ -31,12 +31,14 @@ class PDOConnection extends AbstractConnection
     protected $config = [
         'driver' => 'pdo',
         'host' => 'localhost',
+        'port' => 3306,
         'database' => 'hyperf',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
+        'fetch_mode' => PDO::FETCH_ASSOC,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -115,7 +117,9 @@ class PDOConnection extends AbstractConnection
 
         $statement->execute();
 
-        return $statement->fetchAll();
+        $fetchModel = $this->config['fetch_mode'];
+
+        return $statement->fetchAll($fetchModel);
     }
 
     public function fetch(string $query, array $bindings = [])
@@ -150,6 +154,11 @@ class PDOConnection extends AbstractConnection
         $statement->execute();
 
         return $this->connection->lastInsertId();
+    }
+
+    public function call(string $method, array $argument = [])
+    {
+        return $this->connection->{$method}(...$argument);
     }
 
     /**

@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Hyperf\DB\Exception\RuntimeException;
-use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
+use Swoole\Coroutine\Mysql\Statement;
 
 class MySQLConnection extends AbstractConnection
 {
@@ -29,8 +29,9 @@ class MySQLConnection extends AbstractConnection
      * @var array
      */
     protected $config = [
-        'driver' => 'swoole_mysql',
+        'driver' => 'pdo',
         'host' => 'localhost',
+        'port' => 3306,
         'database' => 'hyperf',
         'username' => 'root',
         'password' => '',
@@ -59,19 +60,6 @@ class MySQLConnection extends AbstractConnection
         return $this->connection->{$name}(...$arguments);
     }
 
-    public function getActiveConnection()
-    {
-        if ($this->check()) {
-            return $this;
-        }
-
-        if (! $this->reconnect()) {
-            throw new ConnectionException('Connection reconnect failed.');
-        }
-
-        return $this;
-    }
-
     /**
      * Reconnect the connection.
      */
@@ -86,7 +74,7 @@ class MySQLConnection extends AbstractConnection
             'database' => $this->config['database'],
             'timeout' => $this->config['pool']['connect_timeout'],
             'charset' => $this->config['charset'],
-            'strict_type' => false,
+            'fetch_mode' => true,
         ]);
 
         $this->connection = $connection;
@@ -105,50 +93,76 @@ class MySQLConnection extends AbstractConnection
         return true;
     }
 
-    public function beginTransaction()
+    public function insert(string $query, array $bindings = [])
     {
-        $this->connection->begin();
+        $statement = $this->prepare($query);
+
+        $statement->execute($bindings);
+
+        return $statement->insert_id;
     }
 
-    public function commit()
+    public function execute(string $query, array $bindings = []): int
     {
-        $this->connection->commit();
+        $statement = $this->prepare($query);
+
+        $statement->execute($bindings);
+
+        return $statement->affected_rows;
     }
 
-    public function rollback()
+    public function exec(string $sql): int
     {
-        $this->connection->rollback();
-    }
-
-    public function getErrorCode()
-    {
-        return $this->connection->errno;
-    }
-
-    public function getErrorInfo()
-    {
-        return $this->connection->error;
-    }
-
-    public function getLastInsertId()
-    {
-        return $this->connection->insert_id;
-    }
-
-    public function prepare(string $sql, ?array $data = null, array $options = []): bool
-    {
-        if (strstr($sql, 'SAVEPOINT')) {
-            return $this->connection->query($sql);
+        $res = $this->connection->query($sql);
+        if ($res === false) {
+            throw new RuntimeException($this->connection->error);
         }
-        $result = $this->connection->prepare($sql);
-        if ($result === false) {
-            throw new RuntimeException($this->getErrorInfo());
-        }
-        return $result->execute($data);
+
+        return $this->connection->affected_rows;
     }
 
-    public function query(string $sql): ?array
+    public function query(string $query, array $bindings = []): array
     {
-        return $this->connection->query($sql);
+        // For select statements, we'll simply execute the query and return an array
+        // of the database result set. Each element in the array will be a single
+        // row from the database table, and will either be an array or objects.
+        $statement = $this->prepare($query);
+
+        $statement->execute($bindings);
+
+        return $statement->fetchAll();
+    }
+
+    public function fetch(string $query, array $bindings = [])
+    {
+        $records = $this->query($query, $bindings);
+
+        return array_shift($records);
+    }
+
+    public function call(string $method, array $argument = [])
+    {
+        $timeout = $this->config['pool']['wait_timeout'];
+        switch ($method) {
+            case 'beginTransaction':
+                return $this->connection->begin($timeout);
+            case 'rollBack':
+                return $this->connection->rollback($timeout);
+            case 'commit':
+                return $this->connection->commit($timeout);
+        }
+
+        return $this->connection->{$method}(...$argument);
+    }
+
+    protected function prepare(string $query): Statement
+    {
+        $statement = $this->connection->prepare($query);
+
+        if ($statement === false) {
+            throw new RuntimeException($this->connection->error);
+        }
+
+        return $statement;
     }
 }

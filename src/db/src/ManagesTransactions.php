@@ -40,7 +40,7 @@ trait ManagesTransactions
     public function commit(): void
     {
         if ($this->transactions == 1) {
-            $this->connection->commit();
+            $this->call('commit');
         }
 
         $this->transactions = max(0, $this->transactions - 1);
@@ -93,7 +93,7 @@ trait ManagesTransactions
     {
         if ($this->transactions == 0) {
             try {
-                $this->connection->beginTransaction();
+                $this->call('beginTransaction');
             } catch (Throwable $e) {
                 $this->handleBeginTransactionException($e);
             }
@@ -122,7 +122,7 @@ trait ManagesTransactions
         if ($this->causedByLostConnection($e)) {
             $this->reconnect();
 
-            $this->connection->beginTransaction();
+            $this->call('beginTransaction');
         } else {
             throw $e;
         }
@@ -136,7 +136,7 @@ trait ManagesTransactions
     protected function performRollBack($toLevel)
     {
         if ($toLevel == 0) {
-            $this->connection->rollBack();
+            $this->call('rollBack');
         } else {
             $this->exec(
                 $this->compileSavepointRollBack('trans' . ($toLevel + 1))

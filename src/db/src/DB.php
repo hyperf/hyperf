@@ -20,11 +20,10 @@ use Throwable;
  * @method beginTransaction()
  * @method commit()
  * @method rollback()
- * @method getErrorCode()
- * @method getErrorInfo()
- * @method getLastInsertId()
- * @method prepare(string $sql, array $data = [], array $options = [])
- * @method query(string $sql)
+ * @method insert(string $query, array $bindings = [])
+ * @method execute(string $query, array $bindings = [])
+ * @method query(string $query, array $bindings = [])
+ * @method fetch(string $query, array $bindings = [])
  */
 class DB
 {
@@ -46,7 +45,7 @@ class DB
 
     public function __call($name, $arguments)
     {
-        $hasContextConnection = $this->hasContextConnection($name);
+        $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
 
         try {
@@ -56,25 +55,33 @@ class DB
             $result = $connection->retry($exception, $name, $arguments);
         } finally {
             if (! $hasContextConnection) {
-                $connection->release();
+                if ($this->shouldUseSameConnection($name)) {
+                    // Should storage the connection to coroutine context, then use defer() to release the connection.
+                    Context::set($this->getContextKey(), $connection);
+                    defer(function () use ($connection) {
+                        $connection->release();
+                    });
+                } else {
+                    // Release the connection after command executed.
+                    $connection->release();
+                }
             }
         }
 
         return $result;
     }
 
-    protected function hasContextConnection($name): bool
+    /**
+     * Define the commands that needs same connection to execute.
+     * When these commands executed, the connection will storage to coroutine context.
+     */
+    protected function shouldUseSameConnection(string $methodName): bool
     {
-        $hasContextConnection = Context::has($this->getContextKey());
-        if (! $hasContextConnection) {
-            if (in_array($name, ['beginTransaction', 'commit', 'rollBack'])) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return true;
+        return in_array($methodName, [
+            'beginTransaction',
+            'commit',
+            'rollBack',
+        ]);
     }
 
     /**
@@ -89,12 +96,6 @@ class DB
         if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get();
-            if ($hasContextConnection) {
-                Context::set($this->getContextKey(), $connection);
-                defer(function () use ($connection) {
-                    $connection->release();
-                });
-            }
         }
         return $connection;
     }

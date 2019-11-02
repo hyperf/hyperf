@@ -59,4 +59,6 @@ interface ConnectionInterface
      * Run a select statement and return a single result.
      */
     public function fetch(string $query, array $bindings = []);
+
+    public function call(string $method, array $argument = []);
 }
