@@ -13,13 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\Di\Container;
+use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
 {
     /**
-     * @var AbstractPool[]
+     * @var Pool[]
      */
     protected $pools = [];
 
@@ -30,20 +32,32 @@ class PoolFactory
 
     public function getPool(string $name)
     {
-        $config = $this->container->get(ConfigInterface::class);
-        $key = sprintf('database.%s', $name);
-        $dbConfig = $config->get($key);
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
         }
 
-        $class = $dbConfig['driver'] === 'swoole_mysql' ? SwooleMySqlPool::class : PDOPool::class;
+        $config = $this->container->get(ConfigInterface::class);
+        $driver = $config->get(sprintf('db.%s.driver', $name), 'pdo');
+        $class = $this->getPoolName($driver);
+
         if ($this->container instanceof Container) {
             $pool = $this->container->make($class, ['name' => $name]);
         } else {
             $pool = new $class($this->container, $name);
         }
-        $this->pools[$name] = $pool;
+
         return $this->pools[$name] = $pool;
+    }
+
+    protected function getPoolName(string $driver)
+    {
+        switch (strtolower($driver)) {
+            case 'mysql':
+                return MySQLPool::class;
+            case 'pdo':
+                return PDOPool::class;
+        }
+
+        throw new DriverNotFoundException(sprintf('Driver %s is not found.', $driver));
     }
 }

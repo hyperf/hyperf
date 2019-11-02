@@ -10,10 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\DB\Pool;
+namespace Hyperf\DB\Exception;
 
-use Hyperf\Pool\Pool;
-
-abstract class AbstractPool extends Pool
+class RuntimeException extends \RuntimeException
 {
 }

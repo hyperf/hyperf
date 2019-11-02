@@ -15,11 +15,12 @@ namespace Hyperf\DB\Pool;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Frequency;
-use Hyperf\DB\SwooleMySQLConnection;
+use Hyperf\DB\MySQLConnection;
+use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
-class SwooleMySQLPool extends AbstractPool
+class MySQLPool extends Pool
 {
     /**
      * @var string
@@ -35,7 +36,7 @@ class SwooleMySQLPool extends AbstractPool
     {
         $this->name = $name;
         $config = $container->get(ConfigInterface::class);
-        $key = sprintf('database.%s', $this->name);
+        $key = sprintf('db.%s', $this->name);
         if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
@@ -57,6 +58,6 @@ class SwooleMySQLPool extends AbstractPool
 
     protected function createConnection(): ConnectionInterface
     {
-        return new SwooleMySQLConnection($this->container, $this, $this->config);
+        return new MySQLConnection($this->container, $this, $this->config);
     }
 }

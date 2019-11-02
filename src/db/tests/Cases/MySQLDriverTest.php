@@ -15,8 +15,8 @@ namespace HyperfTest\DB\Cases;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\DB;
+use Hyperf\DB\Pool\MySQLPool;
 use Hyperf\DB\Pool\PoolFactory;
-use Hyperf\DB\Pool\SwooleMySqlPool;
 use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -25,7 +25,7 @@ use Mockery;
  * @internal
  * @coversNothing
  */
-class SwooleMySQLDriverTest extends AbstractTestCase
+class MySQLDriverTest extends AbstractTestCase
 {
     public function testSwooleMySQL()
     {
@@ -74,7 +74,7 @@ class SwooleMySQLDriverTest extends AbstractTestCase
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
-            'database' => [
+            'db' => [
                 'default' => [
                     'driver' => env('DB_DRIVER', 'swoole_mysql'),
                     'host' => env('DB_HOST', 'localhost'),
@@ -96,8 +96,8 @@ class SwooleMySQLDriverTest extends AbstractTestCase
                 ],
             ],
         ]));
-        $pool = new SwooleMySQLPool($container, 'default');
-        $container->shouldReceive('make')->once()->with(SwooleMySQLPool::class, ['name' => 'default'])->andReturn($pool);
+        $pool = new MySQLPool($container, 'default');
+        $container->shouldReceive('make')->once()->with(MySQLPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
         $factory = new PoolFactory($container);

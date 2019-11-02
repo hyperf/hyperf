@@ -71,7 +71,7 @@ class PDODriverTest extends AbstractTestCase
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
-            'database' => [
+            'db' => [
                 'default' => [
                     'driver' => env('DB_DRIVER', 'mysql'),
                     'host' => env('DB_HOST', 'localhost'),

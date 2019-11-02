@@ -17,7 +17,7 @@ use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
 
-class SwooleMySQLConnection extends AbstractConnection
+class MySQLConnection extends AbstractConnection
 {
     /**
      * @var MySQL
@@ -28,7 +28,7 @@ class SwooleMySQLConnection extends AbstractConnection
      * @var array
      */
     protected $config = [
-        'driver' => 'swoole_mysql',
+        'driver' => 'mysql',
         'host' => 'localhost',
         'database' => 'test',
         'username' => 'root',

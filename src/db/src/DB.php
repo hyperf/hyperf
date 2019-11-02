@@ -96,7 +96,7 @@ class DB
      */
     private function getContextKey(): string
     {
-        return sprintf('database.%s', $this->poolName);
+        return sprintf('db.%s', $this->poolName);
     }
 
     private function addTransactionConnectionCount()

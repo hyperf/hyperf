@@ -16,10 +16,11 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Frequency;
 use Hyperf\DB\PDOConnection;
+use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
-class PDOPool extends AbstractPool
+class PDOPool extends Pool
 {
     /**
      * @var string
@@ -35,7 +36,7 @@ class PDOPool extends AbstractPool
     {
         $this->name = $name;
         $config = $container->get(ConfigInterface::class);
-        $key = sprintf('database.%s', $this->name);
+        $key = sprintf('db.%s', $this->name);
         if (! $config->has($key)) {
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
