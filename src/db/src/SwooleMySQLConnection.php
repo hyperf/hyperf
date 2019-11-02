@@ -11,16 +11,18 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
+use Hyperf\DB\Exception\QueryException;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
-use PDO;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
+use Swoole\Coroutine\MySQL;
 
-class PDOConnection extends AbstractConnection
+class SwooleMySQLConnection extends AbstractConnection
 {
 
     /**
-     * @var PDO
+     * @var MySQL
      */
     protected $connection;
 
@@ -28,7 +30,7 @@ class PDOConnection extends AbstractConnection
      * @var array
      */
     protected $config = [
-        'driver' => 'mysql',
+        'driver' => 'swoole_mysql',
         'host' => 'localhost',
         'database' => 'test',
         'username' => 'root',
@@ -83,20 +85,19 @@ class PDOConnection extends AbstractConnection
      */
     public function reconnect(): bool
     {
-        $dbms = $this->config['driver'];
-        $host = $this->config['host'];
-        $dbName = $this->config['database'];
-        $username = $this->config['username'];
-        $password = $this->config['password'];
-        $dsn = "$dbms:host=$host;dbname=$dbName";
-        try {
-            $pdo = new \PDO($dsn, $username, $password, [PDO::ATTR_PERSISTENT => true]);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
-            throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
-        }
+        $connection = new MySQL();
+        $connection->connect([
+            'host' => $this->config['host'],
+            'port' => $this->config['port'],
+            'user' => $this->config['username'],
+            'password' => $this->config['password'],
+            'database' => $this->config['database'],
+            'timeout' => $this->config['pool']['connect_timeout'],
+            'charset' => $this->config['charset'],
+            'strict_type' => false,
+        ]);
 
-        $this->connection = $pdo;
+        $this->connection = $connection;
         $this->lastUseTime = microtime(true);
 
         return true;
@@ -112,9 +113,10 @@ class PDOConnection extends AbstractConnection
         return true;
     }
 
+
     public function beginTransaction()
     {
-        $this->connection->beginTransaction();
+        $this->connection->begin();
     }
 
     public function commit()
@@ -124,33 +126,42 @@ class PDOConnection extends AbstractConnection
 
     public function rollback()
     {
-        $this->connection->rollBack();
+        $this->connection->rollback();
     }
 
     public function getErrorCode()
     {
-        $errorCode = $this->connection->errorCode();
-        return $errorCode == '00000' ? 0 : $errorCode;
+        return $this->connection->errno;
     }
 
     public function getErrorInfo()
     {
-        $message = $this->connection->errorInfo()[2];
-        return empty($message) ? '' : $message;
+        return $this->connection->error;
     }
 
     public function getLastInsertId()
     {
-        return $this->connection->lastInsertId();
+        return $this->connection->insert_id;
     }
+
 
     public function prepare(string $sql, ?array $data = null, array $options = []): bool
     {
-        return $this->connection->prepare($sql, $options)->execute($data);
+
+        if (strstr($sql, 'SAVEPOINT')) {
+            return $this->connection->query($sql);
+        } else {
+            $result = $this->connection->prepare($sql);
+            if ($result === false) {
+                throw new QueryException($this->getErrorInfo());
+            }
+            return $result->execute($data);
+        }
+
     }
 
     public function query(string $sql): ?array
     {
-        return $this->connection->query($sql, PDO::FETCH_ASSOC)->fetchAll();
+        return $this->connection->query($sql);
     }
 }

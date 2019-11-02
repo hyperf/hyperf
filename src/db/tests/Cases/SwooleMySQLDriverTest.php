@@ -11,11 +11,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Cases;
 
+
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\DB;
-use Hyperf\DB\Pool\PDOPool;
 use Hyperf\DB\Pool\PoolFactory;
+use Hyperf\DB\Pool\SwooleMySqlPool;
 use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -24,11 +25,11 @@ use Mockery;
  * @internal
  * @coversNothing
  */
-class PDODriverTest extends AbstractTestCase
+class SwooleMySQLDriverTest extends AbstractTestCase
 {
-    public function testPDO()
+    public function testSwooleMySQL()
     {
-        $connect = $this->getPDODB();
+        $connect = $this->getSwooleMySqlDB();
         $stmt = $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['insert']);
         $this->assertSame(true, $stmt);
 
@@ -52,26 +53,33 @@ class PDODriverTest extends AbstractTestCase
         // transaction Nesting test
         $connect->beginTransaction();
 
+        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test insert 0']);
+        
         $connect->beginTransaction();
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?) ", ['transaction Nesting test rollback 1']);
-        $connect->commit();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test INSERT 2']);
+        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test rollback 1']);
 
         $connect->rollback();
 
-        var_dump($connect->getLastInsertId());
-        var_dump($connect->getErrorCode());
-        var_dump($connect->getErrorInfo());
+        $connect->rollback();
+
+//        var_dump($connect->getLastInsertId());
+//        var_dump($connect->getErrorCode());
+//        var_dump($connect->getErrorInfo());
+
+
     }
 
-    public function getPDODB()
+    /**
+     * @return DB
+     */
+    public function getSwooleMySQLDB()
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'database' => [
                 'default' => [
-                    'driver' => env('DB_DRIVER', 'mysql'),
+                    'driver' => env('DB_DRIVER', 'swoole_mysql'),
                     'host' => env('DB_HOST', 'localhost'),
                     'port' => env('DB_PORT', '3306'),
                     'database' => env('DB_DATABASE', 'test'),
@@ -91,8 +99,8 @@ class PDODriverTest extends AbstractTestCase
                 ],
             ],
         ]));
-        $pool = new PDOPool($container, 'default');
-        $container->shouldReceive('make')->once()->with(PDOPool::class, ['name' => 'default'])->andReturn($pool);
+        $pool = new SwooleMySQLPool($container, 'default');
+        $container->shouldReceive('make')->once()->with(SwooleMySQLPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
         $factory = new PoolFactory($container);
