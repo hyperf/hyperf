@@ -17,6 +17,13 @@ use Throwable;
 trait ManagesTransactions
 {
     /**
+     * The number of active transactions.
+     *
+     * @var int
+     */
+    protected $transactions = 0;
+
+    /**
      * Start a new database transaction.
      * @throws Throwable
      */

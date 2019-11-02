@@ -12,19 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
-use Hyperf\Database\DetectsDeadlocks;
-use Hyperf\Database\DetectsLostConnections;
 use Hyperf\Pool\Connection;
 
 abstract class AbstractConnection extends Connection implements ConnectionInterface
 {
-    use DetectsDeadlocks;
     use DetectsLostConnections;
-
-    /**
-     * The number of active transactions.
-     *
-     * @var int
-     */
-    protected $transactions = 0;
 }
