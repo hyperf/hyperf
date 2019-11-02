@@ -30,39 +30,37 @@ class MySQLDriverTest extends AbstractTestCase
     public function testMySQL()
     {
         $connect = $this->getMySQLDB();
-        $stmt = $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['insert']);
+        $stmt = $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['insert']);
         $this->assertSame(true, $stmt);
 
-        $testList = $connect->query("SELECT * FROM `log`");
+        $testList = $connect->query('SELECT * FROM `log`');
         $this->assertNotNull($testList);
         // rollback test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert rollback']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert rollback']);
 
         $connect->rollback();
 
         // commit test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction insert commit']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction insert commit']);
 
         $connect->commit();
-
 
         // transaction Nesting test
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test insert 0']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test insert 0']);
 
         $connect->beginTransaction();
 
-        $connect->prepare("INSERT INTO `log`(`content`) VALUES (?)", ['transaction Nesting test rollback 1']);
+        $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test rollback 1']);
 
         $connect->rollback();
 
         $connect->rollback();
-
     }
 
     /**

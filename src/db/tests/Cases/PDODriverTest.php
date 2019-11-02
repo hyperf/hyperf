@@ -59,7 +59,6 @@ class PDODriverTest extends AbstractTestCase
         $connect->prepare('INSERT INTO `log`(`content`) VALUES (?)', ['transaction Nesting test INSERT 2']);
 
         $connect->rollback();
-
     }
 
     public function getPDODB()

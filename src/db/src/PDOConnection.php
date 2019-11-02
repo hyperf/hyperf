@@ -19,6 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class PDOConnection extends AbstractConnection
 {
+    use ManagesTransactions;
+
     /**
      * @var PDO
      */
@@ -117,21 +119,6 @@ class PDOConnection extends AbstractConnection
         return true;
     }
 
-    public function beginTransaction(): void
-    {
-        $this->connection->beginTransaction();
-    }
-
-    public function commit(): void
-    {
-        $this->connection->commit();
-    }
-
-    public function rollBack(): void
-    {
-        $this->connection->rollBack();
-    }
-
     public function query(string $query, array $bindings = []): array
     {
         // For select statements, we'll simply execute the query and return an array
@@ -162,6 +149,11 @@ class PDOConnection extends AbstractConnection
         $statement->execute();
 
         return $statement->rowCount();
+    }
+
+    public function exec(string $sql): int
+    {
+        return $this->connection->exec($sql);
     }
 
     public function insert(string $query, array $bindings = [])

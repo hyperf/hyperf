@@ -37,11 +37,18 @@ interface ConnectionInterface
     public function insert(string $query, array $bindings = []);
 
     /**
-     * Run an update statement against the database.
+     * Run an execute statement against the database.
      *
-     * @return int rows affected
+     * @return int affected rows
      */
     public function execute(string $query, array $bindings = []): int;
+
+    /**
+     * Execute an SQL statement and return the number of affected rows.
+     *
+     * @return int affected rows
+     */
+    public function exec(string $sql): int;
 
     /**
      * Run a select statement against the database.

@@ -65,7 +65,7 @@ class MySQLConnection extends AbstractConnection
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -105,7 +105,6 @@ class MySQLConnection extends AbstractConnection
         return true;
     }
 
-
     public function beginTransaction()
     {
         $this->connection->begin();
@@ -136,20 +135,16 @@ class MySQLConnection extends AbstractConnection
         return $this->connection->insert_id;
     }
 
-
     public function prepare(string $sql, ?array $data = null, array $options = []): bool
     {
-
         if (strstr($sql, 'SAVEPOINT')) {
             return $this->connection->query($sql);
-        } else {
-            $result = $this->connection->prepare($sql);
-            if ($result === false) {
-                throw new RuntimeException($this->getErrorInfo());
-            }
-            return $result->execute($data);
         }
-
+        $result = $this->connection->prepare($sql);
+        if ($result === false) {
+            throw new RuntimeException($this->getErrorInfo());
+        }
+        return $result->execute($data);
     }
 
     public function query(string $sql): ?array
