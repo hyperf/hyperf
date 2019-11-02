@@ -149,7 +149,7 @@ class PDOConnection extends AbstractConnection
         return $this->connection->lastInsertId();
     }
 
-    public function prepare(string $sql, array $data = [], array $options = []): bool
+    public function prepare(string $sql, ?array $data = null, array $options = []): bool
     {
         return $this->connection->prepare($sql, $options)->execute($data);
     }
