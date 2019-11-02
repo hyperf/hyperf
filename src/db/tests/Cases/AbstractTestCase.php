@@ -47,7 +47,7 @@ abstract class AbstractTestCase extends TestCase
             'db' => [
                 'default' => [
                     'driver' => $this->driver,
-                    'password' => '910123',
+                    'password' => '',
                     'database' => 'hyperf',
                     'pool' => [
                         'max_connections' => 20,
