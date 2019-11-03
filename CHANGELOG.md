@@ -9,6 +9,7 @@
 ## Fixed
 
 - [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
+- [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
 
 ## Optimized
 
