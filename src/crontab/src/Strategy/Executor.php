@@ -21,6 +21,7 @@ use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use Swoole\Timer;
 
 class Executor
 {
@@ -95,7 +96,7 @@ class Executor
                 };
                 break;
         }
-        $callback && swoole_timer_after($diff > 0 ? $diff * 1000 : 1, $callback);
+        $callback && Timer::after($diff > 0 ? $diff * 1000 : 1, $callback);
     }
 
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure
