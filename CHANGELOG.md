@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
 - [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
@@ -9,10 +10,13 @@
 ## Fixed
 
 - [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
+- [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
+- [#844](https://github.com/hyperf/hyperf/pull/844) Fixed the composer.json reader support root namespace.
 
 ## Optimized
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+- [#840](https://github.com/hyperf/hyperf/pull/840) Use swoole timer function from namespace.
 
 # v1.1.4 - 2019-10-31
 
