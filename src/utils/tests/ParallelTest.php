@@ -74,6 +74,27 @@ class ParallelTest extends TestCase
         sort($res);
         $this->assertSame([2, 3, 4, 4], array_values($res));
     }
+    
+    public function testParallelConcurrentResultCount()
+    {
+        $parallel = new Parallel();
+        $num = 0;
+        $callback = function () {
+            return 1;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $this->assertEquals(count($res), 4);
+        
+        
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $this->assertEquals(count($res), 4);
+    }
 
     public function returnCoId()
     {

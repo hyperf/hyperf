@@ -59,6 +59,12 @@ class Parallel
             });
         }
         $wg->wait();
+        $this->clear();
         return $result;
+    }
+    
+    public function clear()
+    {
+        $this->callbacks = [];
     }
 }
