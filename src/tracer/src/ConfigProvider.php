@@ -23,6 +23,7 @@ class ConfigProvider
             'dependencies' => [
                 Tracer::class => TracerFactory::class,
                 SwitchManager::class => SwitchManagerFactory::class,
+                SpanTagManager::class => SpanTagManagerFactory::class,
                 Client::class => Client::class,
             ],
             'annotations' => [
