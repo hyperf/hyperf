@@ -11,6 +11,7 @@
 - [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
 - [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
 - [#844](https://github.com/hyperf/hyperf/pull/844) Fixed the composer.json reader support root namespace.
+- [#850](https://github.com/hyperf/hyperf/pull/850) Fixed logger group does not works when the name is same.
 
 ## Optimized
 
