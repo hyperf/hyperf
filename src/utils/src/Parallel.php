@@ -62,7 +62,7 @@ class Parallel
         return $result;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->callbacks = [];
     }
