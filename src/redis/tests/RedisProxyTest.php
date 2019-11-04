@@ -65,6 +65,26 @@ class RedisProxyTest extends TestCase
         $this->assertSame('s:3:"yyy";', $this->getRedis()->get('test'));
     }
 
+    public function testRedisScan()
+    {
+        $redis = $this->getRedis();
+        $origin = ['scan:1', 'scan:2', 'scan:3', 'scan:4'];
+        foreach ($origin as $value) {
+            $redis->set($value, '1');
+        }
+
+        $it = null;
+        $result = [];
+        while (false !== $res = $redis->scan($it, 'scan:*', 2)) {
+            $result = array_merge($result, $res);
+        }
+
+        sort($result);
+
+        $this->assertEquals($origin, $result);
+        $this->assertSame(0, $it);
+    }
+
     /**
      * @param mixed $optinos
      * @return \Redis
