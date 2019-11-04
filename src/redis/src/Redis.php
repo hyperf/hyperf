@@ -63,6 +63,34 @@ class Redis
         return $result;
     }
 
+    public function scan(&$cursor, $pattern = null, $count = 0)
+    {
+        $hasContextConnection = Context::has($this->getContextKey());
+        $connection = $this->getConnection($hasContextConnection);
+        return $connection->scan($cursor, $pattern, $count);
+    }
+
+    public function hScan($key, &$cursor, $pattern = null, $count = 0)
+    {
+        $hasContextConnection = Context::has($this->getContextKey());
+        $connection = $this->getConnection($hasContextConnection);
+        return $connection->hScan($key, $cursor, $pattern, $count);
+    }
+
+    public function zScan($key, &$cursor, $pattern = null, $count = 0)
+    {
+        $hasContextConnection = Context::has($this->getContextKey());
+        $connection = $this->getConnection($hasContextConnection);
+        return $connection->zScan($key, $cursor, $pattern, $count);
+    }
+
+    public function sScan($key, &$cursor, $pattern = null, $count = 0)
+    {
+        $hasContextConnection = Context::has($this->getContextKey());
+        $connection = $this->getConnection($hasContextConnection);
+        return $connection->sScan($key, $cursor, $pattern, $count);
+    }
+
     /**
      * Define the commands that needs same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
