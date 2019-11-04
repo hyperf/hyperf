@@ -15,6 +15,7 @@
 ## Optimized
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+- [#840](https://github.com/hyperf/hyperf/pull/840) Use swoole timer function from namespace.
 
 # v1.1.4 - 2019-10-31
 
