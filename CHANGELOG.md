@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
 
