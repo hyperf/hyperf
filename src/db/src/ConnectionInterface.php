@@ -34,7 +34,7 @@ interface ConnectionInterface
      *
      * @return int|string last insert id
      */
-    public function insert(string $query, array $bindings = []);
+    public function insert(string $query, array $bindings = []): int;
 
     /**
      * Run an execute statement against the database.

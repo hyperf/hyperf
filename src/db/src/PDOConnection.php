@@ -145,7 +145,7 @@ class PDOConnection extends AbstractConnection
         return $this->connection->exec($sql);
     }
 
-    public function insert(string $query, array $bindings = [])
+    public function insert(string $query, array $bindings = []): int
     {
         $statement = $this->connection->prepare($query);
 
@@ -153,7 +153,7 @@ class PDOConnection extends AbstractConnection
 
         $statement->execute();
 
-        return $this->connection->lastInsertId();
+        return (int) $this->connection->lastInsertId();
     }
 
     public function call(string $method, array $argument = [])

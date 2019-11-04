@@ -49,8 +49,6 @@ trait ManagesTransactions
     /**
      * Rollback the active database transaction.
      *
-     * @param null|int $toLevel
-     *
      * @throws Throwable
      */
     public function rollBack(?int $toLevel = null): void
@@ -89,7 +87,7 @@ trait ManagesTransactions
     /**
      * Create a transaction within the database.
      */
-    protected function createTransaction()
+    protected function createTransaction(): void
     {
         if ($this->transactions == 0) {
             try {
@@ -130,10 +128,8 @@ trait ManagesTransactions
 
     /**
      * Perform a rollback within the database.
-     *
-     * @param int $toLevel
      */
-    protected function performRollBack($toLevel)
+    protected function performRollBack(int $toLevel)
     {
         if ($toLevel == 0) {
             $this->call('rollBack');

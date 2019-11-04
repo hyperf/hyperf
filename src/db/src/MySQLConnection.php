@@ -93,7 +93,7 @@ class MySQLConnection extends AbstractConnection
         return true;
     }
 
-    public function insert(string $query, array $bindings = [])
+    public function insert(string $query, array $bindings = []): int
     {
         $statement = $this->prepare($query);
 
