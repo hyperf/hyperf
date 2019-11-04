@@ -59,6 +59,7 @@ class Parallel
             });
         }
         $wg->wait();
+        $this->callbacks = [];
         return $result;
     }
 }
