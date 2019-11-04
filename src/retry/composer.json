@@ -1,0 +1,55 @@
+{
+    "name": "hyperf/circuit-breaker",
+    "description": "A circuit breaker component for hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "circuit breaker"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/container": "^1.0",
+        "hyperf/utils": "~1.1.0"
+    },
+    "require-dev": {
+        "hyperf/contract": "~1.1.0",
+        "hyperf/di": "~1.1.0",
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+        "hyperf/contract": "Required to use annotations.",
+        "hyperf/di": "Required to use annotations."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\CircuitBreaker\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\CircuitBreaker\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}
