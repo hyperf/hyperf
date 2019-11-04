@@ -37,14 +37,7 @@ class ResolvableInputObjectType extends InputObjectType implements ResolvableInp
 
     /**
      * QueryField constructor.
-     * @param string $name
-     * @param FieldsBuilderFactory $controllerQueryProviderFactory
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @param object|string $factory
-     * @param string $methodName
-     * @param ArgumentResolver $argumentResolver
-     * @param null|string $comment
-     * @param array $additionalConfig
      */
     public function __construct(string $name, FieldsBuilderFactory $controllerQueryProviderFactory, RecursiveTypeMapperInterface $recursiveTypeMapper, $factory, string $methodName, ArgumentResolver $argumentResolver, ?string $comment, array $additionalConfig = [])
     {
@@ -70,7 +63,6 @@ class ResolvableInputObjectType extends InputObjectType implements ResolvableInp
     }
 
     /**
-     * @param array $args
      * @return object
      */
     public function resolve(array $args)
