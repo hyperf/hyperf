@@ -66,7 +66,7 @@ class LoggerFactory
         if (isset($this->loggers[$group][$name]) && $this->loggers[$group][$name] instanceof Logger) {
             return $this->loggers[$group][$name];
         }
-    
+
         return $this->loggers[$group][$name] = $this->make($name, $group);
     }
 
