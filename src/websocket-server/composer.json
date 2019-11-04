@@ -12,10 +12,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/exception-handler": "~1.1.0",
-        "hyperf/http-server": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
+        "hyperf/contract": "~1.2.0",
+        "hyperf/exception-handler": "~1.2.0",
+        "hyperf/http-server": "~1.2.0",
+        "hyperf/utils": "~1.2.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0"
@@ -42,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "1.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\WebSocketServer\\ConfigProvider"
