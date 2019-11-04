@@ -107,4 +107,12 @@ class PDODriverTest extends AbstractTestCase
         $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
         $this->assertNotNull($res);
     }
+
+    public function testStaticCall()
+    {
+        $this->getContainer();
+        $res = DB::fetch('SELECT * FROM `user` WHERE id = ?;', [1]);
+
+        $this->assertSame('Hyperf', $res['name']);
+    }
 }

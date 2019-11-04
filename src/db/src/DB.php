@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Hyperf\DB\Pool\PoolFactory;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Throwable;
 
@@ -69,6 +70,13 @@ class DB
         }
 
         return $result;
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        $container = ApplicationContext::getContainer();
+        $db = $container->get(static::class);
+        return $db->{$name}(...$arguments);
     }
 
     /**
