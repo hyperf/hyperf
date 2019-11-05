@@ -103,7 +103,7 @@ abstract class AbstractServiceClient
 
     protected function __request(string $method, array $params, ?string $id = null)
     {
-        if ($this->idGenerator instanceof IdGeneratorInterface && !$id) {
+        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
@@ -120,7 +120,7 @@ abstract class AbstractServiceClient
 
     protected function __generateRpcPath(string $methodName): string
     {
-        if (!$this->serviceName) {
+        if (! $this->serviceName) {
             throw new InvalidArgumentException('Parameter $serviceName missing.');
         }
         return $this->pathGenerator->generate($this->serviceName, $methodName);
@@ -145,7 +145,7 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        if (!$this->container->has(ConfigInterface::class)) {
+        if (! $this->container->has(ConfigInterface::class)) {
             throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
         }
         $refreshCallback = null;
@@ -183,7 +183,7 @@ abstract class AbstractServiceClient
             $nodes = [];
             foreach ($consumer['nodes'] ?? [] as $item) {
                 if (isset($item['host'], $item['port'])) {
-                    if (!is_int($item['port'])) {
+                    if (! is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
                     }
                     $nodes[] = new Node($item['host'], $item['port']);
@@ -221,7 +221,7 @@ abstract class AbstractServiceClient
 
     protected function createConsulHealth(array $config): HealthInterface
     {
-        if (!$this->container->has(Health::class)) {
+        if (! $this->container->has(Health::class)) {
             throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
         return make(Health::class, [
