@@ -10,21 +10,24 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\StrategyInterface;
+namespace Hyperf\Retry;
 
-class BackoffStrategy
+use Hyperf\Utils\Backoff;
+
+class BackoffStrategy implements StrategyInterface
 {
-    public function calculate(float $time): float
+    /**
+     * @var Backoff
+     */
+    private $backoff;
+
+    public function __construct(int $base)
     {
-        if ($time <= 0) {
-            $time = 0.001;
-        }
-        $time *= 2;
-        $jitter = mt_rand() / mt_getrandmax() + 0.5;
-        $time = $time * $jitter;
-        if ($time > 60) {
-            $time = 60;
-        }
-        return $time;
+        $this->backoff = new Backoff($base);
+    }
+
+    public function sleep(): void
+    {
+        $this->backoff->sleep();
     }
 }

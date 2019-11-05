@@ -75,6 +75,10 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        if (! $this->config->get('config_etcd.enable', false)) {
+            return;
+        }
+
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;

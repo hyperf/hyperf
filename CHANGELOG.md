@@ -1,24 +1,46 @@
-# v1.1.4 - TBD
+# v1.1.5 - TBD
+
+## Added
+
+- [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
+- [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
+- [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
+
+## Fixed
+
+- [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
+- [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
+
+## Optimized
+
+- [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+
+# v1.1.4 - 2019-10-31
 
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+- [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
 - [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
+- [#804](https://github.com/hyperf/hyperf/pull/804) Added `BeforeHandle` `AfterHandle` and `FailToHandle` for command.
 
 ## Fixed
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
 - [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
 - [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception. 
+- [#796](https://github.com/hyperf/hyperf/pull/796) Fixed `config_etcd.enable` does not works. 
 
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd. 
 - [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
 
 ## Changed
 
 - [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
+- [#811](https://github.com/hyperf/hyperf/pull/811) Command `di:init-proxy` does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.
 
 # v1.1.3 - 2019-10-24
 

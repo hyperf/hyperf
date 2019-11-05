@@ -10,12 +10,22 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\StrategyInterface;
+namespace Hyperf\Retry;
 
-class FlatStrategy
+class FlatStrategy implements StrategyInterface
 {
-    public function calculate(float $time): float
+    /**
+     * @var int
+     */
+    private $base;
+
+    public function __construct(int $base)
     {
-        return $time;
+        $this->base = $base;
+    }
+
+    public function sleep(): void
+    {
+        usleep($this->base * 1000);
     }
 }

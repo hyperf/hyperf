@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry;
 
-use Hyperf\StrategyInterface\BackoffStrategy;
-use Hyperf\StrategyInterface\StrategyInterface;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -28,7 +25,8 @@ class ConfigProvider
                 ],
             ],
             'dependencies' => [
-                StrategyInterface::class => BackoffStrategy::class,
+                StrategyInterface::class => FlatStrategy::class,
+                RetryBudgetInterface::class => RetryBudget::class,
             ],
         ];
     }

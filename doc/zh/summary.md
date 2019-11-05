@@ -60,6 +60,7 @@
   * [服务限流](zh/rate-limit.md)
   * [配置中心](zh/config-center.md)
   * [调用链追踪](zh/tracer.md)
+  * [服务监控](zh/metric.md)
   
 * 其它组件
 

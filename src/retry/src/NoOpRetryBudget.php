@@ -10,11 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RetrierInterface;
+namespace Hyperf\Retry;
 
-interface RetrierInterface
+class NoOpRetryBudget implements RetryBudgetInterface
 {
-    public function sleepTillRetry(): void;
+    public function produce(): void
+    {
+    }
 
-    public function canRetry(): bool;
+    public function consume(): bool
+    {
+        return true;
+    }
 }

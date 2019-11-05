@@ -260,7 +260,7 @@ class UserServiceFactory
 }
 ```
 
-`UserService` 也许在构造函数提供一个参数接收对应的值：
+`UserService` 也可以在构造函数提供一个参数接收对应的值：
 
 ```php
 <?php

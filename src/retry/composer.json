@@ -1,11 +1,11 @@
 {
-    "name": "hyperf/circuit-breaker",
-    "description": "A circuit breaker component for hyperf.",
+    "name": "hyperf/retry",
+    "description": "A retry component for hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
         "hyperf",
-        "circuit breaker"
+        "retry"
     ],
     "support": {
     },
@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\CircuitBreaker\\": "src/"
+            "Hyperf\\Retry\\": "src/"
         }
     },
     "autoload-dev": {
@@ -43,7 +43,7 @@
             "dev-master": "1.1-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\CircuitBreaker\\ConfigProvider"
+            "config": "Hyperf\\Retry\\ConfigProvider"
         }
     },
     "bin": [
