@@ -131,6 +131,8 @@ public $retryBudget = [
 * `minRetriesPerSec` 每秒“低保”最少可以重试的次数。
 * `percentCanRetry` 重试次数不超过总请求数的百分比。
 
+> 重试组件的令牌桶在worker之间不共享，所以最终的重试次数要乘以worker数量。
+
 ### base
 
 等长重试间歇中的间歇时间，变长重试间歇中的第一次重试间歇时间。
