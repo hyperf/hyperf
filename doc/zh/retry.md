@@ -185,7 +185,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
 class RetryTimeout extends Hyperf\Retry\Annotation\Retry
 {
     public $base = 100;
-    public $strategy = BackoffStrategy::class;
+    public $strategy = \Hyperf\Retry\BackoffStrategy::class;
     public $retryThrowables = [\App\Exception\TimeoutException::class];
 }
 ```
