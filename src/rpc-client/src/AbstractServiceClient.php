@@ -103,7 +103,7 @@ abstract class AbstractServiceClient
 
     protected function __request(string $method, array $params, ?string $id = null)
     {
-        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
+        if ($this->idGenerator instanceof IdGeneratorInterface && !$id) {
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
@@ -120,7 +120,7 @@ abstract class AbstractServiceClient
 
     protected function __generateRpcPath(string $methodName): string
     {
-        if (! $this->serviceName) {
+        if (!$this->serviceName) {
             throw new InvalidArgumentException('Parameter $serviceName missing.');
         }
         return $this->pathGenerator->generate($this->serviceName, $methodName);
@@ -145,7 +145,7 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        if (! $this->container->has(ConfigInterface::class)) {
+        if (!$this->container->has(ConfigInterface::class)) {
             throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
         }
         $refreshCallback = null;
@@ -183,7 +183,7 @@ abstract class AbstractServiceClient
             $nodes = [];
             foreach ($consumer['nodes'] ?? [] as $item) {
                 if (isset($item['host'], $item['port'])) {
-                    if (! is_int($item['port'])) {
+                    if (!is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
                     }
                     $nodes[] = new Node($item['host'], $item['port']);
@@ -196,35 +196,32 @@ abstract class AbstractServiceClient
 
     protected function getNodesFromConsul(array $config): array
     {
-        $agent = $this->createConsulAgent($config);
-        $services = $agent->services()->json();
-        $nodes = [];
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port']) || $service['Service'] !== $this->serviceName) {
-                continue;
-            }
-            // @TODO Get and set the weight property.
-            $nodes[$serviceId] = new Node($service['Address'], $service['Port']);
-        }
-        if (empty($nodes)) {
-            return $nodes;
-        }
         $health = $this->createConsulHealth($config);
-        $checks = $health->checks($this->serviceName)->json();
-        foreach ($checks ?? [] as $check) {
-            if (! isset($check['Status'], $check['ServiceID'])) {
-                continue;
+        $services = $health->service($this->serviceName)->json();
+        $nodes = [];
+        foreach ($services as $node) {
+            $passing = true;
+            $service = $node['Service'] ?? [];
+            $checks = $node['Checks'] ?? [];
+            foreach ($checks as $check) {
+                $status = $check['Status'] ?? false;
+                if ($status != 'passing') {
+                    $passing = false;
+                }
             }
-            if ($check['Status'] !== 'passing') {
-                unset($nodes[$check['ServiceID']]);
+
+            if ($passing) {
+                $address = $service['Address'] ?? '';
+                $port = (int)$service['Port'] ?? 0;
+                $nodes[] = new Node($address, $port);
             }
         }
-        return array_values($nodes);
+        return $nodes;
     }
 
     protected function createConsulAgent(array $config)
     {
-        if (! $this->container->has(Agent::class)) {
+        if (!$this->container->has(Agent::class)) {
             throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
         return make(Agent::class, [
@@ -238,7 +235,7 @@ abstract class AbstractServiceClient
 
     protected function createConsulHealth(array $config): HealthInterface
     {
-        if (! $this->container->has(Health::class)) {
+        if (!$this->container->has(Health::class)) {
             throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
         return make(Health::class, [
