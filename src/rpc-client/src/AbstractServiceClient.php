@@ -219,20 +219,6 @@ abstract class AbstractServiceClient
         return $nodes;
     }
 
-    protected function createConsulAgent(array $config)
-    {
-        if (!$this->container->has(Agent::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
-        }
-        return make(Agent::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Agent::DEFAULT_URI,
-                ]);
-            },
-        ]);
-    }
-
     protected function createConsulHealth(array $config): HealthInterface
     {
         if (!$this->container->has(Health::class)) {
