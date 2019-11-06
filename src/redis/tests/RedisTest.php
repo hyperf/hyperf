@@ -77,6 +77,7 @@ class RedisTest extends TestCase
                     'host' => 'localhost',
                     'auth' => null,
                     'port' => 6379,
+                    'cluster' => false,
                     'db' => 0,
                     'pool' => [
                         'min_connections' => 1,

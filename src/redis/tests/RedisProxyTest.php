@@ -78,6 +78,7 @@ class RedisProxyTest extends TestCase
                     'host' => 'localhost',
                     'auth' => null,
                     'port' => 6379,
+                    'cluster' => false,
                     'db' => 0,
                     'options' => $optinos,
                     'pool' => [

@@ -45,6 +45,7 @@ class RedisConnectionTest extends TestCase
             'host' => 'redis',
             'port' => 16379,
             'auth' => 'redis',
+            'cluster' => false,
             'db' => 0,
             'timeout' => 0.0,
             'options' => [],
@@ -107,6 +108,7 @@ class RedisConnectionTest extends TestCase
                     'host' => 'redis',
                     'auth' => 'redis',
                     'port' => 16379,
+                    'cluster' => false,
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 30,
