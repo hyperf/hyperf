@@ -101,15 +101,22 @@ trait ProxyTrait
 
         $classAnnotations = AnnotationCollector::get($className . '._c', []);
         $methodAnnotations = AnnotationCollector::get($className . '._m.' . $method, []);
-        $annotations = array_unique(array_merge(array_keys($classAnnotations), array_keys($methodAnnotations)));
+        $annotations = array_reverse(
+            array_unique(
+                array_merge(
+                    array_reverse(array_keys($methodAnnotations)),
+                    array_reverse(array_keys($classAnnotations))
+                )
+            )
+        );
         if (! $annotations) {
             return $matchedAspect;
         }
 
         $aspects = AspectCollector::get('annotations', []);
-        foreach ($aspects as $aspect => $rules) {
-            foreach ($rules as $rule) {
-                foreach ($annotations as $annotation) {
+        foreach ($annotations as $annotation) {
+            foreach ($aspects as $aspect => $rules) {
+                foreach ($rules as $rule) {
                     if (strpos($rule, '*') !== false) {
                         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
                         $pattern = "/^{$preg}$/";
