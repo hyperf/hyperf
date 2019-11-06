@@ -4,7 +4,8 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 - 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。
 - 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 组件提供功能支持。
-- 直接使用 zookeeper 作为配置中心 (**试验性质, 请不要在生产环境使用**)
+- ETCD 作为配置中心
+- Zookeeper 作为配置中心 (**试验性质, 请暂时不要在生产环境下使用**)
 
 ## 为什么要使用配置中心？
 
