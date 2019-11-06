@@ -57,7 +57,7 @@ class NatsDriver extends AbstractDriver
             $client = $connection->getConnection();
             $client->publish($subject, $payload, $inbox);
         } finally {
-            $connection->release();
+            $connection && $connection->release();
         }
     }
 
@@ -70,7 +70,7 @@ class NatsDriver extends AbstractDriver
             $client = $connection->getConnection();
             $client->request($subject, $payload, $callback);
         } finally {
-            $connection->release();
+            $connection && $connection->release();
         }
     }
 
@@ -92,7 +92,7 @@ class NatsDriver extends AbstractDriver
             }
             return $message;
         } finally {
-            $connection->release();
+            $connection && $connection->release();
         }
     }
 
@@ -110,7 +110,7 @@ class NatsDriver extends AbstractDriver
             }
             $client->wait();
         } finally {
-            $connection->release();
+            $connection && $connection->release();
         }
     }
 }

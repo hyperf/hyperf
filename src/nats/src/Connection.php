@@ -204,7 +204,7 @@ class Connection
         if ($this->isConnected() === true) {
             if (is_numeric($seconds) === true) {
                 try {
-                    $timeout = number_format($seconds, 3);
+                    $timeout = (float) number_format($seconds, 3);
                     $seconds = floor($timeout);
                     $microseconds = (($timeout - $seconds) * 1000);
                     return stream_set_timeout($this->streamSocket, $seconds, $microseconds);
@@ -252,7 +252,7 @@ class Connection
      *
      * @param float $timeout number of seconds until the connect() system call should timeout
      *
-     * @throws \Exception exception raised if connection fails
+     * @throws \Throwable exception raised if connection fails
      */
     public function connect($timeout = null)
     {
@@ -390,7 +390,7 @@ class Connection
      *
      * @param int $quantity number of messages to wait for
      *
-     * @return Connection $connection Connection object
+     * @return null|Connection $connection Connection object
      */
     public function wait($quantity = 0)
     {
@@ -478,7 +478,7 @@ class Connection
             throw Exception::forStreamSocketClientError($errstr, $errno);
         }
 
-        $timeout = number_format($timeout, 3);
+        $timeout = (float) number_format($timeout, 3);
         $seconds = floor($timeout);
         $microseconds = (($timeout - $seconds) * 1000);
         stream_set_timeout($fp, $seconds, $microseconds);
@@ -537,7 +537,7 @@ class Connection
      *
      * @return string
      */
-    private function receive($len = 0)
+    private function receive(int $len = 0)
     {
         if ($len > 0) {
             $chunkSize = $this->chunkSize;
@@ -595,7 +595,7 @@ class Connection
             $subject = $parts[1];
         }
 
-        $payload = $this->receive($length);
+        $payload = $this->receive((int) $length);
         $msg = new Message($subject, $payload, $sid, $this);
 
         if (isset($this->subscriptions[$sid]) === false) {

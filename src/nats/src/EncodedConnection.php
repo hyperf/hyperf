@@ -22,7 +22,7 @@ class EncodedConnection extends Connection
     /**
      * Encoder for this connection.
      *
-     * @var null|\Nats\Encoders\Encoder
+     * @var null|Encoder
      */
     private $encoder;
 
@@ -30,7 +30,7 @@ class EncodedConnection extends Connection
      * EncodedConnection constructor.
      *
      * @param ConnectionOptions $options connection options object
-     * @param null|\Nats\Encoders\Encoder $encoder encoder to use with the payload
+     * @param null|Encoder $encoder encoder to use with the payload
      */
     public function __construct(ConnectionOptions $options = null, Encoder $encoder = null)
     {

@@ -21,8 +21,6 @@ class Exception extends \Exception
      * Creates an Exception for a failed connection.
      *
      * @param string $response the failed error response
-     *
-     * @return \Nats\Exception
      */
     public static function forFailedConnection($response)
     {
@@ -33,8 +31,6 @@ class Exception extends \Exception
      * Creates an Exception for a failed PING response.
      *
      * @param string $response the failed PING response
-     *
-     * @return \Nats\Exception
      */
     public static function forFailedPing($response)
     {
@@ -45,8 +41,6 @@ class Exception extends \Exception
      * Creates an Exception for an invalid Subscription Identifier (sid).
      *
      * @param string $subscription the Subscription Identifier (sid)
-     *
-     * @return \Nats\Exception
      */
     public static function forSubscriptionNotFound($subscription)
     {
@@ -57,8 +51,6 @@ class Exception extends \Exception
      * Creates an Exception for an invalid Subscription Identifier (sid) callback.
      *
      * @param string $subscription the Subscription Identifier (sid)
-     *
-     * @return \Nats\Exception
      */
     public static function forSubscriptionCallbackInvalid($subscription)
     {
@@ -70,8 +62,6 @@ class Exception extends \Exception
      *
      * @param string $message the system level error message
      * @param int $code the system level error code
-     *
-     * @return \Nats\Exception
      */
     public static function forStreamSocketClientError($message, $code)
     {
