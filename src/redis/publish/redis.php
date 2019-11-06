@@ -15,6 +15,7 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', null),
         'port' => (int) env('REDIS_PORT', 6379),
+        'cluster' => env('REDIS_CLUSTER', false),
         'db' => (int) env('REDIS_DB', 0),
         'timeout' => 0.0,
         'reserved' => null,

@@ -8,12 +8,13 @@ composer require hyperf/redis
 
 ## 配置
 
-| 配置项 |  类型   |   默认值    |   备注    |
-|:------:|:-------:|:-----------:|:---------:|
-|  host  | string  | 'localhost' | Redis地址 |
-|  auth  | string  |     无      |   密码    |
-|  port  | integer |    6379     |   端口    |
-|   db   | integer |      0      |    DB     |
+| 配置项    |  类型   |   默认值    |   备注    |
+|:--------:|:-------:|:-----------:|:---------:|
+|  host    | string  | 'localhost' | Redis地址 |
+|  auth    | string  |     无      |   密码    |
+|  port    | integer |    6379     |   端口    |
+|  cluster | boolean |    false    |   集群    |
+|   db     | integer |      0      |    DB     |
 
 ```php
 <?php
@@ -22,6 +23,7 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
+        'cluster' => env('REDIS_CLUSTER', false),
         'db' => (int) env('REDIS_DB', 0),
         'pool' => [
             'min_connections' => 1,
@@ -62,6 +64,7 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
+        'cluster' => env('REDIS_CLUSTER', false),
         'db' => (int) env('REDIS_DB', 0),
         'pool' => [
             'min_connections' => 1,
@@ -77,6 +80,7 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
+        'cluster' => env('REDIS_CLUSTER', false),
         'db' => 1,
         'pool' => [
             'min_connections' => 1,

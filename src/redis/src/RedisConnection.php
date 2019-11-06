@@ -32,6 +32,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'host' => 'localhost',
         'port' => 6379,
         'auth' => null,
+        'cluster' => false,
         'db' => 0,
         'timeout' => 0.0,
         'options' => [],
@@ -74,12 +75,24 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $host = $this->config['host'];
         $port = $this->config['port'];
         $auth = $this->config['auth'];
+        $cluster = $this->config['cluster'];
         $db = $this->config['db'];
         $timeout = $this->config['timeout'];
 
-        $redis = new \Redis();
-        if (! $redis->connect($host, $port, $timeout)) {
-            throw new ConnectionException('Connection reconnect failed.');
+        $redis = null;
+        if ($cluster !== true) {
+            // Normal Redis (Non-cluster)
+            $redis = new \Redis();
+            if (! $redis->connect($host, $port, $timeout)) {
+                throw new ConnectionException('Connection reconnect failed.');
+            }
+        } else {
+            // Redis Cluster 
+            try {
+                $redis = new \RedisCluster(null, [$host . ':' . $port], $timeout);
+            } catch (\Throwable $e) {
+                throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
+            }
         }
 
         $options = $this->config['options'] ?? [];
