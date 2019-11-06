@@ -74,7 +74,7 @@ class NatsDriver extends AbstractDriver
         }
     }
 
-    public function requestSync(string $subject, $payload, float $timeout = 10.0): Message
+    public function requestSync(string $subject, $payload): Message
     {
         try {
             /** @var Connection $connection */
@@ -82,6 +82,7 @@ class NatsDriver extends AbstractDriver
             /** @var NatsConnection $client */
             $client = $connection->getConnection();
             $channel = new Channel(1);
+            $timeout = floatval($this->config['timeout'] ?? 1.0);
             $client->request($subject, $payload, function (Message $message) use ($channel) {
                 $channel->push($message);
             });
