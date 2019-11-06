@@ -47,17 +47,11 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $db;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return null|int
-     */
     public function getDatabase(): ?int
     {
         return $this->database;

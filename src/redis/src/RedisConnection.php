@@ -18,6 +18,9 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @method select(int $db)
+ */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
     /**
@@ -32,9 +35,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'host' => 'localhost',
         'port' => 6379,
         'auth' => null,
-        'cluster' => false,
         'db' => 0,
         'timeout' => 0.0,
+        'cluster' => [
+            'enable' => false,
+            'name' => null,
+            'seeds' => [],
+        ],
         'options' => [],
     ];
 
@@ -75,24 +82,18 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $host = $this->config['host'];
         $port = $this->config['port'];
         $auth = $this->config['auth'];
-        $cluster = $this->config['cluster'];
         $db = $this->config['db'];
         $timeout = $this->config['timeout'];
+        $cluster = $this->config['cluster']['enable'] ?? false;
 
         $redis = null;
         if ($cluster !== true) {
-            // Normal Redis (Non-cluster)
             $redis = new \Redis();
             if (! $redis->connect($host, $port, $timeout)) {
                 throw new ConnectionException('Connection reconnect failed.');
             }
         } else {
-            // Redis Cluster 
-            try {
-                $redis = new \RedisCluster(null, [$host . ':' . $port], $timeout);
-            } catch (\Throwable $e) {
-                throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
-            }
+            $redis = $this->createRedisCluster();
         }
 
         $options = $this->config['options'] ?? [];
@@ -137,5 +138,20 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function setDatabase(?int $database): void
     {
         $this->database = $database;
+    }
+
+    protected function createRedisCluster()
+    {
+        try {
+            $seeds = $this->config['cluster']['seeds'] ?? [];
+            $name = $this->config['cluster']['name'] ?? null;
+            $timeout = $this->config['timeout'] ?? null;
+
+            $redis = new \RedisCluster($name, $seeds, $timeout);
+        } catch (\Throwable $e) {
+            throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
+        }
+
+        return $redis;
     }
 }

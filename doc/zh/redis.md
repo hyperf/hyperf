@@ -13,8 +13,10 @@ composer require hyperf/redis
 |  host    | string  | 'localhost' | Redis地址 |
 |  auth    | string  |     无      |   密码    |
 |  port    | integer |    6379     |   端口    |
-|  cluster | boolean |    false    |   集群    |
 |   db     | integer |      0      |    DB     |
+|  cluster.enable | boolean |    false    |   是否集群模式    |
+|  cluster.name | string |    null    |   集群名    |
+|  cluster.seeds | array |    []    |   是否集群模式    |
 
 ```php
 <?php
@@ -23,8 +25,12 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
-        'cluster' => env('REDIS_CLUSTER', false),
         'db' => (int) env('REDIS_DB', 0),
+        'cluster' => [
+            'enable' => (bool) env('REDIS_ENABLE_CLUSTER', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -64,8 +70,12 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
-        'cluster' => env('REDIS_CLUSTER', false),
         'db' => (int) env('REDIS_DB', 0),
+        'cluster' => [
+            'enable' => (bool) env('REDIS_ENABLE_CLUSTER', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -80,7 +90,6 @@ return [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
-        'cluster' => env('REDIS_CLUSTER', false),
         'db' => 1,
         'pool' => [
             'min_connections' => 1,
