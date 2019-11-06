@@ -1,0 +1,13 @@
+<?php
+
+namespace DummyNamespace;
+
+use Hyperf\LazyLoader\LazyProxy;
+
+class DummyClass extends LazyProxy
+{
+    public static function getProxyAccessor(): string
+    {
+        return 'DummyTarget';
+    }
+}
