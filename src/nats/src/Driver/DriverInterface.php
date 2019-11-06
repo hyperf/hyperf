@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Nats\Driver;
 
-use Hyperf\Nats\PublishInterface;
-use Hyperf\Nats\RequestInterface;
-use Hyperf\Nats\SubscribeInterface;
+use Hyperf\Nats\Contract\PublishInterface;
+use Hyperf\Nats\Contract\RequestInterface;
+use Hyperf\Nats\Contract\SubscribeInterface;
 
 interface DriverInterface extends PublishInterface, RequestInterface, SubscribeInterface
 {
