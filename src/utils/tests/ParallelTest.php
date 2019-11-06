@@ -75,6 +75,46 @@ class ParallelTest extends TestCase
         $this->assertSame([2, 3, 4, 4], array_values($res));
     }
 
+    public function testParallelCallbackCount()
+    {
+        $parallel = new Parallel();
+        $callback = function () {
+            return 1;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $this->assertEquals(count($res), 4);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $this->assertEquals(count($res), 8);
+    }
+
+    public function testParallelClear()
+    {
+        $parallel = new Parallel();
+        $callback = function () {
+            return 1;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertEquals(count($res), 4);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertEquals(count($res), 4);
+    }
+
     public function returnCoId()
     {
         return Coroutine::id();
