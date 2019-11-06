@@ -37,16 +37,21 @@ class Retry extends AbstractAnnotation
 
     /**
      * Retry Budget.
+     * ttl: Seconds of token lifetime.
+     * minRetriesPerSec: Base retry token generation speed.
+     * percentCanRetry: Generate new token at this ratio of the request volume.
+     *
      * @var array
      */
     public $retryBudget = [
         'ttl' => 10,
-        'minRetriesPerSec' => 10,
+        'minRetriesPerSec' => 1,
         'percentCanRetry' => 0.2,
     ];
 
     /**
-     * Base time inteval (ms) for each try.
+     * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
+     * while for flat strategy this is the interval for every try.
      * @var int
      */
     public $base = 0;

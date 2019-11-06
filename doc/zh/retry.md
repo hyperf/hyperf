@@ -122,7 +122,7 @@ class Retry extends AbstractAnnotation
 ```php
 public $retryBudget = [
     'ttl' => 10,
-    'minRetriesPerSec' => 10,
+    'minRetriesPerSec' => 1,
     'percentCanRetry' => 0.2,
 ];
 ```
