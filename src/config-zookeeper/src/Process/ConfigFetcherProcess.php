@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ConfigApollo\Process;
+namespace Hyperf\ConfigZookeeper\Process;
 
-use Hyperf\ConfigApollo\ClientInterface;
-use Hyperf\ConfigApollo\PipeMessage;
+use Hyperf\ConfigZookeeper\ClientInterface;
+use Hyperf\ConfigZookeeper\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -21,13 +21,10 @@ use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 /**
- * @Process(name="apollo-config-fetcher")
+ * @Process(name="zookeeper-config-fetcher")
  */
 class ConfigFetcherProcess extends AbstractProcess
 {
-    // ext-swoole-zookeeper need use in coroutine
-    public $enableCoroutine = true;
-
     /**
      * @var Server
      */
@@ -42,6 +39,11 @@ class ConfigFetcherProcess extends AbstractProcess
      * @var ConfigInterface
      */
     private $config;
+
+    /**
+     * @var string
+     */
+    private $cacheConfig;
 
     public function __construct(ContainerInterface $container)
     {
@@ -58,28 +60,21 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('apollo.enable', false);
+        return $this->config->get('zookeeper.enable', false);
     }
 
     public function handle(): void
     {
-        $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-        $ipcCallback = function ($configs, $namespace) use ($workerCount) {
-            if (isset($configs['configurations'], $configs['releaseKey'])) {
-                $configs['namespace'] = $namespace;
+        while (true) {
+            $config = $this->client->pull();
+            if ($config !== $this->cacheConfig) {
+                $this->cacheConfig = $config;
+                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($configs), $workerId);
+                    $this->server->sendMessage(new PipeMessage($config), $workerId);
                 }
             }
-        };
-        while (true) {
-            $callbacks = [];
-            $namespaces = $this->config->get('apollo.namespaces', []);
-            foreach ($namespaces as $namespace) {
-                $callbacks[$namespace] = $ipcCallback;
-            }
-            $this->client->pull($namespaces, $callbacks);
-            sleep($this->config->get('apollo.interval', 5));
+            sleep($this->config->get('zookeeper.interval', 5));
         }
     }
 }

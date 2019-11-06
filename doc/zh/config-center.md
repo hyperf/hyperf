@@ -4,6 +4,7 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 - 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。
 - 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 组件提供功能支持。
+- 直接使用 zookeeper 作为配置中心 (**试验性质, 请不要在生产环境使用**)
 
 ## 为什么要使用配置中心？
 
@@ -11,7 +12,7 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 - 安全性：配置跟随源代码保存在版本管理系统中，容易造成配置泄漏
 - 时效性：修改配置，需要每台服务器每个应用修改并重启服务
-- 局限性：无法支持动态调整，例如日志开关、功能开关等   
+- 局限性：无法支持动态调整，例如日志开关、功能开关等
 
 因此，我们可以通过一个配置中心以一种科学的管理方式来统一管理相关的配置。
 
@@ -145,5 +146,5 @@ return [
 
 ## 配置更新的作用范围
 
-在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
+在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。
 需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
