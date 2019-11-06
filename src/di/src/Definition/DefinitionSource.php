@@ -345,12 +345,19 @@ class DefinitionSource implements DefinitionSourceInterface
             }
             return $defined;
         });
-        $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations));
+        $annotations = array_reverse(
+            array_unique(
+                array_merge(
+                    array_reverse($methodAnnotations),
+                    array_reverse($classAnnotations)
+                )
+            )
+        );
         if ($annotations) {
             $annotationsAspects = AspectCollector::get('annotations', []);
-            foreach ($annotationsAspects as $aspect => $rules) {
-                foreach ($rules as $rule) {
-                    foreach ($annotations as $annotation) {
+            foreach ($annotations as $annotation) {
+                foreach ($annotationsAspects as $aspect => $rules) {
+                    foreach ($rules as $rule) {
                         if ($this->isMatch($rule, $annotation)) {
                             return true;
                         }
