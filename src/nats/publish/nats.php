@@ -14,6 +14,7 @@ return [
     'default' => [
         'driver' => Hyperf\Nats\Driver\NatsDriver::class,
         'encoder' => Hyperf\Nats\Encoders\JSONEncoder::class,
+        'timeout' => 10.0,
         'options' => [
             'host' => '127.0.0.1',
             'port' => 4222,

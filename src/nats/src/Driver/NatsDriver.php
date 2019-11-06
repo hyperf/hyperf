@@ -17,6 +17,7 @@ use Hyperf\Nats\Connection as NatsConnection;
 use Hyperf\Nats\ConnectionOptions;
 use Hyperf\Nats\EncodedConnection;
 use Hyperf\Nats\Encoders\JSONEncoder;
+use Hyperf\Nats\Exception\TimeoutException;
 use Hyperf\Nats\Message;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\PoolFactory;
@@ -40,8 +41,9 @@ class NatsDriver extends AbstractDriver
         $this->pool = $factory->get('nats' . $this->name, function () use ($config) {
             $option = new ConnectionOptions($config['options'] ?? []);
             $encoder = make($config['encoder'] ?? JSONEncoder::class);
+            $timeout = $config['timeout'] ?? null;
             $conn = make(EncodedConnection::class, [$option, $encoder]);
-            $conn->connect();
+            $conn->connect($timeout);
             return $conn;
         }, $poolConfig);
     }
@@ -84,7 +86,11 @@ class NatsDriver extends AbstractDriver
                 $channel->push($message);
             });
 
-            return $channel->pop($timeout);
+            $message = $channel->pop($timeout);
+            if (! $message instanceof Message) {
+                throw new TimeoutException('Request timeout.');
+            }
+            return $message;
         } finally {
             $connection->release();
         }
