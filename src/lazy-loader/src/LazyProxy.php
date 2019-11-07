@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\LazyLoader;
 
+use Hyperf\Utils\ApplicationContext;
+
 abstract class LazyProxy
 {
     /**
@@ -28,7 +30,7 @@ abstract class LazyProxy
     public function getInstance($className)
     {
         if (null === $this->instance) {
-            $this->instance = make($className);
+            $this->instance = ApplicationContext::getContainer()->get($className);
         }
         return $this->instance;
     }
