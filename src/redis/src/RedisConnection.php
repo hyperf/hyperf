@@ -24,6 +24,8 @@ use Psr\Container\ContainerInterface;
  */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
+    use ScanCaller;
+
     /**
      * @var \Redis
      */
