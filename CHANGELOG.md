@@ -3,18 +3,26 @@
 ## Added
 
 - [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
+- [#820](https://github.com/hyperf/hyperf/pull/820) Added nats component.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
+- [#852](https://github.com/hyperf/hyperf/pull/852) Added a `clear()` method for `Hyperf\Utils\Parallel` to clear added callbacks.
+- [#854](https://github.com/hyperf/hyperf/pull/854) Added `GraphQLMiddleware`.
+- [#873](https://github.com/hyperf/hyperf/pull/873) Added redis cluster.
 
 ## Fixed
 
+- [#831](https://github.com/hyperf/hyperf/pull/831) Fixed Redis client can not reconnect the server after the Redis server restarted.
 - [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
 - [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
+- [#844](https://github.com/hyperf/hyperf/pull/844) Fixed the reader of `composer.json` does not support the root namespace.
 - [#846](https://github.com/hyperf/hyperf/pull/846) Fixed `scan` `hScan` `zScan` and `sScan` don't works for Redis.
+- [#850](https://github.com/hyperf/hyperf/pull/850) Fixed logger group does not works when the name is same.
 
 ## Optimized
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+- [#840](https://github.com/hyperf/hyperf/pull/840) Use `\Swoole\Timer::*` to instead of `swoole_timer_*` functions.
 
 # v1.1.4 - 2019-10-31
 

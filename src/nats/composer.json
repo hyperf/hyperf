@@ -1,0 +1,59 @@
+{
+    "name": "hyperf/nats",
+    "description": "A nats library for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "nats"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/pool": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "ircmaxell/random-lib": "^1.2",
+        "psr/container": "^1.0"
+    },
+    "require-dev": {
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Nats\\": "src/"
+        },
+        "files": [
+            "src/Functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Nats\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Nats\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}
