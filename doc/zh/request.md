@@ -16,7 +16,7 @@ composer require hyperf/http-message
 
 ## 获得请求对象
 
-可以通过容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 获得 对应的 `Hyperf\HttpServer\Request`，实际注入的对象为一个代理对象，代理的对象为每个请求的 `PSR-7 请求对象(Request)`，也就意味着仅可在 `onRequest` 声明周期内可获得此对象，下面是一个获取示例：
+可以通过容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 获得 对应的 `Hyperf\HttpServer\Request`，实际注入的对象为一个代理对象，代理的对象为每个请求的 `PSR-7 请求对象(Request)`，也就意味着仅可在 `onRequest` 生命周期内可获得此对象，下面是一个获取示例：
 
 ```php
 declare(strict_types=1);
