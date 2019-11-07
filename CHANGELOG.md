@@ -5,6 +5,7 @@
 - [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
+- [#859](https://github.com/hyperf/hyperf/pull/859) Added Consul cluster mode support, now available to fetch the service information from Consul cluster.
 
 ## Fixed
 
@@ -17,6 +18,7 @@
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
 - [#840](https://github.com/hyperf/hyperf/pull/840) Use swoole timer function from namespace.
+- [#859](https://github.com/hyperf/hyperf/pull/859) Optimized the logical of fetch health nodes infomation from consul.
 
 # v1.1.4 - 2019-10-31
 
