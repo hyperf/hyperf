@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
@@ -61,7 +62,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function __call($name, $arguments)
     {
-        return $this->connection->{$name}(...$arguments);
+        try {
+            $result = $this->connection->{$name}(...$arguments);
+        } catch (\Throwable $exception) {
+            $result = $this->retry($name, $arguments, $exception);
+        }
+
+        return $result;
     }
 
     public function getActiveConnection()
@@ -153,5 +160,21 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         return $redis;
+    }
+
+    protected function retry($name, $arguments, \Throwable $exception)
+    {
+        $logger = $this->container->get(StdoutLoggerInterface::class);
+        $logger->warning(sprintf('Redis::__call failed, bacause ' . $exception->getMessage()));
+
+        try {
+            $this->reconnect();
+            $result = $this->connection->{$name}(...$arguments);
+        } catch (\Throwable $exception) {
+            $this->lastUseTime = 0.0;
+            throw $exception;
+        }
+
+        return $result;
     }
 }
