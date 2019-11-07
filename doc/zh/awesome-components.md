@@ -109,8 +109,8 @@
 
 ## Swoole
 
-- - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
-- - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
+- [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
+- [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
 
 ## 第三方 SDK
 
@@ -119,3 +119,5 @@
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole环境下的 PHPMailer
 
+### 第三方组件
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 方便快捷的开发调试组件
