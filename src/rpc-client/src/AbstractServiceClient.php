@@ -203,9 +203,10 @@ abstract class AbstractServiceClient
             $passing = true;
             $service = $node['Service'] ?? [];
             $checks = $node['Checks'] ?? [];
+            
             foreach ($checks as $check) {
                 $status = $check['Status'] ?? false;
-                if ($status != 'passing') {
+                if ($status !== 'passing') {
                     $passing = false;
                 }
             }
@@ -213,7 +214,7 @@ abstract class AbstractServiceClient
             if ($passing) {
                 $address = $service['Address'] ?? '';
                 $port = (int)$service['Port'] ?? 0;
-                $nodes[] = new Node($address, $port);
+                $address && $port && $nodes[] = new Node($address, $port);
             }
         }
         return $nodes;
