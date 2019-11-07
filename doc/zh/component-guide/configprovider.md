@@ -36,10 +36,33 @@ class ConfigProvider
             'commands' => [],
             // 与 commands 类似
             'listeners' => [],
-            // 亦可继续定义其它配置，最终都会何必到与 ConfigInterface 对应的配置储存器中
+            // 组件默认配置文件，即执行命令后会把 source 的对应的文件复制为 destination 对应的的文件
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'description of this config file.', // 描述
+                    // 建议默认配置放在 publish 文件夹中，文件命名和组件名称相同
+                    'source' => __DIR__ . '/../publish/file.php',  // 对应的配置文件路径
+                    'destination' => BASE_PATH . '/config/autoload/file.php', // 复制为这个路径下的该文件
+                ],
+            ],
+            // 亦可继续定义其它配置，最终都会合并到与 ConfigInterface 对应的配置储存器中
         ];
     }
 }
+```
+
+## 默认配置文件说明
+
+在 `ConfigProvider` 中定义好 `publish` 后，可以使用如下命令快速生成配置文件
+
+```bash
+php bin/hyperf.php vendor:publish 包名称
+```
+
+如包名称为 `hyperf/amqp`，可执行命令来生成 `amqp` 默认的配置文件
+```bash
+php bin/hyperf.php vendor:publish hyperf/amqp
 ```
 
 只创建一个类并不会被 Hyperf 自动的加载，您仍需在组件的 `composer.json` 添加一些定义，告诉 Hyperf 这是一个 ConfigProvider 类需要被加载，您需要在组件内的 `composer.json` 文件内增加 `extra.hyperf.config` 配置，并指定对应的 `ConfigProvider` 类的命名空间，如下所示：
