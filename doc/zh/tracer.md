@@ -109,6 +109,7 @@ return [
                 'ipv6' => null,
                 'port' => 9501,
             ],
+            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
             'options' => [
                 // Zipkin 服务的 endpoint 地址
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
