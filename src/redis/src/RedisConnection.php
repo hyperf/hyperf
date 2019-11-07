@@ -19,6 +19,9 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @method bool select(int $db)
+ */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
     /**
@@ -35,6 +38,11 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'auth' => null,
         'db' => 0,
         'timeout' => 0.0,
+        'cluster' => [
+            'enable' => false,
+            'name' => null,
+            'seeds' => [],
+        ],
         'options' => [],
     ];
 
@@ -83,10 +91,16 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $auth = $this->config['auth'];
         $db = $this->config['db'];
         $timeout = $this->config['timeout'];
+        $cluster = $this->config['cluster']['enable'] ?? false;
 
-        $redis = new \Redis();
-        if (! $redis->connect($host, $port, $timeout)) {
-            throw new ConnectionException('Connection reconnect failed.');
+        $redis = null;
+        if ($cluster !== true) {
+            $redis = new \Redis();
+            if (! $redis->connect($host, $port, $timeout)) {
+                throw new ConnectionException('Connection reconnect failed.');
+            }
+        } else {
+            $redis = $this->createRedisCluster();
         }
 
         $options = $this->config['options'] ?? [];
@@ -131,6 +145,21 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function setDatabase(?int $database): void
     {
         $this->database = $database;
+    }
+
+    protected function createRedisCluster()
+    {
+        try {
+            $seeds = $this->config['cluster']['seeds'] ?? [];
+            $name = $this->config['cluster']['name'] ?? null;
+            $timeout = $this->config['timeout'] ?? null;
+
+            $redis = new \RedisCluster($name, $seeds, $timeout);
+        } catch (\Throwable $e) {
+            throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
+        }
+
+        return $redis;
     }
 
     protected function retry($name, $arguments, \Throwable $exception)
