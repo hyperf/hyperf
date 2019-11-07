@@ -10,7 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\LoadBalancer;
+namespace Hyperf\LazyLoader;
+
+use Hyperf\LazyLoader\Listener\BootApplicationListener;
 
 class ConfigProvider
 {
@@ -18,7 +20,7 @@ class ConfigProvider
     {
         return [
             'listeners' => [
-                BootApplicationListener::class,
+                BootApplicationListener::class => 10,
             ],
         ];
     }

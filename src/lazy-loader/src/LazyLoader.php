@@ -144,7 +144,7 @@ class LazyLoader
         spl_autoload_register([$this, 'load'], true, true);
     }
     /**
-     * Set the real-time facade namespace.
+     * Set the real-time proxy namespace.
      *
      * @param  string  $namespace
      * @return void
