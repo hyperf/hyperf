@@ -98,6 +98,10 @@
 
 - [hyperf/graphql](https://github.com/hyperf/graphql) Hyperf 官方提供的 Graphql 服务端组件 (beta)
 
+## 调试
+
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 基于 `WebSocket` 实现的开发调试组件
+
 ## 热更新/热重载
 
 - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一个基于 fswatch 实现的通用热更新组件
@@ -118,7 +122,3 @@
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole环境下的 PHPMailer
-
-### 第三方组件
-
-- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 基于 `WebSocket` 实现的开发调试组件
