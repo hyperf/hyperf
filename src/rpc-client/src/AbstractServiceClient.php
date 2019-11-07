@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
-use Hyperf\Consul\Agent;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
@@ -203,7 +202,7 @@ abstract class AbstractServiceClient
             $passing = true;
             $service = $node['Service'] ?? [];
             $checks = $node['Checks'] ?? [];
-            
+
             foreach ($checks as $check) {
                 $status = $check['Status'] ?? false;
                 if ($status !== 'passing') {
@@ -213,7 +212,7 @@ abstract class AbstractServiceClient
 
             if ($passing) {
                 $address = $service['Address'] ?? '';
-                $port = (int)$service['Port'] ?? 0;
+                $port = (int) $service['Port'] ?? 0;
                 // @TODO Get and set the weight property.
                 $address && $port && $nodes[] = new Node($address, $port);
             }
