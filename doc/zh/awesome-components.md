@@ -120,4 +120,5 @@
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole环境下的 PHPMailer
 
 ### 第三方组件
-- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 方便快捷的开发调试组件
+
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 基于 `WebSocket` 实现的开发调试组件
