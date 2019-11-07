@@ -43,9 +43,6 @@ interface MessageBag
 
     /**
      * Get the first message from the bag for a given key.
-     *
-     * @param null|string $key
-     * @param null|string $format
      */
     public function first(?string $key = null, ?string $format = null): string;
 
