@@ -5,7 +5,7 @@
 - [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
-- [#852](https://github.com/hyperf/hyperf/pull/852) Added a `clear()` method for `Hyperf\Utils\Parallel` to clear adde callbacks.
+- [#852](https://github.com/hyperf/hyperf/pull/852) Added a `clear()` method for `Hyperf\Utils\Parallel` to clear added callbacks.
 - [#873](https://github.com/hyperf/hyperf/pull/873) Added redis cluster.
 
 ## Fixed
