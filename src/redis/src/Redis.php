@@ -18,6 +18,8 @@ use Hyperf\Utils\Context;
 
 class Redis
 {
+    use ScanCaller;
+
     /**
      * @var PoolFactory
      */
