@@ -83,6 +83,7 @@
   * [Task 机制](zh/task.md)
   * [枚举类](zh/constants.md)
   * [Snowflake](zh/snowflake.md)
+  * [Nats](zh/nats.md)
 
 * 应用部署
 

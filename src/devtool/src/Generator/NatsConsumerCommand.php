@@ -17,21 +17,21 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
-class AmqpConsumerCommand extends GeneratorCommand
+class NatsConsumerCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('gen:amqp-consumer');
-        $this->setDescription('Create a new amqp consumer class');
+        parent::__construct('gen:nats-consumer');
+        $this->setDescription('Create a new nats consumer class');
     }
 
     protected function getStub(): string
     {
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/amqp-consumer.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/nats-consumer.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Consumer';
+        return $this->getConfig()['namespace'] ?? 'App\\Nats\\Consumer';
     }
 }
