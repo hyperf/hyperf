@@ -66,9 +66,7 @@ class TypeGenerator
 
     /**
      * @param string $annotatedObjectClassName the FQCN of an object with a Type annotation
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws \ReflectionException
-     * @return MutableObjectType
      */
     public function mapAnnotatedObject(string $annotatedObjectClassName, RecursiveTypeMapperInterface $recursiveTypeMapper): MutableObjectType
     {
@@ -97,8 +95,6 @@ class TypeGenerator
 
     /**
      * @param object $annotatedObject an object with a ExtendType annotation
-     * @param MutableObjectType $type
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      */
     public function extendAnnotatedObject($annotatedObject, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper)
     {
