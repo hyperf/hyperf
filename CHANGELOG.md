@@ -22,6 +22,7 @@
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
 - [#840](https://github.com/hyperf/hyperf/pull/840) Use `\Swoole\Timer::*` to instead of `swoole_timer_*` functions.
+- [#883](https://github.com/hyperf/hyperf/pull/883) Added app_url Configuration properties for user can define Project url.
 
 # v1.1.4 - 2019-10-31
 
