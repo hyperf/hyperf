@@ -214,6 +214,7 @@ abstract class AbstractServiceClient
             if ($passing) {
                 $address = $service['Address'] ?? '';
                 $port = (int)$service['Port'] ?? 0;
+                // @TODO Get and set the weight property.
                 $address && $port && $nodes[] = new Node($address, $port);
             }
         }
