@@ -20,7 +20,7 @@ return [
         'reserved' => null,
         'retry_interval' => 0,
         'cluster' => [
-            'enable' => (bool) env('REDIS_ENABLE_CLUSTER', false),
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
             'seeds' => [],
         ],

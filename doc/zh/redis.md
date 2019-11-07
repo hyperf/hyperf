@@ -8,15 +8,15 @@ composer require hyperf/redis
 
 ## 配置
 
-|     配置项     |  类型   |   默认值    |               备注               |
-|:--------------:|:-------:|:-----------:|:--------------------------------:|
-|      host      | string  | 'localhost' |            Redis地址             |
-|      auth      | string  |     无      |               密码               |
-|      port      | integer |    6379     |               端口               |
-|       db       | integer |      0      |                DB                |
-| cluster.enable | boolean |    false    |           是否集群模式           |
-|  cluster.name  | string  |    null     |              集群名              |
-| cluster.seeds  |  array  |     []      | 集群连接地址阿数组 ['host:port'] |
+|     配置项     |  类型   |   默认值    |              备注              |
+|:--------------:|:-------:|:-----------:|:------------------------------:|
+|      host      | string  | 'localhost' |           Redis地址            |
+|      auth      | string  |     无      |              密码              |
+|      port      | integer |    6379     |              端口              |
+|       db       | integer |      0      |               DB               |
+| cluster.enable | boolean |    false    |          是否集群模式          |
+|  cluster.name  | string  |    null     |             集群名             |
+| cluster.seeds  |  array  |     []      | 集群连接地址数组 ['host:port'] |
 
 ```php
 <?php
@@ -27,7 +27,7 @@ return [
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
         'cluster' => [
-            'enable' => (bool) env('REDIS_ENABLE_CLUSTER', false),
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
             'seeds' => [],
         ],
@@ -72,7 +72,7 @@ return [
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
         'cluster' => [
-            'enable' => (bool) env('REDIS_ENABLE_CLUSTER', false),
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
             'seeds' => [],
         ],

@@ -19,7 +19,7 @@ use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 /**
- * @method select(int $db)
+ * @method bool select(int $db)
  */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
