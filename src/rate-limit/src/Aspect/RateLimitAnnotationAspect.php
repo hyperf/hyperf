@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
-use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
@@ -55,11 +54,6 @@ class RateLimitAnnotationAspect implements AroundInterface
      */
     private $rateLimitHandler;
 
-    /**
-     * @var array<string, TokenBucket>
-     */
-    private $buckets = [];
-
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
@@ -84,12 +78,7 @@ class RateLimitAnnotationAspect implements AroundInterface
             $bucketKey = $this->request->getUri()->getPath();
         }
 
-        if (isset($this->buckets[$bucketKey])) {
-            $bucket = $this->buckets[$bucketKey];
-        } else {
-            $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout);
-            $this->buckets[$bucketKey] = $bucket;
-        }
+        $bucket = $this->rateLimitHandler->build($bucketKey, $annotation->create, $annotation->capacity, $annotation->waitTimeout);
 
         $maxTime = microtime(true) + $annotation->waitTimeout;
         $seconds = 0;
