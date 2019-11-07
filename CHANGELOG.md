@@ -22,6 +22,7 @@
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
 - [#840](https://github.com/hyperf/hyperf/pull/840) Use `\Swoole\Timer::*` to instead of `swoole_timer_*` functions.
+- [#851](https://github.com/hyperf/hyperf/pull/851) Cache buckets as local variables to avoid extra hop to redis.
 
 # v1.1.4 - 2019-10-31
 
