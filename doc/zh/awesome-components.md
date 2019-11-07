@@ -38,6 +38,7 @@
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
+- [reasno/lazy-loader](https://github.com/Reasno/LazyLoader) 为Hyperf DI补充基于类型提示的懒加载注入。
 
 ## 服务
 
