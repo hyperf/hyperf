@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
@@ -119,12 +120,20 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
             if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
                 return $toUrl;
             }
-            /** @var Contract\RequestInterface $request */
-            $request = ApplicationContext::getContainer()->get(Contract\RequestInterface::class);
-            $uri = $request->getUri();
-            $host = $uri->getAuthority();
-            // Build the url by $schema and host.
-            return $schema . '://' . $host . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+            if (! Str::startsWith($toUrl, ['http://', 'https://'])) {
+                $container = ApplicationContext::getContainer();
+                if ($container->has(ConfigInterface::class)) {
+                    if ($schema = $container->get(ConfigInterface::class)->get('app_url')) {
+                        return $schema . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+                    }
+                }
+                /** @var Contract\RequestInterface $request */
+                $request = $container->get(Contract\RequestInterface::class);
+                $uri = $request->getUri();
+                $host = $uri->getAuthority();
+                // Build the url by $schema and host.
+                return $schema . '://' . $host . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+            }
         });
         return $this->getResponse()->withStatus($status)->withAddedHeader('Location', $toUrl);
     }
