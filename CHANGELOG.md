@@ -3,6 +3,7 @@
 ## Added
 
 - [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
+- [#820](https://github.com/hyperf/hyperf/pull/820) Added nats component.
 - [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
 - [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
 
