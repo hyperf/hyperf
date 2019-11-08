@@ -24,6 +24,8 @@ Hyperspeed: Leveraging Swoole coroutine, Hyperf is capable of handling massive t
 
 Flexibility: Hyperf believes its Dependency Injection component is best in class. With the help of Hyperf DI, components and class are all pluggable and meta programmable. On the other hand, All Hyperf components are mean to be shared interchangeably with the world, as they all follow [PSR](https://www.php-fig.org/psr) or open contracts.
 
+Thanks to these metrits, Hyperf has enabled untapped potential in many areas, such as implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet of Things (IoT).
+
 # Documentation
 
 [https://hyperf.wiki](https://hyperf.wiki)
