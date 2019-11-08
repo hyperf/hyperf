@@ -1,5 +1,9 @@
 # v1.1.6 - TBD
 
+## Fixed
+
+- [#897](https://github.com/hyperf/hyperf/pull/897) Fixed `pool` for `Hyperf\Nats\Annotation\Consumer` does not works.
+
 # v1.1.5 - 2019-11-07
 
 ## Added
