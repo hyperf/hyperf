@@ -256,3 +256,66 @@ return [
 ```
 
 如果您希望再进行更细粒度的日志切割，也可通过继承 `Monolog\Handler\RotatingFileHandler` 类并重新实现 `rotate()` 方法实现。
+
+### 配置多个 `Handler`
+
+用户可以修改 `handers` 让对应日志组支持多个 `handler`。比如以下配置，当用户投递一个 `INFO` 级别以上的日志时，只会在 `hyperf.log` 中写入日志。
+当用户投递一个 `DEBUG` 级别以上日志时，会在 `hyperf.log` 和 `hyperf-debug.log` 写入日志。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Logger;
+
+return [
+    'default' => [
+        'handlers' => [
+            [
+                'class' => Handler\StreamHandler::class,
+                'constructor' => [
+                    'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                    'level' => Logger::INFO,
+                ],
+                'formatter' => [
+                    'class' => Formatter\LineFormatter::class,
+                    'constructor' => [
+                        'format' => null,
+                        'dateFormat' => null,
+                        'allowInlineLineBreaks' => true,
+                    ],
+                ],
+            ],
+            [
+                'class' => Handler\StreamHandler::class,
+                'constructor' => [
+                    'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                    'level' => Logger::DEBUG,
+                ],
+                'formatter' => [
+                    'class' => Formatter\JsonFormatter::class,
+                    'constructor' => [
+                        'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                        'appendNewline' => true,
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+
+```
+
+结果如下
+
+```
+==> runtime/logs/hyperf.log <==
+[2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
+
+==> runtime/logs/hyperf-debug.log <==
+{"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+{"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```
