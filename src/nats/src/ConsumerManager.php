@@ -46,7 +46,7 @@ class ConsumerManager
             $annotation->subject && $instance->setSubject($annotation->subject);
             $annotation->queue && $instance->setQueue($annotation->queue);
             $annotation->name && $instance->setName($annotation->name);
-            $annotation->pool && $instance->setName($annotation->pool);
+            $annotation->pool && $instance->setPool($annotation->pool);
 
             $nums = $annotation->nums;
             $process = $this->createProcess($instance);
