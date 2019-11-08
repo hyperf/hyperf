@@ -201,3 +201,202 @@ class UserTest extends HttpTestCase
 ```
 composer test -- --filter=testUserDaoFirst
 ```
+
+## 测试替身
+
+Gerard Meszaros 在 Meszaros2007 中介绍了测试替身的概念：
+
+有时候对被测系统(SUT)进行测试是很困难的，因为它依赖于其他无法在测试环境中使用的组件。这有可能是因为这些组件不可用，它们不会返回测试所需要的结果，或者执行它们会有不良副作用。在其他情况下，我们的测试策略要求对被测系统的内部行为有更多控制或更多可见性。
+
+如果在编写测试时无法使用（或选择不使用）实际的依赖组件(DOC)，可以用测试替身来代替。测试替身不需要和真正的依赖组件有完全一样的的行为方式；他只需要提供和真正的组件同样的 API 即可，这样被测系统就会以为它是真正的组件！
+
+下面展示分别通过构造函数注入依赖、通过inject注释注入依赖的测试替身
+
+#### 构造函数注入依赖的测试替身
+
+```
+<?php
+
+namespace App\Logic;
+
+use App\Api\DemoApi;
+
+class DemoLogic
+{
+    /**
+     * @var DemoApi $demoApi
+     */
+    private $demoApi;
+
+    public function __construct(DemoApi $demoApi)
+    {
+       $this->demoApi = $demoApi;
+    }
+
+    public function test()
+    {
+        $result = $this->demoApi->test();
+
+        return $result;
+    }
+}
+
+```
+
+```
+<?php
+
+namespace App\Api;
+
+class DemoApi
+{
+    public function test()
+    {
+        return [
+            'status' => 1
+        ];
+    }
+}
+
+```
+
+```
+<?php
+
+namespace HyperfTest\Cases;
+
+use App\Api\DemoApi;
+use App\Logic\DemoLogic;
+use Hyperf\Di\Container;
+use HyperfTest\HttpTestCase;
+use Mockery;
+
+class DemoLogicTest extends HttpTestCase
+{
+    public function tearDown()
+    {
+        Mockery::close();
+    }
+
+    public function testIndex()
+    {
+        $res = $this->getContainer()->get(DemoLogic::class)->test();
+
+        $this->assertEquals(1, $res['status']);
+    }
+
+    /**
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        $container = Mockery::mock(Container::class);
+
+        $apiStub = $this->createMock(DemoApi::class);
+
+        $apiStub->method('test')->willReturn([
+            'status' => 1,
+        ]);
+
+        $container->shouldReceive('get')->with(DemoLogic::class)->andReturn(new DemoLogic($apiStub));
+
+        return $container;
+    }
+}
+
+```
+
+#### 通过inject注释注入依赖的测试替身
+
+```
+<?php
+
+namespace App\Logic;
+
+use App\Api\DemoApi;
+use Hyperf\Di\Annotation\Inject;
+
+class DemoLogic
+{
+    /**
+     * @var DemoApi $demoApi
+     * @Inject()
+     */
+    private $demoApi;
+
+    public function test()
+    {
+        $result = $this->demoApi->test();
+
+        return $result;
+    }
+}
+```
+
+```
+<?php
+
+namespace App\Api;
+
+class DemoApi
+{
+    public function test()
+    {
+        return [
+            'status' => 1
+        ];
+    }
+}
+
+```
+
+```
+<?php
+
+namespace HyperfTest\Cases;
+
+use App\Api\DemoApi;
+use App\Logic\DemoLogic;
+use Hyperf\Di\Container;
+use Hyperf\Utils\ApplicationContext;
+use HyperfTest\HttpTestCase;
+use Mockery;
+
+class DemoLogicTest extends HttpTestCase
+{
+    public function tearDown()
+    {
+        Mockery::close();
+    }
+
+    public function testIndex()
+    {
+        $this->getContainer();
+
+        $res = $this->getContainer()->get(DemoLogic::class)->test();
+
+        $this->assertEquals(11, $res['status']);
+    }
+
+    /**
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        $container = ApplicationContext::getContainer();
+
+        $apiStub = $this->createMock(DemoApi::class);
+
+        $apiStub->method('test')->willReturn([
+            'status' => 11
+        ]);
+
+        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+            return $apiStub;
+        });
+        
+        return $container;
+    }
+}
+
+```
