@@ -259,7 +259,7 @@ return [
 
 ### 配置多个 `Handler`
 
-用户可以修改 `handers` 让对应日志组支持多个 `handler`。比如以下配置，当用户投递一个 `INFO` 级别以上的日志时，只会在 `hyperf.log` 中写入日志。
+用户可以修改 `handlers` 让对应日志组支持多个 `handler`。比如以下配置，当用户投递一个 `INFO` 级别以上的日志时，只会在 `hyperf.log` 中写入日志。
 当用户投递一个 `DEBUG` 级别以上日志时，会在 `hyperf.log` 和 `hyperf-debug.log` 写入日志。
 
 ```php
