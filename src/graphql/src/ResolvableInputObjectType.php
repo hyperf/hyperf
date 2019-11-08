@@ -18,12 +18,13 @@ use TheCodingMachine\GraphQLite\GraphQLException;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputInterface;
+use TheCodingMachine\GraphQLite\Types\ResolvableInputObjectType as TheCodingMachineResolvableInputObjectType;
 use function get_class;
 
 /**
  * A GraphQL input object that can be resolved using a factory.
  */
-class ResolvableInputObjectType extends InputObjectType implements ResolvableInputInterface
+class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectType implements ResolvableInputInterface
 {
     /**
      * @var ArgumentResolver
@@ -59,7 +60,7 @@ class ResolvableInputObjectType extends InputObjectType implements ResolvableInp
         }
 
         $config += $additionalConfig;
-        parent::__construct($config);
+        InputObjectType::__construct($config);
     }
 
     /**
