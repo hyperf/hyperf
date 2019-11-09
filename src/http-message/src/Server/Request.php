@@ -579,11 +579,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         } elseif (isset($server['server_addr'])) {
             $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
+            $hasPort = true;
             if (\strpos($header['host'], ':')) {
-                $hasPort = true;
                 [$host, $port] = explode(':', $header['host'], 2);
-
-                if ($port !== '80') {
+                if ($port != $uri->getDefaultPort()) {
                     $uri = $uri->withPort($port);
                 }
             } else {
