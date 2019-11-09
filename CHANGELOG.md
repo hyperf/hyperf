@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#897](https://github.com/hyperf/hyperf/pull/897) Fixed `pool` for `Hyperf\Nats\Annotation\Consumer` does not works.
+- [#904](https://github.com/hyperf/hyperf/pull/904) Fixed apis(redis database etc.) does not works in event `BeforeMainServerStart`.
 
 # v1.1.5 - 2019-11-07
 
