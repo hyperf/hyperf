@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Nats;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nats\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Nats\Driver\DriverFactory;
@@ -69,6 +70,11 @@ class ConsumerManager
              */
             private $subscriber;
 
+            /**
+             * @var StdoutLoggerInterface
+             */
+            private $logger;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
@@ -76,17 +82,27 @@ class ConsumerManager
 
                 $pool = $this->consumer->getPool();
                 $this->subscriber = $this->container->get(DriverFactory::class)->get($pool);
+                $this->logger = $container->get(StdoutLoggerInterface::class);
             }
 
             public function handle(): void
             {
-                $this->subscriber->subscribe(
-                    $this->consumer->getSubject(),
-                    $this->consumer->getQueue(),
-                    function ($data) {
-                        $this->consumer->consume($data);
-                    }
-                );
+                while (true) {
+                    $this->subscriber->subscribe(
+                        $this->consumer->getSubject(),
+                        $this->consumer->getQueue(),
+                        function ($data) {
+                            $this->consumer->consume($data);
+                        }
+                    );
+
+                    $this->logger->warning(sprintf(
+                        'NatsConsumer[%s] subscribe timeout. Try subscribe again 1 millisecond later.',
+                        $this->consumer->getName()
+                    ));
+
+                    usleep(1000);
+                }
             }
         };
     }
