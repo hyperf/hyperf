@@ -16,7 +16,7 @@ use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
-use Swoole\Coroutine\Mysql\Statement;
+use Swoole\Coroutine\MySQL\Statement;
 
 class MySQLConnection extends AbstractConnection
 {
