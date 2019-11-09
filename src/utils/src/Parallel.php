@@ -48,17 +48,27 @@ class Parallel
     public function wait(): array
     {
         $result = [];
-        $wg = new WaitGroup();
-        $wg->add(count($this->callbacks));
+        $done = new Channel(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
-            Coroutine::create(function () use ($callback, $key, $wg, &$result) {
-                $result[$key] = call($callback);
-                $this->concurrentChannel && $this->concurrentChannel->pop();
-                $wg->done();
+            Coroutine::create(function () use ($callback, $key, $done, &$result) {
+                try {
+                    $result[$key] = call($callback);
+                } catch (\Throwable $t) {
+                    $done->push($t);
+                    return;
+                } finally {
+                    $this->concurrentChannel && $this->concurrentChannel->pop();
+                }
+                $done->push(true);
             });
         }
-        $wg->wait();
+        for ($i = 0; $i < count($this->callbacks); ++$i) {
+            $ok = $done->pop();
+            if ($ok !== true) {
+                throw $ok;
+            }
+        }
         return $result;
     }
 
