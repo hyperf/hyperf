@@ -53,7 +53,7 @@ class RetryBudget implements RetryBudgetInterface
             $this->produce();
         }
         $this->timerId = Timer::tick(1000, function () use ($minRetriesPerSec) {
-            for ($i = 0; $i < $minRetriesPerSec; ++$i) {
+            for ($i = 0; $i < $minRetriesPerSec / $this->percentCanRetry; ++$i) {
                 $this->produce();
             }
             while (! $this->budget->isEmpty()
