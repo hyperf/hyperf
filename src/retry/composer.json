@@ -33,6 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Retry\\": "tests/"
         }
     },
     "config": {
