@@ -49,6 +49,7 @@
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
+  * [极简的DB组件](zh/db/db.md)
   
 * 微服务
 

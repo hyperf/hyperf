@@ -1,5 +1,9 @@
 # v1.1.6 - TBD
 
+## Added
+
+- [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
+
 ## Fixed
 
 - [#897](https://github.com/hyperf/hyperf/pull/897) Fixed `pool` for `Hyperf\Nats\Annotation\Consumer` does not works.
