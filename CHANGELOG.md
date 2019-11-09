@@ -2,8 +2,8 @@
 
 ## Fixed
 
-- [#897](https://github.com/hyperf/hyperf/pull/897) Fixed `pool` for `Hyperf\Nats\Annotation\Consumer` does not works.
-- [#903](https://github.com/hyperf/hyperf/pull/903) Fixed bug that command init-proxy will not stop when rpc-client exists.
+- [#897](https://github.com/hyperf/hyperf/pull/897) Fixed connection pool of `Hyperf\Nats\Annotation\Consumer` does not works as expected.
+- [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
 
 # v1.1.5 - 2019-11-07
 
