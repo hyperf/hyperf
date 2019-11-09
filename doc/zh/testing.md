@@ -212,7 +212,7 @@ Gerard Meszaros 在 Meszaros2007 中介绍了测试替身的概念：
 
 下面展示分别通过构造函数注入依赖、通过inject注释注入依赖的测试替身
 
-#### 构造函数注入依赖的测试替身
+### 构造函数注入依赖的测试替身
 
 ```
 <?php
@@ -306,7 +306,7 @@ class DemoLogicTest extends HttpTestCase
 
 ```
 
-#### 通过inject注释注入依赖的测试替身
+### 通过inject注释注入依赖的测试替身
 
 ```
 <?php
