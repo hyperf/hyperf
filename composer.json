@@ -18,10 +18,12 @@
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^2.1",
         "elasticsearch/elasticsearch": "^6.1",
+        "endclothing/prometheus_client_php": "^0.9.1",
         "fig/http-message-util": "^1.1.2",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3",
+        "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^0.1.2",
         "jean85/pretty-package-versions": "^1.2",
         "monolog/monolog": "^1.24",
@@ -40,8 +42,7 @@
         "start-point/etcd-php": "^1.1",
         "symfony/console": "^4.2",
         "symfony/finder": "^4.1",
-        "vlucas/phpdotenv": "^3.1",
-        "endclothing/prometheus_client_php": "^0.9.1"
+        "vlucas/phpdotenv": "^3.1"
     },
     "require-dev": {
         "doctrine/common": "@stable",
@@ -114,6 +115,7 @@
         "files": [
             "src/config/src/Functions.php",
             "src/di/src/Functions.php",
+            "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php"
         ],
@@ -156,6 +158,7 @@
             "Hyperf\\Metric\\": "src/metric/src/",
             "Hyperf\\ModelCache\\": "src/model-cache/src/",
             "Hyperf\\ModelListener\\": "src/model-listener/src/",
+            "Hyperf\\Nats\\": "src/nats/src/",
             "Hyperf\\Paginator\\": "src/paginator/src/",
             "Hyperf\\Pool\\": "src/pool/src/",
             "Hyperf\\Process\\": "src/process/src/",
@@ -218,6 +221,7 @@
             "HyperfTest\\Metric\\": "src/metric/tests/",
             "HyperfTest\\ModelCache\\": "src/model-cache/tests/",
             "HyperfTest\\ModelListener\\": "src/model-listener/tests/",
+            "HyperfTest\\Nats\\": "src/nats/tests/",
             "HyperfTest\\Paginator\\": "src/paginator/tests/",
             "HyperfTest\\Pool\\": "src/pool/tests/",
             "HyperfTest\\Process\\": "src/process/tests/",
@@ -274,6 +278,7 @@
                 "Hyperf\\Metric\\ConfigProvider",
                 "Hyperf\\ModelCache\\ConfigProvider",
                 "Hyperf\\ModelListener\\ConfigProvider",
+                "Hyperf\\Nats\\ConfigProvider",
                 "Hyperf\\Paginator\\ConfigProvider",
                 "Hyperf\\Pool\\ConfigProvider",
                 "Hyperf\\Process\\ConfigProvider",
