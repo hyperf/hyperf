@@ -115,6 +115,28 @@ class ParallelTest extends TestCase
         $this->assertEquals(count($res), 4);
     }
 
+    public function testParallelThrows()
+    {
+        $parallel = new Parallel();
+
+        $err = function () {
+            Coroutine::sleep(0.001);
+            throw new \RuntimeException();
+        };
+
+        $ok = function () {
+            Coroutine::sleep(0.001);
+            return 1;
+        };
+
+        $parallel->add($err);
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($ok);
+        }
+        $this->expectException(\RuntimeException::class);
+        $res = $parallel->wait();
+    }
+
     public function returnCoId()
     {
         return Coroutine::id();
