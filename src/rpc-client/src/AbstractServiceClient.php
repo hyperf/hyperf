@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
-use Hyperf\Consul\Agent;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
@@ -196,44 +195,29 @@ abstract class AbstractServiceClient
 
     protected function getNodesFromConsul(array $config): array
     {
-        $agent = $this->createConsulAgent($config);
-        $services = $agent->services()->json();
-        $nodes = [];
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port']) || $service['Service'] !== $this->serviceName) {
-                continue;
-            }
-            // @TODO Get and set the weight property.
-            $nodes[$serviceId] = new Node($service['Address'], $service['Port']);
-        }
-        if (empty($nodes)) {
-            return $nodes;
-        }
         $health = $this->createConsulHealth($config);
-        $checks = $health->checks($this->serviceName)->json();
-        foreach ($checks ?? [] as $check) {
-            if (! isset($check['Status'], $check['ServiceID'])) {
-                continue;
-            }
-            if ($check['Status'] !== 'passing') {
-                unset($nodes[$check['ServiceID']]);
-            }
-        }
-        return array_values($nodes);
-    }
+        $services = $health->service($this->serviceName)->json();
+        $nodes = [];
+        foreach ($services as $node) {
+            $passing = true;
+            $service = $node['Service'] ?? [];
+            $checks = $node['Checks'] ?? [];
 
-    protected function createConsulAgent(array $config)
-    {
-        if (! $this->container->has(Agent::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
+            foreach ($checks as $check) {
+                $status = $check['Status'] ?? false;
+                if ($status !== 'passing') {
+                    $passing = false;
+                }
+            }
+
+            if ($passing) {
+                $address = $service['Address'] ?? '';
+                $port = (int) $service['Port'] ?? 0;
+                // @TODO Get and set the weight property.
+                $address && $port && $nodes[] = new Node($address, $port);
+            }
         }
-        return make(Agent::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Agent::DEFAULT_URI,
-                ]);
-            },
-        ]);
+        return $nodes;
     }
 
     protected function createConsulHealth(array $config): HealthInterface

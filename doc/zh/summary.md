@@ -49,6 +49,7 @@
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
+  * [极简的DB组件](zh/db/db.md)
   
 * 微服务
 
@@ -83,6 +84,7 @@
   * [Task 机制](zh/task.md)
   * [枚举类](zh/constants.md)
   * [Snowflake](zh/snowflake.md)
+  * [Nats](zh/nats.md)
 
 * 应用部署
 
