@@ -38,6 +38,7 @@
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
+- [reasno/lazy-loader](https://github.com/Reasno/LazyLoader) 为Hyperf DI补充基于类型提示的懒加载注入。
 
 ## 服务
 
@@ -109,12 +110,16 @@
 
 ## Swoole
 
-- - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
-- - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
+- [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
+- [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
+
+## 开发调试
+
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通过 `WebSocket` 实时观测异常错误的开发调试组件
 
 ## 第三方 SDK
 
-- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付SDK
+- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
-- [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
-
+- [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
+- [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer
