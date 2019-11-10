@@ -25,5 +25,27 @@
         "psr-4": {
             "Hyperf\\Encrypt\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Encrypt\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Encrypt\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
     }
 }

@@ -28,6 +28,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for encrypt.',
+                    'source' => __DIR__ . '/../publish/encrypt.php',
+                    'destination' => BASE_PATH . '/config/autoload/encrypt.php',
+                ],
+            ],
         ];
     }
 }
