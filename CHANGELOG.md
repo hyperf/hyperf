@@ -9,6 +9,7 @@
 - [#897](https://github.com/hyperf/hyperf/pull/897) Fixed connection pool of `Hyperf\Nats\Annotation\Consumer` does not works as expected.
 - [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
 - [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
+- [#906](https://github.com/hyperf/hyperf/pull/906) Fixed Uri which build by host is not correct.
 
 # v1.1.5 - 2019-11-07
 
