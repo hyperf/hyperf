@@ -16,9 +16,9 @@
         "endclothing/prometheus_client_php": "^0.9.1",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/guzzle": "~1.1.0"
+        "hyperf/contract": "~1.2.0",
+        "hyperf/utils": "~1.2.0",
+        "hyperf/guzzle": "~1.2.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
