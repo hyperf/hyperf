@@ -97,7 +97,7 @@ class ConsumerManager
                     );
 
                     $this->logger->warning(sprintf(
-                        'NatsConsumer[%s] subscribe timeout. Try subscribe again 1 millisecond later.',
+                        'NatsConsumer[%s] subscribe timeout. Try again after 1 ms.',
                         $this->consumer->getName()
                     ));
 
