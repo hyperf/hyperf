@@ -3,6 +3,7 @@
 ## Added
 
 - [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
+- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\HandleErrorListener`.
 
 ## Fixed
 
