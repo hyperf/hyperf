@@ -35,6 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\View\\": "tests/"
         }
     },
     "config": {
