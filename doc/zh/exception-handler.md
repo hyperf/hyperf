@@ -105,3 +105,44 @@ class IndexController extends Controller
 
 ```
 在上面这个例子，我们先假设 `FooException` 是存在的一个异常，以及假设已经完成了该处理器的配置，那么当业务抛出一个没有被捕获处理的异常时，就会根据配置的顺序依次传递，整一个处理流程可以理解为一个管道，若前一个异常处理器调用 `$this->stopPropagation()` 则不再往后传递，若最后一个配置的异常处理器仍不对该异常进行捕获处理，那么就会交由 Hyperf 的默认异常处理器处理了。
+
+## Error监听器
+
+框架提供了 `error_reporting()` 错误级别的监听器 `Hyperf\ExceptionHandler\Listener\HandleErrorListener`。
+
+### 配置
+
+在 `listeners.php` 中添加监听器
+
+```php
+<?php
+
+return [
+    \Hyperf\ExceptionHandler\Listener\HandleErrorListener::class
+];
+```
+
+则以下代码会抛出 `\ErrorException` 异常
+
+```php
+<?php
+try {
+    $a = [];
+    var_dump($a[1]);
+} catch (\Throwable $throwable) {
+    var_dump(get_class($throwable), $throwable->getMessage());
+}
+
+// string(14) "ErrorException"
+// string(19) "Undefined offset: 1"
+```
+
+如果不配置监听器会出现以下情况，并不会抛出异常。
+
+```
+PHP Notice:  Undefined offset: 1 in IndexController.php on line 24
+
+Notice: Undefined offset: 1 in IndexController.php on line 24
+NULL
+```
+
