@@ -58,7 +58,8 @@
         "smarty/smarty": "^3.1",
         "swoft/swoole-ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
-        "symfony/serializer": "^4.3"
+        "symfony/serializer": "^4.3",
+        "twig/twig": "^2.12"
     },
     "replace": {
         "hyperf/amqp": "self.version",

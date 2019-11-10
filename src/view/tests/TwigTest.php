@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace HyperfTest\View;
 
-use Hyperf\View\Engine\SmartyEngine;
+use Hyperf\View\Engine\TwigEngine;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class SmartyTest extends TestCase
+class TwigTest extends TestCase
 {
     public function testRender()
     {
@@ -28,8 +28,8 @@ class SmartyTest extends TestCase
             'cache_path' => __DIR__ . '/runtime',
         ];
 
-        $engine = new SmartyEngine();
-        $res = $engine->render('index.tpl', ['name' => 'Hyperf'], $config);
+        $engine = new TwigEngine();
+        $res = $engine->render('index.twig', ['name' => 'Hyperf'], $config);
 
         $this->assertEquals('<!DOCTYPE html>
 <html lang="en">
