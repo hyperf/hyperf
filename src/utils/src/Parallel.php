@@ -48,10 +48,9 @@ class Parallel
 
     public function wait(bool $throw = true): array
     {
-        $result = [];
+        $result = $throwables = [];
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
-        $throwables = [];
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
             Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
@@ -67,11 +66,11 @@ class Parallel
         }
         $wg->wait();
         if ($throw && count($throwables) > 0) {
-            $msg = 'At least one throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
-            $pee = new ParallelExecutionException($msg);
-            $pee->setResults($result);
-            $pee->setThrowables($throwables);
-            throw $pee;
+            $message = 'At least one throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+            $executionException = new ParallelExecutionException($message);
+            $executionException->setResults($result);
+            $executionException->setThrowables($throwables);
+            throw $executionException;
         }
         return $result;
     }
@@ -84,12 +83,12 @@ class Parallel
     /**
      * Format throwables into a nice list.
      */
-    private function formatThrowables(array $e): string
+    private function formatThrowables(array $exception): string
     {
-        $out = '';
-        foreach ($e as $key => $value) {
-            $out .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
+        $output = '';
+        foreach ($exception as $key => $value) {
+            $output .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
         }
-        return $out;
+        return $output;
     }
 }
