@@ -70,7 +70,7 @@ class Executor
                 $parameters = $crontab->getCallback()[2] ?? null;
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
                     $callback = function () use ($class, $method, $parameters, $crontab) {
-                        $runable = function () use ($class, $method, $parameters, $crontab) {
+                        $runnable = function () use ($class, $method, $parameters, $crontab) {
                             try {
                                 $result = true;
                                 $instance = make($class);
@@ -93,14 +93,14 @@ class Executor
                         };
 
                         if ($crontab->isSingleton()) {
-                            $runable = $this->runInSingleton($crontab, $runable);
+                            $runnable = $this->runInSingleton($crontab, $runnable);
                         }
 
                         if ($crontab->isOnOneServer()) {
-                            $runable = $this->runOnOneServer($crontab, $runable);
+                            $runnable = $this->runOnOneServer($crontab, $runnable);
                         }
 
-                        Coroutine::create($runable);
+                        Coroutine::create($runnable);
                     };
                 }
                 break;
