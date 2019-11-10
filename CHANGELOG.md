@@ -3,7 +3,7 @@
 ## Added
 
 - [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
-- [#827](https://github.com/hyperf/hyperf/pull/911) Added support for crontab task run on one server.
+- [#911](https://github.com/hyperf/hyperf/pull/911) Added support for crontab task run on one server.
 
 ## Fixed
 
