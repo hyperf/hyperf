@@ -68,7 +68,7 @@ Router::addRoute(['GET', 'POST','PUT','DELETE'], $uri, $callback);
 
 #### 路由组的定义方式
 
-实际路由为 `gourp/route`, 即 `/user/index`, `/user/store`, `/user/update`, `/user/delete` 
+实际路由为 `group/route`, 即 `/user/index`, `/user/store`, `/user/update`, `/user/delete` 
 
 ```php
 Router::addGroup('/user/',function (){

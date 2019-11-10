@@ -92,8 +92,8 @@ class OnMetricFactoryReady implements ListenerInterface
         );
 
         $server = $this->container->get(Server::class);
-        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
-        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();

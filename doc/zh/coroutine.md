@@ -41,7 +41,7 @@ $db->connect($config, function ($db, $r) {
 });
 ```
 
-> 注意 `MySQL` 等异步模块已在[4.3.0](https://wiki.swoole.com/wiki/page/p-4.3.0.html)中移除，并转移到了[swoolw_async](https://github.com/swoole/ext-async)。
+> 注意 `MySQL` 等异步模块已在[4.3.0](https://wiki.swoole.com/wiki/page/p-4.3.0.html)中移除，并转移到了[swoole_async](https://github.com/swoole/ext-async)。
 
 从上面的代码片段可以看出，每一个操作几乎就需要一个回调函数，在复杂的业务场景中回调的层次感和代码结构绝对会让你崩溃，其实不难看出这样的写法有点类似 `JavaScript` 上的异步方法的写法，而 `JavaScript` 也为此提供了不少的解决方案（当然方案是源于其它编程语言），如 `Promise`，`yield + generator`, `async/await`，`Promise` 则是对回调的一种封装方式，而 `yield + generator` 和 `async/await` 则需要在代码上显性的增加一些代码语法标记，这些相对比回调函数来说，不妨都是一些非常不错的解决方案，但是你需要另花时间来理解它的实现机制和语法。   
 Swoole 协程也是对异步回调的一种解决方案，在 `PHP` 语言下，`Swoole` 协程与 `yield + generator` 都属于协程的解决方案，协程的解决方案可以使代码以近乎于同步代码的书写方式来书写异步代码，显性的区别则是 `yield + generator` 的协程机制下，每一处 `I/O` 操作的调用代码都需要在前面加上 `yield` 语法实现协程切换，每一层调用都需要加上，否则会出现意料之外的错误，而 `Swoole` 协程的解决方案对比于此就高明多了，在遇到 `I/O` 时底层自动的进行隐式协程切换，无需添加任何的额外语法，无需在代码前加上 `yield`，协程切换的过程无声无息，极大的减轻了维护异步系统的心智负担。
@@ -203,7 +203,7 @@ $result = parallel([
 
 use Hyperf\Utils\Coroutine\Concurrent;
 
-$concurrent = new Concurrent(10, 1);
+$concurrent = new Concurrent(10);
 
 for ($i = 0; $i < 15; ++$i) {
     $concurrent->create(function () use ($count) {
