@@ -17,7 +17,9 @@ use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\LoggerInterface;
+use Hyperf\Crontab\Mutex\RedisServerMutex;
 use Hyperf\Crontab\Mutex\RedisTaskMutex;
+use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
@@ -33,6 +35,16 @@ class Executor
      * @var null|\Hyperf\Crontab\LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var \Hyperf\Crontab\Mutex\TaskMutex
+     */
+    protected $taskMutex;
+
+    /**
+     * @var \Hyperf\Crontab\Mutex\ServerMutex
+     */
+    protected $serverMutex;
 
     public function __construct(ContainerInterface $container)
     {
@@ -83,6 +95,10 @@ class Executor
                             $runable = $this->runInSingleton($crontab, $runable);
                         }
 
+                        if ($crontab->isOnOneServer()) {
+                            $runable = $this->runOnOneServer($crontab, $runable);
+                        }
+
                         Coroutine::create($runable);
                     };
                 }
@@ -101,9 +117,7 @@ class Executor
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
-            $taskMutex = $this->container->has(TaskMutex::class)
-                ? $this->container->get(TaskMutex::class)
-                : $this->container->get(RedisTaskMutex::class);
+            $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
                 $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
@@ -116,5 +130,41 @@ class Executor
                 $taskMutex->remove($crontab);
             }
         };
+    }
+
+    protected function getTaskMutex(): TaskMutex
+    {
+        if ($this->taskMutex) {
+            return $this->taskMutex;
+        }
+
+        return $this->taskMutex = $this->container->has(TaskMutex::class)
+            ? $this->container->get(TaskMutex::class)
+            : $this->container->get(RedisTaskMutex::class);
+    }
+
+    protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
+    {
+        return function () use ($crontab, $runnable) {
+            $taskMutex = $this->getServerMutex();
+
+            if (!$taskMutex->attempt($crontab)) {
+                $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                return;
+            }
+
+            $runnable();
+        };
+    }
+
+    protected function getServerMutex(): ServerMutex
+    {
+        if ($this->serverMutex) {
+            return $this->serverMutex;
+        }
+
+        return $this->serverMutex = $this->container->has(ServerMutex::class)
+            ? $this->container->get(ServerMutex::class)
+            : $this->container->get(RedisServerMutex::class);
     }
 }
