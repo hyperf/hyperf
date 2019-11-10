@@ -17,6 +17,8 @@ composer require hyperf/redis
 | cluster.enable | boolean |    false    |          是否集群模式          |
 |  cluster.name  | string  |    null     |             集群名             |
 | cluster.seeds  |  array  |     []      | 集群连接地址数组 ['host:port'] |
+|      pool      | object  |     {}      |           连接池配置           |
+|    options     | object  |     {}      |         Redis 配置选项         |
 
 ```php
 <?php
@@ -197,3 +199,65 @@ return [
     ],
 ];
 ```
+
+## Options
+
+用户可以修改 `options`，来设置 `Redis` 配置选项。
+
+例如修改 `Redis` 序列化为 `PHP` 序列化。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
+        ],
+    ],
+];
+```
+
+比如设置 `Redis` 永不超时
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            Redis::OPT_READ_TIMEOUT => -1,
+        ],
+    ],
+];
+```
+
+> 有的 `phpredis` 扩展版本，`option` 的 `value` 必须是 `string` 类型。
