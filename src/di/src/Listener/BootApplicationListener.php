@@ -14,6 +14,7 @@ namespace Hyperf\Di\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
@@ -46,9 +47,11 @@ class BootApplicationListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $configs = $this->container->get(ConfigInterface::class)->get('aspects', []);
+        $configs = $this->container->get(ConfigInterface::class);
+        LazyLoader::bootstrap($configs);
+        $aspectConfigs = $configs->get('aspects', []);
         $aspect = new Aspect();
-        foreach ($configs as $config) {
+        foreach ($aspectConfigs as $config) {
             if (is_string($config)) {
                 $aspect->collectClass($config);
             }
