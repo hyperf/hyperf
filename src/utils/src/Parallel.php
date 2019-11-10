@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
+use Hyperf\Utils\Exception\ParallelExecutionException;
 use Swoole\Coroutine\Channel;
 
 class Parallel
@@ -45,29 +46,32 @@ class Parallel
         }
     }
 
-    public function wait(): array
+    public function wait(bool $throw = true): array
     {
         $result = [];
-        $done = new Channel(count($this->callbacks));
+        $wg = new WaitGroup();
+        $wg->add(count($this->callbacks));
+        $throwables = [];
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
-            Coroutine::create(function () use ($callback, $key, $done, &$result) {
+            Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
                 try {
                     $result[$key] = call($callback);
-                } catch (\Throwable $t) {
-                    $done->push($t);
-                    return;
+                } catch (\Throwable $throwable) {
+                    $throwables[$key] = $throwable;
                 } finally {
                     $this->concurrentChannel && $this->concurrentChannel->pop();
+                    $wg->done();
                 }
-                $done->push(true);
             });
         }
-        for ($i = 0; $i < count($this->callbacks); ++$i) {
-            $ok = $done->pop();
-            if ($ok !== true) {
-                throw $ok;
-            }
+        $wg->wait();
+        if ($throw && count($throwables) > 0) {
+            $msg = 'At least one throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+            $pee = new ParallelExecutionException($msg);
+            $pee->setResults($result);
+            $pee->setThrowables($throwables);
+            throw $pee;
         }
         return $result;
     }
@@ -75,5 +79,17 @@ class Parallel
     public function clear(): void
     {
         $this->callbacks = [];
+    }
+
+    /**
+     * Format throwables into a nice list.
+     */
+    private function formatThrowables(array $e): string
+    {
+        $out = '';
+        foreach ($e as $key => $value) {
+            $out .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
+        }
+        return $out;
     }
 }

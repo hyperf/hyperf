@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
 
@@ -121,7 +122,7 @@ class ParallelTest extends TestCase
 
         $err = function () {
             Coroutine::sleep(0.001);
-            throw new \RuntimeException();
+            throw new \RuntimeException('something bad happened');
         };
 
         $ok = function () {
@@ -133,7 +134,7 @@ class ParallelTest extends TestCase
         for ($i = 0; $i < 4; ++$i) {
             $parallel->add($ok);
         }
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(ParallelExecutionException::class);
         $res = $parallel->wait();
     }
 
