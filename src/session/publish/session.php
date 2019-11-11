@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf.
  *
@@ -13,11 +14,10 @@ declare(strict_types=1);
 use Hyperf\Session\Handler;
 
 return [
-    // Server Name
-    'http' => [
-        'handler' => Handler\FileHandler::class,
-        'options' => [
-            'path' => BASE_PATH . '/runtime/session'
-        ],
+    'handler' => Handler\FileHandler::class,
+    'options' => [
+        'connection' => 'default',
+        'path' => BASE_PATH . '/runtime/session',
+        'gc_lifetime' => 1200,
     ],
 ];

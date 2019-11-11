@@ -14,6 +14,8 @@ namespace Hyperf\Session;
 
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Handler\FileHandlerFactory;
+use Hyperf\Session\Handler\RedisHandler;
+use Hyperf\Session\Handler\RedisHandlerFactory;
 
 class ConfigProvider
 {
@@ -29,6 +31,7 @@ class ConfigProvider
             ],
             'dependencies' => [
                 FileHandler::class => FileHandlerFactory::class,
+                RedisHandler::class => RedisHandlerFactory::class,
             ],
             'publish' => [
                 [
