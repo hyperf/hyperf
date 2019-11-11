@@ -38,7 +38,7 @@
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
-- [reasno/lazy-loader](https://github.com/Reasno/LazyLoader) 为Hyperf DI补充基于类型提示的懒加载注入。
+- [reasno/lazy-loader](https://github.com/Reasno/LazyLoader) 为 Hyperf DI 补充基于类型提示的懒加载注入。
 
 ## 服务
 
@@ -99,14 +99,14 @@
 
 - [hyperf/graphql](https://github.com/hyperf/graphql) Hyperf 官方提供的 Graphql 服务端组件 (beta)
 
-## 热更新/热重载
+## 热更新 / 热重载
 
 - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一个基于 fswatch 实现的通用热更新组件
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一个由 Mixphp 实现的通用热更新组件
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一个基于 Go 语言实现的通用热更新组件
 - [remy/nodemon](https://github.com/remy/nodemon) 一个基于 node.js 实现的通用热更新组件
 
-> Warning: 请勿于生产环境使用 `热更新/热重载` 功能
+> Warning: 请勿于生产环境使用 `热更新 / 热重载` 功能
 
 ## Swoole
 
@@ -119,7 +119,7 @@
 
 ## 第三方 SDK
 
-- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
-- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
+- [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝 / 微信支付 SDK
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee 等）
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer

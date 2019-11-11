@@ -18,6 +18,7 @@ $files = Finder::create()
 foreach ($files as $file) {
     file_put_contents($file, replace(file_get_contents($file)));
 }
+echo count($files).' markdown files formatted!'.PHP_EOL;
 
 function replace($text)
 {
@@ -63,6 +64,11 @@ function replace($text)
             '$1 $2 $3',
         ],
 
+        'bracket_cjk' => [
+            '([' . $cjk . '])([\(`]+\w(.*?)\w[>\)`]+)([' . $cjk . '])',
+            '$1 $2 $4',
+        ],
+
         'ans_operator_cjk' => [
             '([\+\-\*\/=&\\|<>])([A-Za-zΑ-Ωα-ω0-9])([' . $cjk . '])',
             '$1 $2 $3',
@@ -90,8 +96,6 @@ function replace($text)
     $text = preg_replace_callback('/__REPLACEMARK__(\d+)__/s', function ($match) use ($code) {
         return $code[$match[1]];
     }, $text);
-
-    echo 'markdown files formatted!'.PHP_EOL;
 
     return $text;
 }

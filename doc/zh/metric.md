@@ -39,12 +39,12 @@ php bin/hyperf.php vendor:publish hyperf/metric
 'default' => env('TELEMETRY_DRIVER', 'prometheus'),
 ```
 
-* `use_standalone_process`: 是否使用 `独立监控进程`。推荐开启。关闭后将在 `Worker进程` 中处理指标收集与上报。
+* `use_standalone_process`: 是否使用 `独立监控进程`。推荐开启。关闭后将在 `Worker 进程` 中处理指标收集与上报。
 ```php
 'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
 ```
 
-* `enable_default_metric`: 是否统计默认指标。默认指标包括内存占用、系统 CPU 负载以及Swoole Server 指标和 Swoole Coroutine 指标。
+* `enable_default_metric`: 是否统计默认指标。默认指标包括内存占用、系统 CPU 负载以及 Swoole Server 指标和 Swoole Coroutine 指标。
 ```php
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
@@ -89,7 +89,7 @@ Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pus
 'mode' => Constants::SCRAPE_MODE
 ```
 
-并配置爬取地址 `scrape_host`、爬取端口 `scrape_port`、爬取路径 `scrape_path`。Prometheus 可以在对应配置下以HTTP访问形式拉取全部指标。
+并配置爬取地址 `scrape_host`、爬取端口 `scrape_port`、爬取路径 `scrape_path`。Prometheus 可以在对应配置下以 HTTP 访问形式拉取全部指标。
 
 > 注意：爬模式下，必须启用独立进程，即 use_standalone_process = true。
 
@@ -150,7 +150,7 @@ return [
 ];
 ```
 
-InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP端口 `port`、用户名  `username`、密码 `password`、`dbname` 数据表以及批量推送间隔 `push_interval`。
+InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP 端口 `port`、用户名  `username`、密码 `password`、`dbname` 数据表以及批量推送间隔 `push_interval`。
 
 ### 基本抽象
 
@@ -182,7 +182,7 @@ interface GaugeInterface
 }
 ```
 
-* 直方图(Histogram)：用于描述对某一事件的持续观测后产生的统计学分布，通常表示为百分位数或分桶。如HTTP请求延迟。
+* 直方图(Histogram)：用于描述对某一事件的持续观测后产生的统计学分布，通常表示为百分位数或分桶。如 HTTP 请求延迟。
 
 ```php
 interface HistogramInterface
@@ -212,7 +212,7 @@ return [
 
 ### 自定义使用
 
-通过HTTP中间件遥测仅仅是本组件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 类来自行遥测业务数据。比如：创建的订单数量、广告的点击数量等。
+通过 HTTP 中间件遥测仅仅是本组件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 类来自行遥测业务数据。比如：创建的订单数量、广告的点击数量等。
 
 ```php
 <?php

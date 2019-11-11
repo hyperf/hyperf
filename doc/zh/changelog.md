@@ -46,8 +46,8 @@
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) 修复 `JPG` 文件验证不通过的问题。
 - [#787](https://github.com/hyperf/hyperf/pull/787) 修复 `db:seed` 参数 `--class` 多余，导致报错的问题。
-- [#795](https://github.com/hyperf/hyperf/pull/795) 修复自定义进程在异常抛出后，无法正常重启的BUG。
-- [#796](https://github.com/hyperf/hyperf/pull/796) 修复 `etcd` 配置中心 `enable` 即时设为 `false`，在项目启动时，依然会拉取配置的BUG。
+- [#795](https://github.com/hyperf/hyperf/pull/795) 修复自定义进程在异常抛出后，无法正常重启的 BUG。
+- [#796](https://github.com/hyperf/hyperf/pull/796) 修复 `etcd` 配置中心 `enable` 即时设为 `false`，在项目启动时，依然会拉取配置的 BUG。
 
 ## 优化
 
@@ -184,7 +184,7 @@ Config Provider 内数据结构的变化：
 
 - [#630](https://github.com/hyperf/hyperf/pull/630) 变更了 `Hyperf\HttpServer\CoreMiddleware` 类的实例化方式，使用 `make()` 来替代了 `new`；
 - [#631](https://github.com/hyperf/hyperf/pull/631) 变更了 AMQP Consumer 的实例化方式，使用 `make()` 来替代了 `new`；
-- [#637](https://github.com/hyperf/hyperf/pull/637) 调整了Hyperf\Contract\OnMessageInterface` 和 `Hyperf\Contract\OnOpenInterface` 的第一个参数的类型约束， 使用 `Swoole\WebSocket\Server` 替代 `Swoole\Server`；
+- [#637](https://github.com/hyperf/hyperf/pull/637) 调整了 Hyperf\Contract\OnMessageInterface` 和 `Hyperf\Contract\OnOpenInterface` 的第一个参数的类型约束， 使用 `Swoole\WebSocket\Server` 替代 `Swoole\Server`；
 - [#638](https://github.com/hyperf/hyperf/pull/638) 重命名了 `db:model` 命令为 `gen:model` 命令，同时增加了一个 Visitor 来优化创建的 `$connection` 成员属性，如果要创建的模型类的 `$connection` 属性的值与继承的父类一致，那么创建的模型类将不会包含此属性；
 
 ## 移除
@@ -384,7 +384,7 @@ Config Provider 内数据结构的变化：
 
 ## 变更
 
-- [#297](https://github.com/hyperf/hyperf/pull/297) 如果服务注册失败，会于 10 秒后重试注册，且屏蔽了连接不上服务中心(Consul)而抛出的异常；
+- [#297](https://github.com/hyperf/hyperf/pull/297) 如果服务注册失败，会于 10 秒后重试注册，且屏蔽了连接不上服务中心 (Consul) 而抛出的异常；
 - [#298](https://github.com/hyperf/hyperf/pull/298) [#301](https://github.com/hyperf/hyperf/pull/301) 适配 `openzipkin/zipkin` v1.3.3+ 版本；
 
 ## 修复

@@ -124,7 +124,7 @@ class IndexController
 
 #### 自定义错误消息
 
-您可以通过重写 `messages` 方法来自定义表单请求使用的错误消息，该方法应该返回属性/规则对数组及其对应错误消息：
+您可以通过重写 `messages` 方法来自定义表单请求使用的错误消息，该方法应该返回属性 / 规则对数组及其对应错误消息：
 
 ```php
 /**
@@ -432,7 +432,7 @@ if ($errors->has('foo')) {
 
 ##### date_format:format
 
-验证字段必须匹配指定格式，可以使用 PHP 函数date 或 date_format 验证该字段。
+验证字段必须匹配指定格式，可以使用 PHP 函数 date 或 date_format 验证该字段。
 
 ##### different:field
 
@@ -456,7 +456,7 @@ if ($errors->has('foo')) {
 
 有效的约束条件包括：`min_width`, `max_width`, `min_height`, `max_height`, `width`, `height`, `ratio`。
 
-`ratio` 约束宽度/高度的比率，这可以通过表达式 `3/2` 或浮点数 `1.5` 来表示：
+`ratio` 约束宽度 / 高度的比率，这可以通过表达式 `3/2` 或浮点数 `1.5` 来表示：
 
 ```php
 'avatar' => 'dimensions:ratio=3/2'
@@ -573,19 +573,19 @@ $validator = $this->validationFactory->make($data, [
 
 ##### ip
 
-验证字段必须是IP地址。
+验证字段必须是 IP 地址。
 
 ##### ipv4
 
-验证字段必须是IPv4地址。
+验证字段必须是 IPv4 地址。
 
 ##### ipv6
 
-验证字段必须是IPv6地址。
+验证字段必须是 IPv6 地址。
 
 ##### json
 
-验证字段必须是有效的JSON字符串
+验证字段必须是有效的 JSON 字符串
 
 ##### lt:field
 
@@ -722,7 +722,7 @@ $validator = $this->validationFactory->make($request->all(), [
 
 ##### size:value
 
-验证字段必须有和给定值 `value` 相匹配的尺寸/大小，对字符串而言，`value` 是相应的字符数目；对数值而言，`value` 是给定整型值；对数组而言，`value` 是数组长度；对文件而言，`value` 是相应的文件千字节数（KB）。
+验证字段必须有和给定值 `value` 相匹配的尺寸 / 大小，对字符串而言，`value` 是相应的字符数目；对数值而言，`value` 是给定整型值；对数组而言，`value` 是数组长度；对文件而言，`value` 是相应的文件千字节数（KB）。
 
 ##### starts_with:foo,bar,...
 
