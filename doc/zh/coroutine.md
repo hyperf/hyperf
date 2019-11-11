@@ -155,6 +155,8 @@ $wg->wait();
 
 ```php
 <?php
+use Hyperf\Utils\Exception\ParallelExecutionException;
+
 $parallel = new \Hyperf\Utils\Parallel();
 $parallel->add(function () {
     \Hyperf\Utils\Coroutine::sleep(1);
@@ -164,8 +166,13 @@ $parallel->add(function () {
     \Hyperf\Utils\Coroutine::sleep(1);
     return \Hyperf\Utils\Coroutine::id();
 });
-// $result 结果为 [1, 2]
-$result = $parallel->wait();
+try{
+    // $results 结果为 [1, 2]
+   $results = $parallel->wait(); 
+} catch(ParallelExecutionException $e){
+    //$e->getResults() 获取协程中的返回值。
+    //$e->getThrowables() 获取协程中出现的异常。
+}
 ```
 
 通过上面的代码我们可以看到仅花了 1 秒就得到了两个不同的协程的 ID，在调用 `add(callable $callable)` 的时候 `Parallel` 类会为之自动创建一个协程，并加入到 `WaitGroup` 的调度去。    
