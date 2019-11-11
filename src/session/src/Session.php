@@ -27,29 +27,29 @@ class Session implements SessionInterface
     /**
      * @var string
      */
-    private $id;
+    protected $id;
 
     /**
      * @var
      */
-    private $name;
+    protected $name;
 
     /**
      * @var array
      */
-    private $attributes = [];
+    protected $attributes = [];
 
     /**
      * Session store started status.
      *
      * @var bool
      */
-    private $started = false;
+    protected $started = false;
 
     /**
      * @var \SessionHandlerInterface
      */
-    private $handler;
+    protected $handler;
 
     public function __construct($name, SessionHandlerInterface $handler, $id = null)
     {

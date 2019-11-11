@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Session;
 
+use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Handler\FileHandlerFactory;
 use Hyperf\Session\Handler\RedisHandler;
@@ -32,6 +33,7 @@ class ConfigProvider
             'dependencies' => [
                 FileHandler::class => FileHandlerFactory::class,
                 RedisHandler::class => RedisHandlerFactory::class,
+                SessionInterface::class => SessionProxy::class,
             ],
             'publish' => [
                 [
