@@ -46,18 +46,20 @@
     },
     "require-dev": {
         "doctrine/common": "@stable",
+        "domnikl/statsd": "^3.0.1",
         "friendsofphp/php-cs-fixer": "^2.14",
+        "influxdb/influxdb-php": "^1.15.0",
         "jonahgeorge/jaeger-client-php": "^0.4.4",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",
         "phpstan/phpstan": "^0.11.15",
         "phpunit/phpunit": "^7.0.0",
+        "smarty/smarty": "^3.1",
         "swoft/swoole-ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3",
-        "influxdb/influxdb-php": "^1.15.0",
-        "domnikl/statsd": "^3.0.1"
+        "twig/twig": "^2.12"
     },
     "replace": {
         "hyperf/amqp": "self.version",
@@ -237,6 +239,7 @@
             "HyperfTest\\Translation\\": "src/translation/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\Validation\\": "src/validation/tests/",
+            "HyperfTest\\View\\": "src/view/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
     },

@@ -3,7 +3,8 @@
 ## Added
 
 - [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
-- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\HandleErrorListener`.
+- [#905](https://github.com/hyperf/hyperf/pull/905) Added twig template engine for view.
+- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
 
 ## Fixed
 
