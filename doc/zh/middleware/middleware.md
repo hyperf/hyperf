@@ -220,7 +220,7 @@ class FooMiddleware implements MiddlewareInterface
     }
 }
 ```
-中间件的执行顺序为 `BarMiddleware -> FooMiddleware`。
+中间件的执行顺序为 `FooMiddleware -> BarMiddleware`。
 
 ## 中间件的执行顺序
 
