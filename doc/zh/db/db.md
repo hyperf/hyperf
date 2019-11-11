@@ -1,6 +1,6 @@
 # 极简的DB组件
 
-[hyperf/database](https://github.com/hyperf/database) 功能十分强大，但也不可否认效率上确实些许不足。这里提供一个极简的 `DB` 组件，支持 `PDO` 和 `SwooleMysql`。
+[hyperf/database](https://github.com/hyperf/database) 功能十分强大，但也不可否认效率上确实些许不足。这里提供一个极简的 `DB` 组件，支持 `PDO` 和 `Swoole Mysql`。
 
 > 压测对比 database 1800qps，db 6800qps。
 
@@ -36,7 +36,7 @@
 | beginTransaction |    void    |         开启事务 支持事务嵌套          |
 |      commit      |    void    |         提交事务 支持事务嵌套          |
 |     rollBack     |    void    |         回滚事务 支持事务嵌套          |
-|      insert      |    int     | 插入数据，返回主键ID，非自称主键返回 0 |
+|      insert      |    int     | 插入数据，返回主键ID，非自增主键返回 0 |
 |     execute      |    int     |       执行SQL，返回受影响的行数        |
 |      query       |   array    |                查询SQL                 |
 |      fetch       |   array    |      object|查询SQL，返回首行数据      |
