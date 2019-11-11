@@ -28,8 +28,6 @@ class SwooleStream implements StreamInterface
 
     /**
      * SwooleStream constructor.
-     *
-     * @param string $contents
      */
     public function __construct(string $contents = '')
     {
