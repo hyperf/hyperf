@@ -17,6 +17,7 @@
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/consul/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>

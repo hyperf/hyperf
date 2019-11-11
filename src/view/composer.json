@@ -26,6 +26,7 @@
     "suggest": {
         "hyperf/task": "Required to use task as a view render mode.",
         "smarty/smarty": "Required to use smarty as a view render engine.",
+        "twig/twig": "Required to use twig as a view render engine.",
         "duncan3dc/blade": "Required to use blade as a view render engine."
     },
     "autoload": {
@@ -35,6 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\View\\": "tests/"
         }
     },
     "config": {
