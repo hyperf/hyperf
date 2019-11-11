@@ -309,11 +309,11 @@ class OnMetricFactoryReady implements ListenerInterface
 
 关于注解的使用请参阅[注解章节](https://doc.hyperf.io/#/zh/annotation)。
 
-### 自定义Histogram Bucket
+### 自定义 Histogram Bucket
 
-> 本节只适用于Prometheus驱动
+> 本节只适用于 Prometheus 驱动
 
-当您在使用Prometheus的Histogram时，有时会有自定义Bucket的需求。您可以在服务启动前，依赖注入Registry并自行注册Histogram，设置所需Bucket。稍后使用时 `MetricFactory` 就会调用您注册好同名Histogram。示例如下：
+当您在使用 Prometheus 的 Histogram 时，有时会有自定义 Bucket 的需求。您可以在服务启动前，依赖注入 Registry 并自行注册 Histogram ，设置所需 Bucket 。稍后使用时 `MetricFactory` 就会调用您注册好同名 Histogram 。示例如下：
 
 ```php
 <?php
@@ -353,4 +353,4 @@ class OnMainServerStart implements ListenerInterface
     }
 }
 ```
-之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的Histogram了。
+之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的 Histogram 了。
