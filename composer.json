@@ -32,6 +32,7 @@
         "nikic/php-parser": "^4.1",
         "php-amqplib/php-amqplib": "^2.7",
         "php-di/phpdoc-reader": "^2.0.1",
+        "phpseclib/phpseclib": "^2.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^0.7",
         "psr/http-message": "^1.0.1",
@@ -118,6 +119,7 @@
         "files": [
             "src/config/src/Functions.php",
             "src/di/src/Functions.php",
+            "src/encrypt/src/Functions.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php"
