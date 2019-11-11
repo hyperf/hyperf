@@ -77,6 +77,7 @@ class FileHandler implements SessionHandlerInterface
     public function destroy($session_id)
     {
         $this->files->delete($this->path . '/' . $session_id);
+        return true;
     }
 
     /**
@@ -105,6 +106,7 @@ class FileHandler implements SessionHandlerInterface
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
         }
+        return true;
     }
 
     /**

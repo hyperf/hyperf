@@ -14,7 +14,7 @@ class FileHandlerFactory
     {
         $config = $container->get(ConfigInterface::class);
         $path = $config->get('session.options.path');
-        $minutes = $config->get('session.options.gc_lifetime', 1200);
+        $minutes = $config->get('session.options.gc_maxlifetime', 1200);
         if (! $path) {
             throw new \InvalidArgumentException('Invalid session path.');
         }

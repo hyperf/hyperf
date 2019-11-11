@@ -17,7 +17,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\Session\SessionManager;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,7 +49,7 @@ class SessionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (! $this->isSessionAvailable($request)) {
+        if (! $this->isSessionAvailable()) {
             return $handler->handle($request);
         }
 
@@ -68,9 +67,9 @@ class SessionMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    private function isSessionAvailable(ServerRequestInterface $request)
+    private function isSessionAvailable(): bool
     {
-        return true;
+        return $this->config->has('session.handler');
     }
 
     /**

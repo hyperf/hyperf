@@ -14,7 +14,6 @@ namespace Hyperf\Session;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Session\Handler\HandlerManager;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
