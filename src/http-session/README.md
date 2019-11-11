@@ -1,0 +1,2 @@
+# http的session支持
+需要将Hyperf\HttpSession\HttpSessionMiddleware添加到全局中间件
