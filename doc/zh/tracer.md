@@ -67,15 +67,15 @@ return [
     'tracer' => [
         // Zipkin 配置
         'staging_zipkin' => [
-            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
         // 另一套 Zipkin 配置
         'producton_zipkin' => [
-            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
         // Jaeger 配置
         'jaeger' => [
-            'driver' => Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
         ],
     ]
 ];
@@ -109,6 +109,7 @@ return [
                 'ipv6' => null,
                 'port' => 9501,
             ],
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
             'options' => [
                 // Zipkin 服务的 endpoint 地址
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),

@@ -64,6 +64,7 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             $pool = $this->factory->getPool($name);
+            // When Mysql connect failed, it will be catched by `Hyperf\Database\Connectors\ConnectionFactory`.
             $connection = $pool->get()->getConnection();
             Context::set($id, $connection);
             if (Coroutine::inCoroutine()) {

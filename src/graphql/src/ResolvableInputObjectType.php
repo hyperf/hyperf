@@ -18,12 +18,13 @@ use TheCodingMachine\GraphQLite\GraphQLException;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputInterface;
+use TheCodingMachine\GraphQLite\Types\ResolvableInputObjectType as TheCodingMachineResolvableInputObjectType;
 use function get_class;
 
 /**
  * A GraphQL input object that can be resolved using a factory.
  */
-class ResolvableInputObjectType extends InputObjectType implements ResolvableInputInterface
+class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectType implements ResolvableInputInterface
 {
     /**
      * @var ArgumentResolver
@@ -37,14 +38,7 @@ class ResolvableInputObjectType extends InputObjectType implements ResolvableInp
 
     /**
      * QueryField constructor.
-     * @param string $name
-     * @param FieldsBuilderFactory $controllerQueryProviderFactory
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @param object|string $factory
-     * @param string $methodName
-     * @param ArgumentResolver $argumentResolver
-     * @param null|string $comment
-     * @param array $additionalConfig
      */
     public function __construct(string $name, FieldsBuilderFactory $controllerQueryProviderFactory, RecursiveTypeMapperInterface $recursiveTypeMapper, $factory, string $methodName, ArgumentResolver $argumentResolver, ?string $comment, array $additionalConfig = [])
     {
@@ -66,11 +60,10 @@ class ResolvableInputObjectType extends InputObjectType implements ResolvableInp
         }
 
         $config += $additionalConfig;
-        parent::__construct($config);
+        InputObjectType::__construct($config);
     }
 
     /**
-     * @param array $args
      * @return object
      */
     public function resolve(array $args)

@@ -29,9 +29,6 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
      */
     protected $cookies = [];
 
-    /**
-     * @param null|\Swoole\Http\Response $response
-     */
     public function __construct(\Swoole\Http\Response $response = null)
     {
         $this->swooleResponse = $response;

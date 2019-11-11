@@ -1,21 +1,74 @@
-# v1.1.4 - TBD
+# v1.1.6 - TBD
+
+## Added
+
+- [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
+- [#905](https://github.com/hyperf/hyperf/pull/905) Added twig template engine for view.
+- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
+
+## Fixed
+
+- [#897](https://github.com/hyperf/hyperf/pull/897) Fixed connection pool of `Hyperf\Nats\Annotation\Consumer` does not works as expected.
+- [#901](https://github.com/hyperf/hyperf/pull/901) Fixed Annotation `Factory` does not works for GraphQL.
+- [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
+- [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
+- [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
+- [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
+
+# v1.1.5 - 2019-11-07
+
+## Added
+
+- [#812](https://github.com/hyperf/hyperf/pull/812) Added singleton crontab task support.
+- [#820](https://github.com/hyperf/hyperf/pull/820) Added nats component.
+- [#832](https://github.com/hyperf/hyperf/pull/832) Added `Hyperf\Utils\Codec\Json`.
+- [#833](https://github.com/hyperf/hyperf/pull/833) Added `Hyperf\Utils\Backoff`.
+- [#852](https://github.com/hyperf/hyperf/pull/852) Added a `clear()` method for `Hyperf\Utils\Parallel` to clear added callbacks.
+- [#854](https://github.com/hyperf/hyperf/pull/854) Added `GraphQLMiddleware`.
+- [#859](https://github.com/hyperf/hyperf/pull/859) Added Consul cluster mode support, now available to fetch the service information from Consul cluster.
+- [#873](https://github.com/hyperf/hyperf/pull/873) Added redis cluster.
+
+## Fixed
+
+- [#831](https://github.com/hyperf/hyperf/pull/831) Fixed Redis client can not reconnect the server after the Redis server restarted.
+- [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
+- [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
+- [#844](https://github.com/hyperf/hyperf/pull/844) Fixed the reader of `composer.json` does not support the root namespace.
+- [#846](https://github.com/hyperf/hyperf/pull/846) Fixed `scan` `hScan` `zScan` and `sScan` don't works for Redis.
+- [#850](https://github.com/hyperf/hyperf/pull/850) Fixed logger group does not works when the name is same.
+
+## Optimized
+
+- [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
+- [#840](https://github.com/hyperf/hyperf/pull/840) Use `\Swoole\Timer::*` to instead of `swoole_timer_*` functions.
+- [#859](https://github.com/hyperf/hyperf/pull/859) Optimized the logical of fetch health nodes infomation from consul.
+
+# v1.1.4 - 2019-10-31
 
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+- [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
+- [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
+- [#804](https://github.com/hyperf/hyperf/pull/804) Added `BeforeHandle` `AfterHandle` and `FailToHandle` for command.
 
 ## Fixed
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
 - [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
+- [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception. 
+- [#796](https://github.com/hyperf/hyperf/pull/796) Fixed `config_etcd.enable` does not works. 
 
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
+- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd. 
+- [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
 
 ## Changed
 
 - [#793](https://github.com/hyperf/hyperf/pull/793) Changed `protected` to `public` for `Pool::getConnectionsInChannel`.
+- [#811](https://github.com/hyperf/hyperf/pull/811) Command `di:init-proxy` does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.
 
 # v1.1.3 - 2019-10-24
 

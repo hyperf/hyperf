@@ -44,7 +44,6 @@ class InputTypeUtils
     /**
      * Returns an array with 2 elements: [ $inputName, $className ].
      *
-     * @param ReflectionMethod $method
      * @return string[]
      */
     public function getInputTypeNameAndClassName(ReflectionMethod $method): array
@@ -83,9 +82,6 @@ class InputTypeUtils
 
     /**
      * Resolves "self" types into the class type.
-     *
-     * @param Type $type
-     * @return Type
      */
     private function resolveSelf(Type $type, ReflectionClass $reflectionClass): Type
     {

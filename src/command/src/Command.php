@@ -15,6 +15,7 @@ namespace Hyperf\Command;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
@@ -57,6 +58,11 @@ abstract class Command extends SymfonyCommand
      * @var bool
      */
     protected $coroutine = true;
+
+    /**
+     * @var null|EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var int
@@ -381,13 +387,25 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->coroutine && ! Coroutine::inCoroutine()) {
-            run(function () {
+        $callback = function () {
+            try {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
                 call([$this, 'handle']);
-            }, $this->hookFlags);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
+            } catch (\Throwable $exception) {
+                if (! $this->eventDispatcher) {
+                    throw $exception;
+                }
 
+                $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
+            }
+        };
+
+        if ($this->coroutine && ! Coroutine::inCoroutine()) {
+            run($callback, $this->hookFlags);
             return 0;
         }
-        return call([$this, 'handle']);
+
+        return $callback();
     }
 }
