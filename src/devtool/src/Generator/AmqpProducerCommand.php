@@ -32,6 +32,6 @@ class AmqpProducerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Producers';
+        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Producer';
     }
 }

@@ -61,4 +61,9 @@ class Parallel
         $wg->wait();
         return $result;
     }
+
+    public function clear(): void
+    {
+        $this->callbacks = [];
+    }
 }

@@ -34,11 +34,10 @@ class RedisProxyTest extends TestCase
 {
     protected function tearDown()
     {
-        Mockery::close();
-
         $redis = $this->getRedis();
-        $redis->del('test');
-        $redis->del('test:test');
+        $redis->flushDB();
+
+        Mockery::close();
     }
 
     public function testRedisOptionPrefix()
@@ -63,6 +62,46 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $redis->get('test'));
 
         $this->assertSame('s:3:"yyy";', $this->getRedis()->get('test'));
+    }
+
+    public function testRedisScan()
+    {
+        $redis = $this->getRedis();
+        $origin = ['scan:1', 'scan:2', 'scan:3', 'scan:4'];
+        foreach ($origin as $value) {
+            $redis->set($value, '1');
+        }
+
+        $it = null;
+        $result = [];
+        while (false !== $res = $redis->scan($it, 'scan:*', 2)) {
+            $result = array_merge($result, $res);
+        }
+
+        sort($result);
+
+        $this->assertEquals($origin, $result);
+        $this->assertSame(0, $it);
+    }
+
+    public function testRedisHScan()
+    {
+        $redis = $this->getRedis();
+        $origin = ['scan:1', 'scan:2', 'scan:3', 'scan:4'];
+        foreach ($origin as $value) {
+            $redis->hSet('scaner', $value, '1');
+        }
+
+        $it = null;
+        $result = [];
+        while (false !== $res = $redis->hScan('scaner', $it, 'scan:*', 2)) {
+            $result = array_merge($result, array_keys($res));
+        }
+
+        sort($result);
+
+        $this->assertEquals($origin, $result);
+        $this->assertSame(0, $it);
     }
 
     /**

@@ -93,6 +93,9 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->name) && $crontab->setName($annotation->name);
         isset($annotation->type) && $crontab->setType($annotation->type);
         isset($annotation->rule) && $crontab->setRule($annotation->rule);
+        isset($annotation->singleton) && $crontab->setSingleton($annotation->singleton);
+        isset($annotation->mutexPool) && $crontab->setMutexPool($annotation->mutexPool);
+        isset($annotation->mutexExpires) && $crontab->setMutexExpires($annotation->mutexExpires);
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
         return $crontab;
