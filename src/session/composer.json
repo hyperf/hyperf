@@ -10,8 +10,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/http-handler": "^1.0",
-        "hyperf/utils": "^1.0"
+        "psr/http-server-middleware": "^1.0",
+        "hyperf/utils": "^1.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.9",
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Session\\ConfigProvider"
