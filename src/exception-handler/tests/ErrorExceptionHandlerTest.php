@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace HyperfTest\ExceptionHandler;
 
-use Hyperf\ExceptionHandler\Listener\HandleErrorListener;
+use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class HandleErrorListenerTest extends TestCase
+class ErrorExceptionHandlerTest extends TestCase
 {
     public function testHandleError()
     {
-        $listener = new HandleErrorListener();
+        $listener = new ErrorExceptionHandler();
         $listener->process((object) []);
 
         $this->expectException(\ErrorException::class);

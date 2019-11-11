@@ -108,7 +108,7 @@ class IndexController extends Controller
 
 ## Error 监听器
 
-框架提供了 `error_reporting()` 错误级别的监听器 `Hyperf\ExceptionHandler\Listener\HandleErrorListener`。
+框架提供了 `error_reporting()` 错误级别的监听器 `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`。
 
 ### 配置
 
@@ -117,7 +117,7 @@ class IndexController extends Controller
 ```php
 <?php
 return [
-    \Hyperf\ExceptionHandler\Listener\HandleErrorListener::class
+    \Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler::class
 ];
 ```
 

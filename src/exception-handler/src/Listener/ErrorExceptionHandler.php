@@ -16,7 +16,7 @@ use ErrorException;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 
-class HandleErrorListener implements ListenerInterface
+class ErrorExceptionHandler implements ListenerInterface
 {
     public function listen(): array
     {
