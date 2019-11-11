@@ -54,7 +54,7 @@ class SessionMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $session = Context::set(SessionInterface::class, $this->sessionManager->start($request));
+        $session = $this->sessionManager->start($request);
 
         $response = $handler->handle($request);
 
@@ -62,6 +62,7 @@ class SessionMiddleware implements MiddlewareInterface
 
         $response = $this->addCookieToResponse($request, $response, $session);
 
+        // @TODO Use defer
         $this->sessionManager->end($session);
 
         return $response;
@@ -95,7 +96,7 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function getCookieExpirationDate(): int
     {
-        if ($this->config->get('session.expire_on_close')) {
+        if ($this->config->get('session.options.expire_on_close')) {
             $expirationDate = 0;
         } else {
             $expirationDate = Carbon::now()->addMinutes(5 * 60)->getTimestamp();

@@ -17,7 +17,7 @@ return [
     'http' => [
         'handler' => Handler\FileHandler::class,
         'options' => [
-            'path' => '/tmp/hyperf-session'
+            'path' => BASE_PATH . '/runtime/session'
         ],
     ],
 ];

@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Session;
 
+use Hyperf\Session\Handler\FileHandler;
+use Hyperf\Session\Handler\FileHandlerFactory;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -23,6 +26,9 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+            ],
+            'dependencies' => [
+                FileHandler::class => FileHandlerFactory::class,
             ],
             'publish' => [
                 [

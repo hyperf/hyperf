@@ -12,21 +12,30 @@ declare(strict_types=1);
 
 namespace Hyperf\Session;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Handler\HandlerManager;
 use Hyperf\Utils\Context;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SessionHandlerInterface;
 
 class SessionManager
 {
     /**
-     * @var HandlerManager
+     * @var \Psr\Container\ContainerInterface
      */
-    private $handlerManager;
+    protected $container;
 
-    public function __construct(HandlerManager $handlerManager)
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
-        $this->handlerManager = $handlerManager;
+        $this->container = $container;
+        $this->config = $config;
     }
 
     public function getSessionName(): string
@@ -37,14 +46,16 @@ class SessionManager
     public function start(ServerRequestInterface $request): SessionInterface
     {
         $sessionId = $this->parseSessionId($request);
-        $handler = 'file';
-        $session = new Session($this->getSessionName(), $this->handlerManager->getHandler($handler), $sessionId);
-        $session->start();
+        // @TODO Use make() function to create Session object.
+        $session = new Session($this->getSessionName(), $this->buildSessionHandler(), $sessionId);
+        if (! $session->start()) {
+            throw new \RuntimeException('Start session failed.');
+        }
         $this->setSession($session);
         return $session;
     }
 
-    public function end(SessionInterface $session)
+    public function end(SessionInterface $session): void
     {
         $session->save();
     }
@@ -65,9 +76,18 @@ class SessionManager
         $cookies = $request->getCookieParams();
         foreach ($cookies as $key => $value) {
             if ($key === $this->getSessionName()) {
-                return (string) $value;
+                return (string)$value;
             }
         }
         return null;
+    }
+
+    protected function buildSessionHandler(): SessionHandlerInterface
+    {
+        $handler = $this->config->get('session.handler');
+        if (! $handler || ! class_exists($handler)) {
+            throw new \InvalidArgumentException('Invalid handler of session');
+        }
+        return $this->container->get($handler);
     }
 }
