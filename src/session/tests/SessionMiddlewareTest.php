@@ -24,6 +24,7 @@ use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
+use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -52,11 +53,13 @@ class SessionMiddlewareTest extends TestCase
         /** @var Session $session */
         $session = new Session('HYPERF_SESSION_ID', $fileHandler);
         $container->shouldReceive('get')->with(SessionInterface::class)->andReturn($session);
+        $container->shouldReceive('get')->with(FooHandler::class)->andReturn(new FooHandler());
 
-        $handlerManager = new HandlerManager($container);
-        $sessionManager = new SessionManager($handlerManager);
         $config = Mockery::mock(ConfigInterface::class);
-        $config->shouldReceive('get')->with('session.expire_on_close')->andReturn(1);
+        $config->shouldReceive('get')->with('session.handler')->andReturn(FooHandler::class);
+        $config->shouldReceive('has')->with('session.handler')->andReturn(true);
+        $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(1);
+        $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $response = $middleware->process($request, $requestHandler);
 
@@ -92,17 +95,20 @@ class SessionMiddlewareTest extends TestCase
         /** @var Session $session */
         $session = new Session('HYPERF_SESSION_ID', $fileHandler);
         $container->shouldReceive('get')->with(SessionInterface::class)->andReturn($session);
+        $container->shouldReceive('get')->with(FooHandler::class)->andReturn(new FooHandler());
 
-        $handlerManager = new HandlerManager($container);
-        $sessionManager = new SessionManager($handlerManager);
         $config = Mockery::mock(ConfigInterface::class);
-        $config->shouldReceive('get')->with('session.expire_on_close')->andReturn(0);
+        $config->shouldReceive('get')->with('session.handler')->andReturn(FooHandler::class);
+        $config->shouldReceive('has')->with('session.handler')->andReturn(true);
+        $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
+        $time = time();
         $response = $middleware->process($request, $requestHandler);
 
         /** @var Cookie $cookie */
         $cookie = $response->getCookies()['']['/'][$session->getName()];
-        $this->assertSame(0, $cookie->getExpiresTime());
+        $this->assertSame($time + (5 * 60 * 60), $cookie->getExpiresTime());
     }
 
 

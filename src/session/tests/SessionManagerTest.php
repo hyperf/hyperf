@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Session;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Session\Handler\HandlerManager;
 use Hyperf\Session\Session;
@@ -19,6 +20,7 @@ use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Str;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 /**
@@ -29,7 +31,7 @@ class SessionManagerTest extends TestCase
 {
     public function testSetterAndGetter()
     {
-        $sessionManager = new SessionManager(Mockery::mock(HandlerManager::class));
+        $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
         $sessionManager = $sessionManager->setSession($mockSession = Mockery::mock(Session::class));
         $this->assertInstanceOf(SessionManager::class, $sessionManager);
 
@@ -41,7 +43,7 @@ class SessionManagerTest extends TestCase
     public function testParseSessionId()
     {
         $request = new Request('get', '/');
-        $sessionManager = new SessionManager(Mockery::mock(HandlerManager::class));
+        $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
         $reflectionClass = new ReflectionClass(SessionManager::class);
         $parseSessionIdMethod = $reflectionClass->getMethod('parseSessionId');
         $parseSessionIdMethod->setAccessible(true);
