@@ -5,7 +5,7 @@
 
 得益于 [hyperf/event](https://github.com/hyperf/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
 例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
-接下来我们就实现一个记录 SQL 的监听器，来说一下怎么使用。
+接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
 首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：
 
 ```php
@@ -76,7 +76,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |:------------:|:----------------:|:--------:|:-------------------------- --:|
 |   booting    |  模型首次加载前  |    否    |    进程生命周期中只会触发一次         |
 |    booted    |  模型首次加载后  |    否    |    进程生命周期中只会触发一次         |
-|  retrieved   |    填充数据后   |    否    |  每当模型从 DB 或缓存查询出来后触发      |
+|  retrieved   |    填充数据后   |    否    |  每当模型从DB或缓存查询出来后触发      |
 |   creating   |    数据创建时   |    是    |                                  |
 |   created    |    数据创建后   |    否    |                                  |
 |   updating   |    数据更新时   |    是    |                                  |

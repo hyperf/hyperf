@@ -14,7 +14,7 @@
 
 首先我们需要在 `项目` 里新建一个项目。DaoCloud 支持多种镜像仓库，这个可以按需选择。
 
-这里我以 [hyperf-demo](https://github.com/limingxinleo/hyperf-demo) 仓库为例配置。当创建成功后，在对应 `Github 仓库` 的 `WebHooks` 下面就会有对应的 url。
+这里我以 [hyperf-demo](https://github.com/limingxinleo/hyperf-demo) 仓库为例配置。当创建成功后，在对应 `Github仓库` 的 `WebHooks` 下面就会有对应的url。
 
 接下来我们修改一下仓库里的 `Dockerfile`，在 `apk add` 下面增加 `&& apk add wget \`。这里具体原因不是很清楚，如果不更新 `wget`, 使用时就会有问题。但是自建 Gitlab CI 就没有任何问题。
 

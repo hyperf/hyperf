@@ -117,7 +117,7 @@ class UserController
 #### `@Controller` 注解
 
 `@Controller` 为满足更细致的路由定义需求而存在，使用 `@Controller` 注解用于表明当前类为一个 `Controller` 类，同时需配合 `@RequestMapping` 注解来对请求方法和请求路径进行更详细的定义。   
-我们也提供了多种快速便捷的 `Mapping` 注解，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5 种便捷的注解用于表明允许不同的请求方法。
+我们也提供了多种快速便捷的 `Mapping` 注解，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5种便捷的注解用于表明允许不同的请求方法。
 
 > 使用 `@Controller` 注解时需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空间；   
 > 使用 `@RequestMapping` 注解时需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空间；   

@@ -49,25 +49,11 @@ function replace($text)
             '$1$3$5',
         ],
 
-        'cjk_hash' => [
-            '([' . $cjk . '])(#(\S+))',
-            '$1 $2',
-        ],
-
-        'hash_cjk' => [
-            '((\S+)#)([' . $cjk . '])',
-            '$1 $3',
-        ],
-
         'cjk_operator_ans' => [
             '([' . $cjk . '])([A-Za-zΑ-Ωα-ω0-9])([\+\-\*\/=&\\|<>])',
             '$1 $2 $3',
         ],
 
-        'bracket_cjk' => [
-            '([' . $cjk . '])([\(`]+\w(.*?)\w[>\)`]+)([' . $cjk . '])',
-            '$1 $2 $4',
-        ],
 
         'ans_operator_cjk' => [
             '([\+\-\*\/=&\\|<>])([A-Za-zΑ-Ωα-ω0-9])([' . $cjk . '])',
@@ -75,18 +61,18 @@ function replace($text)
         ],
 
         'cjk_ans' => [
-            '([' . $cjk . '])([A-Za-zΑ-Ωα-ω0-9@&%\=\$\^\\-\+\\/|\\\><])',
+            '([' . $cjk . '])([A-Za-zΑ-Ωα-ω0-9@&%\=\$\^\\-\+\\\><])',
             '$1 $2',
         ],
 
         'ans_cjk' => [
-            '([A-Za-zΑ-Ωα-ω0-9~!%&=;\|\,\.\?\$\^\\-\+\/\\\<>])([' . $cjk . '])',
+            '([A-Za-zΑ-Ωα-ω0-9~!%&=;\,\.\?\$\^\\-\+\\\<>])([' . $cjk . '])',
             '$1 $2',
         ],
     ];
     $code = [];
     $i = 0;
-    $text = preg_replace_callback('/```.*(\n|.)*?\n```/m', function ($match) use (&$code, &$i) {
+    $text = preg_replace_callback('/```(\n|.)*?\n```/m', function ($match) use (&$code, &$i) {
         $code[++$i] = $match[0];
         return "__REPLACEMARK__{$i}__";
     }, $text);
@@ -96,6 +82,8 @@ function replace($text)
     $text = preg_replace_callback('/__REPLACEMARK__(\d+)__/s', function ($match) use ($code) {
         return $code[$match[1]];
     }, $text);
+
+    echo 'markdown files formatted!'.PHP_EOL;
 
     return $text;
 }
