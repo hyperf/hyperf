@@ -18,6 +18,7 @@ use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
+use Hyperf\Process\Exception\SocketClosedException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Coroutine\Channel;
@@ -137,6 +138,9 @@ abstract class AbstractProcess implements ProcessInterface
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();
                     $recv = $sock->recv($this->recvLength, $this->recvTimeout);
+                    if ($recv === '') {
+                        throw new SocketClosedException('Socket is closed.');
+                    }
                     if ($this->event && $recv !== false && $data = unserialize($recv)) {
                         $this->event->dispatch(new PipeMessage($data));
                     }
@@ -145,6 +149,10 @@ abstract class AbstractProcess implements ProcessInterface
                         $logger = $this->container->get(StdoutLoggerInterface::class);
                         $formatter = $this->container->get(FormatterInterface::class);
                         $logger->error($formatter->format($exception));
+                    }
+
+                    if ($exception instanceof SocketClosedException) {
+                        throw $exception;
                     }
                 }
             }
