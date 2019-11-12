@@ -105,5 +105,7 @@ class ModelCacheTest extends TestCase
         foreach ($ids as $id) {
             $this->assertSame(2, UserModel::query()->find($id)->gender);
         }
+
+        UserModel::query(true)->whereIn('id', $ids)->delete();
     }
 }

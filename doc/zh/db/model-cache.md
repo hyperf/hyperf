@@ -126,3 +126,13 @@ $models = User::findManyFromCache($ids);
 
 另外一点就是，缓存更新机制，框架内实现了对应的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 监听器，每当数据修改，会主动删除缓存。
 如果用户不想由框架来删除缓存，可以主动覆写 `deleteCache` 方法，然后由自己实现对应监听即可。
+
+### 批量修改或删除
+
+`Hyperf\ModelCache\Cacheable` 会自动接管 `Model::query` 方法，只需要用户通过以下方式修改数据，就可以自动清理缓存。
+
+```php
+<?php
+// 删除用户数据 并自动删除缓存
+User::query(true)->where('gender', '>', 1)->delete();
+```
