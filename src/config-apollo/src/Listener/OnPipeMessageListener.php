@@ -83,6 +83,11 @@ class OnPipeMessageListener implements ListenerInterface
                 return;
             }
             foreach ($data->configurations ?? [] as $key => $value) {
+                if (is_numeric($value)) {
+                    $value = (int) $value;
+                } else if(in_array($value, ['true', 'false'])) {
+                    $value = ($value == 'true') ? true : false;
+                }
                 $this->config->set($key, $value);
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
