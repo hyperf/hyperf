@@ -15,6 +15,10 @@
 - [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
 
+## Optimized
+
+- [#928](https://github.com/hyperf/hyperf/pull/928) Optimized `Hyperf\ModelCache\Cacheable::query` to delete the model cache when batch update
+
 # v1.1.5 - 2019-11-07
 
 ## Added

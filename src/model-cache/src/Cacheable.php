@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Query\Builder;
 use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
@@ -35,7 +35,6 @@ trait Cacheable
     /**
      * Fetch models from cache.
      * @param mixed $ids
-     * @return \Hyperf\Database\Model\Collection
      */
     public static function findManyFromCache($ids): Collection
     {
@@ -48,7 +47,6 @@ trait Cacheable
 
     /**
      * Delete model from cache.
-     * @return bool
      */
     public function deleteCache(): bool
     {
@@ -104,25 +102,39 @@ trait Cacheable
     }
 
     /**
-     * 通过条件批量删除缓存
-     * @param Builder $builder
-     * @return bool
+     * @param bool $cache Whether to delete the model cache when batch update
+     * @return Builder
      */
-    public static function deleteByCondition(Builder $builder)
+    public static function query(bool $cache = false)
     {
-        $class = static::class;
-        /** @var \Hyperf\DbConnection\Model\Model $instance */
-        $instance = new $class();
-        $primaryKey = $instance->getKeyName();
-        $models = $builder->get([$primaryKey]);
-        $ids = [];
-        foreach ($models as $model) {
-            $ids[] = $model->$primaryKey;
+        $query = parent::query();
+
+        if ($cache) {
+            $modelName = static::class;
+            $query->onDelete(function (Builder $builder) use ($modelName) {
+                $queryBuilder = clone $builder;
+                /** @var \Hyperf\DbConnection\Model\Model $instance */
+                $instance = new $modelName();
+                $primaryKey = $instance->getKeyName();
+                $ids = [];
+                $models = $queryBuilder->get([$primaryKey]);
+                foreach ($models as $model) {
+                    $ids[] = $model->{$primaryKey};
+                }
+                if (empty($ids)) {
+                    return 0;
+                }
+
+                $result = $builder->toBase()->delete();
+
+                $manger = ApplicationContext::getContainer()->get(Manager::class);
+
+                $manger->destroy($ids, $modelName);
+
+                return $result;
+            });
         }
-        if (empty($ids)) {
-            return null;
-        }
-        $container = ApplicationContext::getContainer();
-        return $container->get(Manager::class)->destroy($ids, $class);
+
+        return $query;
     }
 }
