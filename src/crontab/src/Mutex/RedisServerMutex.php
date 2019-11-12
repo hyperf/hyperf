@@ -68,7 +68,7 @@ class RedisServerMutex implements ServerMutex
 
     protected function getMutexName(Crontab $crontab)
     {
-        return 'framework' . DIRECTORY_SEPARATOR . 'crontab-' . sha1($crontab->getName() . $crontab->getRule()) . '-sv';
+        return 'hyperf' . DIRECTORY_SEPARATOR . 'crontab-' . sha1($crontab->getName() . $crontab->getRule()) . '-sv';
     }
 
     protected function getMacAddress(): ?string
