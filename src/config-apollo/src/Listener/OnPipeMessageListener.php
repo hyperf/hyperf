@@ -91,9 +91,8 @@ class OnPipeMessageListener implements ListenerInterface
     }
 
     /**
-     * format processing
-     * @param $value
-     * @return bool|float|int|string|void
+     * Format processing
+     * @return mixed
      */
     private function formatValue($value)
     {
