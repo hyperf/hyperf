@@ -54,6 +54,10 @@ function replace($text)
             '$1 $2 $3',
         ],
 
+        'bracket_cjk' => [
+            '([' . $cjk . '])([`]+\w(.*?)\w[`]+)([' . $cjk . '，。])',
+            '$1 $2 $4',
+        ],
 
         'ans_operator_cjk' => [
             '([\+\-\*\/=&\\|<>])([A-Za-zΑ-Ωα-ω0-9])([' . $cjk . '])',
@@ -82,8 +86,6 @@ function replace($text)
     $text = preg_replace_callback('/__REPLACEMARK__(\d+)__/s', function ($match) use ($code) {
         return $code[$match[1]];
     }, $text);
-
-    echo 'markdown files formatted!'.PHP_EOL;
 
     return $text;
 }

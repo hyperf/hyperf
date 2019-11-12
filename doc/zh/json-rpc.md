@@ -296,7 +296,7 @@ return [
 ];
 ```
 
-### 返回PHP对象
+### 返回 PHP 对象
 
 当框架导入 `symfony/serialize (^4.3)` 和 `symfony/property-access (^4.3)` 后，`Hyperf\Contract\NormalizerInterface` 的实现会自动使用 `Hyperf\Utils\Serializer\SymfonyNormalizer` 而非 `Hyperf\Utils\Serializer\SimpleNormalizer`。
 `SymfonyNormalizer` 支持对象的序列化和反序列化。暂时不支持这种 `MathValue[]` 对象数组。

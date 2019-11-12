@@ -1,4 +1,4 @@
-# AMQP组件
+# AMQP 组件
 
 [hyperf/amqp](https://github.com/hyperf/amqp) 是实现 AMQP 标准的组件，主要适用于对 RabbitMQ 的使用。
 
