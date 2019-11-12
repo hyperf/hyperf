@@ -14,6 +14,7 @@
 - [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
 - [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
+- [#925](https://github.com/hyperf/hyperf/pull/925) Fixed the dead cycle caused by socket closed.
 
 # v1.1.5 - 2019-11-07
 

@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Process\Exception;
 
-use RuntimeException;
-
-class SocketClosedException extends RuntimeException
+class SocketAcceptException extends \RuntimeException
 {
+    public function isTimeout(): bool
+    {
+        return $this->getCode() === SOCKET_ETIMEDOUT;
+    }
 }
