@@ -14,6 +14,7 @@ namespace Hyperf\ModelCache;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
@@ -100,5 +101,28 @@ trait Cacheable
             }
         }
         return $res;
+    }
+
+    /**
+     * 通过条件批量删除缓存
+     * @param Builder $builder
+     * @return bool
+     */
+    public static function deleteByCondition(Builder $builder)
+    {
+        $class = static::class;
+        /** @var \Hyperf\DbConnection\Model\Model $instance */
+        $instance = new $class();
+        $primaryKey = $instance->getKeyName();
+        $models = $builder->get([$primaryKey]);
+        $ids = [];
+        foreach ($models as $model) {
+            $ids[] = $model->$primaryKey;
+        }
+        if (empty($ids)) {
+            return null;
+        }
+        $container = ApplicationContext::getContainer();
+        return $container->get(Manager::class)->destroy($ids, $class);
     }
 }
