@@ -15,10 +15,16 @@ namespace Hyperf\ModelCache;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\ModelCache\Builder as ModelCacheBuilder;
 use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
+    /**
+     * @var bool
+     */
+    protected $useCacheBuilder = false;
+
     /**
      * Fetch a model from cache.
      * @param mixed $id
@@ -102,39 +108,32 @@ trait Cacheable
     }
 
     /**
+     * Create a new Model query builder for the model.
+     *
+     * @param \Hyperf\Database\Query\Builder $query
+     * @return \Hyperf\Database\Model\Builder|static
+     */
+    public function newModelBuilder($query)
+    {
+        if ($this->useCacheBuilder) {
+            return new ModelCacheBuilder($query);
+        }
+
+        return new Builder($query);
+    }
+
+    public function newQuery(bool $cache = false)
+    {
+        $this->useCacheBuilder = $cache;
+        return parent::newQuery();
+    }
+
+    /**
      * @param bool $cache Whether to delete the model cache when batch update
      * @return Builder
      */
     public static function query(bool $cache = false)
     {
-        $query = parent::query();
-
-        if ($cache) {
-            $modelName = static::class;
-            $query->onDelete(function (Builder $builder) use ($modelName) {
-                $queryBuilder = clone $builder;
-                /** @var \Hyperf\DbConnection\Model\Model $instance */
-                $instance = new $modelName();
-                $primaryKey = $instance->getKeyName();
-                $ids = [];
-                $models = $queryBuilder->get([$primaryKey]);
-                foreach ($models as $model) {
-                    $ids[] = $model->{$primaryKey};
-                }
-                if (empty($ids)) {
-                    return 0;
-                }
-
-                $result = $builder->toBase()->delete();
-
-                $manger = ApplicationContext::getContainer()->get(Manager::class);
-
-                $manger->destroy($ids, $modelName);
-
-                return $result;
-            });
-        }
-
-        return $query;
+        return (new static())->newQuery($cache);
     }
 }

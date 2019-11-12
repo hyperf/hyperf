@@ -49,7 +49,7 @@ class ModelCacheTest extends TestCase
         $this->assertEquals($expects, $users);
     }
 
-    public function testDeleteByCondition()
+    public function testDeleteByBuilder()
     {
         $container = ContainerStub::mockContainer();
 
@@ -75,6 +75,35 @@ class ModelCacheTest extends TestCase
 
         foreach ($ids as $id) {
             $this->assertNull(UserModel::query()->find($id));
+        }
+    }
+
+    public function testUpdateByBuilder()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $ids = [203, 204, 205];
+        foreach ($ids as $id) {
+            UserModel::query()->firstOrCreate(['id' => $id], [
+                'name' => uniqid(),
+                'gender' => 1,
+            ]);
+        }
+
+        UserModel::findManyFromCache($ids);
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        foreach ($ids as $id) {
+            $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        }
+
+        UserModel::query(true)->whereIn('id', $ids)->update(['gender' => 2]);
+        foreach ($ids as $id) {
+            $this->assertEquals(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+        }
+
+        foreach ($ids as $id) {
+            $this->assertSame(2, UserModel::query()->find($id)->gender);
         }
     }
 }
