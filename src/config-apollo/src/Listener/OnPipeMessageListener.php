@@ -83,15 +83,44 @@ class OnPipeMessageListener implements ListenerInterface
                 return;
             }
             foreach ($data->configurations ?? [] as $key => $value) {
-                if (is_numeric($value)) {
-                    $value = (strpos($value, '.') === false) ? (int) $value : (float) $value;
-                } elseif(in_array($value, ['true', 'false'])) {
-                    $value = ($value === 'true') ? true : false;
-                }
-                $this->config->set($key, $value);
+                $this->config->set($key, $this->formatValue($value));
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
             ReleaseKey::set($cacheKey, $data->releaseKey);
         }
     }
+
+    /**
+     * format processing
+     * @param $value
+     * @return bool|float|int|string|void
+     */
+    private function formatValue($value)
+    {
+        if ($this->config->get('apollo.strict_mode', false) === false) {
+            return $value;
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+
+        if (is_numeric($value)) {
+            $value = (strpos($value, '.') === false) ? (int) $value : (float) $value;
+        }
+
+        return $value;
+    }
+
 }
