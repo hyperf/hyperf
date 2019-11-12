@@ -135,13 +135,12 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        if ($this->taskMutex) {
-            return $this->taskMutex;
-        }
-
-        return $this->taskMutex = $this->container->has(TaskMutex::class)
+        if (! $this->taskMutex) {
+            $this->taskMutex = $this->container->has(TaskMutex::class)
             ? $this->container->get(TaskMutex::class)
             : $this->container->get(RedisTaskMutex::class);
+        }
+        return $this->taskMutex;
     }
 
     protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
@@ -160,12 +159,11 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        if ($this->serverMutex) {
-            return $this->serverMutex;
-        }
-
-        return $this->serverMutex = $this->container->has(ServerMutex::class)
+        if (! $this->serverMutex) {
+            $this->serverMutex = $this->container->has(ServerMutex::class)
             ? $this->container->get(ServerMutex::class)
             : $this->container->get(RedisServerMutex::class);
+        }
+        return $this->serverMutex;
     }
 }
