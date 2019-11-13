@@ -25,9 +25,6 @@ use Swoole\Server;
  */
 class ConfigFetcherProcess extends AbstractProcess
 {
-    // ext-swoole-zookeeper need use in coroutine
-    public $enableCoroutine = true;
-
     /**
      * @var Server
      */
