@@ -17,7 +17,6 @@ class HashIncr implements OperatorInterface
     public function getScript(): string
     {
         return <<<'LUA'
-    local values = {}; 
     if(redis.call('type',KEYS[1]).ok == 'hash') then
         return redis.call('HINCRBYFLOAT',KEYS[1] , KEYS[2] , KEYS[3]);
     end

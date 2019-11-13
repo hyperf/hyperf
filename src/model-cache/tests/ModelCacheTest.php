@@ -124,11 +124,34 @@ class ModelCacheTest extends TestCase
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
 
-        $model->increment('gender', 1);
+        $this->assertEquals(1, $model->increment('gender', 1));
         $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
         $this->assertEquals(2, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
         $this->assertEquals(2, UserModel::findFromCache($id)->gender);
         $this->assertEquals(2, UserModel::query()->find($id)->gender);
+
+        UserModel::query(true)->where('id', $id)->delete();
+    }
+
+    public function testIncrNotExist()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 206;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $model = UserModel::query()->find($id);
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $this->assertEquals(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $this->assertEquals(1, $model->increment('gender', 1));
+        $this->assertEquals(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+        $this->assertEquals(2, UserModel::query()->find($id)->gender);
+        $this->assertEquals(2, UserModel::findFromCache($id)->gender);
 
         UserModel::query(true)->where('id', $id)->delete();
     }

@@ -34,7 +34,7 @@ class LuaManager
     protected $config;
 
     /**
-     * @var \Redis
+     * @var \Redis|RedisProxy
      */
     protected $redis;
 
@@ -62,7 +62,7 @@ class LuaManager
         return $operator->parseResponse($luaData);
     }
 
-    public function getOperator(string $key)
+    public function getOperator(string $key): OperatorInterface
     {
         if (! isset($this->operators[$key])) {
             throw new OperatorNotFoundException(sprintf('The operator %s is not found.', $key));
@@ -75,7 +75,7 @@ class LuaManager
         return $this->operators[$key];
     }
 
-    public function getLuaSha(string $key)
+    public function getLuaSha(string $key): string
     {
         if (empty($this->luaShas[$key])) {
             $sha = $this->redis->script('load', $this->getOperator($key)->getScript());
