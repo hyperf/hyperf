@@ -63,8 +63,8 @@ trait Cacheable
 
     /**
      * Increment a column's value by a given amount.
-     * @param mixed $column
-     * @param mixed $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -86,8 +86,8 @@ trait Cacheable
 
     /**
      * Decrement a column's value by a given amount.
-     * @param mixed $column
-     * @param mixed $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -109,14 +109,15 @@ trait Cacheable
 
     /**
      * Create a new Model query builder for the model.
+     * @param QueryBuilder $query
      */
-    public function newModelBuilder(QueryBuilder $query): Builder
+    public function newModelBuilder($query): Builder
     {
         if ($this->useCacheBuilder) {
             return new ModelCacheBuilder($query);
         }
 
-        return new Builder($query);
+        return parent::newModelBuilder($query);
     }
 
     public function newQuery(bool $cache = false): Builder
