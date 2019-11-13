@@ -172,7 +172,7 @@ abstract class AbstractProcess implements ProcessInterface
             $logger->error($formatter->format($throwable));
 
             if ($throwable instanceof SocketAcceptException) {
-                $logger->critical('Socket is not available, it is best to restart the server');
+                $logger->critical('Socket of process is unavailable, please restart the server');
             }
         }
     }
