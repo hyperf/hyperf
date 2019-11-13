@@ -18,7 +18,7 @@ class PlatesEngine implements EngineInterface
 {
 	public function render($template, $data, $config): string
 	{
-		$plates = new Engine($config['view_path'], $config['file_extension']);
+		$plates = new Engine($config['view_path'], $config['file_extension'] ?? "php");
 
 		return $plates->render($template, $data);
 	}
