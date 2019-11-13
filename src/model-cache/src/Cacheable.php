@@ -15,6 +15,7 @@ namespace Hyperf\ModelCache;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
 use Hyperf\Utils\ApplicationContext;
 
@@ -40,9 +41,8 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
-     * @param mixed $ids
      */
-    public static function findManyFromCache($ids): Collection
+    public static function findManyFromCache(array $ids): Collection
     {
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
@@ -109,11 +109,8 @@ trait Cacheable
 
     /**
      * Create a new Model query builder for the model.
-     *
-     * @param \Hyperf\Database\Query\Builder $query
-     * @return \Hyperf\Database\Model\Builder|static
      */
-    public function newModelBuilder($query)
+    public function newModelBuilder(QueryBuilder $query): Builder
     {
         if ($this->useCacheBuilder) {
             return new ModelCacheBuilder($query);
@@ -122,7 +119,7 @@ trait Cacheable
         return new Builder($query);
     }
 
-    public function newQuery(bool $cache = false)
+    public function newQuery(bool $cache = false): Builder
     {
         $this->useCacheBuilder = $cache;
         return parent::newQuery();
@@ -130,9 +127,8 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
-     * @return Builder
      */
-    public static function query(bool $cache = false)
+    public static function query(bool $cache = false): Builder
     {
         return (new static())->newQuery($cache);
     }
