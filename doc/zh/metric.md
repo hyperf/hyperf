@@ -33,23 +33,25 @@ php bin/hyperf.php vendor:publish hyperf/metric
 
 #### 选项
 
-* `default`：配置文件内的 `default` 对应的值则为使用的驱动名称。驱动的具体配置在 `metric` 项下定义，使用与 `key` 相同的驱动。
+`default`：配置文件内的 `default` 对应的值则为使用的驱动名称。驱动的具体配置在 `metric` 项下定义，使用与 `key` 相同的驱动。
 
 ```php
 'default' => env('TELEMETRY_DRIVER', 'prometheus'),
 ```
 
 * `use_standalone_process`: 是否使用 `独立监控进程`。推荐开启。关闭后将在 `Worker 进程` 中处理指标收集与上报。
+
 ```php
 'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
 ```
 
 * `enable_default_metric`: 是否统计默认指标。默认指标包括内存占用、系统 CPU 负载以及 Swoole Server 指标和 Swoole Coroutine 指标。
+
 ```php
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
-* `default_metric_interval`: 默认指标推送周期，单位为秒，下同。
+`default_metric_interval`: 默认指标推送周期，单位为秒，下同。
 ```php
 'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
 ```
@@ -158,7 +160,7 @@ InfluxDB 使用默认的 HTTP 模式，需要配置地址 `host`，UDP 端口 `p
 
 三种类型分别为：
 
-* 计数器(Counter): 用于描述单向递增的某种指标。如 HTTP 请求计数。
+计数器(Counter): 用于描述单向递增的某种指标。如 HTTP 请求计数。
 
 ```php
 interface CounterInterface
@@ -169,7 +171,7 @@ interface CounterInterface
 }
 ```
 
-* 测量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
+测量器(Gauge)：用于描述某种随时间发生增减变化的指标。如连接池内的可用连接数。
 
 ```php
 interface GaugeInterface
@@ -308,3 +310,49 @@ class OnMetricFactoryReady implements ListenerInterface
 您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 来统计切面的调用次数和运行时间。
 
 关于注解的使用请参阅[注解章节](https://doc.hyperf.io/#/zh/annotation)。
+
+### 自定义 Histogram Bucket
+
+> 本节只适用于 Prometheus 驱动
+
+当您在使用 Prometheus 的 Histogram 时，有时会有自定义 Bucket 的需求。您可以在服务启动前，依赖注入 Registry 并自行注册 Histogram ，设置所需 Bucket 。稍后使用时 `MetricFactory` 就会调用您注册好同名 Histogram 。示例如下：
+
+```php
+<?php
+
+namespace App\Listener;
+
+use Hyperf\Config\Annotation\Value;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BeforeMainServerStart;
+use Prometheus\CollectorRegistry;
+
+class OnMainServerStart implements ListenerInterface
+{
+    protected $registry;
+
+    public function __construct(CollectorRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
+    public function listen(): array
+    {
+        return [
+            BeforeMainServerStart::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        $this->registry->registerHistogram(
+            config("metric.metric.prometheus.namespace"), 
+            'test',
+            'help_message', 
+            ['labelName'], 
+            [0.1, 1, 2, 3.5]
+        );
+    }
+}
+```
+之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的 Histogram 了。
