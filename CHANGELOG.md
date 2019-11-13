@@ -15,8 +15,13 @@
 - [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
 - [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
 - [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
+- [#907](https://github.com/hyperf/hyperf/pull/907) Fixed the expire time is double of the config for `requestSync` in nats.
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
 - [#932](https://github.com/hyperf/hyperf/pull/932) Fixed `Translator::setLocale` does not works in coroutine evnironment.
+
+## Optimized
+
+- [#907](https://github.com/hyperf/hyperf/pull/907) Optimized nats consumer process restart frequently.
 
 # v1.1.5 - 2019-11-07
 
