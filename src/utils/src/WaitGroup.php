@@ -43,7 +43,7 @@ class WaitGroup
 
     public function wait(): void
     {
-        while ($this->counter--) {
+        while ($this->counter && $this->counter--) {
             $this->channel->pop();
         }
     }
