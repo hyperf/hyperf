@@ -19,6 +19,7 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Hyperf\Process\Exception\SocketAcceptException;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Coroutine\Channel;
@@ -112,6 +113,8 @@ abstract class AbstractProcess implements ProcessInterface
                     $this->handle();
 
                     $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                } catch (\Throwable $throwable) {
+                    $this->logThrowable($throwable);
                 } finally {
                     if (isset($quit)) {
                         $quit->push(true);
@@ -132,7 +135,7 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected function listen(Channel $quit)
     {
-        go(function () use ($quit) {
+        Coroutine::create(function () use ($quit) {
             while ($quit->pop(0.001) !== true) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
@@ -150,18 +153,27 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->event->dispatch(new PipeMessage($data));
                     }
                 } catch (\Throwable $exception) {
-                    if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
-                        $logger = $this->container->get(StdoutLoggerInterface::class);
-                        $formatter = $this->container->get(FormatterInterface::class);
-                        $logger->error($formatter->format($exception));
-                    }
-
+                    $this->logThrowable($exception);
                     if ($exception instanceof SocketAcceptException) {
-                        throw $exception;
+                        // TODO: Reconnect the socket.
+                        break;
                     }
                 }
             }
             $quit->close();
         });
+    }
+
+    protected function logThrowable(\Throwable $throwable)
+    {
+        if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
+            $logger = $this->container->get(StdoutLoggerInterface::class);
+            $formatter = $this->container->get(FormatterInterface::class);
+            $logger->error($formatter->format($throwable));
+
+            if ($throwable instanceof SocketAcceptException) {
+                $logger->critical('Socket is not available, it is best to restart the server');
+            }
+        }
     }
 }
