@@ -286,6 +286,25 @@ class TranslatorTest extends TestCase
         $this->assertEquals('foo baz', $t->getFromJson('foo :message', ['message' => 'baz']));
     }
 
+    public function testSetLocale()
+    {
+        $t = new Translator($this->getLoader(), 'en');
+        $this->assertEquals('en', $t->getLocale());
+        parallel([
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_CN');
+                $this->assertEquals('zh_CN', $t->getLocale());
+            },
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_HK');
+                $this->assertEquals('zh_HK', $t->getLocale());
+            },
+        ]);
+        $this->assertEquals('en', $t->getLocale());
+    }
+
     protected function getLoader()
     {
         return Mockery::mock(TranslatorLoaderInterface::class);
