@@ -43,9 +43,11 @@ class ModelCacheTest extends TestCase
     {
         ContainerStub::mockContainer();
 
-        $users = UserModel::findManyFromCache([1, 2]);
-        $expects = UserModel::query()->findMany([1, 2]);
+        $users = UserModel::findManyFromCache([1, 2, 3]);
+        $expects = UserModel::query()->findMany([1, 2, 3]);
 
+        $this->assertTrue(count($users) == 2);
+        $this->assertEquals([1, 2], array_keys($users->getDictionary()));
         $this->assertEquals($expects, $users);
     }
 
@@ -130,6 +132,22 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(2, UserModel::findFromCache($id)->gender);
         $this->assertEquals(2, UserModel::query()->find($id)->gender);
 
+        UserModel::query(true)->where('id', $id)->delete();
+    }
+
+    public function testFindNullBeforeCreate()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 207;
+
+        $model = UserModel::findFromCache($id);
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        $this->assertNull($model);
+
+        $this->assertEquals(1, $redis->del('{mc:default:m:user}:id:' . $id));
         UserModel::query(true)->where('id', $id)->delete();
     }
 

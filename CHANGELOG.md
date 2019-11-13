@@ -23,10 +23,8 @@
 ## Optimized
 
 - [#907](https://github.com/hyperf/hyperf/pull/907) Optimized nats consumer process restart frequently.
-
-## Optimized
-
 - [#928](https://github.com/hyperf/hyperf/pull/928) Optimized `Hyperf\ModelCache\Cacheable::query` to delete the model cache when batch update
+- [#936](https://github.com/hyperf/hyperf/pull/936) Optimized `increment` to atomic operation for model-cache.
 
 # v1.1.5 - 2019-11-07
 
