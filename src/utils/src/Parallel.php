@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
+use Hyperf\Utils\Exception\ParallelExecutionException;
 use Swoole\Coroutine\Channel;
 
 class Parallel
@@ -45,25 +46,49 @@ class Parallel
         }
     }
 
-    public function wait(): array
+    public function wait(bool $throw = true): array
     {
-        $result = [];
+        $result = $throwables = [];
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
-            Coroutine::create(function () use ($callback, $key, $wg, &$result) {
-                $result[$key] = call($callback);
-                $this->concurrentChannel && $this->concurrentChannel->pop();
-                $wg->done();
+            Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
+                try {
+                    $result[$key] = call($callback);
+                } catch (\Throwable $throwable) {
+                    $throwables[$key] = $throwable;
+                } finally {
+                    $this->concurrentChannel && $this->concurrentChannel->pop();
+                    $wg->done();
+                }
             });
         }
         $wg->wait();
+        if ($throw && count($throwables) > 0) {
+            $message = 'At least one throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+            $executionException = new ParallelExecutionException($message);
+            $executionException->setResults($result);
+            $executionException->setThrowables($throwables);
+            throw $executionException;
+        }
         return $result;
     }
 
     public function clear(): void
     {
         $this->callbacks = [];
+    }
+
+    /**
+     * Format throwables into a nice list.
+     */
+    private function formatThrowables(array $exception): string
+    {
+        $output = '';
+        foreach ($exception as $key => $value) {
+            $output .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
+        }
+        return $output;
     }
 }

@@ -5,7 +5,7 @@
 ## 定义访问路由
 
 Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作为默认的路由组件并提供服务，您可以很方便的在 `config/routes.php` 中定义您的路由。   
-不仅如此，框架还提供了极其强大和方便灵活的`注解路由`功能，关于路由的详情文档请查阅 [路由](zh/router.md) 章节
+不仅如此，框架还提供了极其强大和方便灵活的 `注解路由` 功能，关于路由的详情文档请查阅 [路由](zh/router.md) 章节
 
 ### 通过配置文件定义路由
 路由的文件位于 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
@@ -65,8 +65,8 @@ class IndexController
 ```
 
 ### 通过 `@Controller` 注解定义路由
-`@Controller` 为满足更细致的路由定义需求而存在，使用 `@Controller` 注解用于表明当前类为一个 `Controller类`，同时需配合 `@RequestMapping` 注解来对请求方法和请求路径进行更详细的定义。   
-我们也提供了多种快速便捷的 `Mapping注解`，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5种便捷的注解用于表明允许不同的请求方法。
+`@Controller` 为满足更细致的路由定义需求而存在，使用 `@Controller` 注解用于表明当前类为一个 `Controller 类`，同时需配合 `@RequestMapping` 注解来对请求方法和请求路径进行更详细的定义。   
+我们也提供了多种快速便捷的 `Mapping 注解`，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5 种便捷的注解用于表明允许不同的请求方法。
 
 > 使用 `@Controller` 注解时需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空间；   
 > 使用 `@RequestMapping` 注解时需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空间；   
@@ -106,8 +106,8 @@ class IndexController
 
 ## 处理 HTTP 请求
 
-`Hyperf` 是完全开放的，本质上没有规定您必须基于某种模式下去实现请求的处理，您可以采用传统的 `MVC模式`，亦可以采用 `RequestHandler模式` 来进行开发。   
-我们以 `MVC模式` 来举个例子：   
+`Hyperf` 是完全开放的，本质上没有规定您必须基于某种模式下去实现请求的处理，您可以采用传统的 `MVC 模式`，亦可以采用 `RequestHandler 模式` 来进行开发。   
+我们以 `MVC 模式` 来举个例子：   
 在 `app` 文件夹内创建一个 `Controller` 文件夹并创建 `IndexController.php` 如下，`index` 方法内从请求中获取了 `id` 参数，并转换为 `字符串` 类型返回到客户端。
 
 ```php
@@ -216,7 +216,7 @@ class IndexController
    
 通过上面的示例我们不难发现 `$userService` 在没有实例化的情况下， 属性对应的类对象被自动注入了。   
 不过这里的案例并未真正体现出依赖自动注入的好处及其强大之处，我们假设一下 `UserService` 也存在很多的依赖，而这些依赖同时又存在很多其它的依赖时，`new` 实例化的方式就需要手动实例化很多的对象并调整好对应的参数位，而在 `Hyperf` 里我们就无须手动管理这些依赖，只需要声明一下最终使用的类即可。   
-而当 `UserService` 需要发生替换等剧烈的内部变化时，比如从一个本地服务替换成了一个 RPC 远程服务，也只需要通过配置调整依赖中 `UserService` 这个键值对应的类为新的RPC服务类即可。
+而当 `UserService` 需要发生替换等剧烈的内部变化时，比如从一个本地服务替换成了一个 RPC 远程服务，也只需要通过配置调整依赖中 `UserService` 这个键值对应的类为新的 RPC 服务类即可。
 
 ## 启动 Hyperf 服务
 

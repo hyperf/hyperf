@@ -3,17 +3,25 @@
 ## Added
 
 - [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
+- [#905](https://github.com/hyperf/hyperf/pull/905) Added twig template engine for view.
+- [#911](https://github.com/hyperf/hyperf/pull/911) Added support for crontab task run on one server.
+- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
+- [#931](https://github.com/hyperf/hyperf/pull/931) Added `strict_mode` for config-apollo.
 
 ## Fixed
 
 - [#897](https://github.com/hyperf/hyperf/pull/897) Fixed connection pool of `Hyperf\Nats\Annotation\Consumer` does not works as expected.
+- [#901](https://github.com/hyperf/hyperf/pull/901) Fixed Annotation `Factory` does not works for GraphQL.
 - [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
 - [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
 - [#907](https://github.com/hyperf/hyperf/pull/907) Fixed the expire time is double of the config for `requestSync` in nats.
 
 ## Optimized
 
+- [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
 - [#907](https://github.com/hyperf/hyperf/pull/907) Optimized nats consumer process restart frequently.
+- [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
+- [#932](https://github.com/hyperf/hyperf/pull/932) Fixed `Translator::setLocale` does not works in coroutine evnironment.
 
 # v1.1.5 - 2019-11-07
 
