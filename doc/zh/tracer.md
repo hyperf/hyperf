@@ -189,9 +189,9 @@ return [
 
 当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
-### 使用其他Tracer驱动
+### 使用其他 Tracer 驱动
 
-您也可以使用其他任意符合OpenTracing协议的Tracer驱动。在Driver项中，填写任意实现了`Hyperf\Tracer\Contract\NamedFactoryInterface`的类就可以了。该接口只有一个make函数，参数为驱动名称，需返回一个实现了OpenTracing\Tracer的实例。
+您也可以使用其他任意符合 OpenTracing 协议的 Tracer 驱动。在 Driver 项中，填写任意实现了 `Hyperf\Tracer\Contract\NamedFactoryInterface` 的类就可以了。该接口只有一个 make 函数，参数为驱动名称，需返回一个实现了 OpenTracing\Tracer 的实例。
 
 ## Reference
 

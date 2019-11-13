@@ -82,12 +82,11 @@ class NatsDriver extends AbstractDriver
             /** @var NatsConnection $client */
             $client = $connection->getConnection();
             $channel = new Channel(1);
-            $timeout = floatval($this->config['timeout'] ?? 1.0);
             $client->request($subject, $payload, function (Message $message) use ($channel) {
                 $channel->push($message);
             });
 
-            $message = $channel->pop($timeout);
+            $message = $channel->pop(0.001);
             if (! $message instanceof Message) {
                 throw new TimeoutException('Request timeout.');
             }
