@@ -21,9 +21,6 @@ abstract class Event
      */
     protected $consumer;
 
-    /**
-     * @param mixed $data
-     */
     public function __construct(AbstractConsumer $consumer)
     {
         $this->consumer = $consumer;
