@@ -39,8 +39,6 @@ class StartServer extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
-
         $this->checkEnvironment($output);
 
         $serverFactory = $this->container->get(ServerFactory::class)
@@ -53,6 +51,9 @@ class StartServer extends Command
         }
 
         $serverFactory->configure($serverConfig);
+
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+
         $serverFactory->start();
     }
 

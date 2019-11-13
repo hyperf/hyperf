@@ -1,5 +1,60 @@
 # 版本更新记录
 
+# v1.1.5 - 2019-11-07
+
+## 新增
+
+- [#812](https://github.com/hyperf/hyperf/pull/812) 新增计划任务在集群下仅执行一次的支持；
+- [#820](https://github.com/hyperf/hyperf/pull/820) 新增 hyperf/nats 组件；
+- [#832](https://github.com/hyperf/hyperf/pull/832) 新增 `Hyperf\Utils\Codec\Json`；
+- [#833](https://github.com/hyperf/hyperf/pull/833) 新增 `Hyperf\Utils\Backoff`；
+- [#852](https://github.com/hyperf/hyperf/pull/852) 为 `Hyperf\Utils\Parallel` 新增 `clear()` 方法来清理所有已添加的回调；
+- [#854](https://github.com/hyperf/hyperf/pull/854) 新增 `Hyperf\GraphQL\GraphQLMiddleware` 用于解析 GraphQL 请求；
+- [#859](https://github.com/hyperf/hyperf/pull/859) 新增 Consul 集群的支持，现在可以从 Consul 集群中拉取服务提供者的节点信息；
+- [#873](https://github.com/hyperf/hyperf/pull/873) 新增 Redis 集群的客户端支持；
+
+## 修复
+
+- [#831](https://github.com/hyperf/hyperf/pull/831) 修复 Redis 客户端连接在 Redis Server 重启后不会自动重连的问题；
+- [#835](https://github.com/hyperf/hyperf/pull/835) 修复 `Request::inputs` 方法的默认值参数与预期效果不一致的问题；
+- [#841](https://github.com/hyperf/hyperf/pull/841) 修复数据库迁移在多数据库的情况下连接无效的问题；
+- [#844](https://github.com/hyperf/hyperf/pull/844) 修复 Composer 阅读器不支持根命名空间的用法的问题；
+- [#846](https://github.com/hyperf/hyperf/pull/846) 修复 Redis 客户端的 `scan`, `hScan`, `zScan`, `sScan` 无法使用的问题；
+- [#850](https://github.com/hyperf/hyperf/pull/850) 修复 Logger group 在 name 一样时不生效的问题；
+
+## 优化
+
+- [#832](https://github.com/hyperf/hyperf/pull/832) 优化了 Response 对象在转 JSON 格式时的异常处理逻辑；
+- [#840](https://github.com/hyperf/hyperf/pull/840) 使用 `\Swoole\Timer::*` 来替代 `swoole_timer_*` 函数；
+- [#859](https://github.com/hyperf/hyperf/pull/859) 优化了 RPC 客户端去 Consul 获取健康的节点信息的逻辑；
+
+# v1.1.4 - 2019-10-31
+
+## 新增
+
+- [#778](https://github.com/hyperf/hyperf/pull/778) `Hyperf\Testing\Client` 新增 `PUT` 和 `DELETE`方法。
+- [#784](https://github.com/hyperf/hyperf/pull/784) 新增服务监控组件。
+- [#795](https://github.com/hyperf/hyperf/pull/795) `AbstractProcess` 增加 `restartInterval` 参数，允许子进程异常或正常退出后，延迟重启。
+- [#804](https://github.com/hyperf/hyperf/pull/804) `Command` 增加事件 `BeforeHandle` `AfterHandle` 和 `FailToHandle`。
+
+## 变更
+
+- [#793](https://github.com/hyperf/hyperf/pull/793) `Pool::getConnectionsInChannel` 方法由 `protected` 改为 `public`.
+- [#811](https://github.com/hyperf/hyperf/pull/811) 命令 `di:init-proxy` 不再主动清理代理缓存，如果想清理缓存请使用命令 `vendor/bin/init-proxy.sh`。
+
+## 修复
+
+- [#779](https://github.com/hyperf/hyperf/pull/779) 修复 `JPG` 文件验证不通过的问题。
+- [#787](https://github.com/hyperf/hyperf/pull/787) 修复 `db:seed` 参数 `--class` 多余，导致报错的问题。
+- [#795](https://github.com/hyperf/hyperf/pull/795) 修复自定义进程在异常抛出后，无法正常重启的 BUG。
+- [#796](https://github.com/hyperf/hyperf/pull/796) 修复 `etcd` 配置中心 `enable` 即时设为 `false`，在项目启动时，依然会拉取配置的 BUG。
+
+## 优化
+
+- [#781](https://github.com/hyperf/hyperf/pull/781) 可以根据国际化组件配置发布验证器语言包到规定位置。
+- [#796](https://github.com/hyperf/hyperf/pull/796) 优化 `ETCD` 客户端，不会多次创建 `HandlerStack`。 
+- [#797](https://github.com/hyperf/hyperf/pull/797) 优化子进程重启
+
 # v1.1.3 - 2019-10-24
 
 ## 新增
@@ -129,7 +184,7 @@ Config Provider 内数据结构的变化：
 
 - [#630](https://github.com/hyperf/hyperf/pull/630) 变更了 `Hyperf\HttpServer\CoreMiddleware` 类的实例化方式，使用 `make()` 来替代了 `new`；
 - [#631](https://github.com/hyperf/hyperf/pull/631) 变更了 AMQP Consumer 的实例化方式，使用 `make()` 来替代了 `new`；
-- [#637](https://github.com/hyperf/hyperf/pull/637) 调整了Hyperf\Contract\OnMessageInterface` 和 `Hyperf\Contract\OnOpenInterface` 的第一个参数的类型约束， 使用 `Swoole\WebSocket\Server` 替代 `Swoole\Server`；
+- [#637](https://github.com/hyperf/hyperf/pull/637) 调整了 `Hyperf\Contract\OnMessageInterface` 和 `Hyperf\Contract\OnOpenInterface` 的第一个参数的类型约束， 使用 `Swoole\WebSocket\Server` 替代 `Swoole\Server`；
 - [#638](https://github.com/hyperf/hyperf/pull/638) 重命名了 `db:model` 命令为 `gen:model` 命令，同时增加了一个 Visitor 来优化创建的 `$connection` 成员属性，如果要创建的模型类的 `$connection` 属性的值与继承的父类一致，那么创建的模型类将不会包含此属性；
 
 ## 移除
