@@ -50,6 +50,7 @@
         "friendsofphp/php-cs-fixer": "^2.14",
         "influxdb/influxdb-php": "^1.15.0",
         "jonahgeorge/jaeger-client-php": "^0.4.4",
+        "league/plates": "^3.3",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "php-di/php-di": "^6.0",

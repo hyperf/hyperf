@@ -12,33 +12,34 @@ declare(strict_types=1);
 
 namespace HyperfTest\View;
 
-use Hyperf\View\Engine\TwigEngine;
+use Hyperf\View\Engine\PlatesEngine;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class TwigTest extends TestCase
+class PlatesTest extends TestCase
 {
     public function testRender()
     {
         $config = [
             'view_path' => __DIR__ . '/tpl',
             'cache_path' => __DIR__ . '/runtime',
+            'file_extension' => 'plates',
         ];
 
-        $engine = new TwigEngine();
-        $res = $engine->render('index.twig', ['name' => 'Hyperf'], $config);
+        $engine = new PlatesEngine();
+        $res = $engine->render('index', ['name' => 'Hyperf'], $config);
 
         $this->assertEquals('<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Hyperf</title>
+	<meta charset="UTF-8">
+	<title>Hyperf</title>
 </head>
 <body>
-Hello, Hyperf. You are using twig template now.
+Hello, Hyperf. You are using plates template now.
 </body>
 </html>', $res);
     }
