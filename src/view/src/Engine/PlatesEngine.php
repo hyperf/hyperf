@@ -16,10 +16,10 @@ use League\Plates\Engine;
 
 class PlatesEngine implements EngineInterface
 {
-	public function render($template, $data, $config): string
-	{
-		$plates = new Engine($config['view_path'], $config['file_extension'] ?? "php");
+    public function render($template, $data, $config): string
+    {
+        $plates = new Engine($config['view_path'], $config['file_extension'] ?? 'php');
 
-		return $plates->render($template, $data);
-	}
+        return $plates->render($template, $data);
+    }
 }

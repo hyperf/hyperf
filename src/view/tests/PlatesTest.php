@@ -26,10 +26,10 @@ class PlatesTest extends TestCase
         $config = [
             'view_path' => __DIR__ . '/tpl',
             'cache_path' => __DIR__ . '/runtime',
-			'file_extension' => 'plates'
+            'file_extension' => 'plates',
         ];
 
-		$engine = new PlatesEngine();
+        $engine = new PlatesEngine();
         $res = $engine->render('index', ['name' => 'Hyperf'], $config);
 
         $this->assertEquals('<!DOCTYPE html>
