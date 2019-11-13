@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server;
@@ -172,7 +172,7 @@ class Server implements ServerInterface
                 return new SwooleHttpServer($host, $port, $mode, $sockType);
             case ServerInterface::SERVER_WEBSOCKET:
                 return new SwooleWebSocketServer($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_TCP:
+            case ServerInterface::SERVER_BASE:
                 return new SwooleServer($host, $port, $mode, $sockType);
         }
 

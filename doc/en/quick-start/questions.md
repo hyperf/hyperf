@@ -30,17 +30,17 @@ runtime/container/proxy/
 
 Re-genenrate command
 ```
-php bin/hyperf.php di:init-proxy
+vendor/bin/init-proxy.sh
 ```
 
 So the command to run unit test can use the following instead
 ```
-php bin/hyperf.php di:init-proxy && composer test
+vendor/bin/init-proxy.sh && composer test
 ```
 
 Similarly, the command to start the server can also use the following instead
 ```
-php bin/hyperf.php di:init-proxy && php bin/hyperf.php start
+vendor/bin/init-proxy.sh && php bin/hyperf.php start
 ```
 
 ## Docker build failure

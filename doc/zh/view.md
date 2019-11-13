@@ -1,6 +1,6 @@
 # 视图
 
-视图组件由 [hyperf/view](https://github.com/hyperf-cloud/view) 实现并提供使用，满足您对视图渲染的需求，组件默认支持 `Blade` 和 `Smarty` 两种模板引擎。
+视图组件由 [hyperf/view](https://github.com/hyperf/view) 实现并提供使用，满足您对视图渲染的需求，组件默认支持 `Blade` 和 `Smarty` 两种模板引擎。
 
 ## 安装
 
@@ -41,7 +41,7 @@ return [
 ];
 ```
 
-> 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf-cloud/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh/task.md) 组件文档。
+> 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh/task.md) 组件文档。
 
 > 若使用 `Sync` 模式渲染视图时，请确保相关引擎是协程安全的，否则会出现数据混淆的问题，建议使用更加数据安全的 `Task` 模式。
 
@@ -64,7 +64,7 @@ return [
 
 ## 视图渲染引擎
 
-官方目前支持 `Blade` 和 `Smarty` 两种模板，默认安装 [hyperf/view](https://github.com/hyperf-cloud/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
+官方目前支持 `Blade` ，`Smarty` 和 `Twig` 三种模板，默认安装 [hyperf/view](https://github.com/hyperf/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
 
 ### 安装 Blade 引擎
 
@@ -76,6 +76,12 @@ composer require duncan3dc/blade
 
 ```bash
 composer require smarty/smarty
+```
+
+### 安装 Twig 引擎
+
+```bash
+composer require twig/twig
 ```
 
 ### 接入其他模板
@@ -137,7 +143,7 @@ Hello, {{ $name }}. You are using blade template now.
 </html>
 ```
 
-控制器中获取 `Hyperf\View\Render` 示例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
+控制器中获取 `Hyperf\View\Render` 实例，然后调用 `render` 方法并传递视图文件地址 `index` 和 `渲染数据` 即可，文件地址忽略视图文件的后缀名。
 
 ```php
 <?php

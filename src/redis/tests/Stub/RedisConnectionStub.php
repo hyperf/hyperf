@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Redis\Stub;
@@ -39,6 +39,8 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $this->config['db'];
         $this->timeout = $this->config['timeout'];
 
+        $this->lastUseTime = microtime(true);
+
         return true;
     }
 
@@ -47,17 +49,11 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $db;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return null|int
-     */
     public function getDatabase(): ?int
     {
         return $this->database;

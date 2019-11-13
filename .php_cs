@@ -6,7 +6,7 @@ This file is part of Hyperf.
 @link     https://www.hyperf.io
 @document https://doc.hyperf.io
 @contact  group@hyperf.io
-@license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+@license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 EOF;
 
 return PhpCsFixer\Config::create()
@@ -50,9 +50,6 @@ return PhpCsFixer\Config::create()
         'single_line_comment_style' => [
             'comment_types' => [
             ],
-        ],
-        'list_syntax' => [
-            'syntax' => 'short',
         ],
         'yoda_style' => [
             'always_move_variable' => false,

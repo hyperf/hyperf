@@ -7,13 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GraphQL\Annotation;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\GraphQL\ClassCollector;
 use ReflectionProperty;
 
 trait AnnotationTrait
@@ -31,16 +32,19 @@ trait AnnotationTrait
     public function collectClass(string $className): void
     {
         AnnotationCollector::collectClass($className, static::class, $this);
+        ClassCollector::collect($className);
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
         AnnotationCollector::collectMethod($className, $target, static::class, $this);
+        ClassCollector::collect($className);
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
+        ClassCollector::collect($className);
     }
 
     protected function bindMainProperty(string $key, array $value)

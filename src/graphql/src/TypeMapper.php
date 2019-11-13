@@ -7,14 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GraphQL;
 
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\OutputType;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\GraphQL\Annotation\Type;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -176,9 +175,6 @@ class TypeMapper implements TypeMapperInterface
 
     /**
      * Returns true if this type mapper can map the $className FQCN to a GraphQL type.
-     *
-     * @param string $className
-     * @return bool
      */
     public function canMapClassToType(string $className): bool
     {
@@ -198,9 +194,7 @@ class TypeMapper implements TypeMapperInterface
      *
      * @param string $className the exact class name to look for (this function does not look into parent classes)
      * @param null|OutputType $subType an optional sub-type if the main class is an iterator that needs to be typed
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws CannotMapTypeExceptionInterface
-     * @return MutableObjectType
      */
     public function mapClassToType(string $className, ?OutputType $subType, RecursiveTypeMapperInterface $recursiveTypeMapper): MutableObjectType
     {
@@ -229,9 +223,6 @@ class TypeMapper implements TypeMapperInterface
 
     /**
      * Returns true if this type mapper can map the $className FQCN to a GraphQL input type.
-     *
-     * @param string $className
-     * @return bool
      */
     public function canMapClassToInputType(string $className): bool
     {
@@ -247,10 +238,7 @@ class TypeMapper implements TypeMapperInterface
     /**
      * Maps a PHP fully qualified class name to a GraphQL input type.
      *
-     * @param string $className
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws CannotMapTypeExceptionInterface
-     * @return InputObjectType
      */
     public function mapClassToInputType(string $className, RecursiveTypeMapperInterface $recursiveTypeMapper): InputObjectType
     {
@@ -271,7 +259,6 @@ class TypeMapper implements TypeMapperInterface
      * Returns a GraphQL type by name (can be either an input or output type).
      *
      * @param string $typeName The name of the GraphQL type
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws CannotMapTypeExceptionInterface
      * @throws \ReflectionException
      * @return \GraphQL\Type\Definition\Type&(InputType|OutputType)
@@ -308,7 +295,6 @@ class TypeMapper implements TypeMapperInterface
      * Returns true if this type mapper can map the $typeName GraphQL name to a GraphQL type.
      *
      * @param string $typeName The name of the GraphQL type
-     * @return bool
      */
     public function canMapNameToType(string $typeName): bool
     {
@@ -330,10 +316,6 @@ class TypeMapper implements TypeMapperInterface
 
     /**
      * Returns true if this type mapper can extend an existing type for the $className FQCN.
-     *
-     * @param string $className
-     * @param MutableObjectType $type
-     * @return bool
      */
     public function canExtendTypeForClass(string $className, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): bool
     {
@@ -349,9 +331,6 @@ class TypeMapper implements TypeMapperInterface
     /**
      * Extends the existing GraphQL type that is mapped to $className.
      *
-     * @param string $className
-     * @param MutableObjectType $type
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws CannotMapTypeExceptionInterface
      */
     public function extendTypeForClass(string $className, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): void
@@ -373,10 +352,6 @@ class TypeMapper implements TypeMapperInterface
 
     /**
      * Returns true if this type mapper can extend an existing type for the $typeName GraphQL type.
-     *
-     * @param string $typeName
-     * @param MutableObjectType $type
-     * @return bool
      */
     public function canExtendTypeForName(string $typeName, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): bool
     {
@@ -399,9 +374,6 @@ class TypeMapper implements TypeMapperInterface
     /**
      * Extends the existing GraphQL type that is mapped to the $typeName GraphQL type.
      *
-     * @param string $typeName
-     * @param MutableObjectType $type
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws CannotMapTypeExceptionInterface
      */
     public function extendTypeForName(string $typeName, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): void
@@ -571,8 +543,8 @@ class TypeMapper implements TypeMapperInterface
     {
         if ($this->classes === null) {
             $this->classes = [];
-            $classes = AnnotationCollector::getClassByAnnotation(Type::class);
-            foreach (array_keys($classes) as $className) {
+            $classes = ClassCollector::getClasses();
+            foreach ($classes as $className) {
                 if (! \class_exists($className)) {
                     continue;
                 }
@@ -805,7 +777,6 @@ class TypeMapper implements TypeMapperInterface
     }
 
     /**
-     * @param string $className
      * @return null|array<string,string> An array of classes with the ExtendType annotation (key and value = FQCN)
      */
     private function getExtendTypesFromCacheByObjectClass(string $className): ?array
@@ -834,7 +805,6 @@ class TypeMapper implements TypeMapperInterface
     }
 
     /**
-     * @param string $graphqlTypeName
      * @return null|array<string,string> An array of classes with the ExtendType annotation (key and value = FQCN)
      */
     private function getExtendTypesFromCacheByGraphQLTypeName(string $graphqlTypeName): ?array

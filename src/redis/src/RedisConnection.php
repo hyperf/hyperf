@@ -7,19 +7,25 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @method bool select(int $db)
+ */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
+    use ScanCaller;
+
     /**
      * @var \Redis
      */
@@ -34,6 +40,12 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'auth' => null,
         'db' => 0,
         'timeout' => 0.0,
+        'cluster' => [
+            'enable' => false,
+            'name' => null,
+            'seeds' => [],
+        ],
+        'options' => [],
     ];
 
     /**
@@ -52,7 +64,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function __call($name, $arguments)
     {
-        return $this->connection->{$name}(...$arguments);
+        try {
+            $result = $this->connection->{$name}(...$arguments);
+        } catch (\Throwable $exception) {
+            $result = $this->retry($name, $arguments, $exception);
+        }
+
+        return $result;
     }
 
     public function getActiveConnection()
@@ -75,10 +93,23 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $auth = $this->config['auth'];
         $db = $this->config['db'];
         $timeout = $this->config['timeout'];
+        $cluster = $this->config['cluster']['enable'] ?? false;
 
-        $redis = new \Redis();
-        if (! $redis->connect($host, $port, $timeout)) {
-            throw new ConnectionException('Connection reconnect failed.');
+        $redis = null;
+        if ($cluster !== true) {
+            $redis = new \Redis();
+            if (! $redis->connect($host, $port, $timeout)) {
+                throw new ConnectionException('Connection reconnect failed.');
+            }
+        } else {
+            $redis = $this->createRedisCluster();
+        }
+
+        $options = $this->config['options'] ?? [];
+
+        foreach ($options as $name => $value) {
+            // The name is int, value is string.
+            $redis->setOption($name, $value);
         }
 
         if (isset($auth) && $auth !== '') {
@@ -116,5 +147,36 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function setDatabase(?int $database): void
     {
         $this->database = $database;
+    }
+
+    protected function createRedisCluster()
+    {
+        try {
+            $seeds = $this->config['cluster']['seeds'] ?? [];
+            $name = $this->config['cluster']['name'] ?? null;
+            $timeout = $this->config['timeout'] ?? null;
+
+            $redis = new \RedisCluster($name, $seeds, $timeout);
+        } catch (\Throwable $e) {
+            throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
+        }
+
+        return $redis;
+    }
+
+    protected function retry($name, $arguments, \Throwable $exception)
+    {
+        $logger = $this->container->get(StdoutLoggerInterface::class);
+        $logger->warning(sprintf('Redis::__call failed, bacause ' . $exception->getMessage()));
+
+        try {
+            $this->reconnect();
+            $result = $this->connection->{$name}(...$arguments);
+        } catch (\Throwable $exception) {
+            $this->lastUseTime = 0.0;
+            throw $exception;
+        }
+
+        return $result;
     }
 }

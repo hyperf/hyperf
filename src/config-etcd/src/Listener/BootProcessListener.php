@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ConfigEtcd\Listener;
@@ -74,6 +74,10 @@ class BootProcessListener implements ListenerInterface
 
     public function process(object $event)
     {
+        if (! $this->config->get('config_etcd.enable', false)) {
+            return;
+        }
+
         if ($config = $this->client->pull()) {
             $configurations = $this->format($config);
             foreach ($configurations as $kv) {

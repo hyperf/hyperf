@@ -7,14 +7,20 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake;
 
 interface IdGeneratorInterface extends \Hyperf\Contract\IdGeneratorInterface
 {
+    /**
+     * Generate an ID by meta, if meta is null, then use the default meta.
+     */
     public function generate(?Meta $meta = null): int;
 
+    /**
+     * Degenerate the meta by ID.
+     */
     public function degenerate(int $id): Meta;
 }

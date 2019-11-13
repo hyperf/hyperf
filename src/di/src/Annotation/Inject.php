@@ -7,12 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\ReflectionManager;
+use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
 
 /**
@@ -27,6 +28,11 @@ class Inject extends AbstractAnnotation
     public $value;
 
     /**
+     * @var bool
+     */
+    public $required = true;
+
+    /**
      * @var PhpDocReader
      */
     private $docReader;
@@ -39,7 +45,14 @@ class Inject extends AbstractAnnotation
 
     public function collectProperty(string $className, ?string $target): void
     {
-        $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
-        AnnotationCollector::collectProperty($className, $target, static::class, $this);
+        try {
+            $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
+        } catch (AnnotationException $e) {
+            if ($this->required) {
+                throw $e;
+            }
+            $this->value = '';
+        }
     }
 }

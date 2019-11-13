@@ -2,6 +2,8 @@
 
 在 Hyperf 里可通过 `Hyperf\HttpServer\Contract\ResponseInterface` 接口类来注入 `Response` 代理对象对响应进行处理，默认返回 `Hyperf\HttpServer\Response` 对象，该对象可直接调用所有 `Psr\Http\Message\ResponseInterface` 的方法。
 
+> 注意 PSR-7 标准为 响应(Response) 进行了 immutable 机制 的设计，所有以 with 开头的方法的返回值都是一个新对象，不会修改原对象的值
+
 ## 返回 Json 格式
 
 `Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用于快速返回 `Json` 格式，并设置 `Content-Type` 为 `application/json`，`$data` 接受一个数组或为一个实现了 `Hyperf\Utils\Contracts\Arrayable` 接口的对象。
@@ -70,7 +72,7 @@ class IndexController
 
 ## 返回视图
 
-请参考 [视图](view.md) 部分文档
+请参考 [视图](zh/view.md) 部分文档
 
 ## 重定向
 

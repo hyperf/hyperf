@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils\Filesystem;
@@ -49,9 +49,6 @@ class Filesystem
 
     /**
      * Get contents of a file with shared access.
-     *
-     * @param string $path
-     * @return string
      */
     public function sharedGet(string $path): string
     {
@@ -93,7 +90,6 @@ class Filesystem
     /**
      * Require the given file once.
      *
-     * @param string $file
      * @return mixed
      */
     public function requireOnce(string $file)

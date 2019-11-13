@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Process;
@@ -20,6 +20,7 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -44,7 +45,7 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * @var int
      */
-    public $pipeType = 2;
+    public $pipeType = SOCK_DGRAM;
 
     /**
      * @var bool
@@ -66,6 +67,21 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $process;
 
+    /**
+     * @var int
+     */
+    protected $recvLength = 65535;
+
+    /**
+     * @var float
+     */
+    protected $recvTimeout = 10.0;
+
+    /**
+     * @var int
+     */
+    protected $restartInterval = 5;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -84,13 +100,23 @@ abstract class AbstractProcess implements ProcessInterface
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
-                $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                try {
+                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
 
-                $this->process = $process;
-                $this->listen();
-                $this->handle();
+                    $this->process = $process;
+                    if ($this->enableCoroutine) {
+                        $quit = new Channel(1);
+                        $this->listen($quit);
+                    }
+                    $this->handle();
 
-                $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                } finally {
+                    if (isset($quit)) {
+                        $quit->push(true);
+                    }
+                    sleep($this->restartInterval);
+                }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
 
@@ -103,15 +129,15 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * Added event for listening data from worker/task.
      */
-    protected function listen()
+    protected function listen(Channel $quit)
     {
-        go(function () {
-            while (true) {
+        go(function () use ($quit) {
+            while ($quit->pop(0.001) !== true) {
                 try {
                     /** @var \Swoole\Coroutine\Socket $sock */
                     $sock = $this->process->exportSocket();
-                    $recv = $sock->recv();
-                    if ($this->event && $data = unserialize($recv)) {
+                    $recv = $sock->recv($this->recvLength, $this->recvTimeout);
+                    if ($this->event && $recv !== false && $data = unserialize($recv)) {
                         $this->event->dispatch(new PipeMessage($data));
                     }
                 } catch (\Throwable $exception) {
@@ -122,6 +148,7 @@ abstract class AbstractProcess implements ProcessInterface
                     }
                 }
             }
+            $quit->close();
         });
     }
 }

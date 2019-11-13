@@ -8,6 +8,12 @@
 curl -sSL https://get.daocloud.io/docker | sh
 ```
 
+修改文件 `/lib/systemd/system/docker.service`，允许使用 `TCP` 连接 `Docker`
+
+```
+ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+```
+
 ## 搭建自己的Gitlab
 
 ### 安装Gitlab
@@ -146,7 +152,7 @@ docker service create \
 
 ## 创建一个Demo项目
 
-登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
 
 
 ## 配置镜像仓库

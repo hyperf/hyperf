@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Redis;
@@ -47,6 +47,12 @@ class RedisConnectionTest extends TestCase
             'auth' => 'redis',
             'db' => 0,
             'timeout' => 0.0,
+            'cluster' => [
+                'enable' => false,
+                'name' => null,
+                'seeds' => [],
+            ],
+            'options' => [],
             'pool' => [
                 'min_connections' => 1,
                 'max_connections' => 30,

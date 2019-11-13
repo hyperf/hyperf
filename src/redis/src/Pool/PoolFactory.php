@@ -7,14 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Redis\Pool;
 
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
@@ -24,7 +23,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var RedisPool[]
      */
     protected $pools = [];
 

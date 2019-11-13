@@ -7,19 +7,19 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake\MetaGenerator;
 
-use Hyperf\Snowflake\ConfigInterface;
+use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
 
 class RandomMilliSecondMetaGenerator extends MetaGenerator
 {
-    public function __construct(ConfigInterface $config, int $beginTimeStamp)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp)
     {
-        parent::__construct($config, $beginTimeStamp * 1000);
+        parent::__construct($configuration, $beginTimestamp * 1000);
     }
 
     public function getDataCenterId(): int
@@ -32,16 +32,16 @@ class RandomMilliSecondMetaGenerator extends MetaGenerator
         return rand(0, 31);
     }
 
-    public function getTimeStamp(): int
+    public function getTimestamp(): int
     {
         return intval(microtime(true) * 1000);
     }
 
-    public function getNextTimeStamp(): int
+    public function getNextTimestamp(): int
     {
-        $timestamp = $this->getTimeStamp();
-        while ($timestamp <= $this->lastTimeStamp) {
-            $timestamp = $this->getTimeStamp();
+        $timestamp = $this->getTimestamp();
+        while ($timestamp <= $this->lastTimestamp) {
+            $timestamp = $this->getTimestamp();
         }
 
         return $timestamp;

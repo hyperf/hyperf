@@ -12,6 +12,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "ext-swoole": ">=4.4",
         "doctrine/inflector": "^1.3",
         "hyperf/contract": "~1.1.0"
     },
@@ -27,7 +28,8 @@
     "suggest": {
         "symfony/var-dumper": "Required to use the dd function (^4.1).",
         "symfony/serializer": "Required to use SymfonyNormalizer (^4.3)",
-        "symfony/property-access": "Required to use SymfonyNormalizer (^4.3)"
+        "symfony/property-access": "Required to use SymfonyNormalizer (^4.3)",
+        "hyperf/di": "Required to use ExceptionNormalizer"
     },
     "autoload": {
         "files": [

@@ -1,12 +1,12 @@
 # 路由
 
-默认情况下路由由 [nikic/fast-route](https://github.com/nikic/FastRoute) 提供支持，并由 [hyperf/http-server](https://github.com/hyperf-cloud/http-server) 组件负责接入到 `Hyperf` 中，`RPC` 路由由对应的 [hyperf/rpc-server](https://github.com/hyperf-cloud/rpc-server) 组件负责。
+默认情况下路由由 [nikic/fast-route](https://github.com/nikic/FastRoute) 提供支持，并由 [hyperf/http-server](https://github.com/hyperf/http-server) 组件负责接入到 `Hyperf` 中，`RPC` 路由由对应的 [hyperf/rpc-server](https://github.com/hyperf/rpc-server) 组件负责。
 
 ## HTTP 路由
 
 ### 通过配置文件定义路由
 
-在 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 骨架下，默认在 `config/routes.php` 文件内完成所有的路由定义，当然如果您路由众多，您也可以对该文件进行扩展，以适应您的需求，但 `Hyperf` 还支持 `注解路由`，我们更推荐使用 `注解路由`，特别是在路由众多的情况下。   
+在 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 骨架下，默认在 `config/routes.php` 文件内完成所有的路由定义，当然如果您路由众多，您也可以对该文件进行扩展，以适应您的需求，但 `Hyperf` 还支持 `注解路由`，我们更推荐使用 `注解路由`，特别是在路由众多的情况下。   
 
 #### 通过闭包定义路由
 
@@ -68,7 +68,7 @@ Router::addRoute(['GET', 'POST','PUT','DELETE'], $uri, $callback);
 
 #### 路由组的定义方式
 
-实际路由为 `gourp/route`, 即 `/user/index`, `/user/store`, `/user/update`, `/user/delete` 
+实际路由为 `group/route`, 即 `/user/index`, `/user/store`, `/user/update`, `/user/delete` 
 
 ```php
 Router::addGroup('/user/',function (){

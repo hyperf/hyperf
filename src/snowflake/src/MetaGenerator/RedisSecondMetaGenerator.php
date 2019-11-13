@@ -7,62 +7,32 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake\MetaGenerator;
 
-use Hyperf\Contract\ConfigInterface as HyperfConfig;
-use Hyperf\Redis\RedisProxy;
-use Hyperf\Snowflake\ConfigInterface;
-use Hyperf\Snowflake\MetaGenerator;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Snowflake\ConfigurationInterface;
 
-class RedisSecondMetaGenerator extends MetaGenerator
+class RedisSecondMetaGenerator extends RedisMetaGenerator
 {
-    const REDIS_KEY = 'hyperf:snowflake:worker';
-
-    protected $workerId;
-
-    protected $dataCenterId;
-
-    public function __construct(HyperfConfig $hConfig, ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND, ConfigInterface $config)
     {
-        parent::__construct($config, $beginTimeStamp);
-
-        $pool = $hConfig->get('snowflake.' . static::class . '.pool', 'default');
-
-        /** @var \Redis $redis */
-        $redis = make(RedisProxy::class, [
-            'pool' => $pool,
-        ]);
-
-        $id = $redis->incr(static::REDIS_KEY);
-
-        $this->workerId = $id % $config->maxWorkerId();
-        $this->dataCenterId = intval($id / $config->maxWorkerId()) % $config->maxDataCenterId();
+        parent::__construct($configuration, $beginTimestamp, $config);
     }
 
-    public function getDataCenterId(): int
-    {
-        return $this->dataCenterId;
-    }
-
-    public function getWorkerId(): int
-    {
-        return $this->workerId;
-    }
-
-    public function getTimeStamp(): int
+    public function getTimestamp(): int
     {
         return time();
     }
 
-    public function getNextTimeStamp(): int
+    public function getNextTimestamp(): int
     {
-        return $this->lastTimeStamp + 1;
+        return $this->lastTimestamp + 1;
     }
 
-    protected function clockMovedBackwards($timestamp, $lastTimeStamp)
+    protected function clockMovedBackwards($timestamp, $lastTimestamp)
     {
     }
 }

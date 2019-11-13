@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Command;
@@ -17,9 +17,8 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
+use Swoole\Timer;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class InitProxyCommand extends Command
 {
@@ -49,21 +48,13 @@ class InitProxyCommand extends Command
 
     public function handle()
     {
+        $this->warn('This command does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.');
+
         $this->createAopProxies();
 
+        Timer::clearAll();
+
         $this->output->writeln('<info>Proxy class create success.</info>');
-    }
-
-    protected function clearRuntime($paths)
-    {
-        $finder = new Finder();
-        $finder->files()->in($paths)->name(['*.php', '*.cache']);
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $path = $file->getRealPath();
-            @unlink($path);
-        }
     }
 
     protected function getScanDir()
@@ -91,18 +82,14 @@ class InitProxyCommand extends Command
     {
         $scanDirs = $this->getScanDir();
 
-        $runtime = BASE_PATH . '/runtime/container/';
-        if (is_dir($runtime)) {
-            $this->clearRuntime($runtime);
-        }
-
-        $classCollection = $this->scanner->scan($scanDirs);
+        $meta = $this->scanner->scan($scanDirs);
+        $classCollection = array_keys($meta);
 
         foreach ($classCollection as $item) {
             try {
                 $this->container->get($item);
             } catch (\Throwable $ex) {
-                // Entry cannot be resoleved.
+                // Entry cannot be resolved.
             }
         }
 
@@ -111,7 +98,7 @@ class InitProxyCommand extends Command
                 try {
                     $this->container->get($key);
                 } catch (\Throwable $ex) {
-                    // Entry cannot be resoleved.
+                    // Entry cannot be resolved.
                 }
             }
         }

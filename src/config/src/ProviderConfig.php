@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Config;
@@ -49,7 +49,7 @@ class ProviderConfig
     protected static function loadProviders(array $providers): array
     {
         $providerConfigs = [];
-        foreach ($providers ?? [] as $provider) {
+        foreach ($providers as $provider) {
             if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                 $providerConfigs[] = (new $provider())();
             }

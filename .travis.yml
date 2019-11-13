@@ -5,17 +5,11 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.3.6"
-    - php: 7.2
-      env: SW_VERSION="4.4.4"
+      env: SW_VERSION="4.4.12"
     - php: 7.3
-      env: SW_VERSION="4.3.6"
-    - php: 7.3
-      env: SW_VERSION="4.4.4"
+      env: SW_VERSION="4.4.12"
     - php: master
-      env: SW_VERSION="4.3.6"
-    - php: master
-      env: SW_VERSION="4.4.4"
+      env: SW_VERSION="4.4.12"
 
   allow_failures:
     - php: master
@@ -44,5 +38,6 @@ before_script:
   - composer config -g process-timeout 900 && composer update
   
 script:
-  - composer analyse src/di src/json-rpc
-  - composer test
+  - composer analyse src/di src/json-rpc src/tracer src/metric src/redis src/nats src/db
+  - composer test -- --exclude-group NonCoroutine
+  - vendor/bin/phpunit --group NonCoroutine

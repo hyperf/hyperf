@@ -15,12 +15,14 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Command\\": "tests/"
         }
     },
     "require": {
         "php": ">=7.2",
-        "symfony/console": "^4.2",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/utils": "~1.1.0",
+        "psr/event-dispatcher": "^1.0",
+        "symfony/console": "^4.2"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -30,6 +32,9 @@
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {

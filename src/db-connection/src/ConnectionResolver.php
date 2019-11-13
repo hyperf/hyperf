@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DbConnection;
@@ -64,6 +64,7 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             $pool = $this->factory->getPool($name);
+            // When Mysql connect failed, it will be catched by `Hyperf\Database\Connectors\ConnectionFactory`.
             $connection = $pool->get()->getConnection();
             Context::set($id, $connection);
             if (Coroutine::inCoroutine()) {

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Utils;
@@ -30,5 +30,19 @@ class ContextTest extends TestCase
         }));
 
         $this->assertSame(2, Context::get('override.id'));
+    }
+
+    public function testGetOrSet()
+    {
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::getOrSet('test.store.id', function () {
+            return 1;
+        }));
+        $this->assertSame(1, Context::getOrSet('test.store.id', function () {
+            return 2;
+        }));
+
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::getOrSet('test.store.id', 1));
     }
 }

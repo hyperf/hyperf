@@ -7,61 +7,31 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake\MetaGenerator;
 
-use Hyperf\Contract\ConfigInterface as HyperfConfig;
-use Hyperf\Redis\RedisProxy;
-use Hyperf\Snowflake\ConfigInterface;
-use Hyperf\Snowflake\MetaGenerator;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Snowflake\ConfigurationInterface;
 
-class RedisMilliSecondMetaGenerator extends MetaGenerator
+class RedisMilliSecondMetaGenerator extends RedisMetaGenerator
 {
-    const REDIS_KEY = 'hyperf:snowflake:worker';
-
-    protected $workerId;
-
-    protected $dataCenterId;
-
-    public function __construct(HyperfConfig $hConfig, ConfigInterface $config, int $beginTimeStamp = self::DEFAULT_BEGIN_SECOND)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND, ConfigInterface $config)
     {
-        parent::__construct($config, $beginTimeStamp * 1000);
-
-        $pool = $hConfig->get('snowflake.' . static::class . '.pool', 'default');
-
-        /** @var \Redis $redis */
-        $redis = make(RedisProxy::class, [
-            'pool' => $pool,
-        ]);
-
-        $id = $redis->incr(static::REDIS_KEY);
-
-        $this->workerId = $id % $config->maxWorkerId();
-        $this->dataCenterId = intval($id / $config->maxWorkerId()) % $config->maxDataCenterId();
+        parent::__construct($configuration, $beginTimestamp * 1000, $config);
     }
 
-    public function getDataCenterId(): int
-    {
-        return $this->dataCenterId;
-    }
-
-    public function getWorkerId(): int
-    {
-        return $this->workerId;
-    }
-
-    public function getTimeStamp(): int
+    public function getTimestamp(): int
     {
         return intval(microtime(true) * 1000);
     }
 
-    public function getNextTimeStamp(): int
+    public function getNextTimestamp(): int
     {
-        $timestamp = $this->getTimeStamp();
-        while ($timestamp <= $this->lastTimeStamp) {
-            $timestamp = $this->getTimeStamp();
+        $timestamp = $this->getTimestamp();
+        while ($timestamp <= $this->lastTimestamp) {
+            $timestamp = $this->getTimestamp();
         }
 
         return $timestamp;

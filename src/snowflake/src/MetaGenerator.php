@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake;
@@ -17,69 +17,69 @@ use Hyperf\Snowflake\Exception\SnowflakeException;
 abstract class MetaGenerator implements MetaGeneratorInterface
 {
     /**
-     * @var ConfigInterface
+     * @var ConfigurationInterface
      */
-    protected $config;
+    protected $configuration;
 
     protected $sequence = 0;
 
-    protected $lastTimeStamp = 0;
+    protected $lastTimestamp = 0;
 
-    protected $beginTimeStamp = 0;
+    protected $beginTimestamp = 0;
 
-    public function __construct(ConfigInterface $config, int $beginTimeStamp)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp)
     {
-        $this->config = $config;
-        $this->lastTimeStamp = $this->getTimeStamp();
-        $this->beginTimeStamp = $beginTimeStamp;
+        $this->configuration = $configuration;
+        $this->lastTimestamp = $this->getTimestamp();
+        $this->beginTimestamp = $beginTimestamp;
     }
 
     public function generate(): Meta
     {
-        $timestamp = $this->getTimeStamp();
+        $timestamp = $this->getTimestamp();
 
-        if ($timestamp < $this->lastTimeStamp) {
-            $this->clockMovedBackwards($timestamp, $this->lastTimeStamp);
-        }
-
-        if ($timestamp == $this->lastTimeStamp) {
-            $this->sequence = ($this->sequence + 1) % $this->config->maxSequence();
+        if ($timestamp == $this->lastTimestamp) {
+            $this->sequence = ($this->sequence + 1) % $this->configuration->maxSequence();
             if ($this->sequence == 0) {
-                $timestamp = $this->getNextTimeStamp();
+                $timestamp = $this->getNextTimestamp();
             }
         } else {
             $this->sequence = 0;
         }
 
-        if ($timestamp < $this->beginTimeStamp) {
-            throw new SnowflakeException(sprintf('The beginTimeStamp %d is invalid, because it smaller than timestamp %d.', $this->beginTimeStamp, $timestamp));
+        if ($timestamp < $this->lastTimestamp) {
+            $this->clockMovedBackwards($timestamp, $this->lastTimestamp);
         }
 
-        $this->lastTimeStamp = $timestamp;
+        if ($timestamp < $this->beginTimestamp) {
+            throw new SnowflakeException(sprintf('The beginTimestamp %d is invalid, because it smaller than timestamp %d.', $this->beginTimestamp, $timestamp));
+        }
 
-        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp, $this->beginTimeStamp);
+        $this->lastTimestamp = $timestamp;
+
+        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp, $this->beginTimestamp);
     }
 
-    public function getBeginTimeStamp(): int
+    public function getBeginTimestamp(): int
     {
-        return $this->beginTimeStamp;
+        return $this->beginTimestamp;
     }
 
-    public function getConfig(): ConfigInterface
+    public function getConfiguration(): ConfigurationInterface
     {
-        return $this->config;
+        return $this->configuration;
     }
 
     abstract public function getDataCenterId(): int;
 
     abstract public function getWorkerId(): int;
 
-    abstract public function getTimeStamp(): int;
+    abstract public function getTimestamp(): int;
 
-    abstract public function getNextTimeStamp(): int;
+    abstract public function getNextTimestamp(): int;
 
-    protected function clockMovedBackwards($timestamp, $lastTimeStamp)
+    protected function clockMovedBackwards($timestamp, $lastTimestamp)
     {
-        throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds.', $lastTimeStamp - $timestamp));
+        throw new SnowflakeException(sprintf('Clock moved backwards. Refusing to generate id for %d milliseconds.', $lastTimestamp - $timestamp));
     }
 }

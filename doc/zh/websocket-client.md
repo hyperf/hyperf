@@ -1,6 +1,6 @@
 # WebSocket 协程客户端
 
-Hyperf 提供了对 WebSocket Client 的封装，可基于 [hyperf/websocket-client](https://github.com/hyperf-cloud/websocket-client) 组件对 WebSocket Server 进行访问；
+Hyperf 提供了对 WebSocket Client 的封装，可基于 [hyperf/websocket-client](https://github.com/hyperf/websocket-client) 组件对 WebSocket Server 进行访问；
 
 ## 安装
 
