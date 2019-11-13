@@ -318,12 +318,10 @@ class Translator implements TranslatorInterface
 
     /**
      * Get the context locale key.
-     *
-     * @return string
      */
-    public function getContextLocaleKey(): string
+    public function getLocaleContextKey(): string
     {
-        return sprintf('%s:%s', TranslatorInterface::class, 'locale');
+        return sprintf('%s::%s', TranslatorInterface::class, 'locale');
     }
 
     /**
@@ -331,9 +329,9 @@ class Translator implements TranslatorInterface
      */
     public function getLocale(): string
     {
-        $ctxLocale = Context::get($this->getContextLocaleKey());
+        $locale = Context::get($this->getLocaleContextKey());
 
-        return (string) ($ctxLocale ?? $this->locale);
+        return (string) ($locale ?? $this->locale);
     }
 
     /**
@@ -341,7 +339,7 @@ class Translator implements TranslatorInterface
      */
     public function setLocale(string $locale)
     {
-        Context::set($this->getContextLocaleKey(), $locale);
+        Context::set($this->getLocaleContextKey(), $locale);
     }
 
     /**
@@ -471,11 +469,8 @@ class Translator implements TranslatorInterface
 
     /**
      * Parse an array of basic segments.
-     *
-     * @param array $segments
-     * @return array
      */
-    protected function parseBasicSegments(array $segments)
+    protected function parseBasicSegments(array $segments): array
     {
         // The first segment in a basic array will always be the group, so we can go
         // ahead and grab that segment. If there is only one total segment we are
