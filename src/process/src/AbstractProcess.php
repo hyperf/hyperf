@@ -164,7 +164,7 @@ abstract class AbstractProcess implements ProcessInterface
         });
     }
 
-    protected function logThrowable(\Throwable $throwable)
+    protected function logThrowable(\Throwable $throwable): void
     {
         if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
