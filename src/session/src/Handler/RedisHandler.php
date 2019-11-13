@@ -27,9 +27,6 @@ class RedisHandler implements SessionHandlerInterface
      */
     protected $gcMaxLifeTime = 1200;
 
-    /**
-     * @param $redis
-     */
     public function __construct($redis, int $gcMaxLifeTime)
     {
         if (! $redis instanceof \Redis && ! $redis instanceof \RedisArray && ! $redis instanceof \RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {

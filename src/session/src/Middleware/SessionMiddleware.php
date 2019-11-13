@@ -26,12 +26,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class SessionMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \Hyperf\Session\SessionManager
+     * @var SessionManager
      */
     private $sessionManager;
 
     /**
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var ConfigInterface
      */
     private $config;
 
