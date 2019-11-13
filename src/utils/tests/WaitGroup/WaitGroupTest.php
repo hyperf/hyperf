@@ -18,7 +18,6 @@ class WaitGroupTest extends TestCase
             while ($i--) {
                 \Swoole\Coroutine::create(function () use ($wg, $i, &$result) {
                     \Swoole\Coroutine::sleep(1);
-                    //echo '输出' . $i . "\r\n";
                     array_push($result, true);
                     $wg->done();
                 });
@@ -26,7 +25,6 @@ class WaitGroupTest extends TestCase
             
             $wg->wait();
             $this->assertEquals(count($result), 2);
-            //echo "\r\nwait ok================\r\n";
             
             
             $wg->add();
@@ -36,7 +34,6 @@ class WaitGroupTest extends TestCase
             while ($i--) {
                 \Swoole\Coroutine::create(function () use ($wg, $i, &$result) {
                     \Swoole\Coroutine::sleep(1);
-                    //echo '输出' . $i . "\r\n";
                     array_push($result, true);
                     $wg->done();
                 });
@@ -44,7 +41,6 @@ class WaitGroupTest extends TestCase
             
             $wg->wait();
             $this->assertEquals(count($result), 2);
-            //echo "\r\nwait ok================\r\n";
             
             \Swoole\Coroutine::sleep(2);
         });
