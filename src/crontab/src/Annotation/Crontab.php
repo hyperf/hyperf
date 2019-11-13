@@ -54,6 +54,11 @@ class Crontab extends AbstractAnnotation
     public $mutexExpires;
 
     /**
+     * @var bool
+     */
+    public $onOneServer;
+
+    /**
      * @var array|string
      */
     public $callback;
