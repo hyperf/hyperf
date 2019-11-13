@@ -92,11 +92,10 @@ class OnPipeMessageListener implements ListenerInterface
 
     /**
      * Format processing
-     * @return mixed
      */
     private function formatValue($value)
     {
-        if ($this->config->get('apollo.strict_mode', false) === false) {
+        if (! $this->config->get('apollo.strict_mode', false)) {
             return $value;
         }
 
