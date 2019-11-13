@@ -90,9 +90,6 @@ class OnPipeMessageListener implements ListenerInterface
         }
     }
 
-    /**
-     * Format processing
-     */
     private function formatValue($value)
     {
         if (! $this->config->get('apollo.strict_mode', false)) {
