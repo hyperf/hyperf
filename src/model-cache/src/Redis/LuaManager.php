@@ -78,8 +78,8 @@ class LuaManager
     public function getLuaSha(string $key): string
     {
         if (empty($this->luaShas[$key])) {
-            $sha = $this->redis->script('load', $this->getOperator($key)->getScript());
+            $this->luaShas[$key] = $this->redis->script('load', $this->getOperator($key)->getScript());
         }
-        return $this->luaShas[$key] = $sha;
+        return $this->luaShas[$key];
     }
 }
