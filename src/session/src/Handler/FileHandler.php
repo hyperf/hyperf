@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Session\Handler;
@@ -44,7 +44,7 @@ class FileHandler implements SessionHandlerInterface
         $this->path = $path;
         $this->minutes = $minutes;
         if (! file_exists($path)) {
-            @mkdir($path, 755, true);
+            $files->makeDirectory($path, 0755, true);
         }
     }
 

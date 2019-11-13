@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Session;
@@ -75,7 +75,7 @@ class SessionManager
         $cookies = $request->getCookieParams();
         foreach ($cookies as $key => $value) {
             if ($key === $this->getSessionName()) {
-                return (string)$value;
+                return (string) $value;
             }
         }
         return null;

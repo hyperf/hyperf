@@ -7,15 +7,15 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Session;
 
+use Hyperf\Contract\SessionInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use SessionHandlerInterface;
-use Hyperf\Contract\SessionInterface;
 
 /**
  * This's a data class, please create an new instance for each requests.
@@ -276,7 +276,7 @@ class Session implements SessionInterface
      */
     public function token(): string
     {
-        return (string)$this->get('_token');
+        return (string) $this->get('_token');
     }
 
     /**

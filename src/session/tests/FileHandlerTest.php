@@ -1,13 +1,26 @@
 <?php
 
-namespace HyperfTest\Session;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
+namespace HyperfTest\Session;
 
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class FileHandlerTest extends TestCase
 {
     public function testReadAndWrite()
@@ -50,12 +63,11 @@ class FileHandlerTest extends TestCase
 
     public function testGc()
     {
-        $handler = new FileHandler(new Filesystem(), $path = '/tmp', 1);
+        $handler = new FileHandler(new Filesystem(), $path = __DIR__ . '/runtime/session', 1);
         $id = Str::random(40);
         $handler->write($id, 'foo');
         sleep(1);
         $handler->gc(1);
-        $this->assertFileNotExists('/tmp/' . $id);
+        $this->assertFileNotExists($path . '/' . $id);
     }
-
 }

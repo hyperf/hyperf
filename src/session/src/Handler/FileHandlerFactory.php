@@ -1,7 +1,16 @@
 <?php
 
-namespace Hyperf\Session\Handler;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Session\Handler;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -9,7 +18,6 @@ use Psr\Container\ContainerInterface;
 
 class FileHandlerFactory
 {
-
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
@@ -18,8 +26,6 @@ class FileHandlerFactory
         if (! $path) {
             throw new \InvalidArgumentException('Invalid session path.');
         }
-        $handler = new FileHandler($container->get(Filesystem::class), $path, $minutes);
-        return $handler;
+        return new FileHandler($container->get(Filesystem::class), $path, $minutes);
     }
-
 }

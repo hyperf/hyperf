@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Session\Middleware;
@@ -120,7 +120,7 @@ class SessionMiddleware implements MiddlewareInterface
             // @TODO Adapte original response object.
             throw new \RuntimeException('Unsupport response object.');
         }
-        /** @var \Hyperf\HttpMessage\Server\Response $response */
+        /* @var \Hyperf\HttpMessage\Server\Response $response */
         return $response->withCookie(new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly));
     }
 

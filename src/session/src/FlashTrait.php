@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Session;
@@ -16,6 +16,7 @@ trait FlashTrait
 {
     /**
      * Flash a key / value pair to the session.
+     * @param mixed $value
      */
     public function flash(string $key, $value = true): void
     {
@@ -28,6 +29,7 @@ trait FlashTrait
 
     /**
      * Flash a key / value pair to the session for immediate use.
+     * @param mixed $value
      */
     public function now(string $key, $value): void
     {
@@ -67,6 +69,18 @@ trait FlashTrait
     }
 
     /**
+     * Age the flash data for the session.
+     */
+    public function ageFlashData(): void
+    {
+        $this->forget($this->get('_flash.old', []));
+
+        $this->put('_flash.old', $this->get('_flash.new', []));
+
+        $this->put('_flash.new', []);
+    }
+
+    /**
      * Merge new flash keys into the new flash array.
      */
     protected function mergeNewFlashes(array $keys): void
@@ -82,17 +96,5 @@ trait FlashTrait
     protected function removeFromOldFlashData(array $keys): void
     {
         $this->put('_flash.old', array_diff($this->get('_flash.old', []), $keys));
-    }
-
-    /**
-     * Age the flash data for the session.
-     */
-    public function ageFlashData(): void
-    {
-        $this->forget($this->get('_flash.old', []));
-
-        $this->put('_flash.old', $this->get('_flash.new', []));
-
-        $this->put('_flash.new', []);
     }
 }
