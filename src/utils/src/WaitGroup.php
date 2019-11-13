@@ -13,38 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Swoole\Coroutine\Channel as SwooleChannel;
+use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
 
-class WaitGroup
+class WaitGroup extends SwooleWaitGroup
 {
-    /**
-     * @var int
-     */
-    private $counter = 0;
-
-    /**
-     * @var SwooleChannel
-     */
-    private $channel;
-
-    public function __construct()
-    {
-        $this->channel = new SwooleChannel();
-    }
-
-    public function add(int $incr = 1): void
-    {
-        $this->counter += $incr;
-    }
-
-    public function done(): void
-    {
-        $this->channel->push(true);
-    }
-
-    public function wait(): void
-    {
-        while ($this->counter && $this->counter--) {
-            $this->channel->pop();
-        }
-    }
+    
 }
