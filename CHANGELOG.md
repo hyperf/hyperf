@@ -8,6 +8,7 @@
 - [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
 - [#931](https://github.com/hyperf/hyperf/pull/931) Added `strict_mode` for config-apollo.
 - [#933](https://github.com/hyperf/hyperf/pull/933) Added plates template engine for view.
+- [#941](https://github.com/hyperf/hyperf/pull/941) Added an zookeeper adapter for Hyperf config component.
 
 ## Fixed
 
