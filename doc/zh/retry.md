@@ -26,9 +26,117 @@ public function foo()
 }
 ```
 
-## 注解配置
+## 深度定制
 
-Retry 的完整注解默认属性如下：
+本组件通过组合多种重试策略实现了可插拔性。每个策略关注重试过程中的不同侧面，如重试判断、重试间隔，结果处理等。通过调整注解中使用的策略就可以配置出适配任意场景下的重试切面。
+
+建议根据具体业务需要构造自己的注解别名。下面我们演示如何制作最大尝试次数为 3 的新注解。
+
+> 在默认的 `Retry` 注解中，您可以通过 `@Retry{maxAttempts=3}` 来控制最大重试次数。为了演示需要，先假装它不存在。
+
+首先您要新建一个 `注解类` 并继承 `\Hyperf\Retry\Annotations\AbstractRetry` 。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Annotation;
+
+use Doctrine\Common\Annotations\Annotation\Target;
+
+/**
+ * @Annotation
+ * @Target({"METHOD"})
+ */
+class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
+{
+}
+```
+
+根据您的需要，重写 `$policies` 属性。限制重试次数，需要使用 `MaxAttemptsRetryPolicy` 。`MaxAttemptsRetryPolicy` 还需要一个参数，那就是最大尝试的次数限制，`$maxAttempts` 。把这两个属性加入上述的类中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Annotation;
+
+use Doctrine\Common\Annotations\Annotation\Target;
+
+/**
+ * @Annotation
+ * @Target({"METHOD"})
+ */
+class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
+{
+    public $policies = [
+        MaxAttemptsRetryPolicy::class,
+    ];
+    public $maxAttempts = 3;
+}
+```
+
+现在 `@MyRetry` 这个注解会导致任何方法都会被循环执行三次，我们还需要加入一个新的策略 `ClassifierRetryPolicy` 来控制什么样的错误才能被重试。加入 `ClassifierRetryPolicy` 后默认只会在抛出 `Throwable` 后重试。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Annotation;
+
+use Doctrine\Common\Annotations\Annotation\Target;
+
+/**
+ * @Annotation
+ * @Target({"METHOD"})
+ */
+class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
+{
+    public $policies = [
+        MaxAttemptsRetryPolicy::class,
+        ClassifierRetryPolicy::class,
+    ];
+    public $maxAttempts = 3;
+}
+```
+
+您可以继续完善该注解，直到该注解满足您定制化的需求。例如，配置只重试用户自定义的 `TimeoutException` , 并使用重试至少休眠 100 毫秒的变长间歇, 方法如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Annotation;
+
+use Doctrine\Common\Annotations\Annotation\Target;
+
+/**
+ * @Annotation
+ * @Target({"METHOD"})
+ */
+class MyRetry extends \Hyperf\Retry\Annotation\Retry
+{
+    public $policies = [
+        MaxAttemptsRetryPolicy::class,
+        ClassifierRetryPolicy::class,
+        SleepRetryPolicy::class,
+    ];
+    public $maxAttempts = 3;
+    public $base = 100;
+    public $strategy = \Hyperf\Retry\BackoffStrategy::class;
+    public $retryThrowables = [\App\Exception\TimeoutException::class];
+}
+```
+
+只要确保该文件被 Hyperf 扫描，就可以在方法中使用 `@MyRetry` 注解来重试超时错误了。
+
+## 默认配置
+
+`@Retry` 的完整注解默认属性如下：
 
 ```php
 /**
@@ -118,9 +226,7 @@ public $ignoreThrowables = [];
 public $fallback = '';
 ```
 
-## 策略
-
-本组件通过组合多种重试策略实现了可插拔性。每个策略关注重试过程中的不同侧面，如重试判断、重试间隔，结果处理等。通过调整注解中使用的策略就可以配置出适配任意场景下的重试切面。
+## 可选策略
 
 ### 最大尝试次数策略 `MaxAttemptsRetryPolicy`
 
@@ -191,42 +297,13 @@ public $fallback = '';
 
 因为重试注解配置较为复杂，这里提供了一些预设的别名便于书写。
 
-* `@RetryThrowable` 只重试 `Throwable`。和默认的 Retry 相同。
+* `@RetryThrowable` 只重试 `Throwable`。和默认的 `@Retry` 相同。
 
 * `@RetryFalsy` 只重试返回值弱等于 false（$result == false)的错误，不重试异常。
 
-* `@BackoffRetryThrowable` `@RetryThrowable` 的变长重试间歇版本，初次重试间歇 100 毫秒。
+* `@BackoffRetryThrowable` `@RetryThrowable` 的变长重试间歇版本，重试间歇至少 100 毫秒。
 
-* `@BackoffRetryFalsy` `@RetryFalsy` 的变长重试间歇版本，初次重试间歇 100 毫秒。
-
-建议根据具体业务需要构造自己的注解别名。例如，配置只重试用户自定义的 `TimeoutException` , 并使用变长间歇, 方法如下：
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Annotation;
-
-use Doctrine\Common\Annotations\Annotation\Target;
-
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
-class RetryTimeout extends \Hyperf\Retry\Annotation\Retry
-{
-    public $policies = [
-        ClassifierRetryPolicy::class,
-        SleepRetryPolicy::class,
-    ];
-    public $base = 100;
-    public $strategy = \Hyperf\Retry\BackoffStrategy::class;
-    public $retryThrowables = [\App\Exception\TimeoutException::class];
-}
-```
-
-只要确保该文件被 Hyperf 扫描，就可以在方法中使用 `@RetryTimeout` 注解来重试超时错误了。
+* `@BackoffRetryFalsy` `@RetryFalsy` 的变长重试间歇版本，重试间歇至少 100 毫秒。
 
 ## Fluent 链式调用
 

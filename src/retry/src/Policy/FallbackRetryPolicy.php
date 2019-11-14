@@ -33,7 +33,12 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
             return false;
         }
         $retryContext['last_throwable'] = $retryContext['last_result'] = null;
-        $arguments = $retryContext['proceeding_join_point']->getArguments();
+        if (isset($retryContext['proceeding_join_point'])) {
+            $arguments = $retryContext['proceeding_join_point']->getArguments();
+        } else {
+            $arguments = [];
+        }
+        
         try {
             $retryContext['last_result'] = call_user_func($this->fallback, ...$arguments);
         } catch (\Throwable $throwable) {

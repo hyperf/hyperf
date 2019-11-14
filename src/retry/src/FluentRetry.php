@@ -95,7 +95,15 @@ class FluentRetry
         $policy = new HybridRetryPolicy(...$this->policies);
         $context = $policy->start();
         // Fake join point for compatibility with Aspect;
-        $context['proceeding_join_point'] = new ProceedingJoinPoint(\Closure::fromCallable($callable), '', '', []);
+        if (class_exists(ProceedingJoinPoint::class)) {
+            $context['proceeding_join_point'] = new ProceedingJoinPoint(
+                \Closure::fromCallable($callable),
+                '',
+                '',
+                []
+            );
+        }
+        
         if (! $policy->canRetry($context)) {
             goto end;
         }
