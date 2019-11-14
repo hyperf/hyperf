@@ -63,7 +63,6 @@ abstract class AbstractLazyProxyBuilder
         $this->proxyClassName = $proxyClassName;
         $this->originalClassName = $originalClassName;
         $this->builder = $this->factory->class(class_basename($proxyClassName))
-
             ->addStmt(new ClassConst([new Const_('PROXY_TARGET', new String_($originalClassName))]))
             ->addStmt($this->factory->useTrait('\\Hyperf\\Di\\LazyLoader\\LazyProxyTrait'))
             ->setDocComment("/**

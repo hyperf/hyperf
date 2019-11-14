@@ -35,13 +35,13 @@ class PublicMethodVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node)
     {
         if ($node instanceof ClassMethod) {
-            $staticCall =
+            $methodCall =
                 new Return_(new MethodCall(new Variable('this'), '__call', [
                     new Node\Arg(new MagicConstFunction()),
                     new Node\Arg(new FuncCall(new Name('func_get_args'))),
                 ]));
             $node->stmts = [
-                $staticCall,
+                $methodCall,
             ];
             $node->flags &= ~Class_::MODIFIER_ABSTRACT;
         }
