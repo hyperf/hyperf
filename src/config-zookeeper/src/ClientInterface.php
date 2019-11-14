@@ -10,10 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\ConfigZookeeper;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+interface ClientInterface
 {
+    /**
+     * Pull the config values from configuration center, and then update the Config values.
+     */
+    public function pull(): array;
 }

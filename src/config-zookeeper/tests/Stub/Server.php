@@ -10,10 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace HyperfTest\ConfigZookeeper\Stub;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+class Server extends \Swoole\Server
 {
+    public function __construct()
+    {
+    }
 }

@@ -10,10 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
-
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
-{
-}
+return [
+    'enable' => false,
+    'interval' => 5,
+    'server' => env('ZOOKEEPER_SERVER', '127.0.0.1:2181'),
+    'path' => env('ZOOKEEPER_CONFIG_PATH', '/conf'),
+];

@@ -10,10 +10,17 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\ConfigZookeeper;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+class PipeMessage
 {
+    /**
+     * @var array
+     */
+    public $data;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
 }
