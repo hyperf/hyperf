@@ -15,6 +15,10 @@
 - [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
 
+## Changed
+
+- [#934](https://github.com/hyperf/hyperf/pull/934) WaitGroup inherit \Swoole\Coroutine\WaitGroup.
+
 # v1.1.5 - 2019-11-07
 
 ## Added

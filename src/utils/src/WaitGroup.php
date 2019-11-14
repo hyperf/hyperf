@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
-use Swoole\Coroutine\Channel as SwooleChannel;
 use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
 
 class WaitGroup extends SwooleWaitGroup
 {
-    
 }
