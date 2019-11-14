@@ -1,6 +1,6 @@
 # 重试
 
-网络通讯天然是不稳定的，因此在分布式系统中，需要有良好的容错设计。无差别重试是非常危险的。当通讯出现问题时，每个请求都重试一次，相当于系统IO负载增加了100%，容易诱发雪崩事故。重试还要考虑错误的原因，如果是无法通过重试解决的问题，那么重试只是浪费资源而已。除此之外，如果重试的接口不具备幂等性，还可能造成数据不一致等问题。
+网络通讯天然是不稳定的，因此在分布式系统中，需要有良好的容错设计。无差别重试是非常危险的。当通讯出现问题时，每个请求都重试一次，相当于系统 IO 负载增加了 100%，容易诱发雪崩事故。重试还要考虑错误的原因，如果是无法通过重试解决的问题，那么重试只是浪费资源而已。除此之外，如果重试的接口不具备幂等性，还可能造成数据不一致等问题。
 
 本组件提供了丰富的重试机制，可以满足多种场景的重试需求。
 
@@ -28,7 +28,7 @@ public function foo()
 
 ## 注解配置
 
-Retry的完整注解默认属性如下：
+Retry 的完整注解默认属性如下：
 
 ```php
 /**
@@ -135,10 +135,10 @@ public $fallback = '';
 
 |    参数    | 类型 | 说明 |
 | ---------- | --- | --- |
-| ignoreThrowables |  array | 无视的 `Throwable`类名 。优先于 `retryThrowables` |
-| retryThrowables | array | 需要重试的 `Throwable`类名 。优先于 `retryOnThrowablePredicate` |
-| retryOnThrowablePredicate | callable | 通过一个函数来判断 `Throwable` 是否可以重试。如果可以重试，请返回true,反之必须返回false。 |
-| retryOnResultPredicate | callable | 通过一个函数来判断返回值是否可以重试。如果可以重试，请返回true，反之必须返回false。 |
+| ignoreThrowables |  array | 无视的 `Throwable` 类名 。优先于 `retryThrowables` |
+| retryThrowables | array | 需要重试的 `Throwable` 类名 。优先于 `retryOnThrowablePredicate` |
+| retryOnThrowablePredicate | callable | 通过一个函数来判断 `Throwable` 是否可以重试。如果可以重试，请返回 true, 反之必须返回 false。 |
+| retryOnResultPredicate | callable | 通过一个函数来判断返回值是否可以重试。如果可以重试，请返回 true，反之必须返回 false。 |
 
 ### 回退策略 `FallbackRetryPolicy`
 
@@ -146,7 +146,7 @@ public $fallback = '';
 
 |    参数    | 类型 | 说明 |
 | ---------- | --- | --- |
-| fallback |  callable | fallback方法 |
+| fallback |  callable | fallback 方法 |
 
 ### 睡眠策略 `SleepRetryPolicy`
 
@@ -175,7 +175,7 @@ public $fallback = '';
 
 ### 预算策略 `BudgetRetryPolicy`
 
-每一个 `@Retry` 注解处会生成一个对应的令牌桶，每当注解方法被调用时，就在令牌桶中放入一个具有过期时间(ttl)的令牌。如果发生可重试的错误，重试前要消耗掉对应的令牌数量(percentCanRetry)，否则就不会重试（错误继续向下传递）。比如，当percentCanRetry=0.2，则每次重试要消耗5个令牌。如此，遇到对端宕机时，最多只会造成20%的额外重试消耗，对于大多数系统都应该可以接受了。
+每一个 `@Retry` 注解处会生成一个对应的令牌桶，每当注解方法被调用时，就在令牌桶中放入一个具有过期时间(ttl)的令牌。如果发生可重试的错误，重试前要消耗掉对应的令牌数量(percentCanRetry)，否则就不会重试（错误继续向下传递）。比如，当 percentCanRetry=0.2，则每次重试要消耗 5 个令牌。如此，遇到对端宕机时，最多只会造成 20% 的额外重试消耗，对于大多数系统都应该可以接受了。
 
 为了照顾某些使用频率较低的方法，每秒还会生成一定数量的“低保”令牌(minRetriesPerSec)，确保系统稳定。
 
@@ -185,19 +185,19 @@ public $fallback = '';
 | retryBudget.minRetriesPerSec |  int | 每秒“低保”最少可以重试的次数|
 | retryBudget.percentCanRetry |  float | 重试次数不超过总请求数的百分比 |
 
-> 重试组件的令牌桶在worker之间不共享，所以最终的重试次数要乘以worker数量。
+> 重试组件的令牌桶在 worker 之间不共享，所以最终的重试次数要乘以 worker 数量。
 
 ## 注解别名
 
 因为重试注解配置较为复杂，这里提供了一些预设的别名便于书写。
 
-* `@RetryThrowable` 只重试 `Throwable`。和默认的Retry相同。
+* `@RetryThrowable` 只重试 `Throwable`。和默认的 Retry 相同。
 
-* `@RetryFalsy` 只重试返回值弱等于false（$result == false)的错误，不重试异常。
+* `@RetryFalsy` 只重试返回值弱等于 false（$result == false)的错误，不重试异常。
 
-* `@BackoffRetryThrowable` `@RetryThrowable` 的变长重试间歇版本，初次重试间歇100毫秒。
+* `@BackoffRetryThrowable` `@RetryThrowable` 的变长重试间歇版本，初次重试间歇 100 毫秒。
 
-* `@BackoffRetryFalsy` `@RetryFalsy` 的变长重试间歇版本，初次重试间歇100毫秒。
+* `@BackoffRetryFalsy` `@RetryFalsy` 的变长重试间歇版本，初次重试间歇 100 毫秒。
 
 建议根据具体业务需要构造自己的注解别名。例如，配置只重试用户自定义的 `TimeoutException` , 并使用变长间歇, 方法如下：
 
@@ -226,13 +226,13 @@ class RetryTimeout extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-只要确保该文件被Hyperf扫描，就可以在方法中使用 `@RetryTimeout` 注解来重试超时错误了。
+只要确保该文件被 Hyperf 扫描，就可以在方法中使用 `@RetryTimeout` 注解来重试超时错误了。
 
 ## Fluent 链式调用
 
-除了注解方法使用本组件外，您还可以通过常规PHP函数使用。
+除了注解方法使用本组件外，您还可以通过常规 PHP 函数使用。
 
-```
+```php
 <?php
 
 $result = \Hyperf\Retry\Retry::with(
@@ -247,7 +247,7 @@ $result = \Hyperf\Retry\Retry::with(
 ```
 为了增强可读性，还可以使用如下流畅写法。
 
-```
+```php
 <?php
 
 $result = \Hyperf\Retry\Retry::whenReturns(false) // 当返回false时重试
