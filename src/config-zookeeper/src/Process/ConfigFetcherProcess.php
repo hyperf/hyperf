@@ -15,6 +15,8 @@ namespace Hyperf\ConfigZookeeper\Process;
 use Hyperf\ConfigZookeeper\ClientInterface;
 use Hyperf\ConfigZookeeper\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Psr\Container\ContainerInterface;
@@ -69,15 +71,24 @@ class ConfigFetcherProcess extends AbstractProcess
     public function handle(): void
     {
         while (true) {
-            $config = $this->client->pull();
-            if ($config !== $this->cacheConfig) {
-                $this->cacheConfig = $config;
-                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($config), $workerId);
+            try {
+                $config = $this->client->pull();
+                if ($config !== $this->cacheConfig) {
+                    $this->cacheConfig = $config;
+                    $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
+                    for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
+                        $this->server->sendMessage(new PipeMessage($config), $workerId);
+                    }
                 }
+            } catch (\Throwable $exception) {
+                if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $formatter = $this->container->get(FormatterInterface::class);
+                    $logger->error($formatter->format($exception));
+                }
+            } finally {
+                sleep($this->config->get('zookeeper.interval', 5));
             }
-            sleep($this->config->get('zookeeper.interval', 5));
         }
     }
 }

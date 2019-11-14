@@ -19,19 +19,9 @@ use Swoole\Zookeeper;
 class Client implements ClientInterface
 {
     /**
-     * @var array
-     */
-    public $fetchConfig;
-
-    /**
      * @var ConfigInterface
      */
     private $config;
-
-    /**
-     * @var array
-     */
-    private $servers;
 
     public function __construct(ContainerInterface $container)
     {
