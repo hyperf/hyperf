@@ -16,5 +16,5 @@ interface RetryBudgetInterface
 {
     public function produce(): void;
 
-    public function consume(): bool;
+    public function consume(bool $dryRun = false): bool;
 }

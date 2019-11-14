@@ -12,14 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry;
 
-class NoOpRetryBudget implements RetryBudgetInterface
+class Retry
 {
-    public function produce(): void
+    public static function __callStatic($method, $arguments)
     {
-    }
-
-    public function consume(bool $dryRun = false): bool
-    {
-        return true;
+        $retry = new FluentRetry();
+        return $retry->{$method}(...$arguments);
     }
 }

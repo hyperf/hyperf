@@ -12,52 +12,57 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
-class ResultFilterRetryPolicy implements RetryPolicyInterface
+use Hyperf\Utils\Arr;
+
+class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    private $ignoredThrowables;
+    /**
+     * @var string[]
+     */
+    private $ignoreThrowables;
+
+    /**
+     * @var string[]
+     */
     private $retryThrowables;
+
+    /**
+     * @var callable|string
+     */
     private $retryOnThrowablePredicate;
+
+    /**
+     * @var callable|string
+     */
     private $retryOnResultPredicate;
 
     public function __construct(
-        array $ignoredThrowables,
-        array $retryThrowables,
-        callable $retryOnThrowablePredicate,
-        callable $retryOnResultPredicate
+        array $ignoreThrowables = [],
+        array $retryThrowables = [\Throwable::class],
+        $retryOnThrowablePredicate = '',
+        $retryOnResultPredicate = ''
     ) {
-        $this->ignoredThrowables = $ignoredThrowables;
+        $this->ignoreThrowables = $ignoreThrowables;
         $this->retryThrowables = $retryThrowables;
         $this->retryOnThrowablePredicate = $retryOnThrowablePredicate;
         $this->retryOnResultPredicate = $retryOnResultPredicate;
     }
-    
-    public function canRetry(array $retryContext): bool
+
+    public function canRetry(array &$retryContext): bool
     {
-        if (isset($retryContext['last_throwable'])) {
+        if ($this->isFirstTry($retryContext)) {
+            return true;
+        }
+        if ($retryContext['last_throwable'] !== null) {
             return $this->isRetriable($retryContext['last_throwable']);
         }
-        if (isset($retryContext['last_result'])) {
+        if (! is_callable($this->retryOnResultPredicate)) {
+            return false;
+        }
+        if ($retryContext['last_result'] !== null) {
             return call_user_func($this->retryOnResultPredicate, $retryContext['last_result']);
         }
-        return true;
-    }
-
-    public function start(array $parentRetryContext = []): array
-    {
-        $parentRetryContext['last_result'] = null;
-        $parentRetryContext['last_throwable'] = null;
-        return $parentRetryContext;
-    }
-
-    public function break(array $retryContext): void
-    {
-        //no op
-    }
-
-    public function registerResult(array &$retryContext, $result, ?Throwable $throwable = null)
-    {
-        $retryContext['last_result'] = $result;
-        $parentRetryContext['last_throwable'] = $throwable;
+        return false;
     }
 
     private function in(\Throwable $t, array $arr): bool
@@ -75,11 +80,12 @@ class ResultFilterRetryPolicy implements RetryPolicyInterface
         if ($this->in($t, $this->ignoreThrowables)) {
             return false;
         }
-
         if ($this->in($t, $this->retryThrowables)) {
             return true;
         }
-
+        if (! is_callable($this->retryOnThrowablePredicate)) {
+            return false;
+        }
         if (call_user_func($this->retryOnThrowablePredicate, $t)) {
             return true;
         }

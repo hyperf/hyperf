@@ -15,11 +15,16 @@ namespace HyperfTest\Retry;
 use Hyperf\Di\Aop\AnnotationMetadata;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
+use Hyperf\Retry\Annotation\AbstractRetry;
+use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Aspect\RetryAnnotationAspect;
 use Hyperf\Retry\BackoffStrategy;
 use Hyperf\Retry\FlatStrategy;
 use Hyperf\Retry\NoOpRetryBudget;
+use Hyperf\Retry\Policy\TimeoutRetryPolicy;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -34,7 +39,11 @@ class RetryAnnotationAspectTest extends TestCase
 {
     protected function setUp(): void
     {
-        $this->mockContainer();
+        $container = new Container(new DefinitionSource([
+            RetryBudgetInterface::class => NoOpRetryBudget::class,
+            SleepStrategyInterface::class => flatStrategy::class,
+        ], new ScanConfig()));
+        ApplicationContext::setContainer($container);
     }
 
     protected function tearDown(): void
@@ -55,9 +64,9 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = FlatStrategy::class;
+                    $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -82,10 +91,10 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = FlatStrategy::class;
+                    $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->maxAttempts = 2;
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -115,10 +124,10 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = FlatStrategy::class;
+                    $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->ignoreThrowables = [\RuntimeException::class];
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -148,9 +157,9 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = BackoffStrategy::class;
+                    $retry->sleepStrategyClass = BackoffStrategy::class;
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -175,10 +184,10 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = BackoffStrategy::class;
+                    $retry->sleepStrategyClass = BackoffStrategy::class;
                     $retry->retryThrowables = [\RuntimeException::class];
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -204,14 +213,14 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = FlatStrategy::class;
+                    $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->retryOnThrowablePredicate = function ($t) {
                         return $t->getMessage() === 'ok';
                     };
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -237,14 +246,14 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $retry = new Retry();
-                    $retry->strategy = FlatStrategy::class;
+                    $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->retryOnResultPredicate = function ($r) {
                         return $r <= 0;
                     };
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
-                        Retry::class => $retry,
+                        AbstractRetry::class => $retry,
                     ];
                 }
             }
@@ -255,25 +264,88 @@ class RetryAnnotationAspectTest extends TestCase
         $this->assertEquals(1, $aspect->process($point));
     }
 
-    private function mockContainer()
+    public function testCircuitBreaker()
     {
-        $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')
-            ->zeroOrMoreTimes()
-            ->with(StrategyInterface::class, Mockery::any())
-            ->andReturn(new FlatStrategy(0));
-        $container->shouldReceive('make')
-            ->zeroOrMoreTimes()
-            ->with(FlatStrategy::class, Mockery::any())
-            ->andReturn(new FlatStrategy(0));
-        $container->shouldReceive('make')
-            ->zeroOrMoreTimes()
-            ->with(BackoffStrategy::class, Mockery::any())
-            ->andReturn(new BackoffStrategy(1));
-        $container->shouldReceive('make')
-            ->zeroOrMoreTimes()
-            ->with(RetryBudgetInterface::class, Mockery::any())
-            ->andReturn(new NoOpRetryBudget());
-        ApplicationContext::setContainer($container);
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public $method;
+
+                public function __construct()
+                {
+                    $state = Mockery::mock(
+                        \Hyperf\Retry\CircuitBreakerState::class
+                    );
+                    $state->shouldReceive('isOpen')->twice()->andReturns(false);
+                    $state->shouldReceive('isOpen')->once()->andReturns(true);
+                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry->sleepStrategyClass = FlatStrategy::class;
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('getArguments')->andReturns([]);
+        $this->expectException('RuntimeException');
+        $aspect->process($point);
+    }
+
+    public function testTimeout()
+    {
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public $method;
+
+                public function __construct()
+                {
+                    $retry = new class() extends Retry {
+                        public $timeout = 0.001;
+
+                        public $policies = [TimeoutRetryPolicy::class];
+                    };
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->atLeast(3)->andThrow(new \RuntimeException('ok'));
+        $this->expectException('RuntimeException');
+        $aspect->process($point);
+    }
+
+    public function testFallback()
+    {
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public $method;
+
+                public function __construct()
+                {
+                    $retry = new Retry();
+                    $retry->maxAttempts = 1;
+                    $retry->fallback = function () {
+                        return 1;
+                    };
+                    $retry->sleepStrategyClass = FlatStrategy::class;
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->andThrow(new \Exception());
+        $point->shouldReceive('getArguments')->andReturns([]);
+        $this->assertEquals(1, $aspect->process($point));
     }
 }

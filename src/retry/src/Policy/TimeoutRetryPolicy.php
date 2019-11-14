@@ -12,37 +12,30 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
-use Hyperf\Retry\RetryBudgetInterface;
-
-class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
+class TimeoutRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    private $budget;
+    /**
+     * @var float
+     */
+    private $timeout;
 
-    public function __construct(RetryBudgetInterface $retryBudget)
+    public function __construct($timeout)
     {
-        $this->budget = $retryBudget;
+        $this->timeout = $timeout;
     }
 
     public function canRetry(array &$retryContext): bool
     {
-        if ($this->isFirstTry($retryContext)) {
-            return true;
-        }
-        if ($this->budget->consume(true)) {
+        if (microtime(true) < $retryContext['start_time'] + $this->timeout) {
             return true;
         }
         $retryContext['retry_exhausted'] = true;
         return false;
     }
 
-    public function beforeRetry(array &$retryContext): void
-    {
-        $this->budget->consume();
-    }
-
     public function start(array $parentRetryContext = []): array
     {
-        $this->budget->produce();
+        $parentRetryContext['start_time'] = microtime(true);
         return $parentRetryContext;
     }
 }

@@ -12,20 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Annotation;
 
-use Doctrine\Common\Annotations\Annotation\Target;
-use Hyperf\Retry\Policy\BudgetRetryPolicy;
+use Hyperf\Retry\CircuitBreakerState;
+use Hyperf\Retry\Policy\CircuitBreakerRetryPolicy;
 use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
-use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
-class Retry extends AbstractRetry
+class CircuitBreaker extends AbstractRetry
 {
     /**
      * Array of retry policies. Think of these as stacked middlewares.
@@ -34,7 +33,7 @@ class Retry extends AbstractRetry
     public $policies = [
         FallbackRetryPolicy::class,
         ClassifierRetryPolicy::class,
-        BudgetRetryPolicy::class,
+        CircuitBreakerRetryPolicy::class,
         MaxAttemptsRetryPolicy::class,
         SleepRetryPolicy::class,
     ];
@@ -52,17 +51,13 @@ class Retry extends AbstractRetry
     public $maxAttempts = 10;
 
     /**
-     * Retry Budget.
-     * ttl: Seconds of token lifetime.
-     * minRetriesPerSec: Base retry token generation speed.
-     * percentCanRetry: Generate new token at this ratio of the request volume.
+     * Circuit-Breaker state
+     * resetTimeout: After retry session fails, all future tries will be blocked in this period.
      *
-     * @var array|RetryBudgetInterface
+     * @var array|CircuitBreakerState
      */
-    public $retryBudget = [
-        'ttl' => 10,
-        'minRetriesPerSec' => 1,
-        'percentCanRetry' => 0.2,
+    public $circuitBreakerState = [
+        'resetTimeout' => 10,
     ];
 
     /**
@@ -94,7 +89,7 @@ class Retry extends AbstractRetry
      *
      * Ignoring an Throwable has priority over retrying an exception.
      *
-     * @var array<string>
+     * @var array<string|\Throwable>
      */
     public $retryThrowables = [\Throwable::class];
 
@@ -102,7 +97,7 @@ class Retry extends AbstractRetry
      * Configures a list of error classes that are ignored and thus are not retried.
      * Any exception matching or inheriting from one of the list will not be retried, even if marked via retryExceptions.
      *
-     * @var array<string>
+     * @var array<string|\Throwable>
      */
     public $ignoreThrowables = [];
 
@@ -116,8 +111,8 @@ class Retry extends AbstractRetry
     public function __construct($value = null)
     {
         parent::__construct($value);
-        if (is_array($this->retryBudget)) {
-            $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
+        if (is_array($this->circuitBreakerState)) {
+            $this->circuitBreakerState = make(CircuitBreakerState::class, $this->circuitBreakerState);
         }
     }
 }

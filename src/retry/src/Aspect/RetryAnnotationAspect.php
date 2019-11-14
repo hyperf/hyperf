@@ -14,10 +14,9 @@ namespace Hyperf\Retry\Aspect;
 
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\Retry;
-use Hyperf\Retry\RetryBudget;
-use Hyperf\Retry\RetryBudgetInterface;
-use Hyperf\Utils\Arr;
+use Hyperf\Retry\Policy\HybridRetryPolicy;
 
 /**
  * @Aspect
@@ -30,110 +29,51 @@ class RetryAnnotationAspect implements AroundInterface
         Retry::class,
     ];
 
-    /**
-     * @var array<string,RetryBudget>
-     */
-    private $budgets;
-
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $annotation = $this->getAnnotations($proceedingJoinPoint);
-
-        //Initialize Attempts
-        $attempts = 1;
-
-        //Initialize Strategy
-        $strategy = make(
-            $annotation->strategy,
-            ['base' => $annotation->base]
-        );
-
-        //Initialize Retry Budget
-        $budgetKey = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
-        if (isset($this->budgets[$budgetKey])) {
-            $budget = $this->budgets[$budgetKey];
-        } else {
-            $budget = make(RetryBudgetInterface::class, $annotation->retryBudget);
-            $this->budgets[$budgetKey] = $budget;
+        $policy = $this->makePolicy($annotation);
+        $context = $policy->start();
+        $context['proceeding_join_point'] = $proceedingJoinPoint;
+        if (! $policy->canRetry($context)) {
+            goto end;
         }
-        $budget->produce();
 
-        begin:
+        attempt: // Make an attempt to (re)try.
 
-        $res = null; //fix phpstan
+        $context['last_result'] = $context['last_throwable'] = null;
         try {
-            $res = $proceedingJoinPoint->process();
-        } catch (\Throwable $t) {
-            if ($attempts >= $annotation->maxAttempts) {
-                throw $t;
-            }
-            if (! $this->isRetriable($annotation, $t)) {
-                throw $t;
-            }
-            ++$attempts;
-            $strategy->sleep();
-            if (! $budget->consume()) {
-                throw $t;
-            }
-            goto begin;
+            $context['last_result'] = $proceedingJoinPoint->process();
+        } catch (\Throwable $throwable) {
+            $context['last_throwable'] = $throwable;
+        }
+        if ($policy->canRetry($context)) {
+            $policy->beforeRetry($context);
+            goto attempt;
         }
 
-        if ($attempts >= $annotation->maxAttempts) {
-            return $res;
+        end: // Break out of retry
+
+        $policy->end($context);
+        if ($context['last_throwable'] !== null) {
+            throw $context['last_throwable'];
         }
-
-        if (! is_callable($annotation->retryOnResultPredicate)) {
-            return $res;
-        }
-
-        $shouldRetry = call_user_func($annotation->retryOnResultPredicate, $res);
-
-        if ($shouldRetry) {
-            ++$attempts;
-            $strategy->sleep();
-            if (! $budget->consume()) {
-                return $res;
-            }
-            goto begin;
-        }
-
-        return $res;
+        return $context['last_result'];
     }
 
-    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): Retry
+    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): AbstractRetry
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        return $metadata->method[Retry::class] ?? new Retry();
+        return $metadata->method[AbstractRetry::class] ?? new Retry();
     }
 
-    private function in(\Throwable $t, array $arr): bool
+    private function makePolicy(AbstractRetry $annotation): HybridRetryPolicy
     {
-        return Arr::first(
-            $arr,
-            function ($v) use ($t) {
-                return $t instanceof $v;
-            }
-        ) ? true : false;
-    }
-
-    private function isRetriable(Retry $annotation, \Throwable $t): bool
-    {
-        if ($this->in($t, $annotation->ignoreThrowables)) {
-            return false;
+        $policies = [];
+        foreach ($annotation->policies as $policy) {
+            $policies[] = make($policy, (array) $annotation);
         }
 
-        if ($this->in($t, $annotation->retryThrowables)) {
-            return true;
-        }
-
-        if (! is_callable($annotation->retryOnThrowablePredicate)) {
-            return false;
-        }
-
-        if (call_user_func($annotation->retryOnThrowablePredicate, $t)) {
-            return true;
-        }
-
-        return false;
+        return new HybridRetryPolicy(...$policies);
     }
 }

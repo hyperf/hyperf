@@ -25,7 +25,7 @@ class ConfigProvider
                 ],
             ],
             'dependencies' => [
-                StrategyInterface::class => FlatStrategy::class,
+                SleepStrategyInterface::class => FlatStrategy::class,
                 RetryBudgetInterface::class => RetryBudget::class,
             ],
         ];

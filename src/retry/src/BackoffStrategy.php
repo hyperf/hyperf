@@ -14,7 +14,7 @@ namespace Hyperf\Retry;
 
 use Hyperf\Utils\Backoff;
 
-class BackoffStrategy implements StrategyInterface
+class BackoffStrategy implements SleepStrategyInterface
 {
     /**
      * @var Backoff

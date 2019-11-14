@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry;
 
-class FlatStrategy implements StrategyInterface
+class FlatStrategy implements SleepStrategyInterface
 {
     /**
      * @var int

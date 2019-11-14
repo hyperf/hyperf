@@ -12,36 +12,39 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
-class SleepRetryPolicy implements RetryPolicyInterface
+class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
+    /**
+     * @var int
+     */
     private $base;
 
-    public function __construct(int $base)
+    /**
+     * @var string
+     */
+    private $sleepStrategyClass;
+
+    public function __construct(int $base, string $sleepStrategyClass)
     {
         $this->base = $base;
+        $this->sleepStrategyClass = $sleepStrategyClass;
     }
-    
-    public function canRetry(array $retryContext): bool
+
+    public function canRetry(array &$retryContext): bool
+    {
+        return true;
+    }
+
+    public function beforeRetry(array &$retryContext): void
     {
         $retryContext['strategy']->sleep();
-        return true;
     }
 
     public function start(array $parentRetryContext = []): array
     {
-        $parentRetryContext['strategy'] = make(StrategyInterface::class, [
-            'base' => $this->base
+        $parentRetryContext['strategy'] = make($this->sleepStrategyClass, [
+            'base' => $this->base,
         ]);
-        return $parentRetryContext['strategy'];
-    }
-
-    public function break(array $retryContext): void
-    {
-        //no op
-    }
-
-    public function registerResult(array &$retryContext, $result, ?Throwable $throwable)
-    {
-        //no op
+        return parent::start($parentRetryContext);
     }
 }

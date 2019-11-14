@@ -69,10 +69,13 @@ class RetryBudget implements RetryBudgetInterface
         Timer::clear($this->timerId);
     }
 
-    public function consume(): bool
+    public function consume(bool $dryRun = false): bool
     {
         if ($this->budget->count() < 1 / $this->percentCanRetry) {
             return false;
+        }
+        if ($dryRun) {
+            return true;
         }
         for ($i = 0; $i < 1 / $this->percentCanRetry; ++$i) {
             $this->budget->dequeue();

@@ -23,5 +23,5 @@ class BackoffRetryFalsy extends RetryFalsy
 {
     public $base = 100;
 
-    public $strategy = BackoffStrategy::class;
+    public $sleepStrategyClass = BackoffStrategy::class;
 }

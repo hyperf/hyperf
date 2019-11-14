@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry;
 
-interface StrategyInterface
+interface SleepStrategyInterface
 {
     public function sleep(): void;
 }
