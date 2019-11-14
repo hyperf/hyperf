@@ -21,6 +21,7 @@
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
 - [#925](https://github.com/hyperf/hyperf/pull/925) Fixed the dead cycle caused by socket closed.
 - [#932](https://github.com/hyperf/hyperf/pull/932) Fixed `Translator::setLocale` does not works in coroutine evnironment.
+- [#940](https://github.com/hyperf/hyperf/pull/940) Fixed WebSocketClient::push TypeError, expects integer, but boolean given.
 
 ## Optimized
 
