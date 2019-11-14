@@ -12,13 +12,18 @@ declare(strict_types=1);
 
 namespace Hyperf\Nats;
 
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nats\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Nats\Driver\DriverFactory;
+use Hyperf\Nats\Event\AfterConsume;
+use Hyperf\Nats\Event\AfterSubscribe;
+use Hyperf\Nats\Event\BeforeConsume;
+use Hyperf\Nats\Event\BeforeSubscribe;
+use Hyperf\Nats\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ConsumerManager
 {
@@ -71,9 +76,9 @@ class ConsumerManager
             private $subscriber;
 
             /**
-             * @var StdoutLoggerInterface
+             * @var null|EventDispatcherInterface
              */
-            private $logger;
+            private $dispatcher;
 
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
@@ -82,25 +87,30 @@ class ConsumerManager
 
                 $pool = $this->consumer->getPool();
                 $this->subscriber = $this->container->get(DriverFactory::class)->get($pool);
-                $this->logger = $container->get(StdoutLoggerInterface::class);
+                if ($container->has(EventDispatcherInterface::class)) {
+                    $this->dispatcher = $container->get(EventDispatcherInterface::class);
+                }
             }
 
             public function handle(): void
             {
                 while (true) {
+                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
                     $this->subscriber->subscribe(
                         $this->consumer->getSubject(),
                         $this->consumer->getQueue(),
                         function ($data) {
-                            $this->consumer->consume($data);
+                            try {
+                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->consumer->consume($data);
+                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
+                            } catch (\Throwable $throwable) {
+                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                            }
                         }
                     );
 
-                    $this->logger->warning(sprintf(
-                        'NatsConsumer[%s] subscribe timeout. Try again after 1 ms.',
-                        $this->consumer->getName()
-                    ));
-
+                    $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
                     usleep(1000);
                 }
             }
