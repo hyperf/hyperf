@@ -29,11 +29,11 @@ class Proxied
 
     public function setId(string $a)
     {
-    	return $this->id = $a;
+        return $this->id = $a;
     }
 
     public function getId()
     {
-    	return $this->id;
+        return $this->id;
     }
 }

@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-`Db::select()` 方法会返回一个array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
+`Db::select()` 方法会返回一个 array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
 
 ```php
 <?php
@@ -207,7 +207,7 @@ $users = $query->addSelect('age')->get();
 
 ## 原始表达式
 
-有时你需要在查询中使用原始表达式，例如实现 `COUNT(0) AS count`，这就需要用到`raw`方法。
+有时你需要在查询中使用原始表达式，例如实现 `COUNT(0) AS count`，这就需要用到 `raw` 方法。
 
 ```php
 use Hyperf\DbConnection\Db;

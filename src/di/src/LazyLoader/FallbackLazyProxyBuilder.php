@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\LazyLoader;
 
-use PhpParser\Node\Const_;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\ClassConst;
-
 class FallbackLazyProxyBuilder extends AbstractLazyProxyBuilder
 {
     public function addClassRelationship(): AbstractLazyProxyBuilder

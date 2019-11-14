@@ -12,28 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\LazyLoader;
 
-use Closure;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 
 trait LazyProxyTrait
 {
-    public function __construct(){
+    public function __construct()
+    {
         $vars = get_object_vars($this);
         foreach (array_keys($vars) as $var) {
             unset($this->{$var});
         }
-    }
-
-    /**
-     * Return The Proxy Target
-     * @return mixed
-     */
-    public function getInstance()
-    {
-        return ApplicationContext::getContainer()->get(Self::PROXY_TARGET);
     }
 
     public function __call(string $method, array $arguments)
@@ -41,27 +29,41 @@ trait LazyProxyTrait
         $obj = $this->getInstance();
         return call_user_func([$obj, $method], ...$arguments);
     }
+
     public function __get($name)
     {
         return $this->getInstance()->{$name};
     }
+
     public function __set($name, $value)
     {
         $this->getInstance()->{$name} = $value;
     }
+
     public function __isset($name)
     {
         return isset($this->getInstance()->{$name});
     }
+
     public function __unset($name)
     {
         unset($this->getInstance()->{$name});
     }
+
     public function __wakeup()
     {
         $vars = get_object_vars($this);
         foreach (array_keys($vars) as $var) {
             unset($this->{$var});
         }
+    }
+
+    /**
+     * Return The Proxy Target.
+     * @return mixed
+     */
+    public function getInstance()
+    {
+        return ApplicationContext::getContainer()->get(self::PROXY_TARGET);
     }
 }

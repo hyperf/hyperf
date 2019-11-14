@@ -58,7 +58,7 @@ abstract class AbstractLazyProxyBuilder
 
     public function addClassBoilerplate(string $proxyClassName, string $originalClassName): AbstractLazyProxyBuilder
     {
-        $namespace = join(array_slice(explode('\\', $proxyClassName), 0, -1), '\\');
+        $namespace = join('\\', array_slice(explode('\\', $proxyClassName), 0, -1));
         $this->namespace = $namespace;
         $this->proxyClassName = $proxyClassName;
         $this->originalClassName = $originalClassName;
@@ -67,7 +67,7 @@ abstract class AbstractLazyProxyBuilder
             ->addStmt(new ClassConst([new Const_('PROXY_TARGET', new String_($originalClassName))]))
             ->addStmt($this->factory->useTrait('\\Hyperf\\Di\\LazyLoader\\LazyProxyTrait'))
             ->setDocComment("/**
-                              * Be careful: This is a lazy proxy, not the real $originalClassName from container.
+                              * Be careful: This is a lazy proxy, not the real {$originalClassName} from container.
                               *
                               * {@inheritdoc}
                               */");
@@ -84,8 +84,7 @@ abstract class AbstractLazyProxyBuilder
 
     public function getNode(): Node
     {
-
-        if ($this->namespace){
+        if ($this->namespace) {
             return $this->factory
                 ->namespace($this->namespace)
                 ->addStmt($this->builder)

@@ -13,16 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\Di\LazyLoader;
 
 use PhpParser\Node;
-use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeVisitorAbstract;
 
 class PublicMethodVisitor extends NodeVisitorAbstract
 {

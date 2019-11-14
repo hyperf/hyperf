@@ -16,7 +16,7 @@ use Hyperf\Di\LazyLoader\LazyProxyTrait;
 
 class LazyProxy extends Proxied
 {
-	use LazyProxyTrait;
-	const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\Proxied';
-	
+    use LazyProxyTrait;
+
+    const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\Proxied';
 }

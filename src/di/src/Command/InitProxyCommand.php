@@ -17,6 +17,7 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
+use Swoole\Timer;
 use Symfony\Component\Console\Exception\LogicException;
 
 class InitProxyCommand extends Command
@@ -50,6 +51,8 @@ class InitProxyCommand extends Command
         $this->warn('This command does not clear the runtime cache, If you want to delete them, use `vendor/bin/init-proxy.sh` instead.');
 
         $this->createAopProxies();
+
+        Timer::clearAll();
 
         $this->output->writeln('<info>Proxy class create success.</info>');
     }

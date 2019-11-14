@@ -12,16 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\LazyLoader;
 
-use PhpParser\Node\Const_;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\ClassConst;
-
 class InterfaceLazyProxyBuilder extends AbstractLazyProxyBuilder
 {
     public function addClassRelationship(): AbstractLazyProxyBuilder
     {
         if (strpos($this->originalClassName, '\\') !== 0) {
-            $originalClassName = '\\'.$this->originalClassName;
+            $originalClassName = '\\' . $this->originalClassName;
         } else {
             $originalClassName = $this->originalClassName;
         }
