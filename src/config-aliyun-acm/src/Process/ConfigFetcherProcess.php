@@ -16,15 +16,12 @@ use Hyperf\ConfigAliyunAcm\ClientInterface;
 use Hyperf\ConfigAliyunAcm\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="aliyun-acm-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'aliyun-acm-config-fetcher';
     /**
      * @var Server
      */

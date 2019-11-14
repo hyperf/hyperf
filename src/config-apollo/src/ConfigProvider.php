@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo;
 
+use Hyperf\ConfigApollo\Listener\OnPipeMessageListener;
+use Hyperf\ConfigApollo\Process\ConfigFetcherProcess;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,6 +22,12 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => ClientFactory::class,
+            ],
+            'processes' => [
+                ConfigFetcherProcess::class,
+            ],
+            'listener' => [
+                OnPipeMessageListener::class,
             ],
             'annotations' => [
                 'scan' => [

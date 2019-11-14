@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
+use Hyperf\Cache\Listener\DeleteListener;
 use Psr\SimpleCache\CacheInterface;
 
 class ConfigProvider
@@ -21,6 +22,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 CacheInterface::class => Cache::class,
+            ],
+            'listener' => [
+                DeleteListener::class,
             ],
             'annotations' => [
                 'scan' => [

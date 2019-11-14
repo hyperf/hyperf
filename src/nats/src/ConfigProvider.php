@@ -14,6 +14,8 @@ namespace Hyperf\Nats;
 
 use Hyperf\Nats\Driver\DriverFactory;
 use Hyperf\Nats\Driver\DriverInterface;
+use Hyperf\Nats\Listener\AfterSubscribeListener;
+use Hyperf\Nats\Listener\BeforeMainServerStartListener;
 use Psr\Container\ContainerInterface;
 
 class ConfigProvider
@@ -26,6 +28,10 @@ class ConfigProvider
                     $factory = $container->get(DriverFactory::class);
                     return $factory->get('default');
                 },
+            ],
+            'listener' => [
+                AfterSubscribeListener::class,
+                99 => BeforeMainServerStartListener::class,
             ],
             'annotations' => [
                 'scan' => [

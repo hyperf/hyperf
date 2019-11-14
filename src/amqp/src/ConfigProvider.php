@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Listener\BeforeMainServerStartListener;
+use Hyperf\Amqp\Listener\MainWorkerStartListener;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Utils\Packer\JsonPacker;
 
@@ -24,6 +26,10 @@ class ConfigProvider
                 Producer::class => Producer::class,
                 Packer::class => JsonPacker::class,
                 Consumer::class => ConsumerFactory::class,
+            ],
+            'listener' => [
+                BeforeMainServerStartListener::class,
+                MainWorkerStartListener::class,
             ],
             'annotations' => [
                 'scan' => [

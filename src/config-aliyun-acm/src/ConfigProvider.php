@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigAliyunAcm;
 
+use Hyperf\ConfigAliyunAcm\Listener\OnPipeMessageListener;
+use Hyperf\ConfigAliyunAcm\Process\ConfigFetcherProcess;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,6 +22,12 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => Client::class,
+            ],
+            'processes' => [
+                ConfigFetcherProcess::class,
+            ],
+            'listener' => [
+                OnPipeMessageListener::class,
             ],
             'annotations' => [
                 'scan' => [

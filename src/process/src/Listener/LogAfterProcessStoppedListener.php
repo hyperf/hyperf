@@ -13,15 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
-class LogAfterProcessStopped implements ListenerInterface
+class LogAfterProcessStoppedListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
