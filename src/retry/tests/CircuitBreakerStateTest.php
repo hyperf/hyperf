@@ -24,7 +24,7 @@ class CircuitBreakerStateTest extends TestCase
     public function testCircuitBreakerState()
     {
         $state = new CircuitBreakerState(
-            0.001,
+            0.001
         );
         $this->assertFalse($state->isOpen());
         $state->open();

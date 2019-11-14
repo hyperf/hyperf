@@ -26,7 +26,7 @@ class RetryAnnotationAspect implements AroundInterface
     public $classes = [];
 
     public $annotations = [
-        Retry::class,
+        AbstractRetry::class,
     ];
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
