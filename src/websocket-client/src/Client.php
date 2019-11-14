@@ -67,9 +67,15 @@ class Client
         return $ret;
     }
 
-    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, bool $finish = true): bool
+    /**
+     * @param bool|int $finish TODO: When swoole version >= 4.4.12, `finish` is SWOOLE_WEBSOCKET_FLAG_FIN or SWOOLE_WEBSOCKET_FLAG_COMPRESS
+     */
+    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, $finish = null): bool
     {
-        return $this->client->push($data, $opcode, $finish);
+        if (isset($finish)) {
+            return $this->client->push($data, $opcode, $finish);
+        }
+        return $this->client->push($data, $opcode);
     }
 
     public function close(): bool

@@ -91,7 +91,7 @@ return [
 
 ## 接入 Etcd 配置中心
 
-- 安装 `Etcd客户端`
+- 安装 `Etcd 客户端`
 
 ```
 composer require hyperf/etcd
@@ -106,7 +106,7 @@ composer require start-point/etcd-php
 composer require linkorb/etcd-php
 ```
 
-- 添加 `Etcd客户端` 配置文件 `etcd.php`
+- 添加 `Etcd 客户端` 配置文件 `etcd.php`
 
 ```php
 <?php
@@ -119,13 +119,13 @@ return [
 ];
 ```
 
-- 安装 `Etcd配置中心`
+- 安装 `Etcd 配置中心`
 
 ```
 composer require hyperf/config-etcd
 ```
 
-- 添加 `Etcd配置中心` 配置文件 `config_etcd.php`
+- 添加 `Etcd 配置中心` 配置文件 `config_etcd.php`
 
 > mapping 为 `Etcd` 与 `Config` 的映射关系。映射中不存在的 `key`，则不会被同步到 `Config` 中。
 
