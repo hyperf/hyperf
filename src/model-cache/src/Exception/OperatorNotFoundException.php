@@ -10,10 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\ModelCache\Exception;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+class OperatorNotFoundException extends \RuntimeException
 {
 }

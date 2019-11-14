@@ -10,10 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\Process\Exception;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+class SocketAcceptException extends \RuntimeException
 {
+    public function isTimeout(): bool
+    {
+        return $this->getCode() === SOCKET_ETIMEDOUT;
+    }
 }

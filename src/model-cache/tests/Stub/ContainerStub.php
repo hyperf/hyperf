@@ -27,6 +27,7 @@ use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\ModelCache\Manager;
+use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\RedisPool;
@@ -126,7 +127,9 @@ class ContainerStub
         });
 
         ApplicationContext::setContainer($container);
-
+        $container->shouldReceive('make')->with(LuaManager::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new LuaManager(...$args);
+        });
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new Channel($args['size']);
         });
