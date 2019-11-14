@@ -321,13 +321,13 @@ Hyperf的长生命周期依赖注入在项目启动时完成。这意味着长�
 ```php
 <?php
 return [
-    \App\Service\LazyUserService::class => \App\Service\UserServiceInterface::class
+    '\App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
 ```
 
 这样在类型提示 `LazyUserService` 的时候容器就会创建一个懒加载代理注入到构造函数或属性中了。
 
-当该代理对象执行下列操作时，被代理对象才会被真正实例化。
+当该代理对象执行下列操作时，被代理对象才会从容器中真正实例化。
 
 ```php
 
