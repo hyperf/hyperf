@@ -23,7 +23,7 @@ class ConfigProvider
             'dependencies' => [
                 CacheInterface::class => Cache::class,
             ],
-            'listener' => [
+            'listeners' => [
                 DeleteListener::class,
             ],
             'annotations' => [

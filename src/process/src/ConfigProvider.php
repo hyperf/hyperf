@@ -21,7 +21,7 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'listener' => [
+            'listeners' => [
                 BootProcessListener::class,
                 LogAfterProcessStoppedListener::class,
                 LogBeforeProcessStartListener::class,

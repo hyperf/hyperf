@@ -29,7 +29,7 @@ class ConfigProvider
                     return $factory->get('default');
                 },
             ],
-            'listener' => [
+            'listeners' => [
                 AfterSubscribeListener::class,
                 99 => BeforeMainServerStartListener::class,
             ],

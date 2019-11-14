@@ -19,7 +19,7 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'listener' => [
+            'listeners' => [
                 DeleteCacheListener::class,
             ],
             'annotations' => [

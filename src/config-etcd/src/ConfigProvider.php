@@ -27,7 +27,7 @@ class ConfigProvider
             'processes' => [
                 ConfigFetcherProcess::class,
             ],
-            'listener' => [
+            'listeners' => [
                 BootProcessListener::class,
                 OnPipeMessageListener::class,
             ],

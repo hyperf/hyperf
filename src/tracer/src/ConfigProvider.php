@@ -26,7 +26,7 @@ class ConfigProvider
                 SwitchManager::class => SwitchManagerFactory::class,
                 Client::class => Client::class,
             ],
-            'listener' => [
+            'listeners' => [
                 DbQueryExecutedListener::class,
             ],
             'annotations' => [

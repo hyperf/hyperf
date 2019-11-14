@@ -21,7 +21,7 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'listener' => [
+            'listeners' => [
                 ModelEventListener::class,
                 ModelHookEventListener::class,
             ],

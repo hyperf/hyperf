@@ -24,7 +24,7 @@ class ConfigProvider
             'dependencies' => [
                 ConsulAgent::class => ConsulAgentFactory::class,
             ],
-            'listener' => [
+            'listeners' => [
                 RegisterServiceListener::class,
             ],
             'annotations' => [

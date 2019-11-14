@@ -27,7 +27,7 @@ class ConfigProvider
                 Packer::class => JsonPacker::class,
                 Consumer::class => ConsumerFactory::class,
             ],
-            'listener' => [
+            'listeners' => [
                 BeforeMainServerStartListener::class,
                 MainWorkerStartListener::class,
             ],

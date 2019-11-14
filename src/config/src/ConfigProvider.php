@@ -23,7 +23,7 @@ class ConfigProvider
             'dependencies' => [
                 ConfigInterface::class => ConfigFactory::class,
             ],
-            'listener' => [
+            'listeners' => [
                 RegisterPropertyHandlerListener::class,
             ],
             'annotations' => [
