@@ -1,5 +1,9 @@
 # v1.1.7 - TBD
 
+## Added
+
+- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+
 # v1.1.6 - 2019-11-14
 
 ## Added
