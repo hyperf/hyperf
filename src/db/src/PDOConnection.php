@@ -80,7 +80,7 @@ class PDOConnection extends AbstractConnection
     {
         $username = $this->config['username'];
         $password = $this->config['password'];
-        $dsn = $this->getHostDsn($this->config);
+        $dsn = $this->buildDsn($this->config);
         try {
             $pdo = new \PDO($dsn, $username, $password, $this->config['options']);
         } catch (\Throwable $e) {
@@ -176,54 +176,44 @@ class PDOConnection extends AbstractConnection
     }
 
     /**
-     * Get the DSN string for a host / port configuration.
-     *
-     * @return string
+     * Build the DSN string for a host / port configuration.
      */
-    protected function getHostDsn(array $config)
+    protected function buildDsn(array $config): string
     {
         $host = $config['host'] ?? null;
-        $port = $config['port'] ?? null;
+        $port = $config['port'] ?? 3306;
         $database = $config['database'] ?? null;
-        return isset($port)
-            ? "mysql:host={$host};port={$port};dbname={$database}"
-            : "mysql:host={$host};dbname={$database}";
+        return sprintf("mysql:host=%s;port=%d;dbname=%s", $host, $port, $database);
     }
 
     /**
-     * Set the connection character set and collation.
-     *
-     * @param \PDO $connection
+     * Configure the connection character set and collation.
      */
-    protected function configureEncoding($connection, array $config)
+    protected function configureCharset(\PDO $connection, array $config)
     {
         if (! isset($config['charset'])) {
             return $connection;
         }
         $connection->prepare(
-            "set names '{$config['charset']}'" . $this->getCollation($config)
+            sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config))
         )->execute();
     }
 
     /**
      * Get the collation for the configuration.
-     *
-     * @return string
      */
-    protected function getCollation(array $config)
+    protected function getCollation(array $config): string
     {
         return isset($config['collation']) ? " collate '{$config['collation']}'" : '';
     }
 
     /**
-     * Set the timezone on the connection.
-     *
-     * @param \PDO $connection
+     * Configure the timezone on the connection.
      */
-    protected function configureTimezone($connection, array $config)
+    protected function configureTimezone(\PDO $connection, array $config)
     {
         if (isset($config['timezone'])) {
-            $connection->prepare('set time_zone="' . $config['timezone'] . '"')->execute();
+            $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
         }
     }
 
