@@ -210,11 +210,12 @@ class PDOConnection extends AbstractConnection
     /**
      * Configure the timezone on the connection.
      */
-    protected function configureTimezone(\PDO $connection, array $config)
+    protected function configureTimezone(\PDO $connection, array $config): void
     {
-        if (isset($config['timezone'])) {
-            $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
+        if (! isset($config['timezone'])) {
+            return;
         }
+        $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
     }
 
 }
