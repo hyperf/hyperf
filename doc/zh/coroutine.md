@@ -202,6 +202,8 @@ $result = parallel([
 
 #### 限制 Parallel 最大同时运行的协程数
 
+> 该功能仅可在 1.1.3 版本或更高版本使用
+
 当我们添加到 Parallel 里的任务有很多时，假设都是一些请求任务，那么一瞬间发出全部请求很有可能会导致对端服务因为一瞬间接收到了大量的请求而处理不过来，有宕机的风险，所以需要对对端进行适当的保护，但我们又希望可以通过 Parallel 机制来加速这些请求的耗时，那么可以通过在实例化 Parallel 对象时传递第一个参数，来设置最大运行的协程数，比如我们希望最大设置的协程数为 5 ，也就意味着 Parallel 里最多只会有 5 个协程在运行，只有当 5 个里有协程完成结束后，后续的协程才会继续启动，直至所有协程完成任务，示例代码如下：
 
 ```php
@@ -209,7 +211,7 @@ use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
 
-$parallel = new Parallel();
+$parallel = new Parallel(5);
 for ($i = 0; $i < 20; $i++) {
     $parallel->add(function () {
         sleep(1);
