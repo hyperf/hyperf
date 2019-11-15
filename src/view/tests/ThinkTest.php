@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace HyperfTest\View;
 
-use Hyperf\View\Engine\PlatesEngine;
 use Hyperf\View\Engine\ThinkEngine;
 use PHPUnit\Framework\TestCase;
 
@@ -20,21 +19,20 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class PlatesTest extends TestCase
+class ThinkTest extends TestCase
 {
     public function testRender()
     {
         $config = [
             'view_path' => __DIR__ . '/tpl/',
             'cache_path' => __DIR__ . '/runtime/',
-			'view_suffix'  => 'think',
+            'view_suffix' => 'think',
         ];
 
         $engine = new ThinkEngine();
         $res = $engine->render('index', ['name' => 'Hyperf'], $config);
 
-        $this->assertEquals(
-            '<!DOCTYPE html>
+        $this->assertEquals('<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -43,7 +41,6 @@ class PlatesTest extends TestCase
 <body>
 Hello, Hyperf. You are using think template now.
 </body>
-</html>', $res
-        );
+</html>', $res);
     }
 }
