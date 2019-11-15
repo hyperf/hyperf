@@ -191,12 +191,9 @@ class PDOConnection extends AbstractConnection
      */
     protected function configureCharset(\PDO $connection, array $config)
     {
-        if (! isset($config['charset'])) {
-            return $connection;
+        if (isset($config['charset'])) {
+            $connection->prepare(sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config)))->execute();
         }
-        $connection->prepare(
-            sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config))
-        )->execute();
     }
 
     /**
@@ -212,10 +209,9 @@ class PDOConnection extends AbstractConnection
      */
     protected function configureTimezone(\PDO $connection, array $config): void
     {
-        if (! isset($config['timezone'])) {
-            return;
+        if (isset($config['timezone'])) {
+             $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
         }
-        $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
     }
 
 }
