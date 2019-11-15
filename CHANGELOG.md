@@ -4,6 +4,10 @@
 
 - [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
 
+## Fixed
+
+- [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
+
 # v1.1.6 - 2019-11-14
 
 ## Added
