@@ -140,8 +140,8 @@ class RedisHandler implements HandlerInterface
 
     public function incr($key, $column, $amount): bool
     {
-        $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount]);
+        $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount], 1);
 
-        return is_float($data);
+        return is_numeric($data);
     }
 }
