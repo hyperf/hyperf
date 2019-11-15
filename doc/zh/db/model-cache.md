@@ -16,7 +16,7 @@ composer require hyperf/model-cache
 
 |      配置       |  类型  |                        默认值                         |                备注                 |
 |:---------------:|:------:|:-----------------------------------------------------:|:-----------------------------------:|
-|     handler     | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
+|     handler     | string | Hyperf\ModelCache\Handler\RedisHandler::class |                 无                  |
 |    cache_key    | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键 KEY:主键值` |
 |     prefix      | string |                  db connection name                   |              缓存前缀               |
 |       ttl       |  int   |                         3600                          |              超时时间               |
@@ -45,7 +45,7 @@ return [
             'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
         ],
         'cache' => [
-            'handler' => \Hyperf\DbConnection\Cache\Handler\RedisHandler::class,
+            'handler' => \Hyperf\ModelCache\Handler\RedisHandler::class,
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'ttl' => 3600 * 24,
