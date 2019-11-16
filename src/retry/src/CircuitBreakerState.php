@@ -34,15 +34,15 @@ class CircuitBreakerState
 
     public function isOpen(): bool
     {
-        $now = microtime(true);
-        if ($this->openTime !== null) {
-            if ($now > $this->openTime + $this->resetTimeout) {
-                $this->openTime = null; // close the circuit
-                return false;
-            }
-            return true;
+        if ($this->openTime === null) {
+            return false;
         }
-        return false;
+        $now = microtime(true);
+        if ($now > $this->openTime + $this->resetTimeout) {
+            $this->openTime = null; // close the circuit
+            return false;
+        }
+        return true;
     }
 
     public function open()

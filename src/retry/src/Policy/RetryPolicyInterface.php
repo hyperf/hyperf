@@ -15,7 +15,8 @@ namespace Hyperf\Retry\Policy;
 interface RetryPolicyInterface
 {
     /**
-     * Test if we can retry.
+     * Test if we can retry. Note this also includes the first
+     * try.
      * @param array $retryContext the current status object
      * @return bool true if the operation can proceed
      */
@@ -35,7 +36,7 @@ interface RetryPolicyInterface
     public function beforeRetry(array &$retryContext): void;
 
     /**
-     * Define what would happen when the retry session was ultimately failed.
+     * Define what would happen when the retry session ultimately failed.
      * @param array $retryContext the current status object
      * @return bool whether or not the policy chain should continue
      */

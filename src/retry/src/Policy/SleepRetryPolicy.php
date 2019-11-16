@@ -45,6 +45,6 @@ class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
         $parentRetryContext['strategy'] = make($this->sleepStrategyClass, [
             'base' => $this->base,
         ]);
-        return parent::start($parentRetryContext);
+        return $parentRetryContext;
     }
 }
