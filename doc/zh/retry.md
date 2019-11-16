@@ -32,7 +32,7 @@ public function foo()
 
 建议根据具体业务需要构造自己的注解别名。下面我们演示如何制作最大尝试次数为 3 的新注解。
 
-> 在默认的 `Retry` 注解中，您可以通过 `@Retry{maxAttempts=3}` 来控制最大重试次数。为了演示需要，先假装它不存在。
+> 在默认的 `Retry` 注解中，您可以通过 `@Retry(maxAttempts=3)` 来控制最大重试次数。为了演示需要，先假装它不存在。
 
 首先您要新建一个 `注解类` 并继承 `\Hyperf\Retry\Annotations\AbstractRetry` 。
 
