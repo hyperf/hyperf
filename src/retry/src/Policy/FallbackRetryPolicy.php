@@ -38,7 +38,7 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         } else {
             $arguments = [];
         }
-        
+
         try {
             $retryContext['last_result'] = call_user_func($this->fallback, ...$arguments);
         } catch (\Throwable $throwable) {

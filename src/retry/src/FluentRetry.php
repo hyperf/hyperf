@@ -103,7 +103,7 @@ class FluentRetry
                 []
             );
         }
-        
+
         if (! $policy->canRetry($context)) {
             goto end;
         }
