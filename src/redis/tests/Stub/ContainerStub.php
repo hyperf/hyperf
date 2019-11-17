@@ -31,7 +31,7 @@ class ContainerStub
     public static function mockContainer()
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
                     'host' => 'localhost',
@@ -49,20 +49,21 @@ class ContainerStub
                 ],
             ],
         ]));
-        $pool = new RedisPool($container, 'default');
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
+        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturnUsing(function () use ($container) {
+            return new RedisPool($container, 'default');
+        });
         $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
         $container->shouldReceive('has')->with(\Redis::class)->andReturn(true);
-        $container->shouldReceive('get')->with(\Redis::class)->andReturn(value(function () use ($container) {
+        $container->shouldReceive('get')->with(\Redis::class)->andReturnUsing(function () use ($container) {
             $factory = new PoolFactory($container);
             return new Redis($factory);
-        }));
+        });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
             return Mockery::mock(StdoutLoggerInterface::class);

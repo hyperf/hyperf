@@ -25,7 +25,7 @@ abstract class Script implements ScriptInterface
     protected $redis;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $sha;
 
