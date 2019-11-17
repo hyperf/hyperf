@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\RedisLua;
+namespace HyperfTest\Redis\Lua;
 
-use Hyperf\RedisLua\Hash\HGetAllMultiple;
-use Hyperf\RedisLua\Hash\HIncrByFloatIfExists;
+use Hyperf\Redis\Lua\Hash\HGetAllMultiple;
+use Hyperf\Redis\Lua\Hash\HIncrByFloatIfExists;
 use Hyperf\Utils\Str;
-use HyperfTest\RedisLua\Stub\ContainerStub;
+use HyperfTest\Redis\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

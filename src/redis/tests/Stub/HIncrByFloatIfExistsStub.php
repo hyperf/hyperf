@@ -10,12 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisLua;
+namespace HyperfTest\Redis\Stub;
 
-class ConfigProvider
+use Hyperf\Redis\Lua\Hash\HIncrByFloatIfExists;
+
+class HIncrByFloatIfExistsStub extends HIncrByFloatIfExists
 {
-    public function __invoke(): array
-    {
-        return [];
-    }
+    protected $sha = 'xxxx';
 }

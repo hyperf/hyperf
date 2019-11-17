@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisLua\Hash;
+namespace Hyperf\Redis\Lua\Hash;
 
-use Hyperf\RedisLua\Script;
+use Hyperf\Redis\Lua\Script;
 
 class HIncrByFloatIfExists extends Script
 {

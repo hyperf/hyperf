@@ -10,13 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisLua;
+namespace Hyperf\Redis\Exception;
 
-interface ScriptInterface
+class RedisNotFoundException extends \RuntimeException
 {
-    public function getScript(): string;
-
-    public function format($data);
-
-    public function eval(array $arguments = [], $sha = true);
 }

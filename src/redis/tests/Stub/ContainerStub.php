@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\RedisLua\Stub;
+namespace HyperfTest\Redis\Stub;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;

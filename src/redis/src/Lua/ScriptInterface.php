@@ -10,11 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\RedisLua\Stub;
+namespace Hyperf\Redis\Lua;
 
-use Hyperf\RedisLua\Hash\HIncrByFloatIfExists;
-
-class HIncrByFloatIfExistsStub extends HIncrByFloatIfExists
+interface ScriptInterface
 {
-    protected $sha = 'xxxx';
+    public function getScript(): string;
+
+    public function format($data);
+
+    public function eval(array $arguments = [], $sha = true);
 }

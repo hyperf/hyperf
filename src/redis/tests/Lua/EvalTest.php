@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\RedisLua;
+namespace HyperfTest\Redis\Lua;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Str;
-use HyperfTest\RedisLua\Stub\ContainerStub;
-use HyperfTest\RedisLua\Stub\HGetAllMultipleStub;
+use HyperfTest\Redis\Stub\ContainerStub;
+use HyperfTest\Redis\Stub\HGetAllMultipleStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ class EvalTest extends TestCase
         $container = ContainerStub::mockContainer();
         $logger = $container->get(StdoutLoggerInterface::class);
         $logger->shouldReceive('warning')->once()->andReturnUsing(function ($message) {
-            $this->assertSame('NOSCRIPT No matching script[HyperfTest\\RedisLua\\Stub\\HGetAllMultipleStub]. Use EVAL instead.', $message);
+            $this->assertSame('NOSCRIPT No matching script[HyperfTest\\Redis\\Stub\\HGetAllMultipleStub]. Use EVAL instead.', $message);
         });
 
         $redis = $container->get(\Redis::class);

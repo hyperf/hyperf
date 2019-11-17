@@ -10,8 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisLua\Exception;
+namespace HyperfTest\Redis\Stub;
 
-class NoMatchingScriptException extends RuntimeException
+use Hyperf\Redis\Lua\Hash\HGetAllMultiple;
+
+class HGetAllMultipleStub extends HGetAllMultiple
 {
+    protected $sha = 'xxxx';
 }

@@ -39,7 +39,6 @@
             <directory suffix="Test.php">./src/pool/tests</directory>
             <directory suffix="Test.php">./src/protocol/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
-            <directory suffix="Test.php">./src/redis-lua/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>

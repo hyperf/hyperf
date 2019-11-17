@@ -10,10 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\RedisLua;
+namespace Hyperf\Redis\Lua;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\RedisLua\Exception\RedisNotFoundException;
+use Hyperf\Redis\Exception\RedisNotFoundException;
 use Psr\Container\ContainerInterface;
 
 abstract class Script implements ScriptInterface
