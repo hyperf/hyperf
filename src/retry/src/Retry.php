@@ -12,6 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry;
 
+use Hyperf\Retry\Policy\RetryPolicyInterface;
+
+/**
+ * @method static FluentRetry with(RetryPolicyInterface ...$policies)
+ * @method static FluentRetry when(callable $when)
+ * @method static FluentRetry whenReturns($when)
+ * @method static FluentRetry whenThrows(string $when = \Throwable::class)
+ * @method static FluentRetry max(int $times)
+ * @method static FluentRetry inSeconds(float $seconds)
+ * @method static FluentRetry fallback(callable $fallback)
+ * @method static FluentRetry sleep(int $base)
+ * @method static FluentRetry backoff(int $base)
+ * @method static FluentRetry call(callable $callable)
+ */
 class Retry
 {
     public static function __callStatic($method, $arguments)
