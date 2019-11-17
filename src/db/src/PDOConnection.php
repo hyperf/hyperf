@@ -87,7 +87,7 @@ class PDOConnection extends AbstractConnection
             throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
         }
 
-        $this->configureEncoding($pdo, $this->config);
+        $this->configureCharset($pdo, $this->config);
 
         $this->configureTimezone($pdo, $this->config);
 
@@ -183,13 +183,13 @@ class PDOConnection extends AbstractConnection
         $host = $config['host'] ?? null;
         $port = $config['port'] ?? 3306;
         $database = $config['database'] ?? null;
-        return sprintf("mysql:host=%s;port=%d;dbname=%s", $host, $port, $database);
+        return sprintf('mysql:host=%s;port=%d;dbname=%s', $host, $port, $database);
     }
 
     /**
      * Configure the connection character set and collation.
      */
-    protected function configureCharset(\PDO $connection, array $config)
+    protected function configureCharset(PDO $connection, array $config)
     {
         if (isset($config['charset'])) {
             $connection->prepare(sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config)))->execute();
@@ -207,11 +207,10 @@ class PDOConnection extends AbstractConnection
     /**
      * Configure the timezone on the connection.
      */
-    protected function configureTimezone(\PDO $connection, array $config): void
+    protected function configureTimezone(PDO $connection, array $config): void
     {
         if (isset($config['timezone'])) {
-             $connection->prepare(springf('set time_zone="%s"', $config['timezone']))->execute();
+            $connection->prepare(sprintf('set time_zone="%s"', $config['timezone']))->execute();
         }
     }
-
 }
