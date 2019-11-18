@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Aspect;
 
+use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Retry\Annotation\AbstractRetry;
