@@ -93,7 +93,7 @@ class FluentRetry
     public function call(callable $callable)
     {
         if (empty($this->policies)) {
-            throw new \BadMethodCallException('Must specify at least one policy before call');
+            throw new \BadMethodCallException('Please specify at least one policy before call');
         }
         $policy = new HybridRetryPolicy(...$this->policies);
 
