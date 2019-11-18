@@ -32,6 +32,8 @@ class Params
 
     protected $heartbeat = 0;
 
+    protected $closeOnDestruct = true;
+
     public function __construct(array $data)
     {
         if (isset($data['insist'])) {
@@ -68,6 +70,10 @@ class Params
 
         if (isset($data['heartbeat'])) {
             $this->heartbeat = $data['heartbeat'];
+        }
+
+        if (isset($data['close_on_destruct'])) {
+            $this->closeOnDestruct = $data['close_on_destruct'];
         }
     }
 
@@ -114,6 +120,17 @@ class Params
     public function getHeartbeat(): int
     {
         return $this->heartbeat;
+    }
+
+    public function isCloseOnDestruct(): bool
+    {
+        return $this->closeOnDestruct;
+    }
+
+    public function setCloseOnDestruct($closeOnDestruct)
+    {
+        $this->closeOnDestruct = $closeOnDestruct;
+        return $this;
     }
 
     public function setInsist(bool $insist)
