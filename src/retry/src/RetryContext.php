@@ -18,6 +18,10 @@ use Hyperf\Utils\Fluent;
  * @property mixed $lastResult
  * @property null|\Throwable $lastThrowable
  * @property null|bool $retryExhausted
+ * @property null|StrategyInterface $strategy
+ * @property null|float $startTime
+ * @property null|int $attempt
+ * @property null|ProceedingJoinPoint $proceedingJoinPoint
  */
 class RetryContext extends Fluent
 {
