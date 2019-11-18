@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
+
 class MaxAttemptsRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
@@ -24,26 +26,26 @@ class MaxAttemptsRetryPolicy extends BaseRetryPolicy implements RetryPolicyInter
         $this->maxAttempts = $maxAttempts;
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
-        if ($this->isFirstTry($retryContext)) {
+        if ($retryContext->isFirstTry()) {
             return true;
         }
         if ($retryContext['attempt'] < $this->maxAttempts) {
             return true;
         }
-        $retryContext['retry_exhausted'] = true;
+        $retryContext['retryExhausted'] = true;
         return false;
     }
 
-    public function start(array $parentRetryContext = []): array
+    public function start(RetryContext $parentRetryContext): RetryContext
     {
         $parentRetryContext['attempt'] = 1;
         return $parentRetryContext;
     }
 
-    public function beforeRetry(array &$retryContext): void
+    public function beforeRetry(RetryContext &$retryContext): void
     {
-        ++$retryContext['attempt'];
+        ++$retryContext->attempt;
     }
 }

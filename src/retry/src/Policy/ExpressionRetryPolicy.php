@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
+
 class ExpressionRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
@@ -24,7 +26,7 @@ class ExpressionRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
         $this->callable = $callable;
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
         return call_user_func($this->callable, $retryContext);
     }

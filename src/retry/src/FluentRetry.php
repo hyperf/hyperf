@@ -100,7 +100,7 @@ class FluentRetry
         $context = $policy->start();
         // Fake join point for compatibility with Aspect;
         if (class_exists(ProceedingJoinPoint::class)) {
-            $context['proceeding_join_point'] = new ProceedingJoinPoint(
+            $context['proceedingJoinPoint'] = new ProceedingJoinPoint(
                 \Closure::fromCallable($callable),
                 '',
                 '',
@@ -114,11 +114,11 @@ class FluentRetry
 
         attempt: // Make an attempt to (re)try.
 
-        $context['last_result'] = $context['last_throwable'] = null;
+        $context['lastResult'] = $context['lastThrowable'] = null;
         try {
-            $context['last_result'] = $callable();
+            $context['lastResult'] = $callable();
         } catch (\Throwable $throwable) {
-            $context['last_throwable'] = $throwable;
+            $context['lastThrowable'] = $throwable;
         }
         if ($policy->canRetry($context)) {
             $policy->beforeRetry($context);
@@ -128,9 +128,9 @@ class FluentRetry
         end: // Break out of retry
 
         $policy->end($context);
-        if ($context['last_throwable'] !== null) {
-            throw $context['last_throwable'];
+        if ($context['lastThrowable'] !== null) {
+            throw $context['lastThrowable'];
         }
-        return $context['last_result'];
+        return $context['lastResult'];
     }
 }

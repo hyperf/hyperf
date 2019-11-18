@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
 use Hyperf\Utils\Arr;
 
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
@@ -48,19 +49,19 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
         $this->retryOnResultPredicate = $retryOnResultPredicate;
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
-        if ($this->isFirstTry($retryContext)) {
+        if ($retryContext->isFirstTry()) {
             return true;
         }
-        if ($retryContext['last_throwable'] !== null) {
-            return $this->isRetriable($retryContext['last_throwable']);
+        if ($retryContext['lastThrowable'] !== null) {
+            return $this->isRetriable($retryContext['lastThrowable']);
         }
         if (! is_callable($this->retryOnResultPredicate)) {
             return false;
         }
-        if ($retryContext['last_result'] !== null) {
-            return call_user_func($this->retryOnResultPredicate, $retryContext['last_result']);
+        if ($retryContext['lastResult'] !== null) {
+            return call_user_func($this->retryOnResultPredicate, $retryContext['lastResult']);
         }
         return false;
     }

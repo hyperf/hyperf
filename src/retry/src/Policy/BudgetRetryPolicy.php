@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryBudgetInterface;
+use Hyperf\Retry\RetryContext;
 
 class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
@@ -23,24 +24,24 @@ class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
         $this->budget = $retryBudget;
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
-        if ($this->isFirstTry($retryContext)) {
+        if ($retryContext->isFirstTry()) {
             return true;
         }
         if ($this->budget->consume(true)) {
             return true;
         }
-        $retryContext['retry_exhausted'] = true;
+        $retryContext['retryExhausted'] = true;
         return false;
     }
 
-    public function beforeRetry(array &$retryContext): void
+    public function beforeRetry(RetryContext &$retryContext): void
     {
         $this->budget->consume();
     }
 
-    public function start(array $parentRetryContext = []): array
+    public function start(RetryContext $parentRetryContext): RetryContext
     {
         $this->budget->produce();
         return $parentRetryContext;

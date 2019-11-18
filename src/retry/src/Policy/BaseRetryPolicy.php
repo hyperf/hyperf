@@ -12,29 +12,26 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
+
 abstract class BaseRetryPolicy
 {
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
         return true;
     }
 
-    public function beforeRetry(array &$retryContext): void
+    public function beforeRetry(RetryContext &$retryContext): void
     {
     }
 
-    public function start(array $parentRetryContext = []): array
+    public function start(RetryContext $parentRetryContext): RetryContext
     {
         return $parentRetryContext;
     }
 
-    public function end(array &$retryContext): bool
+    public function end(RetryContext &$retryContext): bool
     {
         return false;
-    }
-
-    protected function isFirstTry(array $retryContext): bool
-    {
-        return ! array_key_exists('last_result', $retryContext);
     }
 }

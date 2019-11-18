@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
+
 class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
@@ -24,25 +26,25 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         $this->fallback = $fallback;
     }
 
-    public function end(array &$retryContext): bool
+    public function end(RetryContext &$retryContext): bool
     {
-        if (! isset($retryContext['retry_exhausted'])) {
+        if (! isset($retryContext['retryExhausted'])) {
             return false;
         }
         if (! is_callable($this->fallback)) {
             return false;
         }
-        $retryContext['last_throwable'] = $retryContext['last_result'] = null;
-        if (isset($retryContext['proceeding_join_point'])) {
-            $arguments = $retryContext['proceeding_join_point']->getArguments();
+        $retryContext['lastThrowable'] = $retryContext['lastResult'] = null;
+        if (isset($retryContext['proceedingJoinPoint'])) {
+            $arguments = $retryContext['proceedingJoinPoint']->getArguments();
         } else {
             $arguments = [];
         }
 
         try {
-            $retryContext['last_result'] = call_user_func($this->fallback, ...$arguments);
+            $retryContext['lastResult'] = call_user_func($this->fallback, ...$arguments);
         } catch (\Throwable $throwable) {
-            $retryContext['last_throwable'] = $throwable;
+            $retryContext['lastThrowable'] = $throwable;
         }
         return false;
     }

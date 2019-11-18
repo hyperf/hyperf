@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
 use Hyperf\Utils\Collection;
 
 class HybridRetryPolicy implements RetryPolicyInterface
@@ -27,7 +28,7 @@ class HybridRetryPolicy implements RetryPolicyInterface
         $this->policyCollection = new Collection($policies);
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
         return $this->policyCollection
             ->every(function ($policy) use (&$retryContext) {
@@ -35,15 +36,18 @@ class HybridRetryPolicy implements RetryPolicyInterface
             });
     }
 
-    public function start(array $parentRetryContext = []): array
+    public function start(?RetryContext $parentRetryContext = null): RetryContext
     {
+        if ($parentRetryContext === null) {
+            $parentRetryContext = new RetryContext([]);
+        }
         return $this->policyCollection
             ->reduce(function ($context, $policy) {
                 return $policy->start($context);
             }, $parentRetryContext);
     }
 
-    public function beforeRetry(array &$retryContext): void
+    public function beforeRetry(RetryContext &$retryContext): void
     {
         $this->policyCollection
             ->each(function ($policy) use (&$retryContext) {
@@ -51,7 +55,7 @@ class HybridRetryPolicy implements RetryPolicyInterface
             });
     }
 
-    public function end(array &$retryContext): bool
+    public function end(RetryContext &$retryContext): bool
     {
         return $this->policyCollection
             ->first(function ($policy) use (&$retryContext) {

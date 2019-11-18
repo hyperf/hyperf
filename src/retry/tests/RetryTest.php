@@ -54,10 +54,10 @@ class RetryTest extends TestCase
     {
         $i = 0;
         $result = Retry::when(function ($context) {
-            if (! isset($context['last_result'])) {
+            if (! isset($context['lastResult'])) {
                 return true;
             }
-            return $context['last_result'] < 5;
+            return $context['lastResult'] < 5;
         })->call(function () use (&$i) {
             return ++$i;
         });

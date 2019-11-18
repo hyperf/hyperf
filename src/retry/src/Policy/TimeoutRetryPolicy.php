@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Retry\RetryContext;
+
 class TimeoutRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
@@ -24,18 +26,18 @@ class TimeoutRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
         $this->timeout = $timeout;
     }
 
-    public function canRetry(array &$retryContext): bool
+    public function canRetry(RetryContext &$retryContext): bool
     {
-        if (microtime(true) < $retryContext['start_time'] + $this->timeout) {
+        if (microtime(true) < $retryContext['startTime'] + $this->timeout) {
             return true;
         }
-        $retryContext['retry_exhausted'] = true;
+        $retryContext['retryExhausted'] = true;
         return false;
     }
 
-    public function start(array $parentRetryContext = []): array
+    public function start(RetryContext $parentRetryContext): RetryContext
     {
-        $parentRetryContext['start_time'] = microtime(true);
+        $parentRetryContext['startTime'] = microtime(true);
         return $parentRetryContext;
     }
 }

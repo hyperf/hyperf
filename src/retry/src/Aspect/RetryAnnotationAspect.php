@@ -35,18 +35,18 @@ class RetryAnnotationAspect implements AroundInterface
         $annotation = $this->getAnnotations($proceedingJoinPoint);
         $policy = $this->makePolicy($annotation);
         $context = $policy->start();
-        $context['proceeding_join_point'] = $proceedingJoinPoint;
+        $context['proceedingJoinPoint'] = $proceedingJoinPoint;
         if (! $policy->canRetry($context)) {
             goto end;
         }
 
         attempt: // Make an attempt to (re)try.
 
-        $context['last_result'] = $context['last_throwable'] = null;
+        $context['lastResult'] = $context['lastThrowable'] = null;
         try {
-            $context['last_result'] = $proceedingJoinPoint->process();
+            $context['lastResult'] = $proceedingJoinPoint->process();
         } catch (\Throwable $throwable) {
-            $context['last_throwable'] = $throwable;
+            $context['lastThrowable'] = $throwable;
         }
         if ($policy->canRetry($context)) {
             $policy->beforeRetry($context);
@@ -56,10 +56,10 @@ class RetryAnnotationAspect implements AroundInterface
         end: // Break out of retry
 
         $policy->end($context);
-        if ($context['last_throwable'] !== null) {
-            throw $context['last_throwable'];
+        if ($context['lastThrowable'] !== null) {
+            throw $context['lastThrowable'];
         }
-        return $context['last_result'];
+        return $context['lastResult'];
     }
 
     public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): AbstractRetry
