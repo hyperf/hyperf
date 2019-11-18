@@ -14,7 +14,6 @@ namespace Hyperf\Nats;
 
 use Hyperf\Nats\Driver\DriverFactory;
 use Hyperf\Nats\Driver\DriverInterface;
-use Hyperf\Nats\Listener\AfterSubscribeListener;
 use Hyperf\Nats\Listener\BeforeMainServerStartListener;
 use Psr\Container\ContainerInterface;
 
