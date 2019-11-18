@@ -28,7 +28,7 @@ class ConfigProvider
                 Consumer::class => ConsumerFactory::class,
             ],
             'listeners' => [
-                BeforeMainServerStartListener::class,
+                BeforeMainServerStartListener::class => 99,
                 MainWorkerStartListener::class,
             ],
             'annotations' => [

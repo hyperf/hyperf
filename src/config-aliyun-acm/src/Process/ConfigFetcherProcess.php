@@ -22,6 +22,7 @@ use Swoole\Server;
 class ConfigFetcherProcess extends AbstractProcess
 {
     public $name = 'aliyun-acm-config-fetcher';
+
     /**
      * @var Server
      */

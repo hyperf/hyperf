@@ -23,7 +23,7 @@ class ConfigProvider
         return [
             'listeners' => [
                 ModelEventListener::class,
-                ModelHookEventListener::class,
+                ModelHookEventListener::class => 99,
             ],
             'annotations' => [
                 'scan' => [

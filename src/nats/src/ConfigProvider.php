@@ -30,8 +30,7 @@ class ConfigProvider
                 },
             ],
             'listeners' => [
-                AfterSubscribeListener::class,
-                99 => BeforeMainServerStartListener::class,
+                BeforeMainServerStartListener::class => 99,
             ],
             'annotations' => [
                 'scan' => [

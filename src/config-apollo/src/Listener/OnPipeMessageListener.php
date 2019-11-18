@@ -113,5 +113,4 @@ class OnPipeMessageListener implements ListenerInterface
 
         return $value;
     }
-
 }

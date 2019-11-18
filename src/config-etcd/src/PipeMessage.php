@@ -21,7 +21,6 @@ class PipeMessage
 
     /**
      * PipeMessage constructor.
-     * @param array $configurations
      */
     public function __construct(array $configurations)
     {
