@@ -60,6 +60,7 @@
         "swoft/swoole-ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3",
+        "sy-records/think-template": "^2.0",
         "twig/twig": "^2.12"
     },
     "replace": {

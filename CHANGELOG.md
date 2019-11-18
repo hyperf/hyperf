@@ -1,5 +1,15 @@
 # v1.1.7 - TBD
 
+## Added
+
+- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+
+## Fixed
+
+- [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
+- [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
+- [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
+
 # v1.1.6 - 2019-11-14
 
 ## Added
