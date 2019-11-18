@@ -16,7 +16,7 @@ class Retry
 {
     public static function __callStatic($method, $arguments)
     {
-        $retry = new FluentRetry();
+        $retry = make(FluentRetry::class);
         return $retry->{$method}(...$arguments);
     }
 }
