@@ -20,6 +20,13 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
+/**
+ * Class RpcConnection
+ * @package Hyperf\JsonRpc
+ * @method  send($data)
+ * @method  recv(float $timeout)
+ * @property int $errCode
+ */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
     /**
@@ -37,12 +44,6 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         'options' => [],
     ];
 
-    /**
-     * Current redis database.
-     * @var null|int
-     */
-    protected $database;
-
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
@@ -54,6 +55,15 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     public function __call($name, $arguments)
     {
         return $this->connection->{$name}(...$arguments);
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->connection->{$name};
     }
 
     /**

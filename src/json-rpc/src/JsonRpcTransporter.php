@@ -19,7 +19,6 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
-use Swoole\Coroutine\Client as SwooleClient;
 
 class JsonRpcTransporter implements TransporterInterface
 {
@@ -85,8 +84,7 @@ class JsonRpcTransporter implements TransporterInterface
             'connectTimeout'=>$this->connectTimeout,
         ];
         $name = $node->host.':'.$node->port;
-        $pool = $this->factory->getPool($name,$config);
-        return $pool;
+        return $this->factory->getPool($name,$config);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
