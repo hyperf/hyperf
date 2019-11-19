@@ -119,7 +119,7 @@ class FooCommand extends HyperfCommand
 
 #### 参数
 
-假设我们希望定义一个 `name` 参数，然后通过传递任意字符串如 `Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
+假设我们希望定义两个 `param1` `param2`  参数，然后通过传递任意字符串如 `Hello Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:hello Hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
 
 ```php
 <?php
@@ -149,7 +149,7 @@ class FooCommand extends HyperfCommand
         // 从 $input 获取 name 参数
         $param1 = $this->input->getArgument('param1');
         $param2 = $this->input->getArgument('param2') ?? 'Hyperf';
-        $this->line('param1: ' . $param1.', param2: '.$param2, 'info');
+        $this->line($param1.' '.$param2, 'info');
     }
     
     public function configure()
@@ -164,5 +164,5 @@ class FooCommand extends HyperfCommand
 }
 ``` 
 
-执行 `php bin/hyperf.php foo:hello Hello Hyperf` 我们就能看到输出了 `param1: Hello, param2: Hyperf` 了。
+执行 `php bin/hyperf.php foo:hello Hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
 
