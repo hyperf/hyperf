@@ -11,6 +11,7 @@
 - [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
 - [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
 - [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
+- [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `GrpcClient::yield` does not get the correct channel pool.
 
 # Changed
 
