@@ -89,17 +89,17 @@ class SessionProxy extends Session
 
     public function migrate(bool $destroy = false, ?int $lifetime = null): bool
     {
-        return $this->getSession->migrate($destroy, $lifetime);
+        return $this->getSession()->migrate($destroy, $lifetime);
     }
 
     public function save(): void
     {
-        $this->getSession->save();
+        $this->getSession()->save();
     }
 
     public function has(string $name): bool
     {
-        return $this->getSession->has($name);
+        return $this->getSession()->has($name);
     }
 
     public function get(string $name, $default = null)
