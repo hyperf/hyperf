@@ -28,6 +28,7 @@ class %CLASS% extends HyperfCommand
     public function configure()
     {
         $this->setDescription('Hyperf Demo Command');
+        parent::configure();
     }
 
     public function handle()
