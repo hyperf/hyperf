@@ -96,18 +96,11 @@ class Config
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPool(): string
     {
         return $this->pool;
     }
 
-    /**
-     * @param string $pool
-     * @return Config
-     */
     public function setPool(string $pool): Config
     {
         $this->pool = $pool;

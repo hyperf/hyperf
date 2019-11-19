@@ -10,7 +10,7 @@ composer require hyperf/redis
 
 |     配置项     |  类型   |   默认值    |              备注              |
 |:--------------:|:-------:|:-----------:|:------------------------------:|
-|      host      | string  | 'localhost' |           Redis地址            |
+|      host      | string  | 'localhost' |           Redis 地址            |
 |      auth      | string  |     无      |              密码              |
 |      port      | integer |    6379     |              端口              |
 |       db       | integer |      0      |               DB               |

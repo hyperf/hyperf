@@ -158,7 +158,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
             $redis = new \RedisCluster($name, $seeds, $timeout);
         } catch (\Throwable $e) {
-            throw new ConnectionException('Connection reconnect failed. ' . $e->getMessage());
+            throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }
 
         return $redis;
@@ -167,7 +167,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     protected function retry($name, $arguments, \Throwable $exception)
     {
         $logger = $this->container->get(StdoutLoggerInterface::class);
-        $logger->warning(sprintf('Redis::__call failed, bacause ' . $exception->getMessage()));
+        $logger->warning(sprintf('Redis::__call failed, because ' . $exception->getMessage()));
 
         try {
             $this->reconnect();
