@@ -119,7 +119,7 @@ class FooCommand extends HyperfCommand
 
 #### 参数
 
-假设我们希望定义一个 `name` 参数，然后通过传递任意字符串如 `Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
+假设我们希望定义两个 `param1` `param2`  参数，然后通过传递任意字符串如 `Hello Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:hello Hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
 
 ```php
 <?php
@@ -146,19 +146,29 @@ class FooCommand extends HyperfCommand
 
     public function handle()
     {
-        // 从 $input 获取 name 参数
-        $argument = $this->input->getArgument('name') ?? 'World';
-        $this->line('Hello ' . $argument, 'info');
+        /**
+         * 从 $input 获取 param1、param2 参数
+         *
+         * @var string
+         */
+        $param1 = $this->input->getArgument('param1');
+        $param2 = $this->input->getArgument('param2') ?? 'Hyperf';
+        $this->line($param1.' '.$param2, 'info');
     }
-    
-    protected function getArguments()
+        /**
+         * 配置 `cli` 模式的接受参数选项以及其他选项  
+         */
+    public function configure()
     {
-        return [
-            ['name', InputArgument::OPTIONAL, '这里是对这个参数的解释']
-        ];
+             $this
+             //->setName('model:create')  //  也可以在配置项设置命令名称,效果等同于给类成员 `$name` 赋值 
+             ->setDescription('Hyperf Command 命令功能介绍...')
+             ->setHelp('运行命令时使用 "--help" 选项时的完整命令描述')
+             ->addArgument('param1',InputArgument::REQUIRED,'参数一是一个必填参数...')
+             ->addArgument('param2',InputArgument::OPTIONAL,'参数二是非必填参数...');
     }
 }
 ``` 
 
-执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
+执行 `php bin/hyperf.php foo:hello Hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
 
