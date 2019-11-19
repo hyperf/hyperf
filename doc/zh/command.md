@@ -147,18 +147,22 @@ class FooCommand extends HyperfCommand
     public function handle()
     {
         // 从 $input 获取 name 参数
-        $argument = $this->input->getArgument('name') ?? 'World';
-        $this->line('Hello ' . $argument, 'info');
+        $param1 = $this->input->getArgument('param1');
+        $param2 = $this->input->getArgument('param2') ?? 'Hyperf';
+        $this->line('param1: ' . $param1.', param2: '.$param2, 'info');
     }
     
-    protected function getArguments()
+    public function configure()
     {
-        return [
-            ['name', InputArgument::OPTIONAL, '这里是对这个参数的解释']
-        ];
+             $this
+             //->setName('model:create')  //  也可以在配置项设置命令名称,效果等同于给类成员 `$name` 赋值 
+             ->setDescription('Hyperf Command 命令功能介绍...')
+             ->setHelp('运行命令时使用 "--help" 选项时的完整命令描述')
+             ->addArgument('param1',InputArgument::REQUIRED,'参数一是一个必填参数...')
+             ->addArgument('param2',InputArgument::OPTIONAL,'参数二是非必填参数...');
     }
 }
 ``` 
 
-执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
+执行 `php bin/hyperf.php foo:hello Hello Hyperf` 我们就能看到输出了 `param1: Hello, param2: Hyperf` 了。
 
