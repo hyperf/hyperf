@@ -14,8 +14,7 @@ namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Guzzle\PoolHandler;
-use Hyperf\Guzzle\RetryMiddleware;
+use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Utils\Coroutine;
 
 abstract class Client
@@ -35,37 +34,33 @@ abstract class Client
      */
     protected $options = [];
 
-    protected $client;
+    /**
+     * @var HandlerStack[]
+     */
+    protected $stacks;
 
-    public function __construct(ConfigInterface $config)
+    /**
+     * @var HandlerStackFactory
+     */
+    protected $factory;
+
+    public function __construct(ConfigInterface $config, HandlerStackFactory $factory)
     {
         $uri = $config->get('etcd.uri', 'http://127.0.0.1:2379');
         $version = $config->get('etcd.version', 'v3beta');
 
         $this->options = $config->get('etcd.options', []);
         $this->baseUri = sprintf('%s/%s/', $uri, $version);
+        $this->factory = $factory;
     }
 
     protected function getDefaultHandler()
     {
-        $handler = null;
-        if (Coroutine::inCoroutine()) {
-            $handler = make(PoolHandler::class, [
-                'option' => [
-                    'max_connections' => 50,
-                ],
-            ]);
+        $id = (int) Coroutine::inCoroutine();
+        if ($this->stacks[$id] instanceof HandlerStack) {
+            return $this->stacks[$id];
         }
 
-        // Retry Middleware
-        $retry = make(RetryMiddleware::class, [
-            'retries' => 1,
-            'delay' => 10,
-        ]);
-
-        $stack = HandlerStack::create($handler);
-        $stack->push($retry->getMiddleware(), 'retry');
-
-        return $stack;
+        return $this->stacks[$id] = $this->factory->create();
     }
 }

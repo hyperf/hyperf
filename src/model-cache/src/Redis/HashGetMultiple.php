@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ModelCache\Redis;
 
-class HashsGetMultiple implements OperatorInterface
+class HashGetMultiple implements OperatorInterface
 {
     public function getScript(): string
     {

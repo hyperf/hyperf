@@ -32,13 +32,13 @@ class RedisFactory
     }
 
     /**
-     * @return \Redis
+     * @return \Redis|RedisProxy
      */
     public function get(string $poolName)
     {
         $proxy = $this->proxies[$poolName] ?? null;
         if (! $proxy instanceof RedisProxy) {
-            throw new InvalidRedisProxyException('Redis proxy is invalid.');
+            throw new InvalidRedisProxyException('Invalid Redis proxy.');
         }
 
         return $proxy;

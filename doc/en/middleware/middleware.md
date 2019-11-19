@@ -218,7 +218,7 @@ class FooMiddleware implements MiddlewareInterface
     }
 }
 ```
-The order of execution of the middleware is `BarMiddleware -> FooMiddleware`.
+The order of execution of the middleware is `FooMiddleware -> BarMiddleware`.
 
 ## The order of Middleware execution
 
