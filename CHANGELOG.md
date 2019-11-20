@@ -4,6 +4,7 @@
 
 - [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
 - [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
+- [#987](https://github.com/hyperf/hyperf/pull/987) Added parent::configure for command.stub.
 
 ## Fixed
 
