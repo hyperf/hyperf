@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\JsonRpc;
+namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
@@ -37,8 +37,8 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
      */
     protected $config = [
         'host' => 'localhost',
-        'port' => 0,
-        'connectTimeout' => 0.0,
+        'port' => 9501,
+        'connect_timeout' => 5.0,
         'options' => [],
     ];
 
@@ -55,10 +55,6 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name}(...$arguments);
     }
 
-    /**
-     * @param $name
-     * @return mixed
-     */
     public function __get($name)
     {
         return $this->connection->{$name};
@@ -83,7 +79,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     {
         $host = $this->config['host'];
         $port = $this->config['port'];
-        $connectTimeout = $this->config['connectTimeout'];
+        $connectTimeout = $this->config['connect_timeout'];
 
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
         $client->set($this->config['options'] ?? []);
@@ -93,6 +89,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
             $client->close();
             throw new RuntimeException('Connect to server failed.');
         }
+
         $this->connection = $client;
         $this->lastUseTime = microtime(true);
         return true;
@@ -102,5 +99,10 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     {
         $this->connection->close();
         return true;
+    }
+
+    public function resetLastUseTime(): void
+    {
+        $this->lastUseTime = 0.0;
     }
 }

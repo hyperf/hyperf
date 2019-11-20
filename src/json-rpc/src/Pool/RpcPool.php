@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\JsonRpc\RpcConnection;
-use Hyperf\Pool\Frequency;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
