@@ -287,6 +287,9 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
     public function __construct(BroadcasterInterface $broadcaster)
     {
         $relaySubject = make(ReplaySubject::class, ['bufferSize' => 5]);
+        // 第一个参数为原RxPHP Subject 对象。
+        // 第二个参数为广播方式，默认为全进程广播
+        // 第三个参数为频道ID, 每个频道只能收到相同频道的消息。
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
