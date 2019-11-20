@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
@@ -21,8 +21,6 @@ use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 /**
- * Class RpcConnection
- * @package Hyperf\JsonRpc
  * @method  send($data)
  * @method  recv(float $timeout)
  * @property int $errCode
@@ -67,8 +65,8 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     }
 
     /**
-     * @return $this
      * @throws ConnectionException
+     * @return $this
      */
     public function getActiveConnection()
     {
@@ -105,5 +103,4 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $this->connection->close();
         return true;
     }
-
 }

@@ -12,14 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
-use Swoole\Coroutine\Client as SwooleClient;
 
-class JsonRpcTransporter implements TransporterInterface
+class JsonRpcPoolTransporter implements TransporterInterface
 {
+    /**
+     * @Inject
+     * @var PoolFactory
+     */
+    protected $factory;
+
     /**
      * @var null|LoadBalancerInterface
      */
@@ -52,32 +60,31 @@ class JsonRpcTransporter implements TransporterInterface
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
-            $client = $this->getClient();
+            $pool = $this->getClient();
+            $client = $pool->get();
             if ($client->send($data . $this->getEof()) === false) {
                 if ($client->errCode == 104) {
+                    $client->release();
                     throw new RuntimeException('Connect to server failed.');
                 }
             }
             return $client;
         });
-        return $client->recv($this->recvTimeout);
+        $data = $client->recv($this->recvTimeout);
+        $client->release();
+        return $data;
     }
 
-    public function getClient(): SwooleClient
+    public function getClient(): Pool
     {
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
-
-        return retry(2, function () use ($client) {
-            $node = $this->getNode();
-            $result = $client->connect($node->host, $node->port, $this->connectTimeout);
-            if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
-                // Force close and reconnect to server.
-                $client->close();
-                throw new RuntimeException('Connect to server failed.');
-            }
-            return $client;
-        });
+        $node = $this->getNode();
+        $config = [
+            'host' => $node->host,
+            'port' => $node->port,
+            'connectTimeout' => $this->connectTimeout,
+        ];
+        $name = $node->host . ':' . $node->port;
+        return $this->factory->getPool($name, $config);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface

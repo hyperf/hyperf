@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc\Pool;
@@ -34,21 +34,18 @@ class PoolFactory
     }
 
     /**
-     * @param string $name
-     * @param array $config
-     * @return RpcPool
      * @throws NotFoundException
      */
-    public function getPool(string $name,array $config): RpcPool
+    public function getPool(string $name, array $config): RpcPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
         }
 
         if ($this->container instanceof Container) {
-            $pool = $this->container->make(RpcPool::class, ['name' => $name,'config'=>$config]);
+            $pool = $this->container->make(RpcPool::class, ['name' => $name, 'config' => $config]);
         } else {
-            $pool = new RpcPool($this->container, $name,$config);
+            $pool = new RpcPool($this->container, $name, $config);
         }
         return $this->pools[$name] = $pool;
     }

@@ -7,15 +7,15 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Pool\Pool;
-use Hyperf\Pool\Frequency;
 use Hyperf\JsonRpc\RpcConnection;
+use Hyperf\Pool\Frequency;
+use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 class RpcPool extends Pool
@@ -30,7 +30,7 @@ class RpcPool extends Pool
      */
     protected $config;
 
-    public function __construct(ContainerInterface $container, string $name,array $config)
+    public function __construct(ContainerInterface $container, string $name, array $config)
     {
         $this->name = $name;
         $this->config = $config;
@@ -39,9 +39,6 @@ class RpcPool extends Pool
         parent::__construct($container, $options);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
