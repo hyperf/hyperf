@@ -4,7 +4,6 @@
 
 - [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
 - [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
-- [#987](https://github.com/hyperf/hyperf/pull/987) Added parent::configure for command.stub.
 
 ## Fixed
 
@@ -14,6 +13,7 @@
 - [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
 - [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
 - [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `Hyperf\GrpcClient\GrpcClient::yield` does not get the correct channel pool.
+- [#987](https://github.com/hyperf/hyperf/pull/987) Fixed missing method call `parent::configure()` of `command.stub`.
 
 # Changed
 
