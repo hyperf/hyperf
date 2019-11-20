@@ -1,0 +1,53 @@
+{
+    "name": "hyperf/reactive-x",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "ReactiveX integration for Swoole and Hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ReactiveX\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ReactiveX\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.4",
+        "reactivex/rxphp": "^2.0",
+        "hyperf/utils": "~1.1.0",
+        "hyperf/contract": "~1.1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "phpstan/phpstan": "^0.10.5",
+        "hyperf/event": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "hyperf/testing": "~1.1.0",
+        "hyperf/di": "~1.1.0",
+        "swoft/swoole-ide-helper": "dev-master"
+    },
+    "suggest": {
+        "hyperf/process": "Required to use IpcSubject.",
+        "hyperf/event": "Required to use Observable::fromEvent method."
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\ReactiveX\\ConfigProvider"
+        }
+    }
+}

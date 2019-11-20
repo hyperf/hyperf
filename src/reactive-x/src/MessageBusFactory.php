@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace Hyperf\ReactiveX;
+
+use Hyperf\ReactiveX\Contract\BroadcasterInterface;
+use Psr\Container\ContainerInterface;
+use Rx\Subject\BehaviorSubject;
+
+class MessageBusFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $subject = new BehaviorSubject();
+        $broadcaster = $container->get(BroadcasterInterface::class);
+        return new IpcSubject($subject, $broadcaster, 0);
+    }
+}
