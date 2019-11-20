@@ -125,7 +125,7 @@ class Observable
             },
             function () use ($chan) {
                 $chan->close();
-            },
+            }
         );
         $results = [];
         $receive = $chan->pop();
@@ -150,7 +150,7 @@ class Observable
             },
             function () use ($chan) {
                 $chan->close();
-            },
+            }
         );
         $receive = $chan->pop();
         $id->dispose();

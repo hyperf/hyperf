@@ -23,13 +23,16 @@ use Swoole\Server;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
-class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
+class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     /**
      * @var IpcSubject
      */
     private $subject;
 
+    /**
+     * @var array
+     */
     private $subscriber = [];
 
     public function __construct(BroadcasterInterface $broadcaster)
