@@ -15,16 +15,12 @@ namespace Hyperf\ServiceGovernance\Listener;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class RegisterServiceListener implements ListenerInterface
 {
     /**

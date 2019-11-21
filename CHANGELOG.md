@@ -1,4 +1,31 @@
-# v1.1.6 - TBD
+# v1.1.7 - TBD
+
+## Added
+
+- [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
+- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+- [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
+
+## Fixed
+
+- [#955](https://github.com/hyperf/hyperf/pull/955) Fixed bug that port and charset do not work for `hyperf/db`.
+- [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
+- [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
+- [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
+- [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
+- [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `Hyperf\GrpcClient\GrpcClient::yield` does not get the correct channel pool.
+- [#987](https://github.com/hyperf/hyperf/pull/987) Fixed missing method call `parent::configure()` of `command.stub`.
+
+# Optimized
+
+- [#991](https://github.com/hyperf/hyperf/pull/991) Optimized `Hyperf\DbConnection\ConnectionResolver::connection`. 
+
+# Changed
+
+- [#944](https://github.com/hyperf/hyperf/pull/944) Replaced annotation `@Listener` and `@Process` into config which `listeners` and `processes` in `ConfigProvider`.
+- [#977](https://github.com/hyperf/hyperf/pull/977) Changed `init-proxy.sh` command to only delete the `runtime/container` directory.
+
+# v1.1.6 - 2019-11-14
 
 ## Added
 
@@ -8,6 +35,8 @@
 - [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
 - [#931](https://github.com/hyperf/hyperf/pull/931) Added `strict_mode` for config-apollo.
 - [#933](https://github.com/hyperf/hyperf/pull/933) Added plates template engine for view.
+- [#937](https://github.com/hyperf/hyperf/pull/937) Added consume events for nats.
+- [#941](https://github.com/hyperf/hyperf/pull/941) Added an zookeeper adapter for Hyperf config component.
 
 ## Fixed
 
@@ -18,15 +47,19 @@
 - [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
 - [#907](https://github.com/hyperf/hyperf/pull/907) Fixed the expire time is double of the config for `requestSync` in nats.
 - [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
+- [#925](https://github.com/hyperf/hyperf/pull/925) Fixed the dead cycle caused by socket closed.
 - [#932](https://github.com/hyperf/hyperf/pull/932) Fixed `Translator::setLocale` does not works in coroutine evnironment.
+- [#940](https://github.com/hyperf/hyperf/pull/940) Fixed WebSocketClient::push TypeError, expects integer, but boolean given.
 
 ## Optimized
 
 - [#907](https://github.com/hyperf/hyperf/pull/907) Optimized nats consumer process restart frequently.
-
-## Optimized
-
 - [#928](https://github.com/hyperf/hyperf/pull/928) Optimized `Hyperf\ModelCache\Cacheable::query` to delete the model cache when batch update
+- [#936](https://github.com/hyperf/hyperf/pull/936) Optimized `increment` to atomic operation for model-cache.
+
+## Changed
+
+- [#934](https://github.com/hyperf/hyperf/pull/934) WaitGroup inherit \Swoole\Coroutine\WaitGroup.
 
 # v1.1.5 - 2019-11-07
 
