@@ -62,6 +62,7 @@
   * [配置中心](zh/config-center.md)
   * [调用链追踪](zh/tracer.md)
   * [服务监控](zh/metric.md)
+  * [服务重试](zh/retry.md)
   
 * 其它组件
 
@@ -85,6 +86,7 @@
   * [枚举类](zh/constants.md)
   * [Snowflake](zh/snowflake.md)
   * [Nats](zh/nats.md)
+  * [重试](zh/retry.md)
 
 * 应用部署
 
