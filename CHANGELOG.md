@@ -1,5 +1,7 @@
 # v1.1.7 - TBD
 
+# v1.1.7 - 2019-11-21
+
 ## Added
 
 - [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
