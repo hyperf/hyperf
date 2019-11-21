@@ -98,7 +98,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $redis = null;
         if ($cluster !== true) {
             $redis = new \Redis();
-            if (! $redis->connect($host, $port, $timeout)) {
+            if (! $redis->connect($host, (int) $port, $timeout)) {
                 throw new ConnectionException('Connection reconnect failed.');
             }
         } else {
