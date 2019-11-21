@@ -21,8 +21,8 @@ use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 /**
- * @method  send($data)
- * @method  recv(float $timeout)
+ * @method bool|int send($data)
+ * @method bool|string recv(float $timeout)
  * @property int $errCode
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
