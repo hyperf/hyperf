@@ -46,19 +46,25 @@ class LuaManager
         $this->operators[HashIncr::class] = new HashIncr();
     }
 
-    public function handle(string $key, array $keys)
+    public function handle(string $key, array $keys, ?int $num = null)
     {
         if ($this->config->isLoadScript()) {
             $sha = $this->getLuaSha($key);
         }
 
         $operator = $this->getOperator($key);
+
+        if ($num === null) {
+            $num = count($keys);
+        }
+
         if (! empty($sha)) {
-            $luaData = $this->redis->evalSha($sha, $keys, count($keys));
+            $luaData = $this->redis->evalSha($sha, $keys, $num);
         } else {
             $script = $operator->getScript();
-            $luaData = $this->redis->eval($script, $keys, count($keys));
+            $luaData = $this->redis->eval($script, $keys, $num);
         }
+
         return $operator->parseResponse($luaData);
     }
 

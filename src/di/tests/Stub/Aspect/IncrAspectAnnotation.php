@@ -10,16 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\DbConnection\Stubs;
+namespace HyperfTest\Di\Stub\Aspect;
 
-use Hyperf\DbConnection\Frequency;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-class FrequencyStub extends Frequency
+class IncrAspectAnnotation
 {
-    protected $time = 2;
-
-    public function getHits(): array
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        return $this->hits;
+        return $proceedingJoinPoint->process() + 1;
     }
 }
