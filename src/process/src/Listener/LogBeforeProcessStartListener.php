@@ -13,14 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class LogBeforeProcessStartListener implements ListenerInterface
 {
     /**

@@ -156,24 +156,28 @@ $wg->wait();
 ```php
 <?php
 use Hyperf\Utils\Exception\ParallelExecutionException;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Parallel;
 
-$parallel = new \Hyperf\Utils\Parallel();
+$parallel = new Parallel();
 $parallel->add(function () {
-    \Hyperf\Utils\Coroutine::sleep(1);
-    return \Hyperf\Utils\Coroutine::id();
+    sleep(1);
+    return Coroutine::id();
 });
 $parallel->add(function () {
-    \Hyperf\Utils\Coroutine::sleep(1);
-    return \Hyperf\Utils\Coroutine::id();
+    sleep(1);
+    return Coroutine::id();
 });
+
 try{
     // $results 结果为 [1, 2]
    $results = $parallel->wait(); 
 } catch(ParallelExecutionException $e){
-    //$e->getResults() 获取协程中的返回值。
-    //$e->getThrowables() 获取协程中出现的异常。
+    // $e->getResults() 获取协程中的返回值。
+    // $e->getThrowables() 获取协程中出现的异常。
 }
 ```
+> 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 异常仅在 1.1.6 版本和更新的版本下会抛出
 
 通过上面的代码我们可以看到仅花了 1 秒就得到了两个不同的协程的 ID，在调用 `add(callable $callable)` 的时候 `Parallel` 类会为之自动创建一个协程，并加入到 `WaitGroup` 的调度去。    
 不仅如此，我们还可以通过 `parallel(array $callables)` 函数进行更进一步的简化上面的代码，达到同样的目的，下面为简化后的代码。
@@ -185,17 +189,44 @@ use Hyperf\Utils\Coroutine;
 // 传递的数组参数您也可以带上 key 便于区分子协程，返回的结果也会根据 key 返回对应的结果
 $result = parallel([
     function () {
-        Coroutine::sleep(1);
+        sleep(1);
         return Coroutine::id();
     },
     function () {
-        Coroutine::sleep(1);
+        sleep(1);
         return Coroutine::id();
     }
 ]);
 ```
 
 > 注意 `Parallel` 本身也需要在协程内才能使用
+
+#### 限制 Parallel 最大同时运行的协程数
+
+> 该功能仅可在 1.1.3 版本或更高版本使用
+
+当我们添加到 Parallel 里的任务有很多时，假设都是一些请求任务，那么一瞬间发出全部请求很有可能会导致对端服务因为一瞬间接收到了大量的请求而处理不过来，有宕机的风险，所以需要对对端进行适当的保护，但我们又希望可以通过 Parallel 机制来加速这些请求的耗时，那么可以通过在实例化 Parallel 对象时传递第一个参数，来设置最大运行的协程数，比如我们希望最大设置的协程数为 5 ，也就意味着 Parallel 里最多只会有 5 个协程在运行，只有当 5 个里有协程完成结束后，后续的协程才会继续启动，直至所有协程完成任务，示例代码如下：
+
+```php
+use Hyperf\Utils\Exception\ParallelExecutionException;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Parallel;
+
+$parallel = new Parallel(5);
+for ($i = 0; $i < 20; $i++) {
+    $parallel->add(function () {
+        sleep(1);
+        return Coroutine::id();
+    });
+} 
+
+try{
+   $results = $parallel->wait(); 
+} catch(ParallelExecutionException $e){
+    // $e->getResults() 获取协程中的返回值。
+    // $e->getThrowables() 获取协程中出现的异常。
+}
+```
 
 ### Concurrent 协程运行控制
 

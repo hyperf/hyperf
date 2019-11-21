@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Nats\Listener;
 
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Nats\ConsumerManager;
@@ -20,7 +19,6 @@ use Psr\Container\ContainerInterface;
 
 /**
  * Must handle the event before `Hyperf\Process\Listener\BootProcessListener`.
- * @Listener(priority=99)
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
