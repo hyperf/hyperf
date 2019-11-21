@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Session;
 
+use Carbon\Carbon;
+use HyperfTest\Session\Stub\FooHandler;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
@@ -23,7 +25,6 @@ use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
-use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -103,7 +104,9 @@ class SessionMiddlewareTest extends TestCase
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $time = time();
+        Carbon::setTestNow(Carbon::createFromTimestampUTC($time));
         $response = $middleware->process($request, $requestHandler);
+        Carbon::setTestNow();
 
         /** @var Cookie $cookie */
         $cookie = $response->getCookies()['']['/'][$session->getName()];

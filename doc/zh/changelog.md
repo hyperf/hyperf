@@ -1,5 +1,42 @@
 # 版本更新记录
 
+# v1.1.6 - 2019-11-14
+
+## 新增
+
+- [#827](https://github.com/hyperf/hyperf/pull/827) 新增了极简的高性能的 DB 组件；
+- [#905](https://github.com/hyperf/hyperf/pull/905) 视图组件增加了 `twig` 模板引擎；
+- [#911](https://github.com/hyperf/hyperf/pull/911) 定时任务支持多实例情况下，只运行单一实例的定时任务；
+- [#913](https://github.com/hyperf/hyperf/pull/913) 增加监听器 `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`；
+- [#921](https://github.com/hyperf/hyperf/pull/921) 新增 `Session` 组件；
+- [#931](https://github.com/hyperf/hyperf/pull/931) 阿波罗配置中心增加 `strict_mode`，自动将配置转化成对应数据类型；
+- [#933](https://github.com/hyperf/hyperf/pull/933) 视图组件增加了 `plates` 模板引擎；
+- [#937](https://github.com/hyperf/hyperf/pull/937) Nats 组件添加消费者消费和订阅事件；
+- [#941](https://github.com/hyperf/hyperf/pull/941) 新增 `Zookeeper` 配置中心；
+
+## 变更
+
+- [#934](https://github.com/hyperf/hyperf/pull/934) 修改 `WaitGroup` 继承 `\Swoole\Coroutine\WaitGroup`；
+
+## 修复
+
+- [#897](https://github.com/hyperf/hyperf/pull/897) 修复 `Nats` 消费者，`pool` 配置无效的 BUG；
+- [#901](https://github.com/hyperf/hyperf/pull/901) 修复 `GraphQL` 组件，`Factory` 注解无法正常使用的 BUG；
+- [#903](https://github.com/hyperf/hyperf/pull/903) 修复添加 `hyperf/rpc-client` 依赖后，`init-proxy` 脚本无法正常停止的BUG；
+- [#904](https://github.com/hyperf/hyperf/pull/904) 修复监听器监听 `Hyperf\Framework\Event\BeforeMainServerStart` 事件时，无法使用 `IO` 操作的BUG；
+- [#906](https://github.com/hyperf/hyperf/pull/906) 修复 `Hyperf\HttpMessage\Server\Request` 端口获取有误的 BUG；
+- [#907](https://github.com/hyperf/hyperf/pull/907) 修复 `Nats` 组件 `requestSync` 方法，超时时间不准确的 BUG；
+- [#909](https://github.com/hyperf/hyperf/pull/909) 修复 `Parallel` 内逻辑抛错后，无法正常停止的 BUG；
+- [#925](https://github.com/hyperf/hyperf/pull/925) 修复因 `Socket` 无法正常建立，导致进程频繁重启的 BUG；
+- [#932](https://github.com/hyperf/hyperf/pull/932) 修复 `Translator::setLocale` 在协程环境下，数据混淆的 BUG；
+- [#940](https://github.com/hyperf/hyperf/pull/940) 修复 `WebSocketClient::push` 方法 `finish` 参数类型错误；
+
+## 优化
+
+- [#907](https://github.com/hyperf/hyperf/pull/907) 优化 `Nats` 消费者频繁重启；
+- [#928](https://github.com/hyperf/hyperf/pull/928) `Hyperf\ModelCache\Cacheable::query` 批量修改数据时，可以删除对应缓存；
+- [#936](https://github.com/hyperf/hyperf/pull/936) 优化调用模型缓存 `increment` 时，可能因并发情况导致的数据有错；
+
 # v1.1.5 - 2019-11-07
 
 ## 新增

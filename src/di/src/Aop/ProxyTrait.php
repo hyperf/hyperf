@@ -60,7 +60,7 @@ trait ProxyTrait
     {
         $aspects = self::getAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $aspects = array_unique(array_replace($aspects, $annotationAspects));
+        $aspects = array_unique(array_merge($aspects, $annotationAspects));
         if (empty($aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
