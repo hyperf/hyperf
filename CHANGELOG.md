@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
 - [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
 - [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
 
