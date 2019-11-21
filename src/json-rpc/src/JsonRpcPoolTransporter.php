@@ -81,6 +81,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             $pool = $this->getPool();
             $connection = $pool->get();
             try {
+                /** @var RpcConnection $client */
                 $client = $connection->getConnection();
                 if ($client->send($data . $this->getEof()) === false) {
                     if ($client->errCode == 104) {
