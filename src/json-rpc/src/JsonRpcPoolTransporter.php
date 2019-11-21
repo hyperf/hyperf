@@ -148,12 +148,15 @@ class JsonRpcPoolTransporter implements TransporterInterface
         return $this;
     }
 
+    /**
+     * @return \Hyperf\LoadBalancer\Node[]
+     */
     public function getNodes(): array
     {
         return $this->nodes;
     }
 
-    private function getEof()
+    private function getEof(): string
     {
         return $this->config['eof'] ?? "\r\n";
     }
