@@ -136,7 +136,7 @@ try {
 // string(19) "Undefined offset: 1"
 ```
 
-如果不配置监听器则如下，且不会抛出异常。
+如果不配置监听器则如下，且会抛出异常。
 
 ```
 PHP Notice:  Undefined offset: 1 in IndexController.php on line 24
