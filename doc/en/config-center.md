@@ -48,6 +48,8 @@ return [
     'namespaces' => [
         'application',
     ],
+    // When it's false, the configuration pulled is of type string, When it's true, the configuration is converted to the corresponding type. For example:  1234 will be converted to int type
+    'strict_mode' => false,
     // The interval of update configuration (seconds)
     'interval' => 5,
 ];

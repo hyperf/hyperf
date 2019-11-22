@@ -52,6 +52,8 @@ return [
     ],
     // 配置更新间隔（秒）
     'interval' => 5,
+    // 启用严格模式，为false时拉取的配置均为string类型，为true时拉取的配置转化为相对应的类型，例如：数值型1234转为int型
+    'strict_mode' => false,
     // 客户端IP
     'client_ip' => current(swoole_get_local_ip()),
     // 拉取配置超时时间
