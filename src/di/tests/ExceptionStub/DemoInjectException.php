@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Di\ExceptionStub;
@@ -20,7 +20,7 @@ use Hyperf\Di\Annotation\Inject;
 class DemoInjectException
 {
     /**
-     * @Inject(require=true)
+     * @Inject(required=true)
      * @var Demo1
      */
     private $demo;

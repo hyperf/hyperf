@@ -7,13 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Tracer\Listener;
 
 use Hyperf\Database\Events\QueryExecuted;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
@@ -21,9 +20,6 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use OpenTracing\Tracer;
 
-/**
- * @Listener
- */
 class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;

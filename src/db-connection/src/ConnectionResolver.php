@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\DbConnection;
@@ -64,12 +64,18 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             $pool = $this->factory->getPool($name);
-            $connection = $pool->get()->getConnection();
-            Context::set($id, $connection);
-            if (Coroutine::inCoroutine()) {
-                defer(function () use ($connection) {
-                    $connection->release();
-                });
+            $connection = $pool->get();
+            try {
+                // PDO is initialized as an anonymous function, so there is no IO exception,
+                // but if other exceptions are thrown, the connection will not return to the connection pool properly.
+                $connection = $connection->getConnection();
+                Context::set($id, $connection);
+            } finally {
+                if (Coroutine::inCoroutine()) {
+                    defer(function () use ($connection) {
+                        $connection->release();
+                    });
+                }
             }
         }
 

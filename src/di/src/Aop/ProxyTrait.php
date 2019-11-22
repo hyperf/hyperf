@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di\Aop;
@@ -43,11 +43,13 @@ trait ProxyTrait
         ];
         $reflectMethod = ReflectionManager::reflectMethod($className, $method);
         $reflectParameters = $reflectMethod->getParameters();
+        $leftArgCount = count($args);
         foreach ($reflectParameters as $key => $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
-            if (! isset($arg)) {
+            if (! isset($arg) && $leftArgCount <= 0) {
                 $arg = $reflectionParameter->getDefaultValue();
             }
+            --$leftArgCount;
             $map['keys'][$reflectionParameter->getName()] = $arg;
             $map['order'][] = $reflectionParameter->getName();
         }
@@ -58,7 +60,7 @@ trait ProxyTrait
     {
         $aspects = self::getAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
         $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $aspects = array_unique(array_replace($aspects, $annotationAspects));
+        $aspects = array_unique(array_merge($aspects, $annotationAspects));
         if (empty($aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }

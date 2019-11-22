@@ -7,13 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Tracer;
 
 use Hyperf\Utils\Context;
-use Psr\Http\Message\ServerRequestInterface;
+use OpenTracing\Span;
 
 class SwitchManager
 {
@@ -46,6 +46,6 @@ class SwitchManager
             return false;
         }
 
-        return $this->config[$identifier] && Context::get(ServerRequestInterface::class) instanceof ServerRequestInterface;
+        return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
     }
 }

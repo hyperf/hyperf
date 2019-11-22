@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Redis;
@@ -15,10 +15,15 @@ namespace HyperfTest\Redis;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Pool\Channel;
+use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
+use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +37,7 @@ class RedisTest extends TestCase
     public function tearDown()
     {
         Mockery::close();
+        Context::set('redis.connection.default', null);
     }
 
     public function testRedisConnect()
@@ -68,9 +74,38 @@ class RedisTest extends TestCase
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
 
+    public function testRedisReuseAfterThrowable()
+    {
+        $container = $this->getContainer();
+        $pool = new RedisPoolFailedStub($container, 'default');
+        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
+        $factory = new PoolFactory($container);
+        $redis = new Redis($factory);
+        try {
+            $redis->set('xxxx', 'yyyy');
+        } catch (\Throwable $exception) {
+            $this->assertSame('Get connection failed.', $exception->getMessage());
+        }
+
+        $this->assertSame(1, $pool->getConnectionsInChannel());
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
     private function getRedis()
     {
+        $container = $this->getContainer();
+        $pool = new RedisPoolStub($container, 'default');
+        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
+        $factory = new PoolFactory($container);
+
+        return new Redis($factory);
+    }
+
+    private function getContainer()
+    {
         $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
@@ -89,13 +124,13 @@ class RedisTest extends TestCase
                 ],
             ],
         ]));
-        $pool = new RedisPoolStub($container, 'default');
-        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
-
-        ApplicationContext::setContainer($container);
-
-        $factory = new PoolFactory($container);
-
-        return new Redis($factory);
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new PoolOption(...array_values($args));
+        });
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Channel($args['size']);
+        });
+        return $container;
     }
 }

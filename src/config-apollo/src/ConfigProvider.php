@@ -7,10 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ConfigApollo;
+
+use Hyperf\ConfigApollo\Listener\OnPipeMessageListener;
+use Hyperf\ConfigApollo\Process\ConfigFetcherProcess;
 
 class ConfigProvider
 {
@@ -20,9 +23,17 @@ class ConfigProvider
             'dependencies' => [
                 ClientInterface::class => ClientFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'processes' => [
+                ConfigFetcherProcess::class,
+            ],
+            'listeners' => [
+                OnPipeMessageListener::class,
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

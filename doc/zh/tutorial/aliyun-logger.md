@@ -1,6 +1,6 @@
 # 阿里云日志服务
 
-在 `Docker集群` 部署项目时，收集日志会是一个比较麻烦的问题，但阿里云提供了十分好用的 `日志收集系统`，本篇文档就是简略介绍一下阿里云日志收集的使用方法。
+在 `Docker 集群` 部署项目时，收集日志会是一个比较麻烦的问题，但阿里云提供了十分好用的 `日志收集系统`，本篇文档就是简略介绍一下阿里云日志收集的使用方法。
 
 * [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
 
@@ -18,8 +18,8 @@
 
 |                 参数                  |                    说明                    |
 |:-------------------------------------:|:------------------------------------------:|
-|          ${your_region_name}          |     区域ID 比如华东1区域是 cn-hangzhou     |
-|        ${your_aliyun_user_id}         | 用户标识，请替换为您的阿里云主账号用户ID。 |
+|          ${your_region_name}          |     区域 ID 比如华东 1 区域是 cn-hangzhou     |
+|        ${your_aliyun_user_id}         | 用户标识，请替换为您的阿里云主账号用户 ID。 |
 | ${your_machine_group_user_defined_id} |   集群的机器组自定义标识 以下使用 Hyperf   |
 
 ```
@@ -38,11 +38,11 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 |     参数     |     填写示例     |
 |:------------:|:----------------:|
-| Project名称  |      hyperf      |
+| Project 名称  |      hyperf      |
 |     注释     | 用于日志系统演示 |
-|   所属区域   |  华东1（杭州）   |
+|   所属区域   |  华东 1（杭州）   |
 |   开通服务   |     详细日志     |
-| 日志存储位置 |   当前Project    |
+| 日志存储位置 |   当前 Project    |
 
 ### 创建 Logstore
 
@@ -50,7 +50,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 |     参数     |     填写示例     |
 |:------------:|:---------------:|
-| Logstore名称 | hyperf-demo-api |
+| Logstore 名称 | hyperf-demo-api |
 |   永久保存    |      false      |
 | 数据保存时间  |       60        |
 
@@ -80,10 +80,10 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 |:--------------:|:-------------------------------------------------:|:---------------:|
 |    配置名称    |                  hyperf-demo-api                  |                 |
 |    日志路径    |               /opt/www/runtime/logs               |      *.log      |
-|  Label白名单   |                     app.name                      | hyperf-demo-api |
+|  Label 白名单   |                     app.name                      | hyperf-demo-api |
 |      模式      |                   完整正则模式                    |                 |
 |    单行模式    |                       false                       |                 |
-|    日志样例    |     [2019-03-07 11:58:57] hyperf.WARNING: xxx     |                 |
+|    日志样例    |     `[2019-03-07 11:58:57] hyperf.WARNING: xxx`     |                 |
 | 首行正则表达式 |         \[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*          |                 |
 |    提取字段    |                       true                        |                 |
 |   正则表达式   | \[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*) |                 |

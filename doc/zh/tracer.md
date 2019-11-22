@@ -1,7 +1,7 @@
 # 调用链追踪
 
 在微服务场景下，我们会拆分出来很多的服务，也就意味着一个业务请求，少则跨越 3-4 个服务，多则几十个甚至更多，在这种架构下我们需要对某一个问题进行 Debug 的时候是极其困难的一件事情，那么我们就需要一个调用链追踪系统来帮助我们动态地展示服务调用的链路，以便我们可以快速地对问题点进行定位，亦可根据链路信息对服务进行调优。   
-在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据 OpenTracing 协议定制实现。
+在 `Hyperf` 里我们提供了 [hyperf/tracer](https://github.com/hyperf/tracer) 组件来对各个跨网络请求来进行调用的追踪以及分析，目前根据 [OpenTracing](https://opentracing.io) 协议对接了 [Zipkin](https://zipkin.io/) 系统和 [Jaeger](https://www.jaegertracing.io/) 系统，用户也可以根据 OpenTracing 协议定制实现。
 
 ## 安装
 
@@ -11,7 +11,7 @@
 composer require hyperf/tracer
 ```
 
-[hyperf/tracer](https://github.com/hyperf-cloud/tracer) 组件默认安装了 [Zipkin](https://zipkin.io/) 相关依赖。如果要使用 [Jaeger](https://www.jaegertracing.io/)，还需要执行下面的命令安装对应的依赖：
+[hyperf/tracer](https://github.com/hyperf/tracer) 组件默认安装了 [Zipkin](https://zipkin.io/) 相关依赖。如果要使用 [Jaeger](https://www.jaegertracing.io/)，还需要执行下面的命令安装对应的依赖：
 
 ```bash
 composer require jonahgeorge/jaeger-client-php
@@ -67,15 +67,15 @@ return [
     'tracer' => [
         // Zipkin 配置
         'staging_zipkin' => [
-            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
         // 另一套 Zipkin 配置
         'producton_zipkin' => [
-            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
         // Jaeger 配置
         'jaeger' => [
-            'driver' => Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
+            'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
         ],
     ]
 ];
@@ -109,6 +109,7 @@ return [
                 'ipv6' => null,
                 'port' => 9501,
             ],
+            'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
             'options' => [
                 // Zipkin 服务的 endpoint 地址
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
@@ -188,9 +189,9 @@ return [
 
 当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
-### 使用其他Tracer驱动
+### 使用其他 Tracer 驱动
 
-您也可以使用其他任意符合OpenTracing协议的Tracer驱动。在Driver项中，填写任意实现了`Hyperf\Tracer\Contract\NamedFactoryInterface`的类就可以了。该接口只有一个make函数，参数为驱动名称，需返回一个实现了OpenTracing\Tracer的实例。
+您也可以使用其他任意符合 OpenTracing 协议的 Tracer 驱动。在 Driver 项中，填写任意实现了 `Hyperf\Tracer\Contract\NamedFactoryInterface` 的类就可以了。该接口只有一个 make 函数，参数为驱动名称，需返回一个实现了 OpenTracing\Tracer 的实例。
 
 ## Reference
 

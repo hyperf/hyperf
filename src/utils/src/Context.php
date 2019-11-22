@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils;
@@ -86,6 +86,18 @@ class Context
         $value = $closure($value);
         self::set($id, $value);
         return $value;
+    }
+
+    /**
+     * Retrieve the value and store it if not exists.
+     * @param mixed $value
+     */
+    public static function getOrSet(string $id, $value)
+    {
+        if (! self::has($id)) {
+            return self::set($id, value($value));
+        }
+        return self::get($id);
     }
 
     public static function getContainer()

@@ -2,9 +2,9 @@
 
 ## 前言
 
-> [hyperf/database](https://github.com/hyperf-cloud/database) 衍生于 [illuminate/database](https://github.com/illuminate/database)，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 ORM 组件。
+> [hyperf/database](https://github.com/hyperf/database) 衍生于 [illuminate/database](https://github.com/illuminate/database)，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 ORM 组件。
 
-[hyperf/database](https://github.com/hyperf-cloud/database) 组件是基于 [illuminate/database](https://github.com/illuminate/database) 衍生出来的组件，我们对它进行了一些改造，从设计上是允许用于其它 PHP-FPM 框架或基于 Swoole 的框架中的，而在 Hyperf 里就需要提一下 [hyperf/db-connection](https://github.com/hyperf-cloud/db-connection) 组件，它基于 [hyperf/pool](https://github.com/hyperf-cloud/pool) 实现了数据库连接池并对模型进行了新的抽象，以它作为桥梁，Hyperf 才能把数据库组件及事件组件接入进来。
+[hyperf/database](https://github.com/hyperf/database) 组件是基于 [illuminate/database](https://github.com/illuminate/database) 衍生出来的组件，我们对它进行了一些改造，从设计上是允许用于其它 PHP-FPM 框架或基于 Swoole 的框架中的，而在 Hyperf 里就需要提一下 [hyperf/db-connection](https://github.com/hyperf/db-connection) 组件，它基于 [hyperf/pool](https://github.com/hyperf/pool) 实现了数据库连接池并对模型进行了新的抽象，以它作为桥梁，Hyperf 才能把数据库组件及事件组件接入进来。
 
 ## 安装
 
@@ -28,7 +28,7 @@ composer require hyperf/database
 |:--------------------:|:------:|:---------------:|:------------------:|
 |        driver        | string |       无        |     数据库引擎     |
 |         host         | string |       无        |     数据库地址     |
-|       database       | string |       无        |    数据库默认DB    |
+|       database       | string |       无        |    数据库默认 DB    |
 |       username       | string |       无        |    数据库用户名    |
 |       password       | string |      null       |     数据库密码     |
 |       charset        | string |      utf8       |     数据库编码     |
@@ -222,7 +222,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace App\Model;

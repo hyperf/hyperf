@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ConfigApollo;
@@ -21,10 +21,14 @@ class ClientFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
+        /** @var \Hyperf\ConfigApollo\Option $option */
         $option = make(Option::class);
         $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
             ->setAppid($config->get('apollo.appid', ''))
-            ->setCluster($config->get('apollo.cluster', ''));
+            ->setCluster($config->get('apollo.cluster', ''))
+            ->setClientIp($config->get('apollo.client_ip', current(swoole_get_local_ip())))
+            ->setPullTimeout($config->get('apollo.pull_timeout', 10))
+            ->setIntervalTimeout($config->get('apollo.interval_timeout', 60));
         $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {

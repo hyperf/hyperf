@@ -2,8 +2,8 @@
 
 Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
-- 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf-cloud/config-apollo) 组件提供功能支持。
-- 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) 组件提供功能支持。
+- 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。
+- 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 组件提供功能支持。
 
 ## 为什么要使用配置中心？
 
@@ -31,8 +31,8 @@ composer require hyperf/config-aliyun-acm
 
 ## 接入 Apollo 配置中心
 
-如果您没有对配置组件进行替换使用默认的 [hyperf/config](https://github.com/hyperf-cloud/config) 组件的话，接入 Apollo 配置中心则是轻而易举，只需两步。
-- 通过 Composer 将 [hyperf/config-apollo](https://github.com/hyperf-cloud/config-apollo) ，即执行命令 `composer require hyperf/config-apollo`
+如果您没有对配置组件进行替换使用默认的 [hyperf/config](https://github.com/hyperf/config) 组件的话，接入 Apollo 配置中心则是轻而易举，只需两步。
+- 通过 Composer 将 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) ，即执行命令 `composer require hyperf/config-apollo`
 - 在 `config/autoload` 文件夹内增加一个 `apollo.php` 的配置文件，配置内容如下
 
 ```php
@@ -52,13 +52,21 @@ return [
     ],
     // 配置更新间隔（秒）
     'interval' => 5,
+    // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
+    'strict_mode' => false,
+    // 客户端IP
+    'client_ip' => current(swoole_get_local_ip()),
+    // 拉取配置超时时间
+    'pullTimeout' => 10,
+    // 拉取配置间隔
+    'interval_timeout' => 60,
 ];
 ```
 
 ## 接入 Aliyun ACM 配置中心
 
 接入 Aliyun ACM 配置中心与 Apollo 一样都是轻而易举的，同样只需两步。
-- 通过 Composer 将 [hyperf/config-aliyun-acm](https://github.com/hyperf-cloud/config-aliyun-acm) ，即执行命令 `composer require hyperf/config-aliyun-acm`
+- 通过 Composer 将 [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) ，即执行命令 `composer require hyperf/config-aliyun-acm`
 - 在 `config/autoload` 文件夹内增加一个 `aliyun_acm.php` 的配置文件，配置内容如下
 
 ```php
@@ -85,7 +93,7 @@ return [
 
 ## 接入 Etcd 配置中心
 
-- 安装 `Etcd客户端`
+- 安装 `Etcd 客户端`
 
 ```
 composer require hyperf/etcd
@@ -100,7 +108,7 @@ composer require start-point/etcd-php
 composer require linkorb/etcd-php
 ```
 
-- 添加 `Etcd客户端` 配置文件 `etcd.php`
+- 添加 `Etcd 客户端` 配置文件 `etcd.php`
 
 ```php
 <?php
@@ -113,13 +121,13 @@ return [
 ];
 ```
 
-- 安装 `Etcd配置中心`
+- 安装 `Etcd 配置中心`
 
 ```
 composer require hyperf/config-etcd
 ```
 
-- 添加 `Etcd配置中心` 配置文件 `config_etcd.php`
+- 添加 `Etcd 配置中心` 配置文件 `config_etcd.php`
 
 > mapping 为 `Etcd` 与 `Config` 的映射关系。映射中不存在的 `key`，则不会被同步到 `Config` 中。
 
