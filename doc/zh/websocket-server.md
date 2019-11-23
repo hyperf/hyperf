@@ -29,7 +29,13 @@ composer require hyperf/websocket-server
         ],
     ],
 ],
+'settings' => [
+    // 其他配置
+    'max_request' => 0,  // max_request => 2000，此参数表示worker进程在处理完n次请求后结束运行。manager会重新创建一个worker进程。此选项用来防止worker进程内存溢出。 设置为0表示不自动重启。在Worker进程中需要保存连接信息的服务，需要设置为0。
+],
 ```
+
+注：参考[swoole设置运行时参数](https://wiki.swoole.com/wiki/page/13.html)
 
 ## 配置路由
 
