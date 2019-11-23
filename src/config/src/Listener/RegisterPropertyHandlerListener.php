@@ -17,14 +17,10 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Definition\PropertyInjection;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Utils\ApplicationContext;
 
-/**
- * @Listener
- */
 class RegisterPropertyHandlerListener implements ListenerInterface
 {
     /**

@@ -1,5 +1,33 @@
 # 版本更新记录
 
+# v1.1.7 - 2019-11-21
+
+## 新增
+
+- [#860](https://github.com/hyperf/hyperf/pull/860) 新增 [hyperf/retry](https://github.com/hyperf/retry) 组件；
+- [#952](https://github.com/hyperf/hyperf/pull/952) 新增 ThinkTemplate 视图引擎支持；
+- [#973](https://github.com/hyperf/hyperf/pull/973) 新增 JSON RPC 在 TCP 协议下的连接池支持，通过 `Hyperf\JsonRpc\JsonRpcPoolTransporter` 来使用连接池版本；
+- [#976](https://github.com/hyperf/hyperf/pull/976) 为 `hyperf/amqp` 组件新增  `close_on_destruct` 选项参数，用来控制代码在执行析构函数时是否主动去关闭连接；
+
+## 变更
+
+- [#944](https://github.com/hyperf/hyperf/pull/944) 将组件内所有使用 `@Listener` 和 `@Process` 注解来注册的改成通过 `ConfigProvider`来注册；
+- [#977](https://github.com/hyperf/hyperf/pull/977) 调整 `init-proxy.sh` 命令的行为，改成只删除 `runtime/container` 目录；
+
+## 修复
+
+- [#955](https://github.com/hyperf/hyperf/pull/955) 修复 `hyperf/db` 组件的 `port` 和 `charset` 参数无效的问题；
+- [#956](https://github.com/hyperf/hyperf/pull/956) 修复模型缓存中使用到`RedisHandler::incr` 在集群模式下会失败的问题；
+- [#966](https://github.com/hyperf/hyperf/pull/966) 修复当在非 Worker 进程环境下使用分页器会报错的问题；
+- [#968](https://github.com/hyperf/hyperf/pull/968) 修复当 `classes` 和 `annotations` 两种 Aspect 切入模式同时存在于一个类时，其中一个可能会失效的问题；
+- [#980](https://github.com/hyperf/hyperf/pull/980) 修复 Session 组件内 `migrate`, `save` 核 `has` 方法无法使用的问题；
+- [#982](https://github.com/hyperf/hyperf/pull/982) 修复 `Hyperf\GrpcClient\GrpcClient::yield` 在获取 Channel Pool 时没有通过正确的获取方式去获取的问题；
+- [#987](https://github.com/hyperf/hyperf/pull/987) 修复通过 `gen:command` 命令生成的命令类缺少调用 `parent::configure()` 方法的问题；
+
+## 优化
+
+- [#991](https://github.com/hyperf/hyperf/pull/991) 优化 `Hyperf\DbConnection\ConnectionResolver::connection`的异常情况处理；
+
 # v1.1.6 - 2019-11-14
 
 ## 新增

@@ -94,7 +94,7 @@ php bin/hyperf.php vendor:publish hyperf/amqp
 
 # 组件设计规范
 
-由于 `composer.json` 内的 `extra` 属性在数据不被利用时无其它作用和影响，故这些组件内的定义在其它框架使用时，不会造成任何的干扰和影响，顾 `ConfigProvider` 是一种仅作用于 Hyperf 框架的机制，对其它没有利用此机制的框架不会造成任何的影响，这也就为组件的复用打下了基础，但这也要求在进行组件设计时，必须遵循以下规范：
+由于 `composer.json` 内的 `extra` 属性在数据不被利用时无其它作用和影响，故这些组件内的定义在其它框架使用时，不会造成任何的干扰和影响，故`ConfigProvider` 是一种仅作用于 Hyperf 框架的机制，对其它没有利用此机制的框架不会造成任何的影响，这也就为组件的复用打下了基础，但这也要求在进行组件设计时，必须遵循以下规范：
 
 - 所有类的设计都必须允许通过标准 `OOP` 的使用方式来使用，所有 Hyperf 专有的功能必须作为增强功能并以单独的类来提供，也就意味着在非 Hyperf 框架下仍能通过标准的手段来实现组件的使用；
 - 组件的依赖设计如果可满足 [PSR 标准](https://www.php-fig.org/psr) 则优先满足且依赖对应的接口而不是实现类；如 [PSR 标准](https://www.php-fig.org/psr) 没有包含的功能，则可满足由 Hyperf 定义的契约库 [Hyperf/contract](https://github.com/hyperf/contract) 内的接口时优先满足且依赖对应的接口而不是实现类；
