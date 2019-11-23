@@ -2,6 +2,17 @@
 
 [hyperf/database](https://github.com/hyperf/database) 功能十分强大，但也不可否认效率上确实些许不足。这里提供一个极简的 `DB` 组件，支持 `PDO` 和 `Swoole Mysql`。
 
+## 安装
+
+```bash
+composer require hyperf/db
+```
+
+## 发布组件配置
+```
+php bin/hyperf.php vendor:publish hyperf/db
+```
+
 ## 组件配置
 
 默认配置 `autoload/db.php` 如下，数据库支持多库配置，默认为 `default`。
