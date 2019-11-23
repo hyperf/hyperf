@@ -139,7 +139,7 @@ $this->session->forget(['foo', 'bar']);
 ```php
 <?php
 
-$data = $this->session->clear();
+$this->session->clear();
 ```
 
 ## 获取当前的 Session ID
