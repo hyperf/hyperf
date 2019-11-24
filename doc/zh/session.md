@@ -1,4 +1,4 @@
-# Session
+# Session 会话管理
 
 HTTP 是一种无状态协议，即服务器不保留与客户交易时的任何状态，所以当我们在开发 HTTP Server 应用时，我们通常会通过 Session 来实现多个请求之间用户数据的共享。您可通过 [hyperf/session](https://github.com/hyperf/session) 来实现 Session 的功能。Session 组件当前仅适配了两种储存驱动，分别为 `文件` 和 `Redis`，默认为 `文件` 驱动，在生产环境下，我们强烈建议您使用 `Redis` 来作为储存驱动，这样性能更好也更符合集群架构下的使用。
 
