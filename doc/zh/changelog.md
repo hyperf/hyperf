@@ -50,8 +50,8 @@
 
 - [#897](https://github.com/hyperf/hyperf/pull/897) 修复 `Nats` 消费者，`pool` 配置无效的 BUG；
 - [#901](https://github.com/hyperf/hyperf/pull/901) 修复 `GraphQL` 组件，`Factory` 注解无法正常使用的 BUG；
-- [#903](https://github.com/hyperf/hyperf/pull/903) 修复添加 `hyperf/rpc-client` 依赖后，`init-proxy` 脚本无法正常停止的BUG；
-- [#904](https://github.com/hyperf/hyperf/pull/904) 修复监听器监听 `Hyperf\Framework\Event\BeforeMainServerStart` 事件时，无法使用 `IO` 操作的BUG；
+- [#903](https://github.com/hyperf/hyperf/pull/903) 修复添加 `hyperf/rpc-client` 依赖后，`init-proxy` 脚本无法正常停止的 BUG；
+- [#904](https://github.com/hyperf/hyperf/pull/904) 修复监听器监听 `Hyperf\Framework\Event\BeforeMainServerStart` 事件时，无法使用 `IO` 操作的 BUG；
 - [#906](https://github.com/hyperf/hyperf/pull/906) 修复 `Hyperf\HttpMessage\Server\Request` 端口获取有误的 BUG；
 - [#907](https://github.com/hyperf/hyperf/pull/907) 修复 `Nats` 组件 `requestSync` 方法，超时时间不准确的 BUG；
 - [#909](https://github.com/hyperf/hyperf/pull/909) 修复 `Parallel` 内逻辑抛错后，无法正常停止的 BUG；
