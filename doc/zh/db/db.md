@@ -9,13 +9,16 @@ composer require hyperf/db
 ```
 
 ## 发布组件配置
-```
+
+该组件的配置文件位于 `config/autoload/db.php`，如果文件不存在，可通过下面的命令来将配置文件发布到骨架去： 
+
+```bash
 php bin/hyperf.php vendor:publish hyperf/db
 ```
 
 ## 组件配置
 
-默认配置 `autoload/db.php` 如下，数据库支持多库配置，默认为 `default`。
+默认配置 `config/autoload/db.php` 如下，数据库支持多库配置，默认为 `default`。
 
 |        配置项        |  类型  |       默认值       |               备注               |
 |:--------------------:|:------:|:------------------:|:--------------------------------:|
@@ -62,7 +65,7 @@ use Hyperf\DB\DB;
 
 $db = ApplicationContext::getContainer()->get(DB::class);
 
-$res = $db->query('SELECT * FROM `user` WHERE gender = ?;',[1]);
+$res = $db->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
 ```
 
@@ -73,6 +76,6 @@ $res = $db->query('SELECT * FROM `user` WHERE gender = ?;',[1]);
 
 use Hyperf\DB\DB;
 
-$res = DB::query('SELECT * FROM `user` WHERE gender = ?;',[1]);
+$res = DB::query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
 ```
