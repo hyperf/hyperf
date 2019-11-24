@@ -1,5 +1,9 @@
 # v1.1.8 - TBD
 
+## Fixed
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
+
 ## Changed
 
 - [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
