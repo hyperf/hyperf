@@ -1,5 +1,9 @@
 # v1.1.8 - TBD
 
+## Changed
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
+
 # v1.1.7 - 2019-11-21
 
 ## Added

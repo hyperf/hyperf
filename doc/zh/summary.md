@@ -38,6 +38,7 @@
   * [视图](zh/view.md)
   * [国际化](zh/translation.md)
   * [验证器](zh/validation.md)
+  * [Session 会话管理](zh/session.md)
   
 * 数据库模型
 
@@ -49,7 +50,7 @@
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
-  * [极简的 DB 组件](zh/db/db.md)
+  * [极简 DB 组件](zh/db/db.md)
   
 * 微服务
 
