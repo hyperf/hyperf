@@ -1,5 +1,13 @@
 # v1.1.8 - TBD
 
+## Changed
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
+
+## Optimized
+
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
+
 # v1.1.7 - 2019-11-21
 
 ## Added

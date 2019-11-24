@@ -167,9 +167,14 @@ return [
 ];
 ```
 
+## 发布组件配置
+
+Hyperf 采用组件化设计，在添加一些组件进来骨架项目后，我们通常会需要为新添加的组件创建对应的配置文件，以满足对组件的使用。Hyperf 为组件提供了一个 `组件配置发布机制`，通过该机制，您只需通过一个 `vendor:publish` 命令即可将组件预设的配置文件模板发布到骨架项目中来。
+比如我们希望添加一个 `hyperf/foo` 组件 (该组件实际并不存在，仅示例) 以及该组件对应的配置文件，在执行 `composer require hyperf/foo` 安装之后，您可通过执行 `php bin/hyperf.php vendor:publish hyperf/foo` 来将组件预设的配置文件，发布到骨架项目的 `config/autoload` 文件夹内，具体要发布的内容，由组件来定义提供。 
+
 ## 配置中心
 
-Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。   
+Hyperf 为您提供了分布式系统的外部化配置支持，目前支持由携程开源的 `Apollo`、阿里云 ACM 应用配置管理、ETCD 以及 Zookeeper 作为配置中心的支持。
 关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。
 
 
