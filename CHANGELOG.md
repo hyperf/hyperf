@@ -6,6 +6,7 @@
 
 ## Optimized
 
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
 - [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
 
 # v1.1.7 - 2019-11-21
