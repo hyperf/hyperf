@@ -72,6 +72,11 @@ class Redis implements Adapter
         $this->redis = new \Redis();
     }
 
+    /**
+     * Create an instance from an established redis connection
+     * @param  \Hyperf\Redis\Redis|\Redis $redis
+     * @return Redis
+     */
     public static function fromExistingConnection($redis): self
     {
         if ($redis->isConnected() === false) {
@@ -92,9 +97,9 @@ class Redis implements Adapter
     }
 
     /**
-     * @param $prefix
+     * @param string $prefix
      */
-    public static function setPrefix($prefix): void
+    public static function setPrefix(string $prefix): void
     {
         self::$prefix = $prefix;
     }
