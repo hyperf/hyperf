@@ -1,5 +1,9 @@
 # v1.1.8 - TBD
 
+## Fixed
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1021) Fixed the port in the websocket client is null, when use nginx to proxy.
+
 # v1.1.7 - 2019-11-21
 
 ## Added
