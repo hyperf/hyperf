@@ -10,23 +10,22 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\HttpConsulRegister;
+namespace Hyperf\ServerRegister;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
                         __DIR__,
                     ],
                 ],
+            ],
+            'listeners' => [
+                ServerRegisterListener::class,
             ],
         ];
     }

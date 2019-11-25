@@ -1,22 +1,26 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
-namespace Hyperf\HttpConsulRegister;
+namespace Hyperf\ServerRegister;
 
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Psr\Container\ContainerInterface;
-use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener()
- */
-class EnableHttpConsulRegisterListener implements ListenerInterface
+class ServerRegisterListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -62,12 +66,12 @@ class EnableHttpConsulRegisterListener implements ListenerInterface
 
     public function isEnable(): bool
     {
-        return $this->config->get('consul.http_consul_register', false);
+        return $this->config->get('server_register.enable', false);
     }
 
     public function process(object $event)
     {
-        if (!$this->isEnable()){
+        if (! $this->isEnable()) {
             return;
         }
 
@@ -102,10 +106,10 @@ class EnableHttpConsulRegisterListener implements ListenerInterface
     public function getHttpServerConfig()
     {
         $serverConfigs = $this->config->get('server.servers');
-        $httpServerConfigs = array_filter($serverConfigs, function($config) {
+        $httpServerConfigs = array_filter($serverConfigs, function ($config) {
             return $config['name'] = 'http';
         });
-        if (count($httpServerConfigs)){
+        if (count($httpServerConfigs)) {
             return $httpServerConfigs[0];
         }
 

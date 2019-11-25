@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/http_consul_register",
+    "name": "hyperf/server-register",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -10,12 +10,12 @@
     "description": "",
     "autoload": {
         "psr-4": {
-            "Hyperf\\HttpConsulRegister\\": "src/"
+            "Hyperf\\ServerRegister\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\ServerRegister\\": "tests"
         }
     },
     "require": {
@@ -38,7 +38,7 @@
     },
     "extra": {
         "hyperf": {
-            "config": "Hyperf\\HttpConsulRegister\\ConfigProvider"
+            "config": "Hyperf\\ServerRegister\\ConfigProvider"
         }
     }
 }
