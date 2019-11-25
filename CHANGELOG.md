@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
+- [#1006](https://github.com/hyperf/hyperf/pull/1006) Fixed the order of properties of Model.
 
 ## Changed
 
