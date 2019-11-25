@@ -12,13 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\ServerRegister\Listener;
 
-use Hyperf\Consul\Exception\ServerException;
+use Closure;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\ServerRegister\Agent\AgentInterface;
 use Hyperf\ServerRegister\Agent\ConsulAgent;
+use Hyperf\ServerRegister\RegistedServer;
+use Hyperf\ServerRegister\ServerHelper;
 use Psr\Container\ContainerInterface;
 
 class RegisterServerListener implements ListenerInterface
@@ -75,105 +77,57 @@ class RegisterServerListener implements ListenerInterface
         }
 
         $this->registeredServices = [];
-        $continue = true;
 
-        $httpServerConfig = $this->getHttpServerConfig();
-        $address = $httpServerConfig['host'];
-        if (in_array($address, ['0.0.0.0', 'localhost'])) {
-            $address = $this->getInternalIp();
+        $serverConfigs = $this->config->get('server_register.servers', []);
+        $servers = $this->container->get(ServerHelper::class)->getServers();
+        $closure = $this->getRegistClosure();
+        foreach ($serverConfigs as $serverConfig) {
+            $server = $serverConfig['server'] ?? null;
+            if ($server && isset($servers[$server])) {
+                $name = $serverConfig['name'] ?? $server;
+                [$host, $port, $type] = $servers[$server];
+                $closure($host, $port, $name, $serverConfig['meta'] + ['protocol' => $type]);
+            }
         }
-        $port = $httpServerConfig['port'];
+    }
 
-        $protocol = 'http';
-        $serviceName = $this->config->get('consul.service_name');
-
-        while ($continue) {
-            try {
-                $this->publishToConsul($address, (int) $port, $protocol, $serviceName);
-                $continue = false;
-            } catch (ServerException $throwable) {
-                if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
-                    $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
-                    sleep(10);
-                } else {
-                    throw $throwable;
+    private function getRegistClosure(): Closure
+    {
+        return function ($address, $port, $serviceName, $meta) {
+            $continue = true;
+            while ($continue) {
+                try {
+                    $this->publishToConsul($address, (int) $port, $serviceName, $meta);
+                    $continue = false;
+                } catch (\Throwable $throwable) {
+                    if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
+                        $this->logger->warning('Cannot register server, connection of service center failed, re-register after 10 seconds.');
+                        sleep(10);
+                    } else {
+                        throw $throwable;
+                    }
                 }
             }
-        }
+        };
     }
 
-    public function getHttpServerConfig()
+    private function publishToConsul(string $address, int $port, string $serviceName, array $meta)
     {
-        $serverConfigs = $this->config->get('server.servers');
-        $httpServerConfigs = array_filter($serverConfigs, function ($config) {
-            return $config['name'] = 'http';
-        });
-        if (count($httpServerConfigs)) {
-            return $httpServerConfigs[0];
-        }
-
-        throw new \RuntimeException('Cannot register service, http server not exists.');
-    }
-
-    private function getServers(): array
-    {
-        $result = [];
-        $servers = $this->config->get('server.servers', []);
-        foreach ($servers as $server) {
-            if (! isset($server['name'], $server['host'], $server['port'])) {
-                continue;
-            }
-            if (! $server['name']) {
-                throw new \InvalidArgumentException('Invalid server name');
-            }
-            $host = $server['host'];
-            if (in_array($host, ['0.0.0.0', 'localhost'])) {
-                $host = $this->getInternalIp();
-            }
-            if (! filter_var($host, FILTER_VALIDATE_IP)) {
-                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
-            }
-            $port = $server['port'];
-            if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
-                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
-            }
-            $port = (int) $port;
-            $result[$server['name']] = [$host, $port];
-        }
-        return $result;
-    }
-
-    private function publishToConsul(string $address, int $port, string $protocol, string $serviceName)
-    {
-        $this->logger->debug(sprintf('Service %s is registering to the consul.', $serviceName));
-        if ($this->isRegistered($serviceName, $address, $port, $protocol)) {
-            $this->logger->info(sprintf('Service %s has been already registered to the consul.', $serviceName));
+        $this->logger->debug(sprintf('Server %s is registering.', $serviceName));
+        if ($this->isRegistered($serviceName, $address, $port)) {
+            $this->logger->info(sprintf('Server %s has been already registered.', $serviceName));
             return;
         }
 
         $nextId = $this->generateId($this->getLastServiceId($serviceName));
 
-        $requestBody = [
-            'Name' => $serviceName,
-            'ID' => $nextId,
-            'Address' => $address,
-            'Port' => $port,
-            'Meta' => [
-                'Protocol' => $protocol,
-            ],
-        ];
+        $server = new RegistedServer($nextId, $serviceName, $address, $port, $meta);
 
-        $requestBody['Check'] = [
-            'DeregisterCriticalServiceAfter' => '90m',
-            'HTTP' => "http://{$address}:{$port}/",
-            'Interval' => '1s',
-        ];
-
-        if ($this->agent->registerService($requestBody)) {
-            $this->registeredServices[$serviceName][$protocol][$address][$port] = true;
-            $this->logger->info(sprintf('Server %s:%s regist successfully.', $serviceName, $nextId));
+        if ($this->agent->registerService($server)) {
+            $this->registeredServices[$serviceName][$address][$port] = true;
+            $this->logger->info(sprintf('Server %s: register successfully.', $nextId));
         } else {
-            $this->logger->warning(sprintf('Server %s regist failed.', $serviceName));
+            $this->logger->warning(sprintf('Server %s register failed.', $nextId));
         }
     }
 
@@ -211,22 +165,10 @@ class RegisterServerListener implements ListenerInterface
         return $lastServer ? $lastServer->getService() : $name;
     }
 
-    private function getInternalIp(): string
+    private function isRegistered(string $name, string $address, int $port): bool
     {
-        $ips = swoole_get_local_ip();
-        if (is_array($ips)) {
-            return current($ips);
-        }
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
-        }
-        throw new \RuntimeException('Can not get the internal IP.');
-    }
-
-    private function isRegistered(string $name, string $address, int $port, string $protocol): bool
-    {
-        if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
+        return false;
+        if (isset($this->registeredServices[$name][$address][$port])) {
             return true;
         }
         $servers = $this->agent->services();
@@ -235,17 +177,16 @@ class RegisterServerListener implements ListenerInterface
         }
 
         $glue = ',';
-        $tag = implode($glue, [$name, $address, $port, $protocol]);
+        $tag = implode($glue, [$name, $address, $port]);
         foreach ($servers as $server) {
             $currentTag = implode($glue, [
                 $server->getService(),
                 $server->getAddress(),
                 $server->getPort(),
-                $server->getProtocol(),
             ]);
 
             if ($currentTag === $tag) {
-                $this->registeredServices[$name][$protocol][$address][$port] = true;
+                $this->registeredServices[$name][$address][$port] = true;
                 return true;
             }
         }

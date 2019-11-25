@@ -16,7 +16,16 @@ return [
     'servers' => [
         [
             'server' => 'http',
-            '',
+            'name' => env('APP_NAME', 'hyperf') . '.http-server',
+            'meta' => [
+                // Consul Check Params
+                'check' => [
+                    'DeregisterCriticalServiceAfter' => '60s',
+                    'Interval' => '1s',
+                ],
+                // Consul Meta
+                'meta' => [],
+            ],
         ],
     ],
 ];

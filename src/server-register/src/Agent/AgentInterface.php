@@ -16,7 +16,7 @@ use Hyperf\ServerRegister\RegistedServer;
 
 interface AgentInterface
 {
-    public function registerService(array $service): bool;
+    public function registerService(RegistedServer $server): bool;
 
     /**
      * @return RegistedServer[]

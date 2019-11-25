@@ -14,51 +14,66 @@ namespace Hyperf\ServerRegister;
 
 class RegistedServer
 {
+    /**
+     * @var string
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $service;
 
+    /**
+     * @var string
+     */
     protected $address;
 
+    /**
+     * @var int
+     */
     protected $port;
 
-    protected $protocol;
+    /**
+     * @var array
+     */
+    protected $meta;
 
     protected $raw;
 
-    public function __construct($id, $service, $address, $port, $protocol, $raw)
+    public function __construct(string $id, string $service, string $address, int $port, array $meta = [], $raw = null)
     {
         $this->id = $id;
         $this->service = $service;
         $this->address = $address;
         $this->port = $port;
-        $this->protocol = $protocol;
+        $this->meta = $meta;
         $this->raw = $raw;
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getService()
+    public function getService(): string
     {
         return $this->service;
     }
 
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->address;
     }
 
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
     }
 
-    public function getProtocol()
+    public function getMeta(): array
     {
-        return $this->protocol;
+        return $this->meta;
     }
 
     public function getRaw()
