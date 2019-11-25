@@ -11,6 +11,7 @@
 ## Optimized
 
 - [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
 
 # v1.1.7 - 2019-11-21
 
