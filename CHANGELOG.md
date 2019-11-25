@@ -4,6 +4,10 @@
 
 - [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
 
+## Optimized
+
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
+
 # v1.1.7 - 2019-11-21
 
 ## Added
