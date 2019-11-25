@@ -1,11 +1,16 @@
 # v1.1.8 - TBD
 
+## Fixed
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
+
 ## Changed
 
 - [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
 
 ## Optimized
 
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
 - [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
 
 # v1.1.7 - 2019-11-21
