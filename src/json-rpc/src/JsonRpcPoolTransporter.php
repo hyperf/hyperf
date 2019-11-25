@@ -72,7 +72,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function __construct(PoolFactory $factory, array $config = [])
     {
         $this->factory = $factory;
-        $this->config = array_merge_recursive($this->config, $config);
+        $this->config = array_replace_recursive($this->config, $config);
     }
 
     public function send(string $data)
@@ -155,6 +155,11 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 
     private function getEof(): string
