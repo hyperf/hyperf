@@ -42,6 +42,7 @@
             <directory suffix="Test.php">./src/retry/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
+            <directory suffix="Test.php">./src/server-register/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>

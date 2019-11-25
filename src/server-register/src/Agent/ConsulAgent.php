@@ -45,8 +45,6 @@ class ConsulAgent extends AbstractAgent
             'Meta' => (object) $server->getMeta()['meta'] ?? [],
         ];
 
-        var_dump($server->getMeta()['meta'] ?? []);
-
         $requestBody['Check'] = $this->parseCheckParam($server);
 
         $response = $this->consul->registerService($requestBody);
