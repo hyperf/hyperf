@@ -36,6 +36,10 @@ class Client
         $port = $uri->getPort();
         $ssl = $uri->getScheme() === 'wss';
 
+        if (empty($port)) {
+            $port = $ssl ? 443 : 80;
+        }
+
         $this->client = new Coroutine\Http\Client($host, $port, $ssl);
 
         parse_str($this->uri->getQuery(), $query);
