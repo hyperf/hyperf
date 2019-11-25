@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\ServerRegister;
 
+use Hyperf\ServerRegister\Listener\RegisterServerListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -25,7 +27,15 @@ class ConfigProvider
                 ],
             ],
             'listeners' => [
-                ServerRegisterListener::class,
+                RegisterServerListener::class,
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for server register.',
+                    'source' => __DIR__ . '/../publish/server_register.php',
+                    'destination' => BASE_PATH . '/config/autoload/server_register.php',
+                ],
             ],
         ];
     }

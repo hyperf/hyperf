@@ -10,18 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Cases;
+namespace Hyperf\ServerRegister\Agent;
 
-/**
- * @internal
- * @coversNothing
- */
-class ExampleTest extends AbstractTestCase
+abstract class AbstractAgent implements AgentInterface
 {
-    public function testExample()
-    {
-        $this->assertTrue(true);
-
-        $this->assertTrue(extension_loaded('swoole'));
-    }
 }

@@ -10,4 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+return [
+    'enable' => true,
+    'agent' => \Hyperf\ServerRegister\Agent\ConsulAgent::class,
+    'servers' => [
+        [
+            'server' => 'http',
+            '',
+        ],
+    ],
+];

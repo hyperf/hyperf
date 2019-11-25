@@ -10,17 +10,18 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ServerRegister;
+namespace Hyperf\ServerRegister\Listener;
 
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
-use Hyperf\ServiceGovernance\Register\ConsulAgent;
+use Hyperf\ServerRegister\Agent\AgentInterface;
+use Hyperf\ServerRegister\Agent\ConsulAgent;
 use Psr\Container\ContainerInterface;
 
-class ServerRegisterListener implements ListenerInterface
+class RegisterServerListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -28,9 +29,9 @@ class ServerRegisterListener implements ListenerInterface
     private $container;
 
     /**
-     * @var ConsulAgent
+     * @var AgentInterface
      */
-    private $consulAgent;
+    private $agent;
 
     /**
      * @var ConfigInterface
@@ -50,11 +51,9 @@ class ServerRegisterListener implements ListenerInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->consulAgent = $container->get(ConsulAgent::class);
-
         $this->config = $container->get(ConfigInterface::class);
-
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->agent = $container->get($this->config->get('server_register.agent', ConsulAgent::class));
     }
 
     public function listen(): array
@@ -116,6 +115,34 @@ class ServerRegisterListener implements ListenerInterface
         throw new \RuntimeException('Cannot register service, http server not exists.');
     }
 
+    private function getServers(): array
+    {
+        $result = [];
+        $servers = $this->config->get('server.servers', []);
+        foreach ($servers as $server) {
+            if (! isset($server['name'], $server['host'], $server['port'])) {
+                continue;
+            }
+            if (! $server['name']) {
+                throw new \InvalidArgumentException('Invalid server name');
+            }
+            $host = $server['host'];
+            if (in_array($host, ['0.0.0.0', 'localhost'])) {
+                $host = $this->getInternalIp();
+            }
+            if (! filter_var($host, FILTER_VALIDATE_IP)) {
+                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
+            }
+            $port = $server['port'];
+            if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
+                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
+            }
+            $port = (int) $port;
+            $result[$server['name']] = [$host, $port];
+        }
+        return $result;
+    }
+
     private function publishToConsul(string $address, int $port, string $protocol, string $serviceName)
     {
         $this->logger->debug(sprintf('Service %s is registering to the consul.', $serviceName));
@@ -142,12 +169,11 @@ class ServerRegisterListener implements ListenerInterface
             'Interval' => '1s',
         ];
 
-        $response = $this->consulAgent->registerService($requestBody);
-        if ($response->getStatusCode() === 200) {
+        if ($this->agent->registerService($requestBody)) {
             $this->registeredServices[$serviceName][$protocol][$address][$port] = true;
-            $this->logger->info(sprintf('Service %s:%s register to the consul successfully.', $serviceName, $nextId));
+            $this->logger->info(sprintf('Server %s:%s regist successfully.', $serviceName, $nextId));
         } else {
-            $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName));
+            $this->logger->warning(sprintf('Server %s regist failed.', $serviceName));
         }
     }
 
@@ -166,22 +192,23 @@ class ServerRegisterListener implements ListenerInterface
         return implode('-', $exploded);
     }
 
-    private function getLastServiceId(string $name)
+    private function getLastServiceId(string $name): string
     {
         $maxId = -1;
-        $lastService = $name;
-        $services = $this->consulAgent->services()->json();
-        foreach ($services ?? [] as $id => $service) {
-            if (isset($service['Service']) && $service['Service'] === $name) {
-                $exploded = explode('-', (string) $id);
+        $lastServer = null;
+        $servers = $this->agent->services();
+        foreach ($servers ?? [] as $server) {
+            if ($server->getService() === $name) {
+                $exploded = explode('-', (string) $server->getId());
                 $length = count($exploded);
                 if ($length > 1 && is_numeric($exploded[$length - 1]) && $maxId < $exploded[$length - 1]) {
                     $maxId = $exploded[$length - 1];
-                    $lastService = $service;
+                    $lastServer = $server;
                 }
             }
         }
-        return $lastService['ID'] ?? $name;
+
+        return $lastServer ? $lastServer->getService() : $name;
     }
 
     private function getInternalIp(): string
@@ -202,29 +229,27 @@ class ServerRegisterListener implements ListenerInterface
         if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
             return true;
         }
-        $response = $this->consulAgent->services();
-        if ($response->getStatusCode() !== 200) {
-            $this->logger->warning(sprintf('Service %s register to the consul failed.', $name));
-            return false;
+        $servers = $this->agent->services();
+        if ($servers === null) {
+            $this->logger->warning(sprintf('Server %s regist failed.', $name));
         }
-        $services = $response->json();
+
         $glue = ',';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
-                continue;
-            }
+        foreach ($servers as $server) {
             $currentTag = implode($glue, [
-                $service['Service'],
-                $service['Address'],
-                $service['Port'],
-                $service['Meta']['Protocol'],
+                $server->getService(),
+                $server->getAddress(),
+                $server->getPort(),
+                $server->getProtocol(),
             ]);
+
             if ($currentTag === $tag) {
                 $this->registeredServices[$name][$protocol][$address][$port] = true;
                 return true;
             }
         }
+
         return false;
     }
 }

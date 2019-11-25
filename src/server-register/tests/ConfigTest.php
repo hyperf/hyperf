@@ -10,13 +10,14 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Cases;
+namespace HyperfTest\ServerRegister;
 
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class AbstractTestCase.
+ * @internal
+ * @coversNothing
  */
-abstract class AbstractTestCase extends TestCase
+class ConfigTest extends TestCase
 {
 }

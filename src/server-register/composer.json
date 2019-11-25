@@ -5,9 +5,9 @@
     "keywords": [
         "php",
         "hyperf",
-        "consul"
+        "server-register"
     ],
-    "description": "",
+    "description": "Server register for hyperf.",
     "autoload": {
         "psr-4": {
             "Hyperf\\ServerRegister\\": "src/"
@@ -20,7 +20,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.4"
+        "hyperf/consul": "~1.1.0",
+        "hyperf/contract": "~1.1.0",
+        "psr/container": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
@@ -31,14 +33,17 @@
     "config": {
         "sort-packages": true
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ServerRegister\\ConfigProvider"
+        }
+    },
     "scripts": {
         "test": "co-phpunit -c phpunit.xml --colors=always",
         "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
         "cs-fix": "php-cs-fixer fix $1"
-    },
-    "extra": {
-        "hyperf": {
-            "config": "Hyperf\\ServerRegister\\ConfigProvider"
-        }
     }
 }
