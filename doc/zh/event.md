@@ -75,17 +75,6 @@ class UserRegisteredListener implements ListenerInterface
 }
 ```
 
-#### 通过配置文件注册监听器
-
-在定义完监听器之后，我们需要让其能被 `事件调度器(Dispatcher)` 发现，可以在 `config/autoload/listeners.php` 配置文件 *（如不存在可自行创建）* 内添加该监听器即可，监听器的触发顺序根据该配置文件的配置顺序:
-
-```php
-<?php
-return [
-    \App\Listener\UserRegisteredListener::class,
-];
-```
-
 ### 通过注解注册监听器
 
 Hyperf 还提供了一种更加简便的监听器注册方式，就是通过 `@Listener` 注解注册，只要将该注解定义在监听器类上，且监听器类处于 `Hyperf 注解扫描域` 内即可自动完成注册，代码示例如下：
