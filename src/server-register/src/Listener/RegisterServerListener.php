@@ -167,7 +167,6 @@ class RegisterServerListener implements ListenerInterface
 
     private function isRegistered(string $name, string $address, int $port): bool
     {
-        return false;
         if (isset($this->registeredServices[$name][$address][$port])) {
             return true;
         }
