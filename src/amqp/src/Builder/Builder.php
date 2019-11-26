@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Builder;
 
+use PhpAmqpLib\Wire\AMQPTable;
+
 class Builder
 {
     protected $passive = false;
@@ -70,12 +72,16 @@ class Builder
         return $this;
     }
 
-    public function getArguments(): array
+    public function getArguments()
     {
         return $this->arguments;
     }
 
-    public function setArguments(array $arguments): self
+    /**
+     * @param array|AMQPTable $arguments
+     * @return $this
+     */
+    public function setArguments($arguments): self
     {
         $this->arguments = $arguments;
         return $this;
