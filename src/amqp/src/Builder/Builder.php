@@ -72,14 +72,16 @@ class Builder
         return $this;
     }
 
+    /**
+     * @return AMQPTable|array
+     */
     public function getArguments()
     {
         return $this->arguments;
     }
 
     /**
-     * @param array|AMQPTable $arguments
-     * @return $this
+     * @param AMQPTable|array $arguments
      */
     public function setArguments($arguments): self
     {
