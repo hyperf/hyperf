@@ -1,5 +1,9 @@
 # v1.1.8 - TBD
 
+## Added
+
+- [#1023](https://github.com/hyperf/hyperf/pull/1023) Added CUSTOM_MODE to hyperf/metric prometheus driver.
+
 ## Fixed
 
 - [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
