@@ -104,7 +104,7 @@ class SystemService
 }
 ```
 
-当我们通过自定义设置了 `Cacheable` 的 `value` 时，比如以下情况。
+当我们自定义了 `Cacheable` 的 `value` 时，比如以下情况。
 
 ```php
 <?php
