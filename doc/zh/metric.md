@@ -103,6 +103,13 @@ Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pus
 
 并配置推送地址 `push_host`、推送端口 `push_port`、推送间隔 `push_interval`。只建议离线任务使用推模式。
 
+因为基础设置的差异性，可能以上模式都无法满足需求。本组件还支持自定义模式。在自定义模式下，组件只负责指标的收集，具体的上报需要使用者自行处理。
+
+```php
+'mode' => Constants::CUSTOM_MODE
+```
+例如，您可能希望通过自定义的路由上报指标，或希望将指标存入 Redis 中，由其他独立服务负责指标的集中上报等。[自定义上报](#自定义上报)一节包含了相应的示例。
+
 #### 配置 StatsD
 
 使用 StatsD 时，在配置文件中的 `metric` 项增加 StatsD 的具体配置。
@@ -356,3 +363,39 @@ class OnMainServerStart implements ListenerInterface
 }
 ```
 之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的 Histogram 了。
+
+### 自定义上报
+
+> 本节只适用于 Prometheus 驱动
+
+设置组件的 Promethues 驱动工作模式为自定义模式（ `Constants::CUSTOM_MODE` ）后，您可以自由的处理指标上报。在本节中，我们展示如何将指标存入 Redis 中，然后在 Worker 中添加一个新的 HTTP 路由，返回 Prometheus 渲染后的指标。
+
+#### 使用 Redis 存储指标
+
+指标的存储介质由 `Prometheus\Storage\Adapter` 接口定义。默认使用内存存储。我们可以在 `config/autoload/dependencies.php` 中更换为 Redis 存储。
+
+```php
+<?php
+
+return [
+    Prometheus\Storage\Adapter::class => Hyperf\Metric\Adapter\Prometheus\RedisStorageFactory::class,
+];
+```
+
+#### 在 Worker 中添加 /metrics 路由
+
+在 config/routes.php 中添加 Prometheus 路由。
+
+> 注意若要在 Worker 下获取指标，需要您自行处理 Worker 之间状态共享问题。方法之一就是将状态按上文所述方式存储于 Redis 。
+
+```php
+<?php
+
+use Hyperf\HttpServer\Router\Router;
+
+Router::get('/metrics', function(){
+    $registry = Hyperf\Utils\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
+    $renderer = new Prometheus\RenderTextFormat();
+    return $renderer->render($registry->getMetricFamilySamples());
+});
+```
