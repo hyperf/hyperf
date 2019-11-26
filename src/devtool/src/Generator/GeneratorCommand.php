@@ -77,6 +77,8 @@ abstract class GeneratorCommand extends Command
         file_put_contents($path, $this->buildClass($name));
 
         $output->writeln(sprintf('<info>%s</info>', $name . ' created successfully.'));
+
+        return 0;
     }
 
     /**
@@ -230,7 +232,6 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the custom config for generator.
-     * @return array
      */
     protected function getConfig(): array
     {
@@ -247,7 +248,6 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the stub file for the generator.
-     * @return string
      */
     abstract protected function getStub(): string;
 
@@ -255,7 +255,6 @@ abstract class GeneratorCommand extends Command
      * Get the default namespace for the class.
      *
      * @param string $rootNamespace
-     * @return string
      */
     abstract protected function getDefaultNamespace(): string;
 }

@@ -19,24 +19,17 @@ class IntegerValue
      */
     private $value;
 
-    /**
-     * @return int
-     */
     public function getValue(): int
     {
         return $this->value;
     }
 
-    /**
-     * @param int $value
-     */
     public function setValue(int $value): void
     {
         $this->value = $value;
     }
 
     /**
-     * @param int $value
      * @return IntegerValue
      */
     public static function newInstance(int $value)

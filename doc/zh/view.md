@@ -1,6 +1,6 @@
 # 视图
 
-视图组件由 [hyperf/view](https://github.com/hyperf/view) 实现并提供使用，满足您对视图渲染的需求，组件默认支持 `Blade` 和 `Smarty` 两种模板引擎。
+视图组件由 [hyperf/view](https://github.com/hyperf/view) 实现并提供使用，满足您对视图渲染的需求，组件默认支持 `Blade` 、 `Smarty` 、 `Twig` 、 `Plates` 和 `ThinkTemplate` 五种模板引擎。
 
 ## 安装
 
@@ -64,7 +64,7 @@ return [
 
 ## 视图渲染引擎
 
-官方目前支持 `Blade` ，`Smarty` 和 `Twig` 三种模板，默认安装 [hyperf/view](https://github.com/hyperf/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
+官方目前支持 `Blade` 、 `Smarty` 、 `Twig` 、 `Plates` 和 `ThinkTemplate` 五种模板，默认安装 [hyperf/view](https://github.com/hyperf/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
 
 ### 安装 Blade 引擎
 
@@ -82,6 +82,18 @@ composer require smarty/smarty
 
 ```bash
 composer require twig/twig
+```
+
+### 安装 Plates 引擎
+
+```bash
+composer require league/plates
+```
+
+### 安装 ThinkTemplate 引擎
+
+```bash
+composer require sy-records/think-template
 ```
 
 ### 接入其他模板
