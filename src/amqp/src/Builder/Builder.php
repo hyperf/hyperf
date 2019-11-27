@@ -107,11 +107,17 @@ class Builder
         return $this;
     }
 
+    /**
+     * @return null|int
+     */
     public function getTicket()
     {
         return $this->ticket;
     }
 
+    /**
+     * @param null|int $ticket
+     */
     public function setTicket($ticket): self
     {
         $this->ticket = $ticket;
