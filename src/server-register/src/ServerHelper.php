@@ -62,6 +62,17 @@ class ServerHelper
 
     public function getInternalIp(): string
     {
+        $host = $this->config->get('server_register.host');
+        if ($host !== null) {
+            if (is_string($host)) {
+                return $host;
+            }
+
+            if (is_callable($host)) {
+                return (string) $host();
+            }
+        }
+
         $ips = swoole_get_local_ip();
         if (is_array($ips)) {
             return current($ips);
