@@ -123,3 +123,7 @@
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee 等）
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer
+- [firstphp-wxapp](https://github.com/lamplife/firstphp-wxapp) 一个专注于微信小程序开发的 SDK
+- [ip2region](https://github.com/lamplife/ip2region) 一个高保真的IP地址解析组件
+
+
