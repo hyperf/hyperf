@@ -51,7 +51,7 @@ class ConsumerMessageTest extends TestCase
             $this->assertSame('qos.rk', $args[2]);
         });
         $channel->shouldReceive('basic_qos')->andReturnUsing(function (...$args) {
-            $this->assertSame([0, 10, false], $args);
+            $this->assertSame([null, 10, null], $args);
         });
 
         $consumer = new Consumer($container, $container->get(PoolFactory::class), $container->get(StdoutLoggerInterface::class));

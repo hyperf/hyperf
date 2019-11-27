@@ -117,9 +117,9 @@ class Consumer extends Builder
         }
 
         if (is_array($qos = $message->getQos())) {
-            $size = $qos['prefetch_size'] ?? 0;
-            $count = $qos['prefetch_count'] ?? 0;
-            $global = $qos['global'] ?? false;
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
             $channel->basic_qos($size, $count, $global);
         }
     }
