@@ -16,16 +16,34 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class Builder
 {
+    /**
+     * @var bool
+     */
     protected $passive = false;
 
+    /**
+     * @var bool
+     */
     protected $durable = true;
 
+    /**
+     * @var bool
+     */
     protected $autoDelete = false;
 
+    /**
+     * @var bool
+     */
     protected $nowait = false;
 
+    /**
+     * @var AMQPTable|array
+     */
     protected $arguments = [];
 
+    /**
+     * @var null|int
+     */
     protected $ticket;
 
     public function isPassive(): bool
