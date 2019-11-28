@@ -13,14 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class ModelEventListener implements ListenerInterface
 {
     /**

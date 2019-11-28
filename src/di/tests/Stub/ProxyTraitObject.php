@@ -32,4 +32,13 @@ class ProxyTraitObject
     {
         return $this->getParamsMap(static::class, 'get3', func_get_args());
     }
+
+    public function incr()
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, self::getParamsMap(ProxyTraitObject::class, __FUNCTION__, func_get_args()), function () use ($__function__, $__method__) {
+            return 1;
+        });
+    }
 }

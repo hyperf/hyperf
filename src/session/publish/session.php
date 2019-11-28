@@ -17,6 +17,6 @@ return [
     'options' => [
         'connection' => 'default',
         'path' => BASE_PATH . '/runtime/session',
-        'gc_lifetime' => 1200,
+        'gc_maxlifetime' => 1200,
     ],
 ];

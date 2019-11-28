@@ -16,15 +16,13 @@ use Hyperf\ConfigApollo\ClientInterface;
 use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="apollo-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'apollo-config-fetcher';
+
     /**
      * @var Server
      */
