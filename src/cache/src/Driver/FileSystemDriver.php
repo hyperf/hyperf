@@ -97,7 +97,7 @@ class FileSystemDriver extends Driver
 
     public function clear()
     {
-        return $this->clearPrefix('');
+        return $this->clearPrefix($this->prefix);
     }
 
     public function getMultiple($keys, $default = null)
@@ -149,7 +149,7 @@ class FileSystemDriver extends Driver
 
     public function clearPrefix(string $prefix): bool
     {
-        $files = glob($this->storePath . $prefix . DIRECTORY_SEPARATOR . '*');
+        $files = glob($this->storePath . DIRECTORY_SEPARATOR . $prefix . '*');
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
