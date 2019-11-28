@@ -10,13 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Session\Handler;
+namespace Hyperf\Redis\Exception;
 
-return [
-    'handler' => Handler\FileHandler::class,
-    'options' => [
-        'connection' => 'default',
-        'path' => BASE_PATH . '/runtime/session',
-        'gc_maxlifetime' => 1200,
-    ],
-];
+class RedisNotFoundException extends \RuntimeException
+{
+}
