@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#965](https://github.com/hyperf/hyperf/pull/965) Added Redis Lua Module.
 - [#1023](https://github.com/hyperf/hyperf/pull/1023) Added CUSTOM_MODE to hyperf/metric prometheus driver.
 
 ## Fixed
