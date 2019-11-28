@@ -37,7 +37,7 @@ class FileSystemDriver extends Driver
 
     public function getCacheKey(string $key)
     {
-        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $key . 'cache';
+        return $this->getPrefix() . $key . '.cache';
     }
 
     public function get($key, $default = null)
@@ -97,7 +97,7 @@ class FileSystemDriver extends Driver
 
     public function clear()
     {
-        return $this->clearPrefix($this->prefix);
+        return $this->clearPrefix('');
     }
 
     public function getMultiple($keys, $default = null)
@@ -149,7 +149,7 @@ class FileSystemDriver extends Driver
 
     public function clearPrefix(string $prefix): bool
     {
-        $files = glob($this->storePath . DIRECTORY_SEPARATOR . $prefix . '*');
+        $files = glob($this->getPrefix() . $prefix . '*');
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
@@ -158,5 +158,10 @@ class FileSystemDriver extends Driver
         }
 
         return true;
+    }
+
+    protected function getPrefix()
+    {
+        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix;
     }
 }

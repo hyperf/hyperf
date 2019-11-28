@@ -66,7 +66,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function clear()
     {
-        return $this->clearPrefix($this->prefix);
+        return $this->clearPrefix('');
     }
 
     public function getMultiple($keys, $default = null)
@@ -123,17 +123,19 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function clearPrefix(string $prefix): bool
     {
-        $key = $prefix . '*';
         $iterator = null;
+        $key = $prefix . '*';
         while (true) {
-            $scan_res = $this->redis->rawCommand('SCAN', $iterator, 'MATCH', $key, 'COUNT', 10000);
-            $iterator = $scan_res[0];
-            $this->redis->del($scan_res[1]);
+            $keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000);
+            if (! empty($keys)) {
+                $this->redis->del(...$keys);
+            }
 
             if (empty($iterator)) {
                 break;
             }
         }
+
         return true;
     }
 
