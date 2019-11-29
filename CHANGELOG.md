@@ -1,5 +1,9 @@
 # v1.1.9 - TBD
 
+## Fixed
+
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
+
 # v1.1.8 - 2019-11-28
 
 ## Added
