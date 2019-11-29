@@ -321,7 +321,7 @@ Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长�
 ```php
 <?php
 return [
-    '\App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
+    'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
 ```
 

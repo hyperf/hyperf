@@ -159,8 +159,8 @@ class LazyLoader
      *
      * TODO: implement some of them.
      *
-     * @param \ReflectionClass $targetReflection [description]
-     * @return bool [description]
+     * @param \ReflectionClass $targetReflection
+     * @return bool
      */
     private function isUnsupportedReflectionType(\ReflectionClass $targetReflection): bool
     {
