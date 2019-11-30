@@ -14,9 +14,12 @@ namespace Hyperf\Di\LazyLoader;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine\Locker as CoLocker;
+use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
+use ReflectionClass;
 
 class LazyLoader
 {
@@ -32,7 +35,7 @@ class LazyLoader
     /**
      * The singleton instance of the loader.
      *
-     * @var \Hyperf\Di\LazyLoader\LazyLoader
+     * @var LazyLoader
      */
     protected static $instance;
 
@@ -51,8 +54,6 @@ class LazyLoader
 
     /**
      * Get or create the singleton lazy loader instance.
-     *
-     * @return \Hyperf\Di\LazyLoader\LazyLoader
      */
     public static function bootstrap(ConfigInterface $config): LazyLoader
     {
@@ -69,7 +70,7 @@ class LazyLoader
      */
     public function load(string $proxy)
     {
-        if ($this->config->get($proxy, false)) {
+        if (array_key_exists($proxy, $this->config) || Str::startsWith($proxy, 'HyperfLazy\\')) {
             $this->loadProxy($proxy);
             return true;
         }
@@ -110,7 +111,7 @@ class LazyLoader
             $targetPath = $path . '.' . uniqid();
             $code = $this->generatorLazyProxy(
                 $proxy,
-                $this->config->get($proxy)
+                $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
             );
             file_put_contents($targetPath, $code);
             rename($targetPath, $path);
@@ -124,7 +125,7 @@ class LazyLoader
      */
     protected function generatorLazyProxy(string $proxy, string $target): string
     {
-        $targetReflection = new \ReflectionClass($target);
+        $targetReflection = new ReflectionClass($target);
         $fileName = $targetReflection->getFileName();
         if (! $fileName) {
             $code = ''; // Classes and Interfaces from PHP internals
@@ -148,7 +149,7 @@ class LazyLoader
      */
     protected function prependToLoaderStack(): void
     {
-        /** @var callable(string): void*/
+        /** @var callable(string): void */
         $load = [$this, 'load'];
         spl_autoload_register($load, true, true);
     }
@@ -159,10 +160,10 @@ class LazyLoader
      *
      * TODO: implement some of them.
      *
-     * @param \ReflectionClass $targetReflection [description]
+     * @param ReflectionClass $targetReflection [description]
      * @return bool [description]
      */
-    private function isUnsupportedReflectionType(\ReflectionClass $targetReflection): bool
+    private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
         //Final class
         if ($targetReflection->isFinal()) {
@@ -199,7 +200,7 @@ class LazyLoader
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $builder->addNodes($visitor->nodes);
-        $prettyPrinter = new \PhpParser\PrettyPrinter\Standard();
+        $prettyPrinter = new Standard();
         $stmts = [$builder->getNode()];
         return $prettyPrinter->prettyPrintFile($stmts);
     }

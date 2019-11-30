@@ -20,6 +20,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitorAbstract;
 
@@ -36,10 +37,15 @@ class PublicMethodVisitor extends NodeVisitorAbstract
     {
         if ($node instanceof ClassMethod) {
             $methodCall =
-                new Return_(new MethodCall(new Variable('this'), '__call', [
+                new MethodCall(new Variable('this'), '__call', [
                     new Node\Arg(new MagicConstFunction()),
                     new Node\Arg(new FuncCall(new Name('func_get_args'))),
-                ]));
+                ]);
+            if ($node->returnType && $node->returnType->toString() !== 'void') {
+                $methodCall = new Return_($methodCall);
+            } else {
+                $methodCall = new Expression($methodCall);
+            }
             $node->stmts = [
                 $methodCall,
             ];

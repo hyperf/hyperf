@@ -33,6 +33,11 @@ class Inject extends AbstractAnnotation
     public $required = true;
 
     /**
+     * @var bool
+     */
+    public $lazy = false;
+
+    /**
      * @var PhpDocReader
      */
     private $docReader;
@@ -48,6 +53,9 @@ class Inject extends AbstractAnnotation
         try {
             $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
+            if ($this->lazy) {
+                $this->value = 'HyperfLazy\\' . $this->value;
+            }
         } catch (AnnotationException $e) {
             if ($this->required) {
                 throw $e;

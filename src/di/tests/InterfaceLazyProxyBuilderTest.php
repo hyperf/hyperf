@@ -17,6 +17,7 @@ use Hyperf\Di\LazyLoader\PublicMethodVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -60,7 +61,7 @@ class SomeClass implements \App\SomeInterface
     }
     public function it(\bar\ConfigInterface $a) : void
     {
-        return $this->__call(__FUNCTION__, func_get_args());
+        $this->__call(__FUNCTION__, func_get_args());
     }
     public function works(bool $a, float $b = 1) : int
     {
@@ -81,7 +82,7 @@ CODETEMPLATE;
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $builder->addNodes($visitor->nodes);
-        $prettyPrinter = new \PhpParser\PrettyPrinter\Standard();
+        $prettyPrinter = new Standard();
         $stmts = [$builder->getNode()];
         $newCode = $prettyPrinter->prettyPrintFile($stmts);
         $this->assertEquals($expected, $newCode);

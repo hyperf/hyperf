@@ -15,6 +15,7 @@ namespace HyperfTest\Di;
 use Hyperf\Di\LazyLoader\PublicMethodVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,7 +46,7 @@ public function hope(bool $a) : int
 }
 public function it(ConfigInterface $a) : void
 {
-    return $this->__call(__FUNCTION__, func_get_args());
+    $this->__call(__FUNCTION__, func_get_args());
 }
 public function works(bool $a, float $b = 1) : int
 {
@@ -58,7 +59,7 @@ CODETEMPLATE;
         $visitor = new PublicMethodVisitor();
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
-        $prettyPrinter = new \PhpParser\PrettyPrinter\Standard();
+        $prettyPrinter = new Standard();
         $newCode = $prettyPrinter->prettyPrintFile($visitor->nodes);
         $this->assertEquals($expected, $newCode);
     }
@@ -90,7 +91,7 @@ public function hope(bool $a) : int
 }
 public function it(ConfigInterface $a) : void
 {
-    return $this->__call(__FUNCTION__, func_get_args());
+    $this->__call(__FUNCTION__, func_get_args());
 }
 public function works(bool $a, float $b = 1) : int
 {
@@ -103,7 +104,7 @@ CODETEMPLATE;
         $visitor = new PublicMethodVisitor();
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
-        $prettyPrinter = new \PhpParser\PrettyPrinter\Standard();
+        $prettyPrinter = new Standard();
         $newCode = $prettyPrinter->prettyPrintFile($visitor->nodes);
         $this->assertEquals($expected, $newCode);
         $this->assertEquals(3, count($visitor->nodes));
