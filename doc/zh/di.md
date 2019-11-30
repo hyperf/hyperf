@@ -302,37 +302,36 @@ return [
 
 ### 懒加载
 
-Hyperf的长生命周期依赖注入在项目启动时完成。这意味着长生命周期的类需要注意：
+Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长生命周期的类需要注意：
 
 * 构造函数时还不是协程环境，如果注入了可能会触发协程切换的类，就会导致框架启动失败。
 
 * 构造函数中要避免循坏依赖（比较典型的例子为 `Listener` 和 `EventDispatcherInterface`），不然也会启动失败。
 
-目前解决方案是：只在实例中注入 `ContainerInterface` ，而其他的组件在非构造函数执行时通过 `container` 获取。PSR-11中指出:
+目前解决方案是：只在实例中注入 `Psr\Container\ContainerInterface` ，而其他的组件在非构造函数执行时通过 `container` 获取。但 PSR-11 中指出:
 
 > 「用户不应该将容器作为参数传入对象然后在对象中通过容器获得对象的依赖。这样是把容器当作服务定位器来使用，而服务定位器是一种反模式」
 
 也就是说这样的做法虽然有效，但是从设计模式角度来说并不推荐。
 
-另一个方案是使用PHP中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI组件设计了基于类型提示（TypeHint）的懒加载注入功能。
+另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了基于类型提示 (TypeHint) 的懒加载注入功能。
 
 添加 `config/autoload/lazy_loader.php` 文件并绑定懒加载关系：
 
 ```php
 <?php
 return [
-    '\App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
+    'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
 ```
 
-这样在类型提示 `LazyUserService` 的时候容器就会创建一个懒加载代理注入到构造函数或属性中了。
+这样在注入 `App\Service\LazyUserService` 的时候容器就会创建一个 `懒加载代理类` 注入到目标对象中了。
 
-> 您还可以免除配置烦恼，通过 `@Inject(lazy=true)` 注入懒加载代理。
+> 您还可以通过 `@Inject(lazy=true)` 注入懒加载代理。
 
-当该代理对象执行下列操作时，被代理对象才会从容器中真正实例化。
+注意：当该代理对象执行下列操作时，被代理对象才会从容器中真正实例化。
 
 ```php
-
 // 方法调用
 $proxy->someMethod();
 
