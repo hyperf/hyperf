@@ -314,20 +314,49 @@ Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长�
 
 也就是说这样的做法虽然有效，但是从设计模式角度来说并不推荐。
 
-另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了基于类型提示 (TypeHint) 的懒加载注入功能。
+另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了懒加载注入功能。
 
 添加 `config/autoload/lazy_loader.php` 文件并绑定懒加载关系：
 
 ```php
 <?php
 return [
+    /**
+     * 格式为：代理类名 => 原类名
+     * 代理类此时是不存在的，Hyperf会在runtime文件夹下自动生成该类。
+     * 代理类类名和命名空间可以自由定义。
+     */
     'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
 ```
 
 这样在注入 `App\Service\LazyUserService` 的时候容器就会创建一个 `懒加载代理类` 注入到目标对象中了。
 
-> 您还可以通过 `@Inject(lazy=true)` 注入懒加载代理。
+```php
+use App\Service\LazyUserService;
+
+class Foo{
+    public $service;
+    public function __construct(LazyUserService $sevice){
+        $this->service = $service;
+    }
+}
+````
+
+您还可以通过注解 `@Inject(lazy=true)` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
+
+```php
+use Hyperf\Di\Annotation\Inject;
+use App\Service\UserServiceInterface;
+
+class Foo{
+    /**
+     * @Inject(lazy=true)
+     * @var UserServiceInterface
+     */
+    public $service;
+}
+````
 
 注意：当该代理对象执行下列操作时，被代理对象才会从容器中真正实例化。
 
