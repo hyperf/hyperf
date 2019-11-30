@@ -93,6 +93,28 @@ class Container implements ContainerInterface
     }
 
     /**
+     * Bind an arbitrary resolved entry to an identifier.
+     * Useful for testing 'get'.
+     *
+     * @param mixed $entry
+     */
+    public function set(string $name, $entry)
+    {
+        $this->resolvedEntries[$name] = $entry;
+    }
+
+    /**
+     * Bind an arbitrary definition to an identifier.
+     * Useful for testing 'make'.
+     *
+     * @param array|callable|string $definition
+     */
+    public function define(string $name, $definition)
+    {
+        $this->definitionSource->addDefinition($name, $definition);
+    }
+
+    /**
      * Finds an entry of the container by its identifier and returns it.
      *
      * @param string $name identifier of the entry to look for
