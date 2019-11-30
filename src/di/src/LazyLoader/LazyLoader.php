@@ -42,7 +42,7 @@ class LazyLoader
     /**
      * The Configuration object.
      *
-     * @var ConfigInterface
+     * @var array
      */
     protected $config;
 
@@ -160,13 +160,8 @@ class LazyLoader
      *
      * TODO: implement some of them.
      *
-<<<<<<< HEAD
      * @param ReflectionClass $targetReflection [description]
      * @return bool [description]
-=======
-     * @param \ReflectionClass $targetReflection
-     * @return bool
->>>>>>> origin
      */
     private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
