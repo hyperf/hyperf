@@ -4,6 +4,10 @@
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
 
+## Optimized
+
+- [#987](https://github.com/hyperf/hyperf/pull/987) Optimized `gen:command` Template code created.
+
 # v1.1.8 - 2019-11-28
 
 ## Added

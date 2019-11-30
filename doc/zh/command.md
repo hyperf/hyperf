@@ -16,7 +16,7 @@ composer require hyperf/command
 
 # 自定义命令
 
-## 生成命令
+## 生成命令、描述以及帮助信息
 
 如果你有安装 [hyperf/devtool](https://github.com/hyperf/devtool) 组件的话，可以通过 `gen:command` 命令来生成一个自定义命令：
 
@@ -25,102 +25,6 @@ php bin/hyperf.php gen:command FooCommand
 ```
 执行上述命令后，便会在 `app/Command` 文件夹内生成一个配置好的 `FooCommand` 类了。
 
-### 定义命令
-
-定义该命令类所对应的命令有两种形式，一种是通过 `$name` 属性定义，另一种是通过构造函数传参来定义，我们通过代码示例来演示一下，假设我们希望定义该命令类的命令为 `foo:hello`：   
-
-#### `$name` 属性定义：
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Command;
-
-use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Command\Annotation\Command;
-
-/**
- * @Command
- */
-class FooCommand extends HyperfCommand
-{
-    /**
-     * 执行的命令行
-     *
-     * @var string
-     */
-    protected $name = 'foo:hello';
-}
-```
-
-#### 构造函数传参定义：
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Command;
-
-use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Command\Annotation\Command;
-
-/**
- * @Command
- */
-class FooCommand extends HyperfCommand
-{
-    public function __construct()
-    {
-        parent::__construct('foo:hello');    
-    }
-}
-```
-
-### 定义命令类逻辑
-
-命令类实际运行的逻辑是取决于 `handle` 方法内的代码，也就意味着 `handle` 方法就是命令的入口。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Command;
-
-use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Command\Annotation\Command;
-
-/**
- * @Command
- */
-class FooCommand extends HyperfCommand
-{
-    /**
-     * 执行的命令行
-     *
-     * @var string
-     */
-    protected $name = 'foo:hello';
-    
-    public function handle()
-    {
-        // 通过内置方法 line 在 Console 输出 Hello Hyperf.
-        $this->line('Hello Hyperf.', 'info');
-    }
-}
-```
-
-### 定义命令类的参数
-
-在编写命令时，通常是通过 `参数` 和 `选项` 来收集用户的输入的，在收集一个用户输入前，必须对该 `参数` 或 `选项` 进行定义。
-
-#### 参数
-
-假设我们希望定义一个 `name` 参数，然后通过传递任意字符串如 `Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
-
 ```php
 <?php
 
@@ -130,6 +34,7 @@ namespace App\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
@@ -138,24 +43,89 @@ use Symfony\Component\Console\Input\InputArgument;
 class FooCommand extends HyperfCommand
 {
     /**
-     * 执行的命令行
-     *
-     * @var string
+     * @var ContainerInterface
      */
-    protected $name = 'foo:hello';
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct();
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setName('demo:command')  // 命令名称
+             ->setDescription('Hyperf Demo Command')  //功能描述
+             ->setHelp("you can exec this command test: php  bin/hyperf.php  demo:command ");  // 使用帮助
+    }
+    
+    /**
+    * 命令类实际运行的逻辑是取决于 `handle` 方法内的代码，也就意味着 `handle` 方法就是命令的入口。
+    */
+    public function handle()
+    {
+        $this->line('Hello Hyperf!', 'info');
+    }
+}
+
+```
+
+### 定义带参数的命令
+
+在编写命令时，通常是通过 `参数` 和 `选项` 来收集用户的输入的，在收集一个用户输入前，必须对该 `参数` 和 `选项` 进行定义。
+
+#### 参数
+
+假设我们希望定义两个 `params1` `prams2` 参数，然后通过传递任意字符串如 `Hello` `Hyperf` 于命令一起并执行 `php bin/hyperf.php foo:bar Hello Hyperf` 输出 `Hello Hyperf`，我们通过代码来演示一下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Input\InputArgument;
+
+/**
+ * @Command
+ */
+class FooCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct();
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setName('foo:bar')
+             ->setDescription('Hyperf Demo Command')
+             ->setHelp("you can exec this command test: php  bin/hyperf.php  foo:bar Hello Hyperf")
+             ->addArgument('params1', InputArgument::REQUIRED, 'parms1 为必填参数')
+             ->addArgument('params2', InputArgument::OPTIONAL, 'parms2 为可选参数');
+
+    }
 
     public function handle()
     {
-        // 从 $input 获取 name 参数
-        $argument = $this->input->getArgument('name') ?? 'World';
-        $this->line('Hello ' . $argument, 'info');
-    }
-    
-    protected function getArguments()
-    {
-        return [
-            ['name', InputArgument::OPTIONAL, '这里是对这个参数的解释']
-        ];
+         $params1 = $this->input->getArgument('params1');
+         $params2 = $this->input->getArgument('params2');
+        $this->line("{$params1} {$params2}", 'info');
     }
 }
 ``` 
