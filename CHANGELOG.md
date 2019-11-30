@@ -4,6 +4,10 @@
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
 
+## Optimized
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007)  Optimized `vendor:: publish` return value does not support null.
+
 # v1.1.8 - 2019-11-28
 
 ## Added
