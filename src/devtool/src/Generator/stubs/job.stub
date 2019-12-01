@@ -8,11 +8,9 @@ use Hyperf\AsyncQueue\Job;
 
 class %CLASS% extends Job
 {
-    public $params;
 
-    public function __construct($params=null)
+    public function __construct()
     {
-        $this->params = $params;
     }
 
     public function handle()
