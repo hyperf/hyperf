@@ -78,7 +78,7 @@ class Request implements RequestInterface
      *
      * @param mixed $default
      */
-    public function input(string $key, $default = null)
+    public function input(?string $key, $default = null)
     {
         $data = $this->getInputData();
 
