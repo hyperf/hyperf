@@ -1,5 +1,9 @@
 # v1.1.9 - TBD
 
+## Added
+
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+
 ## Fixed
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.

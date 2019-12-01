@@ -8,7 +8,6 @@ use Hyperf\AsyncQueue\Job;
 
 class %CLASS% extends Job
 {
-
     public function __construct()
     {
     }
