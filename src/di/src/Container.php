@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class Container implements ContainerInterface
