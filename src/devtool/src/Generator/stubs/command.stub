@@ -7,7 +7,6 @@ namespace %NAMESPACE%;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * @Command
@@ -18,32 +17,23 @@ class %CLASS% extends HyperfCommand
      * @var ContainerInterface
      */
     protected $container;
+    protected static $defaultName = 'demo:command';
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
 
-        parent::__construct();
+        parent::__construct('');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setName('demo:command')
-             ->setDescription('Hyperf Demo Command')
-             ->setHelp("you can exec this command test: php  ./bin/hyperf.php  demo:command ");
-           /**
-             ->addArgument('params1', InputArgument::REQUIRED, 'parms1 is required');
-             ->addArgument('params2', InputArgument::OPTIONAL, 'parms2 is optional');
-            */
+        $this->setDescription('Hyperf Demo Command');
     }
 
     public function handle()
     {
         $this->line('Hello Hyperf!', 'info');
-        /**
-         $this->input->getArgument('params1');
-         $this->input->getArgument('params2');
-        */
     }
 }
