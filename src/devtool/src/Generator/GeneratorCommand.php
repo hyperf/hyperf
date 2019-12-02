@@ -66,7 +66,7 @@ abstract class GeneratorCommand extends Command
         // code is untouched. Otherwise, we will continue generating this class' files.
         if (($input->getOption('force') === false) && $this->alreadyExists($this->getNameInput())) {
             $output->writeln(sprintf('<fg=red>%s</>', $name . ' already exists!'));
-            return false;
+            return 0;
         }
 
         // Next, we will generate the path to the location where this class' file should get

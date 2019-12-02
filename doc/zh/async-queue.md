@@ -99,7 +99,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 #### 传统方式
 
-首先我们定义一个消息类，如下
+首先我们定义一个消息类，快速生成命令：`php bin/hyperf.php gen:job ExampleJob` 如下
 
 ```php
 <?php
@@ -135,7 +135,7 @@ class ExampleJob extends Job
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\JobsDispatch;
 
 use App\Job\ExampleJob;
 use Hyperf\AsyncQueue\Driver\DriverFactory;

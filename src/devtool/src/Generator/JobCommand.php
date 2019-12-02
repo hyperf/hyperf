@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * @Command
@@ -33,5 +34,17 @@ class JobCommand extends GeneratorCommand
     protected function getDefaultNamespace(): string
     {
         return $this->getConfig()['namespace'] ?? 'App\\Job';
+    }
+
+    function __destruct()
+    {
+        $command = $this->getApplication()->find('gen:jobDispatch');
+        $arguments = array(
+            'command' => 'gen:jobDispatch',
+            'name'    => $this->getNameInput(),
+        );
+        $greetInput = new ArrayInput($arguments);
+        $command->run($greetInput, $this->output);
+
     }
 }

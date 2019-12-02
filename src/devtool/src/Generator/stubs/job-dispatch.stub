@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\JobsDispatch;
+
+use App\Job\%CLASS% ;
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\Driver\DriverInterface;
+
+class %CLASS%Dispatch
+{
+    /**
+     * @var DriverInterface
+     */
+    protected $driver;
+
+    public function __construct(DriverFactory $driverFactory)
+    {
+        $this->driver = $driverFactory->get('default');
+    }
+
+
+    public function push($params, int $delay = 0): bool
+    {
+        return $this->driver->push(new %CLASS%( ), $delay);
+    }
+}
+
