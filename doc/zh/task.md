@@ -105,7 +105,7 @@ $result = $task->handle(Coroutine::id());
 
 Swoole 暂时没有协程化的函数列表
 
-- mysql，底层使用 libmysqlclient
+- mysql，底层使用 libmysqlclient, 不推荐使用, 推荐使用已经实现协程化的 pod_mysql/mysqli
 - curl，底层使用 libcurl，在 Swoole 4.4 后底层进行了协程化(beta)
 - mongo，底层使用 mongo-c-client
 - pdo_pgsql
