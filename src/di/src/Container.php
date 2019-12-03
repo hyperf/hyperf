@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class Container implements ContainerInterface
@@ -96,7 +96,7 @@ class Container implements ContainerInterface
      * Bind an arbitrary resolved entry to an identifier.
      * Useful for testing 'get'.
      *
-     * @param mixed entry
+     * @param mixed $entry
      */
     public function set(string $name, $entry)
     {
@@ -111,7 +111,7 @@ class Container implements ContainerInterface
      */
     public function define(string $name, $definition)
     {
-        $this->definitionSource->addDefinition($name) = $definition;
+        $this->definitionSource->addDefinition($name, $definition);
     }
 
     /**
