@@ -38,9 +38,9 @@ class JobCommand extends GeneratorCommand
 
     function __destruct()
     {
-        $command = $this->getApplication()->find('gen:jobDispatch');
+        $command = $this->getApplication()->find('gen:jobPush');
         $arguments = array(
-            'command' => 'gen:jobDispatch',
+            'command' => 'gen:jobPush',
             'name'    => $this->getNameInput(),
         );
         $greetInput = new ArrayInput($arguments);

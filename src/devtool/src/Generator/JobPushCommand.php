@@ -18,21 +18,21 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
-class JobDispatchCommand extends GeneratorCommand
+class JobPushCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('gen:jobDispatch');
-        $this->setDescription('Create a new jobDispatch class');
+        parent::__construct('gen:jobPush');
+        $this->setDescription('Create a new jobPush class');
     }
 
     protected function getStub(): string
     {
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/job-dispatch.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/job-push.stub';
     }
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Service\\JobsDispatch';
+        return $this->getConfig()['namespace'] ?? 'App\\Service\\JobsPush';
     }
 }
