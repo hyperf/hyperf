@@ -1,5 +1,9 @@
 # v1.1.9 - TBD
 
+## Added
+
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
+
 ## Fixed
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
