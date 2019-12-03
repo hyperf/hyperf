@@ -165,7 +165,7 @@ class FooCommand extends HyperfCommand
 
 ## 命令常用配置介绍
 
-以下代码皆只修改 `configure` 中的内容。
+以下代码皆只修改 `configure` 和 `handle` 中的内容。
 
 ### 设置 Help
 
