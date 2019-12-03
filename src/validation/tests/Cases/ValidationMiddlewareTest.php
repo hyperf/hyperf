@@ -104,7 +104,10 @@ class ValidationMiddlewareTest extends TestCase
     public function testGetValidatorInstance()
     {
         $container = $this->createContainer();
-        Context::set(ServerRequestInterface::class, new Request('POST', new Uri('/')));
+        Context::set(
+            ServerRequestInterface::class,
+            (new Request('POST', new Uri('/')))->withParsedBody(['username' => 'Hyperf', 'password' => 'Hyperf'])
+        );
         $request = $container->get(DemoRequest::class);
 
         $request->validated();
