@@ -51,7 +51,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 |      insert      |     `int`      | 插入数据，返回主键 ID，非自增主键返回 0 |
 |     execute      |     `int`      |       执行 SQL，返回受影响的行数        |
 |      query       |    `array`     |        查询 SQL，返回结果集列表         |
-|      fetch       | `array|object` |     查询 SQL，返回结果集的首行数据      |
+|      fetch       | `array,object` |     查询 SQL，返回结果集的首行数据      |
 
 ## 使用
 
