@@ -81,7 +81,6 @@ class Container implements HyperfContainerInterface
      *                          the container.
      * @throws NotFoundException no entry found for the given name
      * @throws InvalidArgumentException the name parameter must be of type string
-     * @return mixed
      */
     public function make(string $name, array $parameters = [])
     {
@@ -97,8 +96,6 @@ class Container implements HyperfContainerInterface
     /**
      * Bind an arbitrary resolved entry to an identifier.
      * Useful for testing 'get'.
-     *
-     * @param mixed $entry
      */
     public function set(string $name, $entry)
     {
@@ -120,7 +117,6 @@ class Container implements HyperfContainerInterface
      * Finds an entry of the container by its identifier and returns it.
      *
      * @param string $name identifier of the entry to look for
-     * @return mixed entry
      */
     public function get($name)
     {
