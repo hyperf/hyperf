@@ -40,7 +40,7 @@ config
 
 ## server.php 配置说明
 
-以下为 Hyperf-Skeleton 中的 `server.php` 所提供的默认 `settings` 
+以下为 Hyperf-Skeleton 中的 `config/autoload/server.php` 所提供的默认 `settings` 
 
 ```php
 <?php
@@ -64,7 +64,7 @@ return [
 ];
 ```
 
-此配置文件用于管理 Server 服务，其中的 `settings` 选项可以直接使用由 `Swoole Server` 提供的选项，其他选项可参考 [Swoole 官方文档](https://wiki.swoole.com/wiki/page/274.html) 中的选项。
+此配置文件用于管理 Server 服务，其中的 `settings` 选项可以直接使用由 `Swoole Server` 提供的选项，其他选项可参考 [Swoole 官方文档](https://wiki.swoole.com/wiki/page/274.html) 。
 
 如需要设置守护进程化，可在 `settings` 中增加 `'daemonize' => 1`，执行 `php bin/hyperf.php start`后，程序将转入后台作为守护进程运行
 
