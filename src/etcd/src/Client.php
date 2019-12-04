@@ -37,7 +37,7 @@ abstract class Client
     /**
      * @var HandlerStack[]
      */
-    protected $stacks;
+    protected $stacks = [];
 
     /**
      * @var HandlerStackFactory
