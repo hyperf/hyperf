@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use Hyperf\Contract\ContainerInterface;
+use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Psr\Container\NotFoundExceptionInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-class Container implements ContainerInterface
+class Container implements HyperfContainerInterface
 {
     /**
      * Map of entries that are already resolved.
@@ -63,7 +63,8 @@ class Container implements ContainerInterface
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
-            ContainerInterface::class => $this,
+            PsrContainerInterface::class => $this,
+            HyperfContainerInterface::class => $this,
             ProxyFactory::class => $this->proxyFactory,
         ];
     }
@@ -78,8 +79,9 @@ class Container implements ContainerInterface
      * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
      *                          to specific values. Parameters not defined in this array will be resolved using
      *                          the container.
-     * @throws InvalidArgumentException the name parameter must be of type string
+     * @return mixed
      * @throws NotFoundException no entry found for the given name
+     * @throws InvalidArgumentException the name parameter must be of type string
      */
     public function make(string $name, array $parameters = [])
     {
