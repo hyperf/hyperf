@@ -79,9 +79,9 @@ class Container implements HyperfContainerInterface
      * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
      *                          to specific values. Parameters not defined in this array will be resolved using
      *                          the container.
-     * @return mixed
      * @throws NotFoundException no entry found for the given name
      * @throws InvalidArgumentException the name parameter must be of type string
+     * @return mixed
      */
     public function make(string $name, array $parameters = [])
     {
