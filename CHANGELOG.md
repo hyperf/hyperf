@@ -5,6 +5,7 @@
 - [#1044](https://github.com/hyperf/hyperf/pull/1044) Added `basic_qos` for amqp consumer.
 - [#1056](https://github.com/hyperf/hyperf/pull/1056) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
 - [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) Added php 7.4 support.
 
 ## Fixed
 
