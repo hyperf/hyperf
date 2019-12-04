@@ -57,7 +57,7 @@ abstract class Client
     protected function getDefaultHandler()
     {
         $id = (int) Coroutine::inCoroutine();
-        if ($this->stacks[$id] instanceof HandlerStack) {
+        if (isset($this->stacks[$id]) && $this->stacks[$id] instanceof HandlerStack) {
             return $this->stacks[$id];
         }
 
