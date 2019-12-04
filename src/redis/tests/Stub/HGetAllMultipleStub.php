@@ -10,13 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Session\Handler;
+namespace HyperfTest\Redis\Stub;
 
-return [
-    'handler' => Handler\FileHandler::class,
-    'options' => [
-        'connection' => 'default',
-        'path' => BASE_PATH . '/runtime/session',
-        'gc_maxlifetime' => 1200,
-    ],
-];
+use Hyperf\Redis\Lua\Hash\HGetAllMultiple;
+
+class HGetAllMultipleStub extends HGetAllMultiple
+{
+    protected $sha = 'xxxx';
+}

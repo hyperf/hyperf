@@ -10,13 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Session\Handler;
+namespace Hyperf\Redis\Lua;
 
-return [
-    'handler' => Handler\FileHandler::class,
-    'options' => [
-        'connection' => 'default',
-        'path' => BASE_PATH . '/runtime/session',
-        'gc_maxlifetime' => 1200,
-    ],
-];
+interface ScriptInterface
+{
+    public function getScript(): string;
+
+    public function format($data);
+
+    public function eval(array $arguments = [], $sha = true);
+}

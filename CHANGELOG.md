@@ -1,7 +1,23 @@
-# v1.1.8 - TBD
+# v1.1.9 - TBD
 
 ## Added
 
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+
+## Fixed
+
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
+
+## Optimized
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007)  Optimized `vendor:: publish` return value does not support null.
+
+# v1.1.8 - 2019-11-28
+
+## Added
+
+- [#965](https://github.com/hyperf/hyperf/pull/965) Added Redis Lua Module.
 - [#1023](https://github.com/hyperf/hyperf/pull/1023) Added CUSTOM_MODE to hyperf/metric prometheus driver.
 
 ## Fixed
@@ -17,6 +33,8 @@
 
 - [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
 - [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
+- [#1039](https://github.com/hyperf/hyperf/pull/1039) Updated the ServerRequest object to context in CoreMiddleware automatically.
+- [#1034](https://github.com/hyperf/hyperf/pull/1034) The property `arguments` of `Hyperf\Amqp\Builder\Builder` not only support array.
 
 # v1.1.7 - 2019-11-21
 
