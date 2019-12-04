@@ -235,8 +235,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request 和 $response 为修改后的对象
-\Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-\Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```
 
 ## 自定义 CoreMiddleWare 的行为

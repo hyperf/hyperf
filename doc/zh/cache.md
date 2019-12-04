@@ -104,6 +104,59 @@ class SystemService
 }
 ```
 
+当我们自定义了 `Cacheable` 的 `value` 时，比如以下情况。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Cache;
+
+use Hyperf\Cache\Annotation\Cacheable;
+
+class DemoService
+{
+    /**
+     * @Cacheable(prefix="cache", value="_#{id}", listener="DemoServiceDelete")
+     */
+    public function getCache(int $id)
+    {
+        return $id . '_' . uniqid();
+    }
+}
+```
+
+则需要对应修改 `DeleteListenerEvent` 构造函数中的 `$arguments` 变量，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Cache\Listener\DeleteListenerEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
+
+class SystemService
+{
+    /**
+     * @Inject
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    public function flushCache($userId)
+    {
+        $this->dispatcher->dispatch(new DeleteListenerEvent('user-update', ['id' => $userId]));
+
+        return true;
+    }
+}
+```
+
 ## 注解介绍
 
 ### Cacheable

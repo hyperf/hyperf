@@ -17,12 +17,8 @@ use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener
- */
 class DeleteListener implements ListenerInterface
 {
     /**
