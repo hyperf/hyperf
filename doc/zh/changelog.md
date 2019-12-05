@@ -1,5 +1,28 @@
 # 版本更新记录
 
+# v1.1.8 - 2019-11-28
+
+## 新增
+
+- [#965](https://github.com/hyperf/hyperf/pull/965) 新增 Redis Lua 模块，用于管理 Lua 脚本；
+- [#1023](https://github.com/hyperf/hyperf/pull/1023) hyperf/metric 组件的 Prometheus 驱动新增 CUSTOM_MODE 模式；
+
+## 修复
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) 修复 JsonRpcPoolTransporter 配置合并失败的问题；
+- [#1006](https://github.com/hyperf/hyperf/pull/1006) 修复 `gen:model` 命令生成的属性的顺序；
+
+## 变更
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1012) WebSocket 客户端新增默认端口支持，根据协议默认为 80 和 443；
+- [#1034](https://github.com/hyperf/hyperf/pull/1034) 去掉了 `Hyperf\Amqp\Builder\Builder` 的 `arguments` 参数的 array 类型限制，允许接受其他类型如 AmqpTable；
+
+## 优化
+
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) 优化 `Command::execute` 的返回值类型；
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) 提供更清晰友好的连接池报错信息；
+- [#1039](https://github.com/hyperf/hyperf/pull/1039) 在 CoreMiddleware 中自动设置最新的 ServerRequest 对象到 Context；
+
 # v1.1.7 - 2019-11-21
 
 ## 新增
