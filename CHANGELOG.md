@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#948](https://github.com/hyperf/hyperf/pull/948) Added Lazy loader to DI.
 - [#1044](https://github.com/hyperf/hyperf/pull/1044) Added `basic_qos` for amqp consumer.
 - [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
 - [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
