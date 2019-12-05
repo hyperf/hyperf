@@ -113,11 +113,6 @@ class Retry extends AbstractRetry
      */
     public $fallback = '';
 
-    public function __construct($value = null)
-    {
-        parent::__construct($value);
-    }
-
     public function toArray(): array
     {
         if (is_array($this->retryBudget)) {
