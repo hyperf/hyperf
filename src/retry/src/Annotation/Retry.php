@@ -119,7 +119,7 @@ class Retry extends AbstractRetry
     {
         parent::__construct($value);
         if (is_array($this->retryBudget)) {
-            if (ApplicationContext::hasContainer()) {
+            if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RetryBudgetInterface::class)){
                 $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
             } else {
                 $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
