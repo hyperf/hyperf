@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Di\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
 
-class BootApplicationListener implements ListenerInterface
+class LazyLoaderBootApplicationListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -30,9 +30,6 @@ class BootApplicationListener implements ListenerInterface
         $this->container = $container;
     }
 
-    /**
-     * @return string[] returns the events that you want to listen
-     */
     public function listen(): array
     {
         return [
@@ -40,18 +37,10 @@ class BootApplicationListener implements ListenerInterface
         ];
     }
 
-    /**
-     * Handle the Event when the event is triggered, all listeners will
-     * complete before the event is returned to the EventDispatcher.
-     */
     public function process(object $event)
     {
-        $configs = $this->container->get(ConfigInterface::class)->get('aspects', []);
-        $aspect = new Aspect();
-        foreach ($configs as $config) {
-            if (is_string($config)) {
-                $aspect->collectClass($config);
-            }
-        }
+        $configs = $this->container->get(ConfigInterface::class);
+
+        LazyLoader::bootstrap($configs);
     }
 }
