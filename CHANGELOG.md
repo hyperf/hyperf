@@ -1,8 +1,52 @@
-# v1.1.7 - TBD
+# v1.1.9 - TBD
 
 ## Added
 
+- [#1044](https://github.com/hyperf/hyperf/pull/1044) Added `basic_qos` for amqp consumer.
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) Added php 7.4 support.
+
+## Fixed
+
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) Fixed broken retry annotation
+
+## Optimized
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007)  Optimized `vendor:: publish` return value does not support null.
+
+# v1.1.8 - 2019-11-28
+
+## Added
+
+- [#965](https://github.com/hyperf/hyperf/pull/965) Added Redis Lua Module.
+- [#1023](https://github.com/hyperf/hyperf/pull/1023) Added CUSTOM_MODE to hyperf/metric prometheus driver.
+
+## Fixed
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
+- [#1006](https://github.com/hyperf/hyperf/pull/1006) Fixed the order of properties of Model.
+
+## Changed
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
+
+## Optimized
+
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
+- [#1039](https://github.com/hyperf/hyperf/pull/1039) Updated the ServerRequest object to context in CoreMiddleware automatically.
+- [#1034](https://github.com/hyperf/hyperf/pull/1034) The property `arguments` of `Hyperf\Amqp\Builder\Builder` not only support array.
+
+# v1.1.7 - 2019-11-21
+
+## Added
+
+- [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
 - [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+- [#973](https://github.com/hyperf/hyperf/pull/973) Added `Hyperf\JsonRpc\JsonRpcPoolTransporter`.
+- [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
 
 ## Fixed
 
@@ -10,6 +54,18 @@
 - [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
 - [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
 - [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
+- [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
+- [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `Hyperf\GrpcClient\GrpcClient::yield` does not get the correct channel pool.
+- [#987](https://github.com/hyperf/hyperf/pull/987) Fixed missing method call `parent::configure()` of `command.stub`.
+
+## Optimized
+
+- [#991](https://github.com/hyperf/hyperf/pull/991) Optimized `Hyperf\DbConnection\ConnectionResolver::connection`. 
+
+## Changed
+
+- [#944](https://github.com/hyperf/hyperf/pull/944) Replaced annotation `@Listener` and `@Process` into config which `listeners` and `processes` in `ConfigProvider`.
+- [#977](https://github.com/hyperf/hyperf/pull/977) Changed `init-proxy.sh` command to only delete the `runtime/container` directory.
 
 # v1.1.6 - 2019-11-14
 
