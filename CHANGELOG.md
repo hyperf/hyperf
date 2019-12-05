@@ -10,6 +10,7 @@
 ## Fixed
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) Fixed broken retry annotation
 
 ## Optimized
 
