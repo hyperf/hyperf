@@ -41,10 +41,10 @@ class PublicMethodVisitor extends NodeVisitorAbstract
                     new Node\Arg(new MagicConstFunction()),
                     new Node\Arg(new FuncCall(new Name('func_get_args'))),
                 ]);
-            if ($node->returnType && $node->returnType->toString() !== 'void') {
-                $methodCall = new Return_($methodCall);
-            } else {
+            if ($node->returnType && $node->returnType->toString() === 'void') {
                 $methodCall = new Expression($methodCall);
+            } else {
+                $methodCall = new Return_($methodCall);
             }
             $node->stmts = [
                 $methodCall,

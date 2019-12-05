@@ -34,7 +34,7 @@ use bar\ConfigInterface;
 interface foo {
 	public function hope(bool $a): int;
 	public function it(ConfigInterface $a): void;
-	public function works(bool $a, float $b = 1): int;
+	public function works(bool $a, float $b = 1);
 }
 CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
@@ -48,7 +48,7 @@ public function it(ConfigInterface $a) : void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
-public function works(bool $a, float $b = 1) : int
+public function works(bool $a, float $b = 1)
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
