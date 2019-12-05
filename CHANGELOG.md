@@ -12,7 +12,8 @@
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
 - [#1055](https://github.com/hyperf/hyperf/pull/1055) Fixed image extension validation failed.
-- [#1085](https://github.com/hyperf/hyperf/pull/1085) Fixed broken retry annotation.
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091)Fixed broken retry annotation.
+
 
 ## Optimized
 

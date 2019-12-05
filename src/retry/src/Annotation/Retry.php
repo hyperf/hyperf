@@ -18,10 +18,8 @@ use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
-use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
-use Hyperf\Utils\ApplicationContext;
 
 /**
  * @Annotation
@@ -115,15 +113,11 @@ class Retry extends AbstractRetry
      */
     public $fallback = '';
 
-    public function __construct($value = null)
+    public function toArray(): array
     {
-        parent::__construct($value);
         if (is_array($this->retryBudget)) {
-            if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RetryBudgetInterface::class)){
-                $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
-            } else {
-                $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
-            }
+            $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
         }
+        return parent::toArray();
     }
 }
