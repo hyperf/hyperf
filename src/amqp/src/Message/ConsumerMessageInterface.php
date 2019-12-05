@@ -24,6 +24,8 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function isRequeue(): bool;
 
+    public function getQos(): ?array;
+
     public function getQueueBuilder(): QueueBuilder;
 
     public function getConsumerTag(): string;

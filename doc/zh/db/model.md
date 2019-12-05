@@ -106,7 +106,7 @@ class User extends Model
 |    table     | string |   无    |      数据表名称      |
 |  primaryKey  | string |   id    |       模型主键       |
 |   keyType    | string |   int   |       主键类型       |
-|   fillable   | array  |   []    | 允许被批量复制的属性 |
+|   fillable   | array  |   []    | 允许被批量赋值的属性 |
 |    casts     | string |   无    |    数据格式化配置    |
 |  timestamps  |  bool  |  true   |  是否自动维护时间戳  |
 | incrementing |  bool  |  true   |     是否自增主键     |

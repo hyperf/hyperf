@@ -183,8 +183,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Get context validator key.
-     *
-     * @return string
      */
     protected function getContextValidatorKey(): string
     {

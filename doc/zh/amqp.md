@@ -50,7 +50,7 @@ return [
             'read_write_timeout' => 3.0,
             'context' => null,
             'keepalive' => false,
-            'heartbeat' => 0,
+            'heartbeat' => 3,
         ],
     ],
     'pool2' => [

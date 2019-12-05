@@ -47,12 +47,10 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the query to determine the list of columns.
-     *
-     * @return string
      */
-    public function compileColumnListing()
+    public function compileColumnListing(): string
     {
-        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ?';
+        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
     }
 
     /**

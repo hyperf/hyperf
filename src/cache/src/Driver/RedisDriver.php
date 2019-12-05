@@ -125,8 +125,15 @@ class RedisDriver extends Driver implements KeyCollectorInterface
     {
         $iterator = null;
         $key = $prefix . '*';
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
-            $this->redis->del(...$keys);
+        while (true) {
+            $keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000);
+            if (! empty($keys)) {
+                $this->redis->del(...$keys);
+            }
+
+            if (empty($iterator)) {
+                break;
+            }
         }
 
         return true;

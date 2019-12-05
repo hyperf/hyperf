@@ -48,6 +48,8 @@ return [
     'namespaces' => [
         'application',
     ],
+    // Strict mode. When the value is false, the configuration value that pulled from Apollo will always is string type, when the value is true, the configuration value will transfer to the suitable type according to the original value type on config container.
+    'strict_mode' => false,
     // The interval of update configuration (seconds)
     'interval' => 5,
 ];

@@ -355,4 +355,26 @@ $result = $client->sum(new MathValue(1), new MathValue(2));
 var_dump($result->value);
 ```
 
+### 使用 JsonRpcPoolTransporter
+
+框架提供了基于连接池的 `Transporter`，可以有效避免高并发时，建立过多连接的问题。这里可以通过替换 `JsonRpcTransporter` 的方式，使用 `JsonRpcPoolTransporter`。
+
+修改 `dependencies.php` 文件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\JsonRpc\JsonRpcPoolTransporter;
+use Hyperf\JsonRpc\JsonRpcTransporter;
+
+return [
+    JsonRpcTransporter::class => function () {
+        return make(JsonRpcPoolTransporter::class);
+    },
+];
+
+```
+
 
