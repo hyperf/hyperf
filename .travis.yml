@@ -8,6 +8,8 @@ matrix:
       env: SW_VERSION="4.4.12"
     - php: 7.3
       env: SW_VERSION="4.4.12"
+    - php: 7.4
+      env: SW_VERSION="4.4.12"
     - php: master
       env: SW_VERSION="4.4.12"
 

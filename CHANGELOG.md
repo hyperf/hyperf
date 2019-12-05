@@ -5,11 +5,14 @@
 - [#1044](https://github.com/hyperf/hyperf/pull/1044) Added `basic_qos` for amqp consumer.
 - [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
 - [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) Added php 7.4 support.
 
 ## Fixed
 
 - [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
-- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091)Fixed broken retry annotation
+- [#1055](https://github.com/hyperf/hyperf/pull/1055) Fixed image extension validation failed.
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091)Fixed broken retry annotation.
+
 
 ## Optimized
 
