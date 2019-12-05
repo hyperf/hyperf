@@ -57,7 +57,7 @@ class RetryBudget implements RetryBudgetInterface
                 $this->produce();
             }
             while (! $this->budget->isEmpty()
-                && $this->budget->top() > microtime(true)
+                && $this->budget->top() <= microtime(true)
             ) {
                 $this->budget->dequeue();
             }

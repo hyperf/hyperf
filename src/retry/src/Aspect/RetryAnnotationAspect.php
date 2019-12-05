@@ -72,7 +72,7 @@ class RetryAnnotationAspect implements AroundInterface
     {
         $policies = [];
         foreach ($annotation->policies as $policy) {
-            $policies[] = make($policy, (array) $annotation);
+            $policies[] = make($policy, $annotation->toArray());
         }
 
         return new HybridRetryPolicy(...$policies);

@@ -96,6 +96,7 @@ class Container implements HyperfContainerInterface
     /**
      * Bind an arbitrary resolved entry to an identifier.
      * Useful for testing 'get'.
+     * @param mixed $entry
      */
     public function set(string $name, $entry)
     {
