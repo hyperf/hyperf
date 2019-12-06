@@ -118,3 +118,7 @@
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee等）
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
 
+## 权限认证
+
+- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) spatie/laravel-permission 的Hyperf版
+
