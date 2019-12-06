@@ -214,7 +214,7 @@ declare(strict_types=1);
 
 return [
     'http' => [
-        \Hyperf\Metric\Middleware\MetricMiddeware::class,
+        \Hyperf\Metric\Middleware\MetricMiddleware::class,
     ],
 ];
 ```
