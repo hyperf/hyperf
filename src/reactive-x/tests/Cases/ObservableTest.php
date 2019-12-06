@@ -131,26 +131,26 @@ class ObservableTest extends TestCase
     public function testCoroutine()
     {
         $result = new Channel(1);
-        $o = Observable::fromCoroutine(function () {
+        $o = Observable::fromCoroutine([function () {
             System::sleep(0.002);
             return 24;
         }, function () {
             System::sleep(0.001);
             return 42;
-        });
+        }]);
         $o->take(1)->subscribe(
             function ($x) use ($result) {
                 $result->push($x);
             }
         );
         $this->assertEquals(42, $result->pop());
-        $o = Observable::fromCoroutine(function () {
+        $o = Observable::fromCoroutine([function () {
             System::sleep(0.01);
             return 24;
         }, function () {
             System::sleep(0.01);
             return 42;
-        });
+        }]);
         $o->timeout(15)->subscribe(
             function ($x) {
             },
@@ -174,6 +174,8 @@ class ObservableTest extends TestCase
             ->andReturn(new MethodDefinitionCollector());
         $container->shouldReceive('get')->with(NormalizerInterface::class)
             ->andReturn(new SimpleNormalizer());
+        $container->shouldReceive('has')
+            ->andReturn(false);
         return $container;
     }
 }

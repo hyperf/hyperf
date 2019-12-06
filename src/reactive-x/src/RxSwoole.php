@@ -21,8 +21,13 @@ use Swoole\Timer;
 
 class RxSwoole
 {
+    private static $initialized = false;
+
     public static function init()
     {
+        if (self::$initialized) {
+            return;
+        }
         $loop = function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {
@@ -42,5 +47,7 @@ class RxSwoole
         Scheduler::setDefaultFactory(function () use ($loop) {
             return new Scheduler\EventLoopScheduler($loop);
         });
+
+        RxSwoole::$initialized = true;
     }
 }

@@ -12,21 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Dispatcher\HttpRequestHandler;
-use Hyperf\HttpServer\CoreMiddleware;
-use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\HttpServer\Server;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
-use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Rx\Disposable\EmptyDisposable;
+use Hyperf\ReactiveX\Observable\ChannelObservable;
+use Hyperf\ReactiveX\Observable\CoroutineObservable;
+use Hyperf\ReactiveX\Observable\EventObservable;
+use Hyperf\ReactiveX\Observable\HttpRouteObservable;
 use Rx\Observable as RxObservable;
-use Rx\ObserverInterface;
-use Swoole\Coroutine;
+use Rx\Scheduler;
+use Rx\SchedulerInterface;
 use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\WaitGroup;
 
 class Observable
 {
@@ -35,80 +28,39 @@ class Observable
         return call_user_func([RxObservable::class, $method], ...$arguments);
     }
 
-    public static function fromEvent(string $eventName): RxObservable
+    public static function fromEvent(string $eventName, ?SchedulerInterface $scheduler = null): EventObservable
     {
-        return RxObservable::create(function (ObserverInterface $observer) use ($eventName) {
-            $provider = ApplicationContext::getContainer()->get(ListenerProviderInterface::class);
-            $provider->on($eventName, function ($event) use ($observer) {
-                $observer->onNext($event);
-            });
-            return new EmptyDisposable();
-        });
+        return new EventObservable($eventName, $scheduler ?? Scheduler::getDefault());
     }
 
-    public static function fromChannel(Channel $channel): RxObservable
+    /**
+     * @throws \Exception
+     */
+    public static function fromChannel(Channel $channel, ?SchedulerInterface $scheduler = null): ChannelObservable
     {
-        return RxObservable::create(function (ObserverInterface $observer) use ($channel) {
-            Coroutine::Create(function () use ($channel, $observer) {
-                $result = $channel->pop();
-                while ($result !== false) {
-                    $observer->onNext($result);
-                    $result = $channel->pop();
-                }
-                $observer->onCompleted();
-            });
-            return new EmptyDisposable();
-        });
+        return new ChannelObservable($channel, $scheduler ?? Scheduler::getDefault());
     }
 
-    public static function fromHttpRoute($httpMethod, string $uri, $callback = null): RxObservable
+    /**
+     * @param array<string>|string $httpMethod
+     * @param null|callable|string $callback
+     * @throws \Exception
+     */
+    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null): HttpRouteObservable
     {
-        return RxObservable::create(function (ObserverInterface $observer) use ($httpMethod, $uri, $callback) {
-            $container = ApplicationContext::getContainer();
-            $factory = $container->get(DispatcherFactory::class);
-            $factory->getRouter('http')->addRoute($httpMethod, $uri, function () use ($observer, $callback, $container) {
-                $request = Context::get(ServerRequestInterface::class);
-                $observer->onNext($request);
-                if ($callback !== null) {
-                    $serverName = $container->get(Server::class)->getServerName();
-                    $middleware = new CoreMiddleware($container, $serverName);
-                    $handler = new HttpRequestHandler([], new \stdClass(), $container);
-                    /** @var Dispatched $dispatched */
-                    $dispatched = $request->getAttribute(Dispatched::class);
-                    $dispatched->handler->callback = $callback;
-                    return $middleware->process($request->withAttribute(Dispatched::class, $dispatched), $handler);
-                }
-                return ['status' => 200];
-            });
-            return new EmptyDisposable();
-        });
+        return new HttpRouteObservable($httpMethod, $uri, $scheduler ?? Scheduler::getDefault(), $callback);
     }
 
-    public static function fromCoroutine(callable ...$callables): RxObservable
+    /**
+     * @param array<Callable>|callable $callables
+     * @throws \Exception
+     */
+    public static function fromCoroutine($callables, ?SchedulerInterface $scheduler = null): CoroutineObservable
     {
-        return RxObservable::create(function (ObserverInterface $observer) use ($callables) {
-            coroutine::create(function () use ($observer, $callables) {
-                $wg = new WaitGroup();
-                $wg->add(count($callables));
-                foreach ($callables as $callable) {
-                    Coroutine::create(function () use ($observer, $callable, &$wg) {
-                        try {
-                            $result = $callable();
-                            $observer->onNext($result);
-                        } catch (\Throwable $throwable) {
-                            $observer->onError($throwable);
-                        } finally {
-                            $wg->done();
-                        }
-                    });
-                }
-
-                $wg->wait();
-                $observer->onCompleted();
-            });
-
-            return new EmptyDisposable();
-        });
+        if (is_callable($callables)) {
+            $callables = [$callables];
+        }
+        return new CoroutineObservable($callables, $scheduler ?? Scheduler::getDefault());
     }
 
     public static function unwrap(RxObservable $observable): array

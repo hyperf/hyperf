@@ -15,13 +15,13 @@ use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
 
 $result = new Channel(1);
-$o = Observable::fromCoroutine(function () {
+$o = Observable::fromCoroutine([function () {
     System::sleep(0.002);
     return 1;
 }, function () {
     System::sleep(0.001);
     return 2;
-});
+}]);
 $o->take(1)->subscribe(
     function ($x) use ($result) {
         $result->push($x);

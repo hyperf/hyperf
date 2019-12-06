@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace Hyperf\ReactiveX\Observable;
+
+use Rx\DisposableInterface;
+use Rx\Observable;
+use Rx\ObserverInterface;
+use Rx\SchedulerInterface;
+use Swoole\Coroutine\Channel;
+
+class ChannelObservable extends Observable
+{
+    private $channel;
+
+    private $scheduler;
+
+    public function __construct(Channel $channel, SchedulerInterface $scheduler)
+    {
+        $this->channel = $channel;
+        $this->scheduler = $scheduler;
+    }
+
+    protected function _subscribe(ObserverInterface $observer): DisposableInterface
+    {
+        $action = function ($reschedule) use (&$observer) {
+            try {
+                $result = $this->channel->pop();
+                if ($result === false) {
+                    $observer->onCompleted();
+                }
+                $observer->onNext($result);
+                $reschedule();
+            } catch (\Throwable $e) {
+                $observer->onError($e);
+            }
+        };
+        return $this->scheduler->scheduleRecursive($action);
+    }
+}
