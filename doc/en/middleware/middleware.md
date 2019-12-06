@@ -218,7 +218,7 @@ class FooMiddleware implements MiddlewareInterface
     }
 }
 ```
-The order of execution of the middleware is `BarMiddleware -> FooMiddleware`.
+The order of execution of the middleware is `FooMiddleware -> BarMiddleware`.
 
 ## The order of Middleware execution
 
@@ -233,6 +233,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request and $response are the modified objects
-\Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-\Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```

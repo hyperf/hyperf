@@ -22,7 +22,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Metric Process.
- * @Process
  */
 class MetricProcess extends AbstractProcess
 {

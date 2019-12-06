@@ -83,7 +83,6 @@ trait FormatsMessages
     /**
      * Get the displayable name of the value.
      *
-     * @param string $attribute
      * @param mixed $value
      * @return string
      */

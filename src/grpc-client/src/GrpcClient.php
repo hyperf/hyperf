@@ -301,7 +301,7 @@ class GrpcClient
     {
         $yield = $yield === true ? -1 : $yield;
         if ($yield) {
-            $this->waitYield = self::$channelPool->get();
+            $this->waitYield = $this->channelPool->get();
             return $this->waitYield->pop($yield);
         }
     }

@@ -18,6 +18,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Hyperf\Metric\Listener\OnPipeMessage;
 use Hyperf\Metric\Listener\OnWorkerStart;
+use Hyperf\Metric\Process\MetricProcess;
 use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Driver\Guzzle;
 use Prometheus\Storage\Adapter;
@@ -53,6 +54,9 @@ class ConfigProvider
                 OnPipeMessage::class,
                 OnMetricFactoryReady::class,
                 OnWorkerStart::class,
+            ],
+            'processes' => [
+                MetricProcess::class,
             ],
         ];
     }

@@ -1,6 +1,6 @@
 # 中间件
 
-这里的中间件指的是"中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
+这里的中间件指的是 "中间件模式"，该功能属于 [hyperf/http-server](https://github.com/hyperf/http-server) 组件内的一项主要功能，主要用于编织从 `请求(Request)` 到 `响应(Response)` 的整个流程，该功能完成基于 [PSR-15](https://www.php-fig.org/psr/psr-15/) 实现。
 
 ## 原理
 
@@ -33,7 +33,7 @@ return [
 
 ### 通过配置文件定义
 
-在使用配置文件定义路由时，推荐通过配置文件来定义对应的中间件，局部中间件的配置将在路由配置上完成。   
+在使用配置文件定义路由时，您尽可通过配置文件来定义对应的中间件，局部中间件的配置将在路由配置上完成。   
 `Hyperf\HttpServer\Router\Router` 类的每个定义路由的方法的最后一个参数 `$options` 都将接收一个数组，可通过传递键值 `middleware` 及一个数组值来定义该路由的中间件，我们通过几个路由定义来演示一下:
 
 ```php
@@ -62,7 +62,7 @@ Router::addGroup(
 
 ### 通过注解定义
 
-在通过注解定义路由时，我们推荐通过注解的方式来定义中间件，对中间件的定义有两个注解，分别为：   
+在通过注解定义路由时，您仅可通过注解的方式来定义中间件，对中间件的定义有两个注解，分别为：   
   - `@Middleware` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
   - `@Middlewares` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `@Middleware` 注解实现多个中间件的定义
 
@@ -220,7 +220,7 @@ class FooMiddleware implements MiddlewareInterface
     }
 }
 ```
-中间件的执行顺序为 `BarMiddleware -> FooMiddleware`。
+中间件的执行顺序为 `FooMiddleware -> BarMiddleware`。
 
 ## 中间件的执行顺序
 
@@ -235,8 +235,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request 和 $response 为修改后的对象
-\Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-\Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 ```
 
 ## 自定义 CoreMiddleWare 的行为

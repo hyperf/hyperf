@@ -15,13 +15,9 @@ namespace Hyperf\ModelCache\Listener;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Events\Saved;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelCache\CacheableInterface;
 
-/**
- * @Listener
- */
 class DeleteCacheListener implements ListenerInterface
 {
     public function listen(): array

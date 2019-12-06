@@ -39,6 +39,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $routingKey = [];
 
+    /**
+     * @var null|array
+     */
+    protected $qos;
+
     public function setQueue(string $queue): self
     {
         $this->queue = $queue;
@@ -53,6 +58,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     public function isRequeue(): bool
     {
         return $this->requeue;
+    }
+
+    public function getQos(): ?array
+    {
+        return $this->qos;
     }
 
     public function getQueueBuilder(): QueueBuilder
