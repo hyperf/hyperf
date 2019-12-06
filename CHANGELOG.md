@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#1104](https://github.com/hyperf/hyperf/pull/1104) Fixed guzzle will be retried when the response has the correct status code 2xx.
-
+- [#1105](https://github.com/hyperf/hyperf/pull/1105) Fixed Retry Component not restoring pipeline stack before retry attempts.
 # v1.1.9 - 2019-12-05
 
 ## Added
