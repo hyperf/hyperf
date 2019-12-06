@@ -1,5 +1,56 @@
 # 版本更新记录
 
+# v1.1.8 - 2019-11-28
+
+## 新增
+
+- [#965](https://github.com/hyperf/hyperf/pull/965) 新增 Redis Lua 模块，用于管理 Lua 脚本；
+- [#1023](https://github.com/hyperf/hyperf/pull/1023) hyperf/metric 组件的 Prometheus 驱动新增 CUSTOM_MODE 模式；
+
+## 修复
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) 修复 JsonRpcPoolTransporter 配置合并失败的问题；
+- [#1006](https://github.com/hyperf/hyperf/pull/1006) 修复 `gen:model` 命令生成的属性的顺序；
+
+## 变更
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1012) WebSocket 客户端新增默认端口支持，根据协议默认为 80 和 443；
+- [#1034](https://github.com/hyperf/hyperf/pull/1034) 去掉了 `Hyperf\Amqp\Builder\Builder` 的 `arguments` 参数的 array 类型限制，允许接受其他类型如 AmqpTable；
+
+## 优化
+
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) 优化 `Command::execute` 的返回值类型；
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) 提供更清晰友好的连接池报错信息；
+- [#1039](https://github.com/hyperf/hyperf/pull/1039) 在 CoreMiddleware 中自动设置最新的 ServerRequest 对象到 Context；
+
+# v1.1.7 - 2019-11-21
+
+## 新增
+
+- [#860](https://github.com/hyperf/hyperf/pull/860) 新增 [hyperf/retry](https://github.com/hyperf/retry) 组件；
+- [#952](https://github.com/hyperf/hyperf/pull/952) 新增 ThinkTemplate 视图引擎支持；
+- [#973](https://github.com/hyperf/hyperf/pull/973) 新增 JSON RPC 在 TCP 协议下的连接池支持，通过 `Hyperf\JsonRpc\JsonRpcPoolTransporter` 来使用连接池版本；
+- [#976](https://github.com/hyperf/hyperf/pull/976) 为 `hyperf/amqp` 组件新增  `close_on_destruct` 选项参数，用来控制代码在执行析构函数时是否主动去关闭连接；
+
+## 变更
+
+- [#944](https://github.com/hyperf/hyperf/pull/944) 将组件内所有使用 `@Listener` 和 `@Process` 注解来注册的改成通过 `ConfigProvider`来注册；
+- [#977](https://github.com/hyperf/hyperf/pull/977) 调整 `init-proxy.sh` 命令的行为，改成只删除 `runtime/container` 目录；
+
+## 修复
+
+- [#955](https://github.com/hyperf/hyperf/pull/955) 修复 `hyperf/db` 组件的 `port` 和 `charset` 参数无效的问题；
+- [#956](https://github.com/hyperf/hyperf/pull/956) 修复模型缓存中使用到`RedisHandler::incr` 在集群模式下会失败的问题；
+- [#966](https://github.com/hyperf/hyperf/pull/966) 修复当在非 Worker 进程环境下使用分页器会报错的问题；
+- [#968](https://github.com/hyperf/hyperf/pull/968) 修复当 `classes` 和 `annotations` 两种 Aspect 切入模式同时存在于一个类时，其中一个可能会失效的问题；
+- [#980](https://github.com/hyperf/hyperf/pull/980) 修复 Session 组件内 `migrate`, `save` 核 `has` 方法无法使用的问题；
+- [#982](https://github.com/hyperf/hyperf/pull/982) 修复 `Hyperf\GrpcClient\GrpcClient::yield` 在获取 Channel Pool 时没有通过正确的获取方式去获取的问题；
+- [#987](https://github.com/hyperf/hyperf/pull/987) 修复通过 `gen:command` 命令生成的命令类缺少调用 `parent::configure()` 方法的问题；
+
+## 优化
+
+- [#991](https://github.com/hyperf/hyperf/pull/991) 优化 `Hyperf\DbConnection\ConnectionResolver::connection`的异常情况处理；
+
 # v1.1.6 - 2019-11-14
 
 ## 新增
@@ -22,8 +73,8 @@
 
 - [#897](https://github.com/hyperf/hyperf/pull/897) 修复 `Nats` 消费者，`pool` 配置无效的 BUG；
 - [#901](https://github.com/hyperf/hyperf/pull/901) 修复 `GraphQL` 组件，`Factory` 注解无法正常使用的 BUG；
-- [#903](https://github.com/hyperf/hyperf/pull/903) 修复添加 `hyperf/rpc-client` 依赖后，`init-proxy` 脚本无法正常停止的BUG；
-- [#904](https://github.com/hyperf/hyperf/pull/904) 修复监听器监听 `Hyperf\Framework\Event\BeforeMainServerStart` 事件时，无法使用 `IO` 操作的BUG；
+- [#903](https://github.com/hyperf/hyperf/pull/903) 修复添加 `hyperf/rpc-client` 依赖后，`init-proxy` 脚本无法正常停止的 BUG；
+- [#904](https://github.com/hyperf/hyperf/pull/904) 修复监听器监听 `Hyperf\Framework\Event\BeforeMainServerStart` 事件时，无法使用 `IO` 操作的 BUG；
 - [#906](https://github.com/hyperf/hyperf/pull/906) 修复 `Hyperf\HttpMessage\Server\Request` 端口获取有误的 BUG；
 - [#907](https://github.com/hyperf/hyperf/pull/907) 修复 `Nats` 组件 `requestSync` 方法，超时时间不准确的 BUG；
 - [#909](https://github.com/hyperf/hyperf/pull/909) 修复 `Parallel` 内逻辑抛错后，无法正常停止的 BUG；
