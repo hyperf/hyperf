@@ -743,7 +743,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        if (in_array($value->getExtension(), $parameters)) {
+        if (in_array(strtolower($value->getExtension()), $parameters)) {
             return true;
         }
 
@@ -1501,7 +1501,6 @@ trait ValidatesAttributes
      * @param mixed $first
      * @param mixed $second
      * @throws \InvalidArgumentException
-     * @return bool
      */
     protected function compare($first, $second, string $operator): bool
     {
