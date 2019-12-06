@@ -119,3 +119,7 @@
 - [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的微信 SDK，非微信官方 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole环境下的 PHPMailer
 
+## 权限认证
+
+- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) spatie/laravel-permission 的Hyperf版
+
