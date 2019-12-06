@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace HyperfTest\Guzzle\Cases;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\CoroutineHandler;
@@ -20,6 +22,7 @@ use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -106,6 +109,42 @@ class HandlerStackFactoryTest extends TestCase
         $property->setAccessible(true);
         $items = array_column($property->getValue($stack), 1);
         $this->assertEquals(['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry', 'retry_again'], $items);
+    }
+
+    public function testRetryMiddleware()
+    {
+        $this->setContainer();
+
+        $factory = new HandlerStackFactory();
+        $stack = $factory->create([], ['retry_again' => [RetryMiddleware::class, [1, 10]]]);
+        $stack->setHandler($stub = new CoroutineHandlerStub(201));
+
+        $client = new Client([
+            'handler' => $stack,
+            'base_uri' => 'http://127.0.0.1:9501',
+        ]);
+
+        $resposne = $client->get('/');
+        $this->assertSame(201, $resposne->getStatusCode());
+        $this->assertSame(1, $stub->count);
+
+        $stack = $factory->create([], ['retry' => [RetryMiddleware::class, [1, 10]]]);
+        $stack->setHandler($stub = new CoroutineHandlerStub(400));
+        $client = new Client([
+            'handler' => $stack,
+            'base_uri' => 'http://127.0.0.1:9501',
+        ]);
+
+        $this->expectExceptionCode(400);
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessageRegExp('/400 Bad Request/');
+
+        try {
+            $client->get('/');
+        } catch (\Throwable $exception) {
+            $this->assertSame(2, $stub->count);
+            throw $exception;
+        }
     }
 
     protected function setContainer()
