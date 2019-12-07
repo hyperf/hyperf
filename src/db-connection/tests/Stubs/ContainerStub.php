@@ -34,6 +34,7 @@ class ContainerStub
     public static function mockContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
 
         $factory = new PoolFactory($container);
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
@@ -89,7 +90,6 @@ class ContainerStub
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('make')->with(Frequency::class)->andReturn(new Frequency());
-        ApplicationContext::setContainer($container);
 
         return $container;
     }
@@ -97,6 +97,7 @@ class ContainerStub
     public static function mockReadWriteContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
 
         $factory = new PoolFactory($container);
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
@@ -147,7 +148,6 @@ class ContainerStub
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnectorStub());
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('make')->with(Frequency::class)->andReturn(new Frequency());
-        ApplicationContext::setContainer($container);
 
         return $container;
     }

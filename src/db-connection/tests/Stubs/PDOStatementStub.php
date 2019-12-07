@@ -16,6 +16,13 @@ use PDO;
 
 class PDOStatementStub extends \PDOStatement
 {
+    public $statement;
+
+    public function __construct($statement)
+    {
+        $this->statement = $statement;
+    }
+
     public function execute($input_parameters = null)
     {
         return true;

@@ -16,9 +16,11 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,6 +29,12 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+        Context::set('database.connection.default', null);
+    }
+
     public function testResolveConnection()
     {
         $container = ContainerStub::mockContainer();
