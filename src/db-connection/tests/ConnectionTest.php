@@ -82,4 +82,52 @@ class ConnectionTest extends TestCase
         $connection->rollBack(0);
         $this->assertSame(0, $connection->transactionLevel());
     }
+
+    public function testConnectionReadWrite()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        $resolver = $container->get(ConnectionResolver::class);
+
+        /** @var \Hyperf\Database\Connection $connection */
+        $connection = $resolver->connection();
+
+        /** @var PDOStub $pdo */
+        $pdo = $connection->getPdo();
+        $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+        $pdo = $connection->getReadPdo();
+        $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+    }
+
+    public function testConnectionSticky()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolver::class);
+
+            /** @var \Hyperf\Database\Connection $connection */
+            $connection = $resolver->connection();
+            $connection->statement('UPDATE hyperf.test SET name = 1 WHERE id = 1;');
+
+            /** @var PDOStub $pdo */
+            $pdo = $connection->getPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+            $pdo = $connection->getReadPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+        }]);
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolver::class);
+
+            /** @var \Hyperf\Database\Connection $connection */
+            $connection = $resolver->connection();
+
+            /** @var PDOStub $pdo */
+            $pdo = $connection->getPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+            $pdo = $connection->getReadPdo();
+            $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+        }]);
+    }
 }
