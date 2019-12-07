@@ -38,8 +38,6 @@ class MigrateCommand extends BaseCommand
 
     /**
      * Create a new migration command instance.
-     *
-     * @param \Hyperf\Database\Migrations\Migrator $migrator
      */
     public function __construct(Migrator $migrator)
     {

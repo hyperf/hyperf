@@ -538,6 +538,14 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Reset `recordsModified` to false.
+     */
+    public function resetRecordsModified(): void
+    {
+        $this->recordsModified = false;
+    }
+
+    /**
      * Is Doctrine available?
      *
      * @return bool
