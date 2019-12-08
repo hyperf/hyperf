@@ -1,6 +1,6 @@
 # ReactiveX 集成
 
-本组件提供了 Swoole/Hyperf 环境下的 ReactiveX 集成。
+[hyperf/reactive-x](https://github.com/hyperf/reactive-x) 组件提供了 Swoole/Hyperf 环境下的 ReactiveX 集成。
 
 ## ReactiveX 的历史
 
@@ -20,9 +20,9 @@ ReactiveX 是 Reactive Extensions 的缩写，一般简写为 Rx，最初是 LIN
 
 - 通过响应式编程的思考方式，可以将一些复杂异步问题化繁为简。
 
-- 如果您已经在其他语言有过响应式编程经验(RxJS/RxJava)，本组件可以帮助您将这种经验移植到 Hyperf 上。
+- 如果您已经在其他语言有过响应式编程经验(如 RxJS/RxJava)，本组件可以帮助您将这种经验移植到 Hyperf 上。
 
-- 尽管 Swoole 中推荐通过协程像编写同步程序一样编写异步程序，但 Swoole 中仍然包含大量事件，而处理事件正是 Rx 的强项。
+- 尽管 Swoole 中推荐通过协程像编写同步程序一样编写异步程序，但 Swoole 中仍然包含了大量事件，而处理事件正是 Rx 的强项。
 
 - 如果您业务中包含流处理，如 WebSocket，gRPC streaming 等，Rx 也可以发挥重要作用。
 
@@ -34,6 +34,12 @@ ReactiveX 是 Reactive Extensions 的缩写，一般简写为 Rx，最初是 LIN
 
 - RxPHP 并不是 Rx 家族中的佼佼者。
 
+## 安装
+
+```bash
+composer require hyper/reactive-x
+```
+
 ## 封装
 
 下面我们结合示例来介绍本组件的一些封装，并展示 Rx 的强大能力。全部示例可以在本组件 `src/Example` 下找到。
@@ -42,13 +48,13 @@ ReactiveX 是 Reactive Extensions 的缩写，一般简写为 Rx，最初是 LIN
 
 `Observable::fromEvent` 将 PSR 标准事件转为可观察序列。
 
-在 Hyperf 骨架包中默认提供了打印 SQL 语句的事件监听。下面我们对这个监听做一些优化：
+在 hyperf-skeleton 骨架包中默认提供了打印 SQL 语句的事件监听，默认位置于 `app/Listener/DbQueryExecutedListener.php`。下面我们对这个监听做一些优化：
 
-1. 我希望只打印超过 100ms 的 SQL 查询。
+1. 只打印超过 100ms 的 SQL 查询。
 
-2. 我希望每个连接最多 1 秒打印一次，避免硬盘被问题程序刷爆。
+2. 每个连接最多 1 秒打印 1 次，避免硬盘被问题程序刷爆。
 
-如果没有 Rx, 1 问题还好说，2 问题应该就需要动一番脑筋。
+如果没有 ReactiveX，问题 1 还好说，而问题 2 应该就需要动一番脑筋了。而通过 ReactiveX，则可以通过下面的示例代码的方式轻松解决这些需求：
 
 ```php
 <?php
@@ -121,9 +127,9 @@ class SqlListener implements ListenerInterface
 
 ### Observable::fromChannel
 
-将 Swoole 中的 Channel 转为可观察序列。
+将 Swoole 协程中的 Channel 转为可观察序列。
 
-Swoole 中的 Channel 是读写一对一的。如果我们希望通过 Channel 来做多对多订阅和发布该怎么做呢？
+Swoole 协程中的 Channel 是读写一对一的。如果我们希望通过 Channel 来做多对多订阅和发布在 ReactiveX 下该怎么做呢？
 
 请参阅下面这个例子。
 
@@ -159,7 +165,7 @@ $chan->push('world');
 
 创建一个或多个协程并将执行结果转为可观察序列。
 
-我们现在让两个函数在并发协程中竞争，哪个先执行完毕的就返回哪个的结果。效果类似 JavaScript 中的 Promise.race。
+我们现在让两个函数在并发协程中竞争，哪个先执行完毕的就返回哪个的结果。效果类似 JavaScript 中的 `Promise.race`。
 
 ```php
 <?php
@@ -168,14 +174,13 @@ declare(strict_types=1);
 
 use Hyperf\ReactiveX\Observable;
 use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\System;
 
 $result = new Channel(1);
 $o = Observable::fromCoroutine([function () {
-    System::sleep(0.002);
+    sleep(2);
     return 1;
 }, function () {
-    System::sleep(0.001);
+    sleep(1);
     return 2;
 }]);
 $o->take(1)->subscribe(
@@ -183,12 +188,12 @@ $o->take(1)->subscribe(
         $result->push($x);
     }
 );
-echo $result->pop(); //2;
+echo $result->pop(); // 2;
 ```
 
 ### Observable::fromHttpRoute
 
-所有的 HTTP 请求其实也是事件驱动的。所以 HTTP 请求路由也可以用 Rx 来接管。
+所有的 HTTP 请求其实也是事件驱动的。所以 HTTP 请求路由也可以用 ReactiveX 来接管。
 
 > 由于我们要添加路由，所以务必要在 Server 启动前执行，如在 `BootApplication` 事件监听中。
 
@@ -247,13 +252,13 @@ $observable = Observable::fromHttpRoute('GET', '/hello-hyperf', 'App\Controller\
 
 ### IpcSubject
 
-Swoole 的进程间通讯也是事件驱动的。本组件在 RxPHP 提供的四种 [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) 基础上额外提供了对应的跨进程 Subject 版本，可以用于共享信息。
+Swoole 的进程间通讯也是事件驱动的。本组件在 RxPHP 提供的四种 [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) 基础上额外提供了对应的跨进程 Subject 版本，可以用于在进程间共享信息。
 
-例如，我们需要制作一个 WebSocket 聊天室，需求如下：
+例如，我们需要制作一个基于 WebSocket 的聊天室，需求如下：
 
-1. 聊天室的消息需要在 Worker 之间共享。
+1. 聊天室的消息需要在 `Worker 进程` 之间共享。
 
-2. 用户第一次登陆时显示最新的 5 条消息。
+2. 用户第一次登录时显示最新的 5 条消息。
 
 我们通过 `ReplaySubject` 的跨进程版本来实现。
 
@@ -287,9 +292,9 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
     public function __construct(BroadcasterInterface $broadcaster)
     {
         $relaySubject = make(ReplaySubject::class, ['bufferSize' => 5]);
-        // 第一个参数为原RxPHP Subject 对象。
+        // 第一个参数为原 RxPHP Subject 对象。
         // 第二个参数为广播方式，默认为全进程广播
-        // 第三个参数为频道ID, 每个频道只能收到相同频道的消息。
+        // 第三个参数为频道 ID, 每个频道只能收到相同频道的消息。
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
@@ -313,14 +318,14 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 
 ```
 
-为了方便使用，本组件利用 `IpcSubject` 封装了一条“消息总线” `MessageBusInterface`。只要在注入 `MessageBusInterface` 就可以收发全进程共享信息（包括自定义进程）。诸如配置中心一类的功能可以通过它来轻松实现。
+为了方便使用，本组件利用 `IpcSubject` 封装了一条 “消息总线” `MessageBusInterface`。只需要注入 `MessageBusInterface` 就可以收发全进程共享信息（包括自定义进程）。诸如配置中心一类的功能可以通过它来轻松实现。
 
 ```php
 <?php
 $bus = make(Hyperf\ReactiveX\MessageBusInterface::class);
-//全进程广播信息
+// 全进程广播信息
 $bus->onNext('Hello Hyperf');
-//订阅信息
+// 订阅信息
 $bus->subscribe(function($message){
     echo $message;
 });
