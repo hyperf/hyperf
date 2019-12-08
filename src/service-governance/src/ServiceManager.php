@@ -17,7 +17,7 @@ class ServiceManager
     /**
      * @var array
      */
-    private $services = [];
+    protected $services = [];
 
     /**
      * Register a service to the manager.
