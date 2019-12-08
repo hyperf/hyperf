@@ -502,8 +502,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Save the model to the database.
-     *
-     * @return bool
      */
     public function save(array $options = []): bool
     {

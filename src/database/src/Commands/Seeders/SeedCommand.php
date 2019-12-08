@@ -43,8 +43,6 @@ class SeedCommand extends BaseCommand
 
     /**
      * Create a new seed command instance.
-     *
-     * @param \Hyperf\Database\Seeders\Seed $seed
      */
     public function __construct(Seed $seed)
     {
