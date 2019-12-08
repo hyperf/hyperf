@@ -8,6 +8,7 @@
 ## Changed
 
 - [#1108](https://github.com/hyperf/hyperf/pull/1108) Renamed `Hyperf\Tracer\Middleware\TraceMiddeware` to `Hyperf\Tracer\Middleware\TraceMiddleware`.
+- [#1108](https://github.com/hyperf/hyperf/pull/1111) Upgrade the access level of methods and properties of `Hyperf\ServiceGovernance\Listener\ServiceRegisterListener` , for better override it.
 
 # v1.1.9 - 2019-12-05
 
