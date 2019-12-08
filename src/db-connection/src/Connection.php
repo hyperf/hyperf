@@ -116,7 +116,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function release(): void
     {
         if ($this->connection instanceof \Hyperf\Database\Connection) {
-            // Reset `recordsModified` to false before connection release into pool.
+            // Reset $recordsModified property of connection to false before the connection release into the pool.
             $this->connection->resetRecordsModified();
         }
 
