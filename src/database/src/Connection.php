@@ -538,7 +538,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Reset `recordsModified` to false.
+     * Reset $recordsModified property to false.
      */
     public function resetRecordsModified(): void
     {
@@ -547,10 +547,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Is Doctrine available?
-     *
-     * @return bool
      */
-    public function isDoctrineAvailable()
+    public function isDoctrineAvailable(): bool
     {
         return class_exists('Doctrine\DBAL\Connection');
     }
@@ -1177,7 +1175,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Fire the given event if possible.
-     * @param mixed $event
      */
     protected function event($event)
     {
