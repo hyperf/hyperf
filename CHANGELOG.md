@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1104](https://github.com/hyperf/hyperf/pull/1104) Fixed guzzle will be retried when the response has the correct status code 2xx.
+- [#1106](https://github.com/hyperf/hyperf/pull/1106) Fixed bug that sticky mode will affect the next request.
 
 # v1.1.9 - 2019-12-05
 
