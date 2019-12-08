@@ -23,7 +23,8 @@ class JobPushCommand extends GeneratorCommand
     public function __construct()
     {
         parent::__construct('gen:jobPush');
-        $this->setDescription('Create a new jobPush class');
+        $this->setDescription('Create a new jobPush class')
+             ->setHidden(true);
     }
 
     protected function getStub(): string
