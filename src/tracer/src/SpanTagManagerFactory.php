@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 class SpanTagManagerFactory
 {
-    public function __invoke()
+    public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
         $spanTag = new SpanTagManager();
