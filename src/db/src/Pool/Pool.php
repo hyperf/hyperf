@@ -38,6 +38,8 @@ abstract class Pool extends HyperfPool
             throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
+        $config->set("{$key}.name", $name);
+
         $this->name = $name;
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);

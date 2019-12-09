@@ -52,6 +52,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 |     execute      |     `int`      |       执行 SQL，返回受影响的行数        |
 |      query       |    `array`     |        查询 SQL，返回结果集列表         |
 |      fetch       | `array,object` |     查询 SQL，返回结果集的首行数据      |
+|      connection       | `Hyperf\DB\DB` |     多库配置方式下，指定使用某个库，默认 default      |
 
 ## 使用
 
@@ -64,8 +65,10 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\DB\DB;
 
 $db = ApplicationContext::getContainer()->get(DB::class);
-
+// 使用 默认 default 配置
 $res = $db->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
+// 使用 多库 test 配置
+$res = $db->connection('test')->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
 ```
 
@@ -75,7 +78,60 @@ $res = $db->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 <?php
 
 use Hyperf\DB\DB;
-
+// 使用 默认 default 配置
 $res = DB::query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
+// 使用 多库 test 配置
+$res = DB::connection('test')->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
+
 ```
+## 读写分离
+
+读写分离配置方式如下：
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => 'mysql',
+        'read' => [
+            'host' => ['192.168.1.1'],
+        ],
+        'write' => [
+            'host' => ['192.168.1.2'],
+        ],
+        'sticky'    => true,
+        'port' => env('DB_PORT', 3306),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8mb4'),
+        'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+        'fetch_mode' => PDO::FETCH_ASSOC,
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ],
+    ],
+];
+```
+
+配置数组中增加了三个键，分别是 read， write 和 sticky。 read 和 write 的键都包含一个键为 host 的数组。而 read 和 write 的其他数据库都在键为 mysql 的数组中。
+
+如果你想重写主数组中的配置，只需要修改 read 和 write 数组即可。所以，这个例子中： 192.168.1.1 将作为 「读」 连接主机，而 192.168.1.2 将作为 「写」 连接主机。这两个连接会共享 mysql 数组的各项配置，如数据库的凭据（用户名 / 密码），前缀，字符编码等。
+
+sticky 是一个 可选值，它可用于立即读取在当前请求周期（当前协程周期）内已写入数据库的记录。若 sticky 选项被启用，并且当前请求周期内执行过 「写」 操作，那么任何 「读」 操作都将使用 「写」 连接。这样可确保同一个请求周期内写入的数据可以被立即读取到，从而避免主从延迟导致数据不一致的问题。不过是否启用它，取决于应用程序的需求。
+
+注意：当前请求周期为长生命周期时（例如自定义进程中 while(true) 内调用），一旦发生过写操作，则后续所有读写都将使用「写」连接。
