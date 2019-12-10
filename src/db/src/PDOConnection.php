@@ -13,11 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
-use Hyperf\DB\Events\MySQLConnected;
-use Hyperf\DB\Events\StatementPrepared;
-use Hyperf\DB\Events\TransactionBeginning;
-use Hyperf\DB\Events\TransactionCommitted;
-use Hyperf\DB\Events\TransactionRolledBack;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use PDO;
@@ -118,20 +113,14 @@ class PDOConnection extends AbstractConnection
     {
         $connection = $this->getReadWriteConnection(true);
 
-        $start = microtime(true);
-
         // For select statements, we'll simply execute the query and return an array
         // of the database result set. Each element in the array will be a single
         // row from the database table, and will either be an array or objects.
         $statement = $connection->prepare($query);
 
-        $this->event(new StatementPrepared($this, $statement));
-
         $this->bindValues($statement, $bindings);
 
         $statement->execute();
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         $fetchModel = $this->config['fetch_mode'];
 
@@ -149,17 +138,11 @@ class PDOConnection extends AbstractConnection
     {
         $connection = $this->getReadWriteConnection();
 
-        $start = microtime(true);
-
         $statement = $connection->prepare($query);
-
-        $this->event(new StatementPrepared($this, $statement));
 
         $this->bindValues($statement, $bindings);
 
         $statement->execute();
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified(
             ($count = $statement->rowCount()) > 0
@@ -172,11 +155,7 @@ class PDOConnection extends AbstractConnection
     {
         $connection = $this->getReadWriteConnection();
 
-        $start = microtime(true);
-
         $count = $connection->exec($sql);
-
-        $this->logQuery($sql, [], $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified($count > 0);
 
@@ -187,17 +166,11 @@ class PDOConnection extends AbstractConnection
     {
         $connection = $this->getReadWriteConnection();
 
-        $start = microtime(true);
-
         $statement = $connection->prepare($query);
-
-        $this->event(new StatementPrepared($this, $statement));
 
         $this->bindValues($statement, $bindings);
 
         $statement->execute();
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified();
 
@@ -206,19 +179,7 @@ class PDOConnection extends AbstractConnection
 
     public function call(string $method, array $argument = [])
     {
-        $connection = $this->getReadWriteConnection();
-        switch ($method) {
-            case 'beginTransaction':
-                $this->event(new TransactionBeginning($this));
-                break;
-            case 'rollBack':
-                $this->event(new TransactionCommitted($this));
-                break;
-            case 'commit':
-                $this->event(new TransactionRolledBack($this));
-        }
-
-        return $connection->{$method}(...$argument);
+        return $this->getReadWriteConnection()->{$method}(...$argument);
     }
 
     /**
@@ -292,11 +253,7 @@ class PDOConnection extends AbstractConnection
                     $dsn = $this->buildDsn($config);
 
                     try {
-                        $start = microtime(true);
-
                         $connection = new \PDO($dsn, $username, $password, $this->config['options']);
-
-                        $this->event(new MySQLConnected($this, $this->getElapsedTime($start), $config));
                     } catch (Throwable $e) {
                         continue;
                     }

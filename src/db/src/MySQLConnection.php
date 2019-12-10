@@ -13,11 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
-use Hyperf\DB\Events\MySQLConnected;
-use Hyperf\DB\Events\StatementPrepared;
-use Hyperf\DB\Events\TransactionBeginning;
-use Hyperf\DB\Events\TransactionCommitted;
-use Hyperf\DB\Events\TransactionRolledBack;
 use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
@@ -105,11 +100,7 @@ class MySQLConnection extends AbstractConnection
     {
         $statement = $this->prepare($query);
 
-        $start = microtime(true);
-
         $statement->execute($bindings);
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified();
 
@@ -120,11 +111,7 @@ class MySQLConnection extends AbstractConnection
     {
         $statement = $this->prepare($query);
 
-        $start = microtime(true);
-
         $statement->execute($bindings);
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified(
             ($count = $statement->affected_rows) > 0
@@ -137,14 +124,10 @@ class MySQLConnection extends AbstractConnection
     {
         $connection = $this->getReadWriteConnection();
 
-        $start = microtime(true);
-
         $res = $connection->query($sql);
         if ($res === false) {
             throw new RuntimeException($connection->error);
         }
-
-        $this->logQuery($sql, [], $this->getElapsedTime($start));
 
         $this->recordsHaveBeenModified($connection->affected_rows > 0);
 
@@ -153,16 +136,12 @@ class MySQLConnection extends AbstractConnection
 
     public function query(string $query, array $bindings = []): array
     {
-        $start = microtime(true);
-
         // For select statements, we'll simply execute the query and return an array
         // of the database result set. Each element in the array will be a single
         // row from the database table, and will either be an array or objects.
         $statement = $this->prepare($query, true);
 
         $statement->execute($bindings);
-
-        $this->logQuery($query, $bindings, $this->getElapsedTime($start));
 
         return $statement->fetchAll();
     }
@@ -180,13 +159,10 @@ class MySQLConnection extends AbstractConnection
         $connection = $this->getReadWriteConnection();
         switch ($method) {
             case 'beginTransaction':
-                $this->event(new TransactionBeginning($this));
                 return $connection->begin($timeout);
             case 'rollBack':
-                $this->event(new TransactionCommitted($this));
                 return $connection->rollback($timeout);
             case 'commit':
-                $this->event(new TransactionRolledBack($this));
                 return $connection->commit($timeout);
         }
 
@@ -201,8 +177,6 @@ class MySQLConnection extends AbstractConnection
         if ($statement === false) {
             throw new RuntimeException($connection->error);
         }
-
-        $this->event(new StatementPrepared($this, $statement));
 
         return $statement;
     }
@@ -222,8 +196,6 @@ class MySQLConnection extends AbstractConnection
                 try {
                     $connection = new MySQL();
 
-                    $start = microtime(true);
-
                     $connection->connect([
                         'host' => $config['host'],
                         'port' => $config['port'],
@@ -235,7 +207,6 @@ class MySQLConnection extends AbstractConnection
                         'fetch_mode' => $config['fetch_mode'],
                     ]);
 
-                    $this->event(new MySQLConnected($this, $this->getElapsedTime($start), $config));
                     return $connection;
                 } catch (MySQL\Exception $e) {
                     continue;

@@ -13,13 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\DB\Events\QueryExecuted;
 use Hyperf\Pool\Connection;
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
-use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractConnection extends Connection implements ConnectionInterface
 {
@@ -42,21 +38,6 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
      * @var bool
      */
     protected $recordsModified = false;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var EventDispatcherInterface
-     */
-    protected $events;
-
-    public function __construct(ContainerInterface $container, Pool $pool)
-    {
-        parent::__construct($container, $pool);
-        if ($this->container->has(EventDispatcherInterface::class)) {
-            $this->setEventDispatcher($this->container->get(EventDispatcherInterface::class));
-        }
-    }
 
     public function getConfig(): array
     {
@@ -116,65 +97,12 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
     }
 
     /**
-     * Get the event dispatcher used by the connection.
-     *
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher()
-    {
-        return $this->events;
-    }
-
-    /**
-     * Set the event dispatcher instance on the connection.
-     *
-     * @return $this
-     */
-    public function setEventDispatcher(EventDispatcherInterface $events)
-    {
-        $this->events = $events;
-
-        return $this;
-    }
-
-    /**
-     * Unset the event dispatcher for this connection.
-     */
-    public function unsetEventDispatcher()
-    {
-        $this->events = null;
-    }
-
-    /**
-     * Log a query in the connection's query log.
-     *
-     * @param string $query
-     * @param array $bindings
-     * @param null|float $time
-     */
-    public function logQuery($query, $bindings = [], $time = null)
-    {
-        $this->event(new QueryExecuted($query, $bindings, $time, $this));
-    }
-
-    /**
      * Indicate if any records have been modified.
      */
     public function recordsHaveBeenModified(bool $value = true)
     {
         if ($this->recordsModified != $value) {
             $this->recordsModified = $value;
-        }
-    }
-
-    /**
-     * Fire the given event if possible.
-     * @param mixed $event
-     */
-    protected function event($event)
-    {
-        if (isset($this->events)) {
-            $this->events->dispatch($event);
         }
     }
 
