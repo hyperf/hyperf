@@ -26,7 +26,7 @@ use Throwable;
  * @method query(string $query, array $bindings = [])
  * @method fetch(string $query, array $bindings = [])
  * @method DB connection(string $pool = 'default')
- * @method recordsHaveBeenModified(bool $value = true)
+ * @method resetRecordsModified()
  */
 class DB
 {
@@ -68,7 +68,7 @@ class DB
                 Context::set($this->getContextKey(), $connection);
                 defer(function () use ($connection) {
                     $this->poolName = 'default';
-                    $connection->recordsHaveBeenModified(false);
+                    $connection->resetRecordsModified();
                     $connection->release();
                 });
 //                } else {

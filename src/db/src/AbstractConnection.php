@@ -97,11 +97,19 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
     }
 
     /**
+     * Reset $recordsModified property to false.
+     */
+    public function resetRecordsModified(): void
+    {
+        $this->recordsModified = false;
+    }
+
+    /**
      * Indicate if any records have been modified.
      */
     public function recordsHaveBeenModified(bool $value = true)
     {
-        if ($this->recordsModified != $value) {
+        if (! $this->recordsModified) {
             $this->recordsModified = $value;
         }
     }
