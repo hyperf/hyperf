@@ -300,6 +300,98 @@ return [
 
 > 当然在该场景中可以通过 `@Value` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
 
+### 懒加载
+
+Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长生命周期的类需要注意：
+
+* 构造函数时还不是协程环境，如果注入了可能会触发协程切换的类，就会导致框架启动失败。
+
+* 构造函数中要避免循坏依赖（比较典型的例子为 `Listener` 和 `EventDispatcherInterface`），不然也会启动失败。
+
+目前解决方案是：只在实例中注入 `Psr\Container\ContainerInterface` ，而其他的组件在非构造函数执行时通过 `container` 获取。但 PSR-11 中指出:
+
+> 「用户不应该将容器作为参数传入对象然后在对象中通过容器获得对象的依赖。这样是把容器当作服务定位器来使用，而服务定位器是一种反模式」
+
+也就是说这样的做法虽然有效，但是从设计模式角度来说并不推荐。
+
+另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了懒加载注入功能。
+
+添加 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` 到 `config/autoload/listeners.php` 中。
+
+监听器会监听 `BootApplication` 事件，自动读取 `lazy_loader` 配置，并通过 `spl_autoload_register` 注册懒加载模式。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\Di\Listener\LazyLoaderBootApplicationListener::class,
+];
+
+```
+
+添加 `config/autoload/lazy_loader.php` 文件并绑定懒加载关系：
+
+```php
+<?php
+return [
+    /**
+     * 格式为：代理类名 => 原类名
+     * 代理类此时是不存在的，Hyperf会在runtime文件夹下自动生成该类。
+     * 代理类类名和命名空间可以自由定义。
+     */
+    'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
+];
+```
+
+这样在注入 `App\Service\LazyUserService` 的时候容器就会创建一个 `懒加载代理类` 注入到目标对象中了。
+
+```php
+use App\Service\LazyUserService;
+
+class Foo{
+    public $service;
+    public function __construct(LazyUserService $sevice){
+        $this->service = $service;
+    }
+}
+````
+
+您还可以通过注解 `@Inject(lazy=true)` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
+
+```php
+use Hyperf\Di\Annotation\Inject;
+use App\Service\UserServiceInterface;
+
+class Foo{
+    /**
+     * @Inject(lazy=true)
+     * @var UserServiceInterface
+     */
+    public $service;
+}
+````
+
+注意：当该代理对象执行下列操作时，被代理对象才会从容器中真正实例化。
+
+```php
+// 方法调用
+$proxy->someMethod();
+
+// 读取属性
+echo $proxy->someProperty;
+
+// 写入属性
+$proxy->someProperty = 'foo';
+
+// 检查属性是否存在
+isset($proxy->someProperty);
+
+// 删除属性
+unset($proxy->someProperty);
+```
+
 ## 注意事项
 
 ### 容器仅管理长生命周期的对象
@@ -319,7 +411,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 
 ## 获取容器对象
 
-有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC服务提供者等）都是由 `容器(Container)` 创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject` 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
+有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC 服务提供者等）都是由 `容器(Container)` 创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject` 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
 
 ```php
 <?php

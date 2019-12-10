@@ -432,7 +432,7 @@ if ($errors->has('foo')) {
 
 ##### date_format:format
 
-验证字段必须匹配指定格式，可以使用 PHP 函数date 或 date_format 验证该字段。
+验证字段必须匹配指定格式，可以使用 PHP 函数 date 或 date_format 验证该字段。
 
 ##### different:field
 
@@ -573,19 +573,19 @@ $validator = $this->validationFactory->make($data, [
 
 ##### ip
 
-验证字段必须是IP地址。
+验证字段必须是 IP 地址。
 
 ##### ipv4
 
-验证字段必须是IPv4地址。
+验证字段必须是 IPv4 地址。
 
 ##### ipv6
 
-验证字段必须是IPv6地址。
+验证字段必须是 IPv6 地址。
 
 ##### json
 
-验证字段必须是有效的JSON字符串
+验证字段必须是有效的 JSON 字符串
 
 ##### lt:field
 

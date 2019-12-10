@@ -17,4 +17,6 @@ class Constants
     const SCRAPE_MODE = 1;
 
     const PUSH_MODE = 2;
+
+    const CUSTOM_MODE = 3;
 }

@@ -32,6 +32,26 @@ class Crontab
     protected $rule;
 
     /**
+     * @var bool
+     */
+    protected $singleton = false;
+
+    /**
+     * @var string
+     */
+    protected $mutexPool = 'default';
+
+    /**
+     * @var int
+     */
+    protected $mutexExpires = 3600;
+
+    /**
+     * @var bool
+     */
+    protected $onOneServer = false;
+
+    /**
      * @var mixed
      */
     protected $callback;
@@ -65,6 +85,50 @@ class Crontab
     public function setRule(?string $rule): Crontab
     {
         $this->rule = $rule;
+        return $this;
+    }
+
+    public function isSingleton(): bool
+    {
+        return $this->singleton;
+    }
+
+    public function setSingleton(bool $singleton): Crontab
+    {
+        $this->singleton = $singleton;
+        return $this;
+    }
+
+    public function getMutexPool(): string
+    {
+        return $this->mutexPool;
+    }
+
+    public function setMutexPool(string $mutexPool): Crontab
+    {
+        $this->mutexPool = $mutexPool;
+        return $this;
+    }
+
+    public function getMutexExpires(): int
+    {
+        return $this->mutexExpires;
+    }
+
+    public function setMutexExpires(int $mutexExpires): Crontab
+    {
+        $this->mutexExpires = $mutexExpires;
+        return $this;
+    }
+
+    public function isOnOneServer(): bool
+    {
+        return $this->onOneServer;
+    }
+
+    public function setOnOneServer(bool $onOneServer): Crontab
+    {
+        $this->onOneServer = $onOneServer;
         return $this;
     }
 

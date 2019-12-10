@@ -105,7 +105,7 @@ $result = $task->handle(Coroutine::id());
 
 Swoole 暂时没有协程化的函数列表
 
-- mysql，底层使用 libmysqlclient
+- mysql，底层使用 libmysqlclient, 不推荐使用, 推荐使用已经实现协程化的 pod_mysql/mysqli
 - curl，底层使用 libcurl，在 Swoole 4.4 后底层进行了协程化(beta)
 - mongo，底层使用 mongo-c-client
 - pdo_pgsql
@@ -118,8 +118,8 @@ Swoole 暂时没有协程化的函数列表
 > 因为 `MongoDB` 没有办法被 `hook`，所以我们可以通过 `Task` 来调用，下面就简单介绍一下如何通过注解方式调用 `MongoDB`。
 
 以下我们实现两个方法 `insert` 和 `query`，其中需要注意的是 `manager` 方法不能使用 `Task`，
-因为 `Task` 会在对应的 `Task进程` 中处理，然后将数据从 `Task进程` 返回到 `Worker进程` 。
-所以 `Task方法` 的入参和出参最好不要携带任何 `IO`，比如返回一个实例化后的 `Redis` 等等。
+因为 `Task` 会在对应的 `Task 进程` 中处理，然后将数据从 `Task 进程` 返回到 `Worker 进程` 。
+所以 `Task 方法` 的入参和出参最好不要携带任何 `IO`，比如返回一个实例化后的 `Redis` 等等。
 
 ```php
 <?php

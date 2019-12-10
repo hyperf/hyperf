@@ -27,8 +27,6 @@ class SeederCreator
 
     /**
      * Create a new seeder creator instance.
-     *
-     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {

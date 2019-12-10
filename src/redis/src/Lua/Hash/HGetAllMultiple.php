@@ -10,9 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\ModelCache\Redis;
+namespace Hyperf\Redis\Lua\Hash;
 
-class HashsGetMultiple implements OperatorInterface
+use Hyperf\Redis\Lua\Script;
+
+class HGetAllMultiple extends Script
 {
     public function getScript(): string
     {
@@ -27,7 +29,7 @@ class HashsGetMultiple implements OperatorInterface
 LUA;
     }
 
-    public function parseResponse($data)
+    public function format($data): array
     {
         $result = [];
         foreach ($data ?? [] as $item) {

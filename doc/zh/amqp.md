@@ -1,4 +1,4 @@
-# AMQP组件
+# AMQP 组件
 
 [hyperf/amqp](https://github.com/hyperf/amqp) 是实现 AMQP 标准的组件，主要适用于对 RabbitMQ 的使用。
 
@@ -50,7 +50,7 @@ return [
             'read_write_timeout' => 3.0,
             'context' => null,
             'keepalive' => false,
-            'heartbeat' => 0,
+            'heartbeat' => 3,
         ],
     ],
     'pool2' => [

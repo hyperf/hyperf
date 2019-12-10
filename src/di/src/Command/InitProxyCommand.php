@@ -17,6 +17,7 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
+use Swoole\Timer;
 use Symfony\Component\Console\Exception\LogicException;
 
 class InitProxyCommand extends Command
@@ -51,6 +52,8 @@ class InitProxyCommand extends Command
 
         $this->createAopProxies();
 
+        Timer::clearAll();
+
         $this->output->writeln('<info>Proxy class create success.</info>');
     }
 
@@ -69,7 +72,7 @@ class InitProxyCommand extends Command
         $scanDirs = $annotations['scan']['paths'] ?? [];
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
-            $scanDirs = array_merge($configFromProviders['scan']['paths'] ?? [], $scanDirs);
+            $scanDirs = array_merge($configFromProviders['annotations']['scan']['paths'] ?? [], $scanDirs);
         }
 
         return $scanDirs;

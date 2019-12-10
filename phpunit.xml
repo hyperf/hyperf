@@ -14,9 +14,11 @@
             <directory suffix="Test.php">./src/async-queue/tests</directory>
             <directory suffix="Test.php">./src/cache/tests</directory>
             <directory suffix="Test.php">./src/config/tests</directory>
+            <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/consul/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>
@@ -24,6 +26,7 @@
             <directory suffix="Test.php">./src/etcd/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/exception-handler/tests</directory>
+            <directory suffix="Test.php">./src/framework/tests</directory>
             <directory suffix="Test.php">./src/grpc-client/tests</directory>
             <directory suffix="Test.php">./src/grpc-server/tests</directory>
             <directory suffix="Test.php">./src/guzzle/tests</directory>
@@ -37,9 +40,11 @@
             <directory suffix="Test.php">./src/pool/tests</directory>
             <directory suffix="Test.php">./src/protocol/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
+            <directory suffix="Test.php">./src/retry/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
+            <directory suffix="Test.php">./src/session/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
@@ -53,7 +58,35 @@
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/database</directory>
+            <directory suffix=".php">./src/amqp/src</directory>
+            <directory suffix=".php">./src/async-queue/src</directory>
+            <directory suffix=".php">./src/cache/src</directory>
+            <directory suffix=".php">./src/config/src</directory>
+            <directory suffix=".php">./src/constants/src</directory>
+            <directory suffix=".php">./src/consul/src</directory>
+            <directory suffix=".php">./src/database/src</directory>
+            <directory suffix=".php">./src/db-connection/src</directory>
+            <directory suffix=".php">./src/di/src</directory>
+            <directory suffix=".php">./src/dispatcher/src</directory>
+            <directory suffix=".php">./src/elasticsearch/src</directory>
+            <directory suffix=".php">./src/event/src</directory>
+            <directory suffix=".php">./src/grpc-client/src</directory>
+            <directory suffix=".php">./src/guzzle/src</directory>
+            <directory suffix=".php">./src/http-message/src</directory>
+            <directory suffix=".php">./src/http-server/src</directory>
+            <directory suffix=".php">./src/json-rpc/src</directory>
+            <directory suffix=".php">./src/logger/src</directory>
+            <directory suffix=".php">./src/model-cache/src</directory>
+            <directory suffix=".php">./src/paginator/src</directory>
+            <directory suffix=".php">./src/redis/src</directory>
+            <directory suffix=".php">./src/rpc/src</directory>
+            <directory suffix=".php">./src/server/src</directory>
+            <directory suffix=".php">./src/service-governance/src</directory>
+            <directory suffix=".php">./src/session/src</directory>
+            <directory suffix=".php">./src/snowflake/src</directory>
+            <directory suffix=".php">./src/task/src</directory>
+            <directory suffix=".php">./src/utils/src</directory>
+            <directory suffix=".php">./src/websocket-client/src</directory>
         </whitelist>
     </filter>
 </phpunit>

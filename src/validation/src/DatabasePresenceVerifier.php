@@ -35,8 +35,6 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
 
     /**
      * Create a new database presence verifier.
-     *
-     * @param \Hyperf\Database\ConnectionResolverInterface $db
      */
     public function __construct(ConnectionResolverInterface $db)
     {
