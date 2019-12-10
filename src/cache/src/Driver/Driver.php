@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 /**
  * This file is part of Hyperf.
  *
@@ -15,9 +15,14 @@ namespace Hyperf\Cache\Driver;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
+use Carbon\Carbon;
+use DateTimeInterface;
+use Hyperf\Utils\InteractsWithTime;
 
 abstract class Driver implements DriverInterface
 {
+    use InteractsWithTime;
+
     /**
      * @var ContainerInterface
      */
@@ -52,4 +57,14 @@ abstract class Driver implements DriverInterface
     {
         return $this->prefix . $key;
     }
+
+    protected function getSeconds($ttl)
+    {
+        $duration = $this->parseDateInterval($ttl);
+        if ($duration instanceof DateTimeInterface) {
+            $duration = Carbon::now()->diffInRealSeconds($duration, false);
+        }
+        return (int) $duration > 0 ? $duration : 0;
+    }
+
 }
