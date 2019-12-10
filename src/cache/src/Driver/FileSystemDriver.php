@@ -74,8 +74,9 @@ class FileSystemDriver extends Driver
 
     public function set($key, $value, $ttl = null)
     {
+        $seconds = $this->getSeconds($ttl);
         $file = $this->getCacheKey($key);
-        $content = $this->packer->pack(new FileStorage($value, $ttl));
+        $content = $this->packer->pack(new FileStorage($value, $seconds));
 
         $result = file_put_contents($file, $content, FILE_BINARY);
 
@@ -119,9 +120,9 @@ class FileSystemDriver extends Driver
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
         }
-
+        $seconds = $this->getSeconds($ttl);
         foreach ($values as $key => $value) {
-            $this->set($key, $value, $ttl);
+            $this->set($key, $value, $seconds);
         }
 
         return true;
