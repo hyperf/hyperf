@@ -40,8 +40,6 @@ class InstallCommand extends BaseCommand
 
     /**
      * Create a new migration install command instance.
-     *
-     * @param MigrationRepositoryInterface $repository
      */
     public function __construct(MigrationRepositoryInterface $repository)
     {
