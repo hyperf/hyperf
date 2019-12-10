@@ -135,7 +135,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
         $hosts = Arr::wrap($config['host']);
 
         if (empty($hosts)) {
-            throw new InvalidArgumentException('Database hosts array is empty.');
+            throw new \InvalidArgumentException('Database hosts array is empty.');
         }
 
         return $hosts;

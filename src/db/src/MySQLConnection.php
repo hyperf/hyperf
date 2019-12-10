@@ -24,12 +24,12 @@ use Throwable;
 class MySQLConnection extends AbstractConnection
 {
     /**
-     * @var MySQL
+     * @var Closure|MySQL
      */
     protected $connection;
 
     /**
-     * @var MySQL
+     * @var Closure|MySQL
      */
     protected $readConnection;
 
@@ -215,7 +215,10 @@ class MySQLConnection extends AbstractConnection
                 }
             }
 
-            throw $e;
+            if (isset($e)) {
+                throw $e;
+            }
+            throw new RuntimeException('db connection config error');
         };
     }
 
@@ -255,6 +258,6 @@ class MySQLConnection extends AbstractConnection
             return $this->readConnection = call_user_func($this->readConnection);
         }
 
-        return $this->readConnection ?: $this->getWriteConnection();
+        return $this->readConnection;
     }
 }

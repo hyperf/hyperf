@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
+use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use PDO;
@@ -23,12 +24,12 @@ use Throwable;
 class PDOConnection extends AbstractConnection
 {
     /**
-     * @var PDO
+     * @var Closure|PDO
      */
     protected $connection;
 
     /**
-     * @var PDO
+     * @var Closure|PDO
      */
     protected $readConnection;
 
@@ -270,7 +271,10 @@ class PDOConnection extends AbstractConnection
                 }
             }
 
-            throw $e;
+            if (isset($e)) {
+                throw $e;
+            }
+            throw new RuntimeException('db connection config error');
         };
     }
 
@@ -311,6 +315,6 @@ class PDOConnection extends AbstractConnection
             return $this->readConnection = call_user_func($this->readConnection);
         }
 
-        return $this->readConnection ?: $this->getWriteConnection();
+        return $this->readConnection;
     }
 }
