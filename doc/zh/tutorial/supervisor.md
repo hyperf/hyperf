@@ -67,3 +67,14 @@ supervisorctl update
 # 重新启动所有程序
 supervisorctl reload
 ```
+
+## 配置 `Supervisor` 可视化管理界面 
+
+编辑配置文件 /etc/supervisord.d/supervisord.conf ,将以下注释打开即可 
+```bash
+[inet_http_server]         
+port=0.0.0.0:9001       
+username=user_name           
+password=user_pass   
+```
+接下来执行配置刷新命令 `supervisorctl update` 就可以在浏览器打开 `ip:9001` 地址，输入账号、密码对应用程序进行管理了。  
