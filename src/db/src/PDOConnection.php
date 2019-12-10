@@ -307,6 +307,10 @@ class PDOConnection extends AbstractConnection
      */
     protected function getReadConnection()
     {
+        if (is_null($this->readConnection)) {
+            return $this->getWriteConnection();
+        }
+
         if ($this->recordsModified && Arr::get($this->config, 'sticky')) {
             return $this->getWriteConnection();
         }

@@ -15,6 +15,7 @@ namespace Hyperf\DB;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use Throwable;
 
 /**
@@ -66,11 +67,13 @@ class DB
 //                if ($this->shouldUseSameConnection($name)) {
                 // Should storage the connection to coroutine context, then use defer() to release the connection.
                 Context::set($this->getContextKey(), $connection);
-                defer(function () use ($connection) {
-                    $this->poolName = 'default';
-                    $connection->resetRecordsModified();
-                    $connection->release();
-                });
+                if (Coroutine::inCoroutine()) {
+                    defer(function () use ($connection) {
+                        $this->poolName = 'default';
+                        $connection->resetRecordsModified();
+                        $connection->release();
+                    });
+                }
 //                } else {
 //                     Release the connection after command executed.
 //                    $connection->release();

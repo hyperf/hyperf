@@ -1175,6 +1175,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Fire the given event if possible.
+     * @param mixed $event
      */
     protected function event($event)
     {
