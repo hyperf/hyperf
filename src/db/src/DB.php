@@ -28,6 +28,7 @@ use Throwable;
  * @method fetch(string $query, array $bindings = [])
  * @method DB connection(string $pool = 'default')
  * @method resetRecordsModified()
+ * @method bool getRecordsModified()
  */
 class DB
 {
@@ -64,20 +65,18 @@ class DB
             $result = $connection->retry($exception, $name, $arguments);
         } finally {
             if (! $hasContextConnection) {
-//                if ($this->shouldUseSameConnection($name)) {
-                // Should storage the connection to coroutine context, then use defer() to release the connection.
-                Context::set($this->getContextKey(), $connection);
-                if (Coroutine::inCoroutine()) {
+                if ($this->shouldUseSameConnection($name) || $connection->getRecordsModified()) {
+                    // Should storage the connection to coroutine context, then use defer() to release the connection.
+                    Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
                         $this->poolName = 'default';
                         $connection->resetRecordsModified();
                         $connection->release();
                     });
+                } else {
+                    // Release the connection after command executed.
+                    $connection->release();
                 }
-//                } else {
-//                     Release the connection after command executed.
-//                    $connection->release();
-//                }
             }
         }
 

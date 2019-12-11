@@ -115,6 +115,14 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
     }
 
     /**
+     * get records modified.
+     */
+    public function getRecordsModified(): bool
+    {
+        return $this->recordsModified && Arr::get($this->config, 'sticky');
+    }
+
+    /**
      * Get the elapsed time since a given starting point.
      *
      * @param int $start
