@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Session;
 
 use Carbon\Carbon;
+use Hyperf\HttpMessage\Uri\Uri;
 use HyperfTest\Session\Stub\FooHandler;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -111,5 +113,32 @@ class SessionMiddlewareTest extends TestCase
         /** @var Cookie $cookie */
         $cookie = $response->getCookies()['']['/'][$session->getName()];
         $this->assertSame($time + (5 * 60 * 60), $cookie->getExpiresTime());
+    }
+
+    public function testSessionPreviousUrl()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(SessionInterface::class)->andReturnTrue();
+        $config = Mockery::mock(ConfigInterface::class);
+        $config->shouldReceive('get')->with('session.handler')->andReturn(FooHandler::class);
+        $config->shouldReceive('has')->with('session.handler')->andReturn(true);
+        $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $sessionManager = new SessionManager($container, $config);
+        $middleware = new SessionMiddleware($sessionManager, $config);
+        $reflectionClass = new ReflectionClass(SessionMiddleware::class);
+        $reflectionMethod = $reflectionClass->getMethod('fullUrl');
+        $reflectionMethod->setAccessible(true);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar')))]);
+        $this->assertSame($path, $result);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1')))]);
+        $this->assertSame($path, $result);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1&bar=foo')))]);
+        $this->assertSame($path, $result);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/')))]);
+        $this->assertSame($path, $result);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1')))]);
+        $this->assertSame($path, $result);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1&bar=foo')))]);
+        $this->assertSame($path, $result);
     }
 }
