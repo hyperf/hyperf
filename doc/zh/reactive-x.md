@@ -119,7 +119,7 @@ class SqlListener implements ListenerInterface
             )->subscribe(
                 function ($message) {
                     $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message));
-                },
+                }
             );
     }
 }
