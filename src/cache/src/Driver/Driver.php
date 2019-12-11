@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,12 +12,12 @@ declare(strict_types = 1);
 
 namespace Hyperf\Cache\Driver;
 
-use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
-use Psr\Container\ContainerInterface;
 use Carbon\Carbon;
 use DateTimeInterface;
+use Hyperf\Contract\PackerInterface;
 use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Utils\Packer\PhpSerializerPacker;
+use Psr\Container\ContainerInterface;
 
 abstract class Driver implements DriverInterface
 {
@@ -66,5 +66,4 @@ abstract class Driver implements DriverInterface
         }
         return (int) $duration > 0 ? $duration : 0;
     }
-
 }
