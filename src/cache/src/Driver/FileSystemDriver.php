@@ -74,7 +74,7 @@ class FileSystemDriver extends Driver
 
     public function set($key, $value, $ttl = null)
     {
-        $seconds = $this->getSeconds($ttl);
+        $seconds = $this->secondsUntil($ttl);
         $file = $this->getCacheKey($key);
         $content = $this->packer->pack(new FileStorage($value, $seconds));
 
@@ -120,7 +120,7 @@ class FileSystemDriver extends Driver
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
         }
-        $seconds = $this->getSeconds($ttl);
+        $seconds = $this->secondsUntil($ttl);
         foreach ($values as $key => $value) {
             $this->set($key, $value, $seconds);
         }

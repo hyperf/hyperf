@@ -21,7 +21,7 @@ class FileStorage
     public function __construct($data, $ttl)
     {
         $this->data = $data;
-        if (is_numeric($ttl)) {
+        if (is_numeric($ttl) && $ttl > 0) {
             $this->expiredTime = time() + $ttl;
         }
     }

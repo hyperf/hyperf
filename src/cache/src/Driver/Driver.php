@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache\Driver;
 
-use Carbon\Carbon;
-use DateTimeInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -56,14 +54,5 @@ abstract class Driver implements DriverInterface
     protected function getCacheKey(string $key)
     {
         return $this->prefix . $key;
-    }
-
-    protected function getSeconds($ttl)
-    {
-        $duration = $this->parseDateInterval($ttl);
-        if ($duration instanceof DateTimeInterface) {
-            $duration = Carbon::now()->diffInRealSeconds($duration, false);
-        }
-        return (int) $duration > 0 ? $duration : 0;
     }
 }

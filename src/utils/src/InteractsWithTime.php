@@ -24,7 +24,7 @@ trait InteractsWithTime
      * @param \DateInterval|\DateTimeInterface|int $delay
      * @return int
      */
-    protected function secondsUntil($delay)
+    protected function secondsUntil($delay):int
     {
         $delay = $this->parseDateInterval($delay);
 
