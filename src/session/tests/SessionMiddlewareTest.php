@@ -115,7 +115,7 @@ class SessionMiddlewareTest extends TestCase
         $this->assertSame($time + (5 * 60 * 60), $cookie->getExpiresTime());
     }
 
-    public function testSessionPreviousUrl()
+    public function testSessionStoreCurrentUrl()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->with(SessionInterface::class)->andReturnTrue();
