@@ -79,7 +79,7 @@ class VendorPublishCommand extends SymfonyCommand
                 }
                 $output->writeln(sprintf('<fg=green>%s</>', $out));
             }
-            return;
+            return 0;
         }
 
         if ($id) {
@@ -120,5 +120,6 @@ class VendorPublishCommand extends SymfonyCommand
 
             $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
         }
+        return 0;
     }
 }

@@ -38,6 +38,65 @@ config
 └── routes.php // 用于管理路由
 ```
 
+## server.php 配置说明
+
+以下为 Hyperf-Skeleton 中的 `config/autoload/server.php` 所提供的默认 `settings` 
+
+```php
+<?php
+declare(strict_types=1);
+
+use Hyperf\Server\Server;
+use Hyperf\Server\SwooleEvent;
+
+return [
+    // 这里省略了该文件的其它配置
+    'settings' => [
+        'enable_coroutine' => true, // 开启内置协程
+        'worker_num' => swoole_cpu_num(), // 设置启动的 Worker 进程数
+        'pid_file' => BASE_PATH . '/runtime/hyperf.pid', // master 进程的 PID
+        'open_tcp_nodelay' => true, // TCP 连接发送数据时会关闭 Nagle 合并算法，立即发往客户端连接
+        'max_coroutine' => 100000, // 设置当前工作进程最大协程数量
+        'open_http2_protocol' => true, // 启用 HTTP2 协议解析
+        'max_request' => 100000, // 设置 worker 进程的最大任务数
+        'socket_buffer_size' => 2 * 1024 * 1024, // 配置客户端连接的缓存区长度
+    ],
+];
+```
+
+此配置文件用于管理 Server 服务，其中的 `settings` 选项可以直接使用由 `Swoole Server` 提供的选项，其他选项可参考 [Swoole 官方文档](https://wiki.swoole.com/wiki/page/274.html) 。
+
+如需要设置守护进程化，可在 `settings` 中增加 `'daemonize' => 1`，执行 `php bin/hyperf.php start`后，程序将转入后台作为守护进程运行
+
+单独的 Server 配置需要添加在对应 `servers` 的 `settings` 当中，如 `jsonrpc` 协议的 TCP Server 配置启用 EOF 自动分包，和设置 EOF 字符串
+```php
+<?php
+
+use Hyperf\Server\Server;
+use Hyperf\Server\SwooleEvent;
+
+return [
+    // 这里省略了该文件的其它配置
+    'servers' => [
+        [
+            'name' => 'jsonrpc',
+            'type' => Server::SERVER_BASE,
+            'host' => '0.0.0.0',
+            'port' => 9503,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+            ],
+            'settings' => [
+                'open_eof_split' => true, // 启用 EOF 自动分包
+                'package_eof' => "\r\n", // 设置 EOF 字符串
+            ],
+        ],
+    ],
+];
+
+```
+
 ## `config.php` 与 `autoload` 文件夹内的配置文件的关系
 
 `config.php` 与 `autoload` 文件夹内的配置文件在服务启动时都会被扫描并注入到 `Hyperf\Contract\ConfigInterface` 对应的对象中，配置的结构为一个键值对的大数组，两种配置形式不同的在于 `autoload`  内配置文件的文件名会作为第一层 键(Key) 存在，而 `config.php` 内的则以您定义的为第一层，我们通过下面的例子来演示一下。   
@@ -167,9 +226,14 @@ return [
 ];
 ```
 
+## 发布组件配置
+
+Hyperf 采用组件化设计，在添加一些组件进来骨架项目后，我们通常会需要为新添加的组件创建对应的配置文件，以满足对组件的使用。Hyperf 为组件提供了一个 `组件配置发布机制`，通过该机制，您只需通过一个 `vendor:publish` 命令即可将组件预设的配置文件模板发布到骨架项目中来。
+比如我们希望添加一个 `hyperf/foo` 组件 (该组件实际并不存在，仅示例) 以及该组件对应的配置文件，在执行 `composer require hyperf/foo` 安装之后，您可通过执行 `php bin/hyperf.php vendor:publish hyperf/foo` 来将组件预设的配置文件，发布到骨架项目的 `config/autoload` 文件夹内，具体要发布的内容，由组件来定义提供。 
+
 ## 配置中心
 
-Hyperf 为您提供了分布式系统的外部化配置支持，默认且仅适配了由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。   
+Hyperf 为您提供了分布式系统的外部化配置支持，目前支持由携程开源的 `Apollo`、阿里云 ACM 应用配置管理、ETCD 以及 Zookeeper 作为配置中心的支持。
 关于配置中心的使用细节我们由 [配置中心](zh/config-center.md) 章节来阐述。
 
 

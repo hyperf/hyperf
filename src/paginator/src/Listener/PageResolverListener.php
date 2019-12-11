@@ -17,6 +17,8 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
+use Psr\Http\Message\ServerRequestInterface;
 
 class PageResolverListener implements ListenerInterface
 {
@@ -37,9 +39,13 @@ class PageResolverListener implements ListenerInterface
     public function process(object $event)
     {
         Paginator::currentPageResolver(function ($pageName = 'page') {
-            if (! ApplicationContext::hasContainer() || ! interface_exists(RequestInterface::class)) {
+            if (! ApplicationContext::hasContainer() ||
+                ! interface_exists(RequestInterface::class) ||
+                ! Context::has(ServerRequestInterface::class)
+            ) {
                 return 1;
             }
+
             $container = ApplicationContext::getContainer();
             $page = $container->get(RequestInterface::class)->input($pageName);
 

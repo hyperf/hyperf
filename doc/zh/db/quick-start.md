@@ -28,7 +28,7 @@ composer require hyperf/database
 |:--------------------:|:------:|:---------------:|:------------------:|
 |        driver        | string |       无        |     数据库引擎     |
 |         host         | string |       无        |     数据库地址     |
-|       database       | string |       无        |    数据库默认DB    |
+|       database       | string |       无        |    数据库默认 DB    |
 |       username       | string |       无        |    数据库用户名    |
 |       password       | string |      null       |     数据库密码     |
 |       charset        | string |      utf8       |     数据库编码     |

@@ -45,10 +45,6 @@ class RouteCollector
 
     /**
      * Constructs a route collector.
-     *
-     * @param RouteParser $routeParser
-     * @param DataGenerator $dataGenerator
-     * @param string $server
      */
     public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
     {

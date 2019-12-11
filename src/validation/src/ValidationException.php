@@ -57,7 +57,6 @@ class ValidationException extends ServerException
     /**
      * Create a new exception instance.
      *
-     * @param ValidatorInterface $validator
      * @param null|ResponseInterface $response
      */
     public function __construct(ValidatorInterface $validator, $response = null, string $errorBag = 'default')

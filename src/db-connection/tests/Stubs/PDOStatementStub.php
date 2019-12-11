@@ -16,9 +16,16 @@ use PDO;
 
 class PDOStatementStub extends \PDOStatement
 {
+    public $statement;
+
+    public function __construct($statement)
+    {
+        $this->statement = $statement;
+    }
+
     public function execute($input_parameters = null)
     {
-        return [];
+        return true;
     }
 
     public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)

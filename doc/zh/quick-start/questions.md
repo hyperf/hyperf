@@ -53,7 +53,7 @@ vendor/bin/init-proxy.sh && composer test
 vendor/bin/init-proxy.sh && php bin/hyperf.php start
 ```
 
-## PHP7.3下预先生成代理的脚本 执行失败
+## PHP7.3 下预先生成代理的脚本 执行失败
 
 `php bin/hyperf.php di:init-proxy` 脚本在 `PHP7.3` 的 `Docker` 打包时，会因为返回码是 `1` 而失败。
 

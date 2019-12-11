@@ -6,18 +6,18 @@
 
 ![snowflake](./imgs/snowflake.jpeg)
 
-- `1位`，不用。
+- `1 位`，不用。
   - 二进制中最高位为符号位，我们生成的 `ID` 一般都是正整数，所以这个最高位固定是 0。
   
-- `41位`，用来记录时间戳（毫秒）。
-  - `41位` 可以表示 `2^41 - 1` 个数字。
-  - 也就是说 `41位` 可以表示 `2^41 - 1` 个毫秒的值，转化成单位年则是 `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` 约为 `69` 年。
+- `41 位`，用来记录时间戳（毫秒）。
+  - `41 位` 可以表示 `2^41 - 1` 个数字。
+  - 也就是说 `41 位` 可以表示 `2^41 - 1` 个毫秒的值，转化成单位年则是 `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` 约为 `69` 年。
   
-- `10位`，用来记录工作机器 `ID`。
+- `10 位`，用来记录工作机器 `ID`。
   - 可以部署在 `2^10` 共 `1024` 个节点，包括 `5` 位 `DatacenterId` 和 `5` 位 `WorkerId`。
   
-- `12位`，序列号，用来记录同毫秒内产生的不同 `id`。
-  - `12位` 可以表示的最大正整数是 `2^12 - 1` 共 `4095` 个数字，来表示同一机器同一时间截（毫秒)内产生的 `4095` 个 `ID` 序号。
+- `12 位`，序列号，用来记录同毫秒内产生的不同 `id`。
+  - `12 位` 可以表示的最大正整数是 `2^12 - 1` 共 `4095` 个数字，来表示同一机器同一时间截（毫秒)内产生的 `4095` 个 `ID` 序号。
 
 `Snowflake` 可以保证：
 
@@ -34,7 +34,7 @@ composer require hyperf/snowflake
 
 ## 使用
 
-框架提供了 `MetaGeneratorInterface` 和 `IdGeneratorInterface`，`MetaGeneratorInterface` 会生成 `ID` 的 `Meta` 文件，`IdGeneratorInterface` 则会根据对应的 `Meta` 文件生成 `分布式ID`。
+框架提供了 `MetaGeneratorInterface` 和 `IdGeneratorInterface`，`MetaGeneratorInterface` 会生成 `ID` 的 `Meta` 文件，`IdGeneratorInterface` 则会根据对应的 `Meta` 文件生成 `分布式 ID`。
 
 框架默认使用的 `MetaGeneratorInterface` 是基于 `Redis` 实现的 `毫秒级别生成器`。    
 配置文件位于 `config/autoload/snowflake.php`，如配置文件不存在可通过执行 `php bin/hyperf.php vendor:publish hyperf/snowflake` 命令创建默认配置，配置文件内容如下：
@@ -50,7 +50,10 @@ use Hyperf\Snowflake\MetaGeneratorInterface;
 return [
     'begin_second' => MetaGeneratorInterface::DEFAULT_BEGIN_SECOND,
     RedisMilliSecondMetaGenerator::class => [
+        // Redis Pool
         'pool' => 'default',
+        // 用于计算 WorkerId 的 Key 键
+        'key' => RedisMilliSecondMetaGenerator::DEFAULT_REDIS_KEY
     ],
 ];
 

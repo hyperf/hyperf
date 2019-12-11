@@ -296,7 +296,7 @@ return [
 ];
 ```
 
-### 返回PHP对象
+### 返回 PHP 对象
 
 当框架导入 `symfony/serialize (^4.3)` 和 `symfony/property-access (^4.3)` 后，`Hyperf\Contract\NormalizerInterface` 的实现会自动使用 `Hyperf\Utils\Serializer\SymfonyNormalizer` 而非 `Hyperf\Utils\Serializer\SimpleNormalizer`。
 `SymfonyNormalizer` 支持对象的序列化和反序列化。暂时不支持这种 `MathValue[]` 对象数组。
@@ -353,6 +353,28 @@ $client = ApplicationContext::getContainer()->get(CalculatorServiceInterface::cl
 $result = $client->sum(new MathValue(1), new MathValue(2));
 
 var_dump($result->value);
+```
+
+### 使用 JsonRpcPoolTransporter
+
+框架提供了基于连接池的 `Transporter`，可以有效避免高并发时，建立过多连接的问题。这里可以通过替换 `JsonRpcTransporter` 的方式，使用 `JsonRpcPoolTransporter`。
+
+修改 `dependencies.php` 文件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\JsonRpc\JsonRpcPoolTransporter;
+use Hyperf\JsonRpc\JsonRpcTransporter;
+
+return [
+    JsonRpcTransporter::class => function () {
+        return make(JsonRpcPoolTransporter::class);
+    },
+];
+
 ```
 
 

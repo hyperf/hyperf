@@ -27,7 +27,7 @@ $ php bin/hyperf.php db:model table_name
 |   --inheritance    | string |      `Model`      |                      父类                       |
 |       --uses       | string | `App\Model\Model` |             配合 `inheritance` 使用             |
 | --refresh-fillable |  bool  |      `false`      |            是否刷新 `fillable` 参数             |
-|  --table-mapping   | array  |       `[]`        | 为表名->模型增加映射关系 比如 ['users:Account'] |
+|  --table-mapping   | array  |       `[]`        | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
 |  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
 
@@ -106,7 +106,7 @@ class User extends Model
 |    table     | string |   无    |      数据表名称      |
 |  primaryKey  | string |   id    |       模型主键       |
 |   keyType    | string |   int   |       主键类型       |
-|   fillable   | array  |   []    | 允许被批量复制的属性 |
+|   fillable   | array  |   []    | 允许被批量赋值的属性 |
 |    casts     | string |   无    |    数据格式化配置    |
 |  timestamps  |  bool  |  true   |  是否自动维护时间戳  |
 | incrementing |  bool  |  true   |     是否自增主键     |
@@ -335,7 +335,7 @@ use App\Model\User;
 $count = User::query()->where('gender', 1)->count();
 ```
 
-## 插入&更新模型
+## 插入 & 更新模型
 
 ### 插入
 

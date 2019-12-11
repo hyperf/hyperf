@@ -86,7 +86,7 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 ```php
 <?php
-use Hyperf\Cache\CacheInterface;
+use Psr\SimpleCache\CacheInterface;
 use Hyperf\Utils\ApplicationContext;
 use EasyWeChat\Factory;
 

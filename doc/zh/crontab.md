@@ -62,6 +62,7 @@ namespace App\Task;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="这是一个示例的定时任务")
@@ -96,6 +97,22 @@ class FooTask
 
 定时任务的执行回调，即定时任务实际执行的代码，在通过配置文件定义时，这里需要传递一个 `[$class, $method]` 的数组，`$class` 为一个类的全称，`$method` 为 `$class` 内的一个 `public` 方法。当通过注解定义时，只需要提供一个当前类内的 `public` 方法的方法名即可，如果当前类只有一个 `public` 方法，您甚至可以不提供该属性。
 
+#### singleton
+
+解决任务的并发执行问题，任务永远只会同时运行 1 个。但是这个没法保障任务在集群时重复执行的问题。
+
+#### onOneServer
+
+多实例部署项目时，则只有一个实例会被触发。
+
+#### mutexPool
+
+互斥锁使用的 `Redis` 连接池。
+
+#### mutexExpires
+
+互斥锁超时时间，如果定时任务执行完毕，但解除互斥锁失败时，互斥锁也会在这个时间之后自动解除。
+
 #### memo
 
 定时任务的备注，该属性为可选属性，没有任何逻辑上的意义，仅供开发人员查阅帮助对该定时任务的理解。
@@ -119,19 +136,19 @@ return [
 
 策略类：`Hyperf\Crontab\Strategy\WorkerStrategy`   
 
-默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `Worker` 进程中，由各个 `Worker` 进程以协程来实际运行执行任务。
+默认情况下使用此策略，即为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮询传递执行任务到各个 `Worker` 进程中，由各个 `Worker` 进程以协程来实际运行执行任务。
 
 ##### TaskWorker 进程执行策略
 
 策略类：`Hyperf\Crontab\Strategy\TaskWorkerStrategy`   
 
-此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `TaskWorker` 进程中，由各个 `TaskWorker` 进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
+此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮询传递执行任务到各个 `TaskWorker` 进程中，由各个 `TaskWorker` 进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
 
 ##### 多进程执行策略
 
 策略类：`Hyperf\Crontab\Strategy\ProcessStrategy`   
 
-此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮训传递执行任务到各个 `Worker` 进程和 `TaskWorker` 进程中，由各个进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
+此策略为 `CrontabDispatcherProcess` 进程解析定时任务，并通过进程间通讯轮询传递执行任务到各个 `Worker` 进程和 `TaskWorker` 进程中，由各个进程以协程来实际运行执行任务，使用此策略需注意 `TaskWorker` 进程是否配置了支持协程。
 
 ##### 协程执行策略
 
@@ -142,4 +159,4 @@ return [
 ## 运行定时任务
 
 当您完成上述的配置后，以及定义了定时任务后，只需要直接启动 `Server`，定时任务便会一同启动。   
-在您启动后，即便您定义了足够短周期的定时任务，定时任务也不会马上开始执行，所有定时任务都会等到下一个分钟周期时才会开始执行，比如您启动的时候是 `10时11分12秒`，那么定时任务会在 `10时12分00秒` 才会正式开始执行。
+在您启动后，即便您定义了足够短周期的定时任务，定时任务也不会马上开始执行，所有定时任务都会等到下一个分钟周期时才会开始执行，比如您启动的时候是 `10 时 11 分 12 秒`，那么定时任务会在 `10 时 12 分 00 秒` 才会正式开始执行。

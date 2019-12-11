@@ -11,7 +11,7 @@ composer require hyperf/cache
 
 |  配置  |                  默认值                  |         备注          |
 |:------:|:----------------------------------------:|:---------------------:|
-| driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为Redis |
+| driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为 Redis |
 | packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
 | prefix |                   c:                   |       缓存前缀        |
 
@@ -42,7 +42,7 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 ### 注解方式
 
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
-例如，UserService 提供一个 user 方法，可以查询对应id的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的Redis缓存，key值为`user:id`，超时时间为 `9000` 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
+例如，UserService 提供一个 user 方法，可以查询对应 id 的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的 Redis 缓存，key 值为 `user:id` ，超时时间为 `9000` 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
 
 > 缓存注解基于 [aop](zh/aop.md) 和 [di](zh/di.md)，所以只有在 `Container` 中获取到的对象实例才有效，比如通过 `$container->get` 和 `make` 方法所获得的对象，直接 `new` 出来的对象无法使用。
 
@@ -98,6 +98,59 @@ class SystemService
     public function flushCache($userId)
     {
         $this->dispatcher->dispatch(new DeleteListenerEvent('user-update', [$userId]));
+
+        return true;
+    }
+}
+```
+
+当我们自定义了 `Cacheable` 的 `value` 时，比如以下情况。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Cache;
+
+use Hyperf\Cache\Annotation\Cacheable;
+
+class DemoService
+{
+    /**
+     * @Cacheable(prefix="cache", value="_#{id}", listener="DemoServiceDelete")
+     */
+    public function getCache(int $id)
+    {
+        return $id . '_' . uniqid();
+    }
+}
+```
+
+则需要对应修改 `DeleteListenerEvent` 构造函数中的 `$arguments` 变量，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Cache\Listener\DeleteListenerEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
+
+class SystemService
+{
+    /**
+     * @Inject
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    public function flushCache($userId)
+    {
+        $this->dispatcher->dispatch(new DeleteListenerEvent('user-update', ['id' => $userId]));
 
         return true;
     }
@@ -188,13 +241,13 @@ public function updateUserBook(int $id)
 
 ## 缓存驱动
 
-### Redis驱动
+### Redis 驱动
 
-`Hyperf\Cache\Driver\RedisDriver` 会把缓存数据存放到 `Redis` 中，需要用户配置相应的 `Redis配置`。此方式为默认方式。
+`Hyperf\Cache\Driver\RedisDriver` 会把缓存数据存放到 `Redis` 中，需要用户配置相应的 `Redis 配置`。此方式为默认方式。
 
 ### 协程内存驱动
 
-> 本驱动乃Beta版本，请谨慎使用。
+> 本驱动乃 Beta 版本，请谨慎使用。
 
 如果您需要将数据缓存到 `Context` 中，可以尝试此驱动。例如以下应用场景 `Demo::get` 会在多个地方调用多次，但是又不想每次都到 `Redis` 中进行查询。
 

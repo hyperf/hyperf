@@ -34,7 +34,18 @@
       autoHeader: false,
       subMaxLevel: 4,
       search: {
-        depth: 6
+        depth: 6,
+        noData: {
+          '/en/': 'No results!',
+          '/zh/': '没有找到结果!',
+          '/': '没有找到结果!'
+        },
+        paths: 'auto',
+        placeholder: {
+          '/en/': 'Type to Search',
+          '/zh/': '输入关键词搜索',
+          '/': '输入关键词搜索'
+        }
       },
       alias: {
         '/summary.md': './zh/summary.md'
@@ -46,6 +57,7 @@
   </script>
   <script src="//unpkg.com/docsify-copy-code"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
 
 </html>

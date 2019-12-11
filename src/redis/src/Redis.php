@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis;
 
+use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
 class Redis
 {
+    use ScanCaller;
+
     /**
      * @var PoolFactory
      */
@@ -39,6 +42,7 @@ class Redis
         $connection = $this->getConnection($hasContextConnection);
 
         try {
+            $connection = $connection->getConnection();
             // Execute the command with the arguments.
             $result = $connection->{$name}(...$arguments);
         } finally {
@@ -88,7 +92,10 @@ class Redis
         }
         if (! $connection instanceof RedisConnection) {
             $pool = $this->factory->getPool($this->poolName);
-            $connection = $pool->get()->getConnection();
+            $connection = $pool->get();
+        }
+        if (! $connection instanceof RedisConnection) {
+            throw new InvalidRedisConnectionException('The connection is not a valid RedisConnection.');
         }
         return $connection;
     }

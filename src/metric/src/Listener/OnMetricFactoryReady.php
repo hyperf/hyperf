@@ -88,12 +88,14 @@ class OnMetricFactoryReady implements ListenerInterface
             'tasking_num',
             'request_count',
             'timer_num',
-            'timer_round'
+            'timer_round',
+            'metric_process_memory_usage',
+            'metric_process_memory_peak_usage'
         );
 
         $server = $this->container->get(Server::class);
-        $timerInteval = $this->config->get('metric.default_metric_inteval', 5);
-        Timer::tick($timerInteval * 1000, function () use ($metrics, $server) {
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();
@@ -102,6 +104,8 @@ class OnMetricFactoryReady implements ListenerInterface
             $this->trySet('timer_', $metrics, $timerStats);
             $load = sys_getloadavg();
             $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
+            $metrics['metric_process_memory_usage']->set(memory_get_usage());
+            $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
         });
     }
 }
