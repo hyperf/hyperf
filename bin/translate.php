@@ -27,19 +27,19 @@ $finder->files()->in(BASE_PATH . '/doc/zh-cn');
 foreach ($config as $key => $item) {
     $od = opencc_open($item['rule']);
     foreach ($finder as $fileInfo) {
+        $targetPath = $item['targetDir'] . $fileInfo->getRelativePath();
+        $isCreateDir = false;
+        if (! is_dir($targetPath)) {
+            mkdir($targetPath, 0777, true);
+            chmod($targetPath, 0777);
+            $isCreateDir = true;
+        }
+        if (! is_writable($targetPath)) {
+            echo sprintf('Target path %s is not writable.' . PHP_EOL, $targetPath);
+        }
         if ($fileInfo->getExtension() === 'md') {
-            $targetPath = $item['targetDir'] . $fileInfo->getRelativePath();
-            $isCreateDir = false;
-            if (! is_dir($targetPath)) {
-                mkdir($targetPath, 0777, true);
-                chmod($targetPath, 0777);
-                $isCreateDir = true;
-            }
-            if (! is_writable($targetPath)) {
-                echo sprintf('Target path %s is not writable.' . PHP_EOL, $targetPath);
-            }
             $translated = opencc_convert($fileInfo->getContents(), $od);
-            $translated = str_replace('](zh/', '](' . $key . '/', $translated);
+            $translated = str_replace('](zh-cn/', '](' . $key . '/', $translated);
             $targetTranslatedPath = $item['targetDir'] . $fileInfo->getRelativePathname();
             @file_put_contents($targetTranslatedPath, $translated);
         } else {
