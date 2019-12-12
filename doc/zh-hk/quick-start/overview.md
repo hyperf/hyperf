@@ -5,7 +5,7 @@
 ## 定義訪問路由
 
 Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作為默認的路由組件並提供服務，您可以很方便的在 `config/routes.php` 中定義您的路由。   
-不僅如此，框架還提供了極其強大和方便靈活的 `註解路由` 功能，關於路由的詳情文檔請查閲 [路由](zh/router.md) 章節
+不僅如此，框架還提供了極其強大和方便靈活的 `註解路由` 功能，關於路由的詳情文檔請查閲 [路由](zh-hk/router.md) 章節
 
 ### 通過配置文件定義路由
 路由的文件位於 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 項目的 `config/routes.php` ，下面是一些常用的用法示例。
@@ -33,7 +33,7 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### 通過註解來定義路由
 
-`Hyperf` 提供了極其強大和方便靈活的 [註解](zh/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 兩種註解來定義一個 `Controller`，此處僅做簡單的説明，更多細節請查閲 [路由](zh/router.md) 章節。
+`Hyperf` 提供了極其強大和方便靈活的 [註解](zh-hk/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 兩種註解來定義一個 `Controller`，此處僅做簡單的説明，更多細節請查閲 [路由](zh-hk/router.md) 章節。
 
 ### 通過 `@AutoController` 註解定義路由
 `@AutoController` 為絕大多數簡單的訪問場景提供路由綁定支持，使用 `@AutoController` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。

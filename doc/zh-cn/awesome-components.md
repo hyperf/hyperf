@@ -9,7 +9,7 @@
 
 ## 如何适配 Hyperf ?
 
-我们为您提供了一份 [Hyperf 组件开发指南](zh/component-guide/intro.md)，以帮助您开发 Hyperf 组件或适配 Hyperf 框架。
+我们为您提供了一份 [Hyperf 组件开发指南](zh-cn/component-guide/intro.md)，以帮助您开发 Hyperf 组件或适配 Hyperf 框架。
 
 # 组件列表
 
@@ -121,5 +121,5 @@
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee 等）
-- [overtrue/wechat](zh/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
+- [overtrue/wechat](zh-cn/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer

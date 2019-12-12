@@ -41,7 +41,7 @@ return [
 ];
 ```
 
-> 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh/task.md) 组件文档。
+> 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh-cn/task.md) 组件文档。
 
 > 若使用 `Sync` 模式渲染视图时，请确保相关引擎是协程安全的，否则会出现数据混淆的问题，建议使用更加数据安全的 `Task` 模式。
 

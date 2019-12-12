@@ -72,7 +72,7 @@ class IndexController
 
 ## 返回視圖
 
-請參考 [視圖](zh/view.md) 部分文檔
+請參考 [視圖](zh-hk/view.md) 部分文檔
 
 ## 重定向
 

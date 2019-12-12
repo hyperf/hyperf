@@ -1,7 +1,7 @@
 # 控制器
 
-通過控制器來處理 HTTP 請求，需要通過 `配置檔案` 或 `註解` 的形式將路由與控制器方法進行繫結，具體請查閱 [路由](zh/router.md) 章節。   
-對於 `請求(Request)` 與 `響應(Response)`，Hyperf 提供了 `Hyperf\HttpServer\Contract\RequestInterface` 和 `Hyperf\HttpServer\Contract\ResponseInterface` 方便您獲取入參和返回資料，關於 [請求](zh/request.md) 與 [響應](zh/response.md) 的詳細內容請查閱對應的章節。
+通過控制器來處理 HTTP 請求，需要通過 `配置檔案` 或 `註解` 的形式將路由與控制器方法進行繫結，具體請查閱 [路由](zh-tw/router.md) 章節。   
+對於 `請求(Request)` 與 `響應(Response)`，Hyperf 提供了 `Hyperf\HttpServer\Contract\RequestInterface` 和 `Hyperf\HttpServer\Contract\ResponseInterface` 方便您獲取入參和返回資料，關於 [請求](zh-tw/request.md) 與 [響應](zh-tw/response.md) 的詳細內容請查閱對應的章節。
 
 ## 編寫控制器
 

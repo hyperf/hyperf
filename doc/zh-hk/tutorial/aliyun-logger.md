@@ -2,7 +2,7 @@
 
 在 `Docker 集羣` 部署項目時，收集日誌會是一個比較麻煩的問題，但阿里雲提供了十分好用的 `日誌收集系統`，本篇文檔就是簡略介紹一下阿里雲日誌收集的使用方法。
 
-* [Docker Swarm 集羣搭建](zh/tutorial/docker-swarm.md)
+* [Docker Swarm 集羣搭建](zh-hk/tutorial/docker-swarm.md)
 
 ## 開通日誌服務
 

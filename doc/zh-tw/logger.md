@@ -155,7 +155,7 @@ class Log
 
 是的, 還是通過強大的 `容器(Container)`.
 
-- 首先, 實現一個 `StdoutLoggerFactory` 類，關於 `Factory` 的用法可在 [依賴注入](zh/di.md) 章節獲得更多詳細的說明。
+- 首先, 實現一個 `StdoutLoggerFactory` 類，關於 `Factory` 的用法可在 [依賴注入](zh-tw/di.md) 章節獲得更多詳細的說明。
 
 ```php
 <?php

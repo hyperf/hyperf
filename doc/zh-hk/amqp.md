@@ -107,7 +107,7 @@ class DemoProducer extends ProducerMessage
 
 ```
 
-通過 DI Container 獲取 `Hyperf\Amqp\Producer` 實例，即可投遞消息。以下實例直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh/di.md) 章節中查看。
+通過 DI Container 獲取 `Hyperf\Amqp\Producer` 實例，即可投遞消息。以下實例直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh-hk/di.md) 章節中查看。
 
 ```php
 <?php

@@ -1,7 +1,7 @@
 # 分頁器
 
 在您需要對數據進行分頁處理時，可以藉助 [hyperf/paginator](https://github.com/hyperf/paginator) 組件很方便的解決您的問題，您可對您的數據查詢進行一定的封裝處理，以便更好的使用分頁功能，該組件也可用於其它框架上。   
-通常情況下，您對分頁器的需求可能都是存在於數據庫查詢上，[hyperf/database](https://github.com/hyperf/database) 數據庫組件已經與分頁器組件進行了結合，您可以在進行數據查詢時很方便的調用分頁器來實現分頁，具體可查閲 [數據庫模型 - 分頁](zh/db/paginator.md) 章節。
+通常情況下，您對分頁器的需求可能都是存在於數據庫查詢上，[hyperf/database](https://github.com/hyperf/database) 數據庫組件已經與分頁器組件進行了結合，您可以在進行數據查詢時很方便的調用分頁器來實現分頁，具體可查閲 [數據庫模型 - 分頁](zh-hk/db/paginator.md) 章節。
 
 # 安裝
 

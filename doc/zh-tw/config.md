@@ -135,7 +135,7 @@ Config 元件提供了三種方式獲取配置，通過 `Hyperf\Config\Config` �
 
 #### 通過 Config 物件獲取配置
 
-這種方式要求你已經拿到了 `Config` 物件的例項，預設物件為 `Hyperf\Config\Config`，注入例項的細節可查閱 [依賴注入](zh/di.md) 章節；
+這種方式要求你已經拿到了 `Config` 物件的例項，預設物件為 `Hyperf\Config\Config`，注入例項的細節可查閱 [依賴注入](zh-tw/di.md) 章節；
 
 ```php
 /**
@@ -147,7 +147,7 @@ $config->get($key，$default);
 
 #### 通過 `@Value` 註解獲取配置
 
-這種方式要求註解的應用物件必須是通過 [hyperf/di](https://github.com/hyperf/di) 元件建立的，注入例項的細節可查閱 [依賴注入](zh/di.md) 章節，示例中我們假設 `IndexController` 就是一個已經定義好的 `Controller` 類，`Controller` 類一定是由 `DI` 容器創建出來的；   
+這種方式要求註解的應用物件必須是通過 [hyperf/di](https://github.com/hyperf/di) 元件建立的，注入例項的細節可查閱 [依賴注入](zh-tw/di.md) 章節，示例中我們假設 `IndexController` 就是一個已經定義好的 `Controller` 類，`Controller` 類一定是由 `DI` 容器創建出來的；   
 `@Value()` 內的字串則對應到 `$config->get($key)` 內的 `$key` 引數，在建立該物件例項時，對應的配置會自動注入到定義的類屬性中。
 
 ```php
@@ -234,6 +234,6 @@ Hyperf 採用元件化設計，在新增一些元件進來骨架專案後，我�
 ## 配置中心
 
 Hyperf 為您提供了分散式系統的外部化配置支援，目前支援由攜程開源的 `Apollo`、阿里雲 ACM 應用配置管理、ETCD 以及 Zookeeper 作為配置中心的支援。
-關於配置中心的使用細節我們由 [配置中心](zh/config-center.md) 章節來闡述。
+關於配置中心的使用細節我們由 [配置中心](zh-tw/config-center.md) 章節來闡述。
 
 

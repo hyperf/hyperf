@@ -71,7 +71,7 @@ grpc
 
 - gRPC server 伺服器配置
 
-`server.php` 檔案(參考 [配置](zh/config.md)):
+`server.php` 檔案(參考 [配置](zh-tw/config.md)):
 
 ```php
 'servers' => [
@@ -91,7 +91,7 @@ grpc
 
 - gRPC server 路由配置
 
-`routes.php` 檔案(參考 [路由](zh/router.md)):
+`routes.php` 檔案(參考 [路由](zh-tw/router.md)):
 
 ```php
 Router::addServer('grpc', function () {

@@ -82,7 +82,7 @@ Router::addGroup('/user/',function (){
 
 ### 通過註解定義路由
 
-`Hyperf` 提供了非常便利的 [註解](zh/annotation.md) 路由功能，您可以直接在任意類上通過定義 `@Controller` 或 `@AutoController` 註解來完成一個路由的定義。
+`Hyperf` 提供了非常便利的 [註解](zh-tw/annotation.md) 路由功能，您可以直接在任意類上通過定義 `@Controller` 或 `@AutoController` 註解來完成一個路由的定義。
 
 #### `@AutoController` 註解
 

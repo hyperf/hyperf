@@ -2,7 +2,7 @@
 
 在 `Docker 集群` 部署项目时，收集日志会是一个比较麻烦的问题，但阿里云提供了十分好用的 `日志收集系统`，本篇文档就是简略介绍一下阿里云日志收集的使用方法。
 
-* [Docker Swarm 集群搭建](zh/tutorial/docker-swarm.md)
+* [Docker Swarm 集群搭建](zh-cn/tutorial/docker-swarm.md)
 
 ## 开通日志服务
 

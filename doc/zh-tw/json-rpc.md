@@ -57,7 +57,7 @@ class CalculatorService implements CalculatorServiceInterface
 `name` 屬性為定義該服務的名稱，這裡定義一個全域性唯一的名字即可，Hyperf 會根據該屬性生成對應的 ID 註冊到服務中心去；   
 `protocol` 屬性為定義該服務暴露的協議，目前僅支援 `jsonrpc` 和 `jsonrpc-http`，分別對應於 TCP 協議和 HTTP 協議下的兩種協議，預設值為 `jsonrpc-http`，這裡的值對應在 `Hyperf\Rpc\ProtocolManager` 裡面註冊的協議的 `key`，這兩個本質上都是 JSON RPC 協議，區別在於資料格式化、資料打包、資料傳輸器等不同。   
 `server` 屬性為繫結該服務類釋出所要承載的 `Server`，預設值為 `jsonrpc-http`，該屬性對應 `config/autoload/server.php` 檔案內 `servers` 下所對應的 `name`，這裡也就意味著我們需要定義一個對應的 `Server`，我們下一章節具體闡述這裡應該怎樣去處理；   
-`publishTo` 屬性為定義該服務所要釋出的服務中心，目前僅支援 `consul` 或為空，為空時代表不釋出該服務到服務中心去，但也就意味著您需要手動處理服務發現的問題，當值為 `consul` 時需要對應配置好 [hyperf/consul](zh/consul.md) 元件的相關配置，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 元件，具體可參考 [服務註冊](zh/service-register.md) 章節；
+`publishTo` 屬性為定義該服務所要釋出的服務中心，目前僅支援 `consul` 或為空，為空時代表不釋出該服務到服務中心去，但也就意味著您需要手動處理服務發現的問題，當值為 `consul` 時需要對應配置好 [hyperf/consul](zh-tw/consul.md) 元件的相關配置，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 元件，具體可參考 [服務註冊](zh-tw/service-register.md) 章節；
 
 > 使用 `@RpcService` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 名稱空間。
 
