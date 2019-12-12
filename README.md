@@ -53,7 +53,7 @@ Support this project with your organization or company. Your logo will show up h
     <tr>
       <td align="left" valign="middle">
         <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh-cn/imgs/1shanghu.jpg">
+          <img height="80px" src="./zh-cn/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>

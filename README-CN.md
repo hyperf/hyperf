@@ -65,7 +65,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
     <tr>
       <td align="left" valign="middle">
         <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh-cn/imgs/1shanghu.jpg">
+          <img height="80px" src="./doc/zh-cn/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>
