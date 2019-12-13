@@ -3,6 +3,7 @@
 ## Added
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
+- [#849](https://github.com/hyperf/hyperf/pull/849) Added `tracer` add span tag config
 
 # v1.1.3 - 2019-10-24
 
