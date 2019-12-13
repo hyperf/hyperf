@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 use Zipkin\Samplers\BinarySampler;
@@ -69,7 +69,7 @@ return [
         ],
 
         'db' => [
-            'db.query' =>'db.query',
+            'db.query' => 'db.query',
             'db.statement' => 'db.statement',
             'db.query_time' => 'db.query_time',
         ],

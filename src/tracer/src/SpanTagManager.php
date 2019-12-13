@@ -14,33 +14,33 @@ namespace Hyperf\Tracer;
 
 class SpanTagManager
 {
-    private $tag = [
+    private $tags = [
         'http_client' => [
             'http.status_code' => 'status',
         ],
-        'redis'       => [
+        'redis' => [
             'arguments' => 'arguments',
-            'result'    => 'result',
+            'result' => 'result',
         ],
-        'db'          => [
-            'db.query'      => 'db.query',
-            'db.statement'  => 'db.sql',
-            'db.query_time' => 'db.query_time'
-        ]
+        'db' => [
+            'db.query' => 'db.query',
+            'db.statement' => 'db.sql',
+            'db.query_time' => 'db.query_time',
+        ],
     ];
 
     public function apply(array $tags): void
     {
-        $this->tag = array_replace_recursive($this->tag, $tags);
+        $this->tags = array_replace_recursive($this->tags, $tags);
     }
 
     public function get(string $type, string $name): string
     {
-        return $this->tag[$type][$name] ?? $name;
+        return $this->tags[$type][$name];
     }
 
     public function has(string $type, string $name): bool
     {
-        return isset($this->tag[$type][$name]);
+        return isset($this->tags[$type][$name]);
     }
 }

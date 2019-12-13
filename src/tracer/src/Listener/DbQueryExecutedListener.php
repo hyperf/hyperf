@@ -67,7 +67,7 @@ class DbQueryExecutedListener implements ListenerInterface
             return;
         }
         $sql = $event->sql;
-        if (!Arr::isAssoc($event->bindings)) {
+        if (! Arr::isAssoc($event->bindings)) {
             foreach ($event->bindings as $key => $value) {
                 $sql = Str::replaceFirst('?', "'{$value}'", $sql);
             }
@@ -75,10 +75,10 @@ class DbQueryExecutedListener implements ListenerInterface
 
         $endTime = microtime(true);
         $span = $this->startSpan($this->spanTagManager->get('db', 'db.query'), [
-            'start_time' => (int)(($endTime - $event->time / 1000) * 1000 * 1000),
+            'start_time' => (int) (($endTime - $event->time / 1000) * 1000 * 1000),
         ]);
         $span->setTag($this->spanTagManager->get('db', 'db.statement'), $sql);
         $span->setTag($this->spanTagManager->get('db', 'db.query_time'), $event->time . ' ms');
-        $span->finish((int)($endTime * 1000 * 1000));
+        $span->finish((int) ($endTime * 1000 * 1000));
     }
 }
