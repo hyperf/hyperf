@@ -14,7 +14,6 @@ namespace Hyperf\Redis\Pool;
 
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class PoolFactory
 {
@@ -24,7 +23,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var Channel[]
+     * @var RedisPool[]
      */
     protected $pools = [];
 

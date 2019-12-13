@@ -83,6 +83,10 @@ class RedisDriverTest extends TestCase
 
         $redis = $container->get(\Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
+
+        $dv = new \DateInterval('PT5S');
+        $driver->set('xxx', 'yyy', $dv);
+        $this->assertSame(5, $redis->ttl('c:xxx'));
     }
 
     public function testDelete()
@@ -114,7 +118,7 @@ class RedisDriverTest extends TestCase
             'redis' => [
                 'default' => [
                     'host' => 'localhost',
-                    'auth' => '910123',
+                    'auth' => null,
                     'port' => 6379,
                     'db' => 0,
                     'timeout' => 0.0,

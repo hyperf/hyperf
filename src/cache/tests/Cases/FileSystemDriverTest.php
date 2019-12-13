@@ -68,12 +68,12 @@ class FileSystemDriverTest extends TestCase
         $container = $this->getContainer();
         $driver = $container->get(CacheManager::class)->getDriver();
 
-        $driver->set('xxx', 'yyy', 0.5);
+        $driver->set('xxx', 'yyy', 1);
         [$bool, $result] = $driver->fetch('xxx');
         $this->assertTrue($bool);
         $this->assertSame('yyy', $result);
 
-        sleep(1);
+        sleep(2);
 
         [$bool, $result] = $driver->fetch('xxx');
         $this->assertFalse($bool);

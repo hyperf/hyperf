@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
+use Hyperf\Tracer\Listener\DbQueryExecutedListener;
 use OpenTracing\Tracer;
 
 class ConfigProvider
@@ -25,6 +26,9 @@ class ConfigProvider
                 SwitchManager::class => SwitchManagerFactory::class,
                 SpanTagManager::class => SpanTagManagerFactory::class,
                 Client::class => Client::class,
+            ],
+            'listeners' => [
+                DbQueryExecutedListener::class,
             ],
             'annotations' => [
                 'scan' => [
