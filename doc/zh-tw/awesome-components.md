@@ -34,6 +34,7 @@
 
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基於 Eloquent 衍生的資料庫 ORM，可複用於其它框架
 - [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 元件的自動模型快取元件 
+- [yurunsoft/influxdb-orm](https://github.com/Yurunsoft/influxdb-orm) InfluxDB 時序資料庫的 ORM，常用操作一把梭，支援 php-fpm、Swoole 環境，一鍵輕鬆切換。
 
 ## 依賴注入容器
 
