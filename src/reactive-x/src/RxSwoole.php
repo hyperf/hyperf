@@ -30,7 +30,7 @@ class RxSwoole
         return function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {
-                    Runtime::enableCoroutine(true, SWOOLE_HOOK_FLAGS);
+                    Runtime::enableCoroutine(true, swoole_hook_flags());
                     Coroutine::create($callable);
                 });
                 return new EmptyDisposable();
