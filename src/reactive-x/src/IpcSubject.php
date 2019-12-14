@@ -54,6 +54,7 @@ class IpcSubject implements MessageBusInterface
 
     public function __call($method, $arguments)
     {
+        $this->init();
         return $this->subject->{$method}(...$arguments);
     }
 
@@ -87,11 +88,13 @@ class IpcSubject implements MessageBusInterface
 
     public function dispose()
     {
+        $this->init();
         return $this->subject->dispose();
     }
 
     public function onNext($value)
     {
+        $this->init();
         $this->broadcaster->broadcast(new IpcMessageWrapper(
             $this->channelId,
             new OnNextNotification($value)
@@ -101,6 +104,7 @@ class IpcSubject implements MessageBusInterface
 
     public function onError(\Throwable $exception)
     {
+        $this->init();
         $this->broadcaster->broadcast(new IpcMessageWrapper(
             $this->channelId,
             new OnErrorNotification($exception)
@@ -110,6 +114,7 @@ class IpcSubject implements MessageBusInterface
 
     public function onCompleted()
     {
+        $this->init();
         $this->broadcaster->broadcast(new IpcMessageWrapper(
             $this->channelId,
             new OnCompletedNotification()
