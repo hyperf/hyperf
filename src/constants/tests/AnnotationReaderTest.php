@@ -14,7 +14,14 @@ namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
+use Hyperf\Contract\ContainerInterface;
+use Hyperf\Contract\TranslatorInterface;
+use Hyperf\Translation\ArrayLoader;
+use Hyperf\Translation\Translator;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,10 +39,14 @@ class AnnotationReaderTest extends TestCase
 
         $data = $reader->getAnnotations($classConstants);
         ConstantsCollector::set(ErrorCodeStub::class, $data);
+
+        Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), null);
     }
 
     public function testGetAnnotations()
     {
+        $this->getContainer();
+
         $data = ConstantsCollector::get(ErrorCodeStub::class);
 
         $this->assertSame('Server Error!', $data[ErrorCodeStub::SERVER_ERROR]['message']);
@@ -47,6 +58,8 @@ class AnnotationReaderTest extends TestCase
 
     public function testGetMessageWithArguments()
     {
+        $this->getContainer();
+
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID);
 
         $this->assertSame('Params[%s] is invalid.', $res);
@@ -54,5 +67,43 @@ class AnnotationReaderTest extends TestCase
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, 'user_id');
 
         $this->assertSame('Params[user_id] is invalid.', $res);
+    }
+
+    public function testGetMessageUsingTranslator()
+    {
+        $container = $this->getContainer(true);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::SERVER_ERROR);
+        $this->assertSame('Server Error!', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_ERROR_MESSAGE);
+        $this->assertSame('Error Message', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_NOT_EXIST, ['name' => 'Hyperf']);
+        $this->assertSame('Hyperf is not exist.', $res);
+
+        Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), 'zh_CN');
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_ERROR_MESSAGE);
+        $this->assertSame('错误信息', $res);
+    }
+
+    protected function getContainer($has = false)
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('get')->with(TranslatorInterface::class)->andReturnUsing(function () {
+            $loader = new ArrayLoader();
+            $loader->addMessages('en', 'error', [
+                'message' => 'Error Message',
+                'not exist' => ':name is not exist.',
+            ]);
+            $loader->addMessages('zh_CN', 'error', ['message' => '错误信息']);
+            return new Translator($loader, 'en');
+        });
+
+        $container->shouldReceive('has')->andReturn($has);
+
+        return $container;
     }
 }

@@ -33,4 +33,14 @@ class ErrorCodeStub extends AbstractConstants
      * @Message("Params[%s] is invalid.")
      */
     const PARAMS_INVALID = 503;
+
+    /**
+     * @Message("error.message")
+     */
+    const TRANSLATOR_ERROR_MESSAGE = 504;
+
+    /**
+     * @Message("error.not exist")
+     */
+    const TRANSLATOR_NOT_EXIST = 505;
 }

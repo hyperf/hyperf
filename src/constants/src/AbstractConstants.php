@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Constants;
 
 use Hyperf\Constants\Exception\ConstantsException;
+use Hyperf\Contract\TranslatorInterface;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 
 abstract class AbstractConstants
@@ -35,10 +37,30 @@ abstract class AbstractConstants
 
         array_shift($arguments);
 
+        if ($result = self::translate($message, $arguments)) {
+            return $result;
+        }
+
         if (count($arguments) > 0) {
             return sprintf($message, ...$arguments);
         }
 
         return $message;
+    }
+
+    protected static function translate($key, $arguments): ?string
+    {
+        if (! ApplicationContext::hasContainer() || ! ApplicationContext::getContainer()->has(TranslatorInterface::class)) {
+            return null;
+        }
+
+        $replace = $arguments[0] ?? [];
+        if (! is_array($replace)) {
+            return null;
+        }
+
+        $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
+
+        return $translator->trans($key, $replace);
     }
 }
