@@ -15,7 +15,6 @@ namespace Hyperf\ReactiveX\Example;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
-use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\Utils\Arr;

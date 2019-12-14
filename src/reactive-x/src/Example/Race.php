@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 use Hyperf\ReactiveX\Observable;
 use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\System;
 
 $result = new Channel(1);
 $o = Observable::fromCoroutine([function () {

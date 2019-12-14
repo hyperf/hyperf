@@ -17,6 +17,7 @@ use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\ReactiveX\Scheduler\ConcurrentEventLoopScheduler;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -24,6 +25,11 @@ use Swoole\Coroutine\Channel;
  */
 class ConcurrentEventLoopSchedulerTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+    }
+
     public function testScheduler()
     {
         $result = new Channel(2);

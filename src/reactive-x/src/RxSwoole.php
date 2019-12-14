@@ -18,7 +18,6 @@ use Rx\Disposable\EmptyDisposable;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Event;
-use Swoole\Runtime;
 use Swoole\Timer;
 
 class RxSwoole
@@ -27,7 +26,6 @@ class RxSwoole
 
     public static function getLoop(): callable
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
         return function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {

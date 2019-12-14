@@ -30,7 +30,7 @@ use Rx\SchedulerInterface;
 class HttpRouteObservable extends Observable
 {
     /**
-     * @var string[]|string
+     * @var string|string[]
      */
     private $httpMethod;
 

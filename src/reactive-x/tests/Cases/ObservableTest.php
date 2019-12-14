@@ -55,6 +55,11 @@ use Swoole\Timer;
  */
 class ObservableTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+    }
+
     public function setUp()
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));

@@ -31,6 +31,7 @@ use Rx\Scheduler\EventLoopScheduler;
 use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
 use Swoole\Coroutine\Channel;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -38,6 +39,11 @@ use Swoole\Coroutine\Channel;
  */
 class IpcSubjectTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+    }
+
     public function setUp()
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
