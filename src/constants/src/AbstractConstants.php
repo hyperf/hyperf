@@ -41,7 +41,12 @@ abstract class AbstractConstants
             return $result;
         }
 
-        if (count($arguments) > 0) {
+        $count = count($arguments);
+        if ($count > 0) {
+            if ($count === 1 && is_array($arguments[0])) {
+                return sprintf($message, ...$arguments[0]);
+            }
+
             return sprintf($message, ...$arguments);
         }
 

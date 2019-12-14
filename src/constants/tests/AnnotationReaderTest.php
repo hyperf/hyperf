@@ -67,6 +67,10 @@ class AnnotationReaderTest extends TestCase
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, 'user_id');
 
         $this->assertSame('Params[user_id] is invalid.', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, ['order_id']);
+
+        $this->assertSame('Params[order_id] is invalid.', $res);
     }
 
     public function testGetMessageUsingTranslator()
