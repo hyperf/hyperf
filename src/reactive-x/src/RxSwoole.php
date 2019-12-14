@@ -27,10 +27,10 @@ class RxSwoole
 
     public static function getLoop(): callable
     {
+        Runtime::enableCoroutine(true, swoole_hook_flags());
         return function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {
-                    Runtime::enableCoroutine(true, swoole_hook_flags());
                     Coroutine::create($callable);
                 });
                 return new EmptyDisposable();
