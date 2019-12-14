@@ -47,6 +47,7 @@ abstract class AbstractConstants
                 return sprintf($message, ...$arguments[0]);
             }
 
+            // TODO: Removed in v1.2
             return sprintf($message, ...$arguments);
         }
 
