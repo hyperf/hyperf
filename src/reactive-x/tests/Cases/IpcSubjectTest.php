@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace HyperfTest\Cases;
 
 use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Process\Event\PipeMessage;
@@ -25,6 +27,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Rx\Notification\OnNextNotification;
+use Rx\Scheduler\EventLoopScheduler;
+use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
 use Swoole\Coroutine\Channel;
 
@@ -36,6 +40,9 @@ class IpcSubjectTest extends TestCase
 {
     public function setUp()
     {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container->define(SchedulerInterface::class, EventLoopScheduler::class);
+        ApplicationContext::setContainer($container);
         RxSwoole::init();
     }
 
@@ -72,12 +79,12 @@ class IpcSubjectTest extends TestCase
 
     public function testOnMessage()
     {
+        $container = ApplicationContext::getContainer();
         $broadcaster = Mockery::mock(BroadcasterInterface::class);
+        $container->set(BroadcasterInterface::class, $broadcaster);
         $event = new IpcMessageWrapper(0, new OnNextNotification(42));
         $provider = new ListenerProvider();
-        $container = Mockery::mock(Container::class);
-        $container->shouldReceive('get')->with(ListenerProviderInterface::class)
-            ->andReturn($provider);
+        $container->set(ListenerProviderInterface::class, $provider);
         ApplicationContext::setContainer($container);
         $subject = new IpcSubject(
             new Subject(),

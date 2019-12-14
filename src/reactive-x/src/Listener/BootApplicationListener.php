@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Hyperf\ReactiveX\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ReactiveX\RxSwoole;
 
-class OnBeforeMainServerStart implements ListenerInterface
+class BootApplicationListener implements ListenerInterface
 {
     public function listen(): array
     {
         return [
-            BeforeMainServerStart::class,
+            BootApplication::class,
         ];
     }
 

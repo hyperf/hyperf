@@ -12,40 +12,47 @@ declare(strict_types=1);
 
 namespace Hyperf\ReactiveX;
 
+use Hyperf\Utils\Coroutine;
 use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\EmptyDisposable;
 use Rx\Scheduler;
-use Swoole\Coroutine;
+use Rx\SchedulerInterface;
 use Swoole\Event;
+use Swoole\Runtime;
 use Swoole\Timer;
 
 class RxSwoole
 {
     private static $initialized = false;
 
-    public static function init()
+    public static function getLoop(): callable
     {
-        if (self::$initialized) {
-            return;
-        }
-        $loop = function ($ms, $callable) {
+        return function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {
+                    Runtime::enableCoroutine(true, SWOOLE_HOOK_FLAGS);
                     Coroutine::create($callable);
                 });
                 return new EmptyDisposable();
             }
             $timer = Timer::after($ms, function () use ($callable) {
-                Coroutine::create($callable);
+                $callable();
             });
             return new CallbackDisposable(function () use ($timer) {
                 Timer::clear($timer);
             });
         };
+    }
+
+    public static function init()
+    {
+        if (self::$initialized) {
+            return;
+        }
 
         //You only need to set the default scheduler once
-        Scheduler::setDefaultFactory(function () use ($loop) {
-            return new Scheduler\EventLoopScheduler($loop);
+        Scheduler::setDefaultFactory(function () {
+            return make(SchedulerInterface::class, ['timerCallableOrLoop' => self::getLoop()]);
         });
 
         RxSwoole::$initialized = true;

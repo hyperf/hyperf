@@ -14,6 +14,7 @@ namespace Hyperf\ReactiveX\Example;
 
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
@@ -39,7 +40,7 @@ class SqlListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeWorkerStart::class,
+            AfterWorkerStart::class,
         ];
     }
 

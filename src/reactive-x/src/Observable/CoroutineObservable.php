@@ -16,6 +16,7 @@ use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
+use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
@@ -32,7 +33,7 @@ class CoroutineObservable extends Observable
      */
     private $scheduler;
 
-    public function __construct($callables, SchedulerInterface $scheduler)
+    public function __construct($callables, ?SchedulerInterface $scheduler = null)
     {
         $this->scheduler = $scheduler;
         $this->callables = $callables;
@@ -40,6 +41,9 @@ class CoroutineObservable extends Observable
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
     {
+        if ($this->scheduler === null) {
+            $this->scheduler = Scheduler::getDefault();
+        }
         coroutine::create(function () use ($observer) {
             $wg = new WaitGroup();
             $wg->add(count($this->callables));

@@ -14,13 +14,13 @@ namespace Hyperf\ReactiveX;
 
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Psr\Container\ContainerInterface;
-use Rx\Subject\BehaviorSubject;
+use Rx\Subject\Subject;
 
 class MessageBusFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $subject = new BehaviorSubject();
+        $subject = new Subject();
         $broadcaster = $container->get(BroadcasterInterface::class);
         return new IpcSubject($subject, $broadcaster, 0);
     }

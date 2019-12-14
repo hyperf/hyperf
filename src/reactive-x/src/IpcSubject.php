@@ -39,23 +39,17 @@ class IpcSubject implements MessageBusInterface
      */
     protected $channelId;
 
+    /**
+     * @var bool
+     */
+    private $isSubscribed;
+
     public function __construct(Subject $subject, BroadcasterInterface $broadcaster = null, int $channelId = 1)
     {
         $this->subject = $subject;
         $this->broadcaster = $broadcaster;
         $this->channelId = $channelId;
-
-        Observable::fromEvent(OnPipeMessage::class)
-            ->merge(Observable::fromEvent(PipeMessage::class))
-            ->filter(function ($event) {
-                return $event->data instanceof IpcMessageWrapper
-                && $event->data->channelId === $this->channelId;
-            })
-            ->map(function ($event) {
-                return $event->data->data;
-            })
-            ->dematerialize()
-            ->subscribe($this->subject);
+        $this->isSubscribed = false;
     }
 
     public function __call($method, $arguments)
@@ -63,8 +57,31 @@ class IpcSubject implements MessageBusInterface
         return $this->subject->{$method}(...$arguments);
     }
 
+    /**
+     * Lazy initializer to avoid causing circular dependency in event listeners.
+     */
+    public function init()
+    {
+        if ($this->isSubscribed === true) {
+            return;
+        }
+        Observable::fromEvent(OnPipeMessage::class)
+            ->merge(Observable::fromEvent(PipeMessage::class))
+            ->filter(function ($event) {
+                return $event->data instanceof IpcMessageWrapper
+                    && $event->data->channelId === $this->channelId;
+            })
+            ->map(function ($event) {
+                return $event->data->data;
+            })
+            ->dematerialize()
+            ->subscribe($this->subject);
+        $this->isSubscribed = true;
+    }
+
     public function subscribe($onNextOrObserver = null, callable $onError = null, callable $onCompleted = null): DisposableInterface
     {
+        $this->init();
         return $this->subject->subscribe($onNextOrObserver, $onError, $onCompleted);
     }
 

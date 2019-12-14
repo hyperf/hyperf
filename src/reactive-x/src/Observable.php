@@ -17,7 +17,6 @@ use Hyperf\ReactiveX\Observable\CoroutineObservable;
 use Hyperf\ReactiveX\Observable\EventObservable;
 use Hyperf\ReactiveX\Observable\HttpRouteObservable;
 use Rx\Observable as RxObservable;
-use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Coroutine\Channel;
 
@@ -30,7 +29,7 @@ class Observable
 
     public static function fromEvent(string $eventName, ?SchedulerInterface $scheduler = null): EventObservable
     {
-        return new EventObservable($eventName, $scheduler ?? Scheduler::getDefault());
+        return new EventObservable($eventName, $scheduler);
     }
 
     /**
@@ -38,7 +37,7 @@ class Observable
      */
     public static function fromChannel(Channel $channel, ?SchedulerInterface $scheduler = null): ChannelObservable
     {
-        return new ChannelObservable($channel, $scheduler ?? Scheduler::getDefault());
+        return new ChannelObservable($channel, $scheduler);
     }
 
     /**
@@ -48,7 +47,7 @@ class Observable
      */
     public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null): HttpRouteObservable
     {
-        return new HttpRouteObservable($httpMethod, $uri, $scheduler ?? Scheduler::getDefault(), $callback);
+        return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler);
     }
 
     /**
@@ -60,7 +59,7 @@ class Observable
         if (is_callable($callables)) {
             $callables = [$callables];
         }
-        return new CoroutineObservable($callables, $scheduler ?? Scheduler::getDefault());
+        return new CoroutineObservable($callables, $scheduler);
     }
 
     public static function unwrap(RxObservable $observable): array

@@ -14,6 +14,8 @@ namespace HyperfTest\Cases;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Event\EventDispatcher;
@@ -29,6 +31,7 @@ use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;
 use Mockery;
@@ -36,9 +39,15 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Http\Message\ResponseInterface;
+use Rx\Disposable\CallbackDisposable;
+use Rx\Disposable\EmptyDisposable;
 use Rx\Observable as RxObservable;
+use Rx\Scheduler\EventLoopScheduler;
+use Rx\SchedulerInterface;
 use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\System;
+use Swoole\Event;
+use Swoole\Runtime;
+use Swoole\Timer;
 
 /**
  * @internal
@@ -46,8 +55,11 @@ use Swoole\Coroutine\System;
  */
 class ObservableTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public function setUp()
     {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container->define(SchedulerInterface::class, EventLoopScheduler::class);
+        ApplicationContext::setContainer($container);
         RxSwoole::init();
     }
 
@@ -66,7 +78,21 @@ class ObservableTest extends TestCase
             $this->assertTrue(true);
             Context::set(ResponseInterface::class, new Response());
             return 'ok';
-        });
+        }, new EventLoopScheduler(function ($ms, $callable) {
+            if ($ms === 0) {
+                Event::defer(function () use ($callable) {
+                    Runtime::enableCoroutine(true, SWOOLE_HOOK_FLAGS);
+                    Coroutine::create($callable);
+                });
+                return new EmptyDisposable();
+            }
+            $timer = Timer::after($ms, function () use ($ms, $callable) {
+                $callable();
+            });
+            return new CallbackDisposable(function () use ($timer) {
+                Timer::clear($timer);
+            });
+        }));
         $o->take(1)->subscribe(
             function ($x) use ($result) {
                 $result->push($x->url());
@@ -128,14 +154,64 @@ class ObservableTest extends TestCase
         $this->assertEquals(42, $result->pop());
     }
 
+    public function testInterval()
+    {
+        $result = new Channel(2);
+        $o = Observable::interval(1);
+        $o->delay(2)->take(1)->subscribe(
+            function ($x) use ($result) {
+                $result->push($x);
+            }
+        );
+        $o->skip(1)->take(1)->subscribe(
+            function ($x) use ($result) {
+                $result->push($x);
+            }
+        );
+        $this->assertEquals(1, $result->pop());
+        $this->assertEquals(0, $result->pop());
+
+        $o = Observable::interval(1);
+        $o->take(1)->subscribe(
+            function ($x) use ($result) {
+                usleep(2000);
+                $result->push($x);
+            }
+        );
+        $o->skip(1)->take(1)->subscribe(
+            function ($x) use ($result) {
+                $result->push($x);
+            }
+        );
+        $this->assertEquals(0, $result->pop());
+        $this->assertEquals(1, $result->pop());
+
+        $o = Observable::interval(1);
+        $o->take(1)->subscribe(
+            function ($x) use ($result) {
+                go(function () use ($result, $x) {
+                    usleep(2000);
+                    $result->push($x);
+                });
+            }
+        );
+        $o->skip(1)->take(1)->subscribe(
+            function ($x) use ($result) {
+                $result->push($x);
+            }
+        );
+        $this->assertEquals(1, $result->pop());
+        $this->assertEquals(0, $result->pop());
+    }
+
     public function testCoroutine()
     {
         $result = new Channel(1);
         $o = Observable::fromCoroutine([function () {
-            System::sleep(0.002);
+            usleep(2000);
             return 24;
         }, function () {
-            System::sleep(0.001);
+            usleep(1000);
             return 42;
         }]);
         $o->take(1)->subscribe(
@@ -145,10 +221,10 @@ class ObservableTest extends TestCase
         );
         $this->assertEquals(42, $result->pop());
         $o = Observable::fromCoroutine([function () {
-            System::sleep(0.01);
+            usleep(1000);
             return 24;
         }, function () {
-            System::sleep(0.01);
+            usleep(2000);
             return 42;
         }]);
         $o->timeout(15)->subscribe(

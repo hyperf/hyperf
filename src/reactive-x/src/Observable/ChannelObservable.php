@@ -15,6 +15,7 @@ namespace Hyperf\ReactiveX\Observable;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
+use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Coroutine\Channel;
 
@@ -24,7 +25,7 @@ class ChannelObservable extends Observable
 
     private $scheduler;
 
-    public function __construct(Channel $channel, SchedulerInterface $scheduler)
+    public function __construct(Channel $channel, ?SchedulerInterface $scheduler = null)
     {
         $this->channel = $channel;
         $this->scheduler = $scheduler;
@@ -44,6 +45,9 @@ class ChannelObservable extends Observable
                 $observer->onError($e);
             }
         };
+        if ($this->scheduler === null) {
+            $this->scheduler = Scheduler::getDefault();
+        }
         return $this->scheduler->scheduleRecursive($action);
     }
 }

@@ -29,6 +29,7 @@ class BatchSaveRoute implements ListenerInterface
 
     /**
      * @param QueryExecuted $event
+     * @throws \Exception
      */
     public function process(object $event)
     {

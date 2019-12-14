@@ -18,6 +18,7 @@ use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
+use Rx\Scheduler;
 use Rx\SchedulerInterface;
 
 class EventObservable extends Observable
@@ -26,7 +27,7 @@ class EventObservable extends Observable
 
     private $scheduler;
 
-    public function __construct(string $eventName, SchedulerInterface $scheduler)
+    public function __construct(string $eventName, ?SchedulerInterface $scheduler = null)
     {
         $this->eventName = $eventName;
         $this->scheduler = $scheduler;
@@ -36,6 +37,9 @@ class EventObservable extends Observable
     {
         $provider = ApplicationContext::getContainer()->get(ListenerProviderInterface::class);
         $provider->on($this->eventName, function ($event) use ($observer) {
+            if ($this->scheduler === null) {
+                $this->scheduler = Scheduler::getDefault();
+            }
             return $this->scheduler->schedule(function () use ($observer, $event) {
                 $observer->onNext($event);
             });

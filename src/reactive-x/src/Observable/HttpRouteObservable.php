@@ -49,7 +49,7 @@ class HttpRouteObservable extends Observable
      */
     private $scheduler;
 
-    public function __construct($httpMethod, string $uri, SchedulerInterface $scheduler, $callback = null)
+    public function __construct($httpMethod, string $uri, $callback = null, SchedulerInterface $scheduler = null)
     {
         $this->scheduler = $scheduler;
         $this->httpMethod = $httpMethod;
@@ -61,9 +61,11 @@ class HttpRouteObservable extends Observable
     {
         $container = ApplicationContext::getContainer();
         $factory = $container->get(DispatcherFactory::class);
-        $scheduler = $scheduler ?? Scheduler::getDefault();
         $factory->getRouter('http')->addRoute($this->httpMethod, $this->uri, function () use ($observer, $container) {
             $request = Context::get(ServerRequestInterface::class);
+            if ($this->scheduler === null) {
+                $this->scheduler = Scheduler::getDefault();
+            }
             $this->scheduler->schedule(function () use ($observer, $request) {
                 $observer->onNext($request);
             });

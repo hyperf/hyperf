@@ -14,7 +14,9 @@ namespace Hyperf\ReactiveX;
 
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\Contract\MessageBusInterface;
-use Hyperf\ReactiveX\Listener\OnBeforeMainServerStart;
+use Hyperf\ReactiveX\Listener\BootApplicationListener;
+use Rx\Scheduler\EventLoopScheduler;
+use Rx\SchedulerInterface;
 
 class ConfigProvider
 {
@@ -24,9 +26,10 @@ class ConfigProvider
             'dependencies' => [
                 BroadcasterInterface::class => AllProcessesBroadcaster::class,
                 MessageBusInterface::class => MessageBusFactory::class,
+                SchedulerInterface::class => EventLoopScheduler::class,
             ],
             'listeners' => [
-                OnBeforeMainServerStart::class,
+                BootApplicationListener::class,
             ],
         ];
     }
