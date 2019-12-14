@@ -331,6 +331,8 @@ $bus->subscribe(function($message){
 });
 ```
 
+> 由于 ReactiveX 需要使用事件循环，请注意一定要在 Swoole Server 启动之后再调用 ReactiveX 相关 API 。
+
 ## 参考资料
 
 * [Rx 中文文档](https://mcxiaoke.gitbooks.io/rxdocs/content/)
