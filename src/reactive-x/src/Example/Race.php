@@ -16,10 +16,10 @@ use Swoole\Coroutine\System;
 
 $result = new Channel(1);
 $o = Observable::fromCoroutine([function () {
-    System::sleep(0.002);
+    sleep(2);
     return 1;
 }, function () {
-    System::sleep(0.001);
+    sleep(1);
     return 2;
 }]);
 $o->take(1)->subscribe(
