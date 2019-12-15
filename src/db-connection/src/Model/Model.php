@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Model;
 
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model as BaseModel;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -33,7 +33,7 @@ class Model extends BaseModel
     public function getConnection(): ConnectionInterface
     {
         $connectionName = $this->getConnectionName();
-        $resolver = $this->getContainer()->get(ConnectionResolver::class);
+        $resolver = $this->getContainer()->get(ConnectionResolverInterface::class);
         return $resolver->connection($connectionName);
     }
 
