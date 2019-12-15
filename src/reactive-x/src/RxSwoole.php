@@ -33,9 +33,7 @@ class RxSwoole
                 });
                 return new EmptyDisposable();
             }
-            $timer = Timer::after($ms, function () use ($callable) {
-                $callable();
-            });
+            $timer = Timer::after($ms, $callable);
             return new CallbackDisposable(function () use ($timer) {
                 Timer::clear($timer);
             });
