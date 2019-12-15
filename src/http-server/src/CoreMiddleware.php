@@ -81,10 +81,10 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $request = Context::set(ServerRequestInterface::class, $request);
-
         /** @var Dispatched $dispatched */
         $dispatched = $request->getAttribute(Dispatched::class);
+        
+        $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, $dispatched));
 
         if (! $dispatched instanceof Dispatched) {
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
