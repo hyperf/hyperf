@@ -75,7 +75,7 @@ class ValidationException extends ServerException
      */
     public static function withMessages(array $messages)
     {
-        return new static(tap(ValidatorFactory::make([], []), function ($validator) use ($messages) {
+        return new static(tap(make(ValidatorFactory::class)->make([], []), function ($validator) use ($messages) {
             foreach ($messages as $key => $value) {
                 foreach (Arr::wrap($value) as $message) {
                     $validator->errors()->add($key, $message);
