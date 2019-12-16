@@ -18,7 +18,7 @@ use Hyperf\Database\Model\Register;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 
-class RegistConnectionResolverListener implements ListenerInterface
+class RegisterConnectionResolverListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface

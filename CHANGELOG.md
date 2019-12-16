@@ -1,5 +1,9 @@
 # v1.1.11 - TBD
 
+## Fixed
+
+- [#1142](https://github.com/hyperf/hyperf/pull/1142) Fixed bug that Register::resolveConnection will return null.
+
 # v1.1.10 - 2019-12-12
 
 ## Fixed

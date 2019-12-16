@@ -27,7 +27,7 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
-use Hyperf\DbConnection\Listener\RegistConnectionResolverListener;
+use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -56,7 +56,7 @@ class ConfigProvider
                 SeedCommand::class,
             ],
             'listeners' => [
-                RegistConnectionResolverListener::class,
+                RegisterConnectionResolverListener::class,
             ],
             'annotations' => [
                 'scan' => [
