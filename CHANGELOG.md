@@ -1,4 +1,132 @@
-# v1.1.5 - TBD
+# v1.1.11 - TBD
+
+## Fixed
+
+- [#1142](https://github.com/hyperf/hyperf/pull/1142) Fixed bug that Register::resolveConnection will return null.
+
+# v1.1.10 - 2019-12-12
+
+## Fixed
+
+- [#1104](https://github.com/hyperf/hyperf/pull/1104) Fixed guzzle will be retried when the response has the correct status code 2xx.
+- [#1105](https://github.com/hyperf/hyperf/pull/1105) Fixed Retry Component not restoring pipeline stack before retry attempts.
+- [#1106](https://github.com/hyperf/hyperf/pull/1106) Fixed bug that sticky mode will affect the next request.
+- [#1119](https://github.com/hyperf/hyperf/pull/1119) Fixed JSONRPC on TCP Server cannot response the expected error response when cannot unpack the data.
+- [#1124](https://github.com/hyperf/hyperf/pull/1124) Fixed Session middleware does not store the current url correctly when the path of url end with a slash.
+
+## Changed
+
+- [#1108](https://github.com/hyperf/hyperf/pull/1108) Renamed `Hyperf\Tracer\Middleware\TraceMiddeware` to `Hyperf\Tracer\Middleware\TraceMiddleware`.
+- [#1108](https://github.com/hyperf/hyperf/pull/1111) Upgrade the access level of methods and properties of `Hyperf\ServiceGovernance\Listener\ServiceRegisterListener` , for better override it.
+
+# v1.1.9 - 2019-12-05
+
+## Added
+
+- [#948](https://github.com/hyperf/hyperf/pull/948) Added Lazy loader to DI.
+- [#1044](https://github.com/hyperf/hyperf/pull/1044) Added `basic_qos` for amqp consumer.
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) Added `define()` and `set()` to Container. Added `Hyperf\Contract\ContainerInterface`.
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) Added constructor for `job.stub`.
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) Added php 7.4 support.
+
+## Fixed
+
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) Fixed `Hyperf\Cache\Driver\RedisDriver::clear` sometimes fails to delete all caches.
+- [#1055](https://github.com/hyperf/hyperf/pull/1055) Fixed image extension validation failed.
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091) Fixed broken retry annotation.
+
+## Optimized
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007)  Optimized `vendor:: publish` return value does not support null.
+
+# v1.1.8 - 2019-11-28
+
+## Added
+
+- [#965](https://github.com/hyperf/hyperf/pull/965) Added Redis Lua Module.
+- [#1023](https://github.com/hyperf/hyperf/pull/1023) Added CUSTOM_MODE to hyperf/metric prometheus driver.
+
+## Fixed
+
+- [#1013](https://github.com/hyperf/hyperf/pull/1013) Fixed config of JsonRpcPoolTransporter merge failed.
+- [#1006](https://github.com/hyperf/hyperf/pull/1006) Fixed the order of properties of Model.
+
+## Changed
+
+- [#1021](https://github.com/hyperf/hyperf/pull/1021) Added default port to WebSocket client.
+
+## Optimized
+
+- [#1014](https://github.com/hyperf/hyperf/pull/1014) Optimized `Command:: execute` return value does not support null.
+- [#1022](https://github.com/hyperf/hyperf/pull/1022) Provided cleaner connection pool error message without implementation details.
+- [#1039](https://github.com/hyperf/hyperf/pull/1039) Updated the ServerRequest object to context in CoreMiddleware automatically.
+- [#1034](https://github.com/hyperf/hyperf/pull/1034) The property `arguments` of `Hyperf\Amqp\Builder\Builder` not only support array.
+
+# v1.1.7 - 2019-11-21
+
+## Added
+
+- [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
+- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+- [#973](https://github.com/hyperf/hyperf/pull/973) Added `Hyperf\JsonRpc\JsonRpcPoolTransporter`.
+- [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
+
+## Fixed
+
+- [#955](https://github.com/hyperf/hyperf/pull/955) Fixed bug that port and charset do not work for `hyperf/db`.
+- [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
+- [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
+- [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
+- [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
+- [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `Hyperf\GrpcClient\GrpcClient::yield` does not get the correct channel pool.
+- [#987](https://github.com/hyperf/hyperf/pull/987) Fixed missing method call `parent::configure()` of `command.stub`.
+
+## Optimized
+
+- [#991](https://github.com/hyperf/hyperf/pull/991) Optimized `Hyperf\DbConnection\ConnectionResolver::connection`. 
+
+## Changed
+
+- [#944](https://github.com/hyperf/hyperf/pull/944) Replaced annotation `@Listener` and `@Process` into config which `listeners` and `processes` in `ConfigProvider`.
+- [#977](https://github.com/hyperf/hyperf/pull/977) Changed `init-proxy.sh` command to only delete the `runtime/container` directory.
+
+# v1.1.6 - 2019-11-14
+
+## Added
+
+- [#827](https://github.com/hyperf/hyperf/pull/827) Added a simple db component.
+- [#905](https://github.com/hyperf/hyperf/pull/905) Added twig template engine for view.
+- [#911](https://github.com/hyperf/hyperf/pull/911) Added support for crontab task run on one server.
+- [#913](https://github.com/hyperf/hyperf/pull/913) Added `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
+- [#931](https://github.com/hyperf/hyperf/pull/931) Added `strict_mode` for config-apollo.
+- [#933](https://github.com/hyperf/hyperf/pull/933) Added plates template engine for view.
+- [#937](https://github.com/hyperf/hyperf/pull/937) Added consume events for nats.
+- [#941](https://github.com/hyperf/hyperf/pull/941) Added an zookeeper adapter for Hyperf config component.
+
+## Fixed
+
+- [#897](https://github.com/hyperf/hyperf/pull/897) Fixed connection pool of `Hyperf\Nats\Annotation\Consumer` does not works as expected.
+- [#901](https://github.com/hyperf/hyperf/pull/901) Fixed Annotation `Factory` does not works for GraphQL.
+- [#903](https://github.com/hyperf/hyperf/pull/903) Fixed execute `init-proxy` command can not stop when `hyperf/rpc-client` component exists.
+- [#904](https://github.com/hyperf/hyperf/pull/904) Fixed the hooked I/O request does not works in the listener that listening `Hyperf\Framework\Event\BeforeMainServerStart` event.
+- [#906](https://github.com/hyperf/hyperf/pull/906) Fixed `port` property of URI of `Hyperf\HttpMessage\Server\Request`.
+- [#907](https://github.com/hyperf/hyperf/pull/907) Fixed the expire time is double of the config for `requestSync` in nats.
+- [#909](https://github.com/hyperf/hyperf/pull/909) Fixed a issue that causes staled parallel execution.
+- [#925](https://github.com/hyperf/hyperf/pull/925) Fixed the dead cycle caused by socket closed.
+- [#932](https://github.com/hyperf/hyperf/pull/932) Fixed `Translator::setLocale` does not works in coroutine evnironment.
+- [#940](https://github.com/hyperf/hyperf/pull/940) Fixed WebSocketClient::push TypeError, expects integer, but boolean given.
+
+## Optimized
+
+- [#907](https://github.com/hyperf/hyperf/pull/907) Optimized nats consumer process restart frequently.
+- [#928](https://github.com/hyperf/hyperf/pull/928) Optimized `Hyperf\ModelCache\Cacheable::query` to delete the model cache when batch update
+- [#936](https://github.com/hyperf/hyperf/pull/936) Optimized `increment` to atomic operation for model-cache.
+
+## Changed
+
+- [#934](https://github.com/hyperf/hyperf/pull/934) WaitGroup inherit \Swoole\Coroutine\WaitGroup.
+
+# v1.1.5 - 2019-11-07
 
 ## Added
 
@@ -17,13 +145,13 @@
 - [#835](https://github.com/hyperf/hyperf/pull/835) Fixed `Request::inputs` default value does not works.
 - [#841](https://github.com/hyperf/hyperf/pull/841) Fixed migration does not take effect under multiple data sources.
 - [#844](https://github.com/hyperf/hyperf/pull/844) Fixed the reader of `composer.json` does not support the root namespace.
+- [#846](https://github.com/hyperf/hyperf/pull/846) Fixed `scan` `hScan` `zScan` and `sScan` don't works for Redis.
 - [#850](https://github.com/hyperf/hyperf/pull/850) Fixed logger group does not works when the name is same.
 
 ## Optimized
 
 - [#832](https://github.com/hyperf/hyperf/pull/832) Optimized that response will throw a exception when json format failed.
 - [#840](https://github.com/hyperf/hyperf/pull/840) Use `\Swoole\Timer::*` to instead of `swoole_timer_*` functions.
-- [#851](https://github.com/hyperf/hyperf/pull/851) Cache buckets as local variables to avoid extra hop to redis.
 - [#859](https://github.com/hyperf/hyperf/pull/859) Optimized the logical of fetch health nodes infomation from consul.
 
 # v1.1.4 - 2019-10-31
