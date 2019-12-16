@@ -14,6 +14,7 @@ namespace Hyperf\DbConnection;
 
 use Generator;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Utils\ApplicationContext;
@@ -72,7 +73,7 @@ class Db
 
     private function __connection($pool = 'default'): ConnectionInterface
     {
-        $resolver = $this->container->get(ConnectionResolver::class);
+        $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($pool);
     }
 }
