@@ -120,5 +120,5 @@
 
 ## 权限认证
 
-- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) spatie/laravel-permission 的Hyperf版
+- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基于 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 开发的适配 Hyperf 的权限组件
 
