@@ -138,7 +138,14 @@ class SwooleIO extends AbstractIO
                 $sock->errCode
             );
         }
-        $this->sock = $sock;
+
+        if ($this->keepalive) {
+            $this->sock = new Socket($sock, function () {
+                $this->write_heartbeat();
+            });
+        } else {
+            $this->sock = $sock;
+        }
     }
 
     /**
@@ -228,7 +235,7 @@ class SwooleIO extends AbstractIO
 
     public function close()
     {
-        if (isset($this->sock) && $this->sock instanceof Client) {
+        if (isset($this->sock) && ($this->sock instanceof Client || $this->sock instanceof Socket)) {
             $this->sock->close();
         }
         $this->sock = null;
