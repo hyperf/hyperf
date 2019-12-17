@@ -29,7 +29,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 # 生产可用
 
-我们为组件进行了大量的单元测试以保证逻辑的正确，目前存在 `1120` 个单测共 `3369` 个断言条件，同时维护了高质量的文档，在 Hyperf 正式对外开放(2019年6月20日)之前，便已经过了严酷的生产环境的考验，我们才正式的对外开放该项目，现在已有很多的大型互联网企业都已将 Hyperf 部署到了自己的生产环境上并稳定运行。   
+我们为组件进行了大量的单元测试以保证逻辑的正确，目前存在 `1120` 个单测共 `3369` 个断言条件，同时维护了高质量的文档，在 Hyperf 正式对外开放(2019年6月20日)之前，便已经过了严酷的生产环境的考验，我们才正式的对外开放该项目，现在已有很多的大型互联网企业将 Hyperf 部署到了自己的生产环境上并稳定运行。   
 
 # 运行环境
 
@@ -65,7 +65,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
     <tr>
       <td align="left" valign="middle">
         <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
+          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh-cn/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>
