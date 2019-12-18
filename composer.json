@@ -226,6 +226,7 @@
             "HyperfTest\\Pool\\": "src/pool/tests/",
             "HyperfTest\\Process\\": "src/process/tests/",
             "HyperfTest\\Protocol\\": "src/protocol/tests/",
+            "HyperfTest\\RateLimit\\": "src/rate-limit/tests/",
             "HyperfTest\\Redis\\": "src/redis/tests/",
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",
