@@ -4,6 +4,7 @@
 
 - [#1142](https://github.com/hyperf/hyperf/pull/1142) Fixed bug that Register::resolveConnection will return null.
 - [#1145](https://github.com/hyperf/hyperf/pull/1145) Fixed error return value for method `CoroutineMemoryDriver::delKey`.
+- [#1153](https://github.com/hyperf/hyperf/pull/1153) Fixed validation rule `alpha_num` not works.
 
 # v1.1.10 - 2019-12-12
 
