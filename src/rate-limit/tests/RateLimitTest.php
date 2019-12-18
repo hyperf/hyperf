@@ -87,18 +87,6 @@ class RateLimitTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
-        // $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
-        //     'rate_limit' => [
-        //         'create' => 1,
-        //         'consume' => 1,
-        //         'capacity' => 2,
-        //         'limitCallback' => [],
-        //         'waitTimeout' => 1,
-        //     ],
-        // ]));
-
-        // $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
-
         return $container;
     }
 }

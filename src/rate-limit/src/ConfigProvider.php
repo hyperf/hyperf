@@ -24,6 +24,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for rate-limit.',
+                    'source' => __DIR__ . '/../publish/rate_limit.php',
+                    'destination' => BASE_PATH . '/config/autoload/rate_limit.php',
+                ],
+            ],
         ];
     }
 }
