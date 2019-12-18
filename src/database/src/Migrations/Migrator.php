@@ -471,7 +471,12 @@ class Migrator
 
         $callback = function () use ($migration, $method) {
             if (method_exists($migration, $method)) {
+                $defaultConnection = $this->resolver->getDefaultConnection();
+                $this->resolver->setDefaultConnection($migration->getConnection() ?: $this->connection);
+
                 $migration->{$method}();
+
+                $this->resolver->setDefaultConnection($defaultConnection);
             }
         };
 

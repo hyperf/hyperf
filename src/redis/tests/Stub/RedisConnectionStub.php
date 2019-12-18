@@ -39,6 +39,8 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $this->config['db'];
         $this->timeout = $this->config['timeout'];
 
+        $this->lastUseTime = microtime(true);
+
         return true;
     }
 
@@ -47,17 +49,11 @@ class RedisConnectionStub extends RedisConnection
         $this->db = $db;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return null|int
-     */
     public function getDatabase(): ?int
     {
         return $this->database;

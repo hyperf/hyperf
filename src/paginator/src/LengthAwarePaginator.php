@@ -155,7 +155,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     /**
      * Get the current page for the request.
      */
-    protected function setCurrentPage(int $currentPage, string $pageName): int
+    protected function setCurrentPage(?int $currentPage, string $pageName): int
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage($pageName);
 

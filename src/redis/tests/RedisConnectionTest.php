@@ -47,6 +47,11 @@ class RedisConnectionTest extends TestCase
             'auth' => 'redis',
             'db' => 0,
             'timeout' => 0.0,
+            'cluster' => [
+                'enable' => false,
+                'name' => null,
+                'seeds' => [],
+            ],
             'options' => [],
             'pool' => [
                 'min_connections' => 1,

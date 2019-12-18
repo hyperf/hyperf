@@ -79,6 +79,30 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(TestHandler::class, $handlers[1]);
     }
 
+    public function testHandlerGroupNotWorks()
+    {
+        $container = $this->mockContainer();
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get('hyperf');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $reflectionClass = new ReflectionClass($logger);
+        $handlersProperty = $reflectionClass->getProperty('handlers');
+        $handlersProperty->setAccessible(true);
+        $handlers = $handlersProperty->getValue($logger);
+        $this->assertCount(1, $handlers);
+        $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
+
+        $logger = $factory->get('hyperf', 'default-handlers');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $reflectionClass = new ReflectionClass($logger);
+        $handlersProperty = $reflectionClass->getProperty('handlers');
+        $handlersProperty->setAccessible(true);
+        $handlers = $handlersProperty->getValue($logger);
+        $this->assertCount(2, $handlers);
+        $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
+        $this->assertInstanceOf(TestHandler::class, $handlers[1]);
+    }
+
     private function mockContainer(): ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);

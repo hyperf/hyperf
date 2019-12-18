@@ -106,6 +106,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
             }
         }
         $instance->put($collector, $result);
+        return true;
     }
 
     protected function getCollection()
