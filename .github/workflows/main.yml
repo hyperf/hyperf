@@ -7,3 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: wip/action@master
+  issue-reference:
+    name: "Add an issue reference"
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: kentaro-m/add-an-issue-reference-action@v1.0.0
