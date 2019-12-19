@@ -67,7 +67,6 @@ return [
             'arguments' => 'arguments',
             'result' => 'result',
         ],
-
         'db' => [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
