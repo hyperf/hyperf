@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#849](https://github.com/hyperf/hyperf/pull/849) Added `tracer` add span tag config
+- [#849](https://github.com/hyperf/hyperf/pull/849) Added configuration of span tag for `tracer` component.
 
 ## Fixed
 
