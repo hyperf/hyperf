@@ -25,4 +25,9 @@ class Trace extends AbstractAnnotation
      * @var string
      */
     public $name = '';
+
+    /**
+     * @var array|string
+     */
+    public $tag = 'source';
 }

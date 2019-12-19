@@ -1,5 +1,9 @@
 # v1.1.11 - TBD
 
+## Added
+
+- [#849](https://github.com/hyperf/hyperf/pull/849) Added configuration of span tag for `tracer` component.
+
 ## Fixed
 
 - [#1142](https://github.com/hyperf/hyperf/pull/1142) Fixed bug that Register::resolveConnection will return null.

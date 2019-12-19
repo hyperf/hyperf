@@ -180,6 +180,32 @@ return [
     ],
 ];
 ```
+### 配置 span tag
+
+只需对配置项 `opentracing.tags` 进行修改即可.
+```php
+return [
+    'tags' => [
+        'http_client' => [
+            'http.url' => 'http.url',
+            'http.method' => 'http.method',
+            'http.status_code' => 'http.status_code',
+        ],
+        'redis' => [
+            'arguments' => 'arguments',
+            'result' => 'result',
+        ],
+
+        'db' => [
+            'db.query' => 'db.query',
+            'db.statement' => 'db.statement',
+            'db.query_time' => 'db.query_time',
+        ],
+    ]
+];
+```
+
+
 
 ### 更换采样器
 
