@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
@@ -155,7 +156,19 @@ class Request implements RequestInterface
         }
         return $this->getHeaderLine($key);
     }
-
+    /**
+     * Retrieve the data from route parameters
+     *
+     * @param  string  $key
+     * @param  mixed   $default
+     */
+    public function route(string $key, $default = null){
+        $route = $this->getAttribute(Dispatched::class);
+        if(null === $route){
+            return $default;
+        }
+        return array_key_exists($key, $route->params)?$route->params[$key]:$default;
+    }
     /**
      * Get the current path info for the request.
      *
