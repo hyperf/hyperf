@@ -117,6 +117,10 @@
 
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
 
+## 許可權認證
+
+- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的許可權元件
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支援 Swoole 協程的支付寶/微信支付 SDK
