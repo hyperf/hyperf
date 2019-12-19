@@ -12,3 +12,5 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - uses: kentaro-m/add-an-issue-reference-action@v1.0.0
+        secrets:
+          - "GITHUB_TOKEN"
