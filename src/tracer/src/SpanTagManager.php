@@ -14,7 +14,7 @@ namespace Hyperf\Tracer;
 
 class SpanTagManager
 {
-    // TODO v1.2 will remove it.
+    // TODO: The properties will be changed to standard version in v1.2.
     private $tags = [
         'http_client' => [
             'http.status_code' => 'status',
