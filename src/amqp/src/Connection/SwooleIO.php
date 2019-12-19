@@ -16,7 +16,6 @@ use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
-use Swoole;
 use Swoole\Coroutine\Client;
 
 class SwooleIO extends AbstractIO
@@ -86,7 +85,9 @@ class SwooleIO extends AbstractIO
     /** @var int */
     private $initialHeartbeat;
 
-    /** @var Swoole\Coroutine\Client */
+    /**
+     * @var Socket
+     */
     private $sock;
 
     private $buffer = '';
@@ -139,13 +140,16 @@ class SwooleIO extends AbstractIO
             );
         }
 
-        if ($this->keepalive) {
-            $this->sock = new Socket($sock, function () {
-                $this->write_heartbeat();
-            });
-        } else {
-            $this->sock = $sock;
-        }
+        $this->sock = new Socket($sock, value(function () {
+            $heartbeat = null;
+            if ($this->keepalive) {
+                $heartbeat = function () {
+                    $this->check_heartbeat();
+                };
+            }
+
+            return $heartbeat;
+        }));
     }
 
     /**
@@ -165,49 +169,51 @@ class SwooleIO extends AbstractIO
     public function read($len)
     {
         $this->check_heartbeat();
-        do {
-            if ($len <= strlen($this->buffer)) {
-                $data = substr($this->buffer, 0, $len);
-                $this->buffer = substr($this->buffer, $len);
-                $this->lastRead = microtime(true);
+        return $this->sock->call(function (Client $socket) use ($len) {
+            do {
+                if ($len <= strlen($this->buffer)) {
+                    $data = substr($this->buffer, 0, $len);
+                    $this->buffer = substr($this->buffer, $len);
+                    $this->lastRead = microtime(true);
 
-                return $data;
-            }
+                    return $data;
+                }
 
-            if (! $this->sock->connected) {
-                throw new AMQPRuntimeException('Broken pipe or closed connection');
-            }
+                if (! $socket->connected) {
+                    throw new AMQPRuntimeException('Broken pipe or closed connection');
+                }
 
-            $read_buffer = $this->sock->recv($this->readWriteTimeout ? $this->readWriteTimeout : -1);
-            if ($read_buffer === false) {
-                throw new AMQPRuntimeException('Error receiving data, errno=' . $this->sock->errCode);
-            }
+                $read_buffer = $socket->recv($this->readWriteTimeout ? $this->readWriteTimeout : -1);
+                if ($read_buffer === false) {
+                    throw new AMQPRuntimeException('Error receiving data, errno=' . $socket->errCode);
+                }
 
-            if ($read_buffer === '') {
-                throw new AMQPRuntimeException('Connection is closed.');
-            }
+                if ($read_buffer === '') {
+                    throw new AMQPRuntimeException('Connection is closed.');
+                }
 
-            $this->buffer .= $read_buffer;
-        } while (true);
-
-        return false;
+                $this->buffer .= $read_buffer;
+            } while (true);
+        });
     }
 
     /**
      * @param string $data
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @throws AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @return mixed|void
      */
     public function write($data)
     {
-        $buffer = $this->sock->send($data);
+        $this->sock->call(function ($socket) use ($data) {
+            $buffer = $socket->send($data);
 
-        if ($buffer === false) {
-            throw new AMQPRuntimeException('Error sending data');
-        }
+            if ($buffer === false) {
+                throw new AMQPRuntimeException('Error sending data');
+            }
 
-        $this->lastWrite = microtime(true);
+            $this->lastWrite = microtime(true);
+        });
     }
 
     /**
@@ -223,7 +229,7 @@ class SwooleIO extends AbstractIO
 
             // server has gone away
             if (($this->heartbeat * 2) < $t_read) {
-                $this->reconnect();
+                // $this->reconnect();
             }
 
             // time for client to send a heartbeat
@@ -235,7 +241,7 @@ class SwooleIO extends AbstractIO
 
     public function close()
     {
-        if (isset($this->sock) && ($this->sock instanceof Client || $this->sock instanceof Socket)) {
+        if (isset($this->sock) && $this->sock instanceof Socket) {
             $this->sock->close();
         }
         $this->sock = null;

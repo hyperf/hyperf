@@ -23,23 +23,30 @@ class Socket
 
     protected $timerId;
 
-    public function __construct(Client $client, Closure $heatbeat)
+    protected $closed;
+
+    public function __construct(Client $client, ?Closure $heatbeat)
     {
         $this->channel = new Channel(1);
         $this->channel->push($client);
+        $this->closed = false;
 
-        $this->timerId = Timer::tick(2000, function () use ($heatbeat) {
-            try {
-                $heatbeat();
-            } catch (\Throwable $exception) {
-                var_dump($exception->getMessage());
-            }
-        });
+        if ($heatbeat) {
+            $this->timerId = Timer::tick(2000, function () use ($heatbeat) {
+                try {
+                    $heatbeat();
+                } catch (\Throwable $exception) {
+                    var_dump($exception->getMessage());
+                }
+            });
+        }
     }
 
     public function __destruct()
     {
-        Timer::clear($this->timerId);
+        if ($this->timerId) {
+            Timer::clear($this->timerId);
+        }
     }
 
     public function __call($name, $arguments)
@@ -62,5 +69,23 @@ class Socket
         $this->channel->push($socket);
 
         return $result;
+    }
+
+    public function call(Closure $closure)
+    {
+        $socket = $this->channel->pop();
+
+        try {
+            $result = $closure($socket);
+        } finally {
+            $this->channel->push($socket);
+        }
+
+        return $result;
+    }
+
+    public function close()
+    {
+        $this->closed = true;
     }
 }
