@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Context;
 use OpenTracing\Tracer;
@@ -46,10 +47,16 @@ class HttpClientAspect implements AroundInterface
      */
     private $switchManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    /**
+     * @var SpanTagManager
+     */
+    private $spanTagManager;
+
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
         $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -70,6 +77,12 @@ class HttpClientAspect implements AroundInterface
         $key = "HTTP Request [{$method}] {$uri}";
         $span = $this->startSpan($key);
         $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
+        if ($this->spanTagManager->has('http_client', 'http.url')) {
+            $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $uri);
+        }
+        if ($this->spanTagManager->has('http_client', 'http.method')) {
+            $span->setTag($this->spanTagManager->get('http_client', 'http.method'), $method);
+        }
         $appendHeaders = [];
         // Injects the context into the wire
         $this->tracer->inject(
@@ -81,7 +94,7 @@ class HttpClientAspect implements AroundInterface
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
         $result = $proceedingJoinPoint->process();
         if ($result instanceof ResponseInterface) {
-            $span->setTag('status', $result->getStatusCode());
+            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
         }
         $span->finish();
         return $result;
