@@ -32,7 +32,11 @@ class AMQPSwooleConnection extends AbstractConnection
         bool $keepalive = false,
         int $heartbeat = 0
     ) {
-        $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        if ($keepalive) {
+            $io = new KeepaliveIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        } else {
+            $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        }
 
         parent::__construct(
             $user,
@@ -46,5 +50,10 @@ class AMQPSwooleConnection extends AbstractConnection
             $heartbeat,
             $connectionTimeout
         );
+    }
+
+    public function getIO()
+    {
+        return $this->io;
     }
 }

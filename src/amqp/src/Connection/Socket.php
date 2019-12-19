@@ -145,7 +145,7 @@ class Socket
     protected function addHeartbeat()
     {
         $this->clear();
-        $this->timerId = Timer::tick($this->heartbeat, function () {
+        $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
             $this->heartbeat();
         });
     }

@@ -129,17 +129,11 @@ class PoolOption implements PoolOptionInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getMaxIdleTime(): float
     {
         return $this->maxIdleTime;
     }
 
-    /**
-     * @param float $maxIdleTime
-     */
     public function setMaxIdleTime(float $maxIdleTime): self
     {
         $this->maxIdleTime = $maxIdleTime;

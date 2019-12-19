@@ -19,8 +19,6 @@ use Swoole\Coroutine\Client;
 
 class KeepaliveIO extends AbstractIO
 {
-    const READ_BUFFER_WAIT_INTERVAL = 100000;
-
     /**
      * @var string
      */
