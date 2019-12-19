@@ -81,7 +81,7 @@ class HttpClientAspect implements AroundInterface
             $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $uri);
         }
         if ($this->spanTagManager->has('http_client', 'http.method')) {
-            $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $method);
+            $span->setTag($this->spanTagManager->get('http_client', 'http.method'), $method);
         }
         $appendHeaders = [];
         // Injects the context into the wire
@@ -94,7 +94,7 @@ class HttpClientAspect implements AroundInterface
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
         $result = $proceedingJoinPoint->process();
         if ($result instanceof ResponseInterface) {
-            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $uri);
+            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
         }
         $span->finish();
         return $result;
