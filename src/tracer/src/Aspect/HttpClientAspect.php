@@ -94,7 +94,7 @@ class HttpClientAspect implements AroundInterface
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
         $result = $proceedingJoinPoint->process();
         if ($result instanceof ResponseInterface) {
-            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $uri);
+            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
         }
         $span->finish();
         return $result;
