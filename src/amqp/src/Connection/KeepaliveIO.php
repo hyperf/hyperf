@@ -55,16 +55,18 @@ class KeepaliveIO extends AbstractIO
     protected $heartbeat;
 
     /**
-     * @var bool
+     * @var int
      */
-    protected $ssl = false;
-
-    /** @var int */
     private $initialHeartbeat;
 
-    /** @var Socket */
+    /**
+     * @var Socket
+     */
     private $sock;
 
+    /**
+     * @var string
+     */
     private $buffer = '';
 
     /**
@@ -97,9 +99,6 @@ class KeepaliveIO extends AbstractIO
 
     /**
      * Sets up the stream connection.
-     *
-     * @throws AMQPRuntimeException
-     * @throws \Exception
      */
     public function connect()
     {
@@ -118,7 +117,7 @@ class KeepaliveIO extends AbstractIO
     /**
      * @param int $len
      * @throws AMQPRuntimeException
-     * @return mixed|string
+     * @return string
      */
     public function read($len)
     {
@@ -147,15 +146,11 @@ class KeepaliveIO extends AbstractIO
                 $this->buffer .= $read_buffer;
             } while (true);
         });
-
-        return false;
     }
 
     /**
      * @param string $data
      * @throws AMQPRuntimeException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
-     * @return mixed|void
      */
     public function write($data)
     {
@@ -169,7 +164,7 @@ class KeepaliveIO extends AbstractIO
     }
 
     /**
-     * Heartbeat logic: check connection health here.
+     * No effect in KeeyaliveIO.
      */
     public function check_heartbeat()
     {
@@ -183,9 +178,6 @@ class KeepaliveIO extends AbstractIO
         }
     }
 
-    /**
-     * @return resource
-     */
     public function getSocket()
     {
         throw new AMQPRuntimeException('Socket of KeepaliveIO is forbidden to be used by others.');
@@ -194,7 +186,7 @@ class KeepaliveIO extends AbstractIO
     /**
      * @param int $sec
      * @param int $usec
-     * @return int|mixed
+     * @return int
      */
     public function select($sec, $usec)
     {
