@@ -89,6 +89,7 @@ abstract class Pool implements PoolInterface
                 --$num;
 
                 if ($num <= 0) {
+                    // Ignore connections queued during flushing.
                     break;
                 }
             }
