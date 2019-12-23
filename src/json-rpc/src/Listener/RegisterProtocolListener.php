@@ -21,7 +21,6 @@ use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\JsonRpc\Packer\JsonPacker as RPCJsonPacker;
 
 class RegisterProtocolListener implements ListenerInterface
 {
@@ -51,7 +50,7 @@ class RegisterProtocolListener implements ListenerInterface
     public function process(object $event)
     {
         $this->protocolManager->register('jsonrpc', [
-            'packer' => RPCJsonPacker::class,
+            'packer' => JsonPacker::class,
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,

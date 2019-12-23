@@ -53,7 +53,7 @@ class JsonRpcTransporter implements TransporterInterface
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data) === false) {
+            if ($client->send($data . $this->getEof()) === false) {
                 if ($client->errCode == 104) {
                     throw new RuntimeException('Connect to server failed.');
                 }
@@ -103,6 +103,20 @@ class JsonRpcTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    private function getEof(): string
+    {
+        if (($this->getConfig()['options']['open_length_check'] ?? false) === true) {
+            return '';
+        }
+
+        return $this->getConfig()['eof'] ?? "\r\n";
     }
 
     /**
