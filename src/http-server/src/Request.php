@@ -156,8 +156,9 @@ class Request implements RequestInterface
         }
         return $this->getHeaderLine($key);
     }
+
     /**
-     * Retrieve the data from route parameters
+     * Retrieve the data from route parameters.
      *
      * @param mixed $default
      */
@@ -167,8 +168,9 @@ class Request implements RequestInterface
         if (is_null($route)) {
             return $default;
         }
-        return array_key_exists($key, $route->params)?$route->params[$key]:$default;
+        return array_key_exists($key, $route->params) ? $route->params[$key] : $default;
     }
+
     /**
      * Get the current path info for the request.
      *
@@ -539,6 +541,7 @@ class Request implements RequestInterface
      *
      * Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
      */
+
     protected function prepareRequestUri()
     {
         $requestUri = '';
