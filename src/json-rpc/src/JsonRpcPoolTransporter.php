@@ -135,7 +135,7 @@ class JsonRpcPoolTransporter extends AbstractJsonRpcTransporter implements Trans
         return $this->config;
     }
 
-    protected function getDefaultConfig()
+    protected function getDefaultConfig(): array
     {
         return [
             'connect_timeout' => 5.0,
