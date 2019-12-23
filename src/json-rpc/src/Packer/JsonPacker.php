@@ -20,9 +20,7 @@ class JsonPacker implements PackerInterface
 
     public function pack($data): string
     {
-        if (!is_string($data)) {
-            $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-        }
+        $data = json_encode($data, JSON_UNESCAPED_UNICODE);
         return pack('N', strlen($data)) . $data;
     }
 
