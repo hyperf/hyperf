@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
@@ -20,7 +21,7 @@ use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
 
-class JsonRpcPoolTransporter implements TransporterInterface
+class JsonRpcPoolTransporter extends AbstractJsonRpcTransporter implements TransporterInterface
 {
     /**
      * @var PoolFactory
@@ -50,34 +51,12 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
-    /**
-     * TODO: Set config.
-     * @var array
-     */
-    private $config = [
-        'connect_timeout' => 5.0,
-        'eof' => "\r\n",
-        'options' => [
-            // 'open_length_check' => true,
-            // 'package_length_type' => 'N',
-            // 'package_length_offset' => 0,
-            // 'package_body_offset' => 4,
-        ],
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 32,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
-        'recv_timeout' => 5.0,
-    ];
-
-    public function __construct(PoolFactory $factory, array $config = [])
+    public function __construct(PoolFactory $factory, ConfigInterface $conf, array $config = [])
     {
+        parent::__construct($conf);
+
         $this->factory = $factory;
-        $this->config = array_replace_recursive($this->config, $config);
+        $this->config = array_replace_recursive($this->config, $this->getDefaultConfig(), $config);
     }
 
     public function send(string $data)
@@ -88,7 +67,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             try {
                 /** @var RpcConnection $client */
                 $client = $connection->getConnection();
-                if ($client->send($data . $this->getEof()) === false) {
+                if ($client->send($data) === false) {
                     if ($client->errCode == 104) {
                         throw new RuntimeException('Connect to server failed.');
                     }
@@ -156,13 +135,22 @@ class JsonRpcPoolTransporter implements TransporterInterface
         return $this->config;
     }
 
-    private function getEof(): string
+    protected function getDefaultConfig()
     {
-        if (($this->getConfig()['options']['open_length_check'] ?? false) === true) {
-            return '';
-        }
-
-        return $this->getConfig()['eof'] ?? "\r\n";
+        return [
+            'connect_timeout' => 5.0,
+            'eof' => "\r\n",
+            'options' => [],
+            'pool' => [
+                'min_connections' => 1,
+                'max_connections' => 32,
+                'connect_timeout' => 10.0,
+                'wait_timeout' => 3.0,
+                'heartbeat' => -1,
+                'max_idle_time' => 60.0,
+            ],
+            'recv_timeout' => 5.0,
+        ];
     }
 
     /**

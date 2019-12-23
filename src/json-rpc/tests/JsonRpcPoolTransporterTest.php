@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\JsonRpc\JsonRpcPoolTransporter;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Mockery;
@@ -31,7 +32,9 @@ class JsonRpcPoolTransporterTest extends TestCase
     public function testJsonRpcPoolTransporterConfig()
     {
         $factory = Mockery::mock(PoolFactory::class);
-        $transporter = new JsonRpcPoolTransporter($factory, ['pool' => ['min_connections' => 10]]);
+        $config = Mockery::mock(ConfigInterface::class);
+        $config->shouldReceive('get')->with('json_rpc.transporter.tcp', Mockery::any())->andReturn([]);
+        $transporter = new JsonRpcPoolTransporter($factory, $config, ['pool' => ['min_connections' => 10]]);
 
         $this->assertSame(10, $transporter->getConfig()['pool']['min_connections']);
         $this->assertSame(32, $transporter->getConfig()['pool']['max_connections']);

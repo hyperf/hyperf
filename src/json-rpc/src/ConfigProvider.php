@@ -40,6 +40,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for json-rpc.',
+                    'source' => __DIR__ . '/../publish/json_rpc.php',
+                    'destination' => BASE_PATH . '/config/autoload/json_rpc.php',
+                ],
+            ],
         ];
     }
 }

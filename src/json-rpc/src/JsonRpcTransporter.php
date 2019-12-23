@@ -18,7 +18,7 @@ use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
-class JsonRpcTransporter implements TransporterInterface
+class JsonRpcTransporter extends AbstractJsonRpcTransporter implements TransporterInterface
 {
     /**
      * @var null|LoadBalancerInterface
@@ -43,17 +43,11 @@ class JsonRpcTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
-    /**
-     * TODO: Set config.
-     * @var array
-     */
-    private $config;
-
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data . $this->getEof()) === false) {
+            if ($client->send($data) === false) {
                 if ($client->errCode == 104) {
                     throw new RuntimeException('Connect to server failed.');
                 }
@@ -66,7 +60,7 @@ class JsonRpcTransporter implements TransporterInterface
     public function getClient(): SwooleClient
     {
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
+        $client->set($this->getConfig()['options'] ?? []);
 
         return retry(2, function () use ($client) {
             $node = $this->getNode();
@@ -108,15 +102,6 @@ class JsonRpcTransporter implements TransporterInterface
     public function getConfig(): array
     {
         return $this->config;
-    }
-
-    private function getEof(): string
-    {
-        if (($this->getConfig()['options']['open_length_check'] ?? false) === true) {
-            return '';
-        }
-
-        return $this->getConfig()['eof'] ?? "\r\n";
     }
 
     /**
