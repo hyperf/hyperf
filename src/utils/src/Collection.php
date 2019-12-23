@@ -1021,7 +1021,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function random(int $number = null): self
     {
         if (is_null($number)) {
-            return Arr::random($this->items);
+            return new static(Arr::random($this->items));
         }
         return new static(Arr::random($this->items, $number));
     }
