@@ -26,6 +26,54 @@ composer require hyperf/rpc-client
 
 服务有两种角色，一种是 `服务提供者(ServiceProvider)`，即为其它服务提供服务的服务，另一种是 `服务消费者(ServiceConsumer)`，即依赖其它服务的服务，一个服务既可能是 `服务提供者(ServiceProvider)`，同时又是 `服务消费者(ServiceConsumer)`。而两者直接可以通过 `服务契约` 来定义和约束接口的调用，在 Hyperf 里，可直接理解为就是一个 `接口类(Interface)`，通常来说这个接口类会同时出现在提供者和消费者下。
 
+### 创建配置
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/json-rpc
+```
+
+配置默认使用 `Hyperf\JsonRpc\JsonRpcTransporter`，您可以修改 `transporter.tcp.class` 来替换 `JsonRpcTransporter`。
+配置默认使用 `open_eof_check`，有需要的用户可以修改为 `open_length_check`。
+
+>> 对应的 `server.servers.*.settings` 配置也需要修改成对应的协议。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\JsonRpc\JsonRpcTransporter;
+
+return [
+    'transporter' => [
+        'tcp' => [
+            'class' => JsonRpcTransporter::class,
+            'connect_timeout' => 5.0,
+            'options' => [
+                'open_eof_check' => true,
+                'package_eof' => "\r\n",
+
+                // 'open_length_check' => true,
+                // 'package_length_type' => 'N',
+                // 'package_length_offset' => 0,
+                // 'package_body_offset' => 4,
+
+                'package_max_length' => 1024 * 1024 * 2,
+            ],
+            'pool' => [
+                'min_connections' => 1,
+                'max_connections' => 32,
+                'connect_timeout' => 10.0,
+                'wait_timeout' => 3.0,
+                'heartbeat' => -1,
+                'max_idle_time' => 60.0,
+            ],
+            'recv_timeout' => 5.0,
+        ],
+    ],
+];
+```
+
 ### 定义服务提供者
 
 目前仅支持通过注解的形式来定义 `服务提供者(ServiceProvider)`，后续迭代会增加配置的形式。   
@@ -359,7 +407,9 @@ var_dump($result->value);
 
 框架提供了基于连接池的 `Transporter`，可以有效避免高并发时，建立过多连接的问题。这里可以通过替换 `JsonRpcTransporter` 的方式，使用 `JsonRpcPoolTransporter`。
 
-修改 `dependencies.php` 文件
+除了修改 `json_rpc.php` 文件外，还可以修改 `dependencies.php` 文件
+
+> 以下方式在 v1.1.12 以后不再推荐使用
 
 ```php
 <?php
