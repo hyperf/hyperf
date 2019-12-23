@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Scout\Cases;
 
@@ -11,6 +20,10 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class BuilderTest extends TestCase
 {
     protected function tearDown(): void
@@ -18,7 +31,8 @@ class BuilderTest extends TestCase
         m::close();
         $this->assertTrue(true);
     }
-    public function test_pagination_correctly_handles_paginated_results()
+
+    public function testPaginationCorrectlyHandlesPaginatedResults()
     {
         Paginator::currentPageResolver(function () {
             return 1;
@@ -30,27 +44,31 @@ class BuilderTest extends TestCase
         $model->shouldReceive('getPerPage')->andReturn(15);
         $model->shouldReceive('searchableUsing')->andReturn($engine = m::mock());
         $engine->shouldReceive('paginate');
-        $engine->shouldReceive('map')->andReturn($results = Collection::make([new stdClass]));
+        $engine->shouldReceive('map')->andReturn($results = Collection::make([new stdClass()]));
         $engine->shouldReceive('getTotalCount');
         $model->shouldReceive('newCollection')->andReturn($results);
         $builder->paginate();
     }
-    public function test_macroable()
+
+    public function testMacroable()
     {
         Builder::macro('foo', function () {
             return 'bar';
         });
         $builder = new Builder($model = m::mock(Model::class), 'zonda');
         $this->assertEquals(
-            'bar', $builder->foo()
+            'bar',
+            $builder->foo()
         );
     }
-    public function test_hard_delete_doesnt_set_wheres()
+
+    public function testHardDeleteDoesntSetWheres()
     {
         $builder = new Builder($model = m::mock(Model::class), 'zonda', null, false);
         $this->assertArrayNotHasKey('__soft_deleted', $builder->wheres);
     }
-    public function test_soft_delete_sets_wheres()
+
+    public function testSoftDeleteSetsWheres()
     {
         $builder = new Builder($model = m::mock(Model::class), 'zonda', null, true);
         $this->assertEquals(0, $builder->wheres['__soft_deleted']);

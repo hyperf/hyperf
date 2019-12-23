@@ -52,7 +52,7 @@ class ModelObserver
     public static function syncingDisabledFor($class): bool
     {
         $class = is_object($class) ? get_class($class) : $class;
-        $syncingDisabled = (array)Context::get('syncing_disabled', []);
+        $syncingDisabled = (array) Context::get('syncing_disabled', []);
         return array_key_exists($class, $syncingDisabled);
     }
 

@@ -16,7 +16,6 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Coroutine;
 
 trait Searchable
@@ -229,7 +228,7 @@ trait Searchable
      */
     public function syncWithSearchUsingConcurency(): int
     {
-        return (int)config('scout.concurrency', 100);
+        return (int) config('scout.concurrency', 100);
     }
 
     /**

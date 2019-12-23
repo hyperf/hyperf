@@ -1,8 +1,16 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Scout\Cases;
-
 
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Restored;
@@ -12,6 +20,10 @@ use Hyperf\Scout\ModelObserver;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ModelObserverTest extends TestCase
 {
     protected function tearDown(): void
@@ -19,42 +31,47 @@ class ModelObserverTest extends TestCase
         m::close();
         $this->assertTrue(true);
     }
-    public function test_saved_handler_makes_model_searchable()
+
+    public function testSavedHandlerMakesModelSearchable()
     {
-        $observer = new ModelObserver;
+        $observer = new ModelObserver();
         $model = m::mock(Model::class);
         $model->shouldReceive('shouldBeSearchable')->andReturn(true);
         $model->shouldReceive('searchable');
 
         $observer->saved(new Saved($model));
     }
-    public function test_saved_handler_doesnt_make_model_searchable_when_disabled()
+
+    public function testSavedHandlerDoesntMakeModelSearchableWhenDisabled()
     {
-        $observer = new ModelObserver;
+        $observer = new ModelObserver();
         $model = m::mock(Model::class);
         $observer->disableSyncingFor(get_class($model));
         $model->shouldReceive('searchable')->never();
         $observer->saved(new Saved($model));
     }
-    public function test_saved_handler_makes_model_unsearchable_when_disabled_per_model_rule()
+
+    public function testSavedHandlerMakesModelUnsearchableWhenDisabledPerModelRule()
     {
-        $observer = new ModelObserver;
+        $observer = new ModelObserver();
         $model = m::mock(Model::class);
         $model->shouldReceive('shouldBeSearchable')->andReturn(false);
         $model->shouldReceive('searchable')->never();
         $model->shouldReceive('unsearchable');
         $observer->saved(new Saved($model));
     }
-    public function test_deleted_handler_makes_model_unsearchable()
+
+    public function testDeletedHandlerMakesModelUnsearchable()
     {
-        $observer = new ModelObserver;
+        $observer = new ModelObserver();
         $model = m::mock(Model::class);
         $model->shouldReceive('unsearchable');
         $observer->deleted(new Deleted($model));
     }
-    public function test_restored_handler_makes_model_searchable()
+
+    public function testRestoredHandlerMakesModelSearchable()
     {
-        $observer = new ModelObserver;
+        $observer = new ModelObserver();
         $model = m::mock(Model::class);
         $model->shouldReceive('shouldBeSearchable')->andReturn(true);
         $model->shouldReceive('searchable');

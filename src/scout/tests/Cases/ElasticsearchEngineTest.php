@@ -1,6 +1,17 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Scout\Cases;
+
 use Hyperf\Database\Model\Collection;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
@@ -8,6 +19,10 @@ use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ElasticsearchEngineTest extends TestCase
 {
     public function tearDown()
@@ -15,7 +30,8 @@ class ElasticsearchEngineTest extends TestCase
         Mockery::close();
         $this->assertTrue(true);
     }
-    public function test_update_adds_objects_to_index()
+
+    public function testUpdateAddsObjectsToIndex()
     {
         $client = Mockery::mock('Elasticsearch\Client');
         $client->shouldReceive('bulk')->with([
@@ -25,18 +41,19 @@ class ElasticsearchEngineTest extends TestCase
                         '_id' => 1,
                         '_index' => 'scout',
                         '_type' => 'table',
-                    ]
+                    ],
                 ],
                 [
-                    'doc' => ['id' => 1 ],
-                    'doc_as_upsert' => true
-                ]
-            ]
+                    'doc' => ['id' => 1],
+                    'doc_as_upsert' => true,
+                ],
+            ],
         ]);
         $engine = new ElasticsearchEngine($client, 'scout');
-        $engine->update(Collection::make([new ElasticsearchEngineTestModel]));
+        $engine->update(Collection::make([new ElasticsearchEngineTestModel()]));
     }
-    public function test_delete_removes_objects_to_index()
+
+    public function testDeleteRemovesObjectsToIndex()
     {
         $client = Mockery::mock('Elasticsearch\Client');
         $client->shouldReceive('bulk')->with([
@@ -46,14 +63,15 @@ class ElasticsearchEngineTest extends TestCase
                         '_id' => 1,
                         '_index' => 'scout',
                         '_type' => 'table',
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ]);
         $engine = new ElasticsearchEngine($client, 'scout');
-        $engine->delete(Collection::make([new ElasticsearchEngineTestModel]));
+        $engine->delete(Collection::make([new ElasticsearchEngineTestModel()]));
     }
-    public function test_search_sends_correct_parameters_to_elasticsearch()
+
+    public function testSearchSendsCorrectParametersToElasticsearch()
     {
         $client = Mockery::mock('Elasticsearch\Client');
         $client->shouldReceive('search')->with([
@@ -66,22 +84,23 @@ class ElasticsearchEngineTest extends TestCase
                             ['query_string' => ['query' => '*zonda*']],
                             ['match_phrase' => ['foo' => 1]],
                             ['terms' => ['bar' => [1, 3]]],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 'sort' => [
-                    ['id' => 'desc']
-                ]
-            ]
+                    ['id' => 'desc'],
+                ],
+            ],
         ]);
         $engine = new ElasticsearchEngine($client, 'scout');
-        $builder = new Builder(new ElasticsearchEngineTestModel, 'zonda');
+        $builder = new Builder(new ElasticsearchEngineTestModel(), 'zonda');
         $builder->where('foo', 1);
         $builder->where('bar', [1, 3]);
         $builder->orderBy('id', 'desc');
         $engine->search($builder);
     }
-    public function test_builder_callback_can_manipulate_search_parameters_to_elasticsearch()
+
+    public function testBuilderCallbackCanManipulateSearchParametersToElasticsearch()
     {
         /** @var \Elasticsearch\Client|\Mockery\MockInterface $client */
         $client = Mockery::mock(\Elasticsearch\Client::class);
@@ -99,7 +118,8 @@ class ElasticsearchEngineTest extends TestCase
         );
         $engine->search($builder);
     }
-    public function test_map_correctly_maps_results_to_models()
+
+    public function testMapCorrectlyMapsResultsToModels()
     {
         $client = Mockery::mock('Elasticsearch\Client');
         $engine = new ElasticsearchEngine($client, 'scout');
@@ -113,10 +133,10 @@ class ElasticsearchEngineTest extends TestCase
                 'total' => '1',
                 'hits' => [
                     [
-                        '_id' => '1'
-                    ]
-                ]
-            ]
+                        '_id' => '1',
+                    ],
+                ],
+            ],
         ], $model);
         $this->assertEquals(1, count($results));
     }
