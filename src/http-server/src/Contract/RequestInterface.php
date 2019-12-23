@@ -67,9 +67,7 @@ interface RequestInterface extends ServerRequestInterface
 
     /**
      * Retrieve the data from route parameters
-     *
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param mixed $default
      */
     public function route(string $key, $default = null);
     /**

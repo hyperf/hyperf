@@ -159,12 +159,12 @@ class Request implements RequestInterface
     /**
      * Retrieve the data from route parameters
      *
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param mixed $default
      */
-    public function route(string $key, $default = null){
+    public function route(string $key, $default = null)
+    {
         $route = $this->getAttribute(Dispatched::class);
-        if(null === $route){
+        if (is_null($route)) {
             return $default;
         }
         return array_key_exists($key, $route->params)?$route->params[$key]:$default;
