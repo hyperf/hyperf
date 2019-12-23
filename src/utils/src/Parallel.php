@@ -87,7 +87,7 @@ class Parallel
     {
         $output = '';
         foreach ($exception as $key => $value) {
-            $output .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
+            $output .= \sprintf('(%s) %s: %s \n %s' . PHP_EOL, $key, get_class($value), $value->getMessage(), $value->getTraceAsString());
         }
         return $output;
     }
