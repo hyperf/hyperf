@@ -83,7 +83,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             try {
                 /** @var RpcConnection $client */
                 $client = $connection->getConnection();
-                if ($client->send($data . $this->getEof()) === false) {
+                if ($client->send($data) === false) {
                     if ($client->errCode == 104) {
                         throw new RuntimeException('Connect to server failed.');
                     }

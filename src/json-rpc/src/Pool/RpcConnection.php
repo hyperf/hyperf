@@ -39,7 +39,12 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         'host' => 'localhost',
         'port' => 9501,
         'connect_timeout' => 5.0,
-        'options' => [],
+        'options' => [
+            'open_length_check' => true,
+            'package_length_type' => 'N',
+            'package_length_offset' => 0,
+            'package_body_offset' => 4,
+        ],
     ];
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
