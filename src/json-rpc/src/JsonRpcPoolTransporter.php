@@ -56,7 +56,7 @@ class JsonRpcPoolTransporter extends AbstractJsonRpcTransporter implements Trans
         parent::__construct($conf);
 
         $this->factory = $factory;
-        $this->config = array_replace_recursive($this->config, $this->getDefaultConfig(), $config);
+        $this->config = array_replace_recursive($this->getDefaultConfig(), $this->config, $config);
     }
 
     public function send(string $data)
@@ -139,7 +139,6 @@ class JsonRpcPoolTransporter extends AbstractJsonRpcTransporter implements Trans
     {
         return [
             'connect_timeout' => 5.0,
-            'eof' => "\r\n",
             'options' => [],
             'pool' => [
                 'min_connections' => 1,

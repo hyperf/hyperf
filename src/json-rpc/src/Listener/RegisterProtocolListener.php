@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\BootApplication;
@@ -30,9 +31,15 @@ class RegisterProtocolListener implements ListenerInterface
      */
     private $protocolManager;
 
-    public function __construct(ProtocolManager $protocolManager)
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    public function __construct(ProtocolManager $protocolManager, ConfigInterface $config)
     {
         $this->protocolManager = $protocolManager;
+        $this->config = $config;
     }
 
     public function listen(): array
@@ -50,12 +57,15 @@ class RegisterProtocolListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        $transporter = $this->config->get('json_rpc.transporter.tcp.class', JsonRpcTransporter::class);
+
         $this->protocolManager->register('jsonrpc', [
             'packer' => JsonRpcPacker::class,
-            'transporter' => JsonRpcTransporter::class,
+            'transporter' => $transporter,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
         ]);
+
         $this->protocolManager->register('jsonrpc-http', [
             'packer' => JsonPacker::class,
             'transporter' => JsonRpcHttpTransporter::class,

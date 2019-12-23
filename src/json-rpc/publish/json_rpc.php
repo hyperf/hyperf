@@ -10,13 +10,16 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
+use Hyperf\JsonRpc\JsonRpcTransporter;
+
 return [
     'transporter' => [
         'tcp' => [
+            'class' => JsonRpcTransporter::class,
             'connect_timeout' => 5.0,
             'options' => [
-                // 'open_eof_check' => true,
-                // 'package_eof' => "\r\n",
+                'open_eof_check' => true,
+                'package_eof' => "\r\n",
 
                 // 'open_length_check' => true,
                 // 'package_length_type' => 'N',
