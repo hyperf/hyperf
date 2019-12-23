@@ -541,7 +541,6 @@ class Request implements RequestInterface
      *
      * Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
      */
-
     protected function prepareRequestUri()
     {
         $requestUri = '';
