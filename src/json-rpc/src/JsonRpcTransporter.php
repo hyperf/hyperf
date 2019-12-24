@@ -44,7 +44,6 @@ class JsonRpcTransporter implements TransporterInterface
     private $recvTimeout = 5;
 
     /**
-     * TODO: Set config.
      * @var array
      */
     private $config = [];

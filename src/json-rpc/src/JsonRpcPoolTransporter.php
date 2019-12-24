@@ -116,18 +116,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
         ]);
     }
 
-    public function getClient(): Pool
-    {
-        $node = $this->getNode();
-        $config = [
-            'host' => $node->host,
-            'port' => $node->port,
-            'connectTimeout' => $this->connectTimeout,
-        ];
-        $name = $node->host . ':' . $node->port;
-        return $this->factory->getPool($name, $config);
-    }
-
     public function getLoadBalancer(): ?LoadBalancerInterface
     {
         return $this->loadBalancer;
