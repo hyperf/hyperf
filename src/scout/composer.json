@@ -24,6 +24,7 @@
         "hyperf/contract": "~1.1.0",
         "hyperf/utils": "~1.1.0",
         "hyperf/database": "~1.1.0",
+        "hyperf/model-listener": "~1.1.0",
         "hyperf/event": "~1.1.0",
         "hyperf/command": "~1.1.0"
     },
