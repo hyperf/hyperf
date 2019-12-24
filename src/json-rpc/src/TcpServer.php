@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
@@ -23,6 +24,7 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
+use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -41,6 +43,16 @@ class TcpServer extends Server
      */
     protected $packer;
 
+    /**
+     * @var ProtocolManager
+     */
+    protected $protocolManager;
+
+    /**
+     * @var array
+     */
+    protected $serverConfig;
+
     public function __construct(
         ContainerInterface $container,
         RequestDispatcher $dispatcher,
@@ -48,20 +60,55 @@ class TcpServer extends Server
         ProtocolManager $protocolManager,
         StdoutLoggerInterface $logger
     ) {
-        $protocol = new Protocol($container, $protocolManager, 'jsonrpc');
+        parent::__construct($container, $dispatcher, $exceptionDispatcher, $logger);
 
-        parent::__construct($container, $dispatcher, $exceptionDispatcher, $protocol, $logger);
+        $this->protocolManager = $protocolManager;
+    }
 
-        $this->packer = $protocol->getPacker();
+    public function initCoreMiddleware(string $serverName): void
+    {
+        $this->initServerConfig($serverName);
+
+        $this->initProtocol();
+
+        parent::initCoreMiddleware($serverName);
+    }
+
+    protected function initProtocol()
+    {
+        $protocol = 'jsonrpc';
+        if ($this->isLengthCheck()) {
+            $protocol = 'jsonrpc-tcp-length-check';
+        }
+
+        $this->protocol = new Protocol($this->container, $this->protocolManager, $protocol);
+        $this->packer = $this->protocol->getPacker($this->serverConfig['settings'] ?? []);
         $this->responseBuilder = make(ResponseBuilder::class, [
-            'dataFormatter' => $protocol->getDataFormatter(),
+            'dataFormatter' => $this->protocol->getDataFormatter(),
             'packer' => $this->packer,
         ]);
     }
 
+    protected function isLengthCheck(): bool
+    {
+        return boolval($this->serverConfig['settings']['open_length_check'] ?? false);
+    }
+
+    protected function initServerConfig(string $serverName): array
+    {
+        $servers = $this->container->get(ConfigInterface::class)->get('server.servers', []);
+        foreach ($servers as $server) {
+            if ($server['name'] === $serverName) {
+                return $this->serverConfig = $server;
+            }
+        }
+
+        throw new InvalidArgumentException(sprintf('Server name %s is invalid.', $serverName));
+    }
+
     protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
-        return new CoreMiddleware($this->container, $this->protocol, $this->serverName);
+        return new CoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
     protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface

@@ -81,13 +81,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         ContainerInterface $container,
         DispatcherInterface $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        Protocol $protocol,
         LoggerInterface $logger
     ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 

@@ -47,9 +47,6 @@ class RpcClientPool extends Pool
         parent::__construct($container, $options);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;

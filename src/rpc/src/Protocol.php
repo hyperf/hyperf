@@ -35,11 +35,17 @@ class Protocol
      */
     private $name;
 
-    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager, string $name)
+    /**
+     * @var array
+     */
+    private $options;
+
+    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager, string $name, array $options = [])
     {
         $this->container = $container;
         $this->name = $name;
         $this->protocolManager = $protocolManager;
+        $this->options = $options;
     }
 
     public function getName(): string
@@ -53,7 +59,8 @@ class Protocol
         if (! $this->container->has($packer)) {
             throw new \InvalidArgumentException("Packer {$packer} for {$this->name} does not exist");
         }
-        return $this->container->get($packer);
+
+        return make($packer, [$this->options]);
     }
 
     public function getTransporter(): TransporterInterface
