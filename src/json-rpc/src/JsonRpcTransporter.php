@@ -47,13 +47,21 @@ class JsonRpcTransporter implements TransporterInterface
      * TODO: Set config.
      * @var array
      */
-    private $config;
+    private $config = [];
+
+    public function __construct(array $config = [])
+    {
+        $this->config = array_replace_recursive($this->config, $config);
+
+        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
+        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
+    }
 
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data . $this->getEof()) === false) {
+            if ($client->send($data) === false) {
                 if ($client->errCode == 104) {
                     throw new RuntimeException('Connect to server failed.');
                 }
@@ -66,7 +74,7 @@ class JsonRpcTransporter implements TransporterInterface
     public function getClient(): SwooleClient
     {
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
+        $client->set($this->config['settings'] ?? []);
 
         return retry(2, function () use ($client) {
             $node = $this->getNode();
@@ -103,11 +111,6 @@ class JsonRpcTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
-    }
-
-    private function getEof()
-    {
-        return "\r\n";
     }
 
     /**

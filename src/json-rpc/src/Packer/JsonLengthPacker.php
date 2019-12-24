@@ -34,7 +34,7 @@ class JsonLengthPacker implements PackerInterface
 
     public function __construct(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $options['settings'] ?? []);
 
         $this->type = $options['package_length_type'];
         $this->length = $options['package_length_offset'] + $options['package_body_offset'];

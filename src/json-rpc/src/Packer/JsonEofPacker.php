@@ -23,7 +23,7 @@ class JsonEofPacker implements PackerInterface
 
     public function __construct(array $options = [])
     {
-        $this->eof = $options['package_eof'] ?? "\r\n";
+        $this->eof = $options['settings']['package_eof'] ?? "\r\n";
     }
 
     public function pack($data): string
