@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Scout\Provider;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
@@ -33,8 +34,8 @@ class ElasticsearchProvider implements ProviderInterface
     {
         $config = $this->container->get(ConfigInterface::class);
         $builder = $this->container->get(ClientBuilderFactory::class)->create();
-        $client = $builder->setHosts($config->get("scout.{$name}.hosts"))->build();
-        $index = $config->get("scout.{$name}.index");
+        $client = $builder->setHosts($config->get("scout.engine.{$name}.hosts"))->build();
+        $index = $config->get("scout.engine.{$name}.index");
         return new ElasticsearchEngine($client, $index);
     }
 }

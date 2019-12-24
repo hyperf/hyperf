@@ -40,6 +40,7 @@ class FlushCommand extends HyperfCommand
      */
     public function handle()
     {
+        define('SCOUT_COMMAND', true);
         $class = $this->input->getArgument('model');
         $model = new $class();
         $model::removeAllFromSearch();

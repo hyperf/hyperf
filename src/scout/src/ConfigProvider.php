@@ -28,6 +28,14 @@ class ConfigProvider
                 ImportCommand::class,
                 FlushCommand::class,
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of hyperf scout.',
+                    'source' => __DIR__ . '/../publish/scout.php',
+                    'destination' => BASE_PATH . '/config/autoload/scout.php',
+                ],
+            ],
         ];
     }
 }

@@ -13,9 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
-use Hyperf\Event\ListenerProvider;
 use Hyperf\Scout\Event\ModelsImported;
 use Hyperf\Utils\ApplicationContext;
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 class ImportCommand extends Command
 {
@@ -38,9 +39,10 @@ class ImportCommand extends Command
      */
     public function handle()
     {
+        define('SCOUT_COMMAND', true);
         $class = $this->input->getArgument('model');
         $model = new $class();
-        $provider = ApplicationContext::getContainer()->get(ListenerProvider::class);
+        $provider = ApplicationContext::getContainer()->get(ListenerProviderInterface::class);
         $provider->on(ModelsImported::class, function ($event) use ($class) {
             $key = $event->models->last()->getScoutKey();
             $this->line('<comment>Imported [' . $class . '] models up to ID:</comment> ' . $key);

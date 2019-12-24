@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Scout;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Collection as BaseCollection;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
 use Hyperf\Utils\ApplicationContext;
@@ -39,9 +40,21 @@ trait Searchable
     {
         static::addGlobalScope(make(SearchableScope::class));
         ListenerCollector::register(static::class, ModelObserver::class);
-        if (! (static::$scoutRunner instanceof Coroutine\Concurrent)) {
-            static::$scoutRunner = new Coroutine\Concurrent((new static())->syncWithSearchUsingConcurency());
-        }
+        (new static())->registerSearchableMacros();
+    }
+
+    /**
+     * Register the searchable macros.
+     */
+    public function registerSearchableMacros()
+    {
+        $self = $this;
+        BaseCollection::macro('searchable', function () use ($self) {
+            $self->queueMakeSearchable($this);
+        });
+        BaseCollection::macro('unsearchable', function () use ($self) {
+            $self->queueRemoveFromSearch($this);
+        });
     }
 
     /**
@@ -52,15 +65,10 @@ trait Searchable
         if ($models->isEmpty()) {
             return;
         }
-        if (Coroutine::inCoroutine()) {
-            Coroutine::defer(function () use ($models) {
-                $models->first()->searchableUsing()->update($models);
-            });
-        } else {
-            self::$scoutRunner->create(function () use ($models) {
-                $models->first()->searchableUsing()->update($models);
-            });
-        }
+        $job = function () use ($models) {
+            $models->first()->searchableUsing()->update($models);
+        };
+        self::dispatchSearchableJob($job);
     }
 
     /**
@@ -72,15 +80,10 @@ trait Searchable
         if ($models->isEmpty()) {
             return;
         }
-        if (Coroutine::inCoroutine()) {
-            Coroutine::defer(function () use ($models) {
-                $models->first()->searchableUsing()->delete($models);
-            });
-        } else {
-            self::$scoutRunner->create(function () use ($models) {
-                $models->first()->searchableUsing()->delete($models);
-            });
-        }
+        $job = function () use ($models) {
+            $models->first()->searchableUsing()->delete($models);
+        };
+        self::dispatchSearchableJob($job);
     }
 
     /**
@@ -220,7 +223,7 @@ trait Searchable
      */
     public function searchableUsing()
     {
-        return ApplicationContext::getContainer()->get(EngineManager::class)->engine();
+        return ApplicationContext::getContainer()->get(Engine::class);
     }
 
     /**
@@ -282,6 +285,21 @@ trait Searchable
     public function getScoutKeyName()
     {
         return $this->getQualifiedKeyName();
+    }
+
+    /**
+     * Dispatch the coroutine to scout the given models.
+     */
+    protected static function dispatchSearchableJob(callable $job)
+    {
+        if (defined('SCOUT_COMMAND')) {
+            if (! (static::$scoutRunner instanceof Coroutine\Concurrent)) {
+                static::$scoutRunner = new Coroutine\Concurrent((new static())->syncWithSearchUsingConcurency());
+            }
+            self::$scoutRunner->create($job);
+        } else {
+            Coroutine::defer($job);
+        }
     }
 
     /**
