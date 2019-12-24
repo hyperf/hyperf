@@ -130,11 +130,17 @@ class LoggerFactoryTest extends TestCase
                                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
                                 'level' => \Monolog\Logger::DEBUG,
                             ],
+                            'formatter' => [
+                                'class' => \Monolog\Formatter\LineFormatter::class,
+                            ],
                         ],
                         [
                             'class' => \Monolog\Handler\TestHandler::class,
                             'constructor' => [
                                 'level' => \Monolog\Logger::DEBUG,
+                            ],
+                            'formatter' => [
+                                'class' => \Monolog\Formatter\LineFormatter::class,
                             ],
                         ],
                     ],
