@@ -81,8 +81,8 @@ class TcpServer extends Server
             $protocol = 'jsonrpc-tcp-length-check';
         }
 
-        $this->protocol = new Protocol($this->container, $this->protocolManager, $protocol);
-        $this->packer = $this->protocol->getPacker($this->serverConfig['settings'] ?? []);
+        $this->protocol = new Protocol($this->container, $this->protocolManager, $protocol, $this->serverConfig['settings'] ?? []);
+        $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [
             'dataFormatter' => $this->protocol->getDataFormatter(),
             'packer' => $this->packer,
