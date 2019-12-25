@@ -1,5 +1,9 @@
 # v1.1.12 - TBD
 
+## Optimized
+
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) Automatically added default constructor's configuration, when you forgetton to set it.
+
 # v1.1.11 - 2019-12-19
 
 ## Added
