@@ -1449,7 +1449,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an operator checker callback.
-     * @param string $operator
+     * @param mixed|string $operator
      * @param null|mixed $value
      */
     protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
