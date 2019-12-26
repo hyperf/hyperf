@@ -33,4 +33,15 @@ class CollectionTest extends TestCase
         $this->assertSame(1, $res->count());
         $this->assertSame(['id' => 2, 'name' => 'HyperfCloud'], $res->shift());
     }
+
+    public function testRandom()
+    {
+        $col = new Collection([['id' => 1, 'name' => 'Hyperf'], ['id' => 2, 'name' => 'HyperfCloud']]);
+
+        $res = $col->random();
+        $this->assertTrue(is_array($res));
+
+        $res = $col->random(1);
+        $this->assertTrue($res instanceof Collection);
+    }
 }
