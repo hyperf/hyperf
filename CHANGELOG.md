@@ -1,5 +1,18 @@
 # v1.1.12 - TBD
 
+## Added
+
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) Added protocol `jsonrpc-tcp-length-check` for `jsonrpc`.
+
+## Fixed
+
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator does not works for `Hyperf\Utils\Collection::operatorForWhere`.
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) Fixed `Hyperf\Database\Query\Builder::chunkById` does not works when the collection item is array.
+
+## Optimized
+
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) Automatically added default constructor's configuration, when you forgetton to set it.
+
 # v1.1.11 - 2019-12-19
 
 ## Added
