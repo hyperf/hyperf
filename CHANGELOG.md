@@ -2,7 +2,8 @@
 
 ## Fixed
 
-- [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator `=` does not works for `Hyperf\Utils\Collection::operatorForWhere`.
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator does not works for `Hyperf\Utils\Collection::operatorForWhere`.
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) Fixed `Hyperf\Database\Query\Builder::chunkById` does not works when the collection item is array.
 
 ## Optimized
 
