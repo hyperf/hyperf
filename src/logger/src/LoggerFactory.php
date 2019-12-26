@@ -104,6 +104,11 @@ class LoggerFactory
         foreach ($handlerConfigs as $value) {
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
+            if (isset($value['formatter'])) {
+                if (! isset($value['formatter']['constructor'])) {
+                    $value['formatter']['constructor'] = $defaultFormatterConfig['constructor'];
+                }
+            }
             $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
 
             $handlers[] = $this->handler($class, $constructor, $formatterConfig);
