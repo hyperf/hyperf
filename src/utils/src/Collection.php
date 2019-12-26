@@ -1017,11 +1017,12 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get one or a specified number of items randomly from the collection.
      *
      * @throws \InvalidArgumentException
+     * @return mixed|self
      */
-    public function random(int $number = null): self
+    public function random(int $number = null)
     {
         if (is_null($number)) {
-            return new static(Arr::random($this->items));
+            return Arr::random($this->items);
         }
         return new static(Arr::random($this->items, $number));
     }
