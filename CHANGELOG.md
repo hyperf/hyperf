@@ -1,5 +1,9 @@
 # v1.1.12 - TBD
 
+## Added
+
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) Added protocol `jsonrpc-tcp-length-check` for `jsonrpc`.
+
 ## Fixed
 
 - [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator does not works for `Hyperf\Utils\Collection::operatorForWhere`.
