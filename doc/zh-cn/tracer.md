@@ -180,6 +180,33 @@ return [
     ],
 ];
 ```
+### 配置 Span tag
+
+`1.1.11` 版本后增加了 Span Tag 配置的功能，对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
+
+```php
+return [
+    'tags' => [
+        // HTTP 客户端 (Guzzle)
+        'http_client' => [
+            'http.url' => 'http.url',
+            'http.method' => 'http.method',
+            'http.status_code' => 'http.status_code',
+        ],
+        // Redis 客户端
+        'redis' => [
+            'arguments' => 'arguments',
+            'result' => 'result',
+        ],
+        // 数据库客户端 (hyper/database)
+        'db' => [
+            'db.query' => 'db.query',
+            'db.statement' => 'db.statement',
+            'db.query_time' => 'db.query_time',
+        ],
+    ]
+];
+```
 
 ### 更换采样器
 

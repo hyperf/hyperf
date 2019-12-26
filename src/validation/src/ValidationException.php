@@ -14,7 +14,9 @@ namespace Hyperf\Validation;
 
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ValidationException extends ServerException
@@ -75,7 +77,9 @@ class ValidationException extends ServerException
      */
     public static function withMessages(array $messages)
     {
-        return new static(tap(ValidatorFactory::make([], []), function ($validator) use ($messages) {
+        $factory = ApplicationContext::getContainer()->get(ValidatorFactoryInterface::class);
+
+        return new static(tap($factory->make([], []), function ($validator) use ($messages) {
             foreach ($messages as $key => $value) {
                 foreach (Arr::wrap($value) as $message) {
                     $validator->errors()->add($key, $message);
