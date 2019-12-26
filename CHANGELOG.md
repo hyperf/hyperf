@@ -1,5 +1,9 @@
 # v1.1.12 - TBD
 
+## Fixed
+
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator `=` does not works for `Hyperf\Utils\Collection::operatorForWhere`.
+
 ## Optimized
 
 - [#1186](https://github.com/hyperf/hyperf/pull/1186) Automatically added default constructor's configuration, when you forgetton to set it.

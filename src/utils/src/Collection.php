@@ -1449,9 +1449,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an operator checker callback.
+     * @param mixed|string $operator
      * @param null|mixed $value
      */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
     {
         if (func_num_args() === 1) {
             $value = true;
