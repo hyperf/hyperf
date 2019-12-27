@@ -1,0 +1,61 @@
+{
+    "name": "hyperf/config-zookeeper",
+    "description": "An zookeeper adapter for Hyperf config component.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "config",
+        "configuration",
+        "zookeeper"
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/container": "^1.0",
+        "hyperf/contract": "~1.1.0"
+    },
+    "require-dev": {
+        "hyperf/config": "~1.1.0",
+        "hyperf/event": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
+        "hyperf/process": "~1.1.0",
+        "malukenho/docheader": "^0.1.6",
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^7.0.0",
+        "friendsofphp/php-cs-fixer": "^2.9"
+    },
+    "suggest": {
+        "hyperf/process": "Use hyperf process to run ConfigFetcherProcess.",
+        "ext-swoole-zookeeper": "coroutine client for zookeeper"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ConfigZookeeper\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ConfigZookeeper\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ConfigZookeeper\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}

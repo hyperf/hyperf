@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Event;
@@ -32,9 +32,11 @@ class ConfigProviderTest extends TestCase
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    str_replace('/tests', '/src', __DIR__),
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        str_replace('/tests', '/src', __DIR__),
+                    ],
                 ],
             ],
         ], (new ConfigProvider())());

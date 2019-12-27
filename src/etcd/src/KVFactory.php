@@ -7,13 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Etcd;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Etcd\Exception\ClientNotFindException;
+use Hyperf\Guzzle\HandlerStackFactory;
 use Psr\Container\ContainerInterface;
 
 class KVFactory
@@ -23,7 +24,7 @@ class KVFactory
         $config = $container->get(ConfigInterface::class);
         $version = $config->get('etcd.version');
 
-        $params = ['config' => $config];
+        $params = ['config' => $config, 'factory' => $container->get(HandlerStackFactory::class)];
 
         switch ($version) {
             case 'v3':

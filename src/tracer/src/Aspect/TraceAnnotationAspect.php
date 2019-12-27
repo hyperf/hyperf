@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Tracer\Aspect;
@@ -52,11 +52,13 @@ class TraceAnnotationAspect implements AroundInterface
         /** @var Trace $annotation */
         if ($annotation = $metadata->method[Trace::class] ?? null) {
             $name = $annotation->name;
+            $tag = $annotation->tag;
         } else {
             $name = $source;
+            $tag = 'source';
         }
         $span = $this->startSpan($name);
-        $span->setTag('source', $source);
+        $span->setTag($tag, $source);
         $result = $proceedingJoinPoint->process();
         $span->finish();
         return $result;

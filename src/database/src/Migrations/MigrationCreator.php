@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Database\Migrations;
@@ -35,8 +35,6 @@ class MigrationCreator
 
     /**
      * Create a new migration creator instance.
-     *
-     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {

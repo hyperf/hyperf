@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Logger;
@@ -63,11 +63,11 @@ class LoggerFactory
 
     public function get($name = 'hyperf', $group = 'default'): LoggerInterface
     {
-        if (isset($this->loggers[$name]) && $this->loggers[$name] instanceof Logger) {
-            return $this->loggers[$name];
+        if (isset($this->loggers[$group][$name]) && $this->loggers[$group][$name] instanceof Logger) {
+            return $this->loggers[$group][$name];
         }
 
-        return $this->loggers[$name] = $this->make($name, $group);
+        return $this->loggers[$group][$name] = $this->make($name, $group);
     }
 
     protected function getDefaultFormatterConfig($config)
@@ -104,6 +104,11 @@ class LoggerFactory
         foreach ($handlerConfigs as $value) {
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
+            if (isset($value['formatter'])) {
+                if (! isset($value['formatter']['constructor'])) {
+                    $value['formatter']['constructor'] = $defaultFormatterConfig['constructor'];
+                }
+            }
             $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
 
             $handlers[] = $this->handler($class, $constructor, $formatterConfig);

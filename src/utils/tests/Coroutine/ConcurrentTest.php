@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Utils\Coroutine;
@@ -36,6 +36,7 @@ class ConcurrentTest extends TestCase
         $this->assertSame($limit, $concurrent->getLimit());
         $this->assertTrue($concurrent->isEmpty());
         $this->assertFalse($concurrent->isFull());
+
         $count = 0;
         for ($i = 0; $i < 15; ++$i) {
             $concurrent->create(function () use (&$count) {
@@ -49,12 +50,19 @@ class ConcurrentTest extends TestCase
         $this->assertSame($limit, $concurrent->getRunningCoroutineCount());
         $this->assertSame($limit, $concurrent->getLength());
         $this->assertSame($limit, $concurrent->length());
+
+        while (! $concurrent->isEmpty()) {
+            Coroutine::sleep(0.1);
+        }
+
+        $this->assertSame(15, $count);
     }
 
     public function testException()
     {
         $con = new Concurrent(10, 1);
         $count = 0;
+
         for ($i = 0; $i < 15; ++$i) {
             $con->create(function () use (&$count) {
                 Coroutine::sleep(0.1);
@@ -65,6 +73,11 @@ class ConcurrentTest extends TestCase
 
         $this->assertSame(5, $count);
         $this->assertSame(10, $con->getRunningCoroutineCount());
+
+        while (! $con->isEmpty()) {
+            Coroutine::sleep(0.1);
+        }
+        $this->assertSame(15, $count);
     }
 
     protected function getContainer()

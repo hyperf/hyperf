@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils;
@@ -1017,8 +1017,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get one or a specified number of items randomly from the collection.
      *
      * @throws \InvalidArgumentException
+     * @return mixed|self
      */
-    public function random(int $number = null): self
+    public function random(int $number = null)
     {
         if (is_null($number)) {
             return Arr::random($this->items);
@@ -1449,9 +1450,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an operator checker callback.
+     * @param mixed|string $operator
      * @param null|mixed $value
      */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
     {
         if (func_num_args() === 1) {
             $value = true;

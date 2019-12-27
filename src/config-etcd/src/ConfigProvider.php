@@ -7,10 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ConfigEtcd;
+
+use Hyperf\ConfigEtcd\Listener\BootProcessListener;
+use Hyperf\ConfigEtcd\Listener\OnPipeMessageListener;
+use Hyperf\ConfigEtcd\Process\ConfigFetcherProcess;
 
 class ConfigProvider
 {
@@ -20,11 +24,18 @@ class ConfigProvider
             'dependencies' => [
                 ClientInterface::class => Client::class,
             ],
-            'commands' => [
+            'processes' => [
+                ConfigFetcherProcess::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'listeners' => [
+                BootProcessListener::class,
+                OnPipeMessageListener::class,
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GraphQL;
@@ -53,12 +53,6 @@ class InputTypeGenerator
         $this->argumentResolver = $argumentResolver;
     }
 
-    /**
-     * @param string $factory
-     * @param string $methodName
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
-     * @return InputObjectType
-     */
     public function mapFactoryMethod(string $factory, string $methodName, RecursiveTypeMapperInterface $recursiveTypeMapper, ContainerInterface $container): InputObjectType
     {
         $method = new ReflectionMethod($factory, $methodName);

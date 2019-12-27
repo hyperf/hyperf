@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\RpcServer;
@@ -81,13 +81,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         ContainerInterface $container,
         DispatcherInterface $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        Protocol $protocol,
         LoggerInterface $logger
     ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 
@@ -126,7 +124,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
                 $response = $this->transferToResponse($response);
             }
             if ($response) {
-                $server->send($fd, (string) $response->getBody());
+                $this->send($server, $fd, $response);
             }
         }
     }
@@ -137,6 +135,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         /* @var \Swoole\Server\Port */
         [$type, $port] = ServerManager::get($this->serverName);
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
+    }
+
+    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
+    {
+        $server->send($fd, (string) $response->getBody());
     }
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;

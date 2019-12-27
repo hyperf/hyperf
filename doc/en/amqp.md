@@ -1,6 +1,6 @@
 # AMQP
 
-[https://github.com/hyperf-cloud/amqp](https://github.com/hyperf-cloud/amqp)
+[https://github.com/hyperf/amqp](https://github.com/hyperf/amqp)
 
 ## Default Config
 ```php

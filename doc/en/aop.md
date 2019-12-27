@@ -4,9 +4,9 @@
 
 AOP is an abbreviation for `Aspect Oriented Programming`, a technique for achieving unified maintenance of program functions through techniques such as dynamic proxy. AOP is a continuation of OOP and an important part of Hyperf. It is a derivative paradigm of functional programming. AOP can be used to isolate the various parts of the business logic, which reduces the degree of coupling between the various parts of the business logic, improves the reusability of the program, and improves the efficiency of development. 
 
-Popular speaking, it is in Hyperf that you can intervene in the execution of any method of any class managed by [hyperf/di](https://github.com/hyperf-cloud/di) through `Aspect`. Going in the process to change or enhance the functionality of the original method, this is AOP.
+Popular speaking, it is in Hyperf that you can intervene in the execution of any method of any class managed by [hyperf/di](https://github.com/hyperf/di) through `Aspect`. Going in the process to change or enhance the functionality of the original method, this is AOP.
 
-> Use AOP have to use [hyperf/di](https://github.com/hyperf-cloud/di) as the dependency injection container
+> Use AOP have to use [hyperf/di](https://github.com/hyperf/di) as the dependency injection container
 
 ## Introduction
 
@@ -17,7 +17,7 @@ Compared to the AOP feature implemented by other frameworks, we have further sim
 
 ## Define Aspect
 
-Each `Aspect` have to implemented `Hyperf\Di\Aop\ArroundInterface`, and provided `$classes` and `$annotations` properties at `public` level. For ease of use, we can simplify the usage by inheriting `Hyperf\Di\Aop\AbstractAspect` in our aspect class.
+Each `Aspect` have to implemented `Hyperf\Di\Aop\AroundInterface`, and provided `$classes` and `$annotations` properties at `public` level. For ease of use, we can simplify the usage by inheriting `Hyperf\Di\Aop\AbstractAspect` in our aspect class.
 
 ```php
 <?php

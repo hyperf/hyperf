@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Testing;
@@ -71,6 +71,26 @@ class Client extends Server
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
             'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
+    public function put($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('PUT', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
+    public function delete($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('DELETE', $uri, [
+            'headers' => $headers,
+            'query' => $data,
         ]);
 
         return $this->packer->unpack($response->getBody()->getContents());

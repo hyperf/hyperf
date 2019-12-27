@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 return [
@@ -18,5 +18,8 @@ return [
         'retry_seconds' => 5,
         'handle_timeout' => 10,
         'processes' => 1,
+        'concurrent' => [
+            'limit' => 10,
+        ],
     ],
 ];

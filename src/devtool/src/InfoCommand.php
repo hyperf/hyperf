@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Devtool;
@@ -47,5 +47,7 @@ class InfoCommand extends SymfonyCommand
         }
         $adapter = $this->info->get($type);
         $adapter->execute($input, $output);
+
+        return 0;
     }
 }

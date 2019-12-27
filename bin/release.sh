@@ -27,7 +27,7 @@ do
     echo ""
     echo "Cloning $REMOTE";
     TMP_DIR="/tmp/hyperf-split"
-    REMOTE_URL="git@github.com:hyperf-cloud/$REMOTE.git"
+    REMOTE_URL="git@github.com:hyperf/$REMOTE.git"
 
     rm -rf $TMP_DIR;
     mkdir $TMP_DIR;

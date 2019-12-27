@@ -8,13 +8,13 @@ composer require hyperf/circuit-breaker
 
 ## Why you need a Circuit Breaker ?
 
-In distributed systems, it is often the case that the entire system is unavailable due to the unavailability of a basic service. This phenomenon is called the service avalanche effect. In response to service avalanches, a common practice is to downgrade services. The [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) component is designed to solve this problem.
+In distributed systems, it is often the case that the entire system is unavailable due to the unavailability of a basic service. This phenomenon is called the service avalanche effect. In response to service avalanches, a common practice is to downgrade services. The [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) component is designed to solve this problem.
 
 ## Usage
 
 ## Why you need a Circuit Breaker ?
 
-In distributed systems, it is often the case that the entire system is unavailable due to the unavailability of a basic service. This phenomenon is called the service avalanche effect. In response to service avalanches, a common practice is to downgrade services. The [hyperf/circuit-breaker](https://github.com/hyperf-cloud/circuit-breaker) component is designed to solve this problem.
+In distributed systems, it is often the case that the entire system is unavailable due to the unavailability of a basic service. This phenomenon is called the service avalanche effect. In response to service avalanches, a common practice is to downgrade services. The [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) component is designed to solve this problem.
 
 ## Using Circuit Breaker
 

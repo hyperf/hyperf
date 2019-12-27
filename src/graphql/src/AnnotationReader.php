@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GraphQL;
@@ -63,9 +63,7 @@ class AnnotationReader
 
     /**
      * AnnotationReader constructor.
-     * @param Reader $reader
      * @param string $mode One of self::LAX_MODE or self::STRICT_MODE
-     * @param array $strictNamespaces
      */
     public function __construct(Reader $reader, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
     {

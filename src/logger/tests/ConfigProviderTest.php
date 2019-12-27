@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Logger;
@@ -26,13 +26,11 @@ class ConfigProviderTest extends TestCase
         $dir = str_replace('/tests', '/src', __DIR__);
 
         $this->assertSame([
-            'dependencies' => [
-            ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    $dir,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        $dir,
+                    ],
                 ],
             ],
             'publish' => [

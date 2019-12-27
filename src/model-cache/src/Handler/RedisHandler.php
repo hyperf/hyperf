@@ -7,14 +7,16 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ModelCache\Handler;
 
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
-use Hyperf\ModelCache\Redis\HashsGetMultiple;
+use Hyperf\ModelCache\Redis\HashGetMultiple;
+use Hyperf\ModelCache\Redis\HashIncr;
+use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Container\ContainerInterface;
@@ -38,11 +40,9 @@ class RedisHandler implements HandlerInterface
     protected $config;
 
     /**
-     * @var HashsGetMultiple
+     * @var LuaManager
      */
-    protected $multiple;
-
-    protected $luaSha = '';
+    protected $manager;
 
     protected $defaultKey = 'HF-DATA';
 
@@ -57,7 +57,7 @@ class RedisHandler implements HandlerInterface
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
         $this->config = $config;
-        $this->multiple = new HashsGetMultiple();
+        $this->manager = make(LuaManager::class, [$config]);
     }
 
     public function get($key, $default = null)
@@ -107,25 +107,14 @@ class RedisHandler implements HandlerInterface
 
     public function getMultiple($keys, $default = null)
     {
-        if ($this->config->isLoadScript()) {
-            $sha = $this->getLuaSha();
-        }
-
-        if (! empty($sha)) {
-            $list = $this->redis->evalSha($sha, $keys, count($keys));
-        } else {
-            $script = $this->multiple->getScript();
-            $list = $this->redis->eval($script, $keys, count($keys));
-        }
-
+        $data = $this->manager->handle(HashGetMultiple::class, $keys);
         $result = [];
-        foreach ($this->multiple->parseResponse($list) as $item) {
+        foreach ($data as $item) {
             unset($item[$this->defaultKey]);
-            if ($item) {
+            if (! empty($item)) {
                 $result[] = $item;
             }
         }
-
         return $result;
     }
 
@@ -151,18 +140,8 @@ class RedisHandler implements HandlerInterface
 
     public function incr($key, $column, $amount): bool
     {
-        $ret = $this->redis->hIncrByFloat($key, $column, (float) $amount);
-        return is_float($ret);
-    }
+        $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount], 1);
 
-    protected function getLuaSha()
-    {
-        if (! empty($this->luaSha)) {
-            return $this->luaSha;
-        }
-
-        $sha = $this->redis->script('load', $this->multiple->getScript());
-
-        return $this->luaSha = $sha;
+        return is_numeric($data);
     }
 }

@@ -1,6 +1,6 @@
 # Cache
 
-[https://github.com/hyperf-cloud/cache](https://github.com/hyperf-cloud/cache)
+[https://github.com/hyperf/cache](https://github.com/hyperf/cache)
 
 ## Config
 

@@ -7,13 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
@@ -68,7 +69,7 @@ class ModelCommand extends Command
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct('db:model');
+        parent::__construct('gen:model');
         $this->container = $container;
     }
 
@@ -89,13 +90,15 @@ class ModelCommand extends Command
 
         $option = new ModelOption();
         $option->setPool($pool)
-            ->setPath($this->getOption('path', 'commands.db:model.path', $pool, 'app/Model'))
+            ->setPath($this->getOption('path', 'commands.gen:model.path', $pool, 'app/Model'))
             ->setPrefix($this->getOption('prefix', 'prefix', $pool, ''))
-            ->setInheritance($this->getOption('inheritance', 'commands.db:model.inheritance', $pool, 'Model'))
-            ->setUses($this->getOption('uses', 'commands.db:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
-            ->setForceCasts($this->getOption('force-casts', 'commands.db:model.force_casts', $pool, false))
-            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.db:model.refresh_fillable', $pool, false))
-            ->setTableMapping($this->getOption('table-mapping', 'commands.db:model.table_mapping', $pool));
+            ->setInheritance($this->getOption('inheritance', 'commands.gen:model.inheritance', $pool, 'Model'))
+            ->setUses($this->getOption('uses', 'commands.gen:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
+            ->setForceCasts($this->getOption('force-casts', 'commands.gen:model.force_casts', $pool, false))
+            ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
+            ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
+            ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
+            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -116,6 +119,8 @@ class ModelCommand extends Command
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
         $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
+        $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
+        $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -131,12 +136,24 @@ class ModelCommand extends Command
 
         foreach ($builder->getAllTables() as $row) {
             $row = (array) $row;
-            $tables[] = reset($row);
+            $table = reset($row);
+            if (! $this->isIgnoreTable($table, $option)) {
+                $tables[] = $table;
+            }
         }
 
         foreach ($tables as $table) {
             $this->createModel($table, $option);
         }
+    }
+
+    protected function isIgnoreTable(string $table, ModelOption $option): bool
+    {
+        if (in_array($table, $option->getIgnoreTables())) {
+            return true;
+        }
+
+        return $table === $this->config->get('databases.migrations', 'migrations');
     }
 
     protected function createModel(string $table, ModelOption $option)
@@ -156,7 +173,7 @@ class ModelCommand extends Command
                 @mkdir($dir, 0755, true);
             }
 
-            file_put_contents($path, $this->buildClass($class, $option));
+            file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
         $columns = $this->getColumns($class, $columns, $option->isForceCasts());
@@ -168,6 +185,7 @@ class ModelCommand extends Command
             'option' => $option,
         ]);
         $traverser->addVisitor($visitor);
+        $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
@@ -212,10 +230,10 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
             $nonInput = false;
         }
-        if (in_array($name, ['table-mapping'])) {
+        if (in_array($name, ['table-mapping', 'ignore-tables'])) {
             $nonInput = [];
         }
 
@@ -229,7 +247,7 @@ class ModelCommand extends Command
     /**
      * Build the class with the given name.
      */
-    protected function buildClass(string $name, ModelOption $option): string
+    protected function buildClass(string $table, string $name, ModelOption $option): string
     {
         $stub = file_get_contents(__DIR__ . '/stubs/Model.stub');
 
@@ -237,7 +255,8 @@ class ModelCommand extends Command
             ->replaceInheritance($stub, $option->getInheritance())
             ->replaceConnection($stub, $option->getPool())
             ->replaceUses($stub, $option->getUses())
-            ->replaceClass($stub, $name);
+            ->replaceClass($stub, $name)
+            ->replaceTable($stub, $table);
     }
 
     /**
@@ -299,13 +318,21 @@ class ModelCommand extends Command
     /**
      * Replace the class name for the given stub.
      */
-    protected function replaceClass(string $stub, string $name): string
+    protected function replaceClass(string &$stub, string $name): self
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
         $stub = str_replace('%CLASS%', $class, $stub);
 
-        return str_replace('%TABLE%', Str::snake($class), $stub);
+        return $this;
+    }
+
+    /**
+     * Replace the table name for the given stub.
+     */
+    protected function replaceTable(string $stub, string $table): string
+    {
+        return str_replace('%TABLE%', $table, $stub);
     }
 
     /**

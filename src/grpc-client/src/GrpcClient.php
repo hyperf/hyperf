@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
@@ -301,7 +301,7 @@ class GrpcClient
     {
         $yield = $yield === true ? -1 : $yield;
         if ($yield) {
-            $this->waitYield = self::$channelPool->get();
+            $this->waitYield = $this->channelPool->get();
             return $this->waitYield->pop($yield);
         }
     }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Guzzle\Stub;
@@ -17,6 +17,15 @@ use Swoole\Coroutine\Http\Client;
 
 class CoroutineHandlerStub extends CoroutineHandler
 {
+    public $count = 0;
+
+    protected $statusCode;
+
+    public function __construct($statusCode = 200)
+    {
+        $this->statusCode = $statusCode;
+    }
+
     public function checkStatusCode(Client $client, $request)
     {
         return parent::checkStatusCode($client, $request);
@@ -33,7 +42,8 @@ class CoroutineHandlerStub extends CoroutineHandler
             'headers' => $client->requestHeaders,
             'uri' => $path,
         ]);
-        $client->statusCode = 200;
+        $client->statusCode = $this->statusCode;
         $client->headers = [];
+        ++$this->count;
     }
 }

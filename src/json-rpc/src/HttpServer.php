@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\JsonRpc;
@@ -70,7 +70,7 @@ class HttpServer extends Server
 
     protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
-        return new HttpCoreMiddleware($this->container, $this->protocol, $this->serverName);
+        return new HttpCoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ModelCache;
@@ -96,18 +96,11 @@ class Config
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPool(): string
     {
         return $this->pool;
     }
 
-    /**
-     * @param string $pool
-     * @return Config
-     */
     public function setPool(string $pool): Config
     {
         $this->pool = $pool;

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils\Coroutine;
@@ -15,7 +15,7 @@ namespace Hyperf\Utils\Coroutine;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
@@ -32,20 +32,14 @@ class Concurrent
     protected $channel;
 
     /**
-     * @var float
-     */
-    protected $timeout;
-
-    /**
      * @var int
      */
     protected $limit;
 
-    public function __construct(int $limit, float $timeout = 10.0)
+    public function __construct(int $limit)
     {
         $this->limit = $limit;
         $this->channel = new Channel($limit);
-        $this->timeout = $timeout;
     }
 
     public function __call($name, $arguments)
@@ -70,18 +64,9 @@ class Concurrent
         return $this->getLength();
     }
 
-    public function getTimeout(): float
-    {
-        return $this->timeout;
-    }
-
     public function create(callable $callable): void
     {
-        while (true) {
-            if ($this->channel->push(true, $this->getTimeout())) {
-                break;
-            }
-        }
+        $this->channel->push(true);
 
         Coroutine::create(function () use ($callable) {
             try {
@@ -96,7 +81,7 @@ class Concurrent
                     }
                 }
             } finally {
-                $this->channel->pop($this->getTimeout());
+                $this->channel->pop();
             }
         });
     }

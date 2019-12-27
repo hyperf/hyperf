@@ -1,0 +1,62 @@
+{
+    "name": "hyperf/validation",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "validation",
+        "hyperf"
+    ],
+    "description": "hyperf validation",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Validation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Validation\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.3",
+        "egulias/email-validator": "^2.1",
+        "hyperf/command": "~1.1.0",
+        "hyperf/contract": "~1.1.0",
+        "hyperf/database": "~1.1.0",
+        "hyperf/devtool": "~1.1.0",
+        "hyperf/di": "~1.1.0",
+        "hyperf/framework": "~1.1.0",
+        "hyperf/http-server": "~1.1.0",
+        "hyperf/utils": "~1.1.0",
+        "hyperf/translation": "~1.1.0",
+        "nesbot/carbon": "^2.21",
+        "psr/container": "^1.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "hyperf/db-connection": "^1.0",
+        "hyperf/testing": "1.0.*",
+        "mockery/mockery": "^1.2",
+        "phpstan/phpstan": "^0.10.5",
+        "swoft/swoole-ide-helper": "^4.4.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Validation\\ConfigProvider"
+        }
+    }
+}

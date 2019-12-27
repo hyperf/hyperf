@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server;
@@ -106,7 +106,7 @@ class Server implements ServerInterface
                 ServerManager::add($name, [$type, current($this->server->ports)]);
 
                 if (class_exists(BeforeMainServerStart::class)) {
-                    // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
+                    // Trigger BeforeMainServerStart event, this event only trigger once before main server start.
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {

@@ -7,17 +7,25 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ModelCache;
 
+use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\ModelCache\Builder as ModelCacheBuilder;
 use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
+    /**
+     * @var bool
+     */
+    protected $useCacheBuilder = false;
+
     /**
      * Fetch a model from cache.
      * @param mixed $id
@@ -33,10 +41,8 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
-     * @param mixed $ids
-     * @return \Hyperf\Database\Model\Collection
      */
-    public static function findManyFromCache($ids): Collection
+    public static function findManyFromCache(array $ids): Collection
     {
         $container = ApplicationContext::getContainer();
         $manager = $container->get(Manager::class);
@@ -47,7 +53,6 @@ trait Cacheable
 
     /**
      * Delete model from cache.
-     * @return bool
      */
     public function deleteCache(): bool
     {
@@ -58,8 +63,8 @@ trait Cacheable
 
     /**
      * Increment a column's value by a given amount.
-     * @param mixed $column
-     * @param mixed $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -81,8 +86,8 @@ trait Cacheable
 
     /**
      * Decrement a column's value by a given amount.
-     * @param mixed $column
-     * @param mixed $amount
+     * @param string $column
+     * @param float|int $amount
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -100,5 +105,32 @@ trait Cacheable
             }
         }
         return $res;
+    }
+
+    /**
+     * Create a new Model query builder for the model.
+     * @param QueryBuilder $query
+     */
+    public function newModelBuilder($query): Builder
+    {
+        if ($this->useCacheBuilder) {
+            return new ModelCacheBuilder($query);
+        }
+
+        return parent::newModelBuilder($query);
+    }
+
+    public function newQuery(bool $cache = false): Builder
+    {
+        $this->useCacheBuilder = $cache;
+        return parent::newQuery();
+    }
+
+    /**
+     * @param bool $cache Whether to delete the model cache when batch update
+     */
+    public static function query(bool $cache = false): Builder
+    {
+        return (new static())->newQuery($cache);
     }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Di;
@@ -31,5 +31,20 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has(FooInterface::class));
         $this->assertFalse($container->has(NotExistClass::class));
         $this->assertTrue($container->has(Foo::class));
+    }
+
+    public function testSet()
+    {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $subject = new Foo();
+        $container->set(FooInterface::class, $subject);
+        $this->assertSame($subject, $container->get(FooInterface::class));
+    }
+
+    public function testDefine()
+    {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container->define(FooInterface::class, Foo::class);
+        $this->assertInstanceOf(Foo::class, $container->make(FooInterface::class));
     }
 }

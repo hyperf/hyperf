@@ -40,6 +40,9 @@
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
         "hyperf": {
             "config": "Hyperf\\Translation\\ConfigProvider"
         }

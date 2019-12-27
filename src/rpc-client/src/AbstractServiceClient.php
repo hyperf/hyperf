@@ -7,12 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\RpcClient;
 
-use Hyperf\Consul\Agent;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
@@ -88,7 +87,7 @@ abstract class AbstractServiceClient
     {
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
-        $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
         $transporter = $protocol->getTransporter()->setLoadBalancer($loadBalancer);
         $this->client = make(Client::class)
@@ -108,10 +107,10 @@ abstract class AbstractServiceClient
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
-            if (isset($response['result'])) {
+            if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
-            if (isset($response['error'])) {
+            if (array_key_exists('error', $response)) {
                 return $response['error'];
             }
         }
@@ -138,6 +137,34 @@ abstract class AbstractServiceClient
         return $loadBalancer;
     }
 
+    protected function getOptions(): array
+    {
+        $consumer = $this->getConsumerConfig();
+
+        return $consumer['options'] ?? [];
+    }
+
+    protected function getConsumerConfig(): array
+    {
+        if (! $this->container->has(ConfigInterface::class)) {
+            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
+        }
+
+        $config = $this->container->get(ConfigInterface::class);
+
+        // According to the registry config of the consumer, retrieve the nodes.
+        $consumers = $config->get('services.consumers', []);
+        $config = [];
+        foreach ($consumers as $consumer) {
+            if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
+                $config = $consumer;
+                break;
+            }
+        }
+
+        return $config;
+    }
+
     /**
      * Create nodes the first time.
      *
@@ -145,24 +172,11 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        if (! $this->container->has(ConfigInterface::class)) {
-            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
-        }
         $refreshCallback = null;
-        $config = $this->container->get(ConfigInterface::class);
-
-        // According to the registry config of the consumer, retrieve the nodes.
-        $consumers = $config->get('services.consumers', []);
-        $isMatch = false;
-        foreach ($consumers as $consumer) {
-            if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
-                $isMatch = true;
-                break;
-            }
-        }
+        $consumer = $this->getConsumerConfig();
 
         // Current $consumer is the config of the specified consumer.
-        if ($isMatch && isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
+        if (isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
             // According to the protocol and address of the registry, retrieve the nodes.
             switch ($registryProtocol = $consumer['registry']['protocol'] ?? '') {
                 case 'consul':
@@ -178,6 +192,7 @@ abstract class AbstractServiceClient
             }
             return [$nodes, $refreshCallback];
         }
+
         // Not exists the registry config, then looking for the 'nodes' property.
         if (isset($consumer['nodes'])) {
             $nodes = [];
@@ -191,49 +206,35 @@ abstract class AbstractServiceClient
             }
             return [$nodes, $refreshCallback];
         }
+
         throw new InvalidArgumentException('Config of registry or nodes missing.');
     }
 
     protected function getNodesFromConsul(array $config): array
     {
-        $agent = $this->createConsulAgent($config);
-        $services = $agent->services()->json();
-        $nodes = [];
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port']) || $service['Service'] !== $this->serviceName) {
-                continue;
-            }
-            // @TODO Get and set the weight property.
-            $nodes[$serviceId] = new Node($service['Address'], $service['Port']);
-        }
-        if (empty($nodes)) {
-            return $nodes;
-        }
         $health = $this->createConsulHealth($config);
-        $checks = $health->checks($this->serviceName)->json();
-        foreach ($checks ?? [] as $check) {
-            if (! isset($check['Status'], $check['ServiceID'])) {
-                continue;
-            }
-            if ($check['Status'] !== 'passing') {
-                unset($nodes[$check['ServiceID']]);
-            }
-        }
-        return array_values($nodes);
-    }
+        $services = $health->service($this->serviceName)->json();
+        $nodes = [];
+        foreach ($services as $node) {
+            $passing = true;
+            $service = $node['Service'] ?? [];
+            $checks = $node['Checks'] ?? [];
 
-    protected function createConsulAgent(array $config)
-    {
-        if (! $this->container->has(Agent::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
+            foreach ($checks as $check) {
+                $status = $check['Status'] ?? false;
+                if ($status !== 'passing') {
+                    $passing = false;
+                }
+            }
+
+            if ($passing) {
+                $address = $service['Address'] ?? '';
+                $port = (int) $service['Port'] ?? 0;
+                // @TODO Get and set the weight property.
+                $address && $port && $nodes[] = new Node($address, $port);
+            }
         }
-        return make(Agent::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Agent::DEFAULT_URI,
-                ]);
-            },
-        ]);
+        return $nodes;
     }
 
     protected function createConsulHealth(array $config): HealthInterface

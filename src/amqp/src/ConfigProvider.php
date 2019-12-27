@@ -7,11 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Listener\BeforeMainServerStartListener;
+use Hyperf\Amqp\Listener\MainWorkerStartListener;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Utils\Packer\JsonPacker;
 
@@ -25,11 +27,15 @@ class ConfigProvider
                 Packer::class => JsonPacker::class,
                 Consumer::class => ConsumerFactory::class,
             ],
-            'commands' => [
+            'listeners' => [
+                BeforeMainServerStartListener::class => 99,
+                MainWorkerStartListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

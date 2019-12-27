@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\JsonRpc\Stub;
@@ -36,5 +36,10 @@ class CalculatorService implements CalculatorServiceInterface
             throw new \InvalidArgumentException('Expected non-zero value of divider');
         }
         return $value / $divider;
+    }
+
+    public function array(int $a, int $b): array
+    {
+        return ['params' => [$a, $b], 'sum' => $a + $b];
     }
 }
