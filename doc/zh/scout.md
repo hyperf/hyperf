@@ -109,7 +109,7 @@ class Post extends Model
 <a name="adding-records"></a>
 ### 添加记录
 
-当你将 `Hyperf\Scout\Searchable`  trait 添加到模型中，你需要做的是 `save` 一个模型实例，它就会自动添加到你的搜索索引。如果你已经将 Scout 配置为 [使用队列](#queueing)，那这个操作会在后台由你的队列工作进程来执行：
+当你将 `Hyperf\Scout\Searchable`  trait 添加到模型中，你需要做的是 `save` 一个模型实例，它就会自动添加到你的搜索索引。更新索引操作将会在协程结束时进行，不会堵塞请求。
 
     $order = new App\Order;
 
@@ -117,9 +117,9 @@ class Post extends Model
 
     $order->save();
 
-#### 使用队列添加
+#### 批量添加
 
-如果你想通过 Eloquent 查询构造器将模型集合添加到搜索索引中，你也可以在 Eloquent 查询构造器上链式调用 `searchable` 方法。`searchable` 会把构造器的查询 [结果分块](/docs/{{version}}/eloquent#chunking-results) 并且将记录添加到你的搜索索引里。同样的，如果你已经配置 Scout 为使用队列，则所有的数据块将在后台由你的队列工作进程添加：
+如果你想通过 Eloquent 查询构造器将模型集合添加到搜索索引中，你也可以在 Eloquent 查询构造器上链式调用 `searchable` 方法。`searchable` 会把构造器的查询结果分块并且将记录添加到你的搜索索引里。
 
     // 使用 Eloquent 查询构造器增加...
     App\Order::where('price', '>', 100)->searchable();
@@ -157,7 +157,7 @@ class Post extends Model
 <a name="removing-records"></a>
 ### 删除记录
 
-简单地使用 `delete` 从数据库中删除该模型就可以移除索引里的记录。这种删除形式甚至与 [软删除](/docs/{{version}}/eloquent#soft-deleting) 的模型兼容:
+简单地使用 `delete` 从数据库中删除该模型就可以移除索引里的记录。这种删除形式甚至与软删除的模型兼容:
 
     $order = App\Order::find(1);
 
@@ -225,7 +225,7 @@ Scout 允许你在搜索查询中增加简单的「where」语句。目前，这
 
     $orders = App\Order::search('Star Trek')->paginate(15);
 
-获取到检索结果后，就可以使用 [Blade](/docs/{{version}}/blade) 来渲染分页链接从而显示结果，就像传统的 Eloquent 查询分页一样：
+获取到检索结果后，就可以使用喜欢的模板引擎来渲染分页链接从而显示结果，就像传统的 Eloquent 查询分页一样：
 
     <div class="container">
         @foreach ($orders as $order)
