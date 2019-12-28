@@ -292,6 +292,10 @@ trait Searchable
      */
     protected static function dispatchSearchableJob(callable $job)
     {
+        if (!Coroutine::inCoroutine()){
+            $job();
+            return;
+        }
         if (defined('SCOUT_COMMAND')) {
             if (! (static::$scoutRunner instanceof Coroutine\Concurrent)) {
                 static::$scoutRunner = new Coroutine\Concurrent((new static())->syncWithSearchUsingConcurency());
