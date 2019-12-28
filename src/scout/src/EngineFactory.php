@@ -15,6 +15,7 @@ namespace Hyperf\Scout;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Scout\Provider\ElasticsearchProvider;
+use Hyperf\Scout\Provider\ProviderInterface;
 
 class EngineFactory
 {
@@ -24,6 +25,9 @@ class EngineFactory
         $name = $config->get('scout.default', 'elasticsearch');
         $driver = $config->get("scout.engine.{$name}.driver", ElasticsearchProvider::class);
         $driverInstance = make($driver);
-        return $driverInstance->make($name);
+        if ($driverInstance instanceof ProviderInterface) {
+            return $driverInstance->make($name);
+        }
+        return $driverInstance;
     }
 }
