@@ -54,7 +54,7 @@ class TaskAspect extends AbstractAspect
         foreach ($parameters as $parameter) {
             $arg = $proceedingJoinPoint->arguments['keys'][$parameter->getName()];
             if ($parameter->isVariadic()) {
-                $arguments = $arguments + $arg;
+                $arguments = array_merge($arguments, $arg);
             } else {
                 $arguments[] = $arg;
             }
