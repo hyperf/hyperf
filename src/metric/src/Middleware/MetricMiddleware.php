@@ -41,7 +41,7 @@ class MetricMiddleware implements MiddlewareInterface
     {
         $labels = [
             'request_status' => '500', //default to 500 incase uncaught exception occur
-            'request_path' => $request->getRequestTarget(),
+            'request_path' => $request->getUri()->getPath(),
             'request_method' => $request->getMethod(),
         ];
         $timer = new Timer('http_requests', $labels);
