@@ -13,12 +13,14 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Connection;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,11 +29,17 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+        Context::set('database.connection.default', null);
+    }
+
     public function testResolveConnection()
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         $connection = $resolver->connection();
 
@@ -57,7 +65,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         /** @var \Hyperf\Database\Connection $connection */
         $connection = $resolver->connection();
@@ -81,5 +89,53 @@ class ConnectionTest extends TestCase
         $this->assertSame(2, $connection->transactionLevel());
         $connection->rollBack(0);
         $this->assertSame(0, $connection->transactionLevel());
+    }
+
+    public function testConnectionReadWrite()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var \Hyperf\Database\Connection $connection */
+        $connection = $resolver->connection();
+
+        /** @var PDOStub $pdo */
+        $pdo = $connection->getPdo();
+        $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+        $pdo = $connection->getReadPdo();
+        $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+    }
+
+    public function testConnectionSticky()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolverInterface::class);
+
+            /** @var \Hyperf\Database\Connection $connection */
+            $connection = $resolver->connection();
+            $connection->statement('UPDATE hyperf.test SET name = 1 WHERE id = 1;');
+
+            /** @var PDOStub $pdo */
+            $pdo = $connection->getPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+            $pdo = $connection->getReadPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+        }]);
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolverInterface::class);
+
+            /** @var \Hyperf\Database\Connection $connection */
+            $connection = $resolver->connection();
+
+            /** @var PDOStub $pdo */
+            $pdo = $connection->getPdo();
+            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+            $pdo = $connection->getReadPdo();
+            $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+        }]);
     }
 }

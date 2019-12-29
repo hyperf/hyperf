@@ -14,6 +14,7 @@ namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -21,6 +22,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
 use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
+use Hyperf\Utils\ApplicationContext;
 use Swoole\Coroutine;
 
 /**
@@ -57,7 +59,7 @@ class RateLimitAnnotationAspect implements AroundInterface
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
-        $this->config = $config->get('rate-limit', []);
+        $this->config = $this->parseConfig($config);
         $this->request = $request;
         $this->rateLimitHandler = $rateLimitHandler;
     }
@@ -123,6 +125,36 @@ class RateLimitAnnotationAspect implements AroundInterface
         return [
             $metadata->class[RateLimit::class] ?? null,
             $metadata->method[RateLimit::class] ?? null,
+        ];
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    protected function parseConfig(ConfigInterface $config)
+    {
+        if ($config->has('rate_limit')) {
+            return $config->get('rate_limit');
+        }
+
+        // TODO: Removed in v1.2
+        if ($config->has('rate-limit')) {
+            if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
+                $logger = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                $logger->warning('Config rate-limit.php will be removed in v1.2, please use rate_limit.php instead.');
+            }
+
+            return $config->get('rate-limit');
+        }
+
+        return [
+            'create' => 1,
+            'consume' => 1,
+            'capacity' => 2,
+            'limitCallback' => [],
+            'waitTimeout' => 1,
         ];
     }
 }

@@ -15,6 +15,7 @@ namespace Hyperf\Tracer\Listener;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
@@ -34,10 +35,16 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     private $switchManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    /**
+     * @var SpanTagManager
+     */
+    private $spanTagManager;
+
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
         $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     public function listen(): array
@@ -63,11 +70,11 @@ class DbQueryExecutedListener implements ListenerInterface
         }
 
         $endTime = microtime(true);
-        $span = $this->startSpan('db.query', [
+        $span = $this->startSpan($this->spanTagManager->get('db', 'db.query'), [
             'start_time' => (int) (($endTime - $event->time / 1000) * 1000 * 1000),
         ]);
-        $span->setTag('db.sql', $sql);
-        $span->setTag('db.query_time', $event->time . ' ms');
+        $span->setTag($this->spanTagManager->get('db', 'db.statement'), $sql);
+        $span->setTag($this->spanTagManager->get('db', 'db.query_time'), $event->time . ' ms');
         $span->finish((int) ($endTime * 1000 * 1000));
     }
 }
