@@ -59,6 +59,20 @@ class Request implements RequestInterface
         }
         return data_get($this->getQueryParams(), $key, $default);
     }
+    
+    /**
+     * Retrieve the data from route parameters.
+     *
+     * @param mixed $default
+     */
+    public function route(string $key, $default = null)
+    {
+        $route = $this->getAttribute(Dispatched::class);
+        if (is_null($route)) {
+            return $default;
+        }
+        return array_key_exists($key, $route->params) ? $route->params[$key] : $default;
+    }
 
     /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
@@ -155,20 +169,6 @@ class Request implements RequestInterface
             return $default;
         }
         return $this->getHeaderLine($key);
-    }
-
-    /**
-     * Retrieve the data from route parameters.
-     *
-     * @param mixed $default
-     */
-    public function route(string $key, $default = null)
-    {
-        $route = $this->getAttribute(Dispatched::class);
-        if (is_null($route)) {
-            return $default;
-        }
-        return array_key_exists($key, $route->params) ? $route->params[$key] : $default;
     }
 
     /**
