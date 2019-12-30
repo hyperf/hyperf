@@ -1,5 +1,9 @@
 # v1.1.13 - TBD
 
+## Added
+
+- [#1195](https://github.com/hyperf/hyperf/pull/1195) Added max offset for `Cacheable` and `CachePut`.
+
 ## Fixed
 
 - [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
