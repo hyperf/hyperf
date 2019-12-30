@@ -2189,10 +2189,8 @@ class Builder
 
     /**
      * Insert ignore a new record into the database.
-     *
-     * @return int
      */
-    public function insertOrIgnore(array $values)
+    public function insertOrIgnore(array $values): int
     {
         if (empty($values)) {
             return 0;
