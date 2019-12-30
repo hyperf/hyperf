@@ -106,8 +106,6 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile an insert ignore statement into SQL.
-     *
-     * @return string
      */
     public function compileInsertOrIgnore(Builder $query, array $values)
     {
