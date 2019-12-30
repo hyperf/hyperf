@@ -101,7 +101,7 @@
 
 ## 熱更新/熱過載
 
-- [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一個基於 fswatch 實現的通用熱更新元件
+- [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一個基於 Swoole 實現的通用熱更新元件
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一個由 Mixphp 實現的通用熱更新元件
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一個基於 Go 語言實現的通用熱更新元件
 - [remy/nodemon](https://github.com/remy/nodemon) 一個基於 node.js 實現的通用熱更新元件

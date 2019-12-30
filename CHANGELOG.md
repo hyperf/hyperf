@@ -1,5 +1,11 @@
 # v1.1.13 - TBD
 
+## Fixed
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
+- [#1200](https://github.com/hyperf/hyperf/pull/1200) Request path shouldn't include query parameters in hyperf/metric middleware.
+
+
 # v1.1.12 - 2019-12-26
 
 ## Added
