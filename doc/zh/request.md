@@ -76,6 +76,32 @@ class IndexController
 }
 ```
 
+除了可以通过依赖注入获取路由参数，还可以通过`route`方法获取，如下所示：
+
+```php
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController()
+ */
+class IndexController
+{
+    public function info(RequestInterface $request)
+    {
+        // 存在则返回，不存在则返回默认值 null
+        $id = $request->route('id');
+        // 存在则返回，不存在则返回默认值 0
+        $id = $request->route('id', 0);
+        // ...
+    }
+}
+```
+
 ### 请求路径 & 方法
 
 `Hyperf\HttpServer\Contract\RequestInterface` 除了使用 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准定义的 `APIs` 之外，还提供了多种方法来检查请求，下面我们提供一些方法的示例：
