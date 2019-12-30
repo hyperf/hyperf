@@ -28,6 +28,7 @@ use Hyperf\Utils\Context;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @internal
@@ -516,6 +517,22 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->where('id', '=', 1)->orWhereIn('id', [new Raw(1)]);
         $this->assertEquals('select * from "users" where "id" = ? or "id" in (1)', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+    }
+
+    public function testInsertOrIgnoreMethod()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This database engine does not support insert or ignore.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->insertOrIgnore(['email' => 'foo']);
+    }
+
+    public function testMySqlInsertOrIgnoreMethod()
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('affectingStatement')->once()->with('insert ignore into `users` (`email`) values (?)', ['foo'])->andReturn(1);
+        $result = $builder->from('users')->insertOrIgnore(['email' => 'foo']);
+        $this->assertEquals(1, $result);
     }
 
     public function testEmptyWhereIns()
