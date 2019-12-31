@@ -40,7 +40,7 @@ class NormalizeDataFormatter extends DataFormatter
 
     public function formatErrorResponse($data)
     {
-        if (isset($data[3]) && $data[3] instanceof \Exception) {
+        if (isset($data[3]) && $data[3] instanceof \Throwable) {
             $data[3] = [
                 'class' => get_class($data[3]),
                 'attributes' => $this->normalizer->normalize($data[3]),

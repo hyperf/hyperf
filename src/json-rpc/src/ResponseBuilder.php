@@ -49,7 +49,7 @@ class ResponseBuilder
         $this->packer = $packer;
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, \Exception $error = null): ResponseInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
         return $this->response()->withAddedHeader('content-type', 'application/json')->withBody($body);
@@ -74,7 +74,7 @@ class ResponseBuilder
         return $this->packer->pack($response);
     }
 
-    protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Exception $error = null): string
+    protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
     {
         [$code, $message] = $this->error($code, $error ? $error->getMessage() : null);
         $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id') ?? '', $code, $message, $error]);
