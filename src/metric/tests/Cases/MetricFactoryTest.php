@@ -63,7 +63,7 @@ class MetricFactoryTest extends TestCase
                     'prometheus' => [
                         'driver' => PrometheusFactory::class,
                         'mode' => Constants::SCRAPE_MODE,
-                        'namespace' => 'Hello-World',
+                        'namespace' => 'Hello-World!',
                     ],
                 ],
             ],
@@ -73,6 +73,6 @@ class MetricFactoryTest extends TestCase
         $p = new PrometheusFactory($config, $r, $c);
         $method = new ReflectionMethod(PrometheusFactory::class, 'getNamespace');
         $method->setAccessible(true);
-        $this->assertEquals('hello_world', $method->invoke($p));
+        $this->assertEquals('hello__world_', $method->invoke($p));
     }
 }
