@@ -30,6 +30,7 @@ use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
 use SplFileInfo;
 use Throwable;
+use function DI\string;
 
 trait ValidatesAttributes
 {
@@ -1492,7 +1493,7 @@ trait ValidatesAttributes
             return $value->getSize() / 1024;
         }
 
-        return mb_strlen($value);
+        return mb_strlen((string)$value);
     }
 
     /**
