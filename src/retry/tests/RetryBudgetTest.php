@@ -15,6 +15,7 @@ namespace HyperfTest\Retry;
 use Hyperf\Retry\RetryBudget;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine\System;
 use Swoole\Timer;
 
 /**
@@ -58,11 +59,14 @@ class RetryBudgetTest extends TestCase
         $this->assertTrue($budget->consume());
         $this->assertTrue(! $budget->consume());
         $budget = new RetryBudget(
-            1,
-            10,
+            100,
+            2,
             0.1
         );
-        usleep(1000);
+        System::sleep(1.2);
+        $this->assertTrue($budget->consume());
+        $this->assertTrue($budget->consume());
+        $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
         $this->assertTrue(! $budget->consume());
     }

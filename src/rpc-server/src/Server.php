@@ -81,13 +81,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         ContainerInterface $container,
         DispatcherInterface $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        Protocol $protocol,
         LoggerInterface $logger
     ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 
@@ -141,18 +139,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
     {
-        $eof = $server->setting['package_eof'] ?? '';
-        $serverPort = $server->getClientInfo($fd)['server_port'] ?? null;
-        if ($serverPort) {
-            foreach ($server->ports ?? [] as $port) {
-                if ($port->port === $serverPort) {
-                    $eof = $port->setting['package_eof'] ?? $eof;
-                    break;
-                }
-            }
-        }
-
-        $server->send($fd, (string) $response->getBody() . $eof);
+        $server->send($fd, (string) $response->getBody());
     }
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
