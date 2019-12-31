@@ -140,6 +140,7 @@ class MetricFactory implements MetricFactoryInterface
 
     private function getNamespace(): string
     {
-        return $this->config->get("metric.metric.{$this->name}.namespace");
+        $name = $this->config->get("metric.metric.{$this->name}.namespace");
+        return str_replace('-', '', Str::snake($name));
     }
 }
