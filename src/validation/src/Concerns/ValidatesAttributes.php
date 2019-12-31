@@ -30,7 +30,6 @@ use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
 use SplFileInfo;
 use Throwable;
-use function DI\string;
 
 trait ValidatesAttributes
 {
