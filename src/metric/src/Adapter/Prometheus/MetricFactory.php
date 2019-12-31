@@ -20,6 +20,7 @@ use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
+use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
 use Swoole\Coroutine;
@@ -139,7 +140,8 @@ class MetricFactory implements MetricFactoryInterface
 
     private function getNamespace(): string
     {
-        return $this->config->get("metric.metric.{$this->name}.namespace");
+        $name = $this->config->get("metric.metric.{$this->name}.namespace");
+        return str_replace('-', '', Str::snake($name));
     }
 
     private function guardConfig()

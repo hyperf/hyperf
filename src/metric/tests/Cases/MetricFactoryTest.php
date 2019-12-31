@@ -20,6 +20,7 @@ use Hyperf\Metric\Exception\RuntimeException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
+use ReflectionMethod;
 
 /**
  * @internal
@@ -50,5 +51,28 @@ class MetricFactoryTest extends TestCase
         $c = Mockery::mock(ClientFactory::class);
         $this->expectException(RuntimeException::class);
         $p = new PrometheusFactory($config, $r, $c);
+    }
+
+    public function testGetNamespace()
+    {
+        $config = new Config([
+            'metric' => [
+                'default' => 'prometheus',
+                'use_standalone_process' => true,
+                'metric' => [
+                    'prometheus' => [
+                        'driver' => PrometheusFactory::class,
+                        'mode' => Constants::SCRAPE_MODE,
+                        'namespace' => 'Hello-World',
+                    ],
+                ],
+            ],
+        ]);
+        $r = Mockery::mock(CollectorRegistry::class);
+        $c = Mockery::mock(ClientFactory::class);
+        $p = new PrometheusFactory($config, $r, $c);
+        $method = new ReflectionMethod(PrometheusFactory::class, 'getNamespace');
+        $method->setAccessible(true);
+        $this->assertEquals('hello_world', $method->invoke($p));
     }
 }
