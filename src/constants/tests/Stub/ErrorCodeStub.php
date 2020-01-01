@@ -40,7 +40,7 @@ class ErrorCodeStub extends AbstractConstants
     const TRANSLATOR_ERROR_MESSAGE = 504;
 
     /**
-     * @Message("error.not exist")
+     * @Message("error.not_exist")
      */
     const TRANSLATOR_NOT_EXIST = 505;
 }

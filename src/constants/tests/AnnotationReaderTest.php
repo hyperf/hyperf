@@ -100,7 +100,7 @@ class AnnotationReaderTest extends TestCase
             $loader = new ArrayLoader();
             $loader->addMessages('en', 'error', [
                 'message' => 'Error Message',
-                'not exist' => ':name is not exist.',
+                'not_exist' => ':name is not exist.',
             ]);
             $loader->addMessages('zh_CN', 'error', ['message' => '错误信息']);
             return new Translator($loader, 'en');
