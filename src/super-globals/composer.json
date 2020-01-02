@@ -22,6 +22,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/http-server": "Required to use $_SERVER.",
+        "hyperf/session": "Required to use $_SESSION."
     },
     "autoload": {
         "psr-4": {
