@@ -8,7 +8,7 @@
 
 - [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
 - [#1200](https://github.com/hyperf/hyperf/pull/1200) Request path shouldn't include query parameters in hyperf/metric middleware.
-
+- [#1205](https://github.com/hyperf/hyperf/issues/1205) Fixed validation `size` does not works without `numeric` or `integer` rules when the type of value is numeric.
 
 # v1.1.12 - 2019-12-26
 
