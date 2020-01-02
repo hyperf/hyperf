@@ -14,5 +14,5 @@ namespace Hyperf\View;
 
 interface RenderInterface
 {
-    public function render(string $template, array $data);
+    public function render(string $template, array $data = []);
 }
