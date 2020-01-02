@@ -45,7 +45,7 @@ class IndexController
 ```php
 // 註解方式
 /**
- * @GetMapping(path="/user/{id:\d+}")
+ * @GetMapping(path="user/{id:\d+}")
  */
  
 // 配置方式
