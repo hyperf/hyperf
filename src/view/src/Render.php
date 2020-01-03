@@ -58,7 +58,7 @@ class Render implements RenderInterface
         $this->container = $container;
     }
 
-    public function render(string $template, array $data)
+    public function render(string $template, array $data = [])
     {
         switch ($this->mode) {
             case Mode::SYNC:
