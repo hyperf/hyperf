@@ -140,7 +140,27 @@ class Connection extends BaseConnection implements ConnectionInterface
         }
 
         $this->lastHeartbeatTime = microtime(true);
-        return new $class($this->config['host'] ?? 'localhost', $this->config['port'] ?? 5672, $this->config['user'] ?? 'guest', $this->config['password'] ?? 'guest', $this->config['vhost'] ?? '/', $this->params->isInsist(), $this->params->getLoginMethod(), $this->params->getLoginResponse(), $this->params->getLocale(), $this->params->getConnectionTimeout(), $this->params->getReadWriteTimeout(), $this->params->getContext(), $this->params->isKeepalive(), $this->params->getHeartbeat());
+        /** @var AbstractConnection $connection */
+        $connection = new $class(
+            $this->config['host'] ?? 'localhost',
+            $this->config['port'] ?? 5672,
+            $this->config['user'] ?? 'guest',
+            $this->config['password'] ?? 'guest',
+            $this->config['vhost'] ?? '/',
+            $this->params->isInsist(),
+            $this->params->getLoginMethod(),
+            $this->params->getLoginResponse(),
+            $this->params->getLocale(),
+            $this->params->getConnectionTimeout(),
+            $this->params->getReadWriteTimeout(),
+            $this->params->getContext(),
+            $this->params->isKeepalive(),
+            $this->params->getHeartbeat()
+        );
+
+        $connection->set_close_on_destruct($this->params->isCloseOnDestruct());
+
+        return $connection;
     }
 
     protected function isHeartbeatTimeout(): bool

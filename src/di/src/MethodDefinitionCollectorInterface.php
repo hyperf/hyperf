@@ -22,7 +22,6 @@ interface MethodDefinitionCollectorInterface
 
     /**
      * Retrieve the metadata for the return value of the method.
-     * @return ReflectionType
      */
     public function getReturnType(string $class, string $method): ReflectionType;
 }

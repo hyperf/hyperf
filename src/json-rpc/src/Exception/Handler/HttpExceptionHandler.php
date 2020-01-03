@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc\Exception\Handler;
 
-use Exception;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;

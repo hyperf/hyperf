@@ -37,6 +37,7 @@ return [
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 3,
+            'close_on_destruct' => true,
         ],
     ],
 ];

@@ -9,7 +9,7 @@ if [ ! -f "composer.lock" ]; then
   exit
 fi
 
-rm -rf runtime
+rm -rf runtime/container
 
 echo "Runtime cleared"
 

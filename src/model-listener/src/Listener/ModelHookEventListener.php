@@ -13,12 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener(priority=99)
- */
 class ModelHookEventListener implements ListenerInterface
 {
     public function listen(): array

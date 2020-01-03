@@ -29,9 +29,6 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
      */
     protected $cookies = [];
 
-    /**
-     * @param null|\Swoole\Http\Response $response
-     */
     public function __construct(\Swoole\Http\Response $response = null)
     {
         $this->swooleResponse = $response;
@@ -72,6 +69,14 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
         $clone = clone $this;
         $clone->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
         return $clone;
+    }
+
+    /**
+     * Return all cookies.
+     */
+    public function getCookies(): array
+    {
+        return $this->cookies;
     }
 
     public function getSwooleResponse(): ?\Swoole\Http\Response

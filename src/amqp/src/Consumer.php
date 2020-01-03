@@ -115,6 +115,13 @@ class Consumer extends Builder
         foreach ($routineKeys as $routingKey) {
             $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
         }
+
+        if (is_array($qos = $message->getQos())) {
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
+            $channel->basic_qos($size, $count, $global);
+        }
     }
 
     protected function getConcurrent(): ?Concurrent

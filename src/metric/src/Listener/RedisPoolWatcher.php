@@ -64,8 +64,8 @@ class RedisPoolWatcher implements ListenerInterface
             ->with('default', (string) $workerId);
 
         $config = $this->container->get(ConfigInterface::class);
-        $timerInteval = $config->get('metric.default_metric_inteval', 5);
-        Timer::tick($timerInteval * 1000, function () use ($gauge, $pool) {
+        $timerInterval = $config->get('metric.default_metric_interval', 5);
+        Timer::tick($timerInterval * 1000, function () use ($gauge, $pool) {
             $gauge->set((float) $pool->getCurrentConnections());
         });
     }

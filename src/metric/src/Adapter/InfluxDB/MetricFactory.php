@@ -100,7 +100,7 @@ class MetricFactory implements MetricFactoryInterface
         $username = $this->config->get("metric.metric.{$this->name}.username");
         $password = $this->config->get("metric.metric.{$this->name}.password");
         $dbname = $this->config->get("metric.metric.{$this->name}.dbname");
-        $inteval = (float) $this->config->get("metric.metric.{$this->name}.push_inteval", 5);
+        $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
         $create = $this->config->get("metric.metric.{$this->name}.auto_create_db");
         $client = new Client($host, $port, $username, $password);
         $guzzleClient = $this->guzzleClientFactory->create([
@@ -115,7 +115,7 @@ class MetricFactory implements MetricFactoryInterface
             $database->create(new RetentionPolicy($dbname, '1d', 1, true));
         }
         while (true) {
-            Coroutine::sleep($inteval);
+            Coroutine::sleep($interval);
             $points = [];
             $metrics = $this->registry->getMetricFamilySamples();
             foreach ($metrics as $metric) {

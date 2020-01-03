@@ -161,7 +161,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -743,7 +743,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        if (in_array($value->getExtension(), $parameters)) {
+        if (in_array(strtolower($value->getExtension()), $parameters)) {
             return true;
         }
 
@@ -1492,7 +1492,7 @@ trait ValidatesAttributes
             return $value->getSize() / 1024;
         }
 
-        return mb_strlen($value);
+        return mb_strlen((string) $value);
     }
 
     /**
@@ -1501,7 +1501,6 @@ trait ValidatesAttributes
      * @param mixed $first
      * @param mixed $second
      * @throws \InvalidArgumentException
-     * @return bool
      */
     protected function compare($first, $second, string $operator): bool
     {

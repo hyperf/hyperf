@@ -106,7 +106,7 @@ class Server implements ServerInterface
                 ServerManager::add($name, [$type, current($this->server->ports)]);
 
                 if (class_exists(BeforeMainServerStart::class)) {
-                    // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
+                    // Trigger BeforeMainServerStart event, this event only trigger once before main server start.
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {

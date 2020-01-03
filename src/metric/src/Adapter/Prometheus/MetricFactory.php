@@ -98,6 +98,9 @@ class MetricFactory implements MetricFactoryInterface
             case Constants::PUSH_MODE:
                 $this->pushHandle();
                 break;
+            case Constants::CUSTOM_MODE:
+                $this->customHandle();
+                break;
             default:
                 throw new InvalidArgumentException('Unsupported Prometheus mode encountered');
                 break;
@@ -121,12 +124,17 @@ class MetricFactory implements MetricFactoryInterface
     protected function pushHandle()
     {
         while (true) {
-            $inteval = (float) $this->config->get("metric.metric.{$this->name}.push_inteval", 5);
+            $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
             $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
-            Coroutine::sleep($inteval);
+            Coroutine::sleep($interval);
         }
+    }
+
+    protected function customHandle()
+    {
+        Coroutine::yield(); // Yield forever
     }
 
     private function getNamespace(): string

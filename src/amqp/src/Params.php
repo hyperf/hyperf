@@ -32,42 +32,48 @@ class Params
 
     protected $heartbeat = 0;
 
+    protected $closeOnDestruct = true;
+
     public function __construct(array $data)
     {
         if (isset($data['insist'])) {
-            $this->insist = $data['insist'];
+            $this->setInsist($data['insist']);
         }
 
         if (isset($data['login_method'])) {
-            $this->loginMethod = $data['login_method'];
+            $this->setLoginMethod($data['login_method']);
         }
 
         if (isset($data['login_response'])) {
-            $this->loginResponse = $data['login_response'];
+            $this->setLoginResponse($data['login_response']);
         }
 
         if (isset($data['locale'])) {
-            $this->locale = $data['locale'];
+            $this->setLocale($data['locale']);
         }
 
         if (isset($data['connection_timeout'])) {
-            $this->connectionTimeout = $data['connection_timeout'];
+            $this->setConnectionTimeout($data['connection_timeout']);
         }
 
         if (isset($data['read_write_timeout'])) {
-            $this->readWriteTimeout = $data['read_write_timeout'];
+            $this->setReadWriteTimeout($data['read_write_timeout']);
         }
 
         if (isset($data['context'])) {
-            $this->context = $data['context'];
+            $this->setContext($data['context']);
         }
 
         if (isset($data['keepalive'])) {
-            $this->keepalive = $data['keepalive'];
+            $this->setKeepalive($data['keepalive']);
         }
 
         if (isset($data['heartbeat'])) {
-            $this->heartbeat = $data['heartbeat'];
+            $this->setHeartbeat($data['heartbeat']);
+        }
+
+        if (isset($data['close_on_destruct'])) {
+            $this->setCloseOnDestruct($data['close_on_destruct']);
         }
     }
 
@@ -116,6 +122,17 @@ class Params
         return $this->heartbeat;
     }
 
+    public function isCloseOnDestruct(): bool
+    {
+        return $this->closeOnDestruct;
+    }
+
+    public function setCloseOnDestruct(bool $closeOnDestruct)
+    {
+        $this->closeOnDestruct = $closeOnDestruct;
+        return $this;
+    }
+
     public function setInsist(bool $insist)
     {
         $this->insist = $insist;
@@ -156,7 +173,7 @@ class Params
         $this->keepalive = $keepalive;
     }
 
-    public function setHeartbeat($heartbeat)
+    public function setHeartbeat(int $heartbeat)
     {
         $this->heartbeat = $heartbeat;
     }

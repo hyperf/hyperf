@@ -53,12 +53,6 @@ class InputTypeGenerator
         $this->argumentResolver = $argumentResolver;
     }
 
-    /**
-     * @param string $factory
-     * @param string $methodName
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
-     * @return InputObjectType
-     */
     public function mapFactoryMethod(string $factory, string $methodName, RecursiveTypeMapperInterface $recursiveTypeMapper, ContainerInterface $container): InputObjectType
     {
         $method = new ReflectionMethod($factory, $methodName);

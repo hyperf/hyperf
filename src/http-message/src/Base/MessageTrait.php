@@ -192,7 +192,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     public function withHeaders(array $headers)
@@ -341,7 +340,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     private function setHeaders(array $headers)

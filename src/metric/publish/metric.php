@@ -16,7 +16,7 @@ return [
     'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('METRIC_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('METRIC_ENABLE_DEFAULT_METRIC', true),
-    'default_metric_inteval' => env('DEFAULT_METRIC_INTEVAL', 5),
+    'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
     'metric' => [
         'prometheus' => [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
@@ -27,7 +27,7 @@ return [
             'scrape_path' => env('PROMETHEUS_SCRAPE_PATH', '/metrics'),
             'push_host' => env('PROMETHEUS_PUSH_HOST', '0.0.0.0'),
             'push_port' => env('PROMETHEUS_PUSH_PORT', '9091'),
-            'push_inteval' => env('PROMETHEUS_PUSH_INTEVAL', 5),
+            'push_interval' => env('PROMETHEUS_PUSH_INTERVAL', 5),
         ],
         'statsd' => [
             'driver' => Hyperf\Metric\Adapter\StatsD\MetricFactory::class,
@@ -35,7 +35,7 @@ return [
             'udp_host' => env('STATSD_UDP_HOST', '127.0.0.1'),
             'udp_port' => env('STATSD_UDP_PORT', '8125'),
             'enable_batch' => env('STATSD_ENABLE_BATCH', true),
-            'push_inteval' => env('STATSD_PUSH_INTEVAL', 5),
+            'push_interval' => env('STATSD_PUSH_INTERVAL', 5),
             'sample_rate' => env('STATSD_SAMPLE_RATE', 1.0),
         ],
         'influxdb' => [
@@ -46,7 +46,7 @@ return [
             'username' => env('INFLUXDB_USERNAME', ''),
             'password' => env('INFLUXDB_PASSWORD', ''),
             'dbname' => env('INFLUXDB_DBNAME', true),
-            'push_inteval' => env('INFLUXDB_PUSH_INTEVAL', 5),
+            'push_interval' => env('INFLUXDB_PUSH_INTERVAL', 5),
             'auto_create_db' => env('INFLUXDB_AUTO_CREATE_DB', true),
         ],
     ],

@@ -19,6 +19,11 @@ return [
         'timeout' => 0.0,
         'reserved' => null,
         'retry_interval' => 0,
+        'cluster' => [
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
