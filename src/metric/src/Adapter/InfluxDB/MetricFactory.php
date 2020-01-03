@@ -21,6 +21,7 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Utils\Str;
 use InfluxDB\Client;
 use InfluxDB\Database;
 use InfluxDB\Database\RetentionPolicy;
@@ -140,6 +141,7 @@ class MetricFactory implements MetricFactoryInterface
 
     private function getNamespace(): string
     {
-        return $this->config->get("metric.metric.{$this->name}.namespace");
+        $name = $this->config->get("metric.metric.{$this->name}.namespace");
+        return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
     }
 }
