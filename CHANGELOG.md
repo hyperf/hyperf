@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1165](https://github.com/hyperf/hyperf/pull/1165) Added a method `route` for `Hyperf\HttpServer\Contract\RequestInterface`.
 - [#1195](https://github.com/hyperf/hyperf/pull/1195) Added max offset for `Cacheable` and `CachePut`.
 - [#1216](https://github.com/hyperf/hyperf/pull/1216) Added default value for `$data` of `RenderInterface::render()`.
 
@@ -9,7 +10,7 @@
 
 - [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
 - [#1200](https://github.com/hyperf/hyperf/pull/1200) Request path shouldn't include query parameters in hyperf/metric middleware.
-- [#1205](https://github.com/hyperf/hyperf/issues/1205) Fixed validation `size` does not works without `numeric` or `integer` rules when the type of value is numeric.
+- [#1210](https://github.com/hyperf/hyperf/pull/1210) Fixed validation `size` does not works without `numeric` or `integer` rules when the type of value is numeric.
 
 # v1.1.12 - 2019-12-26
 
