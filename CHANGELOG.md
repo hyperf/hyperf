@@ -1,5 +1,9 @@
 # v1.1.14 - TBD
 
+## Added
+
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) Add amqp extension whether consumers follow service startup.
+
 # v1.1.13 - 2020-01-03
 
 ## Added

@@ -159,7 +159,8 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
-框架会根据 `@Consumer` 注解自动创建 `Process 进程`，进程意外退出后会被重新拉起。
+框架会根据 `@Consumer` 注解自动创建 `Process 进程`，进程意外退出后会被重新拉起。如果不想让 `Process 进程` 跟随服务启动，可在 `@Consumer` 
+注解中配置 `isEnable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
 
 ### 消费结果
 
