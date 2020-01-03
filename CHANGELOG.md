@@ -1,5 +1,9 @@
 # v1.1.14 - TBD
 
+## Optimized
+
+- [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+
 # v1.1.13 - 2020-01-03
 
 ## Added
