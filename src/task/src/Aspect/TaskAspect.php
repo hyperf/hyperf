@@ -48,7 +48,17 @@ class TaskAspect extends AbstractAspect
 
         $class = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->getArguments();
+
+        $arguments = [];
+        $parameters = $proceedingJoinPoint->getReflectMethod()->getParameters();
+        foreach ($parameters as $parameter) {
+            $arg = $proceedingJoinPoint->arguments['keys'][$parameter->getName()];
+            if ($parameter->isVariadic()) {
+                $arguments = array_merge($arguments, $arg);
+            } else {
+                $arguments[] = $arg;
+            }
+        }
 
         $timeout = 10;
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
