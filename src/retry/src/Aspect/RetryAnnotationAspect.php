@@ -36,6 +36,7 @@ class RetryAnnotationAspect implements AroundInterface
         $policy = $this->makePolicy($annotation);
         $context = $policy->start();
         $context['proceedingJoinPoint'] = $proceedingJoinPoint;
+        $context['pipe'] = $proceedingJoinPoint->pipe;
         if (! $policy->canRetry($context)) {
             goto end;
         }
@@ -50,6 +51,7 @@ class RetryAnnotationAspect implements AroundInterface
         }
         if ($policy->canRetry($context)) {
             $policy->beforeRetry($context);
+            $proceedingJoinPoint->pipe = $context['pipe'];
             goto attempt;
         }
 

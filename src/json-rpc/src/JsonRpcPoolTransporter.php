@@ -50,14 +50,9 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
-    /**
-     * TODO: Set config.
-     * @var array
-     */
     private $config = [
         'connect_timeout' => 5.0,
-        'eof' => "\r\n",
-        'options' => [],
+        'settings' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 32,
@@ -73,6 +68,9 @@ class JsonRpcPoolTransporter implements TransporterInterface
     {
         $this->factory = $factory;
         $this->config = array_replace_recursive($this->config, $config);
+
+        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
+        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
     }
 
     public function send(string $data)
@@ -83,7 +81,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             try {
                 /** @var RpcConnection $client */
                 $client = $connection->getConnection();
-                if ($client->send($data . $this->getEof()) === false) {
+                if ($client->send($data) === false) {
                     if ($client->errCode == 104) {
                         throw new RuntimeException('Connect to server failed.');
                     }
@@ -114,19 +112,8 @@ class JsonRpcPoolTransporter implements TransporterInterface
             'host' => $node->host,
             'port' => $node->port,
             'connect_timeout' => $this->config['connect_timeout'],
+            'settings' => $this->config['settings'],
         ]);
-    }
-
-    public function getClient(): Pool
-    {
-        $node = $this->getNode();
-        $config = [
-            'host' => $node->host,
-            'port' => $node->port,
-            'connectTimeout' => $this->connectTimeout,
-        ];
-        $name = $node->host . ':' . $node->port;
-        return $this->factory->getPool($name, $config);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -160,11 +147,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function getConfig(): array
     {
         return $this->config;
-    }
-
-    private function getEof(): string
-    {
-        return $this->config['eof'] ?? "\r\n";
     }
 
     /**

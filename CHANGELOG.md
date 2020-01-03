@@ -1,9 +1,58 @@
-# v1.1.10 - TBD
+# v1.1.13 - TBD
+
+## Added
+
+- [#1137](https://github.com/hyperf/hyperf/pull/1137) Added translator for constants.
+- [#1165](https://github.com/hyperf/hyperf/pull/1165) Added a method `route` for `Hyperf\HttpServer\Contract\RequestInterface`.
+- [#1195](https://github.com/hyperf/hyperf/pull/1195) Added max offset for `Cacheable` and `CachePut`.
+- [#1216](https://github.com/hyperf/hyperf/pull/1216) Added default value for `$data` of `RenderInterface::render()`.
+- [#1221](https://github.com/hyperf/hyperf/pull/1221) Added `traceId` and `spanId` of the `swoole-tracker` component.
+
+## Fixed
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
+- [#1199](https://github.com/hyperf/hyperf/pull/1199) Fixed variadic arguments do not work in task annotation.
+- [#1200](https://github.com/hyperf/hyperf/pull/1200) Request path shouldn't include query parameters in hyperf/metric middleware.
+- [#1210](https://github.com/hyperf/hyperf/pull/1210) Fixed validation `size` does not works without `numeric` or `integer` rules when the type of value is numeric.
+
+# v1.1.12 - 2019-12-26
+
+## Added
+
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) Added protocol `jsonrpc-tcp-length-check` for `jsonrpc`.
+
+## Fixed
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) Fixed `Hyperf\Utils\Collection::random` does not works when the number is null.
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) Fixed `Hyperf\Database\Query\Builder::chunkById` does not works when the collection item is array.
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) Fixed default operator does not works for `Hyperf\Utils\Collection::operatorForWhere`.
+
+## Optimized
+
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) Automatically added default constructor's configuration, when you forgetton to set it.
+
+# v1.1.11 - 2019-12-19
+
+## Added
+
+- [#849](https://github.com/hyperf/hyperf/pull/849) Added configuration of span tag for `tracer` component.
+
+## Fixed
+
+- [#1142](https://github.com/hyperf/hyperf/pull/1142) Fixed bug that Register::resolveConnection will return null.
+- [#1144](https://github.com/hyperf/hyperf/pull/1144) Fixed rate-limit config does not works.
+- [#1145](https://github.com/hyperf/hyperf/pull/1145) Fixed error return value for method `CoroutineMemoryDriver::delKey`.
+- [#1153](https://github.com/hyperf/hyperf/pull/1153) Fixed validation rule `alpha_num` does not works.
+
+# v1.1.10 - 2019-12-12
 
 ## Fixed
 
 - [#1104](https://github.com/hyperf/hyperf/pull/1104) Fixed guzzle will be retried when the response has the correct status code 2xx.
+- [#1105](https://github.com/hyperf/hyperf/pull/1105) Fixed Retry Component not restoring pipeline stack before retry attempts.
 - [#1106](https://github.com/hyperf/hyperf/pull/1106) Fixed bug that sticky mode will affect the next request.
+- [#1119](https://github.com/hyperf/hyperf/pull/1119) Fixed JSONRPC on TCP Server cannot response the expected error response when cannot unpack the data.
+- [#1124](https://github.com/hyperf/hyperf/pull/1124) Fixed Session middleware does not store the current url correctly when the path of url end with a slash.
 
 ## Changed
 

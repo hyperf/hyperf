@@ -1934,7 +1934,8 @@ class Builder
                 return false;
             }
 
-            $lastId = $results->last()->{$alias};
+            $lastResult = $results->last();
+            $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
 
             unset($results);
         } while ($countResults == $count);

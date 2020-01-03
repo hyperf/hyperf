@@ -15,6 +15,7 @@ namespace Hyperf\Di\Aop;
 use Closure;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Exception\Exception;
+use Hyperf\Di\ReflectionManager;
 
 class ProceedingJoinPoint
 {
@@ -99,5 +100,13 @@ class ProceedingJoinPoint
             }
             return $result;
         });
+    }
+
+    public function getReflectMethod(): \ReflectionMethod
+    {
+        return ReflectionManager::reflectMethod(
+            $this->className,
+            $this->methodName
+        );
     }
 }

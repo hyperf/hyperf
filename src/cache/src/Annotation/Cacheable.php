@@ -43,6 +43,12 @@ class Cacheable extends AbstractAnnotation
     public $listener;
 
     /**
+     * The max offset for ttl.
+     * @var int
+     */
+    public $offset = 0;
+
+    /**
      * @var string
      */
     public $group = 'default';
@@ -56,6 +62,7 @@ class Cacheable extends AbstractAnnotation
     {
         parent::__construct($value);
         $this->ttl = (int) $this->ttl;
+        $this->offset = (int) $this->offset;
     }
 
     public function collectMethod(string $className, ?string $target): void
