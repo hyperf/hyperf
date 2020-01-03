@@ -66,6 +66,12 @@ interface RequestInterface extends ServerRequestInterface
     public function header(string $key, $default = null);
 
     /**
+     * Retrieve the data from route parameters.
+     * @param mixed $default
+     */
+    public function route(string $key, $default = null);
+
+    /**
      * Returns the path being requested relative to the executed script.
      * The path info always starts with a /.
      * Suppose this request is instantiated from /mysite on localhost:

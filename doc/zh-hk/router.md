@@ -173,7 +173,7 @@ Router::get('/user/{id}', 'App\Controller\UserController::info')
 ```
 
 ```php
-public function index(int $id)
+public function info(int $id)
 {
     $user = User::find($id);
     return $user->toArray();

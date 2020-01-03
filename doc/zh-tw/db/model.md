@@ -21,7 +21,7 @@ $ php bin/hyperf.php db:model table_name
 |        引數        |  型別  |      預設值       |                      備註                       |
 |:------------------:|:------:|:-----------------:|:-----------------------------------------------:|
 |       --pool       | string |     `default`     |      連線池，指令碼會根據當前連線池配置建立       |
-|       --path       | string |    `app\Model`    |                    模型路徑                     |
+|       --path       | string |    `app/Model`    |                    模型路徑                     |
 |   --force-casts    |  bool  |      `false`      |            是否強制重置 `casts` 引數            |
 |      --prefix      | string |     空字串      |                     表字首                      |
 |   --inheritance    | string |      `Model`      |                      父類                       |

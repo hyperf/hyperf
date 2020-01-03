@@ -39,7 +39,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         'host' => 'localhost',
         'port' => 9501,
         'connect_timeout' => 5.0,
-        'options' => [],
+        'settings' => [],
     ];
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
@@ -82,7 +82,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $connectTimeout = $this->config['connect_timeout'];
 
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
+        $client->set($this->config['settings'] ?? []);
         $result = $client->connect($host, $port, $connectTimeout);
         if ($result === false && ($client->errCode === 114 || $client->errCode === 115)) {
             // Force close and reconnect to server.

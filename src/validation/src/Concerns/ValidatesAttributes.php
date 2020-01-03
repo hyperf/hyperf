@@ -161,7 +161,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -1492,7 +1492,7 @@ trait ValidatesAttributes
             return $value->getSize() / 1024;
         }
 
-        return mb_strlen($value);
+        return mb_strlen((string) $value);
     }
 
     /**

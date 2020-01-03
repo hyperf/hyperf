@@ -41,9 +41,6 @@ class RouteCollector
 
     /**
      * Constructs a route collector.
-     *
-     * @param RouteParser $routeParser
-     * @param DataGenerator $dataGenerator
      */
     public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
     {
@@ -58,9 +55,7 @@ class RouteCollector
      * The syntax used in the $route string depends on the used route parser.
      *
      * @param string|string[] $httpMethod
-     * @param string $route
      * @param mixed $handler
-     * @param array $options
      */
     public function addRoute(string $route, $handler, array $options = [])
     {
@@ -80,7 +75,6 @@ class RouteCollector
      * All routes created in the passed callback will have the given group prefix prepended.
      *
      * @param string $prefix
-     * @param callable $callback
      */
     public function addGroup($prefix, callable $callback, array $options = [])
     {
