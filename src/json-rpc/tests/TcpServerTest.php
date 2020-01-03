@@ -16,7 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
-use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
+use Hyperf\JsonRpc\Exception\Handler\TcpExceptionHandler;
 use Hyperf\JsonRpc\TcpServer;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -46,7 +46,7 @@ class TcpServerTest extends TestCase
         $method->setAccessible(true);
         $res = $method->invoke($server);
 
-        $this->assertSame([HttpExceptionHandler::class], $res);
+        $this->assertSame([TcpExceptionHandler::class], $res);
     }
 
     protected function getContainer()

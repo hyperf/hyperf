@@ -20,7 +20,7 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
-use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
+use Hyperf\JsonRpc\Exception\Handler\TcpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -149,7 +149,7 @@ class TcpServer extends Server
     protected function getDefaultExceptionHandler(): array
     {
         return [
-            HttpExceptionHandler::class,
+            TcpExceptionHandler::class,
         ];
     }
 }
