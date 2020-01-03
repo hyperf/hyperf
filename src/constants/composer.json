@@ -21,6 +21,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/translation": "Required to use translation."
     },
     "autoload": {
         "psr-4": {
