@@ -20,6 +20,10 @@
 
 - [#1211](https://github.com/hyperf/hyperf/pull/1211) Convert app name to valid prometheus namespace.
 
+## Changed
+
+- [#1217](https://github.com/hyperf/hyperf/pull/1217) Replaced `zendframework/zend-mime` into `laminas/laminas-mine`.
+
 # v1.1.12 - 2019-12-26
 
 ## Added
