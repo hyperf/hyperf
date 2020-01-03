@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Task\Cases;
+namespace HyperfTest\Task;
 
 use Hyperf\Task\ChannelFactory;
 use PHPUnit\Framework\TestCase;

@@ -64,7 +64,6 @@ class Redis implements Adapter
 
     /**
      * Redis constructor.
-     * @param array $options
      */
     public function __construct(array $options = [])
     {
@@ -73,8 +72,8 @@ class Redis implements Adapter
     }
 
     /**
-     * Create an instance from an established redis connection
-     * @param  \Hyperf\Redis\Redis|\Redis $redis
+     * Create an instance from an established redis connection.
+     * @param \Hyperf\Redis\Redis|\Redis $redis
      * @return Redis
      */
     public static function fromExistingConnection($redis): self
@@ -88,17 +87,11 @@ class Redis implements Adapter
         return $self;
     }
 
-    /**
-     * @param array $options
-     */
     public static function setDefaultOptions(array $options): void
     {
         self::$defaultOptions = array_merge(self::$defaultOptions, $options);
     }
 
-    /**
-     * @param string $prefix
-     */
     public static function setPrefix(string $prefix): void
     {
         self::$prefix = $prefix;
@@ -132,7 +125,6 @@ class Redis implements Adapter
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateHistogram(array $data): void
@@ -171,7 +163,6 @@ LUA
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateGauge(array $data): void
@@ -209,7 +200,6 @@ LUA
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateCounter(array $data): void
@@ -261,9 +251,6 @@ LUA
         $this->redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->options['read_timeout']);
     }
 
-    /**
-     * @return bool
-     */
     private function connectToServer(): bool
     {
         try {
@@ -280,9 +267,6 @@ LUA
         }
     }
 
-    /**
-     * @return array
-     */
     private function collectHistograms(): array
     {
         $keys = $this->redis->sMembers(self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
@@ -351,9 +335,6 @@ LUA
         return $histograms;
     }
 
-    /**
-     * @return array
-     */
     private function collectGauges(): array
     {
         $keys = $this->redis->sMembers(self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
@@ -380,9 +361,6 @@ LUA
         return $gauges;
     }
 
-    /**
-     * @return array
-     */
     private function collectCounters(): array
     {
         $keys = $this->redis->sMembers(self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
@@ -409,10 +387,6 @@ LUA
         return $counters;
     }
 
-    /**
-     * @param int $cmd
-     * @return string
-     */
     private function getRedisCommand(int $cmd): string
     {
         switch ($cmd) {
@@ -427,10 +401,6 @@ LUA
         }
     }
 
-    /**
-     * @param array $data
-     * @return string
-     */
     private function toMetricKey(array $data): string
     {
         return implode(':', [self::$prefix, $data['type'], $data['name']]);

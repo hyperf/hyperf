@@ -180,6 +180,18 @@ public function info(int $id)
 }
 ```
 
+通过`route`方法获取
+
+```php
+public function index(RequestInterface $request)
+{
+        // 存在则返回，不存在则返回默认值 null
+        $id = $request->route('id');
+        // 存在则返回，不存在则返回默认值 0
+        $id = $request->route('id', 0);
+}
+```
+
 #### 必填参数
 
 我们可以对 `$uri` 进行一些参数定义，通过 `{}` 来声明参数，如 `/user/{id}` 则声明了 `id` 值为一个必填参数。
