@@ -52,7 +52,9 @@ class Composer
                 throw new \RuntimeException('composer.lock not found.');
             }
             self::$content = collect(json_decode(file_get_contents($path), true));
-            foreach (self::$content->offsetGet('packages') ?? [] as $package) {
+            $packages = self::$content->offsetGet('packages') ?? [];
+            $packagesDev = self::$content->offsetGet('packages-dev') ?? [];
+            foreach (array_merge($packages, $packagesDev) as $package) {
                 $packageName = '';
                 foreach ($package ?? [] as $key => $value) {
                     if ($key === 'name') {
