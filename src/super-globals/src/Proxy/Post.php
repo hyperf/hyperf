@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\SuperGlobals\Proxy;
 
+use Hyperf\SuperGlobals\Proxy;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Post extends Proxy

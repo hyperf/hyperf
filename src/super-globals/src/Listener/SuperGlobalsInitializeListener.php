@@ -12,12 +12,24 @@ declare(strict_types=1);
 
 namespace Hyperf\SuperGlobals\Listener;
 
+use Hyperf\Contract\ContainerInterface;
+use Hyperf\Contract\SessionInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\SuperGlobals\Proxy;
 
 class SuperGlobalsInitializeListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function listen(): array
     {
         return [
@@ -36,6 +48,9 @@ class SuperGlobalsInitializeListener implements ListenerInterface
         $_POST = make(Proxy\Post::class);
         $_REQUEST = make(Proxy\Request::class);
         $_SERVER = make(Proxy\Server::class, [$_SERVER]);
-        $_SESSION = make(Proxy\Session::class);
+        $_SESSION = [];
+        if ($this->container->has(SessionInterface::class)) {
+            $_SESSION = make(Proxy\Session::class);
+        }
     }
 }

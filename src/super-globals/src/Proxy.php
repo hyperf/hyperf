@@ -17,7 +17,6 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
 use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use JsonSerializable;
@@ -27,7 +26,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 {
     public function jsonSerialize()
     {
-        return Json::encode($this->toArray());
+        return $this->toArray();
     }
 
     public function offsetExists($offset)

@@ -14,6 +14,7 @@ namespace Hyperf\SuperGlobals\Proxy;
 
 use Hyperf\SuperGlobals\Exception\InvalidOperationException;
 use Hyperf\SuperGlobals\Proxy;
+use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Server extends Proxy
@@ -30,7 +31,12 @@ class Server extends Proxy
 
     public function toArray(): array
     {
-        return array_merge($this->default, $this->getRequest()->getServerParams());
+        $headers = [];
+        foreach ($this->getRequest()->getHeaders() as $key => $value) {
+            $headers['HTTP_' . str_replace('-', '_', Str::upper($key))] = $value;
+        }
+
+        return array_merge($this->default, $this->getRequest()->getServerParams(), $headers);
     }
 
     protected function override(ServerRequestInterface $request, array $data): ServerRequestInterface
