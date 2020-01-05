@@ -48,6 +48,7 @@
             <directory suffix="Test.php">./src/session/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
+            <directory suffix="Test.php">./src/super-globals/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
             <directory suffix="Test.php">./src/testing/tests</directory>
             <directory suffix="Test.php">./src/tracer/tests</directory>
