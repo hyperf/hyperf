@@ -113,6 +113,9 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    //默认handle抛出异常后重试的次数
+    protected $maxAttempts = 0;
 
     public function __construct($params)
     {
