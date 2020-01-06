@@ -24,6 +24,7 @@ use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcClient\Exception\RequestException;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -93,9 +94,7 @@ abstract class AbstractServiceClient
         $this->client = make(Client::class)
             ->setPacker($protocol->getPacker())
             ->setTransporter($transporter);
-        if ($container->has(IdGeneratorInterface::class)) {
-            $this->idGenerator = $container->get(IdGeneratorInterface::class);
-        }
+        $this->idGenerator = $container->get(IdGenerator\IdGeneratorInterface::class);
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
     }
@@ -107,6 +106,10 @@ abstract class AbstractServiceClient
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
+            if (! isset($response['id']) || $response['id'] !== $id) {
+                throw new RequestException(sprintf('Invalid response. Request id[%s] is not equal to response id[%s].', $id, $response['id'] ?? null));
+            }
+
             if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
@@ -114,7 +117,7 @@ abstract class AbstractServiceClient
                 return $response['error'];
             }
         }
-        throw new RuntimeException('Invalid response.');
+        throw new RequestException('Invalid response.');
     }
 
     protected function __generateRpcPath(string $methodName): string
