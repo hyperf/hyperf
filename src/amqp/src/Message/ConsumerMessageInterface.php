@@ -29,4 +29,8 @@ interface ConsumerMessageInterface extends MessageInterface
     public function getQueueBuilder(): QueueBuilder;
 
     public function getConsumerTag(): string;
+
+    public function isEnable(): bool;
+
+    public function setEnable(bool $enable);
 }

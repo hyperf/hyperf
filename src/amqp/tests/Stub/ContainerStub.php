@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Amqp\Stub;
 
+use Hyperf\Amqp\Consumer;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\ApplicationContext;
@@ -40,6 +41,9 @@ class ContainerStub
         });
         $container->shouldReceive('has')->andReturnUsing(function ($class) {
             return true;
+        });
+        $container->shouldReceive('get')->with(Consumer::class)->andReturnUsing(function () use ($container) {
+            return new Consumer($container, $container->get(PoolFactory::class), $container->get(StdoutLoggerInterface::class));
         });
 
         return $container;
