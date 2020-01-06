@@ -19,7 +19,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
 class BootProcessListener implements ListenerInterface
@@ -35,19 +34,9 @@ class BootProcessListener implements ListenerInterface
     private $logger;
 
     /**
-     * @var array
-     */
-    private $mapping;
-
-    /**
      * @var ClientInterface
      */
     private $client;
-
-    /**
-     * @var PackerInterface
-     */
-    private $packer;
 
     public function __construct(ContainerInterface $container)
     {
