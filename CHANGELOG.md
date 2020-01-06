@@ -1,5 +1,9 @@
 # v1.1.14 - TBD
 
+## Added
+
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) Added property `enable` for amqp consumer, which controls whether consumers should start along with the service.
+
 ## Fixed
 
 - [#1223](https://github.com/hyperf/hyperf/pull/1223) Fixed the scanner will missing the packages at require-dev of composer.json
