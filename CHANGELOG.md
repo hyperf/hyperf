@@ -4,6 +4,10 @@
 
 - [#1219](https://github.com/hyperf/hyperf/pull/1219) Add amqp extension whether consumers follow service startup.
 
+## Fixed
+
+- [#1223](https://github.com/hyperf/hyperf/pull/1223) Fixed the scanner will missing the packages at require-dev of composer.json
+
 # v1.1.13 - 2020-01-03
 
 ## Added
