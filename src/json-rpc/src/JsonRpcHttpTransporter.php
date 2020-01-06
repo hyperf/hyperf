@@ -84,6 +84,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
         return '';
     }
 
+    public function recv()
+    {
+        throw new \RuntimeException('JsonRpcHttpTransporter not support recv.');
+    }
+
     public function getClient(): Client
     {
         return $this->clientFactory->create([

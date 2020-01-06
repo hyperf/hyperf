@@ -106,9 +106,7 @@ abstract class AbstractServiceClient
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
-            if (! isset($response['id']) || $response['id'] !== $id) {
-                throw new RequestException(sprintf('Invalid response. Request id[%s] is not equal to response id[%s].', $id, $response['id'] ?? null));
-            }
+            $response = $this->checkRequestIdAndTryAgain($response, $id);
 
             if (array_key_exists('result', $response)) {
                 return $response['result'];
@@ -252,5 +250,25 @@ abstract class AbstractServiceClient
                 ]);
             },
         ]);
+    }
+
+    protected function checkRequestIdAndTryAgain(array $response, $id, int $again = 1): array
+    {
+        if (isset($response['id']) && $response['id'] === $id) {
+            return $response;
+        }
+
+        $response = $this->client->recv();
+        if ($again <= 0) {
+            throw new RequestException(sprintf(
+                'Invalid response. Request id[%s] is not equal to response id[%s].',
+                $id,
+                $response['id'] ?? null
+            ));
+        }
+
+        --$again;
+
+        return $this->checkRequestIdAndTryAgain($response, $id, $again);
     }
 }

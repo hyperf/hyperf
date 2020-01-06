@@ -56,9 +56,7 @@ class ServiceClient extends AbstractServiceClient
             throw new RequestException('Invalid response.');
         }
 
-        if (! isset($response['id']) || $response['id'] !== $id) {
-            throw new RequestException(sprintf('Invalid response. Request id[%s] is not equal to response id[%s].', $id, $response['id'] ?? null));
-        }
+        $response = $this->checkRequestIdAndTryAgain($response, $id);
 
         if (isset($response['result'])) {
             $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);

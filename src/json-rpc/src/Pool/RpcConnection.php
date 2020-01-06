@@ -97,6 +97,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function close(): bool
     {
+        $this->lastUseTime = 0.0;
         $this->connection->close();
         return true;
     }

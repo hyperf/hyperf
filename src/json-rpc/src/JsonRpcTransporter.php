@@ -15,6 +15,7 @@ namespace Hyperf\JsonRpc;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
@@ -70,12 +71,22 @@ class JsonRpcTransporter implements TransporterInterface
         return $client->recv($this->recvTimeout);
     }
 
+    public function recv()
+    {
+        return $this->getClient()->recv($this->recvTimeout);
+    }
+
     public function getClient(): SwooleClient
     {
+        $class = static::class . '.Connection';
+        if (Context::has($class)) {
+            return Context::get($class);
+        }
+
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
         $client->set($this->config['settings'] ?? []);
 
-        return retry(2, function () use ($client) {
+        $client = retry(2, function () use ($client) {
             $node = $this->getNode();
             $result = $client->connect($node->host, $node->port, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
@@ -85,6 +96,8 @@ class JsonRpcTransporter implements TransporterInterface
             }
             return $client;
         });
+
+        return Context::set($class, $client);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
