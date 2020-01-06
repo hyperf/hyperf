@@ -73,7 +73,7 @@ class ServiceClient extends AbstractServiceClient
             }
 
             // Throw RequestException when denormalize exception failed.
-            throw new RequestException($error['message'] ?? '', $error['code']);
+            throw new RequestException($error['message'] ?? '', $code, $error['data'] ?? []);
         }
 
         throw new RequestException('Invalid response.');
