@@ -14,7 +14,6 @@ namespace Hyperf\ConfigAliyunAcm\Listener;
 
 use Hyperf\ConfigAliyunAcm\ClientInterface;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
@@ -26,17 +25,17 @@ class BootProcessListener implements ListenerInterface
     /**
      * @var ConfigInterface
      */
-    private $config;
+    protected $config;
 
     /**
      * @var StdoutLoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var ClientInterface
      */
-    private $client;
+    protected $client;
 
     public function __construct(ContainerInterface $container)
     {
