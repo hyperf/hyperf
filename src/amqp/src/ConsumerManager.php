@@ -43,9 +43,7 @@ class ConsumerManager
             if (! $instance instanceof ConsumerMessageInterface) {
                 continue;
             }
-            if ($annotation->isEnable === false) {
-                continue;
-            }
+
             $annotation->exchange && $instance->setExchange($annotation->exchange);
             $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
             $annotation->queue && $instance->setQueue($annotation->queue);

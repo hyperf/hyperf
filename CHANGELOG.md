@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#1219](https://github.com/hyperf/hyperf/pull/1219) Add amqp extension whether consumers follow service startup.
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) Added property `enable` for amqp consumer, which controls whether consumers should start along with the service.
 
 ## Fixed
 
