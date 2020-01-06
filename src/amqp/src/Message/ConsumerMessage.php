@@ -44,6 +44,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $qos;
 
+    /**
+     * @var bool
+     */
+    protected $enable = true;
+
     public function setQueue(string $queue): self
     {
         $this->queue = $queue;
@@ -80,11 +85,17 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getConsumerTag(): string
     {
-        return implode(',', (array)$this->getRoutingKey());
+        return implode(',', (array) $this->getRoutingKey());
     }
 
     public function isEnable(): bool
     {
-        return true;
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): self
+    {
+        $this->enable = $enable;
+        return $this;
     }
 }
