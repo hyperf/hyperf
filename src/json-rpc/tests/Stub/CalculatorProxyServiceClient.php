@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\JsonRpc\Stub;
@@ -27,6 +27,11 @@ class CalculatorProxyServiceClient extends AbstractProxyService implements Calcu
     }
 
     public function divide($value, $divider)
+    {
+        return $this->client->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function array(int $a, int $b): array
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }

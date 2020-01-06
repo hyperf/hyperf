@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Cache\Driver;
@@ -125,8 +125,15 @@ class RedisDriver extends Driver implements KeyCollectorInterface
     {
         $iterator = null;
         $key = $prefix . '*';
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
-            $this->redis->del(...$keys);
+        while (true) {
+            $keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000);
+            if (! empty($keys)) {
+                $this->redis->del(...$keys);
+            }
+
+            if (empty($iterator)) {
+                break;
+            }
         }
 
         return true;

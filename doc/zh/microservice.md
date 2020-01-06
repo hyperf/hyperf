@@ -52,4 +52,4 @@
 虽然 `微服务架构(Microservice)` 好处众多，但 **微服务不是银弹 ！！！** ，您需要面对所有分布式系统都需要面对的复杂性，你可能需要在部署、测试和监控上做很多的工作，在服务间调用、服务的可靠性上做很多工作，甚至您还需要处理类似于 分布式事务 或者与 CAP 相关的问题。尽管 `Hyperf` 已经为您解决了许多的问题，但在实施 `微服务架构(Microservice)` 之前您的团队必须储备足够的分布式系统相关的知识体系，以面对很多您在 `单体架构(Monolithic architecture)` 下可能没有面临过甚至没有考虑过的问题。
 
 
-*| 本章节部分内容译自 Sam Newman 的 《Building Microservices 》*
+*| 本章节部分内容译自 Sam Newman 的 《Building Microservices》*

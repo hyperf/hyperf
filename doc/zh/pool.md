@@ -26,7 +26,7 @@ use Hyperf\Pool\Pool;
 
 class MyConnectionPool extends Pool
 {
-    public function createConnection(): ConnectionInteface
+    public function createConnection(): ConnectionInterface
     {
         return new MyConnection();
     }
@@ -56,7 +56,7 @@ $connection = $pool->get();
 
 $client = $connection->getConnection(); // 即上述 Client.
 
-// Do somethind.
+// Do something.
 
 $connection->release();
 

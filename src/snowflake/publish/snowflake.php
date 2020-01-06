@@ -7,12 +7,19 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-use Hyperf\Snowflake\IdGeneratorInterface;
+use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
+use Hyperf\Snowflake\MetaGenerator\RedisSecondMetaGenerator;
+use Hyperf\Snowflake\MetaGeneratorInterface;
 
 return [
-    'level' => IdGeneratorInterface::LEVEL_MILLISECOND,
-    'begin_second' => IdGeneratorInterface::DEFAULT_SECOND,
+    'begin_second' => MetaGeneratorInterface::DEFAULT_BEGIN_SECOND,
+    RedisMilliSecondMetaGenerator::class => [
+        'pool' => 'default',
+    ],
+    RedisSecondMetaGenerator::class => [
+        'pool' => 'default',
+    ],
 ];

@@ -18,6 +18,10 @@
         "friendsofphp/php-cs-fixer": "^2.15",
         "phpunit/phpunit": "^7.0.0"
     },
+    "suggest": {
+        "hyperf/http-server": "Required to use GraphQLMiddleware.",
+        "hyperf/http-message": "Required to use GraphQLMiddleware."
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\GraphQL\\": "src/"
@@ -25,7 +29,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "1.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GraphQL\\ConfigProvider"

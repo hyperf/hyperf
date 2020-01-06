@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ExceptionHandler;
@@ -17,13 +17,6 @@ use Throwable;
 
 abstract class ExceptionHandler
 {
-    /**
-     * Determine if the exception should propagate to next handler.
-     *
-     * @var bool
-     */
-    protected $propagationStopped = false;
-
     /**
      * Handle the exception, and return the specified result.
      */
@@ -43,8 +36,8 @@ abstract class ExceptionHandler
      */
     public function stopPropagation(): bool
     {
-        $this->propagationStopped = true;
-        return $this->propagationStopped;
+        Propagation::instance()->setPropagationStopped(true);
+        return true;
     }
 
     /**
@@ -54,6 +47,6 @@ abstract class ExceptionHandler
      */
     public function isPropagationStopped(): bool
     {
-        return $this->propagationStopped;
+        return Propagation::instance()->isPropagationStopped();
     }
 }

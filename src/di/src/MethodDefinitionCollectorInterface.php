@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Di;
@@ -22,7 +22,6 @@ interface MethodDefinitionCollectorInterface
 
     /**
      * Retrieve the metadata for the return value of the method.
-     * @return ReflectionType
      */
     public function getReturnType(string $class, string $method): ReflectionType;
 }

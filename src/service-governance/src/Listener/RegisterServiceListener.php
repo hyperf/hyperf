@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ServiceGovernance\Listener;
@@ -15,16 +15,12 @@ namespace Hyperf\ServiceGovernance\Listener;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class RegisterServiceListener implements ListenerInterface
 {
     /**

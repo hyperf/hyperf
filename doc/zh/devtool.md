@@ -27,4 +27,4 @@ php bin/hyperf.php
   gen:process        Create a new process class
  vendor
   vendor:publish     Publish any publishable configs from vendor packages.
-```x
+```

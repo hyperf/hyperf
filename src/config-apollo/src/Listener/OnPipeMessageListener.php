@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ConfigApollo\Listener;
@@ -18,13 +18,9 @@ use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 
-/**
- * @Listener
- */
 class OnPipeMessageListener implements ListenerInterface
 {
     /**
@@ -83,10 +79,38 @@ class OnPipeMessageListener implements ListenerInterface
                 return;
             }
             foreach ($data->configurations ?? [] as $key => $value) {
-                $this->config->set($key, $value);
+                $this->config->set($key, $this->formatValue($value));
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
             ReleaseKey::set($cacheKey, $data->releaseKey);
         }
+    }
+
+    private function formatValue($value)
+    {
+        if (! $this->config->get('apollo.strict_mode', false)) {
+            return $value;
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+
+        if (is_numeric($value)) {
+            $value = (strpos($value, '.') === false) ? (int) $value : (float) $value;
+        }
+
+        return $value;
     }
 }

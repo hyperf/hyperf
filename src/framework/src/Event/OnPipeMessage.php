@@ -7,10 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Framework\Event;
+
+use Swoole\Server;
 
 class OnPipeMessage
 {
@@ -29,7 +31,7 @@ class OnPipeMessage
      */
     public $data;
 
-    public function __construct(\Swoole\Server $server, int $fromWorkerId, $data)
+    public function __construct(Server $server, int $fromWorkerId, $data)
     {
         $this->server = $server;
         $this->fromWorkerId = $fromWorkerId;

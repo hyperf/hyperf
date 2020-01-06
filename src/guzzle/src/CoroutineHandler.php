@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Guzzle;
@@ -190,11 +190,16 @@ class CoroutineHandler
             'errCode' => $errCode,
         ];
 
-        if ($statusCode === -1) {
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
             return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
         }
-        if ($statusCode === -2) {
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
             return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
+        }
+
+        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
+            return new RequestException('Server reset', $request, null, null, $ctx);
         }
 
         return true;

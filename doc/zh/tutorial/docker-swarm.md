@@ -1,6 +1,6 @@
 # Docker Swarm 集群搭建
 
-现阶段，Docker容器技术已经相当成熟，就算是中小型公司也可以基于 Gitlab、Aliyun镜像服务、Docker Swarm 轻松搭建自己的 Docker集群服务。
+现阶段，Docker 容器技术已经相当成熟，就算是中小型公司也可以基于 Gitlab、Aliyun 镜像服务、Docker Swarm 轻松搭建自己的 Docker 集群服务。
 
 ## 安装 Docker
 
@@ -8,9 +8,15 @@
 curl -sSL https://get.daocloud.io/docker | sh
 ```
 
-## 搭建自己的Gitlab
+修改文件 `/lib/systemd/system/docker.service`，允许使用 `TCP` 连接 `Docker`
 
-### 安装Gitlab
+```
+ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+```
+
+## 搭建自己的 Gitlab
+
+### 安装 Gitlab
 
 首先我们修改一下端口号，把 `sshd` 服务的 `22` 端口改为 `2222`，让 `gitlab` 可以使用 `22` 端口。
 
@@ -43,7 +49,7 @@ gitlab/gitlab-ce:latest
 
 首次登录 `Gitlab` 会重置密码，用户名是 `root`。
 
-### 安装gitlab-runner
+### 安装 gitlab-runner
 
 [官方地址](https://docs.gitlab.com/runner/install/linux-repository.html)
 
@@ -144,9 +150,9 @@ docker service create \
     portainer/portainer
 ```
 
-## 创建一个Demo项目
+## 创建一个 Demo 项目
 
-登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
 
 
 ## 配置镜像仓库
@@ -206,7 +212,7 @@ networks:
     external: true
 ```
 
-然后在我们的 portainer 中，创建对应的 Config demo_v1.0。当然，以下参数需要根据实际情况调整，因为我们的Demo中，没有任何IO操作，所以填默认的即可。
+然后在我们的 portainer 中，创建对应的 Config demo_v1.0。当然，以下参数需要根据实际情况调整，因为我们的 Demo 中，没有任何 IO 操作，所以填默认的即可。
 
 ```
 APP_NAME=demo
@@ -227,7 +233,7 @@ REDIS_PORT=6379
 REDIS_DB=0
 ```
 
-因为我们配置的 gitlab-ci.yml 会检测 test 分支和 tags，所以我们把修改的内容合并到test分支，然后推到gitlab上。
+因为我们配置的 gitlab-ci.yml 会检测 test 分支和 tags，所以我们把修改的内容合并到 test 分支，然后推到 gitlab 上。
 
 接下来我们就可以访问集群任意一台机器的 9501 端口。进行测试了
 
@@ -237,8 +243,8 @@ curl http://127.0.0.1:9501/
 
 ## 安装 KONG 网关
 
-通常情况下，Swarm集群是不会直接对外的，所以我们这里推荐使用 `KONG` 作为网关。
-还有另外一个原因，那就是 `Swarm` 的 `Ingress网络` 设计上有缺陷，所以在连接不复用的情况下，会有并发瓶颈，具体请查看对应 `Issue` [#35082](https://github.com/moby/moby/issues/35082)
+通常情况下，Swarm 集群是不会直接对外的，所以我们这里推荐使用 `KONG` 作为网关。
+还有另外一个原因，那就是 `Swarm` 的 `Ingress 网络` 设计上有缺陷，所以在连接不复用的情况下，会有并发瓶颈，具体请查看对应 `Issue` [#35082](https://github.com/moby/moby/issues/35082)
 而 `KONG` 作为网关，默认情况下就会复用后端的连接，所以会极大减缓上述问题。
 
 ### 安装数据库
@@ -300,6 +306,19 @@ docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard 
 接下来只需要把部署 `KONG` 的机器 `IP` 对外，然后配置 `Service` 即可。
 如果机器直接对外，最好只开放 `80` `443` 端口，然后把 `Kong` 容器的 `8000` 和 `8443` 映射到 `80` 和 `443` 上。
 当然，如果使用了 `SLB` 等负载均衡，就直接通过负载均衡，把 `80` 和 `443` 映射到 `KONG` 所在几台机器的 `8000` `8443` 上。
+
+## 如何使用 Linux Crontab
+
+`Hyperf` 虽然提供了 `crontab` 组件，但是不一定可以满足所有人的需求，这里提供一个 `Linux` 使用的脚本，执行 `Docker` 内的 `Command`。
+
+```bash
+#!/usr/bin/env bash
+basepath=$(cd `dirname $0`; pwd)
+docker pull registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest
+docker run --rm -i -v $basepath/.env:/opt/www/.env \
+--entrypoint php registry-vpc.cn-shanghai.aliyuncs.com/namespace/project:latest \
+/opt/www/bin/hyperf.php your_command
+```
 
 ## 意外情况
 

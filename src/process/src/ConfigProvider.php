@@ -7,23 +7,30 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Process;
+
+use Hyperf\Process\Listener\BootProcessListener;
+use Hyperf\Process\Listener\LogAfterProcessStoppedListener;
+use Hyperf\Process\Listener\LogBeforeProcessStartListener;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
+            'listeners' => [
+                BootProcessListener::class,
+                LogAfterProcessStoppedListener::class,
+                LogBeforeProcessStartListener::class,
             ],
-            'commands' => [
-            ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

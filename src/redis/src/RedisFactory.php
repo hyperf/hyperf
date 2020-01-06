@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Redis;
@@ -32,13 +32,13 @@ class RedisFactory
     }
 
     /**
-     * @return \Redis
+     * @return \Redis|RedisProxy
      */
     public function get(string $poolName)
     {
         $proxy = $this->proxies[$poolName] ?? null;
         if (! $proxy instanceof RedisProxy) {
-            throw new InvalidRedisProxyException('Redis proxy is invalid.');
+            throw new InvalidRedisProxyException('Invalid Redis proxy.');
         }
 
         return $proxy;

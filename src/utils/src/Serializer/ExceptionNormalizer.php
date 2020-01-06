@@ -7,11 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils\Serializer;
 
+use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\ReflectionManager;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -19,6 +20,11 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
 {
+    /**
+     * @var Instantiator
+     */
+    protected $instantiator;
+
     /**
      * {@inheritdoc}
      */
@@ -35,8 +41,8 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         }
         if (is_array($data) && isset($data['message'], $data['code'])) {
             try {
-                $exception = new $class($data['message'], $data['code']);
-                foreach (['file', 'line'] as $attribute) {
+                $exception = $this->getInstantiator()->instantiate($class);
+                foreach (['code', 'message', 'file', 'line'] as $attribute) {
                     if (isset($data[$attribute])) {
                         $property = ReflectionManager::reflectProperty($class, $attribute);
                         $property->setAccessible(true);
@@ -101,5 +107,14 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function hasCacheableSupportsMethod(): bool
     {
         return \get_class($this) === __CLASS__;
+    }
+
+    protected function getInstantiator(): Instantiator
+    {
+        if ($this->instantiator instanceof Instantiator) {
+            return $this->instantiator;
+        }
+
+        return $this->instantiator = new Instantiator();
     }
 }

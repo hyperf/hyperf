@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer\Router;
@@ -177,7 +177,9 @@ class DispatcherFactory
                     }
                     $path = $mapping->path;
 
-                    if ($path[0] !== '/') {
+                    if ($path === '') {
+                        $path = $prefix;
+                    } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], [

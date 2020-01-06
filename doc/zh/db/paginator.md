@@ -1,6 +1,6 @@
 # 查询分页
 
-在使用 [hyperf/database](https://github.com/hyperf-cloud/database) 来查询数据时，可以很方便的通过与 [hyperf/paginator](https://github.com/hyperf-cloud/paginator) 组件配合便捷地对查询结果进行分页。
+在使用 [hyperf/database](https://github.com/hyperf/database) 来查询数据时，可以很方便的通过与 [hyperf/paginator](https://github.com/hyperf/paginator) 组件配合便捷地对查询结果进行分页。
 
 # 使用方法
 

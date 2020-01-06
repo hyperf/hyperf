@@ -1,6 +1,6 @@
 # 控制器
 
-通过控制器来处理 HTTP 请求，需要通过 `配置文件` 或 `注解` 的形式将路由与控制器方法进行绑定，具体请查阅 [路由](zh/route.md) 章节。   
+通过控制器来处理 HTTP 请求，需要通过 `配置文件` 或 `注解` 的形式将路由与控制器方法进行绑定，具体请查阅 [路由](zh/router.md) 章节。   
 对于 `请求(Request)` 与 `响应(Response)`，Hyperf 提供了 `Hyperf\HttpServer\Contract\RequestInterface` 和 `Hyperf\HttpServer\Contract\ResponseInterface` 方便您获取入参和返回数据，关于 [请求](zh/request.md) 与 [响应](zh/response.md) 的详细内容请查阅对应的章节。
 
 ## 编写控制器

@@ -1,6 +1,6 @@
 # 请求对象
 
-`请求对象(Request)` 是完全基于 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准实现的，由 [hyperf/http-message](https://github.com/hyperf-cloud/http-message) 组件提供实现支持。
+`请求对象(Request)` 是完全基于 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准实现的，由 [hyperf/http-message](https://github.com/hyperf/http-message) 组件提供实现支持。
 
 > 注意 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准为 `请求(Request)` 进行了 `immutable 机制` 的设计，所有以 `with` 开头的方法的返回值都是一个新对象，不会修改原对象的值
 
@@ -16,7 +16,7 @@ composer require hyperf/http-message
 
 ## 获得请求对象
 
-可以通过容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 获得 对应的 `Hyperf\HttpServer\Request`，实际注入的对象为一个代理对象，代理的对象为每个请求的 `PSR-7 请求对象(Request)`，也就意味着仅可在 `onRequest` 声明周期内可获得此对象，下面是一个获取示例：
+可以通过容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 获得 对应的 `Hyperf\HttpServer\Request`，实际注入的对象为一个代理对象，代理的对象为每个请求的 `PSR-7 请求对象(Request)`，也就意味着仅可在 `onRequest` 生命周期内可获得此对象，下面是一个获取示例：
 
 ```php
 declare(strict_types=1);
@@ -122,7 +122,7 @@ if ($request->isMethod('post')) {
 
 ### PSR-7 请求及方法
 
-[hyperf/http-message](https://github.com/hyperf-cloud/http-message) 组件本身是一个实现了 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准的组件，相关方法都可以通过注入的 `请求对象(Request)` 来调用。   
+[hyperf/http-message](https://github.com/hyperf/http-message) 组件本身是一个实现了 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准的组件，相关方法都可以通过注入的 `请求对象(Request)` 来调用。   
 如果注入时声明为 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准的 `Psr\Http\Message\ServerRequestInterface` 接口，则框架会自动转换为等同于 `Hyperf\HttpServer\Contract\RequestInterface` 的 `Hyperf\HttpServer\Request` 对象。   
 
 > 建议使用 `Hyperf\HttpServer\Contract\RequestInterface` 来注入，这样可获得 IDE 对专属方法的自动完成提醒支持。
@@ -172,7 +172,7 @@ $name = $request->query();
 
 ### 获取 `JSON` 输入信息
 
-如果请求的 `Body` 数据格式是 `JSON`，则只要 `请求对象(Request)` 的 `Content-Type` `Header值` 正确设置为 `application/json`，就可以通过  `input(string $key, $default = null)` 方法访问 `JSON` 数据，你甚至可以使用 「点」语法来读取 `JSON` 数组：
+如果请求的 `Body` 数据格式是 `JSON`，则只要 `请求对象(Request)` 的 `Content-Type` `Header 值` 正确设置为 `application/json`，就可以通过  `input(string $key, $default = null)` 方法访问 `JSON` 数据，你甚至可以使用 「点」语法来读取 `JSON` 数组：
 
 ```php
 // 存在则返回，不存在则返回 null

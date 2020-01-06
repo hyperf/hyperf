@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpMessage\Uri;
@@ -545,8 +545,6 @@ class Uri implements UriInterface
      * Whether the URI has the default port of the current scheme.
      * `Psr\Http\Message\UriInterface::getPort` may return null or the standard port. This method can be used
      * independently of the implementation.
-     *
-     * @return bool
      */
     public function isDefaultPort(): bool
     {
@@ -708,7 +706,6 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param array $match
      * @return string
      */
     private function rawurlencodeMatchZero(array $match)

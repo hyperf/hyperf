@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Process\Listener;
@@ -15,16 +15,12 @@ namespace Hyperf\Process\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class BootProcessListener implements ListenerInterface
 {
     /**

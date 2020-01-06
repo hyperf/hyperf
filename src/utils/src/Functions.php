@@ -7,11 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
@@ -67,11 +68,12 @@ if (! function_exists('retry')) {
      * Retry an operation a given number of times.
      *
      * @param int $times
-     * @param int $sleep
+     * @param int $sleep millisecond
      * @throws \Throwable
      */
     function retry($times, callable $callback, $sleep = 0)
     {
+        $backoff = new Backoff($sleep);
         beginning:
         try {
             return $callback();
@@ -79,9 +81,7 @@ if (! function_exists('retry')) {
             if (--$times < 0) {
                 throw $e;
             }
-            if ($sleep) {
-                usleep($sleep * 1000);
-            }
+            $backoff->sleep();
             goto beginning;
         }
     }
@@ -422,14 +422,19 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        if (version_compare(swoole_version(), '4.4.0', '>=')) {
-            $result = \Swoole\Coroutine\Run($callback);
-        } else {
-            go($callback);
-            $result = true;
-        }
+        $result = \Swoole\Coroutine\Run($callback);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
+    }
+}
+
+if (! function_exists('swoole_hook_flags')) {
+    /**
+     * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
+     */
+    function swoole_hook_flags(): int
+    {
+        return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
     }
 }

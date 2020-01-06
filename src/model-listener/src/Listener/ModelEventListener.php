@@ -7,20 +7,16 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class ModelEventListener implements ListenerInterface
 {
     /**

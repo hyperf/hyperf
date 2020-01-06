@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace HyperfTest\Server;
@@ -33,7 +33,7 @@ class PortTest extends TestCase
 
         $port = Port::build([
             'name' => 'tcp',
-            'type' => Server::SERVER_TCP,
+            'type' => Server::SERVER_BASE,
         ]);
 
         $this->assertSame([
@@ -43,7 +43,7 @@ class PortTest extends TestCase
 
         $port = Port::build([
             'name' => 'tcp',
-            'type' => Server::SERVER_TCP,
+            'type' => Server::SERVER_BASE,
             'settings' => [
                 'open_http2_protocol' => true,
             ],

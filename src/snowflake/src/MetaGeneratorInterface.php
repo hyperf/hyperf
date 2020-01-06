@@ -7,12 +7,18 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Snowflake;
 
 interface MetaGeneratorInterface
 {
+    const DEFAULT_BEGIN_SECOND = 1560960000;
+
     public function generate(): Meta;
+
+    public function getBeginTimestamp(): int;
+
+    public function getConfiguration(): ConfigurationInterface;
 }

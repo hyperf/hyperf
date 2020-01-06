@@ -12,14 +12,14 @@ composer require hyperf/translation
 
 # 语言文件
 
-Hyperf 的语言文件默认都放在 `storage/languages` 下面，您也可以在 `config/autoload/translation.php` 内更改语言文件的文件夹，每种语言对应其中的一个子文件夹，例如 `en` 指英文语言文件，`zh-CN` 指中文简体的语言文件，你可以按照实际需要创建新的语言文件夹和里面的语言文件。示例如下：
+Hyperf 的语言文件默认都放在 `storage/languages` 下面，您也可以在 `config/autoload/translation.php` 内更改语言文件的文件夹，每种语言对应其中的一个子文件夹，例如 `en` 指英文语言文件，`zh_CN` 指中文简体的语言文件，你可以按照实际需要创建新的语言文件夹和里面的语言文件。示例如下：
 
 ```
 /storage
     /languages
         /en
             messages.php
-        /zh-CN
+        /zh_CN
             messages.php
 ```
 
@@ -36,6 +36,8 @@ return [
 
 ## 配置语言环境
 
+### 配置默认语言环境
+
 关于国际化组件的相关配置都是在 `config/autoload/translation.php` 配置文件里设定的，你可以按照实际需要修改它。
 
 ```php
@@ -50,6 +52,30 @@ return [
     // 语言文件存放的文件夹
     'path' => BASE_PATH . '/storage/languages',
 ];
+```
+
+### 配置临时语言环境
+
+```php
+<?php
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Contract\TranslatorInterface;
+
+class FooController
+{
+    /**
+     * @Inject
+     * @var TranslatorInterface
+     */
+    private $translator;
+    
+    public function index()
+    {
+        // 只在当前请求或协程生命周期有效
+        $this->translator->setLocale('zh_CN');
+    }
+}
 ```
 
 # 翻译字符串
@@ -74,7 +100,7 @@ class FooController
     
     public function index()
     {
-        return $this->translator->trans('messages.welcome', [], 'zh-CN');
+        return $this->translator->trans('messages.welcome', [], 'zh_CN');
     }
 }
 ```
@@ -82,7 +108,7 @@ class FooController
 ## 通过全局函数翻译
 
 您也可以通过全局函数 `__()` 或 `trans()` 来对字符串进行翻译。   
-函数的第一个参数使用 `键`（指使用翻译字符串作为键的键） 或者是 `文件.键` 的形式。
+函数的第一个参数使用 `键`（指使用翻译字符串作为键的键） 或者是 `文件. 键` 的形式。
 
 ```php
 echo __('messages.welcome');

@@ -7,13 +7,15 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Grpc\Parser;
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
@@ -36,12 +38,19 @@ class BaseClient
             if (! ($options['client'] instanceof GrpcClient)) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
-            $this->setClient($options['client']);
+            $this->grpcClient = $options['client'];
         } else {
             $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
             $this->grpcClient->set($hostname, $options);
         }
-        $this->start();
+        if (! $this->start()) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->getGrpcClient()->getErrCode(),
+                $hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
     }
 
     public function __get($name)
@@ -75,6 +84,7 @@ class BaseClient
      * @param array $metadata A metadata map to send to the server
      *                        (optional)
      * @param array $options An array of options (optional)
+     * @throws GrpcClientException The client should not be used after this exception
      * @return []
      */
     protected function simpleRequest(
@@ -83,6 +93,10 @@ class BaseClient
         $deserialize
     ) {
         $streamId = $this->send($this->buildRequest($method, $argument));
+        if ($streamId === 0) {
+            // The client should not be used after this exception
+            throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
+        }
         return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
 

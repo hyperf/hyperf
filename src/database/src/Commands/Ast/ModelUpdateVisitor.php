@@ -7,29 +7,39 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Database\Commands\ModelOption;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
+    /**
+     * @var array
+     */
     protected $columns = [];
 
-    public function __construct($columns = [])
+    /**
+     * @var ModelOption
+     */
+    protected $option;
+
+    public function __construct($columns = [], ModelOption $option)
     {
         $this->columns = $columns;
+        $this->option = $option;
     }
 
     public function leaveNode(Node $node)
     {
         switch ($node) {
             case $node instanceof Node\Stmt\PropertyProperty:
-                if ($node->name == 'fillable') {
+                if ($node->name == 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
                 } elseif ($node->name == 'casts') {
                     $node = $this->rewriteCasts($node);
@@ -39,8 +49,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
-                    [$name, $type] = $this->getProperty($column);
-                    $doc .= sprintf(' * @property %s $%s', $type, $name) . PHP_EOL;
+                    [$name, $type, $comment] = $this->getProperty($column);
+                    $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
@@ -87,7 +97,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
         $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
 
-        return [$name, $type];
+        $comment = $this->option->isWithComments() ? $column['column_comment'] ?? '' : '';
+
+        return [$name, $type, $comment];
     }
 
     protected function formatDatabaseType(string $type): ?string

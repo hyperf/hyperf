@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Crontab;
@@ -30,6 +30,26 @@ class Crontab
      * @var null|string
      */
     protected $rule;
+
+    /**
+     * @var bool
+     */
+    protected $singleton = false;
+
+    /**
+     * @var string
+     */
+    protected $mutexPool = 'default';
+
+    /**
+     * @var int
+     */
+    protected $mutexExpires = 3600;
+
+    /**
+     * @var bool
+     */
+    protected $onOneServer = false;
 
     /**
      * @var mixed
@@ -65,6 +85,50 @@ class Crontab
     public function setRule(?string $rule): Crontab
     {
         $this->rule = $rule;
+        return $this;
+    }
+
+    public function isSingleton(): bool
+    {
+        return $this->singleton;
+    }
+
+    public function setSingleton(bool $singleton): Crontab
+    {
+        $this->singleton = $singleton;
+        return $this;
+    }
+
+    public function getMutexPool(): string
+    {
+        return $this->mutexPool;
+    }
+
+    public function setMutexPool(string $mutexPool): Crontab
+    {
+        $this->mutexPool = $mutexPool;
+        return $this;
+    }
+
+    public function getMutexExpires(): int
+    {
+        return $this->mutexExpires;
+    }
+
+    public function setMutexExpires(int $mutexExpires): Crontab
+    {
+        $this->mutexExpires = $mutexExpires;
+        return $this;
+    }
+
+    public function isOnOneServer(): bool
+    {
+        return $this->onOneServer;
+    }
+
+    public function setOnOneServer(bool $onOneServer): Crontab
+    {
+        $this->onOneServer = $onOneServer;
         return $this;
     }
 

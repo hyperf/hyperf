@@ -1,6 +1,6 @@
 # WebSocket 服务
 
-Hyperf 提供了对 WebSocket Server 的封装，可基于 [hyperf/websocket-server](https://github.com/hyperf-cloud/websocket-server) 组件快速搭建一个 WebSocket 应用。
+Hyperf 提供了对 WebSocket Server 的封装，可基于 [hyperf/websocket-server](https://github.com/hyperf/websocket-server) 组件快速搭建一个 WebSocket 应用。
 
 ## 安装
 
@@ -59,10 +59,11 @@ use Hyperf\Contract\OnOpenInterface;
 use Swoole\Http\Request;
 use Swoole\Server;
 use Swoole\Websocket\Frame;
+use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage(Server $server, Frame $frame): void
+    public function onMessage(WebSocketServer $server, Frame $frame): void
     {
         $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
@@ -72,7 +73,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
         var_dump('closed');
     }
 
-    public function onOpen(Server $server, Request $request): void
+    public function onOpen(WebSocketServer $server, Request $request): void
     {
         $server->push($request->fd, 'Opened');
     }

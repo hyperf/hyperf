@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer\Router;
@@ -45,10 +45,6 @@ class RouteCollector
 
     /**
      * Constructs a route collector.
-     *
-     * @param RouteParser $routeParser
-     * @param DataGenerator $dataGenerator
-     * @param string $server
      */
     public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
     {

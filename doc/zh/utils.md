@@ -1,6 +1,6 @@
 # 辅助类
 
-Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用的，不会列举所有，可自行查看 [hyperf/utils](https://github.com/hyperf-cloud/utils) 组件的代码获得更多信息。
+Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用的，不会列举所有，可自行查看 [hyperf/utils](https://github.com/hyperf/utils) 组件的代码获得更多信息。
 
 ## 协程辅助类
 

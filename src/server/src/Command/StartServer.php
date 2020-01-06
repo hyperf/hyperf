@@ -7,25 +7,23 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Server\Command;
 
-use Hyperf\Command\Annotation\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Server\ServerFactory;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Swoole\Runtime;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @Command
- */
-class StartServer extends SymfonyCommand
+class StartServer extends Command
 {
     /**
      * @var ContainerInterface
@@ -34,16 +32,13 @@ class StartServer extends SymfonyCommand
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct('start');
         $this->container = $container;
-
-        $this->setDescription('Start swoole server.');
+        parent::__construct('start');
+        $this->setDescription('Start hyperf servers.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        \Swoole\Runtime::enableCoroutine(true);
-
         $this->checkEnvironment($output);
 
         $serverFactory = $this->container->get(ServerFactory::class)
@@ -52,17 +47,45 @@ class StartServer extends SymfonyCommand
 
         $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
         if (! $serverConfig) {
-            throw new \InvalidArgumentException('At least one server should be defined.');
+            throw new InvalidArgumentException('At least one server should be defined.');
         }
 
         $serverFactory->configure($serverConfig);
+
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+
         $serverFactory->start();
     }
 
     private function checkEnvironment(OutputInterface $output)
     {
-        if (ini_get_all('swoole')['swoole.use_shortname']['local_value'] !== 'Off') {
-            $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = \'Off\' into your php.ini.');
+        /**
+         * swoole.use_shortname = true       => string(1) "1"     => enabled
+         * swoole.use_shortname = "true"     => string(1) "1"     => enabled
+         * swoole.use_shortname = on         => string(1) "1"     => enabled
+         * swoole.use_shortname = On         => string(1) "1"     => enabled
+         * swoole.use_shortname = "On"       => string(2) "On"    => enabled
+         * swoole.use_shortname = "on"       => string(2) "on"    => enabled
+         * swoole.use_shortname = 1          => string(1) "1"     => enabled
+         * swoole.use_shortname = "1"        => string(1) "1"     => enabled
+         * swoole.use_shortname = 2          => string(1) "1"     => enabled
+         * swoole.use_shortname = false      => string(0) ""      => disabled
+         * swoole.use_shortname = "false"    => string(5) "false" => disabled
+         * swoole.use_shortname = off        => string(0) ""      => disabled
+         * swoole.use_shortname = Off        => string(0) ""      => disabled
+         * swoole.use_shortname = "off"      => string(3) "off"   => disabled
+         * swoole.use_shortname = "Off"      => string(3) "Off"   => disabled
+         * swoole.use_shortname = 0          => string(1) "0"     => disabled
+         * swoole.use_shortname = "0"        => string(1) "0"     => disabled
+         * swoole.use_shortname = 00         => string(2) "00"    => disabled
+         * swoole.use_shortname = "00"       => string(2) "00"    => disabled
+         * swoole.use_shortname = ""         => string(0) ""      => disabled
+         * swoole.use_shortname = " "        => string(1) " "     => disabled.
+         */
+        $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
+        $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));
+        if (! in_array($useShortname, ['', 'off', 'false'], true)) {
+            $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = off into your php.ini.');
             exit(0);
         }
     }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Tracer\Aspect;
@@ -16,13 +16,16 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
-use Hyperf\Tracer\Tracing;
+use Hyperf\Tracer\SpanStarter;
+use OpenTracing\Tracer;
 
 /**
  * @Aspect
  */
 class TraceAnnotationAspect implements AroundInterface
 {
+    use SpanStarter;
+
     public $classes = [];
 
     public $annotations = [
@@ -30,13 +33,13 @@ class TraceAnnotationAspect implements AroundInterface
     ];
 
     /**
-     * @var Tracing
+     * @var Tracer
      */
-    private $tracing;
+    private $tracer;
 
-    public function __construct(Tracing $tracing)
+    public function __construct(Tracer $tracer)
     {
-        $this->tracing = $tracing;
+        $this->tracer = $tracer;
     }
 
     /**
@@ -52,9 +55,8 @@ class TraceAnnotationAspect implements AroundInterface
         } else {
             $name = $source;
         }
-        $span = $this->tracing->span($name);
-        $span->tag('source', $source);
-        $span->start();
+        $span = $this->startSpan($name);
+        $span->setTag('source', $source);
         $result = $proceedingJoinPoint->process();
         $span->finish();
         return $result;

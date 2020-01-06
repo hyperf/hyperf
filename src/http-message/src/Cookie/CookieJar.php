@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpMessage\Cookie;
@@ -274,7 +274,6 @@ class CookieJar implements CookieJarInterface
      *
      * @see https://tools.ietf.org/html/rfc6265#section-5.1.4
      *
-     * @param RequestInterface $request
      * @return string
      */
     private function getCookiePathFromRequest(RequestInterface $request)
@@ -299,8 +298,6 @@ class CookieJar implements CookieJarInterface
     /**
      * If a cookie already exists and the server asks to set it again with a
      * null value, the cookie must be deleted.
-     *
-     * @param SetCookie $cookie
      */
     private function removeCookieIfEmpty(SetCookie $cookie)
     {

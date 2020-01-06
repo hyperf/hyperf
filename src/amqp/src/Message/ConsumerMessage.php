@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Amqp\Message;
@@ -39,6 +39,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $routingKey = [];
 
+    /**
+     * @var null|array
+     */
+    protected $qos;
+
     public function setQueue(string $queue): self
     {
         $this->queue = $queue;
@@ -53,6 +58,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     public function isRequeue(): bool
     {
         return $this->requeue;
+    }
+
+    public function getQos(): ?array
+    {
+        return $this->qos;
     }
 
     public function getQueueBuilder(): QueueBuilder

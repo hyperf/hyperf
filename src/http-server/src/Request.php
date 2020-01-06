@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\HttpServer;
@@ -93,10 +93,9 @@ class Request implements RequestInterface
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
-        $result = $default ?? [];
 
         foreach ($keys as $key) {
-            $result[$key] = data_get($data, $key);
+            $result[$key] = data_get($data, $key, $default[$key] ?? null);
         }
 
         return $result;

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Utils;
@@ -42,11 +42,19 @@ class Coroutine
 
     /**
      * Returns the parent coroutine ID.
-     * Returns -1 when running in non-coroutine context.
+     * Returns -1 when running in the top level coroutine.
+     * Returns null when running in non-coroutine context.
+     *
+     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
      */
-    public static function parentId(): int
+    public static function parentId(): ?int
     {
-        return SwooleCoroutine::getPcid();
+        $cid = SwooleCoroutine::getPcid();
+        if ($cid === false) {
+            return null;
+        }
+
+        return $cid;
     }
 
     /**

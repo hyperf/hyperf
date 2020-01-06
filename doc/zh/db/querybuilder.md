@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-`Db::select()` 方法会返回一个array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
+`Db::select()` 方法会返回一个 array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
 
 ```php
 <?php
@@ -207,7 +207,7 @@ $users = $query->addSelect('age')->get();
 
 ## 原始表达式
 
-有时你需要在查询中使用原始表达式，例如实现 `COUNT(0) AS count`，这就需要用到`raw`方法。
+有时你需要在查询中使用原始表达式，例如实现 `COUNT(0) AS count`，这就需要用到 `raw` 方法。
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -324,7 +324,7 @@ Db::table('users')
 
 ### 子连接查询
 
-你可以使用 `joinSub``，leftJoinSub` 和 `rightJoinSub` 方法关联一个查询作为子查询。他们每一种方法都会接收三个参数：子查询，表别名和定义关联字段的闭包：
+你可以使用 `joinSub`，`leftJoinSub` 和 `rightJoinSub` 方法关联一个查询作为子查询。他们每一种方法都会接收三个参数：子查询，表别名和定义关联字段的闭包：
 
 ```php
 $latestPosts = Db::table('posts')
@@ -641,7 +641,7 @@ Db::table('users')->where('id', 1)->update(['votes' => 1]);
 
 ### 更新或者新增
 
-有时您可能希望更新数据库中的现有记录，或者如果不存在匹配记录则创建它。 在这种情况下，可以使用 `updateOrInsert` 方法。 `updateOrInsert` 方法接受两个参数：一个用于查找记录的条件数组，以及一个包含要更该记录的键值对数组。
+有时您可能希望更新数据库中的现有记录，或者如果不存在匹配记录则创建它。 在这种情况下，可以使用 `updateOrInsert` 方法。 `updateOrInsert` 方法接受两个参数：一个用于查找记录的条件数组，以及一个包含要更改记录的键值对数组。
 
 `updateOrInsert` 方法将首先尝试使用第一个参数的键和值对来查找匹配的数据库记录。 如果记录存在，则使用第二个参数中的值去更新记录。 如果找不到记录，将插入一个新记录，更新的数据是两个数组的集合：
 

@@ -3,6 +3,7 @@
   * [项目介绍](zh/README.md)
   * [线上交流](zh/communication.md)
   * [捐献及赞助](zh/donate.md)
+  * [版本更新记录](zh/changelog.md)
 
 * 快速入门
 
@@ -36,6 +37,8 @@
   * [自动化测试](zh/testing.md)
   * [视图](zh/view.md)
   * [国际化](zh/translation.md)
+  * [验证器](zh/validation.md)
+  * [Session 会话管理](zh/session.md)
   
 * 数据库模型
 
@@ -47,6 +50,7 @@
   * [模型事件](zh/db/event.md)
   * [模型缓存](zh/db/model-cache.md)
   * [数据库迁移](zh/db/migration.md)
+  * [极简 DB 组件](zh/db/db.md)
   
 * 微服务
 
@@ -58,6 +62,8 @@
   * [服务限流](zh/rate-limit.md)
   * [配置中心](zh/config-center.md)
   * [调用链追踪](zh/tracer.md)
+  * [服务监控](zh/metric.md)
+  * [服务重试](zh/retry.md)
   
 * 其它组件
 
@@ -75,10 +81,13 @@
   * [开发者工具](zh/devtool.md)
   * [辅助类](zh/utils.md)
   * [限流器](zh/rate-limit.md)
-  * [Swoole Enterprise](zh/swoole-enterprise.md)
+  * [Swoole Tracker](zh/swoole-tracker.md)
   * [定时任务](zh/crontab.md)
   * [Task 机制](zh/task.md)
   * [枚举类](zh/constants.md)
+  * [Snowflake](zh/snowflake.md)
+  * [Nats](zh/nats.md)
+  * [重试](zh/retry.md)
 
 * 应用部署
 
@@ -86,6 +95,7 @@
   * [DaoCloud Devops 搭建](zh/tutorial/daocloud.md)
   * [Supervisor 部署](zh/tutorial/supervisor.md)
   * [Nginx 反向代理](zh/tutorial/nginx.md)
+  * [阿里云日志服务](zh/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
@@ -96,3 +106,7 @@
   * [指南前言](zh/component-guide/intro.md)
   * [创建新的组件](zh/component-guide/create.md)
   * [ConfigProvider 机制](zh/component-guide/configprovider.md)
+
+* 版本升级指南
+  
+  * [1.1 升级指南](zh/upgrade/1.1.md)
