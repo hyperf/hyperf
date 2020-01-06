@@ -8,6 +8,10 @@
 
 - [#1223](https://github.com/hyperf/hyperf/pull/1223) Fixed the scanner will missing the packages at require-dev of composer.json
 
+## Optimized
+
+- [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+
 # v1.1.13 - 2020-01-03
 
 ## Added
