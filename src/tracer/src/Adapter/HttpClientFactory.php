@@ -28,9 +28,6 @@ class HttpClientFactory implements ClientFactory
         $this->guzzleClientFactory = $guzzleClientFactory;
     }
 
-    /**
-     * @return callable
-     */
     public function build(array $options): callable
     {
         return function ($payload) use ($options) {

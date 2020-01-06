@@ -19,7 +19,6 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Builder;
-use Hyperf\DbConnection\ConnectionResolver as DBConnectionResolver;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
@@ -60,7 +59,7 @@ class ValidationExistsRuleTest extends TestCase
         ];
         $connection = $connector->make($dbConfig);
         $resolver = new ConnectionResolver(['default' => $connection]);
-        $container->shouldReceive('get')->with(DBConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
         ApplicationContext::setContainer($container);
         Register::setConnectionResolver($resolver);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new EventDispatcher());

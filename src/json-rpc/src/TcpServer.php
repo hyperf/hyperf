@@ -72,7 +72,7 @@ class TcpServer extends Server
 
     protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
     {
-        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data));
+        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
     }
 
     protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)

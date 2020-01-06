@@ -35,8 +35,6 @@ class MigrationCreator
 
     /**
      * Create a new migration creator instance.
-     *
-     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
