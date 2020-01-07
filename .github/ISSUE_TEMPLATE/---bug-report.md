@@ -7,9 +7,10 @@ assignees: ''
 
 ---
 
-- Hyperf Version: #.#.#
-- PHP Version: `(php -v)` #.#.#
-- Swoole Version: `(php --ri swoole)` #.#.#
+Execute the command `uname -a && php -v && composer info | grep hyperf && php --ri swoole` and paste the result below.
+```bash
+# Paste the result here.
+```
 
 ### Description:
 
