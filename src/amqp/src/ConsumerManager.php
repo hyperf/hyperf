@@ -43,9 +43,11 @@ class ConsumerManager
             if (! $instance instanceof ConsumerMessageInterface) {
                 continue;
             }
+
             $annotation->exchange && $instance->setExchange($annotation->exchange);
             $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
             $annotation->queue && $instance->setQueue($annotation->queue);
+            ! is_null($annotation->enable) && $instance->setEnable($annotation->enable);
             property_exists($instance, 'container') && $instance->container = $this->container;
             $nums = $annotation->nums;
             $process = $this->createProcess($instance);
@@ -78,6 +80,16 @@ class ConsumerManager
             public function handle(): void
             {
                 $this->consumer->consume($this->consumerMessage);
+            }
+
+            public function getConsumerMessage(): ConsumerMessageInterface
+            {
+                return $this->consumerMessage;
+            }
+
+            public function isEnable(): bool
+            {
+                return $this->consumerMessage->isEnable();
             }
         };
     }

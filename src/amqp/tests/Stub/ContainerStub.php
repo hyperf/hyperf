@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Amqp\Stub;
 
+use Hyperf\Amqp\Consumer;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
@@ -41,7 +43,23 @@ class ContainerStub
         $container->shouldReceive('has')->andReturnUsing(function ($class) {
             return true;
         });
+        $container->shouldReceive('get')->with(Consumer::class)->andReturnUsing(function () use ($container) {
+            return new Consumer($container, $container->get(PoolFactory::class), $container->get(StdoutLoggerInterface::class));
+        });
 
+        return $container;
+    }
+
+    public static function getHyperfContainer()
+    {
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('get')->with(PoolFactory::class)->andReturn(new PoolFactory($container));
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(
+            Mockery::mock(EventDispatcherInterface::class)
+        );
+        $container->shouldReceive('has')->andReturn(true);
         return $container;
     }
 }
