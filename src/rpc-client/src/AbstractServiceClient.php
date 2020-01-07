@@ -22,6 +22,7 @@ use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
+use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcClient\Exception\RequestException;

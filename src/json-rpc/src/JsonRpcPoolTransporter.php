@@ -24,6 +24,8 @@ use RuntimeException;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var PoolFactory
      */
@@ -94,12 +96,14 @@ class JsonRpcPoolTransporter implements TransporterInterface
             }
         });
 
-        return $client->recv($this->recvTimeout);
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function recv()
     {
-        return $this->getConnection()->recv($this->recvTimeout);
+        $client = $this->getConnection();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     /**

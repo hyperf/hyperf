@@ -21,6 +21,8 @@ use Swoole\Coroutine\Client as SwooleClient;
 
 class JsonRpcTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var null|LoadBalancerInterface
      */
@@ -68,12 +70,15 @@ class JsonRpcTransporter implements TransporterInterface
             }
             return $client;
         });
-        return $client->recv($this->recvTimeout);
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function recv()
     {
-        return $this->getClient()->recv($this->recvTimeout);
+        $client = $this->getClient();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function getClient(): SwooleClient

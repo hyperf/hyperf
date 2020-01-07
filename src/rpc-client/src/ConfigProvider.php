@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient;
 
-use Hyperf\RpcClient\IdGenerator\IdGeneratorInterface;
-use Hyperf\RpcClient\IdGenerator\UniqidIdGenerator;
+use Hyperf\Rpc\IdGenerator\IdGeneratorInterface;
+use Hyperf\Rpc\IdGenerator\UniqidIdGenerator;
 use Hyperf\RpcClient\Listener\AddConsumerDefinitionListener;
 
 class ConfigProvider
