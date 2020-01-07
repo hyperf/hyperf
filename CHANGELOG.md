@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1166](https://github.com/hyperf/hyperf/pull/1166) Added KeepaliveIO for amqp.
 - [#1219](https://github.com/hyperf/hyperf/pull/1219) Added property `enable` for amqp consumer, which controls whether consumers should start along with the service.
 
 ## Fixed
