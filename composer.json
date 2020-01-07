@@ -26,6 +26,7 @@
         "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^0.1.2",
         "jean85/pretty-package-versions": "^1.2",
+        "laminas/laminas-mime": "^2.7",
         "monolog/monolog": "^1.24",
         "nesbot/carbon": "^2.0",
         "nikic/fast-route": "^1.3",

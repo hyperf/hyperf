@@ -306,7 +306,7 @@ Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长�
 
 * 构造函数时还不是协程环境，如果注入了可能会触发协程切换的类，就会导致框架启动失败。
 
-* 构造函数中要避免循坏依赖（比较典型的例子为 `Listener` 和 `EventDispatcherInterface`），不然也会启动失败。
+* 构造函数中要避免循环依赖（比较典型的例子为 `Listener` 和 `EventDispatcherInterface`），不然也会启动失败。
 
 目前解决方案是：只在实例中注入 `Psr\Container\ContainerInterface` ，而其他的组件在非构造函数执行时通过 `container` 获取。但 PSR-11 中指出:
 

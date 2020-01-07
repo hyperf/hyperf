@@ -1,5 +1,66 @@
 # 版本更新记录
 
+# v1.1.12 - 2019-12-26
+
+## 新增
+
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) 为 `jsonrpc` 组件增加了新的协议 `jsonrpc-tcp-length-check`，并对部分代码进行了优化。
+
+## 修复
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修复 `Hyperf\Utils\Collection::random` 方法不支持传入 `null`。
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) 修复 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情况。
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修复 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能传入 `string` 的BUG。
+
+## 优化
+
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) 日志配置中，只填写 `formatter.class` 的情况下，可以使用默认的 `formatter.constructor` 配置。
+
+# v1.1.11 - 2019-12-19
+
+## 新增
+
+- [#849](https://github.com/hyperf/hyperf/pull/849) 为 hyperf/tracer 组件增加 span tag 配置功能；
+
+## 修复
+
+- [#1142](https://github.com/hyperf/hyperf/pull/1142) 修复 `Register::resolveConnection` 会返回 null 的问题；
+- [#1144](https://github.com/hyperf/hyperf/pull/1144) 修复配置文件形式下服务限流会失效的问题；
+- [#1145](https://github.com/hyperf/hyperf/pull/1145) 修复 `CoroutineMemoryDriver::delKey` 方法的返回值错误的问题；
+- [#1153](https://github.com/hyperf/hyperf/pull/1153) 修复验证器的 `alpha_num` 规则无法按预期运行的问题；
+
+# v1.1.10 - 2019-12-12
+
+## 修复
+
+- [#1104](https://github.com/hyperf/hyperf/pull/1104) 修复了 Guzzle 客户端的重试中间件的状态码识别范围为 2xx；
+- [#1105](https://github.com/hyperf/hyperf/pull/1105) 修复了 Retry 组件在重试尝试前不还原管道堆栈的问题；
+- [#1106](https://github.com/hyperf/hyperf/pull/1106) 修复了数据库在开启 `sticky` 模式时连接回归连接池时没有重置状态的问题；
+- [#1119](https://github.com/hyperf/hyperf/pull/1119) 修复 TCP 协议下的 JSONRPC Server 在解析 JSON 失败时无法正确的返回预期的 Error Response 的问题；
+- [#1124](https://github.com/hyperf/hyperf/pull/1124) 修复 Session 中间件在储存当前的 URL 时，当 URL 以 `/` 结尾时会忽略斜杠的问题；
+
+## 变更
+
+- [#1108](https://github.com/hyperf/hyperf/pull/1108) 重命名 `Hyperf\Tracer\Middleware\TraceMiddeware` 为 `Hyperf\Tracer\Middleware\TraceMiddleware`；
+- [#1108](https://github.com/hyperf/hyperf/pull/1111) 升级 `Hyperf\ServiceGovernance\Listener\ServiceRegisterListener` 类的成员属性和方法的等级为 `protected`，以便更好的重写相关方法；
+
+# v1.1.9 - 2019-12-05
+
+## 新增
+
+- [#948](https://github.com/hyperf/hyperf/pull/948) 为 DI Container 增加懒加载功能；
+- [#1044](https://github.com/hyperf/hyperf/pull/1044) 为 AMQP Consumer 增加 `basic_qos` 配置；
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) DI Container 增加 `define()` 和 `set()` 方法，同时增加 `Hyperf\Contract\ContainerInterface`；
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) `job.stub` 模板增加构造函数；
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) 支持 PHP 7.4，TrvisCI 增加 PHP 7.4 运行支持；
+
+## 修复
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007) 修复 `vendor:: publish` 的命令返回值；
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) 修复 `Hyperf\Cache\Driver\RedisDriver::clear` 会有可能删除所有缓存失败的问题；
+- [#1055](https://github.com/hyperf/hyperf/pull/1055) 修复 Image 验证时后缀大小写的问题；
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091) Fixed `@Retry` 注解使用时会找不到容器的问题；
+
 # v1.1.8 - 2019-11-28
 
 ## 新增

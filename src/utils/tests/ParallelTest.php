@@ -15,6 +15,7 @@ namespace HyperfTest\Utils;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -119,23 +120,55 @@ class ParallelTest extends TestCase
     public function testParallelThrows()
     {
         $parallel = new Parallel();
-
         $err = function () {
             Coroutine::sleep(0.001);
             throw new \RuntimeException('something bad happened');
         };
-
         $ok = function () {
             Coroutine::sleep(0.001);
             return 1;
         };
-
         $parallel->add($err);
         for ($i = 0; $i < 4; ++$i) {
             $parallel->add($ok);
         }
         $this->expectException(ParallelExecutionException::class);
         $res = $parallel->wait();
+    }
+
+    public function testParallelResultsAndThrows()
+    {
+        $parallel = new Parallel();
+
+        $err = function () {
+            Coroutine::sleep(0.001);
+            throw new \RuntimeException('something bad happened');
+        };
+        $parallel->add($err);
+
+        $ids = [1 => uniqid(), 2 => uniqid(), 3 => uniqid(), 4 => uniqid()];
+        foreach ($ids as $id) {
+            $parallel->add(function () use ($id) {
+                Coroutine::sleep(0.001);
+                return $id;
+            });
+        }
+
+        try {
+            $parallel->wait();
+            throw new \RuntimeException();
+        } catch (ParallelExecutionException $exception) {
+            foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
+                $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
+            }
+
+            $result = $exception->getResults();
+            $this->assertEquals($ids, $result);
+
+            $throwables = $exception->getThrowables();
+            $this->assertTrue(count($throwables) === 1);
+            $this->assertSame('something bad happened', $throwables[0]->getMessage());
+        }
     }
 
     public function returnCoId()
