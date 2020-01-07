@@ -1,5 +1,9 @@
 # v1.1.14 - TBD
 
+## Changed
+
+- [#1227](https://github.com/hyperf/hyperf/pull/1227) Upgraded jcchavezs/zipkin-php-opentracing to 0.1.4.
+
 # v1.1.13 - 2020-01-03
 
 ## Added
