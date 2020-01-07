@@ -37,7 +37,7 @@ class UserController
             ['id' => 3, 'name' => 'Tim'],
             ['id' => 4, 'name' => 'Joe'],
         ];
-        return new Paginator($users, $perPage, $currentPage);
+        return new Paginator($users, $perPage, (int)$currentPage);
     }
 }
 ```
