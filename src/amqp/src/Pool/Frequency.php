@@ -10,9 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\View;
+namespace Hyperf\Amqp\Pool;
 
-interface RenderInterface
+use Hyperf\Pool\Frequency as DefaultFrequency;
+
+class Frequency extends DefaultFrequency
 {
-    public function render(string $template, array $data = []);
 }
