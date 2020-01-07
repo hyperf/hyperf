@@ -13,6 +13,7 @@
 ## Optimized
 
 - [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+- [#1235](https://github.com/hyperf/hyperf/pull/1235) Release connection after declared for amqp producers.
 
 ## Changed
 
