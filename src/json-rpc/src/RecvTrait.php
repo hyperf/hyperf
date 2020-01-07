@@ -26,6 +26,9 @@ trait RecvTrait
     {
         $data = $client->recv((float) $timeout);
         if ($data === '') {
+            // RpcConnection: When the next time the connection is taken out of the connection pool, it will reconnecting to the target service.
+            // Client: It will reconnecting to the target service in the next request.
+            $client->close();
             throw new RecvException('Connection is closed.');
         }
         if ($data === false) {

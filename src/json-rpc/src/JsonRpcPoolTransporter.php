@@ -116,8 +116,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             return Context::get($class);
         }
 
-        $pool = $this->getPool();
-        $connection = $pool->get();
+        $connection = $this->getPool()->get();
 
         defer(function () use ($connection) {
             $connection->release();

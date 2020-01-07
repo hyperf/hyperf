@@ -95,7 +95,7 @@ abstract class AbstractServiceClient
         $this->client = make(Client::class)
             ->setPacker($protocol->getPacker())
             ->setTransporter($transporter);
-        $this->idGenerator = $container->get(IdGenerator\IdGeneratorInterface::class);
+        $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
     }
@@ -130,6 +130,19 @@ abstract class AbstractServiceClient
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
         return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+    }
+
+    protected function getIdGenerator(): IdGeneratorInterface
+    {
+        if ($this->container->has(IdGenerator\IdGeneratorInterface::class)) {
+            return $this->container->get(IdGenerator\IdGeneratorInterface::class);
+        }
+
+        if ($this->container->has(IdGeneratorInterface::class)) {
+            return $this->container->get(IdGeneratorInterface::class);
+        }
+
+        return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
@@ -259,7 +272,6 @@ abstract class AbstractServiceClient
             return $response;
         }
 
-        $response = $this->client->recv();
         if ($again <= 0) {
             throw new RequestException(sprintf(
                 'Invalid response. Request id[%s] is not equal to response id[%s].',
@@ -268,6 +280,7 @@ abstract class AbstractServiceClient
             ));
         }
 
+        $response = $this->client->recv();
         --$again;
 
         return $this->checkRequestIdAndTryAgain($response, $id, $again);

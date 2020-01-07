@@ -130,10 +130,15 @@ class RpcServiceClientTest extends TestCase
                 'id' => '1234',
                 'result' => 3,
             ]));
-        $transporter->shouldReceive('recv')->andReturn(json_encode([
-            'id' => '1234',
-            'result' => 3,
-        ]));
+        $once = true;
+        $transporter->shouldReceive('recv')->andReturnUsing(function () use (&$once) {
+            $this->assertTrue($once);
+            $once = false;
+            return json_encode([
+                'id' => '1234',
+                'result' => 3,
+            ]);
+        });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
         /** @var CalculatorServiceInterface $service */
