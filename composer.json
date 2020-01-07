@@ -24,7 +24,7 @@
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3",
         "ircmaxell/random-lib": "^1.2",
-        "jcchavezs/zipkin-opentracing": "^0.1.2",
+        "jcchavezs/zipkin-opentracing": "^0.1.4",
         "jean85/pretty-package-versions": "^1.2",
         "laminas/laminas-mime": "^2.7",
         "monolog/monolog": "^1.24",
