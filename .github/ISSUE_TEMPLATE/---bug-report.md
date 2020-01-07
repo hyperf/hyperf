@@ -7,7 +7,10 @@ assignees: ''
 
 ---
 
-Execute the command `uname -a && php -v && composer info | grep hyperf && php --ri swoole` and paste the result below.
+Execute the command and paste the result below.
+
+Command: `uname -a && php -v && composer info | grep hyperf && php --ri swoole`
+
 ```bash
 # Paste the result here.
 ```
