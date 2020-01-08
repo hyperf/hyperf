@@ -20,4 +20,8 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class ExceptionHandler extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
+    public $server = 'http';
 }

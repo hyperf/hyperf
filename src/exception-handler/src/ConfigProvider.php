@@ -14,6 +14,7 @@ namespace Hyperf\ExceptionHandler;
 
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\ExceptionHandler\Listener\ExceptionHandlerAnnotation;
 
 class ConfigProvider
 {
@@ -22,6 +23,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 FormatterInterface::class => DefaultFormatter::class,
+            ],
+            'listeners' => [
+                ExceptionHandlerAnnotation::class,
             ],
             'annotations' => [
                 'scan' => [
