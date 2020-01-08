@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ExceptionHandler;
 
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Dispatcher\AbstractDispatcher;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -25,9 +26,12 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
      */
     private $container;
 
+    private $handlers = [];
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->initAnnotationExceptionHandler(AnnotationCollector::list());
     }
 
     /**
@@ -49,6 +53,11 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          */
         [$throwable, $handlers] = $params;
         $response = Context::get(ResponseInterface::class);
+
+        foreach ($this->handlers as $handler) {
+            $handlers[] = $handler;
+        }
+        
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
                 throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
@@ -63,5 +72,14 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
             }
         }
         return $response;
+    }
+
+    private function initAnnotationExceptionHandler(array $collector): void
+    {
+        foreach ($collector as $className => $metadata) {
+            if (isset($metadata['_c'][\Hyperf\ExceptionHandler\Annotation\ExceptionHandler::class])) {
+                $this->handlers[] = $className;
+            }
+        }
     }
 }
