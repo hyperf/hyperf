@@ -55,8 +55,6 @@ class ExceptionHandlerAnnotation implements ListenerInterface
         $servers = $this->getServers($config);
 
         $config->set($configHandlerKey, $this->mergeAnnotationExceptionHandlers($config, $configHandlerKey, $servers));
-
-        var_dump($config->get($configHandlerKey));
     }
 
     private function getServers(ConfigInterface $config)
