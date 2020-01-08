@@ -90,6 +90,10 @@ class ExceptionHandlerAnnotation implements ListenerInterface
                 }
             }
         }
-        return $configHandlers;
+        $handlers = [];
+        foreach ($configHandlers as $server => $handler) {
+            $handlers[$server] = array_keys(array_flip($handler));
+        }
+        return $handlers;
     }
 }
