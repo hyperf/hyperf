@@ -252,3 +252,49 @@ class QueueController extends Controller
     }
 }
 ```
+
+#### 队列重试
+
+通过定义重试次数和在业务逻辑中抛出异常进行队列重试，重试间隔通过配置文件的 `retry_seconds` 参数进行设置
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Job;
+
+use Hyperf\AsyncQueue\Job;
+
+class ExampleJob extends Job
+{
+    public $params;
+    
+    //队列任务异常后重试次数
+    protected $maxAttempts = 2;
+
+    public function __construct($params)
+    {
+        try {
+            
+            //业务逻辑
+            
+        }catch (\Exception $exception) {
+
+            //输出错误消息
+            echo $exception->getMessage();
+            
+            //抛出异常,队列自动进入重试
+            throw new \Exception('error');
+
+        }
+    }
+
+    public function handle()
+    {
+        // 根据参数处理具体逻辑
+        var_dump($this->params);
+    }
+}
+```
+
