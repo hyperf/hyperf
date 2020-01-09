@@ -88,10 +88,9 @@ class JsonRpcTransporter implements TransporterInterface
             return Context::get($class);
         }
 
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['settings'] ?? []);
-
-        $client = retry(2, function () use ($client) {
+        return Context::set($class, retry(2, function () {
+            $client = new SwooleClient(SWOOLE_SOCK_TCP);
+            $client->set($this->config['settings'] ?? []);
             $node = $this->getNode();
             $result = $client->connect($node->host, $node->port, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
@@ -100,9 +99,7 @@ class JsonRpcTransporter implements TransporterInterface
                 throw new RuntimeException('Connect to server failed.');
             }
             return $client;
-        });
-
-        return Context::set($class, $client);
+        }));
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface

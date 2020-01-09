@@ -102,7 +102,7 @@ abstract class AbstractServiceClient
 
     protected function __request(string $method, array $params, ?string $id = null)
     {
-        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
+        if (! $id && $this->idGenerator instanceof IdGeneratorInterface) {
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));

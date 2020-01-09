@@ -20,15 +20,16 @@ class RequestException extends \RuntimeException
     protected $throwable;
 
     /**
-     * @param $throwable = [
-     *     'class' => 'RuntimeException', // The exception class
+     * @param $throwable
+     * [
+     *     'class' => 'RuntimeException', // The exception class name
      *     'code' => 0, // The exception code
      *     'message' => '', // The exception message
      *     'attributes' => [
      *         'message' => '', // The exception message
      *         'code' => 0, // The exception code
-     *         'file' => '/opt/www/hyperf/app/JsonRpc/CalculatorService.php', // The file in which the exception occurred
-     *         'line' => 99, // The line in which the exception occurred
+     *         'file' => '/opt/www/hyperf/app/JsonRpc/CalculatorService.php', // The file path which the exception occurred
+     *         'line' => 99, // The line of file which the exception occurred
      *     ],
      * ]
      * @param string $message

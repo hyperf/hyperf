@@ -86,7 +86,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
 
     public function recv()
     {
-        throw new \RuntimeException('JsonRpcHttpTransporter not support recv.');
+        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
     }
 
     public function getClient(): Client
