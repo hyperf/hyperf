@@ -78,6 +78,7 @@ class Client implements ClientInterface
         // Get config
         $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
             'headers' => [
+                'Content-Type'=>'charset=UTF-8',
                 'Spas-AccessKey' => $accessKey,
                 'timeStamp' => $timestamp,
                 'Spas-Signature' => $sign,
