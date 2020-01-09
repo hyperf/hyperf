@@ -68,11 +68,16 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     public function dispatch(ServerRequestInterface $request): ServerRequestInterface
     {
-        $routes = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $routes = $this->dispatcher->dispatch($request->getMethod(), $this->perfectUri($request->getUri()->getPath()));
 
         $dispatched = new Dispatched($routes);
 
         return Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, $dispatched));
+    }
+
+    protected function perfectUri($uri)
+    {
+        return '/' . trim($uri);
     }
 
     /**
