@@ -23,22 +23,22 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var int
      */
-    public $create = 1;
+    public $create;
 
     /**
      * @var int
      */
-    public $consume = 1;
+    public $consume;
 
     /**
      * @var int
      */
-    public $capacity = 2;
+    public $capacity;
 
     /**
      * @var callable
      */
-    public $limitCallback = [];
+    public $limitCallback;
 
     /**
      * @var callable|string
@@ -48,5 +48,5 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var int
      */
-    public $waitTimeout = 1;
+    public $waitTimeout;
 }

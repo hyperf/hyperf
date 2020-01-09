@@ -23,9 +23,6 @@ trait MetricSetter
      * Try to set every stats available to the gauge.
      * Some of the stats might be missing depending
      * on the platform.
-     * @param string $prefix
-     * @param array $metrics
-     * @param array $stats
      */
     private function trySet(string $prefix, array $metrics, array $stats): void
     {

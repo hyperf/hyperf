@@ -15,6 +15,7 @@ namespace HyperfTest\DbConnection\Stubs;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\DbConnection\ConnectionResolver;
@@ -40,7 +41,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         $config = new Config([
             StdoutLoggerInterface::class => [
@@ -103,7 +104,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         $config = new Config([
             'databases' => [

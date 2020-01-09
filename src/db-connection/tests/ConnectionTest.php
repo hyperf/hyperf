@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Connection;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
@@ -39,7 +39,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         $connection = $resolver->connection();
 
@@ -65,7 +65,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         /** @var \Hyperf\Database\Connection $connection */
         $connection = $resolver->connection();
@@ -95,7 +95,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockReadWriteContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         /** @var \Hyperf\Database\Connection $connection */
         $connection = $resolver->connection();
@@ -112,7 +112,7 @@ class ConnectionTest extends TestCase
         $container = ContainerStub::mockReadWriteContainer();
 
         parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolver::class);
+            $resolver = $container->get(ConnectionResolverInterface::class);
 
             /** @var \Hyperf\Database\Connection $connection */
             $connection = $resolver->connection();
@@ -126,7 +126,7 @@ class ConnectionTest extends TestCase
         }]);
 
         parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolver::class);
+            $resolver = $container->get(ConnectionResolverInterface::class);
 
             /** @var \Hyperf\Database\Connection $connection */
             $connection = $resolver->connection();
