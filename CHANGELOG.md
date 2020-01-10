@@ -21,7 +21,7 @@
 
 - [#1208](https://github.com/hyperf/hyperf/pull/1208) Optimized json-rpc logical.
 - [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
-- [#1224](https://github.com/hyperf/hyperf/pull/1224) Optimized config center of Aliyun ACM.
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) Allows config fetcher of Aliyun ACM parse UTF-8 charater, and fetch configuration once after worker start automatically, also allows pass the configutation to user process.
 - [#1235](https://github.com/hyperf/hyperf/pull/1235) Release connection after declared for amqp producers.
 
 ## Changed
