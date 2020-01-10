@@ -1,4 +1,10 @@
-# v1.1.15 - TBD
+# v1.1.16 - TBD
+
+## Added
+
+- [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
+
+# v1.1.15 - 2010-01-10
 
 ## Fixed
 
