@@ -13,7 +13,14 @@
 
 ## Optimized
 
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Optimized json-rpc.
+ - [x] Fixed bug that exception cannot be resolved successfully in TcpServer.
+ - [x] Fixed bug that error cannot be resolved successfully in TcpServer.
+ - [x] Fixed bug that request id must is equal to response id.
+ - [x] Added exception code `error.data.code`.
+ - [x] Added method `recv` into TransporterInterface.
 - [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) Optimized config center of Aliyun ACM.
 - [#1235](https://github.com/hyperf/hyperf/pull/1235) Release connection after declared for amqp producers.
 
 ## Changed
