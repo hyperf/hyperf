@@ -34,6 +34,7 @@
 
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基于 Eloquent 衍生的数据库 ORM，可复用于其它框架
 - [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基于 [hyperf/database](https://github.com/hyperf/database) 组件的自动模型缓存组件 
+- [jie-anthony/hyperf-filter](https://github.com/JieAnthony/hyperf-filter) 模型查询过滤器
 
 ## 依赖注入容器
 
