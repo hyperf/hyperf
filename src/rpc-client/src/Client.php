@@ -42,6 +42,13 @@ class Client
         return $packer->unpack((string) $response);
     }
 
+    public function recv()
+    {
+        $packer = $this->getPacker();
+        $response = $this->getTransporter()->recv();
+        return $packer->unpack((string) $response);
+    }
+
     public function getPacker(): PackerInterface
     {
         return $this->packer;

@@ -96,9 +96,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
-            HttpExceptionHandler::class,
-        ]);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void
@@ -135,6 +133,13 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         /* @var \Swoole\Server\Port */
         [$type, $port] = ServerManager::get($this->serverName);
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
+    }
+
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
     }
 
     protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void

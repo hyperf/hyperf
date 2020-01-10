@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\JsonRpc\Exception\Handler;
+namespace Hyperf\Rpc\Exception;
 
-class HttpExceptionHandler extends TcpExceptionHandler
+class RecvException extends \RuntimeException
 {
 }

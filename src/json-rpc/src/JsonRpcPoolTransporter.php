@@ -12,16 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\Context;
 use RuntimeException;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var PoolFactory
      */
@@ -76,11 +80,8 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
-            $pool = $this->getPool();
-            $connection = $pool->get();
             try {
-                /** @var RpcConnection $client */
-                $client = $connection->getConnection();
+                $client = $this->getConnection();
                 if ($client->send($data) === false) {
                     if ($client->errCode == 104) {
                         throw new RuntimeException('Connect to server failed.');
@@ -88,20 +89,40 @@ class JsonRpcPoolTransporter implements TransporterInterface
                 }
                 return $client;
             } catch (\Throwable $throwable) {
-                if ($connection instanceof RpcConnection) {
-                    // Reconnect again next time.
-                    $connection->resetLastUseTime();
+                if (isset($client) && $client instanceof ConnectionInterface) {
+                    $client->close();
                 }
-                $connection->release();
                 throw $throwable;
             }
         });
-        try {
-            $data = $client->recv($this->recvTimeout);
-        } finally {
-            $client->release();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    public function recv()
+    {
+        $client = $this->getConnection();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    /**
+     * Get RpcConnection from Context.
+     */
+    public function getConnection(): RpcConnection
+    {
+        $class = static::class . '.Connection';
+        if (Context::has($class)) {
+            return Context::get($class);
         }
-        return $data;
+
+        $connection = $this->getPool()->get();
+
+        defer(function () use ($connection) {
+            $connection->release();
+        });
+
+        return Context::set($class, $connection->getConnection());
     }
 
     public function getPool(): Pool

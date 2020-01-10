@@ -41,9 +41,10 @@ class DataFormatter implements DataFormatterInterface
     {
         [$id, $code, $message, $data] = $data;
 
-        if (isset($data) && $data instanceof \Exception) {
+        if (isset($data) && $data instanceof \Throwable) {
             $data = [
                 'class' => get_class($data),
+                'code' => $data->getCode(),
                 'message' => $data->getMessage(),
             ];
         }
