@@ -159,7 +159,41 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
-框架會根據 `@Consumer` 註解自動建立 `Process 程序`，程序意外退出後會被重新拉起。
+### 禁止消費程序自啟
+
+預設情況下，使用了 `@Consumer` 註解後，框架會自動建立子程序啟動消費者，並且會在子程序異常退出後，重新拉起。
+如果出於開發階段，進行消費者除錯時，可能會因為消費其他訊息而導致除錯不便。
+
+這種情況，只需要在 `@Consumer` 註解中配置 `enable=false` (預設為 `true` 跟隨服務啟動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+
+/**
+ * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
+ */
+class DemoConsumer extends ConsumerMessage
+{
+    public function consume($data): string
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+
+    public function isEnable(): bool
+    {
+        return parent::isEnable();
+    }
+}
+```
 
 ### 消費結果
 

@@ -306,7 +306,7 @@ Hyperf 的長生命週期依賴注入在專案啟動時完成。這意味著長�
 
 * 建構函式時還不是協程環境，如果注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
 
-* 建構函式中要避免循壞依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啟動失敗。
+* 建構函式中要避免迴圈依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啟動失敗。
 
 目前解決方案是：只在例項中注入 `Psr\Container\ContainerInterface` ，而其他的元件在非建構函式執行時通過 `container` 獲取。但 PSR-11 中指出:
 

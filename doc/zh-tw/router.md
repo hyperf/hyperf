@@ -180,6 +180,18 @@ public function info(int $id)
 }
 ```
 
+通過`route`方法獲取
+
+```php
+public function index(RequestInterface $request)
+{
+        // 存在則返回，不存在則返回預設值 null
+        $id = $request->route('id');
+        // 存在則返回，不存在則返回預設值 0
+        $id = $request->route('id', 0);
+}
+```
+
 #### 必填引數
 
 我們可以對 `$uri` 進行一些引數定義，通過 `{}` 來宣告引數，如 `/user/{id}` 則聲明瞭 `id` 值為一個必填引數。
