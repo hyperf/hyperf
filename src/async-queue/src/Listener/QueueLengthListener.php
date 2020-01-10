@@ -50,6 +50,7 @@ class QueueLengthListener implements ListenerInterface
             if ($event->length < $value) {
                 $message = sprintf('Queue lengh of %s is %d.', $event->key, $event->length);
                 $this->logger->{$level}($message);
+                break;
             }
         }
     }

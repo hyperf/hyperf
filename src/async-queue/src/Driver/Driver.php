@@ -111,7 +111,7 @@ abstract class Driver implements DriverInterface
     protected function checkQueueLength()
     {
         $info = $this->info();
-        foreach ($info as $name => $value) {
+        foreach ($info as $key => $value) {
             $this->event && $this->event->dispatch(new QueueLength($key, $value));
         }
     }
