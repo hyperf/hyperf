@@ -155,12 +155,19 @@ class Socket
         });
     }
 
+    protected function isEmpty(): bool
+    {
+        return $this->channel->isEmpty();
+    }
+
     protected function addHeartbeat()
     {
         $this->clear();
         $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
             try {
-                $this->heartbeat();
+                if (! $this->isEmpty()) {
+                    $this->heartbeat();
+                }
             } catch (\Throwable $throwable) {
                 $this->close();
                 if ($this->logger) {
