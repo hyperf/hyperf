@@ -71,7 +71,7 @@ class Log
                     return;
                 }
 
-                $logger->log($level, $message->getMessage(), $context);
+                $logger->log($level, (string) $message, $context);
                 return;
             }
         }

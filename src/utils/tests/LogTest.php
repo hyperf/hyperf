@@ -61,7 +61,7 @@ class LogTest extends TestCase
             $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('log')->with(Mockery::any(), Mockery::any(), Mockery::any())->andReturnUsing(function ($level, $message, $context) use ($expected) {
                 $this->assertSame('warning', $level);
-                $this->assertSame('Invalid Operation.', $message);
+                $this->assertRegExp('/^RuntimeException: Invalid Operation\./', $message);
                 $this->assertSame($expected, $context);
             });
 
