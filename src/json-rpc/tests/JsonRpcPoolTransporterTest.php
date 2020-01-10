@@ -97,6 +97,18 @@ class JsonRpcPoolTransporterTest extends TestCase
         $this->assertSame($data, $packer->unpack($string));
     }
 
+    public function testsplObjectHash()
+    {
+        $class = new \stdClass();
+        $class->id = 1;
+        $hash = spl_object_hash($class);
+
+        $class->id = 2;
+        $hash2 = spl_object_hash($class);
+
+        $this->assertSame($hash, $hash2);
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);

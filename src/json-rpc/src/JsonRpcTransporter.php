@@ -83,7 +83,7 @@ class JsonRpcTransporter implements TransporterInterface
 
     public function getClient(): SwooleClient
     {
-        $class = static::class . '.Connection';
+        $class = spl_object_hash($this) . '.Connection';
         if (Context::has($class)) {
             return Context::get($class);
         }
