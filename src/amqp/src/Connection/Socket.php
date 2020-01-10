@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Connection;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\ApplicationContext;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
@@ -63,12 +64,20 @@ class Socket
      */
     protected $waitTimeout = 10.0;
 
-    public function __construct(string $host, int $port, float $timeout, int $heartbeat)
+    /**
+     * @var null|StdoutLoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(ContainerInterface $container, string $host, int $port, float $timeout, int $heartbeat)
     {
         $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
         $this->heartbeat = $heartbeat;
+        if ($container->has(StdoutLoggerInterface::class)) {
+            $this->logger = $container->get(StdoutLoggerInterface::class);
+        }
 
         $this->connect();
     }
@@ -156,9 +165,9 @@ class Socket
                 $this->heartbeat();
             } catch (\Throwable $throwable) {
                 $this->close();
-                if ($logger = $this->getLogger()) {
-                    $message = sprintf('KeepaliveIO heartbeat failed, %s', $throwable->getMessage());
-                    $logger->error($message);
+                if ($this->logger) {
+                    $message = sprintf('KeepaliveIO heartbeat failed, %s', (string) $throwable);
+                    $this->logger->error($message);
                 }
             }
         });

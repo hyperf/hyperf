@@ -59,6 +59,9 @@ class ContainerStub
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(
             Mockery::mock(EventDispatcherInterface::class)
         );
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
+            return Mockery::mock(StdoutLoggerInterface::class);
+        });
         $container->shouldReceive('has')->andReturn(true);
         return $container;
     }
