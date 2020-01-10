@@ -1,20 +1,74 @@
 # 版本更新记录
 
+# v1.1.14 - 2020-01-10
+
+## 新增
+
+- [#1166](https://github.com/hyperf/hyperf/pull/1166) 为 AMQP 增加 KeepaliveIO 功能；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 为 JSON-RPC 的响应增加了 `error.data.code` 值来传递 Exception Code；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 为 `Hyperf\Rpc\Contract\TransporterInterface` 增加了 `recv` 方法；
+- [#1215](https://github.com/hyperf/hyperf/pull/1215) 新增 [hyperf/super-globals](https://github.com/hyperf/super-globals) 组件，用来适配一些不支持 PSR-7 的第三方包；
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) 为 AMQP 消费者增加 `enable` 属性，通过该属性来控制该消费者是否跟随 Server 一同启动；
+
+## 修复
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 修复 Exception 和 error 在 JSON-RPC TCP Server 下无法被正确处理的问题；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 修复 JSON-RPC 没有检查 Request ID 和 Response ID 是否一致的问题；
+- [#1223](https://github.com/hyperf/hyperf/pull/1223) 修复 ConfigProvider 扫描器不会扫描 composer.json 内 require-dev 的配置；
+- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修复执行 `init-proxy.sh` 命令在某些环境如Alpine下会报 bash 不存在的问题；
+
+## 优化
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 优化了 JSON-RPC 组件的部分逻辑；
+- [#1174](https://github.com/hyperf/hyperf/pull/1174) 调整了 `Hyperf\Utils\Parallel` 在输出异常时的格式，现在会一同打印 Trace 信息；
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) 允许 Aliyun ACM 配置中心的配置获取进程解析 UTF-8 字符，同时在 Worker 启动后会自动获取一次配置，以及拉取的配置现在会传递到自定义进程了；
+- [#1235](https://github.com/hyperf/hyperf/pull/1235) 在 AMQP 生产者执行 declare 后释放对应的连接；
+
+## 修改
+
+- [#1227](https://github.com/hyperf/hyperf/pull/1227) 升级 `jcchavezs/zipkin-php-opentracing` 依赖至 0.1.4 版本；
+
+# v1.1.13 - 2020-01-03
+
+## 新增
+
+- [#1137](https://github.com/hyperf/hyperf/pull/1137) `constants` 组件增加国际化支持；
+- [#1165](https://github.com/hyperf/hyperf/pull/1165) `Hyperf\HttpServer\Contract\RequestInterface` 新增 `route` 方法；
+- [#1195](https://github.com/hyperf/hyperf/pull/1195) 注解 `Cacheable` 和 `CachePut` 增加最大超时时间偏移量配置；
+- [#1204](https://github.com/hyperf/hyperf/pull/1204) `database` 组件增加了 `insertOrIgnore` 方法；
+- [#1216](https://github.com/hyperf/hyperf/pull/1216) `RenderInterface::render()` 方法的 `$data` 参数，添加了默认值；
+- [#1221](https://github.com/hyperf/hyperf/pull/1221) `swoole-tracker` 组件添加了 `traceId` 和 `spanId`；
+
+## 修复
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修复 `Hyperf\Utils\Collection::random` 当传入 `null` 时，无法正常工作的 `BUG`；
+- [#1199](https://github.com/hyperf/hyperf/pull/1199) 修复使用 `Task` 注解时，参数无法使用动态变量的 `BUG`；
+- [#1200](https://github.com/hyperf/hyperf/pull/1200) 修复 `metric` 组件，请求路径会携带参数的 `BUG`；
+- [#1210](https://github.com/hyperf/hyperf/pull/1210) 修复验证器规则 `size` 无法作用于 `integer` 的 `BUG`；
+
+## 优化
+
+- [#1211](https://github.com/hyperf/hyperf/pull/1211) 自动将项目名转化为 `prometheus` 的规范命名；
+
+## 修改
+
+- [#1217](https://github.com/hyperf/hyperf/pull/1217) 将 `zendframework/zend-mime` 替换为 `laminas/laminas-mine`；
+
 # v1.1.12 - 2019-12-26
 
 ## 新增
 
-- [#1177](https://github.com/hyperf/hyperf/pull/1177) 为 `jsonrpc` 组件增加了新的协议 `jsonrpc-tcp-length-check`，并对部分代码进行了优化。
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) 为 `jsonrpc` 组件增加了新的协议 `jsonrpc-tcp-length-check`，并对部分代码进行了优化；
 
 ## 修复
 
-- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修复 `Hyperf\Utils\Collection::random` 方法不支持传入 `null`。
-- [#1178](https://github.com/hyperf/hyperf/pull/1178) 修复 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情况。
-- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修复 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能传入 `string` 的BUG。
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修复 `Hyperf\Utils\Collection::random` 方法不支持传入 `null`；
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) 修复 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情况；
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修复 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能传入 `string` 的BUG；
 
 ## 优化
 
-- [#1186](https://github.com/hyperf/hyperf/pull/1186) 日志配置中，只填写 `formatter.class` 的情况下，可以使用默认的 `formatter.constructor` 配置。
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) 日志配置中，只填写 `formatter.class` 的情况下，可以使用默认的 `formatter.constructor` 配置；
 
 # v1.1.11 - 2019-12-19
 
@@ -181,27 +235,27 @@
 
 ## 新增
 
-- [#778](https://github.com/hyperf/hyperf/pull/778) `Hyperf\Testing\Client` 新增 `PUT` 和 `DELETE`方法。
-- [#784](https://github.com/hyperf/hyperf/pull/784) 新增服务监控组件。
-- [#795](https://github.com/hyperf/hyperf/pull/795) `AbstractProcess` 增加 `restartInterval` 参数，允许子进程异常或正常退出后，延迟重启。
-- [#804](https://github.com/hyperf/hyperf/pull/804) `Command` 增加事件 `BeforeHandle` `AfterHandle` 和 `FailToHandle`。
+- [#778](https://github.com/hyperf/hyperf/pull/778) `Hyperf\Testing\Client` 新增 `PUT` 和 `DELETE`方法；
+- [#784](https://github.com/hyperf/hyperf/pull/784) 新增服务监控组件；
+- [#795](https://github.com/hyperf/hyperf/pull/795) `AbstractProcess` 增加 `restartInterval` 参数，允许子进程异常或正常退出后，延迟重启；
+- [#804](https://github.com/hyperf/hyperf/pull/804) `Command` 增加事件 `BeforeHandle` `AfterHandle` 和 `FailToHandle`；
 
 ## 变更
 
 - [#793](https://github.com/hyperf/hyperf/pull/793) `Pool::getConnectionsInChannel` 方法由 `protected` 改为 `public`.
-- [#811](https://github.com/hyperf/hyperf/pull/811) 命令 `di:init-proxy` 不再主动清理代理缓存，如果想清理缓存请使用命令 `vendor/bin/init-proxy.sh`。
+- [#811](https://github.com/hyperf/hyperf/pull/811) 命令 `di:init-proxy` 不再主动清理代理缓存，如果想清理缓存请使用命令 `vendor/bin/init-proxy.sh`；
 
 ## 修复
 
-- [#779](https://github.com/hyperf/hyperf/pull/779) 修复 `JPG` 文件验证不通过的问题。
-- [#787](https://github.com/hyperf/hyperf/pull/787) 修复 `db:seed` 参数 `--class` 多余，导致报错的问题。
-- [#795](https://github.com/hyperf/hyperf/pull/795) 修复自定义进程在异常抛出后，无法正常重启的 BUG。
-- [#796](https://github.com/hyperf/hyperf/pull/796) 修复 `etcd` 配置中心 `enable` 即时设为 `false`，在项目启动时，依然会拉取配置的 BUG。
+- [#779](https://github.com/hyperf/hyperf/pull/779) 修复 `JPG` 文件验证不通过的问题；
+- [#787](https://github.com/hyperf/hyperf/pull/787) 修复 `db:seed` 参数 `--class` 多余，导致报错的问题；
+- [#795](https://github.com/hyperf/hyperf/pull/795) 修复自定义进程在异常抛出后，无法正常重启的 BUG；
+- [#796](https://github.com/hyperf/hyperf/pull/796) 修复 `etcd` 配置中心 `enable` 即时设为 `false`，在项目启动时，依然会拉取配置的 BUG；
 
 ## 优化
 
-- [#781](https://github.com/hyperf/hyperf/pull/781) 可以根据国际化组件配置发布验证器语言包到规定位置。
-- [#796](https://github.com/hyperf/hyperf/pull/796) 优化 `ETCD` 客户端，不会多次创建 `HandlerStack`。 
+- [#781](https://github.com/hyperf/hyperf/pull/781) 可以根据国际化组件配置发布验证器语言包到规定位置；
+- [#796](https://github.com/hyperf/hyperf/pull/796) 优化 `ETCD` 客户端，不会多次创建 `HandlerStack`； 
 - [#797](https://github.com/hyperf/hyperf/pull/797) 优化子进程重启
 
 # v1.1.3 - 2019-10-24
