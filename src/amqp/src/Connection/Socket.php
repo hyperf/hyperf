@@ -82,6 +82,9 @@ class Socket
         }
 
         $client = $this->channel->pop($this->waitTimeout);
+        if ($client === false) {
+            throw new AMQPRuntimeException('Socket of keepaliveIO is exhausted. Cannot establish new socket before wait_timeout.');
+        }
 
         $result = $closure($client);
 
