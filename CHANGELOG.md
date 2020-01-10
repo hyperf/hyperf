@@ -1,5 +1,9 @@
 # v1.1.15 - TBD
 
+## Fixed
+
+- [#1258](https://github.com/hyperf/hyperf/pull/1258) Fixed CRITICAL error that socket of process is unavailable when amqp send heartbeat failed.
+
 # v1.1.14 - 2010-01-10
 
 ## Added
