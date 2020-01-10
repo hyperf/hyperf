@@ -4,6 +4,11 @@
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
 
+## Optimized
+
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) Convert message of stdoutlogger to a string.
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) Optimized logs for socket of KeepaliveIO.
+
 # v1.1.15 - 2010-01-10
 
 ## Fixed
