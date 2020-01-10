@@ -14,10 +14,8 @@ namespace Hyperf\Amqp\Connection;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\ApplicationContext;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
-use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Client;
 use Swoole\Timer;
@@ -179,19 +177,5 @@ class Socket
             Timer::clear($this->timerId);
             $this->timerId = null;
         }
-    }
-
-    protected function getLogger(): ?LoggerInterface
-    {
-        if (! ApplicationContext::hasContainer()) {
-            return null;
-        }
-
-        $container = ApplicationContext::getContainer();
-        if (! $container->has(StdoutLoggerInterface::class)) {
-            return null;
-        }
-
-        return $container->get(StdoutLoggerInterface::class);
     }
 }
