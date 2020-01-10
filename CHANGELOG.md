@@ -1,19 +1,27 @@
-# v1.1.14 - TBD
+# v1.1.15 - TBD
+
+# v1.1.14 - 2010-01-10
 
 ## Added
 
 - [#1166](https://github.com/hyperf/hyperf/pull/1166) Added KeepaliveIO for amqp.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Added exception code `error.data.code` to json-rpc response.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Added `recv` method to `Hyperf\Rpc\Contract\TransporterInterface`.
 - [#1215](https://github.com/hyperf/hyperf/pull/1215) Added super-globals component.
 - [#1219](https://github.com/hyperf/hyperf/pull/1219) Added property `enable` for amqp consumer, which controls whether consumers should start along with the service.
 
 ## Fixed
 
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Fixed bug that exception and error cannot be resolved successfully in TcpServer.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Fixed bug that request id of json-rpc MUST is equal to response id.
 - [#1223](https://github.com/hyperf/hyperf/pull/1223) Fixed the scanner will missing the packages at require-dev of composer.json
 - [#1254](https://github.com/hyperf/hyperf/pull/1254) Fixed bash not found on some environment like Alpine when execute `init-proxy.sh`.
 
 ## Optimized
 
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Optimized json-rpc logical.
 - [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) Allows config fetcher of Aliyun ACM parse UTF-8 charater, and fetch configuration once after worker start automatically, also allows pass the configutation to user process.
 - [#1235](https://github.com/hyperf/hyperf/pull/1235) Release connection after declared for amqp producers.
 
 ## Changed
