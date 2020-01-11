@@ -60,8 +60,8 @@ class KeepaliveIOTest extends TestCase
         $heartbeat = 3;
 
         $container = ContainerStub::getHyperfContainer();
-        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new SocketStub($container, ...array_values($args));
+        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new SocketStub(...array_values($args));
         });
 
         $io = new KeepaliveIO($host, $port, $timeout, 6, null, true, $heartbeat);
@@ -79,8 +79,8 @@ class KeepaliveIOTest extends TestCase
         $heartbeat = 1;
 
         $container = ContainerStub::getHyperfContainer();
-        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new SocketStub($container, ...array_values($args));
+        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new SocketStub(...array_values($args));
         });
 
         $io = new KeepaliveIO($host, $port, $timeout, 6, null, true, $heartbeat);
