@@ -121,4 +121,28 @@ class KeepaliveIOTest extends TestCase
 
         $this->assertSame($data, Context::get('test.amqp.send.data'));
     }
+
+    public function testKeepaliveReconnect()
+    {
+        $host = '127.0.0.1';
+        $port = 5672;
+        $timeout = 5;
+        $heartbeat = 1;
+
+        $sock = new SocketWithoutIOStub(false, $host, $port, $timeout, $heartbeat);
+        $container = ContainerStub::getHyperfContainer();
+        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($sock) {
+            return $sock;
+        });
+
+        $io = new KeepaliveIO($host, $port, $timeout, 6, null, true, $heartbeat);
+
+        $io->connect();
+
+        try {
+            $io->read(10);
+        } catch (\Throwable $throwable) {
+            $this->assertSame(2, $sock->getConnectCount());
+        }
+    }
 }

@@ -17,6 +17,8 @@ use Swoole\Coroutine\Channel;
 
 class SocketWithoutIOStub extends Socket
 {
+    public $connectCount = 0;
+
     public function __construct(bool $connected, string $host, int $port, float $timeout, int $heartbeat)
     {
         parent::__construct($host, $port, $timeout, $heartbeat);
@@ -27,5 +29,13 @@ class SocketWithoutIOStub extends Socket
     {
         $this->channel = new Channel(1);
         $this->waitTimeout = 0.1;
+        ++$this->connectCount;
+
+        $this->addHeartbeat();
+    }
+
+    public function getConnectCount(): int
+    {
+        return $this->connectCount;
     }
 }
