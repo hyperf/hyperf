@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed socket of keepaliveIO always exhausted.
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
 
 # v1.1.15 - 2010-01-10
 
