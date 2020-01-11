@@ -151,7 +151,6 @@ class Socket
 
         $this->call(function ($client) use ($data) {
             $buffer = $client->send($data);
-            var_dump($buffer);
             if ($buffer === false) {
                 throw new AMQPRuntimeException('Error sending data');
             }
