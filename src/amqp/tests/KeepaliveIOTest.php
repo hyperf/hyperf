@@ -14,7 +14,9 @@ namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\Connection\KeepaliveIO;
 use Hyperf\Amqp\Connection\Socket;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Str;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\SocketStub;
 use HyperfTest\Amqp\Stub\SocketWithoutIOStub;
@@ -22,6 +24,7 @@ use Mockery;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 use Swoole\Timer;
 
 /**
@@ -144,5 +147,35 @@ class KeepaliveIOTest extends TestCase
         } catch (\Throwable $throwable) {
             $this->assertSame(2, $sock->getConnectCount());
         }
+    }
+
+    public function testKeepaliveIOHeartbeat()
+    {
+        $host = '127.0.0.1';
+        $port = 5672;
+        $timeout = 5;
+        $heartbeat = 1;
+
+        $sock = new SocketWithoutIOStub(true, $host, $port, $timeout, $heartbeat);
+        $container = ContainerStub::getHyperfContainer();
+        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($sock) {
+            return $sock;
+        });
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
+            $logger = Mockery::mock(StdoutLoggerInterface::class);
+            $logger->shouldReceive('error')->once()->with(Mockery::any())->andReturnUsing(function ($message) {
+                $this->assertTrue(Str::contains($message, 'KeepaliveIO heartbeat failed'));
+                $this->assertTrue(Str::contains($message, 'AMQPRuntimeException'));
+                $this->assertTrue(Str::contains($message, 'Socket of keepaliveIO is exhausted.'));
+            });
+
+            return $logger;
+        });
+
+        $io = new KeepaliveIO($host, $port, $timeout, 6, null, true, $heartbeat);
+
+        $io->connect();
+
+        Coroutine::sleep(2);
     }
 }
