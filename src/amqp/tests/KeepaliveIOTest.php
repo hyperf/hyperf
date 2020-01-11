@@ -17,7 +17,9 @@ use Hyperf\Amqp\Connection\Socket;
 use Hyperf\Utils\Context;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\SocketStub;
+use HyperfTest\Amqp\Stub\SocketWithoutIOStub;
 use Mockery;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PHPUnit\Framework\TestCase;
 use Swoole\Timer;
@@ -69,6 +71,27 @@ class KeepaliveIOTest extends TestCase
 
         $res = $io->read(10);
         $this->assertTrue(strlen($res) === 10);
+    }
+
+    public function testKeepalivePopFailed()
+    {
+        $host = '127.0.0.1';
+        $port = 5672;
+        $timeout = 5;
+        $heartbeat = 1;
+
+        $container = ContainerStub::getHyperfContainer();
+        $container->shouldReceive('make')->with(Socket::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new SocketWithoutIOStub(true, ...array_values($args));
+        });
+
+        $io = new KeepaliveIO($host, $port, $timeout, 6, null, true, $heartbeat);
+
+        $io->connect();
+
+        $this->expectException(AMQPRuntimeException::class);
+        $this->expectExceptionMessageRegExp('/^Socket of keepaliveIO is exhausted\. Cannot establish new socket before wait_timeout\.$/');
+        $io->read(10);
     }
 
     public function testKeepaliveHeartbeatTimer()
