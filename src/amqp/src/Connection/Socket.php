@@ -89,9 +89,11 @@ class Socket
             throw new AMQPRuntimeException('Socket of keepaliveIO is exhausted. Cannot establish new socket before wait_timeout.');
         }
 
-        $result = $closure($client);
-
-        $this->channel->push($client);
+        try {
+            $result = $closure($client);
+        } finally {
+            $this->channel->push($client);
+        }
 
         return $result;
     }
@@ -153,11 +155,13 @@ class Socket
         $this->clear();
         $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
             try {
-                $this->heartbeat();
+                if ($this->isConnected()) {
+                    $this->heartbeat();
+                }
             } catch (\Throwable $throwable) {
                 $this->close();
                 if ($logger = $this->getLogger()) {
-                    $message = sprintf('KeepaliveIO heartbeat failed, %s', $throwable->getMessage());
+                    $message = sprintf('KeepaliveIO heartbeat failed, %s', (string) $throwable);
                     $logger->error($message);
                 }
             }
@@ -174,15 +178,12 @@ class Socket
 
     protected function getLogger(): ?LoggerInterface
     {
-        if (! ApplicationContext::hasContainer()) {
-            return null;
+        if (ApplicationContext::hasContainer() && $container = ApplicationContext::getContainer()) {
+            if ($container->has(StdoutLoggerInterface::class)) {
+                return $container->get(StdoutLoggerInterface::class);
+            }
         }
 
-        $container = ApplicationContext::getContainer();
-        if (! $container->has(StdoutLoggerInterface::class)) {
-            return null;
-        }
-
-        return $container->get(StdoutLoggerInterface::class);
+        return null;
     }
 }

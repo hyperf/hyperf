@@ -4,6 +4,10 @@
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
 
+## Fixed
+
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
+
 # v1.1.15 - 2010-01-10
 
 ## Fixed

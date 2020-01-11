@@ -102,7 +102,12 @@ class KeepaliveIO extends AbstractIO
      */
     public function connect()
     {
-        $this->sock = make(Socket::class, [$this->host, $this->port, $this->connectionTimeout, $this->heartbeat]);
+        $this->sock = make(Socket::class, [
+            'host' => $this->host,
+            'port' => $this->port,
+            'timeout' => $this->connectionTimeout,
+            'heartbeat' => $this->heartbeat,
+        ]);
     }
 
     /**
