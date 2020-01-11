@@ -96,9 +96,11 @@ class Socket
             throw new AMQPRuntimeException('Socket of keepaliveIO is exhausted. Cannot establish new socket before wait_timeout.');
         }
 
-        $result = $closure($client);
-
-        $this->channel->push($client);
+        try {
+            $result = $closure($client);
+        } finally {
+            $this->channel->push($client);
+        }
 
         return $result;
     }
@@ -149,15 +151,11 @@ class Socket
 
         $this->call(function ($client) use ($data) {
             $buffer = $client->send($data);
+            var_dump($buffer);
             if ($buffer === false) {
                 throw new AMQPRuntimeException('Error sending data');
             }
         });
-    }
-
-    protected function isEmpty(): bool
-    {
-        return $this->channel->isEmpty();
     }
 
     protected function addHeartbeat()
@@ -165,7 +163,7 @@ class Socket
         $this->clear();
         $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
             try {
-                if (! $this->isEmpty()) {
+                if ($this->isConnected()) {
                     $this->heartbeat();
                 }
             } catch (\Throwable $throwable) {
