@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Connection;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Utils\ApplicationContext;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
+use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Client;
 use Swoole\Timer;
@@ -62,20 +63,12 @@ class Socket
      */
     protected $waitTimeout = 10.0;
 
-    /**
-     * @var null|StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container, string $host, int $port, float $timeout, int $heartbeat)
+    public function __construct(string $host, int $port, float $timeout, int $heartbeat)
     {
         $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
         $this->heartbeat = $heartbeat;
-        if ($container->has(StdoutLoggerInterface::class)) {
-            $this->logger = $container->get(StdoutLoggerInterface::class);
-        }
 
         $this->connect();
     }
@@ -167,9 +160,9 @@ class Socket
                 }
             } catch (\Throwable $throwable) {
                 $this->close();
-                if ($this->logger) {
+                if ($logger = $this->getLogger()) {
                     $message = sprintf('KeepaliveIO heartbeat failed, %s', (string) $throwable);
-                    $this->logger->error($message);
+                    $logger->error($message);
                 }
             }
         });
@@ -181,5 +174,16 @@ class Socket
             Timer::clear($this->timerId);
             $this->timerId = null;
         }
+    }
+
+    protected function getLogger(): ?LoggerInterface
+    {
+        if (ApplicationContext::hasContainer() && $container = ApplicationContext::getContainer()) {
+            if ($container->has(StdoutLoggerInterface::class)) {
+                return $container->get(StdoutLoggerInterface::class);
+            }
+        }
+
+        return null;
     }
 }
