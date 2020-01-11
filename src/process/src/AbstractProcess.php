@@ -26,6 +26,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
+use Swoole\Timer;
 
 abstract class AbstractProcess implements ProcessInterface
 {
@@ -120,6 +121,7 @@ abstract class AbstractProcess implements ProcessInterface
                         $quit->push(true);
                     }
                     sleep($this->restartInterval);
+                    Timer::clearAll();
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
