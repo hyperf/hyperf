@@ -19,6 +19,12 @@ swoole.use_shortname = 'Off'
 
 > 注意该配置必须于 php.ini 内配置，无法通过 ini_set() 函数来重写
 
+当然，也可以通过以下方式启动服务
+
+```
+php -d swoole.use_shortname=Off bin/hyperf.php start
+```
+
 ## 代理类缓存
 
 代理类缓存一旦生成，将不会再重新覆盖。所以当你修改了已经生成代理类的文件时，需要手动清理。
