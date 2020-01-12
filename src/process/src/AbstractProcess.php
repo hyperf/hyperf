@@ -120,8 +120,8 @@ abstract class AbstractProcess implements ProcessInterface
                     if (isset($quit)) {
                         $quit->push(true);
                     }
-                    sleep($this->restartInterval);
                     Timer::clearAll();
+                    sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
