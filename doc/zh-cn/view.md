@@ -41,9 +41,15 @@ return [
 ];
 ```
 
-> 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh-cn/task.md) 组件文档。
+### Task 模式
 
-> 若使用 `Sync` 模式渲染视图时，请确保相关引擎是协程安全的，否则会出现数据混淆的问题，建议使用更加数据安全的 `Task` 模式。
+使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh-cn/task.md) 组件文档。
+
+另外，因为视图渲染是在 `Task` 进程中完成的，所以 `Request`，`Session` 等是无法正常使用的， 这时候就需要您先处理好数据，然后再调用 `render` 进行视图渲染。
+
+### Sync 模式
+
+若使用 `Sync` 模式渲染视图时，请确保相关引擎是协程安全的，否则会出现数据混淆的问题，建议使用更加数据安全的 `Task` 模式。
 
 ### 配置静态资源
 
