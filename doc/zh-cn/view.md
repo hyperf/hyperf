@@ -45,7 +45,7 @@ return [
 
 使用 `Task` 模式时，需引入 [hyperf/task](https://github.com/hyperf/task) 组件且必须配置 `task_enable_coroutine` 为 `false`，否则会出现协程数据混淆的问题，更多请查阅 [Task](zh-cn/task.md) 组件文档。
 
-另外，因为视图渲染是在 `Task` 进程中完成的，所以 `Request`，`Session` 等是无法正常使用的， 这时候就需要您先处理好数据，然后再调用 `render` 进行视图渲染。
+另外，在 `Task` 模式下，视图渲染工作是在 `Task Worker` 进程中完成的，而请求处理即 Controller 是在 `Worker` 进程完成的，两部分的工作由不同的进程完成，所以像 `Request`，`Session` 等在 `Worker` 进程通过上下文管理的对象或数据在视图页面上是无法直接使用的，这时候就需要您在 Controller 先处理好数据或判断结果，然后再调用 `render` 时传递数据到视图进行数据的渲染。
 
 ### Sync 模式
 
