@@ -10,6 +10,34 @@ Hyperf 提供了一个 [Consul](https://www.consul.io/api/index.html) 的协程�
 composer require hyperf/consul
 ```
 
+## 使用
+
+- 获取对应 consul 功能组件
+
+```php
+use GuzzleHttp\Client;
+use Hyperf\Consul\KV;
+
+$url = 'http://192.168.111.6:9500';
+$kv = new KV(function () use ($url) {
+    return new Client([
+        'base_uri' => $url,
+    ]);
+});
+```
+
+- consul acl token
+
+```php
+// 方式一: 使用 header, 推荐
+$options['headers']['X-Consul-Token'] = 'consul-acl-token';
+
+// 方式二: 使用 query
+$options['query']['token'] = 'consul-acl-token';
+
+$response = $kv->get($namespace, $options)->json();
+```
+
 ## KV
 
 由 `Hyperf\Consul\KV` 实现 `Hyperf\Consul\KVInterface` 提供支持。
