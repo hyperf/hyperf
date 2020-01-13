@@ -69,7 +69,7 @@ class GrpcClient
     private $mainCoroutineId = 0;
 
     /**
-     * @var SwooleHttp2Client
+     * @var null|SwooleHttp2Client
      */
     private $httpClient;
 
@@ -95,7 +95,7 @@ class GrpcClient
     private $waitStatus = Status::WAIT_PENDDING;
 
     /**
-     * @var Channel
+     * @var null|Channel
      */
     private $waitYield;
 
@@ -170,16 +170,23 @@ class GrpcClient
             $shouldKill = true;
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
-            if ($shouldKill) {
-                // Set `connected` of http client to `false`
-                $this->getHttpClient()->close();
-            }
         }
+        if ($shouldKill) {
+            // Set `connected` of http client to `false`
+            $this->getHttpClient()->close();
+        }
+
         // Clear the receive channel map
         if (! empty($this->recvChannelMap)) {
             foreach ($this->recvChannelMap as $channel) {
-                $channel->push(false);
-                $this->channelPool->release($channel);
+                // If this channel has pending pop, we should push 'false' to negate the pop.
+                // Otherwise we should release it directly.
+                while ($channel->stats()['consumer_num'] !== 0) {
+                    $channel->push(false);
+                }
+                if ($channel->length() === 0) {
+                    $this->channelPool->release($channel);
+                }
             }
             $this->recvChannelMap = [];
         }
@@ -241,6 +248,11 @@ class GrpcClient
         }
 
         return $streamId;
+    }
+
+    public function write(int $streamId, $data, bool $end = false)
+    {
+        return $this->httpClient->write($streamId, $data, $end);
     }
 
     public function recv(int $streamId, float $timeout = null)
