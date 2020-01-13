@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Rpc\Context;
 
 class NormalizeDataFormatter extends DataFormatter
 {
@@ -21,9 +22,11 @@ class NormalizeDataFormatter extends DataFormatter
      */
     private $normalizer;
 
-    public function __construct(NormalizerInterface $normalizer)
+    public function __construct(NormalizerInterface $normalizer, Context $context)
     {
         $this->normalizer = $normalizer;
+
+        parent::__construct($context);
     }
 
     public function formatRequest($data)

@@ -20,6 +20,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
@@ -160,5 +161,10 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             return $psr7Response->withBody(new SwooleStream($response));
         }
         return null;
+    }
+
+    protected function getContext()
+    {
+        return $this->container->get(RpcContext::class);
     }
 }
