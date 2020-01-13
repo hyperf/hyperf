@@ -34,20 +34,33 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 
 #### 通过 Header 添加 Token
 
-您可在调用方法时往 $options 参数传递 Key 为 `X-Consul-Token` 的 Header 来设置，如下所示：
+您可在调用方法时往 Client 传递 Key 为 `X-Consul-Token` 的 Header 来设置，如下所示：
 
 ```php
-$options['headers']['X-Consul-Token'] = 'your-token';
-$response = $kv->get($namespace, $options)->json();
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+        'headers' => [
+            'X-Consul-Token' => 'your-token'
+        ],
+    ]);
+});
 ```
 
 #### 通过 Query 添加 Token
 
-您也可在调用方法时往 $options 参数传递 Key 为 `token` 的 query 参数来设置，如下所示：
+您也可在调用方法时往 $options 参数传递 Key 为 `token` 的参数来设置，这样 Token 会跟随 Query 一起传递到 Server，如下所示：
 
 ```php
-$options['query']['token'] = 'your-token';
-$response = $kv->get($namespace, $options)->json();
+$response = $kv->get($namespace, ['token' => 'your-token'])->json();
 ```
 
 ## KV
