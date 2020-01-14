@@ -331,8 +331,6 @@ class GrpcClient
                     }
                     // Force close.
                     if ($this->waitStatus === Status::WAIT_CLOSE_FORCE) {
-                        $this->channelPool->release($this->recvChannelMap[$streamId]);
-                        unset($this->recvChannelMap[$streamId]);
                         if ($this->closeRecv()) {
                             break;
                         }

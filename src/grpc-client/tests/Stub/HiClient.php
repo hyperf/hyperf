@@ -26,6 +26,7 @@ class HiClient extends BaseClient
             [UserReply::class, 'decode']
         );
     }
+
     public function sayBug()
     {
         return $this->simpleRequest(

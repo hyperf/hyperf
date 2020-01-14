@@ -50,6 +50,14 @@ class BaseClientTest extends TestCase
             self::$server->start();
         });
     }
+
+    public static function tearDownAfterClass()
+    {
+        Coroutine::create(function () {
+            self::$server->shutdown();
+        });
+    }
+
     public function setUp()
     {
         if (swoole_version() === '4.4.14') {
@@ -63,13 +71,6 @@ class BaseClientTest extends TestCase
     {
         Mockery::close();
         parent::tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        Coroutine::create(function () {
-            self::$server->shutdown();
-        });
     }
 
     public function testGrpcClientConnectionFailure()
@@ -135,9 +136,9 @@ class BaseClientTest extends TestCase
     {
         $this->getContainer();
         $client = new HiClient('127.0.0.1:2222', ['retry_attempts' => 0]);
-        try{
+        try {
             $client->sayBug();
-        } catch(TypeError $e){
+        } catch (TypeError $e) {
             $this->assertNotNull($e);
         } finally {
             $this->assertGreaterThan(0, $client->sayHello());

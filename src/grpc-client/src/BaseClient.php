@@ -27,7 +27,7 @@ use InvalidArgumentException;
  */
 class BaseClient
 {
-    /** 
+    /**
      * @var null|GrpcClient
      */
     private $grpcClient;
