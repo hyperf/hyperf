@@ -3,6 +3,7 @@
 ## Added
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) Add NoOp Driver to hyperf/metric.
 
 ## Fixed
 
