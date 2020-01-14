@@ -14,6 +14,14 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
+### 配置代理
+
+可以到 `Aliyun` 上申请 `Docker` 加速器，然后配置到服务器上，修改 `/etc/docker/daemon.json` 文件，添加以下内容
+
+```json
+{"registry-mirrors": ["https://xxxxx.mirror.aliyuncs.com"]}
+```
+
 ## 搭建自己的 Gitlab
 
 ### 安装 Gitlab
@@ -50,6 +58,8 @@ gitlab/gitlab-ce:latest
 首次登录 `Gitlab` 会重置密码，用户名是 `root`。
 
 ### 安装 gitlab-runner
+
+这里建议与 `Gitlab` 服务器分开，专门作为打包服务器。
 
 [官方地址](https://docs.gitlab.com/runner/install/linux-repository.html)
 
