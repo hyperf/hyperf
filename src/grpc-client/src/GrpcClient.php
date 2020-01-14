@@ -184,9 +184,7 @@ class GrpcClient
                 while ($channel->stats()['consumer_num'] !== 0) {
                     $channel->push(false);
                 }
-                if ($channel->length() === 0) {
-                    $this->channelPool->release($channel);
-                }
+                $this->channelPool->release($channel);
             }
             $this->recvChannelMap = [];
         }
