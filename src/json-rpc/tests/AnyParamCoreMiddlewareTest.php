@@ -147,6 +147,43 @@ class AnyParamCoreMiddlewareTest extends TestCase
         ], $ret['error']['data']['attributes']);
     }
 
+    public function testThrowable()
+    {
+        $container = $this->createContainer();
+        $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
+        $router->addRoute('/CalculatorService/error', [
+            CalculatorService::class, 'error',
+        ]);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
+        $builder = $container->make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+        $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
+        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $request = (new Request('POST', new Uri('/CalculatorService/error')))
+            ->withParsedBody([]);
+        Context::set(ResponseInterface::class, new Response());
+
+        $request = $middleware->dispatch($request);
+        try {
+            $response = $middleware->process($request, $handler);
+        } catch (\Throwable $exception) {
+            $response = Context::get(ResponseInterface::class);
+        }
+        $this->assertEquals(200, $response->getStatusCode());
+        $ret = json_decode((string) $response->getBody(), true);
+
+        $this->assertArrayHasKey('error', $ret);
+        $this->assertArrayHasKey('data', $ret['error']);
+
+        $this->assertEquals(\Error::class, $ret['error']['data']['class']);
+        $this->assertArraySubset([
+            'message' => 'Not only a exception.',
+            'code' => 0,
+        ], $ret['error']['data']['attributes']);
+    }
+
     public function createContainer()
     {
         $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);

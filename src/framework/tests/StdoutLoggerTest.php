@@ -47,4 +47,21 @@ class StdoutLoggerTest extends TestCase
 
         $logger->info('Hello {name}.', ['name' => 'Hyperf']);
     }
+
+    public function testLogThrowable()
+    {
+        $output = Mockery::mock(ConsoleOutput::class);
+        $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
+            $this->assertRegExp('/RuntimeException: Invalid Arguments./', $message);
+        });
+        $logger = new StdoutLogger(new Config([
+            StdoutLoggerInterface::class => [
+                'log_level' => [
+                    LogLevel::ERROR,
+                ],
+            ],
+        ]), $output);
+
+        $logger->error(new \RuntimeException('Invalid Arguments.'));
+    }
 }

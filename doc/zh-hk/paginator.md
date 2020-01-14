@@ -30,14 +30,14 @@ class UserController
     public function index(RequestInterface $request)
     {
         $currentPage = $request->input('page', 1);
-        $perPage = 2;
+        $perPage = $request->input('per_page', 2);
         $users = [
             ['id' => 1, 'name' => 'Tom'],
             ['id' => 2, 'name' => 'Sam'],
             ['id' => 3, 'name' => 'Tim'],
             ['id' => 4, 'name' => 'Joe'],
         ];
-        return new Paginator($users, $perPage, $currentPage);
+        return new Paginator($users, (int) $perPage, (int) $currentPage);
     }
 }
 ```

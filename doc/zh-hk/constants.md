@@ -115,3 +115,65 @@ class IndexController extends Controller
 
 ```
 
+### 可變參數
+
+在使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 來獲取對應錯誤信息時，我們也可以傳入可變參數，進行錯誤信息組合。比如以下情況
+
+```php
+<?php
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class ErrorCode extends AbstractConstants
+{
+    /**
+     * @Message("Params %s is invalid.")
+     */
+    const PARAMS_INVALID = 1000;
+}
+
+$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
+
+// 1.2 版本以下 可以使用以下方式，但會在 1.2 版本移除
+
+$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
+```
+
+### 國際化
+
+```
+composer require hyperf/translation
+```
+
+相關配置詳見 [國際化](./translation.md)
+
+```php
+<?php
+
+// 國際化配置
+
+return [
+    'params.invalid' => 'Params :param is invalid.',
+];
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class ErrorCode extends AbstractConstants
+{
+    /**
+     * @Message("params.invalid")
+     */
+    const PARAMS_INVALID = 1000;
+}
+
+$message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
+```
+

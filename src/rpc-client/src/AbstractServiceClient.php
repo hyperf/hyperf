@@ -22,8 +22,10 @@ use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
+use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcClient\Exception\RequestException;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -93,20 +95,20 @@ abstract class AbstractServiceClient
         $this->client = make(Client::class)
             ->setPacker($protocol->getPacker())
             ->setTransporter($transporter);
-        if ($container->has(IdGeneratorInterface::class)) {
-            $this->idGenerator = $container->get(IdGeneratorInterface::class);
-        }
+        $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
     }
 
     protected function __request(string $method, array $params, ?string $id = null)
     {
-        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
+        if (! $id && $this->idGenerator instanceof IdGeneratorInterface) {
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
+            $response = $this->checkRequestIdAndTryAgain($response, $id);
+
             if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
@@ -114,7 +116,7 @@ abstract class AbstractServiceClient
                 return $response['error'];
             }
         }
-        throw new RuntimeException('Invalid response.');
+        throw new RequestException('Invalid response.');
     }
 
     protected function __generateRpcPath(string $methodName): string
@@ -128,6 +130,19 @@ abstract class AbstractServiceClient
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
         return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+    }
+
+    protected function getIdGenerator(): IdGeneratorInterface
+    {
+        if ($this->container->has(IdGenerator\IdGeneratorInterface::class)) {
+            return $this->container->get(IdGenerator\IdGeneratorInterface::class);
+        }
+
+        if ($this->container->has(IdGeneratorInterface::class)) {
+            return $this->container->get(IdGeneratorInterface::class);
+        }
+
+        return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
@@ -249,5 +264,30 @@ abstract class AbstractServiceClient
                 ]);
             },
         ]);
+    }
+
+    protected function checkRequestIdAndTryAgain(array $response, $id, int $again = 1): array
+    {
+        if (is_null($id)) {
+            // If the request id is null then do not check.
+            return $response;
+        }
+
+        if (isset($response['id']) && $response['id'] === $id) {
+            return $response;
+        }
+
+        if ($again <= 0) {
+            throw new RequestException(sprintf(
+                'Invalid response. Request id[%s] is not equal to response id[%s].',
+                $id,
+                $response['id'] ?? null
+            ));
+        }
+
+        $response = $this->client->recv();
+        --$again;
+
+        return $this->checkRequestIdAndTryAgain($response, $id, $again);
     }
 }

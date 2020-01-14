@@ -1,4 +1,51 @@
-# v1.1.13 - TBD
+# v1.1.16 - TBD
+
+## Added
+
+- [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
+
+## Fixed
+
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
+- [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process not restart when use timer.
+- [#1272](https://github.com/hyperf/hyperf/pull/1272) Fixed bug that request id will be checked failed, when the id is null.
+
+# v1.1.15 - 2010-01-10
+
+## Fixed
+
+- [#1258](https://github.com/hyperf/hyperf/pull/1258) Fixed CRITICAL error that socket of process is unavailable when amqp send heartbeat failed.
+- [#1260](https://github.com/hyperf/hyperf/pull/1260) Fixed json rpc connection confused.
+
+# v1.1.14 - 2010-01-10
+
+## Added
+
+- [#1166](https://github.com/hyperf/hyperf/pull/1166) Added KeepaliveIO for amqp.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Added exception code `error.data.code` to json-rpc response.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Added `recv` method to `Hyperf\Rpc\Contract\TransporterInterface`.
+- [#1215](https://github.com/hyperf/hyperf/pull/1215) Added super-globals component.
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) Added property `enable` for amqp consumer, which controls whether consumers should start along with the service.
+
+## Fixed
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Fixed bug that exception and error cannot be resolved successfully in TcpServer.
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Fixed bug that json-rpc has not validated the request id whether is equal to response id.
+- [#1223](https://github.com/hyperf/hyperf/pull/1223) Fixed the scanner will missing the packages at require-dev of composer.json
+- [#1254](https://github.com/hyperf/hyperf/pull/1254) Fixed bash not found on some environment like Alpine when execute `init-proxy.sh`.
+
+## Optimized
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) Optimized json-rpc logical.
+- [#1174](https://github.com/hyperf/hyperf/pull/1174) Adjusted the format of exception printer of `Hyperf\Utils\Parallel`.
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) Allows config fetcher of Aliyun ACM parse UTF-8 charater, and fetch configuration once after worker start automatically, also allows pass the configutation to user process.
+- [#1235](https://github.com/hyperf/hyperf/pull/1235) Release connection after declared for amqp producers.
+
+## Changed
+
+- [#1227](https://github.com/hyperf/hyperf/pull/1227) Upgraded jcchavezs/zipkin-php-opentracing to 0.1.4.
+
+# v1.1.13 - 2020-01-03
 
 ## Added
 
@@ -19,6 +66,10 @@
 ## Optimized
 
 - [#1211](https://github.com/hyperf/hyperf/pull/1211) Convert app name to valid prometheus namespace.
+
+## Changed
+
+- [#1217](https://github.com/hyperf/hyperf/pull/1217) Replaced `zendframework/zend-mime` into `laminas/laminas-mine`.
 
 # v1.1.12 - 2019-12-26
 
