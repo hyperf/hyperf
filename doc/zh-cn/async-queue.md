@@ -99,7 +99,43 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 #### 传统方式
 
-首先我们定义一个消息类，如下
+这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
+
+比如以下 `Job` 的定义，是 **不可取** 的
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Job;
+
+use Hyperf\AsyncQueue\Job;
+use Psr\Container\ContainerInterface;
+
+class ExampleJob extends Job
+{
+    public $container;
+
+    public $params;
+
+    public function __construct(ContainerInterface $container, $params)
+    {
+        $this->container = $container;
+        $this->params = $params;
+    }
+
+    public function handle()
+    {
+        // 根据参数处理具体逻辑
+        var_dump($this->params);
+    }
+}
+
+$job = make(ExampleJob::class);
+```
+
+正确的 `Job` 应该是只有需要处理的数据，其他相关数据，可以在 `handle` 方法中重新获取，如下。
 
 ```php
 <?php
@@ -123,12 +159,13 @@ class ExampleJob extends Job
     public function handle()
     {
         // 根据参数处理具体逻辑
+        // 通过具体参数获取模型等
         var_dump($this->params);
     }
 }
 ```
 
-生产消息
+正确定义完 `Job` 后，我们需要写一个专门投递消息的 `Service`，代码如下。
 
 ```php
 <?php
@@ -168,38 +205,9 @@ class QueueService
 }
 ```
 
-#### 注解方式
+投递消息
 
-框架除了传统方式投递消息，还提供了注解方式。
-
-让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，具体代码如下。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
-
-class QueueService
-{
-    /**
-     * @AsyncQueueMessage
-     */
-    public function example($params)
-    {
-        // 需要异步执行的代码逻辑
-        var_dump($params);
-    }
-}
-
-```
-
-#### 投递消息
-
-根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
+接下来，调用我们的 `QueueService` 投递消息即可。
 
 ```php
 <?php
@@ -236,6 +244,63 @@ class QueueController extends Controller
 
         return 'success';
     }
+}
+```
+
+#### 注解方式
+
+框架除了传统方式投递消息，还提供了注解方式。
+
+让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，并加上对应注解 `AsyncQueueMessage`，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
+
+class QueueService
+{
+    /**
+     * @AsyncQueueMessage
+     */
+    public function example($params)
+    {
+        // 需要异步执行的代码逻辑
+        var_dump($params);
+    }
+}
+
+```
+
+投递消息
+
+注解模式投递消息就跟平常调用方法一致，代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Service\QueueService;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController
+ */
+class QueueController extends Controller
+{
+    /**
+     * @Inject
+     * @var QueueService
+     */
+    protected $service;
 
     /**
      * 注解模式投递消息

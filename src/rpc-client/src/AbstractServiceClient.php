@@ -268,6 +268,11 @@ abstract class AbstractServiceClient
 
     protected function checkRequestIdAndTryAgain(array $response, $id, int $again = 1): array
     {
+        if (is_null($id)) {
+            // If the request id is null then do not check.
+            return $response;
+        }
+
         if (isset($response['id']) && $response['id'] === $id) {
             return $response;
         }
