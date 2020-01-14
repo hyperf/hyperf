@@ -15,6 +15,7 @@ namespace HyperfTest\Metric\Cases;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Metric\Adapter\NoOp\MetricFactory as NoOpFactory;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Adapter\RemoteProxy\MetricFactory as RemoteFactory;
 use Hyperf\Metric\Adapter\StatsD\MetricFactory as StatsDFactory;
@@ -129,5 +130,30 @@ class MetricFactoryPickerTest extends TestCase
         $picker = new MetricFactoryPicker();
 
         $this->assertInstanceOf(PrometheusFactory::class, $picker($container));
+    }
+
+    public function testNoOpDriver()
+    {
+        $config = new Config([
+            'metric' => [
+                'default' => 'noop',
+                'metric' => [
+                    'noop' => [
+                        'driver' => NoOpFactory::class,
+                    ],
+                    'statsD' => [
+                        'driver' => StatsDFactory::class,
+                    ],
+                ],
+            ],
+        ]);
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
+        $container->shouldReceive('get')->with(NoOpFactory::class)->andReturn(Mockery::mock(NoOpFactory::class));
+
+        MetricFactoryPicker::$inMetricProcess = true;
+        $picker = new MetricFactoryPicker();
+
+        $this->assertInstanceOf(NoOpFactory::class, $picker($container));
     }
 }
