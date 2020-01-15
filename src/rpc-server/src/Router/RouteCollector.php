@@ -57,7 +57,7 @@ class RouteCollector
      * @param string|string[] $httpMethod
      * @param mixed $handler
      */
-    public function addRoute(string $route, $handler, array $options = [])
+    public function addRoute($httpMethod, string $route, $handler, array $options = [])
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);

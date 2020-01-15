@@ -118,7 +118,7 @@ class DispatcherFactory
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
             $path = $this->pathGenerator->generate($prefix, $methodName);
-            $router->addRoute($path, [
+            $router->addRoute('POST', $path, [
                 $className,
                 $methodName,
             ]);
