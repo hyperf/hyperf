@@ -14,6 +14,7 @@ namespace HyperfTest\JsonRpc;
 
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\NormalizeDataFormatter;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SymfonyNormalizer;
@@ -29,11 +30,13 @@ class DataFormatterTest extends TestCase
     protected function tearDown()
     {
         Mockery::close();
+        (new RpcContext())->clear();
     }
 
     public function testFormatErrorResponse()
     {
-        $formatter = new DataFormatter();
+        $formatter = new DataFormatter($context = new RpcContext());
+        $context->set('id', $cid = uniqid());
         $data = $formatter->formatErrorResponse([$id = uniqid(), 500, 'Error', new \RuntimeException('test case', 1000)]);
 
         $this->assertEquals([
@@ -48,6 +51,9 @@ class DataFormatterTest extends TestCase
                     'message' => 'test case',
                 ],
             ],
+            'context' => [
+                'id' => $cid,
+            ],
         ], $data);
 
         $exception = new RequestException('', 0, $data['error']['data']);
@@ -59,7 +65,7 @@ class DataFormatterTest extends TestCase
     {
         $normalizer = new SymfonyNormalizer((new SerializerFactory())());
 
-        $formatter = new NormalizeDataFormatter($normalizer);
+        $formatter = new NormalizeDataFormatter($normalizer, new RpcContext());
         $data = $formatter->formatErrorResponse([$id = uniqid(), 500, 'Error', new \RuntimeException('test case', 1000)]);
 
         $this->assertArrayHasKey('line', $data['error']['data']['attributes']);
@@ -85,6 +91,7 @@ class DataFormatterTest extends TestCase
                     ],
                 ],
             ],
+            'context' => [],
         ], $data);
     }
 }

@@ -31,6 +31,7 @@ use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -219,7 +220,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(PathGenerator::class)
             ->andReturn(new PathGenerator());
         $container->shouldReceive('get')->with(DataFormatter::class)
-            ->andReturn(new NormalizeDataFormatter($normalizer));
+            ->andReturn(new NormalizeDataFormatter($normalizer, new RpcContext()));
         $container->shouldReceive('get')->with(JsonPacker::class)
             ->andReturn(new JsonPacker());
         $container->shouldReceive('get')->with(CalculatorService::class)
@@ -235,6 +236,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $container->shouldReceive('make')->with(JsonEofPacker::class, \Mockery::any())->andReturnUsing(function ($_, $args) {
             return new JsonEofPacker(...array_values($args));
         });
+        $container->shouldReceive('get')->with(RpcContext::class)->andReturn(new RpcContext());
 
         ApplicationContext::setContainer($container);
         return $container;
