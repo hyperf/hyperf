@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace App\Listeners;
+namespace App\Listener;
 
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Annotation\Listener;
