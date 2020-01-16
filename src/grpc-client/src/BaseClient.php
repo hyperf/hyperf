@@ -127,14 +127,14 @@ class BaseClient
         Message $argument,
         $deserialize
     ) {
-        $streamId = 0;
-        retry($this->options['retry_attempts'] ?? 3, function () use (&$streamId, $method, $argument) {
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument) {
             $streamId = $this->send($this->buildRequest($method, $argument));
             if ($streamId === 0) {
                 $this->init();
                 // The client should not be used after this exception
                 throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
             }
+            return $streamId;
         }, $this->options['retry_interval'] ?? 100);
         return Parser::parseResponse($this->recv($streamId), $deserialize);
     }
