@@ -56,7 +56,7 @@ class CoreMiddlewareTest extends TestCase
     {
         $container = $this->createContainer();
         $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
-        $router->addRoute('/CalculatorService/add', [
+        $router->addRoute('POST', '/CalculatorService/add', [
             CalculatorService::class, 'add',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
@@ -82,7 +82,7 @@ class CoreMiddlewareTest extends TestCase
     {
         $container = $this->createContainer();
         $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
-        $router->addRoute('/CalculatorService/array', [
+        $router->addRoute('POST', '/CalculatorService/array', [
             CalculatorService::class, 'array',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
@@ -108,7 +108,7 @@ class CoreMiddlewareTest extends TestCase
     {
         $container = $this->createContainer();
         $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
-        $router->addRoute('/CalculatorService/divide', [
+        $router->addRoute('POST', '/CalculatorService/divide', [
             CalculatorService::class, 'divide',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
@@ -143,7 +143,7 @@ class CoreMiddlewareTest extends TestCase
     {
         $container = $this->createContainer();
         $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
-        $router->addRoute('/CalculatorService/divide', [
+        $router->addRoute('POST', '/CalculatorService/divide', [
             CalculatorService::class, 'divide',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
