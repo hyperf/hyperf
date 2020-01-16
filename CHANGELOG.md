@@ -3,13 +3,27 @@
 ## Added
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
-- [#1277](https://github.com/hyperf/hyperf/pull/1277) Add NoOp Driver to hyperf/metric.
+- [#1276](https://github.com/hyperf/hyperf/pull/1276) Added ACL token for Consul client.
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) Added NoOp Driver to hyperf/metric.
 
 ## Fixed
 
 - [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
 - [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process not restart when use timer.
 - [#1272](https://github.com/hyperf/hyperf/pull/1272) Fixed bug that request id will be checked failed, when the id is null.
+
+## Optimized
+
+- [#1273](https://github.com/hyperf/hyperf/pull/1273) Optimized grpc client.
+  - gRPC client now automatically reconnects to the server after disconnection.
+  - When gRPC client is garbage collected, the connection is automatically closed.
+  - Fixed a bug where a closed gRPC client still holds the underlying http2 connection.
+  - Fixed a bug where channel pool for gRPC may contain non-empty channels.
+  - gRPC client now initializes itself lazily, so it can be used in constructor and container.
+
+## Deleted
+
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) Deleted phpstan from require-dev.
 
 # v1.1.15 - 2010-01-10
 
