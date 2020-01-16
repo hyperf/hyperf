@@ -3,9 +3,8 @@
 ## Added
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
-- [#1276](https://github.com/hyperf/hyperf/pull/1276) Add ACL token for Consul client.
-- [#1277](https://github.com/hyperf/hyperf/pull/1277) Add NoOp Driver to hyperf/metric.
-- [#1281](https://github.com/hyperf/hyperf/pull/1281) chore: add hyperf/opentracing.
+- [#1276](https://github.com/hyperf/hyperf/pull/1276) Added ACL token for Consul client.
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) Added NoOp Driver to hyperf/metric.
 
 ## Fixed
 
