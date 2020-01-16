@@ -1,5 +1,39 @@
 # 版本更新記錄
 
+# v1.1.16 - 2020-01-16
+
+## 新增
+
+- [#1263](https://github.com/hyperf/hyperf/pull/1263) 為 async-queue 元件增加 `QueueLength` 事件；
+- [#1276](https://github.com/hyperf/hyperf/pull/1276) 為 Consul 客戶端增加 ACL token 支援；
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) 為 [hyperf/metric](https://github.com/hyperf/metric) 元件增加 NoOp 驅動，用來臨時關閉 metric 功能；
+
+## 修復
+
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) 修復 keepaliveIO 功能下 socket 會被消耗光的問題；
+- [#1266](https://github.com/hyperf/hyperf/pull/1266) 修復當自定義程序存在 Timer 的情況下會無法重啟的問題；
+- [#1272](https://github.com/hyperf/hyperf/pull/1272) 修復 JSONRPC 下當 Request ID 為 null 時檢查會失敗的問題； 
+
+## 優化
+
+- [#1273](https://github.com/hyperf/hyperf/pull/1273) 優化 gRPC 客戶端：
+  - 優化使 gRPC 客戶端在當連線與 Server 斷開時會自動重連；
+  - 優化使當 gRPC 客戶端被垃圾回收時，已建立的連線會自動關閉；
+  - 修復關閉了的客戶端依舊會持有 HTTP2 連線的問題；
+  - 修復 gRPC 客戶端的 channel pool 可能會存在非空 channel 的問題；
+  - 優化使 gRPC 客戶端會自動初始化，所以現在可以在建構函式和容器注入下使用；
+
+## 刪除
+
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) 從 require-dev 中移除 [phpstan/phpstan](https://github.com/phpstan/phpstan) 包的依賴。
+
+# v1.1.15 - 2020-01-10
+
+## 修復
+
+- [#1258](https://github.com/hyperf/hyperf/pull/1258) 修復 AMQP 傳送心跳失敗，會導致子程序 Socket 通訊不可用的問題；
+- [#1260](https://github.com/hyperf/hyperf/pull/1260) 修復 JSONRPC 在同一協程內，連線會混淆複用的問題；
+
 # v1.1.14 - 2020-01-10
 
 ## 新增
