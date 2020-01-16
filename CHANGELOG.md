@@ -11,7 +11,7 @@
 ## Fixed
 
 - [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
-- [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process not restart when use timer.
+- [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process does not restart when use timer.
 - [#1272](https://github.com/hyperf/hyperf/pull/1272) Fixed bug that request id will be checked failed, when the id is null.
 
 ## Optimized
@@ -25,7 +25,8 @@
 
 ## Deleted
 
-- [#1286](https://github.com/hyperf/hyperf/pull/1286) Deleted phpstan from require-dev.
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) Removed [phpstan/phpstan](https://github.com/phpstan/phpstan) requires from require-dev.
+
 
 # v1.1.15 - 2010-01-10
 
