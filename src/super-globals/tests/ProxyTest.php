@@ -118,7 +118,7 @@ class ProxyTest extends TestCase
         Context::set(ServerRequestInterface::class, $request);
         $proxy = new Server([]);
 
-        $this->assertSame($name, $proxy['server_name']);
+        $this->assertSame($name, $proxy['SERVER_NAME']);
         $this->assertSame($token, $proxy['HTTP_X_TOKEN']);
     }
 
