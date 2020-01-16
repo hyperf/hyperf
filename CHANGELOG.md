@@ -35,7 +35,7 @@
 - [#1258](https://github.com/hyperf/hyperf/pull/1258) Fixed CRITICAL error that socket of process is unavailable when amqp send heartbeat failed.
 - [#1260](https://github.com/hyperf/hyperf/pull/1260) Fixed json rpc connection confused.
 
-# v1.1.14 - 2010-01-10
+# v1.1.14 - 2020-01-10
 
 ## Added
 
