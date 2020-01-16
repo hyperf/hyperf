@@ -16,6 +16,12 @@
 
 - [#1273](https://github.com/hyperf/hyperf/pull/1273) Optimized grpc client.
 
+1. gRPC client now automatically reconnects to the server after disconnection.
+2. when gRPC client is garbage collected, the connection is automatically closed.
+3. fix a bug where a closed gRPC client still holds the underlying http2 connection.
+4. fix a bug where channel pool for gRPC may contain non-empty channels.
+5. gRPC client now initializes itself lazily, so it can be used in constructor and container.
+
 ## Deleted
 
 - [#1286](https://github.com/hyperf/hyperf/pull/1286) Deleted phpstan from require-dev.
