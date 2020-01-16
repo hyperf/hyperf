@@ -16,6 +16,10 @@
 
 - [#1273](https://github.com/hyperf/hyperf/pull/1273) Optimized grpc client.
 
+## Deleted
+
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) Deleted phpstan from require-dev.
+
 # v1.1.15 - 2010-01-10
 
 ## Fixed
