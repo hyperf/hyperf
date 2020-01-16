@@ -13,6 +13,10 @@
 - [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process not restart when use timer.
 - [#1272](https://github.com/hyperf/hyperf/pull/1272) Fixed bug that request id will be checked failed, when the id is null.
 
+## Optimized
+
+- [#1273](https://github.com/hyperf/hyperf/pull/1273) Optimized grpc client.
+
 # v1.1.15 - 2010-01-10
 
 ## Fixed
