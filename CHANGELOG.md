@@ -28,7 +28,7 @@
 - [#1286](https://github.com/hyperf/hyperf/pull/1286) Removed [phpstan/phpstan](https://github.com/phpstan/phpstan) requires from require-dev.
 
 
-# v1.1.15 - 2010-01-10
+# v1.1.15 - 2020-01-10
 
 ## Fixed
 
