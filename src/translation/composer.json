@@ -28,15 +28,13 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
-        "mockery/mockery": "^1.2",
-        "phpstan/phpstan": "^0.10.5"
+        "mockery/mockery": "^1.2"
     },
     "config": {
         "sort-packages": true
     },
     "scripts": {
         "test": "co-phpunit -c phpunit.xml --colors=always",
-        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
