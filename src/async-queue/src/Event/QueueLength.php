@@ -12,8 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Event;
 
+use Hyperf\AsyncQueue\Driver\Driver;
+use Hyperf\AsyncQueue\Driver\DriverInterface;
+
 class QueueLength
 {
+    /**
+     * @var Driver
+     */
+    public $driver;
+
     /**
      * @var string
      */
@@ -24,8 +32,9 @@ class QueueLength
      */
     public $length;
 
-    public function __construct(string $key, int $length)
+    public function __construct(DriverInterface $driver, string $key, int $length)
     {
+        $this->driver = $driver;
         $this->key = $key;
         $this->length = $length;
     }
