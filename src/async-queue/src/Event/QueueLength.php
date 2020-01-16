@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Event;
 
-use Hyperf\AsyncQueue\Driver\Driver;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueLength
 {
     /**
-     * @var Driver
+     * @var DriverInterface
      */
     public $driver;
 
