@@ -46,6 +46,9 @@ abstract class Client
 
     protected function resolveOptions(array $options, array $availableOptions): array
     {
+        // Add key of ACL token to $availableOptions
+        $availableOptions[] = 'token';
+        
         return array_intersect_key($options, array_flip($availableOptions));
     }
 
