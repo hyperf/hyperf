@@ -8,15 +8,7 @@ BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 repos=$(ls "$BASEPATH")
 echo $NOW
 
-cd `dirname $0`; cd ../src/
-
-git checkout master && git checkout -b licenses-generate-"$NOW"
-
-for REPO in $repos
-do
-    echo "Generating $REPO";
-    cd "./$REPO"
-
+function generate() {
     if [ -f "composer.json" ]; then
       composer update -q
       php-legal-licenses generate
@@ -30,6 +22,23 @@ do
     if [ -f "licenses.md" ]; then
       git add ./licenses.md
     fi
+}
+
+cd ..
+
+git checkout master && git checkout -b licenses-generate-"$NOW"
+
+echo "Generating main repository";
+generate
+
+cd ./src
+
+for REPO in $repos
+do
+    echo "Generating $REPO";
+    cd "./$REPO"
+
+    generate
 
     cd ../
 
