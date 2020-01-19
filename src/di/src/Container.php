@@ -122,7 +122,7 @@ class Container implements HyperfContainerInterface
     public function get($name)
     {
         // If the entry is already resolved we return it
-        if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
+        if (array_key_exists($name, $this->resolvedEntries)) {
             return $this->resolvedEntries[$name];
         }
         $this->resolvedEntries[$name] = $value = $this->make($name);
