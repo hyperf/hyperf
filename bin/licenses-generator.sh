@@ -45,7 +45,6 @@ do
 done
 
 git commit -m "Update licenses.md"
-git push
 
 TIME=$(echo "$(date +%s) - $NOW" | bc)
 
