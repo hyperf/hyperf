@@ -41,6 +41,8 @@ abstract class PoolWatcher
         ];
     }
 
+    abstract protected function getPrefix();
+
     /**
      * Periodically scan metrics.
      */
