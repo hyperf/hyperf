@@ -83,15 +83,15 @@ class RegisterServiceListener implements ListenerInterface
                 $services = $this->serviceManager->all();
                 $servers = $this->getServers();
                 foreach ($services as $serviceName => $serviceProtocols) {
-                    foreach ($serviceProtocols as $paths) {
+                    foreach ($serviceProtocols as $paths){
                         foreach ($paths as $path => $service) {
-                            if (!isset($service['publishTo'], $service['server'])) {
+                            if (! isset($service['publishTo'], $service['server'])) {
                                 continue;
                             }
                             [$address, $port] = $servers[$service['server']];
                             switch ($service['publishTo']) {
                                 case 'consul':
-                                    $this->publishToConsul($address, (int)$port, $service, $serviceName, $path);
+                                    $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
                                     break;
                             }
                         }
@@ -175,7 +175,7 @@ class RegisterServiceListener implements ListenerInterface
         $services = $this->consulAgent->services()->json();
         foreach ($services ?? [] as $id => $service) {
             if (isset($service['Service']) && $service['Service'] === $name) {
-                $exploded = explode('-', (string)$id);
+                $exploded = explode('-', (string) $id);
                 $length = count($exploded);
                 if ($length > 1 && is_numeric($exploded[$length - 1]) && $maxId < $exploded[$length - 1]) {
                     $maxId = $exploded[$length - 1];
@@ -200,7 +200,7 @@ class RegisterServiceListener implements ListenerInterface
         $glue = ',';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
         foreach ($services as $serviceId => $service) {
-            if (!isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
+            if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
                 continue;
             }
             $currentTag = implode($glue, [
@@ -222,24 +222,24 @@ class RegisterServiceListener implements ListenerInterface
         $result = [];
         $servers = $this->config->get('server.servers', []);
         foreach ($servers as $server) {
-            if (!isset($server['name'], $server['host'], $server['port'])) {
+            if (! isset($server['name'], $server['host'], $server['port'])) {
                 continue;
             }
-            if (!$server['name']) {
+            if (! $server['name']) {
                 throw new \InvalidArgumentException('Invalid server name');
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->getInternalIp();
             }
-            if (!filter_var($host, FILTER_VALIDATE_IP)) {
+            if (! filter_var($host, FILTER_VALIDATE_IP)) {
                 throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
             }
             $port = $server['port'];
-            if (!is_numeric($port) || ($port < 0 || $port > 65535)) {
+            if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
                 throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
-            $port = (int)$port;
+            $port = (int) $port;
             $result[$server['name']] = [$host, $port];
         }
         return $result;
