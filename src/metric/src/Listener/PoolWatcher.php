@@ -26,11 +26,6 @@ abstract class PoolWatcher
      */
     protected $container;
 
-    /**
-     * @var string
-     */
-    private $prefix = '';
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
