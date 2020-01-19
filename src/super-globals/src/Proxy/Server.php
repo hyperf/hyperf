@@ -37,7 +37,7 @@ class Server extends Proxy
         }
         $result = [];
         foreach (array_merge($this->default, $this->getRequest()->getServerParams(), $headers) as $key => $value) {
-            $key = strtoupper($key);
+            $key = Str::upper($key);
             if (is_array($value) && count($value) == 1) {
                 $result[$key] = $value[0];
             } else {
