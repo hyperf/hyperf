@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
@@ -38,6 +39,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     protected $config = [
         'host' => 'localhost',
         'port' => 9501,
+        'node' => null,
         'connect_timeout' => 5.0,
         'settings' => [],
     ];
@@ -80,6 +82,12 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $host = $this->config['host'];
         $port = $this->config['port'];
         $connectTimeout = $this->config['connect_timeout'];
+        if ($this->config['node'] instanceof \Closure) {
+            /** @var Node $node */
+            $node = value($this->config['node']);
+            $host = $node->host;
+            $port = $node->port;
+        }
 
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
         $client->set($this->config['settings'] ?? []);
