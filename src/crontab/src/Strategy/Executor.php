@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
 use Closure;
+use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\LoggerInterface;
@@ -24,6 +25,8 @@ use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class Executor
 {
@@ -105,6 +108,13 @@ class Executor
                 }
                 break;
             case 'command':
+                $input = new ArrayInput($crontab->getCallback());
+                $output = new NullOutput();
+                $application = $this->container->get(ApplicationInterface::class);
+                $application->setAutoExit(false);
+                $callback = function () use ($application, $input, $output) {
+                    $application->run($input, $output);
+                };
                 break;
             case 'eval':
                 $callback = function () use ($crontab) {
@@ -148,7 +158,7 @@ class Executor
         return function () use ($crontab, $runnable) {
             $taskMutex = $this->getServerMutex();
 
-            if (!$taskMutex->attempt($crontab)) {
+            if (! $taskMutex->attempt($crontab)) {
                 $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
