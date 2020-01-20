@@ -2,10 +2,7 @@
 
 ## Fixed
 
-- [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed validation组件添加缺少的翻译项:gt,gte,ipv4,ipv6,lt,lte,mimetypes,not_regex,starts_with,uuid.
-
-## Fixed
-
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed some missing traslation of validation, like gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid.
 - [#1291](https://github.com/hyperf/hyperf/pull/1291) Fixed `$_SERVER` has lower keys for super-globals.
 
 # v1.1.16 - 2020-01-16
