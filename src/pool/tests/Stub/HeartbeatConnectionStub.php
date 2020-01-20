@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Pool\Stub;
 
-use Hyperf\Pool\Socket;
+use Hyperf\Pool\HeartbeatConnection;
 use Swoole\Coroutine;
 
-class SocketStub extends Socket
+class HeartbeatConnectionStub extends HeartbeatConnection
 {
     public function getChannel(): Coroutine\Channel
     {

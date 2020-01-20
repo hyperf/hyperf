@@ -13,16 +13,28 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Closure;
-use Hyperf\Contract\SocketProxyInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
 use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Timer;
 
-abstract class Socket implements SocketProxyInterface
+abstract class HeartbeatConnection implements ConnectionInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var Pool
+     */
+    protected $pool;
+
     /**
      * @var Coroutine\Channel
      */
@@ -43,36 +55,25 @@ abstract class Socket implements SocketProxyInterface
      */
     protected $connected = false;
 
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var float
-     */
-    protected $timeout;
-
-    /**
-     * @var float
-     */
-    protected $heartbeat;
-
-    public function __construct(string $name, float $timeout, float $heartbeat, array $config = [], bool $connect = true)
+    public function __construct(ContainerInterface $container, Pool $pool)
     {
-        $this->name = $name;
-        $this->timeout = $timeout;
-        $this->heartbeat = $heartbeat;
-        $this->config = $config;
-
-        if ($connect) {
-            $this->reconnect();
-        }
+        $this->container = $container;
+        $this->pool = $pool;
     }
 
     public function __destruct()
     {
         $this->clear();
+    }
+
+    public function getConnection()
+    {
+        throw new InvalidArgumentException('Please use call instead of getConnection.');
+    }
+
+    public function check(): bool
+    {
+        return $this->isConnected();
     }
 
     public function reconnect(): void
@@ -113,7 +114,11 @@ abstract class Socket implements SocketProxyInterface
             $this->clear();
             throw $throwable;
         } finally {
-            $this->release($socket);
+            if ($this->isConnected()) {
+                $this->channel->push($socket, 0.001);
+            } else {
+                $this->sendClose($socket);
+            }
         }
 
         return $result;
@@ -136,15 +141,6 @@ abstract class Socket implements SocketProxyInterface
             }
         } finally {
             $this->clear();
-        }
-    }
-
-    protected function release($socket)
-    {
-        if ($this->isConnected()) {
-            $this->channel->push($socket, 0.001);
-        } else {
-            $this->sendClose($socket);
         }
     }
 
@@ -197,6 +193,10 @@ abstract class Socket implements SocketProxyInterface
         }
 
         return null;
+    }
+
+    protected function heartbeat()
+    {
     }
 
     /**
