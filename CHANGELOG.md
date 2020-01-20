@@ -1,5 +1,9 @@
 # v1.1.17 - TBD
 
+## Fixed
+
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) Fixed `$_SERVER` has lower keys for super-globals.
+
 # v1.1.16 - 2020-01-16
 
 ## Added
