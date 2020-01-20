@@ -95,30 +95,28 @@ class Executor
                             }
                         };
 
-                        if ($crontab->isSingleton()) {
-                            $runnable = $this->runInSingleton($crontab, $runnable);
-                        }
-
-                        if ($crontab->isOnOneServer()) {
-                            $runnable = $this->runOnOneServer($crontab, $runnable);
-                        }
-
-                        Coroutine::create($runnable);
+                        Coroutine::create($this->decorateRunnable($runnable, $crontab));
                     };
                 }
                 break;
             case 'command':
-                $input = new ArrayInput($crontab->getCallback());
-                $output = new NullOutput();
+                $input = make(ArrayInput::class, [$crontab->getCallback()]);
+                $output = make(NullOutput::class);
                 $application = $this->container->get(ApplicationInterface::class);
                 $application->setAutoExit(false);
-                $callback = function () use ($application, $input, $output) {
-                    $application->run($input, $output);
+                $callback = function () use ($application, $input, $output, $crontab) {
+                    $runnable = function () use ($application, $input, $output, $crontab) {
+                        $application->run($input, $output);
+                    };
+                    $this->decorateRunnable($runnable, $crontab)();
                 };
                 break;
             case 'eval':
                 $callback = function () use ($crontab) {
-                    eval($crontab->getCallback());
+                    $runnable = function () use ($crontab) {
+                        eval($crontab->getCallback());
+                    };
+                    $this->decorateRunnable($runnable, $crontab)();
                 };
                 break;
         }
@@ -175,5 +173,18 @@ class Executor
             : $this->container->get(RedisServerMutex::class);
         }
         return $this->serverMutex;
+    }
+
+    protected function decorateRunnable(Closure $runnable, Crontab $crontab): Closure
+    {
+        if ($crontab->isSingleton()) {
+            $runnable = $this->runInSingleton($crontab, $runnable);
+        }
+
+        if ($crontab->isOnOneServer()) {
+            $runnable = $this->runOnOneServer($crontab, $runnable);
+        }
+
+        return $runnable;
     }
 }
