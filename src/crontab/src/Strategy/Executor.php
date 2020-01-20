@@ -95,7 +95,7 @@ class Executor
                             }
                         };
 
-                        Coroutine::create($this->decorateRunnable($runnable, $crontab));
+                        Coroutine::create($this->decorateRunnable($crontab, $runnable));
                     };
                 }
                 break;
@@ -108,7 +108,7 @@ class Executor
                     $runnable = function () use ($application, $input, $output, $crontab) {
                         $application->run($input, $output);
                     };
-                    $this->decorateRunnable($runnable, $crontab)();
+                    $this->decorateRunnable($crontab, $runnable)();
                 };
                 break;
             case 'eval':
@@ -116,7 +116,7 @@ class Executor
                     $runnable = function () use ($crontab) {
                         eval($crontab->getCallback());
                     };
-                    $this->decorateRunnable($runnable, $crontab)();
+                    $this->decorateRunnable($crontab, $runnable)();
                 };
                 break;
         }
@@ -175,7 +175,7 @@ class Executor
         return $this->serverMutex;
     }
 
-    protected function decorateRunnable(Closure $runnable, Crontab $crontab): Closure
+    protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
     {
         if ($crontab->isSingleton()) {
             $runnable = $this->runInSingleton($crontab, $runnable);
