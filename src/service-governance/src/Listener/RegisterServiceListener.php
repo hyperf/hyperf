@@ -83,7 +83,7 @@ class RegisterServiceListener implements ListenerInterface
                 $services = $this->serviceManager->all();
                 $servers = $this->getServers();
                 foreach ($services as $serviceName => $serviceProtocols) {
-                    foreach ($serviceProtocols as $paths){
+                    foreach ($serviceProtocols as $paths) {
                         foreach ($paths as $path => $service) {
                             if (! isset($service['publishTo'], $service['server'])) {
                                 continue;

@@ -24,7 +24,7 @@ class ServiceManager
      */
     public function register(string $name, string $path, array $metadata): void
     {
-        if(isset($metadata['protocol'])){
+        if (isset($metadata['protocol'])) {
             $this->services[$name][$path][$metadata['protocol']] = $metadata;
         } else {
             $this->services[$name][$path]['default'] = $metadata;
