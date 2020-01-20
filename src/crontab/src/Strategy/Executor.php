@@ -106,7 +106,14 @@ class Executor
                 $application->setAutoExit(false);
                 $callback = function () use ($application, $input, $output, $crontab) {
                     $runnable = function () use ($application, $input, $output, $crontab) {
-                        $application->run($input, $output);
+                        $result = $application->run($input, $output);
+                        if ($this->logger) {
+                            if ($result === 0) {
+                                $this->logger->info(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                            } else {
+                                $this->logger->error(sprintf('Crontab task [%s] execute failure at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                            }
+                        }
                     };
                     $this->decorateRunnable($crontab, $runnable)();
                 };
