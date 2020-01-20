@@ -42,16 +42,6 @@ class SocketStub extends Socket
         return $this->name;
     }
 
-    public function getHost(): string
-    {
-        return $this->host;
-    }
-
-    public function getPort(): int
-    {
-        return $this->port;
-    }
-
     public function getTimeout(): float
     {
         return $this->timeout;
@@ -62,11 +52,16 @@ class SocketStub extends Socket
         return $this->heartbeat;
     }
 
+    public function heartbeat(): void
+    {
+        // TODO: Implement heartbeat() method.
+    }
+
     protected function connect()
     {
     }
 
-    protected function sendHeartbeat($socket)
+    protected function sendClose($socket): void
     {
     }
 }

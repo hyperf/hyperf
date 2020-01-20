@@ -14,6 +14,8 @@ namespace HyperfTest\Pool;
 
 use HyperfTest\Pool\Stub\SocketStub;
 use PHPUnit\Framework\TestCase;
+use Swoole\Timer;
+use Mockery;
 
 /**
  * @internal
@@ -21,14 +23,25 @@ use PHPUnit\Framework\TestCase;
  */
 class SocketTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Timer::clearAll();
+        Mockery::close();
+    }
+
     public function testSocketConstruct()
     {
-        $socket = new SocketStub($name = 'test', $host = '127.0.0.1', $port = 9511, $timeout = 10.0, $heartbeat = 5.0, false);
+        $socket = new SocketStub($name = 'test', $timeout = 10.0, $heartbeat = 5.0, false);
 
         $this->assertSame($name, $socket->getName());
-        $this->assertSame($host, $socket->getHost());
-        $this->assertSame($port, $socket->getPort());
         $this->assertSame($timeout, $socket->getTimeout());
         $this->assertSame($heartbeat, $socket->getHeartbeat());
+    }
+
+    public function testSocketDestruct()
+    {
+        $socket = new SocketStub($name = 'test', $timeout = 10.0, $heartbeat = 5.0, false);
+
+
     }
 }

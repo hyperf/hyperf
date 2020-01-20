@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Closure;
+use Hyperf\Contract\SocketProxyInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Exception\SocketPopException;
 use Hyperf\Utils\ApplicationContext;
@@ -20,7 +21,7 @@ use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Timer;
 
-abstract class Socket implements SocketInterface
+abstract class Socket implements SocketProxyInterface
 {
     /**
      * @var Coroutine\Channel
@@ -48,16 +49,6 @@ abstract class Socket implements SocketInterface
     protected $name;
 
     /**
-     * @var string
-     */
-    protected $host;
-
-    /**
-     * @var int
-     */
-    protected $port;
-
-    /**
      * @var float
      */
     protected $timeout;
@@ -67,13 +58,12 @@ abstract class Socket implements SocketInterface
      */
     protected $heartbeat;
 
-    public function __construct(string $name, string $host, int $port, float $timeout, float $heartbeat, bool $connect = true)
+    public function __construct(string $name, float $timeout, float $heartbeat, array $config = [], bool $connect = true)
     {
         $this->name = $name;
-        $this->host = $host;
-        $this->port = $port;
         $this->timeout = $timeout;
         $this->heartbeat = $heartbeat;
+        $this->config = $config;
 
         if ($connect) {
             $this->reconnect();
@@ -100,37 +90,33 @@ abstract class Socket implements SocketInterface
         $this->addHeartbeat();
     }
 
-    public function call(Closure $closure, bool $using = true)
+    /**
+     * @return mixed
+     */
+    public function call(Closure $closure, bool $isUserCall = true)
     {
         if (! $this->isConnected()) {
             $this->reconnect();
         }
 
-        $client = $this->channel->pop($this->timeout);
-        if ($client === false) {
+        $socket = $this->channel->pop($this->timeout);
+        if ($socket === false) {
             throw new SocketPopException(sprintf('Socket of %s is exhausted. Cannot establish socket before timeout.', $this->name));
         }
 
         try {
-            $result = $closure($client);
-            if ($using) {
+            $result = $closure($socket);
+            if ($isUserCall) {
                 $this->lastUseTime = microtime(true);
             }
         } catch (\Throwable $throwable) {
             $this->clear();
             throw $throwable;
         } finally {
-            $this->channel->push($client, 0.001);
+            $this->release($socket);
         }
 
         return $result;
-    }
-
-    public function heartbeat(): void
-    {
-        $this->call(function ($socket) {
-            $this->sendHeartbeat($socket);
-        }, false);
     }
 
     public function isConnected(): bool
@@ -143,11 +129,22 @@ abstract class Socket implements SocketInterface
         try {
             if ($this->isConnected()) {
                 $this->call(function ($socket) {
-                    $socket->close();
-                });
+                    if ($this->isConnected()) {
+                        $this->sendClose($socket);
+                    }
+                }, false);
             }
         } finally {
             $this->clear();
+        }
+    }
+
+    protected function release($socket)
+    {
+        if ($this->isConnected()) {
+            $this->channel->push($socket, 0.001);
+        } else {
+            $this->sendClose($socket);
         }
     }
 
@@ -160,7 +157,7 @@ abstract class Socket implements SocketInterface
                     return;
                 }
 
-                if ($this->lastUseTime < microtime(true) - $this->heartbeat * 2) {
+                if ($this->isTimeout()) {
                     // The socket does not used in double of heartbeat.
                     $this->close();
                     return;
@@ -175,6 +172,11 @@ abstract class Socket implements SocketInterface
                 }
             }
         });
+    }
+
+    protected function isTimeout(): bool
+    {
+        return $this->lastUseTime < microtime(true) - $this->heartbeat * 2;
     }
 
     protected function clear()
@@ -203,5 +205,9 @@ abstract class Socket implements SocketInterface
      */
     abstract protected function connect();
 
-    abstract protected function sendHeartbeat($socket);
+    /**
+     * Send close protocol.
+     * @param $socket
+     */
+    abstract protected function sendClose($socket): void;
 }
