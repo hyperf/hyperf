@@ -37,8 +37,6 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
      * @var array
      */
     protected $config = [
-        'host' => 'localhost',
-        'port' => 9501,
         'node' => null,
         'connect_timeout' => 5.0,
         'settings' => [],
@@ -79,15 +77,15 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        $host = $this->config['host'];
-        $port = $this->config['port'];
-        $connectTimeout = $this->config['connect_timeout'];
-        if ($this->config['node'] instanceof \Closure) {
-            /** @var Node $node */
-            $node = value($this->config['node']);
-            $host = $node->host;
-            $port = $node->port;
+        if (! $this->config['node'] instanceof \Closure) {
+            throw new ConnectionException('Node of Connection is invalid.');
         }
+
+        /** @var Node $node */
+        $node = value($this->config['node']);
+        $host = $node->host;
+        $port = $node->port;
+        $connectTimeout = $this->config['connect_timeout'];
 
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
         $client->set($this->config['settings'] ?? []);
