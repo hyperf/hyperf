@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command support to `hyperf\crontab`.
 - [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
 
 ## Fixed
