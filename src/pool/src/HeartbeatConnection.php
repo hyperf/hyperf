@@ -17,7 +17,6 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
@@ -66,6 +65,11 @@ abstract class HeartbeatConnection implements ConnectionInterface
         $this->clear();
     }
 
+    public function release(): void
+    {
+        $this->pool->release($this);
+    }
+
     public function getConnection()
     {
         throw new InvalidArgumentException('Please use call instead of getConnection.');
@@ -76,48 +80,48 @@ abstract class HeartbeatConnection implements ConnectionInterface
         return $this->isConnected();
     }
 
-    public function reconnect(): void
+    public function reconnect(): bool
     {
         $this->close();
 
-        $socket = $this->connect();
+        $connection = $this->getActiveConnection();
 
         $channel = new Coroutine\Channel(1);
-        $channel->push($socket);
+        $channel->push($connection);
         $this->channel = $channel;
-        $this->connected = true;
         $this->lastUseTime = microtime(true);
 
         $this->addHeartbeat();
+
+        return true;
     }
 
     /**
+     * @param bool $refresh refresh last use time or not
      * @return mixed
      */
-    public function call(Closure $closure, bool $isUserCall = true)
+    public function call(Closure $closure, bool $refresh = true)
     {
         if (! $this->isConnected()) {
             $this->reconnect();
         }
 
-        $socket = $this->channel->pop($this->timeout);
-        if ($socket === false) {
+        $connection = $this->channel->pop($this->pool->getOption()->getWaitTimeout());
+        if ($connection === false) {
             throw new SocketPopException(sprintf('Socket of %s is exhausted. Cannot establish socket before timeout.', $this->name));
         }
 
         try {
-            $result = $closure($socket);
-            if ($isUserCall) {
+            $result = $closure($connection);
+            if ($refresh) {
                 $this->lastUseTime = microtime(true);
             }
-        } catch (\Throwable $throwable) {
-            $this->clear();
-            throw $throwable;
         } finally {
             if ($this->isConnected()) {
-                $this->channel->push($socket, 0.001);
+                $this->channel->push($connection, 0.001);
             } else {
-                $this->sendClose($socket);
+                // Unset and drop the connection.
+                unset($connection);
             }
         }
 
@@ -129,25 +133,32 @@ abstract class HeartbeatConnection implements ConnectionInterface
         return $this->connected;
     }
 
-    public function close(): void
+    public function close(): bool
     {
-        try {
-            if ($this->isConnected()) {
-                $this->call(function ($socket) {
+        if ($this->isConnected()) {
+            $this->call(function ($connection) {
+                try {
                     if ($this->isConnected()) {
-                        $this->sendClose($socket);
+                        $this->sendClose($connection);
                     }
-                }, false);
-            }
-        } finally {
-            $this->clear();
+                } finally {
+                    $this->clear();
+                }
+            }, false);
         }
+
+        return true;
+    }
+
+    public function isTimeout(): bool
+    {
+        return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime();
     }
 
     protected function addHeartbeat()
     {
-        $this->clear();
-        $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
+        $this->connected = true;
+        $this->timerId = Timer::tick($this->getHeartbeat(), function () {
             try {
                 if (! $this->isConnected()) {
                     return;
@@ -170,9 +181,18 @@ abstract class HeartbeatConnection implements ConnectionInterface
         });
     }
 
-    protected function isTimeout(): bool
+    /**
+     * @return int ms
+     */
+    protected function getHeartbeat(): int
     {
-        return $this->lastUseTime < microtime(true) - $this->heartbeat * 2;
+        $heartbeat = $this->pool->getOption()->getHeartbeat();
+
+        if ($heartbeat > 0) {
+            return intval($heartbeat * 1000);
+        }
+
+        return 10 * 1000;
     }
 
     protected function clear()
@@ -186,28 +206,28 @@ abstract class HeartbeatConnection implements ConnectionInterface
 
     protected function getLogger(): ?LoggerInterface
     {
-        if (ApplicationContext::hasContainer() && $container = ApplicationContext::getContainer()) {
-            if ($container->has(StdoutLoggerInterface::class)) {
-                return $container->get(StdoutLoggerInterface::class);
-            }
+        if ($this->container->has(StdoutLoggerInterface::class)) {
+            return $this->container->get(StdoutLoggerInterface::class);
         }
 
         return null;
     }
 
-    protected function heartbeat()
+    protected function heartbeat(): void
     {
     }
 
     /**
-     * Connect and return the active socket.
-     * @return mixed
+     * Send close protocol.
+     * @param $connection
      */
-    abstract protected function connect();
+    protected function sendClose($connection): void
+    {
+    }
 
     /**
-     * Send close protocol.
-     * @param $socket
+     * Connect and return the active connection.
+     * @return mixed
      */
-    abstract protected function sendClose($socket): void;
+    abstract protected function getActiveConnection();
 }

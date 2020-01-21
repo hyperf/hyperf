@@ -13,55 +13,33 @@ declare(strict_types=1);
 namespace HyperfTest\Pool\Stub;
 
 use Hyperf\Pool\HeartbeatConnection;
-use Swoole\Coroutine;
+use Hyperf\Utils\Context;
 
 class HeartbeatConnectionStub extends HeartbeatConnection
 {
-    public function getChannel(): Coroutine\Channel
+    protected $activeConnection;
+
+    public function setActiveConnection($connection)
     {
-        return $this->channel;
+        $this->activeConnection = $connection;
     }
 
-    public function getLastUseTime(): float
+    protected function getActiveConnection()
     {
-        return $this->lastUseTime;
+        return $this->activeConnection;
     }
 
-    public function getTimerId(): ?int
+    protected function sendClose($connection): void
     {
-        return $this->timerId;
+        $data = Context::get('test.pool.heartbeat_connection', []);
+        $data['close'] = 'close protocol';
+        Context::set('test.pool.heartbeat_connection', $data);
     }
 
-    public function isConnected(): bool
+    protected function heartbeat(): void
     {
-        return $this->connected;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getTimeout(): float
-    {
-        return $this->timeout;
-    }
-
-    public function getHeartbeat(): float
-    {
-        return $this->heartbeat;
-    }
-
-    public function heartbeat(): void
-    {
-        // TODO: Implement heartbeat() method.
-    }
-
-    protected function connect()
-    {
-    }
-
-    protected function sendClose($socket): void
-    {
+        $data = Context::get('test.pool.heartbeat_connection', []);
+        $data['heartbeat'] = 'heartbeat protocol';
+        Context::set('test.pool.heartbeat_connection', $data);
     }
 }
