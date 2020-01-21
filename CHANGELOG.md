@@ -1,5 +1,9 @@
 # v1.1.17 - TBD
 
+## Added
+
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
+
 ## Fixed
 
 - [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed some missing traslation of validation, like gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid.
