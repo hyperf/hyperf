@@ -1,5 +1,15 @@
 # v1.1.17 - TBD
 
+## Added
+
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command support to `hyperf\crontab`.
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
+
+## Fixed
+
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed some missing traslation of validation, like gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid.
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) Fixed `$_SERVER` has lower keys for super-globals.
+
 # v1.1.16 - 2020-01-16
 
 ## Added

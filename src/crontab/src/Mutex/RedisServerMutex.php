@@ -24,7 +24,7 @@ class RedisServerMutex implements ServerMutex
     private $redisFactory;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $macAddress;
 
