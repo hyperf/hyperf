@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 basepath=$(cd `dirname $0`; pwd)
 
@@ -9,7 +9,7 @@ if [ ! -f "composer.lock" ]; then
   exit
 fi
 
-rm -rf runtime
+rm -rf runtime/container
 
 echo "Runtime cleared"
 

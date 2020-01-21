@@ -13,16 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Server\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Swoole\Server\Port;
 
-/**
- * @Listener
- */
 class AfterWorkerStartListener implements ListenerInterface
 {
     /**

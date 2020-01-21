@@ -19,10 +19,6 @@ class PipeMessage
      */
     public $configurations;
 
-    /**
-     * PipeMessage constructor.
-     * @param array $configurations
-     */
     public function __construct(array $configurations)
     {
         $this->configurations = $configurations;

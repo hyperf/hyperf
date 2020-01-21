@@ -17,16 +17,14 @@ use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="etcd-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'etcd-config-fetcher';
+
     /**
      * @var Server
      */

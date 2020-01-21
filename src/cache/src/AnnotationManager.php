@@ -50,7 +50,7 @@ class AnnotationManager
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
-        return [$key, $ttl, $group, $annotation];
+        return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
 
     public function getCacheEvictValue(string $className, string $method, array $arguments): array
@@ -79,7 +79,7 @@ class AnnotationManager
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
-        return [$key, $ttl, $group, $annotation];
+        return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
 
     public function getFailCacheValue(string $className, string $method, array $arguments): array
@@ -93,6 +93,15 @@ class AnnotationManager
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
         return [$key, $ttl, $group, $annotation];
+    }
+
+    protected function getRandomOffset(int $offset): int
+    {
+        if ($offset > 0) {
+            return rand(0, $offset);
+        }
+
+        return 0;
     }
 
     protected function getAnnotation(string $annotation, string $className, string $method): AbstractAnnotation

@@ -28,8 +28,6 @@ class GenSeederCommand extends BaseCommand
 
     /**
      * Create a new seeder generator command instance.
-     *
-     * @param \Hyperf\Database\Seeders\SeederCreator $creator
      */
     public function __construct(SeederCreator $creator)
     {
@@ -51,8 +49,6 @@ class GenSeederCommand extends BaseCommand
 
     /**
      * Write the seeder file to disk.
-     *
-     * @param string $name
      */
     protected function writeMigration(string $name)
     {

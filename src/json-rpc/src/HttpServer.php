@@ -18,6 +18,7 @@ use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Server;
 use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -70,7 +71,7 @@ class HttpServer extends Server
 
     protected function createCoreMiddleware(): CoreMiddlewareInterface
     {
-        return new HttpCoreMiddleware($this->container, $this->protocol, $this->serverName);
+        return new HttpCoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
@@ -92,6 +93,9 @@ class HttpServer extends Server
             ->withParsedBody($content['params'] ?? null)
             ->withAttribute('data', $content ?? [])
             ->withAttribute('request_id', $content['id'] ?? null);
+
+        $this->getContext()->setData($content['context'] ?? []);
+
         Context::set(ServerRequestInterface::class, $psr7Request);
         Context::set(ResponseInterface::class, $psr7Response);
         return [$psr7Request, $psr7Response];
@@ -100,5 +104,10 @@ class HttpServer extends Server
     protected function isHealthCheck(RequestInterface $request): bool
     {
         return $request->getHeaderLine('user-agent') === 'Consul Health Check';
+    }
+
+    protected function getContext()
+    {
+        return $this->container->get(RpcContext::class);
     }
 }

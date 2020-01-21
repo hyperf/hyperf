@@ -15,11 +15,14 @@ namespace Hyperf\JsonRpc;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 class JsonRpcTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var null|LoadBalancerInterface
      */
@@ -44,31 +47,50 @@ class JsonRpcTransporter implements TransporterInterface
     private $recvTimeout = 5;
 
     /**
-     * TODO: Set config.
      * @var array
      */
-    private $config;
+    private $config = [];
+
+    public function __construct(array $config = [])
+    {
+        $this->config = array_replace_recursive($this->config, $config);
+
+        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
+        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
+    }
 
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data . $this->getEof()) === false) {
+            if ($client->send($data) === false) {
                 if ($client->errCode == 104) {
                     throw new RuntimeException('Connect to server failed.');
                 }
             }
             return $client;
         });
-        return $client->recv($this->recvTimeout);
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    public function recv()
+    {
+        $client = $this->getClient();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function getClient(): SwooleClient
     {
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['options'] ?? []);
+        $class = spl_object_hash($this) . '.Connection';
+        if (Context::has($class)) {
+            return Context::get($class);
+        }
 
-        return retry(2, function () use ($client) {
+        return Context::set($class, retry(2, function () {
+            $client = new SwooleClient(SWOOLE_SOCK_TCP);
+            $client->set($this->config['settings'] ?? []);
             $node = $this->getNode();
             $result = $client->connect($node->host, $node->port, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
@@ -77,7 +99,7 @@ class JsonRpcTransporter implements TransporterInterface
                 throw new RuntimeException('Connect to server failed.');
             }
             return $client;
-        });
+        }));
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -103,11 +125,6 @@ class JsonRpcTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
-    }
-
-    private function getEof()
-    {
-        return "\r\n";
     }
 
     /**

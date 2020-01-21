@@ -15,42 +15,38 @@ namespace Hyperf\ServiceGovernance\Listener;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class RegisterServiceListener implements ListenerInterface
 {
     /**
      * @var ConsulAgent
      */
-    private $consulAgent;
+    protected $consulAgent;
 
     /**
      * @var StdoutLoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var ServiceManager
      */
-    private $serviceManager;
+    protected $serviceManager;
 
     /**
      * @var ConfigInterface
      */
-    private $config;
+    protected $config;
 
     /**
      * @var array
      */
-    private $defaultLoggerContext
+    protected $defaultLoggerContext
         = [
             'component' => 'service-governance',
         ];
@@ -58,7 +54,7 @@ class RegisterServiceListener implements ListenerInterface
     /**
      * @var array
      */
-    private $registeredServices;
+    protected $registeredServices;
 
     public function __construct(ContainerInterface $container)
     {
@@ -111,7 +107,7 @@ class RegisterServiceListener implements ListenerInterface
         }
     }
 
-    private function publishToConsul(string $address, int $port, array $service, string $serviceName, string $path)
+    protected function publishToConsul(string $address, int $port, array $service, string $serviceName, string $path)
     {
         $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
         if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
@@ -155,7 +151,7 @@ class RegisterServiceListener implements ListenerInterface
         }
     }
 
-    private function generateId(string $name)
+    protected function generateId(string $name)
     {
         $exploded = explode('-', $name);
         $length = count($exploded);
@@ -170,7 +166,7 @@ class RegisterServiceListener implements ListenerInterface
         return implode('-', $exploded);
     }
 
-    private function getLastServiceId(string $name)
+    protected function getLastServiceId(string $name)
     {
         $maxId = -1;
         $lastService = $name;
@@ -188,7 +184,7 @@ class RegisterServiceListener implements ListenerInterface
         return $lastService['ID'] ?? $name;
     }
 
-    private function isRegistered(string $name, string $address, int $port, string $protocol): bool
+    protected function isRegistered(string $name, string $address, int $port, string $protocol): bool
     {
         if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
             return true;
@@ -219,7 +215,7 @@ class RegisterServiceListener implements ListenerInterface
         return false;
     }
 
-    private function getServers(): array
+    protected function getServers(): array
     {
         $result = [];
         $servers = $this->config->get('server.servers', []);
@@ -247,7 +243,7 @@ class RegisterServiceListener implements ListenerInterface
         return $result;
     }
 
-    private function getInternalIp(): string
+    protected function getInternalIp(): string
     {
         $ips = swoole_get_local_ip();
         if (is_array($ips)) {

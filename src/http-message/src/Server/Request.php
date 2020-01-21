@@ -64,7 +64,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     private $bodyParams;
 
     /**
-     * Load a swoole request, and transfer to a swoft request object.
+     * Load a swoole request, and transfer to a psr-7 request object.
      *
      * @return \Hyperf\HttpMessage\Server\Request
      */

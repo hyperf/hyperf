@@ -398,7 +398,10 @@ abstract class Command extends SymfonyCommand
                 }
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
+                return $exception->getCode();
             }
+
+            return 0;
         };
 
         if ($this->coroutine && ! Coroutine::inCoroutine()) {

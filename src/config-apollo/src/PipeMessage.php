@@ -38,9 +38,6 @@ class PipeMessage
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isValid(): bool
     {
         if (! $this->configurations || ! $this->releaseKey || ! $this->namespace) {

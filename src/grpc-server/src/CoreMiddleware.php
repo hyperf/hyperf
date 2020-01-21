@@ -47,6 +47,8 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $request = Context::set(ServerRequestInterface::class, $request);
+
         /** @var Dispatched $dispatched */
         $dispatched = $request->getAttribute(Dispatched::class);
 
