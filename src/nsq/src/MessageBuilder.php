@@ -72,6 +72,13 @@ class MessageBuilder
         return $command . $size . $message;
     }
 
+    public function buildAuth(string $identity): string
+    {
+        $command = "AUTH\n";
+        $size = Packer::packUInt32(strlen($identity));
+        return $command . $size . $identity;
+    }
+
     /**
      * Subscribe to a topic/channel
      * Success Response: OK

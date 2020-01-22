@@ -12,9 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Nsq\Pool;
 
+use Hyperf\Nsq\MessageBuilder;
+use Hyperf\Nsq\Subscriber;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\KeepaliveConnection;
 use Hyperf\Pool\Pool;
+use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Socket;
 
@@ -28,9 +31,15 @@ class NsqConnection extends KeepaliveConnection
         'port' => 4150,
     ];
 
+    /**
+     * @var MessageBuilder
+     */
+    protected $builder;
+
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         $this->config = array_merge($this->config, $config);
+        $this->builder = $container->get(MessageBuilder::class);
         parent::__construct($container, $pool);
     }
 
@@ -46,6 +55,21 @@ class NsqConnection extends KeepaliveConnection
 
         if ($socket->send('  V2') === false) {
             throw new ConnectionException('Nsq connect failed.');
+        }
+
+        $socket->sendAll($this->builder->buildIdentify());
+
+        $reader = new Subscriber($socket);
+        $reader->recv();
+
+        if (! $reader->isOk()) {
+            $result = $reader->getJsonPayload();
+            if (Arr::get($result, 'auth_required') === true) {
+                $socket->sendAll($this->builder->buildAuth($this->config['auth']));
+
+                $reader = new Subscriber($socket);
+                $reader->recv();
+            }
         }
 
         return $socket;

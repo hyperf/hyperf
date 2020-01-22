@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Nsq;
 
+use Hyperf\Utils\Codec\Json;
 use Swoole\Coroutine\Socket;
 
 class Subscriber
@@ -60,6 +61,16 @@ class Subscriber
     public function getMessage(): Message
     {
         return new Message($this->payload);
+    }
+
+    public function getPayload(): string
+    {
+        return $this->payload;
+    }
+
+    public function getJsonPayload(): array
+    {
+        return Json::decode($this->payload);
     }
 
     public function isMessage()
