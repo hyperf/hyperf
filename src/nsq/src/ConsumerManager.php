@@ -104,7 +104,7 @@ class ConsumerManager
                         try {
                             $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
                             $result = $this->consumer->consume($data);
-                            $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
+                            $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
                         } catch (\Throwable $throwable) {
                             $result = Result::DROP;
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));

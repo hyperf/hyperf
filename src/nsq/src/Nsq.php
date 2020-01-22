@@ -63,7 +63,7 @@ class Nsq
     }
 
     /**
-     * @param string[]|string $message
+     * @param string|string[] $message
      * @throws \Throwable
      */
     public function publish(string $topic, $message, float $deferTime = 0.0): bool

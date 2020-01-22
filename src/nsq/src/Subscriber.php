@@ -50,7 +50,7 @@ class Subscriber
     public function recv()
     {
         $data = $this->socket->recv(8);
-        $this->size = sprintf('%u', unpack('N', substr($data, 0, 4))[1]);
+        $this->size = (int) sprintf('%u', unpack('N', substr($data, 0, 4))[1]);
         $this->type = sprintf('%u', unpack('N', substr($data, 4, 4))[1]);
         $data = $this->socket->recv($this->size - 4);
         $this->payload = Packer::unpackString($data);

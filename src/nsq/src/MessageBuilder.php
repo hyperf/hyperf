@@ -19,7 +19,6 @@ use Jean85\PrettyVersions;
  */
 class MessageBuilder
 {
-
     /**
      * Publish a message to a topic
      * Success Response: OK

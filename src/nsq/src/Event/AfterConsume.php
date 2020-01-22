@@ -12,6 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\Nsq\Event;
 
+use Hyperf\Nsq\AbstractConsumer;
+
 class AfterConsume extends Consume
 {
+    /**
+     * @var string
+     */
+    protected $result;
+
+    public function __construct(AbstractConsumer $consumer, $data, string $result)
+    {
+        parent::__construct($consumer, $data);
+
+        $this->result = $result;
+    }
 }
