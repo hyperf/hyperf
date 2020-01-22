@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Nsq;
 
 use Closure;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nsq\Exception\SocketSendException;
 use Hyperf\Nsq\Pool\NsqConnection;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
@@ -27,6 +28,9 @@ class Nsq
      */
     protected $socket;
 
+    /**
+     * @var Packer
+     */
     protected $packer;
 
     /**
@@ -44,12 +48,18 @@ class Nsq
      */
     protected $builder;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container, string $pool = 'default')
     {
         $this->container = $container;
         $this->pool = $container->get(NsqPoolFactory::class)->getPool($pool);
         $this->builder = $container->get(MessageBuilder::class);
         $this->packer = $container->get(Packer::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     public function publish($topic, $message)
@@ -77,12 +87,20 @@ class Nsq
                         $socket->sendAll("NOP\n");
                     } else {
                         $message = $reader->getMessage();
+                        $result = null;
                         try {
-                            $callback($message);
+                            $result = $callback($message);
                         } catch (\Throwable $throwable) {
+                            $result = Result::DROP;
+                            $this->logger->error('Subscribe failed, ' . (string) $throwable);
+                        }
+
+                        if ($result === Result::REQUEUE) {
                             $socket->sendAll($this->builder->buildTouch($message->getMessageId()));
                             $socket->sendAll($this->builder->buildReq($message->getMessageId()));
+                            return;
                         }
+
                         $socket->sendAll($this->builder->buildFin($message->getMessageId()));
                     }
                 }
