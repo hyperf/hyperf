@@ -100,13 +100,17 @@ class ConsumerManager
                     $this->consumer->getTopic(),
                     $this->consumer->getChannel(),
                     function ($data) {
+                        $result = null;
                         try {
                             $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
-                            $this->consumer->consume($data);
+                            $result = $this->consumer->consume($data);
                             $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
                         } catch (\Throwable $throwable) {
+                            $result = Result::DROP;
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                         }
+
+                        return $result;
                     }
                 );
 

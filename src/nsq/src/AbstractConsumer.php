@@ -51,7 +51,7 @@ abstract class AbstractConsumer
         $this->container = $container;
     }
 
-    abstract public function consume(Message $message);
+    abstract public function consume(Message $payload): ?string;
 
     public function getTopic(): string
     {

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Nsq;
 
 use Closure;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nsq\Exception\SocketSendException;
 use Hyperf\Nsq\Pool\NsqConnection;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
@@ -26,6 +27,11 @@ class Nsq
      * @var \Swoole\Coroutine\Socket
      */
     protected $socket;
+
+    /**
+     * @var Packer
+     */
+    protected $packer;
 
     /**
      * @var ContainerInterface
@@ -42,22 +48,43 @@ class Nsq
      */
     protected $builder;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container, string $pool = 'default')
     {
         $this->container = $container;
         $this->pool = $container->get(NsqPoolFactory::class)->getPool($pool);
         $this->builder = $container->get(MessageBuilder::class);
+        $this->packer = $container->get(Packer::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function publish(string $topic, string $message): bool
+    /**
+     * @param array<string>|string $message
+     * @throws \Throwable
+     */
+    public function publish(string $topic, $message, float $deferTime = 0.0): bool
     {
-        $payload = $this->builder->buildPub($topic, $message);
-        return $this->call(function (Socket $socket) use ($payload) {
-            if ($socket->send($payload) === false) {
-                throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+        if (is_array($message)) {
+            if ($deferTime > 0) {
+                foreach ($message as $value) {
+                    $this->sendDPub($topic, $value, $deferTime);
+                }
+
+                return true;
             }
-            return true;
-        });
+
+            return $this->sendMPub($topic, $message);
+        }
+
+        if ($deferTime > 0) {
+            return $this->sendDPub($topic, $message, $deferTime);
+        }
+
+        return $this->sendPub($topic, $message);
     }
 
     public function subscribe(string $topic, string $channel, callable $callback): void
@@ -75,17 +102,58 @@ class Nsq
                         $socket->sendAll($this->builder->buildNop());
                     } else {
                         $message = $reader->getMessage();
+                        $result = null;
                         try {
-                            $callback($message);
+                            $result = $callback($message);
                         } catch (\Throwable $throwable) {
+                            $result = Result::DROP;
+                            $this->logger->error('Subscribe failed, ' . (string) $throwable);
+                        }
+
+                        if ($result === Result::REQUEUE) {
                             $socket->sendAll($this->builder->buildTouch($message->getMessageId()));
                             $socket->sendAll($this->builder->buildReq($message->getMessageId()));
+                            return;
                         }
+
                         $socket->sendAll($this->builder->buildFin($message->getMessageId()));
                     }
                 }
             });
         }
+    }
+
+    protected function sendMPub(string $topic, array $messages): bool
+    {
+        $payload = $this->builder->buildMPub($topic, $messages);
+        return $this->call(function (Socket $socket) use ($payload) {
+            if ($socket->send($payload) === false) {
+                throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+            }
+            return true;
+        });
+    }
+
+    protected function sendPub(string $topic, string $message): bool
+    {
+        $payload = $this->builder->buildPub($topic, $message);
+        return $this->call(function (Socket $socket) use ($payload) {
+            if ($socket->send($payload) === false) {
+                throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+            }
+            return true;
+        });
+    }
+
+    protected function sendDPub(string $topic, string $message, float $deferTime = 0.0): bool
+    {
+        $payload = $this->builder->buildDPub($topic, $message, intval($deferTime * 1000));
+        return $this->call(function (Socket $socket) use ($payload) {
+            if ($socket->send($payload) === false) {
+                throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+            }
+            return true;
+        });
     }
 
     protected function call(Closure $closure)
