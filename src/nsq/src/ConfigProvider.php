@@ -12,11 +12,16 @@ declare(strict_types=1);
 
 namespace Hyperf\Nsq;
 
+use Hyperf\Nsq\Listener\BeforeMainServerStartListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'listeners' => [
+                BeforeMainServerStartListener::class => 99,
+            ],
             'publish' => [
                 [
                     'id' => 'config',
