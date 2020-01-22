@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Nsq\AbstractConsumer;
+use Hyperf\Nsq\Annotation\Consumer;
+use Hyperf\Nsq\Message;
+
+/**
+ * @Consumer(topic="hyperf", channel="hyperf", name ="%CLASS%", nums=1)
+ */
+class %CLASS% extends AbstractConsumer
+{
+    public function consume(Message $payload)
+    {
+        var_dump($payload->getBody());
+    }
+}
