@@ -105,6 +105,7 @@ class Nsq
     protected function sendSub(string $topic, string $channel): void
     {
         $this->call(function (Socket $socket) use ($topic, $channel) {
+            $socket->sendAll($this->builder->buildIdentify());
             $result = $socket->sendAll($this->builder->buildSub($topic, $channel));
             if ($result === false) {
                 throw new SocketSendException('SUB send failed, the errorCode is ' . $socket->errCode);

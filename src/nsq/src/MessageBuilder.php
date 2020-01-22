@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Nsq;
 
+use Jean85\PrettyVersions;
+
 /**
  * NSQ Protocol https://nsq.io/clients/tcp_protocol_spec.html.
  */
 class MessageBuilder
 {
+
     /**
      * Publish a message to a topic
      * Success Response: OK
@@ -142,5 +145,25 @@ class MessageBuilder
     public function buildCls(): string
     {
         return "CLS\n";
+    }
+
+    public function buildIdentify(): string
+    {
+        $command = "IDENTIFY\n";
+        $version = PrettyVersions::getVersion('hyperf/nsq') ?? '1.0';
+        $hostname = value(function () {
+            $ip = gethostbyname(gethostname());
+            if (is_string($ip)) {
+                return $ip;
+            }
+            return 'consumer-' . rand(0, 9999);
+        });
+        $message = json_encode([
+            'hostname' => $hostname,
+            'user_agent' => 'hyperf-nsq/' . $version,
+            'feature_negotiation' => true,
+        ]);
+        $size = Packer::packUInt32(strlen($message));
+        return $command . $size . $message;
     }
 }
