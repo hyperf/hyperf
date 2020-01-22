@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Timer;
 
-abstract class HeartbeatConnection implements ConnectionInterface
+abstract class KeepaliveConnection implements ConnectionInterface
 {
     /**
      * @var ContainerInterface

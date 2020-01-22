@@ -17,8 +17,8 @@ use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
-use HyperfTest\Pool\Stub\HeartbeatConnectionStub;
 use HyperfTest\Pool\Stub\HeartbeatPoolStub;
+use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Timer;
@@ -42,7 +42,7 @@ class HeartbeatConnectionTest extends TestCase
         $pool = $container->get(HeartbeatPoolStub::class);
         $connection = $pool->get();
 
-        $this->assertInstanceOf(HeartbeatConnectionStub::class, $connection);
+        $this->assertInstanceOf(KeepaliveConnectionStub::class, $connection);
         $this->assertSame(1, $pool->getCurrentConnections());
         $this->assertSame(0, $pool->getConnectionsInChannel());
 
@@ -62,7 +62,7 @@ class HeartbeatConnectionTest extends TestCase
     {
         $container = $this->getContainer();
         $pool = $container->get(HeartbeatPoolStub::class);
-        /** @var HeartbeatConnectionStub $connection */
+        /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->setActiveConnection($conn = new class() {
             public function send(string $data)
@@ -82,7 +82,7 @@ class HeartbeatConnectionTest extends TestCase
     {
         $container = $this->getContainer();
         $pool = $container->get(HeartbeatPoolStub::class);
-        /** @var HeartbeatConnectionStub $connection */
+        /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->reconnect();
         $this->assertSame(1, count(Timer::list()));
@@ -97,7 +97,7 @@ class HeartbeatConnectionTest extends TestCase
     {
         $container = $this->getContainer();
         $pool = $container->get(HeartbeatPoolStub::class);
-        /** @var HeartbeatConnectionStub $connection */
+        /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->reconnect();
         $connection->release();

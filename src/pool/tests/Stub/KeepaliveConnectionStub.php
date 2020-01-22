@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Pool\Stub;
 
-use Hyperf\Pool\HeartbeatConnection;
+use Hyperf\Pool\KeepaliveConnection;
 use Hyperf\Utils\Context;
 
-class HeartbeatConnectionStub extends HeartbeatConnection
+class KeepaliveConnectionStub extends KeepaliveConnection
 {
     protected $activeConnection;
 

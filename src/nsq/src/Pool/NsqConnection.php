@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Pool\Exception\ConnectionException;
-use Hyperf\Pool\HeartbeatConnection;
+use Hyperf\Pool\KeepaliveConnection;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Socket;
 
-class NsqConnection extends HeartbeatConnection
+class NsqConnection extends KeepaliveConnection
 {
     /**
      * @var array

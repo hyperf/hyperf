@@ -19,6 +19,6 @@ class HeartbeatPoolStub extends Pool
 {
     protected function createConnection(): ConnectionInterface
     {
-        return new HeartbeatConnectionStub($this->container, $this);
+        return new KeepaliveConnectionStub($this->container, $this);
     }
 }
