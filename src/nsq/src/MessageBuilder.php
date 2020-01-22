@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Nsq;
@@ -39,22 +39,21 @@ class MessageBuilder
 
     public function buildRdy(int $count): string
     {
-        return "RDY $count \n";
+        return "RDY {$count} \n";
     }
 
     public function buildTouch($id): string
     {
-        return "TOUCH $id\n";
+        return "TOUCH {$id}\n";
     }
 
     public function buildFin($id): string
     {
-        return "FIN $id\n";
+        return "FIN {$id}\n";
     }
 
     public function buildReq($id, $timeout = 1): string
     {
-        return "REQ $id $timeout\n";
+        return "REQ {$id} {$timeout}\n";
     }
-
 }

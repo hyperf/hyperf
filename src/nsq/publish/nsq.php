@@ -10,12 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Nsq;
-
-class Packer
-{
-    public function packUInt32($int)
-    {
-        return pack('N', $int);
-    }
-}
+return [
+    'default' => [
+        'host' => '127.0.0.1',
+        'port' => 4150,
+    ],
+];

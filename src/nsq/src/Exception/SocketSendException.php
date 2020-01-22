@@ -10,12 +10,10 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Nsq;
+namespace Hyperf\Nsq\Exception;
 
-class Packer
+use RuntimeException;
+
+class SocketSendException extends RuntimeException
 {
-    public function packUInt32($int)
-    {
-        return pack('N', $int);
-    }
 }

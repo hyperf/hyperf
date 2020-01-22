@@ -16,6 +16,15 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        return [];
+        return [
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for nsq.',
+                    'source' => __DIR__ . '/../publish/nsq.php',
+                    'destination' => BASE_PATH . '/config/autoload/nsq.php',
+                ],
+            ],
+        ];
     }
 }

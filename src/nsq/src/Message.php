@@ -1,11 +1,19 @@
 <?php
 
-namespace Hyperf\Nsq;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
+namespace Hyperf\Nsq;
 
 class Message
 {
-
     protected $timestamp;
 
     protected $attempts;
@@ -20,17 +28,6 @@ class Message
         $this->attempts = unpack('v', substr($decode, 8, 2));
         $this->messageId = $this->decodeString(substr($decode, 10, 16));
         $this->body = $this->decodeString(substr($decode, 26));
-    }
-
-    protected function decodeString($content)
-    {
-        $size = strlen($content);
-        $bytes = unpack("c{$size}chars", $content);
-        $string = '';
-        foreach ($bytes as $byte) {
-            $string .= chr($byte);
-        }
-        return $string;
     }
 
     public function getTimestamp()
@@ -77,4 +74,14 @@ class Message
         return $this;
     }
 
+    protected function decodeString($content)
+    {
+        $size = strlen($content);
+        $bytes = unpack("c{$size}chars", $content);
+        $string = '';
+        foreach ($bytes as $byte) {
+            $string .= chr($byte);
+        }
+        return $string;
+    }
 }
