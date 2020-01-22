@@ -66,25 +66,25 @@ class Nsq
      * @param array<string>|string $message
      * @throws \Throwable
      */
-    public function publish(string $topic, $message, int $deferTime = 0): bool
+    public function publish(string $topic, $message, float $deferTime = 0.0): bool
     {
         if (is_array($message)) {
-            if ($deferTime === 0) {
-                return $this->sendMPub($topic, $message);
+            if ($deferTime > 0) {
+                foreach ($message as $value) {
+                    $this->sendDPub($topic, $value, $deferTime);
+                }
+
+                return true;
             }
 
-            foreach ($message as $value) {
-                $this->sendDPub($topic, $value, $deferTime);
-            }
-
-            return true;
+            return $this->sendMPub($topic, $message);
         }
 
-        if ($deferTime === 0) {
-            return $this->sendPub($topic, $message);
+        if ($deferTime > 0) {
+            return $this->sendDPub($topic, $message, $deferTime);
         }
 
-        return $this->sendDPub($topic, $message, $deferTime);
+        return $this->sendPub($topic, $message);
     }
 
     public function subscribe(string $topic, string $channel, callable $callback): void
@@ -145,9 +145,9 @@ class Nsq
         });
     }
 
-    protected function sendDPub(string $topic, string $message, int $deferTime = 0): bool
+    protected function sendDPub(string $topic, string $message, float $deferTime = 0.0): bool
     {
-        $payload = $this->builder->buildDPub($topic, $message, $deferTime);
+        $payload = $this->builder->buildDPub($topic, $message, intval($deferTime * 1000));
         return $this->call(function (Socket $socket) use ($payload) {
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
