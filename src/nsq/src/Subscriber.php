@@ -42,24 +42,18 @@ class Subscriber
      */
     protected $payload;
 
-    /**
-     * @var \Hyperf\Nsq\Packer
-     */
-    protected $packer;
-
-    public function __construct(Socket $socket, Packer $packer)
+    public function __construct(Socket $socket)
     {
         $this->socket = $socket;
-        $this->packer = $packer;
     }
 
     public function recv()
     {
         $data = $this->socket->recv(8);
-        $this->size = unpack('N', substr($data, 0, 4))[1];
-        $this->type = unpack('N', substr($data, 4, 4))[1];
+        $this->size = sprintf("%u", unpack('N', substr($data, 0, 4))[1]);
+        $this->type = sprintf("%u", unpack('N', substr($data, 4, 4))[1]);
         $data = $this->socket->recv($this->size - 4);
-        $this->payload = $this->readString($data);
+        $this->payload = Packer::unpackString($data);
         return $this;
     }
 
@@ -86,13 +80,5 @@ class Subscriber
     private function isMatchResponse($response): bool
     {
         return ! is_null($this->payload) && $this->type == self::TYPE_RESPONSE && $response === $this->payload;
-    }
-
-    private function readString($content)
-    {
-        $size = strlen($content);
-        $bytes = unpack("c{$size}chars", $content);
-
-        return implode(array_map('chr', $bytes));
     }
 }

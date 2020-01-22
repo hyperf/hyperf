@@ -22,12 +22,12 @@ class Message
 
     protected $body;
 
-    public function __construct($decode)
+    public function __construct(string $payload)
     {
-        $this->timestamp = unpack('q', substr($decode, 0, 8));
-        $this->attempts = unpack('v', substr($decode, 8, 2));
-        $this->messageId = $this->decodeString(substr($decode, 10, 16));
-        $this->body = $this->decodeString(substr($decode, 26));
+        $this->timestamp = Packer::unpackInt64(substr($payload, 0, 8));
+        $this->attempts = Packer::unpackUInt16(substr($payload, 8, 2));
+        $this->messageId = Packer::unpackString(substr($payload, 10, 16));
+        $this->body = Packer::unpackString(substr($payload, 26));
     }
 
     public function getTimestamp()
@@ -72,16 +72,5 @@ class Message
     {
         $this->body = $body;
         return $this;
-    }
-
-    protected function decodeString($content)
-    {
-        $size = strlen($content);
-        $bytes = unpack("c{$size}chars", $content);
-        $string = '';
-        foreach ($bytes as $byte) {
-            $string .= chr($byte);
-        }
-        return $string;
     }
 }

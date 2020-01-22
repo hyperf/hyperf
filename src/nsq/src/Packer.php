@@ -14,8 +14,29 @@ namespace Hyperf\Nsq;
 
 class Packer
 {
-    public function packUInt32($int)
+    public static function packUInt32($int)
     {
         return pack('N', $int);
+    }
+
+    public static function unpackInt64($int)
+    {
+        return unpack('q', $int);
+    }
+
+    public static function unpackUInt16($int)
+    {
+        return unpack('v', $int);
+    }
+
+    public static function unpackString(string $content): string
+    {
+        $size = strlen($content);
+        $bytes = unpack("c{$size}chars", $content);
+        $string = '';
+        foreach ($bytes as $byte) {
+            $string .= chr($byte);
+        }
+        return $string;
     }
 }
