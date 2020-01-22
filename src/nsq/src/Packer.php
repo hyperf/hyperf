@@ -21,12 +21,12 @@ class Packer
 
     public static function unpackInt64($int)
     {
-        return unpack('q', $int);
+        return unpack('q', $int)[1];
     }
 
     public static function unpackUInt16($int)
     {
-        return unpack('v', $int);
+        return unpack('v', $int)[1];
     }
 
     public static function unpackString(string $content): string
