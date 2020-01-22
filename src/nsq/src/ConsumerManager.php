@@ -95,25 +95,22 @@ class ConsumerManager
 
             public function handle(): void
             {
-                while (true) {
-                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
-                    $this->subscriber->subscribe(
-                        $this->consumer->getTopic(),
-                        $this->consumer->getChannel(),
-                        function ($data) {
-                            try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
-                                $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
-                            } catch (\Throwable $throwable) {
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
-                            }
+                $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                $this->subscriber->subscribe(
+                    $this->consumer->getTopic(),
+                    $this->consumer->getChannel(),
+                    function ($data) {
+                        try {
+                            $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                            $this->consumer->consume($data);
+                            $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
+                        } catch (\Throwable $throwable) {
+                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                         }
-                    );
+                    }
+                );
 
-                    $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
-                    sleep(1);
-                }
+                $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
             }
         };
     }
