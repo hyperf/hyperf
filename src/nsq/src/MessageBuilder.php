@@ -14,46 +14,42 @@ namespace Hyperf\Nsq;
 
 class MessageBuilder
 {
-    /**
-     * @var \Hyperf\Nsq\Packer
-     */
-    protected $packer;
 
-    public function __construct(Packer $packer)
+    public function buildPub(string $topic, string $message): string
     {
-        $this->packer = $packer;
-    }
-
-    public function buildPub($topic, $message): string
-    {
-        $cmd = "PUB {$topic} \n";
-        $size = $this->packer->packUInt32(strlen($message));
+        $cmd = "PUB {$topic}\n";
+        $size = Packer::packUInt32(strlen($message));
 
         return $cmd . $size . $message;
     }
 
-    public function buildSub($topic, $channel): string
+    public function buildSub(string $topic, string $channel): string
     {
-        return "SUB {$topic} {$channel} \n";
+        return "SUB {$topic} {$channel}\n";
     }
 
     public function buildRdy(int $count): string
     {
-        return "RDY {$count} \n";
+        return "RDY {$count}\n";
     }
 
-    public function buildTouch($id): string
+    public function buildTouch(string $id): string
     {
         return "TOUCH {$id}\n";
     }
 
-    public function buildFin($id): string
+    public function buildFin(string $id): string
     {
         return "FIN {$id}\n";
     }
 
-    public function buildReq($id, $timeout = 1): string
+    public function buildReq(string $id, int $timeout = 1): string
     {
         return "REQ {$id} {$timeout}\n";
+    }
+
+    public function buildNop(): string
+    {
+        return "NOP\n";
     }
 }

@@ -62,29 +62,30 @@ class Nsq
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function publish($topic, $message)
+    public function publish(string $topic, string $message): bool
     {
         $payload = $this->builder->buildPub($topic, $message);
-        $this->call(function (Socket $socket) use ($payload) {
+        return $this->call(function (Socket $socket) use ($payload) {
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
+            return true;
         });
     }
 
-    public function subscribe(string $topic, string $channel, callable $callback)
+    public function subscribe(string $topic, string $channel, callable $callback): void
     {
         $this->sendSub($topic, $channel);
         $this->sendRdy();
 
         while ($this->sendRdy()) {
             $this->call(function (Socket $socket) use ($callback) {
-                $reader = new Subscriber($socket, $this->packer);
+                $reader = new Subscriber($socket);
                 $reader->recv();
 
                 if ($reader->isMessage()) {
                     if ($reader->isHeartbeat()) {
-                        $socket->sendAll("NOP\n");
+                        $socket->sendAll($this->builder->buildNop());
                     } else {
                         $message = $reader->getMessage();
                         $result = null;
@@ -122,7 +123,7 @@ class Nsq
         }
     }
 
-    protected function sendSub(string $topic, string $channel)
+    protected function sendSub(string $topic, string $channel): void
     {
         $this->call(function (Socket $socket) use ($topic, $channel) {
             $result = $socket->sendAll($this->builder->buildSub($topic, $channel));
