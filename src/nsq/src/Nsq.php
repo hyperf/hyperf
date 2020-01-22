@@ -63,7 +63,7 @@ class Nsq
     }
 
     /**
-     * @param array<string>|string $message
+     * @param string[]|string $message
      * @throws \Throwable
      */
     public function publish(string $topic, $message, float $deferTime = 0.0): bool
@@ -73,7 +73,6 @@ class Nsq
                 foreach ($message as $value) {
                     $this->sendDPub($topic, $value, $deferTime);
                 }
-
                 return true;
             }
 
@@ -90,7 +89,6 @@ class Nsq
     public function subscribe(string $topic, string $channel, callable $callback): void
     {
         $this->sendSub($topic, $channel);
-        $this->sendRdy();
 
         while ($this->sendRdy()) {
             $this->call(function (Socket $socket) use ($callback) {
