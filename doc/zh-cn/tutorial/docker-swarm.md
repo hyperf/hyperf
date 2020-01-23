@@ -16,6 +16,8 @@ ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 
 ### 配置代理
 
+[加速器文档](https://help.aliyun.com/document_detail/60750.html)
+
 可以到 `Aliyun` 上申请 `Docker` 加速器，然后配置到服务器上，修改 `/etc/docker/daemon.json` 文件，添加以下内容，然后重启 `Docker`。
 
 ```json
