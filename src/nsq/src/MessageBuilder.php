@@ -19,6 +19,16 @@ use Jean85\PrettyVersions;
  */
 class MessageBuilder
 {
+
+    /**
+     * After connecting, a client must send a 4-byte “magic” identifier
+     * indicating what version of the protocol they will be communicating.
+     */
+    public function buildMagic(): string
+    {
+        return '  V2';
+    }
+
     /**
      * Publish a message to a topic
      * Success Response: OK

@@ -53,7 +53,7 @@ class NsqConnection extends KeepaliveConnection
             throw new ConnectionException('Nsq connect failed.');
         }
 
-        if ($socket->send('  V2') === false) {
+        if ($socket->send($this->builder->buildMagic()) === false) {
             throw new ConnectionException('Nsq connect failed.');
         }
 
@@ -74,4 +74,15 @@ class NsqConnection extends KeepaliveConnection
 
         return $socket;
     }
+
+    protected function sendClose($connection): void
+    {
+        try {
+            $connection->send($this->builder->buildCls());
+        } catch (\Throwable $throwable) {
+            // Do nothing
+        }
+    }
+
+
 }
