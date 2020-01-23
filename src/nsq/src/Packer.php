@@ -19,6 +19,11 @@ class Packer
         return pack('N', $int);
     }
 
+    public static function unpackUInt32($int)
+    {
+        return unpack('N', $int);
+    }
+
     public static function unpackInt64($int)
     {
         return unpack('q', $int)[1];
@@ -26,7 +31,7 @@ class Packer
 
     public static function unpackUInt16($int)
     {
-        return unpack('v', $int)[1];
+        return unpack('n', $int)[1];
     }
 
     public static function unpackString(string $content): string

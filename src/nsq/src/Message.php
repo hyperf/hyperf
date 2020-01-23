@@ -24,7 +24,10 @@ class Message
 
     public function __construct(string $payload)
     {
-        $this->timestamp = Packer::unpackInt64(substr($payload, 0, 8));
+        // u16int to u32int
+        $left = sprintf("%u", Packer::unpackUInt32(substr($payload, 0, 4))[1]);
+        $right = sprintf("%u", Packer::unpackUInt32(substr($payload, 4, 4))[1]);
+        $this->timestamp = bcadd(bcmul($left, '4294967296' ), $right);
         $this->attempts = Packer::unpackUInt16(substr($payload, 8, 2));
         $this->messageId = Packer::unpackString(substr($payload, 10, 16));
         $this->body = Packer::unpackString(substr($payload, 26));
