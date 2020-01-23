@@ -29,11 +29,6 @@ class Nsq
     protected $socket;
 
     /**
-     * @var Packer
-     */
-    protected $packer;
-
-    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -58,7 +53,6 @@ class Nsq
         $this->container = $container;
         $this->pool = $container->get(NsqPoolFactory::class)->getPool($pool);
         $this->builder = $container->get(MessageBuilder::class);
-        $this->packer = $container->get(Packer::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
