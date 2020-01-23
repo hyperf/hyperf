@@ -19,7 +19,7 @@ abstract class AbstractConsumer
     /**
      * @var string
      */
-    public $pool = 'default';
+    protected $pool = 'default';
 
     /**
      * @var string

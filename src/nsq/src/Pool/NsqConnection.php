@@ -83,6 +83,4 @@ class NsqConnection extends KeepaliveConnection
             // Do nothing
         }
     }
-
-
 }

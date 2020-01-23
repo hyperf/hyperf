@@ -19,7 +19,6 @@ use Jean85\PrettyVersions;
  */
 class MessageBuilder
 {
-
     /**
      * After connecting, a client must send a 4-byte “magic” identifier
      * indicating what version of the protocol they will be communicating.

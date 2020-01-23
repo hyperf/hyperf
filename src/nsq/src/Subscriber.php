@@ -60,7 +60,7 @@ class Subscriber
 
     public function getMessage(): Message
     {
-        return new Message($this->payload);
+        return new Message($this->getPayload());
     }
 
     public function getPayload(): string
@@ -70,26 +70,26 @@ class Subscriber
 
     public function getJsonPayload(): array
     {
-        return Json::decode($this->payload);
+        return Json::decode($this->getPayload());
     }
 
-    public function isMessage()
+    public function isMessage(): bool
     {
-        return $this->type == self::TYPE_MESSAGE;
+        return (int) $this->type === self::TYPE_MESSAGE;
     }
 
-    public function isHeartbeat()
+    public function isHeartbeat(): bool
     {
         return $this->isMatchResponse('_heartbeat_');
     }
 
-    public function isOk()
+    public function isOk(): bool
     {
         return $this->isMatchResponse('OK');
     }
 
     private function isMatchResponse($response): bool
     {
-        return ! is_null($this->payload) && $this->type == self::TYPE_RESPONSE && $response === $this->payload;
+        return ! is_null($this->getPayload()) && (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
     }
 }
