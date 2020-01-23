@@ -1,6 +1,6 @@
 # Docker Swarm 集群搭建
 
-现阶段，Docker 容器技术已经相当成熟，就算是中小型公司也可以基于 Gitlab、Aliyun 镜像服务、Docker Swarm 轻松搭建自己的 Docker 集群服务。
+现阶段，Docker 容器技术已经相当成熟，就算是中小型公司，也可以基于 Gitlab、Aliyun 镜像服务 和 Docker Swarm 轻松搭建自己的 Docker 集群服务。
 
 ## 安装 Docker
 
@@ -16,9 +16,7 @@ ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 
 ### 配置代理
 
-[加速器文档](https://help.aliyun.com/document_detail/60750.html)
-
-可以到 `Aliyun` 上申请 `Docker` 加速器，然后配置到服务器上，修改 `/etc/docker/daemon.json` 文件，添加以下内容，然后重启 `Docker`。
+基于跨国线路访问速度过慢等问题，我们可以为 Docker 配置代理镜像地址，如 [阿里云(Aliyun) Docker 镜像加速器](https://help.aliyun.com/document_detail/60750.html)，我们可以申请一个 `Docker` 加速器，然后配置到服务器上的 `/etc/docker/daemon.json` 文件，添加以下内容，然后重启 `Docker`，下面的地址请填写您自己获得的加速器地址。
 
 ```json
 {"registry-mirrors": ["https://xxxxx.mirror.aliyuncs.com"]}
