@@ -20,23 +20,24 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {
     /**
      * @var ConfigInterface
      */
-    private $config;
+    protected $config;
 
     /**
      * @var StdoutLoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var \Hyperf\ConfigApollo\ClientInterface
      */
-    private $client;
+    protected $client;
 
     public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger, ClientInterface $client)
     {
@@ -52,6 +53,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipMessage::class,
         ];
     }
 
@@ -61,7 +63,7 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;
 
@@ -86,7 +88,7 @@ class OnPipeMessageListener implements ListenerInterface
         }
     }
 
-    private function formatValue($value)
+    protected function formatValue($value)
     {
         if (! $this->config->get('apollo.strict_mode', false)) {
             return $value;
