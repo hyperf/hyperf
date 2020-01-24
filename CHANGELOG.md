@@ -1,7 +1,10 @@
-# v1.1.17 - TBD
+# v1.1.18 - TBD
+
+# v1.1.17 - 2020-01-24
 
 ## Added
 
+- [#1292](https://github.com/hyperf/hyperf/pull/1292) Added ForeignKeyDefinition.
 - [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command support to `hyperf\crontab`.
 - [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
 
