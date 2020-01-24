@@ -7,6 +7,7 @@
 - [#1292](https://github.com/hyperf/hyperf/pull/1292) Added ForeignKeyDefinition.
 - [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command support to `hyperf\crontab`.
 - [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) Added nsq component.
 
 ## Fixed
 
