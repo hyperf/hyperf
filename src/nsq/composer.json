@@ -12,6 +12,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "ext-bcmath": "*",
         "hyperf/contract": "~1.1.0",
         "hyperf/utils": "~1.1.0",
         "jean85/pretty-package-versions": "^1.2"

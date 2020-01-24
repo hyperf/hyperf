@@ -14,12 +14,24 @@ namespace Hyperf\Nsq;
 
 class Message
 {
+    /**
+     * @var string nanosecond
+     */
     protected $timestamp;
 
+    /**
+     * @var int
+     */
     protected $attempts;
 
+    /**
+     * @var string
+     */
     protected $messageId;
 
+    /**
+     * @var string
+     */
     protected $body;
 
     public function __construct(string $payload)
