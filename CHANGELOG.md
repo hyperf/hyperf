@@ -4,10 +4,11 @@
 
 ## Added
 
+- [#1288](https://github.com/hyperf/hyperf/pull/1288) Added driver object into `Hyperf\AsyncQueue\Event\QueueLength` event as the first parameter
 - [#1292](https://github.com/hyperf/hyperf/pull/1292) Added ForeignKeyDefinition.
-- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command support to `hyperf\crontab`.
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command mode support to `hyperf\crontab`.
 - [#1315](https://github.com/hyperf/hyperf/pull/1315) Added the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
-- [#1321](https://github.com/hyperf/hyperf/pull/1321) Added nsq component.
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) Added [hyperf/nsq](https://github.com/hyperf/nsq) component, [NSQ](https://nsq.io) is a realtime distributed messaging platform.
 
 ## Fixed
 
