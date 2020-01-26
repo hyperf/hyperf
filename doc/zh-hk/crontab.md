@@ -47,7 +47,16 @@ return [
     'enable' => true,
     // 通過配置文件定義的定時任務
     'crontab' => [
+        // Callback類型定時任務（默認）
         (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('這是一個示例的定時任務'),
+        // Command類型定時任務
+        (new Crontab())->setType('command')->setName('Bar')->setRule('* * * * *')->setCallback([
+            'command' => 'swiftmailer:spool:send',
+            // (optional) arguments
+            'fooArgument' => 'barValue',
+            // (optional) options
+            '--message-limit' => 1,
+        ]),
     ],
 ];
 ```
