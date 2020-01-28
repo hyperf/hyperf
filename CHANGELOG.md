@@ -1,5 +1,9 @@
 # v1.1.18 - TBD
 
+## Optimized
+
+- [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server Handle HEAD request automatically, now will not response the body on HEAD request.
+
 # v1.1.17 - 2020-01-24
 
 ## Added
