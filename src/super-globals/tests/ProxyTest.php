@@ -114,12 +114,16 @@ class ProxyTest extends TestCase
         ]);
         $request->shouldReceive('getHeaders')->andReturn([
             'X-Token' => $token = uniqid(),
+            'host' => ['hyperf.io'],
+            'x-forwarded-for' => ['127.0.0.1'],
         ]);
         Context::set(ServerRequestInterface::class, $request);
         $proxy = new Server([]);
 
-        $this->assertSame($name, $proxy['server_name']);
+        $this->assertSame($name, $proxy['SERVER_NAME']);
         $this->assertSame($token, $proxy['HTTP_X_TOKEN']);
+        $this->assertSame('127.0.0.1', $proxy['HTTP_X_FORWARDED_FOR']);
+        $this->assertSame('hyperf.io', $proxy['HTTP_HOST']);
     }
 
     public function testSession()

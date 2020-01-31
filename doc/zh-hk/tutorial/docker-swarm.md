@@ -1,6 +1,6 @@
 # Docker Swarm 集羣搭建
 
-現階段，Docker 容器技術已經相當成熟，就算是中小型公司也可以基於 Gitlab、Aliyun 鏡像服務、Docker Swarm 輕鬆搭建自己的 Docker 集羣服務。
+現階段，容器技術已經相當成熟了，就算是中小型公司，也可以基於 Gitlab、Aliyun 鏡像倉庫服務 和 Docker Swarm 輕鬆搭建自己的 Docker 集羣服務。
 
 ## 安裝 Docker
 
@@ -14,11 +14,21 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
-## 搭建自己的 Gitlab
+### 配置倉庫鏡像地址
+
+基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啟 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
+
+```json
+{"registry-mirrors": ["https://xxxxx.mirror.aliyuncs.com"]}
+```
+
+## 搭建 Gitlab 服務
 
 ### 安裝 Gitlab
 
-首先我們修改一下端口號，把 `sshd` 服務的 `22` 端口改為 `2222`，讓 `gitlab` 可以使用 `22` 端口。
+#### 修改 sshd 默認端口號
+
+首先我們需要修改一下服務器的 `sshd` 服務的端口號，把默認的 `22` 端口改為 `2222` 端口(或其它未被佔用的端口)，這樣可以讓 `gitlab` 通過使用 `22` 端口來進行 `ssh` 連接。
 
 ```
 $ vim /etc/ssh/sshd_config
@@ -36,7 +46,9 @@ $ systemctl restart sshd.service
 ssh -p 2222 root@host 
 ```
 
-安裝 Gitlab
+#### 安裝 Gitlab
+
+我們來通過 Docker 啟動一個 Gitlab 服務，如下：
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -47,20 +59,20 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登錄 `Gitlab` 會重置密碼，用户名是 `root`。
+首次登錄 `Gitlab` 需要重置密碼，默認用户名為 `root`。
 
 ### 安裝 gitlab-runner
 
-[官方地址](https://docs.gitlab.com/runner/install/linux-repository.html)
+> 這裏建議與 `Gitlab` 服務器分開部署，專門提供單獨的 runner 服務器。
 
-以 `CentOS` 為例
+我們以 `CentOS` 的的安裝方式為例，其餘可參考 [Gitlab 官網文檔](https://docs.gitlab.com/runner/install/linux-repository.html)
 
 ```
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
 yum install gitlab-runner
 ```
 
-當然，可以用 `curl https://setup.ius.io | sh` 命令，更新為最新的 `git` 源，然後直接使用 yum 安裝 git 和 gitlab-runner。
+當然，也可以用 `curl https://setup.ius.io | sh` 命令，更新為最新的 `git` 源，然後直接使用 yum 安裝 git 和 gitlab-runner。
 
 ```
 $ curl https://setup.ius.io | sh
@@ -71,8 +83,10 @@ $ yum install gitlab-runner
 
 ### 註冊 gitlab-runner
 
+通過 `gitlab-runner register --clone-url http://your-ip/` 命令來將 gitlab-runner 註冊到 Gitlab 上，注意要替換 `your-ip` 為您的 Gitlab 的內網 IP，如下：
+
 ```
-$ gitlab-runner register --clone-url http://內網ip/
+$ gitlab-runner register --clone-url http://your-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -96,11 +110,13 @@ concurrent = 5
 ## 初始化 Swarm 集羣
 
 登錄另外一台機器，初始化集羣
+
 ```
 $ docker swarm init
 ```
 
 創建自定義 Overlay 網絡
+
 ```
 docker network create \
 --driver overlay \
@@ -111,6 +127,7 @@ default-network
 ```
 
 加入集羣
+
 ```
 # 顯示manager節點的TOKEN
 $ docker swarm join-token manager
@@ -212,7 +229,7 @@ networks:
     external: true
 ```
 
-然後在我們的 portainer 中，創建對應的 Config demo_v1.0。當然，以下參數需要根據實際情況調整，因為我們的 Demo 中，沒有任何 IO 操作，所以填默認的即可。
+然後在我們的 Portainer 中，創建對應的 Config `demo_v1.0`。當然，以下參數需要根據實際情況調整，因為我們的 Demo 中，沒有任何 I/O 操作，所以填默認的即可。
 
 ```
 APP_NAME=demo
@@ -243,9 +260,9 @@ curl http://127.0.0.1:9501/
 
 ## 安裝 KONG 網關
 
-通常情況下，Swarm 集羣是不會直接對外的，所以我們這裏推薦使用 `KONG` 作為網關。
-還有另外一個原因，那就是 `Swarm` 的 `Ingress 網絡` 設計上有缺陷，所以在連接不復用的情況下，會有併發瓶頸，具體請查看對應 `Issue` [#35082](https://github.com/moby/moby/issues/35082)
-而 `KONG` 作為網關，默認情況下就會複用後端的連接，所以會極大減緩上述問題。
+通常情況下，Docker Swarm 集羣是不會直接對外暴露提供訪問的，所以我們可以在上層構建一個網關服務，這裏推薦使用 `KONG` 作為網關。
+還有另外一個原因是 Docker Swarm 的 `Ingress 網絡` 存在設計的缺陷，在連接不復用的情況下，會有併發瓶頸，具體細節請查看對應的 `Issue` [#35082](https://github.com/moby/moby/issues/35082)
+而 `KONG` 作為網關服務，默認情況下會複用後端的連接，所以會極大減緩上述問題。
 
 ### 安裝數據庫
 
@@ -301,15 +318,15 @@ docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard 
   --basic-auth user1=password1 user2=password2
 ```
 
-### 配置
+### 配置 Service
 
-接下來只需要把部署 `KONG` 的機器 `IP` 對外，然後配置 `Service` 即可。
-如果機器直接對外，最好只開放 `80` `443` 端口，然後把 `Kong` 容器的 `8000` 和 `8443` 映射到 `80` 和 `443` 上。
-當然，如果使用了 `SLB` 等負載均衡，就直接通過負載均衡，把 `80` 和 `443` 映射到 `KONG` 所在幾台機器的 `8000` `8443` 上。
+接下來只需要把部署 `KONG` 網關的機器 `IP` 對外暴露訪問，然後配置對應的 `Service` 即可。
+如果機器直接對外暴露訪問，那麼最好只開放 `80` 和 `443` 端口，然後把 `Kong` 容器的 `8000` 和 `8443` 端口映射到 `80` 和 `443` 端口上。
+當然，如果使用了 `SLB` 等負載均衡服務，也直接通過負載均衡，把 `80` 和 `443` 端口映射到 `KONG` 所在機器的 `8000` `8443` 端口上。
 
 ## 如何使用 Linux Crontab
 
-`Hyperf` 雖然提供了 `crontab` 組件，但是不一定可以滿足所有人的需求，這裏提供一個 `Linux` 使用的腳本，執行 `Docker` 內的 `Command`。
+`Hyperf` 雖然提供了 `crontab` 組件，但可能並不一定可以滿足所有人的需求，這裏提供一個 `Linux` 下使用的腳本，來執行 `Docker` 內的 `Command`。
 
 ```bash
 #!/usr/bin/env bash
@@ -320,11 +337,11 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 /opt/www/bin/hyperf.php your_command
 ```
 
-## 意外情況
+## 常見問題
 
 ### fatal: git fetch-pack: expected shallow list
 
-這種情況是 `gitlab-runner` 使用的 `git` 版本過低，更新 `git` 版本即可。
+這種情況是 `gitlab-runner` 使用的 `git` 版本過低，更新 `git` 版本即可，如下：
 
 ```
 $ curl https://setup.ius.io | sh

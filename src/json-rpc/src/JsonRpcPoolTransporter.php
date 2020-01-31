@@ -127,14 +127,16 @@ class JsonRpcPoolTransporter implements TransporterInterface
 
     public function getPool(): Pool
     {
-        $node = $this->getNode();
-        $name = sprintf('%s:%s', $node->host, $node->port);
-        return $this->factory->getPool($name, [
-            'host' => $node->host,
-            'port' => $node->port,
+        $name = spl_object_hash($this) . '.Pool';
+        $config = [
             'connect_timeout' => $this->config['connect_timeout'],
             'settings' => $this->config['settings'],
-        ]);
+            'node' => function () {
+                return $this->getNode();
+            },
+        ];
+
+        return $this->factory->getPool($name, $config);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface

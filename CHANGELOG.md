@@ -1,4 +1,25 @@
-# v1.1.17 - TBD
+# v1.1.18 - TBD
+
+## Optimized
+
+- [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server Handle HEAD request automatically, now will not response the body on HEAD request.
+
+# v1.1.17 - 2020-01-24
+
+## Added
+
+- [#1288](https://github.com/hyperf/hyperf/pull/1288) Added driver object into `Hyperf\AsyncQueue\Event\QueueLength` event as the first parameter
+- [#1292](https://github.com/hyperf/hyperf/pull/1292) Added `Hyperf\Database\Schema\ForeignKeyDefinition` for return type of `Hyperf\Database\Schema\Blueprint::foreign()` method.
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command mode support to `hyperf\crontab`.
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) Added [hyperf/nsq](https://github.com/hyperf/nsq) component, [NSQ](https://nsq.io) is a realtime distributed messaging platform.
+
+## Fixed
+
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) Fixed `$_SERVER` has lower keys for super-globals.
+- [#1302](https://github.com/hyperf/hyperf/pull/1302) Fixed JSONRPC reconnect failed, when the node is invalid.
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed some missing traslation of validation, like gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid.
+- [#1310](https://github.com/hyperf/hyperf/pull/1310) Fixed register failed because has the exactly same service.
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) Fixed the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
 
 # v1.1.16 - 2020-01-16
 

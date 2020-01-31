@@ -16,6 +16,7 @@ use Hyperf\ConfigApollo\ClientInterface;
 use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -62,8 +63,17 @@ class ConfigFetcherProcess extends AbstractProcess
         $ipcCallback = function ($configs, $namespace) use ($workerCount) {
             if (isset($configs['configurations'], $configs['releaseKey'])) {
                 $configs['namespace'] = $namespace;
+                $pipeMessage = new PipeMessage($configs);
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($configs), $workerId);
+                    $this->server->sendMessage($pipeMessage, $workerId);
+                }
+
+                $string = serialize($pipeMessage);
+
+                $processes = ProcessCollector::all();
+                /** @var \Swoole\Process $process */
+                foreach ($processes as $process) {
+                    $process->exportSocket()->send($string);
                 }
             }
         };
