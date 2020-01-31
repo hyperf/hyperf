@@ -1,5 +1,9 @@
 # v1.1.18 - TBD
 
+## Changed
+
+- [#1324](https://github.com/hyperf/hyperf/pull/1324) `Hyperf\AsyncQueue\Listener\Queuelengthlistener` is no longer the default listener.
+
 ## Optimized
 
 - [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server Handle HEAD request automatically, now will not response the body on HEAD request.
