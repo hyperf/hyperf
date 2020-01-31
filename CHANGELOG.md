@@ -4,6 +4,10 @@
 
 - [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server Handle HEAD request automatically, now will not response the body on HEAD request.
 
+## Deleted
+
+- [#1303](https://github.com/hyperf/hyperf/pull/1303) Deleted useless `$httpMethod` for `Hyperf\RpcServer\Router\Router`.
+
 # v1.1.17 - 2020-01-24
 
 ## Added
