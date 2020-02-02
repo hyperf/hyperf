@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
+use Carbon\Carbon;
 use Hyperf\Utils\Context;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine\Channel;
+use Swoole\Coroutine\System;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -44,5 +48,102 @@ class ContextTest extends TestCase
 
         Context::set('test.store.id', null);
         $this->assertSame(1, Context::getOrSet('test.store.id', 1));
+    }
+
+    public function testCancel()
+    {
+        Context::set(Context::DONE, null);
+        $chan = new Channel(1);
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(2, $chan->pop());
+        Context::cancel();
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(1, $chan->pop());
+    }
+
+    public function testNestedCancel()
+    {
+        Context::set(Context::DONE, null);
+        $chan = new Channel(1);
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            usleep(20000);
+            System::sleep(1);
+            Context::go(function () use ($chan) {
+                if (Context::done()) {
+                    $chan->push(2);
+                    return;
+                }
+                $chan->push(3);
+            });
+        });
+        usleep(10000);
+        Context::cancel();
+        $this->assertEquals(2, $chan->pop());
+    }
+
+    public function testTimeout()
+    {
+        Context::set(Context::DONE, null);
+        Runtime::enableCoroutine();
+        Context::setTimeout(5);
+        $chan = new Channel(1);
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(2, $chan->pop());
+        Context::go(function () use ($chan) {
+            usleep(10000);
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(1, $chan->pop());
+    }
+
+    public function testDeadline()
+    {
+        Context::set(Context::DONE, null);
+        $deadline = Carbon::now()->addMillisecond(5);
+        Context::setDeadline($deadline);
+        $chan = new Channel(1);
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(2, $chan->pop());
+        usleep(10000);
+        Context::go(function () use ($chan) {
+            if (Context::done()) {
+                $chan->push(1);
+                return;
+            }
+            $chan->push(2);
+        });
+        $this->assertEquals(1, $chan->pop());
     }
 }

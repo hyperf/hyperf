@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Utils;
 
+use Carbon\Carbon;
 use Swoole\Coroutine as SwCoroutine;
 
 class Context
 {
+    public const DONE = 'hyperf.context.done';
+
     protected static $nonCoContext = [];
 
     public static function set(string $id, $value)
@@ -107,5 +110,51 @@ class Context
         }
 
         return static::$nonCoContext;
+    }
+
+    public static function done(): bool
+    {
+        $holder = self::getOrSet(static::DONE, new \stdClass());
+        return $holder->done ?? false;
+    }
+
+    /**
+     * @param float|int $millisecond
+     */
+    public static function setTimeout($millisecond)
+    {
+        $holder = self::getOrSet(static::DONE, new \stdClass());
+        Coroutine::create(function () use ($holder, $millisecond) {
+            usleep((int) $millisecond * 1000);
+            $holder->done = true;
+        });
+    }
+
+    public static function setDeadline(\DateTime $deadline)
+    {
+        if (! ($deadline instanceof Carbon)) {
+            $deadline = Carbon::instance($deadline);
+        }
+
+        $timeout = $deadline->getPreciseTimestamp(3) - microtime(true) * 1000;
+        $timeout = $timeout > 0 ? $timeout : 0;
+        static::setTimeout($timeout);
+    }
+
+    public static function cancel(): void
+    {
+        $holder = self::getOrSet(static::DONE, new \stdClass());
+        $holder->done = true;
+    }
+
+    public static function go(callable $callable): int
+    {
+        if (! self::has(static::DONE)) {
+            self::set(static::DONE, new \stdClass());
+        }
+        return Coroutine::create(function () use ($callable) {
+            static::copy(coroutine::parentId());
+            $callable();
+        });
     }
 }
