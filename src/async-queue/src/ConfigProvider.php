@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\AsyncQueue\Listener\QueueLengthListener;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -25,9 +23,6 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
-            ],
-            'listeners' => [
-                QueueLengthListener::class,
             ],
             'publish' => [
                 [

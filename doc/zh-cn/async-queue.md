@@ -18,7 +18,7 @@ composer require hyperf/async-queue
 |:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
 |     channel      |  string   |                    queue                    |                队列前缀                 |
-|     timeout      |    int    |                      2                      |            pop 消息的超时时间            |
+|     timeout      |    int    |                      2                      |           pop 消息的超时时间            |
 |  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
 |  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
 |    processes     |    int    |                      1                      |               消费进程数                |
@@ -316,4 +316,29 @@ class QueueController extends Controller
         return 'success';
     }
 }
+```
+
+## 事件
+
+|   事件名称   |        触发时机         |                         备注                         |
+|:------------:|:-----------------------:|:----------------------------------------------------:|
+| BeforeHandle |     处理消息前触发      |                                                      |
+| AfterHandle  |     处理消息后触发      |                                                      |
+| FailedHandle |   处理消息失败后触发    |                                                      |
+| RetryHandle  |   重试处理消息前触发    |                                                      |
+| QueueLength  | 每处理 500 个消息后触发 | 用户可以监听此事件，判断失败或超时队列是否有消息积压 |
+
+### QueueLengthListener
+
+框架自带了一个记录队列长度的监听器，默认不开启，您如果需要，可以自行添加到 `listeners` 配置中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\QueueLengthListener::class
+];
+
 ```
