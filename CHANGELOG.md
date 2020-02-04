@@ -12,6 +12,11 @@
 
 - [#1303](https://github.com/hyperf/hyperf/pull/1303) Deleted useless `$httpMethod` for `Hyperf\RpcServer\Router\Router`.
 
+## Fixed
+
+- [#1328](https://github.com/hyperf/hyperf/pull/1328) Fixed when model exists,and reset the parent class,but ModelCommand::createModel not update.
+
+
 # v1.1.17 - 2020-01-24
 
 ## Added
