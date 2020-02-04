@@ -172,9 +172,8 @@ class ModelCommand extends Command
             if (! is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
-
-            file_put_contents($path, $this->buildClass($table, $class, $option));
         }
+        file_put_contents($path, $this->buildClass($table, $class, $option));
 
         $columns = $this->getColumns($class, $columns, $option->isForceCasts());
 
