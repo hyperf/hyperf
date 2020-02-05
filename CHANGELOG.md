@@ -12,6 +12,10 @@
 
 - [#1303](https://github.com/hyperf/hyperf/pull/1303) Deleted useless `$httpMethod` for `Hyperf\RpcServer\Router\Router`.
 
+## Fixed
+
+- [#1330](https://github.com/hyperf/hyperf/pull/1330) fixed bug when using `(new Parallel())->add($callback, $key)`, when the parameter $key is a numeric index, the returned result will sort $key from 0
+
 # v1.1.17 - 2020-01-24
 
 ## Added
