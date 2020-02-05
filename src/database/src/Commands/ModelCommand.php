@@ -172,8 +172,8 @@ class ModelCommand extends Command
             if (! is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
+            file_put_contents($path, $this->buildClass($table, $class, $option));
         }
-        file_put_contents($path, $this->buildClass($table, $class, $option));
 
         $columns = $this->getColumns($class, $columns, $option->isForceCasts());
 
@@ -182,6 +182,7 @@ class ModelCommand extends Command
         $visitor = make(ModelUpdateVisitor::class, [
             'columns' => $columns,
             'option' => $option,
+            'class' => $class,
         ]);
         $traverser->addVisitor($visitor);
         $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
