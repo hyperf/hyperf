@@ -5,13 +5,13 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.4.14"
+      env: SW_VERSION="4.4.15"
     - php: 7.3
-      env: SW_VERSION="4.4.14"
+      env: SW_VERSION="4.4.15"
     - php: 7.4
-      env: SW_VERSION="4.4.14"
+      env: SW_VERSION="4.4.15"
     - php: master
-      env: SW_VERSION="4.4.14"
+      env: SW_VERSION="4.4.15"
 
   allow_failures:
     - php: master
