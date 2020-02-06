@@ -20,10 +20,15 @@ interface LoadBalancerInterface
     public function select(array ...$parameters): Node;
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      * @return $this
      */
     public function setNodes(array $nodes);
+
+    /**
+     * @return Node[] $nodes
+     */
+    public function getNodes(): array;
 
     /**
      * Remove a node from the node list.
