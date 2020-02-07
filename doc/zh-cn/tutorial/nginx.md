@@ -24,6 +24,9 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         
+        # 转发Cookie，设置 SameSite
+        proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+        
         # 执行代理访问真实服务器
         proxy_pass http://hyperf;
     }
