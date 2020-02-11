@@ -1,5 +1,9 @@
 # v1.1.18 - TBD
 
+## Added
+
+- [#1331](https://github.com/hyperf/hyperf/pull/1331) Added `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`.
+
 ## Changed
 
 - [#1324](https://github.com/hyperf/hyperf/pull/1324) `Hyperf\AsyncQueue\Listener\QueueLengthListener` is no longer as the default listener of [hyperf/async-queue](https://github.com/hyperf/async-queue).
@@ -14,8 +18,7 @@
 
 ## Fixed
 
-- [#1328](https://github.com/hyperf/hyperf/pull/1328) Fixed when model exists,and reset the parent class,but ModelCommand::createModel not update.
-
+- [#1330](https://github.com/hyperf/hyperf/pull/1330) Fixed bug when using `(new Parallel())->add($callback, $key)` and the parameter `$key` is a not string index, the returned result will sort `$key` from 0.
 
 # v1.1.17 - 2020-01-24
 
