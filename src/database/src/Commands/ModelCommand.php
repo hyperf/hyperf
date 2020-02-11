@@ -98,7 +98,8 @@ class ModelCommand extends Command
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
-            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false));
+            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
+            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -121,6 +122,7 @@ class ModelCommand extends Command
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
+        $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -179,13 +181,15 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $visitor = make(ModelUpdateVisitor::class, [
+        $traverser->addVisitor(make(ModelUpdateVisitor::class, [
             'columns' => $columns,
             'option' => $option,
-            'class' => $class,
-        ]);
-        $traverser->addVisitor($visitor);
+        ]));
         $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
+        foreach ($option->getVisitors() as $visitorClass) {
+            $data = make(ModelData::class)->setClass($class)->setColumns($columns);
+            $traverser->addVisitor(make($visitorClass, [$option, $data]));
+        }
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
@@ -233,7 +237,7 @@ class ModelCommand extends Command
         if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
             $nonInput = false;
         }
-        if (in_array($name, ['table-mapping', 'ignore-tables'])) {
+        if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {
             $nonInput = [];
         }
 

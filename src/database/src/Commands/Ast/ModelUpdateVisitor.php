@@ -15,7 +15,6 @@ namespace Hyperf\Database\Commands\Ast;
 use Hyperf\Database\Commands\ModelOption;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PhpParser\NodeVisitorAbstract;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
@@ -30,16 +29,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected $option;
 
-    /**
-     * @var string
-     */
-    protected $class = '';
-
-    public function __construct($columns = [], ModelOption $option, $class)
+    public function __construct($columns = [], ModelOption $option)
     {
         $this->columns = $columns;
         $this->option = $option;
-        $this->class = $class;
     }
 
     public function leaveNode(Node $node)
@@ -56,7 +49,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 //更改模型继承的父类名;
                 $inheritance = $this->option->getInheritance();
-                if(is_object($node->extends) && !empty($inheritance)) {
+                if (is_object($node->extends) && ! empty($inheritance)) {
                     $node->extends->parts = [$inheritance];
                 }
 
@@ -67,28 +60,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 $doc .= ' */';
                 $node->setDocComment(new Doc($doc));
-                return $node;
-            case $node instanceof Node\Stmt\UseUse: //更改模型父类的use路径;
-                $modelParent = get_parent_class($this->class);
-
-                $class = end($node->name->parts);
-                $alias = is_object($node->alias) ? $node->alias->name : '';
-                if ($class == $modelParent || $alias = $modelParent) {
-                    preg_match_all('/\s*([a-z0-9\\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $this->option->getUses(), $match);
-                    if(!empty($match) && isset($match[1][0])) {
-                        $newClass = $match[1][0];
-                        $newAlias = $match[1][2] ?? '';
-
-                        $node->name->parts = explode('\\', $newClass);
-                        $node->alias = null;
-
-                        if(!empty($newAlias)) {
-                            $node->alias = new Identifier($newAlias);
-                            $node->alias->setAttribute('startLine', $node->getAttribute('startLine'));
-                            $node->alias->setAttribute('endLine', $node->getAttribute('endLine'));
-                        }
-                    }
-                }
                 return $node;
         }
     }
