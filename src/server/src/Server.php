@@ -115,7 +115,7 @@ class Server implements ServerInterface
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
                 }
-                $server->getSettings() && $slaveServer->set($server->getSettings());
+                $server->getSettings() && $slaveServer->set(array_replace($config->getSettings(), $server->getSettings()));
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
                 ServerManager::add($name, [$type, $slaveServer]);
             }
