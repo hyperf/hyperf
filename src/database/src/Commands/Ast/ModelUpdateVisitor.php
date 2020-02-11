@@ -47,12 +47,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                //更改模型继承的父类名;
-                $inheritance = $this->option->getInheritance();
-                if (is_object($node->extends) && ! empty($inheritance)) {
-                    $node->extends->parts = [$inheritance];
-                }
-
                 $doc = '/**' . PHP_EOL;
                 foreach ($this->columns as $column) {
                     [$name, $type, $comment] = $this->getProperty($column);
