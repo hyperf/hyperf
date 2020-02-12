@@ -27,7 +27,7 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 /**
  * @Command
  */
-class RouteListCommand extends SymfonyCommand
+class InfoRouteCommand extends SymfonyCommand
 {
     /**
      * @var ContainerInterface
@@ -43,7 +43,7 @@ class RouteListCommand extends SymfonyCommand
 
     public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
-        parent::__construct('route:list');
+        parent::__construct('info:routes');
         $this->container = $container;
         $this->config = $config;
     }
