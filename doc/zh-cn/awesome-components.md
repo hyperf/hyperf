@@ -115,6 +115,7 @@
 
 ## 开发调试
 
+- [mabu233/sdebug](https://github.com/mabu233/sdebug) 用于协助开发与调试，`xdebug`的协程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通过 `WebSocket` 实时观测异常错误的开发调试组件
 
 ## 权限认证

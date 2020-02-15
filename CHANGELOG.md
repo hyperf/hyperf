@@ -1,24 +1,82 @@
-# v1.1.16 - TBD
+# v1.1.18 - TBD
+
+## Added
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) Added pre-made `Grafana` dashboard for `hyperf\metric`.
+- [#1328](https://github.com/hyperf/hyperf/pull/1328) Added `ModelRewriteInheritanceVisitor` to rewrite the model inheritance for command `gen:model`.
+- [#1331](https://github.com/hyperf/hyperf/pull/1331) Added `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`.
+- [#1335](https://github.com/hyperf/hyperf/pull/1335) Added event `AfterExecute` for `command`.
+
+## Changed
+
+- [#1324](https://github.com/hyperf/hyperf/pull/1324) `Hyperf\AsyncQueue\Listener\QueueLengthListener` is no longer as the default listener of [hyperf/async-queue](https://github.com/hyperf/async-queue).
+
+## Optimized
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) Optimize edge cases in `hyperf\metric`.
+- [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server Handle HEAD request automatically, now will not response the body on HEAD request.'
+
+## Deleted
+
+- [#1303](https://github.com/hyperf/hyperf/pull/1303) Deleted useless `$httpMethod` for `Hyperf\RpcServer\Router\Router`.
+
+## Fixed
+
+- [#1330](https://github.com/hyperf/hyperf/pull/1330) Fixed bug when using `(new Parallel())->add($callback, $key)` and the parameter `$key` is a not string index, the returned result will sort `$key` from 0.
+
+# v1.1.17 - 2020-01-24
+
+## Added
+
+- [#1288](https://github.com/hyperf/hyperf/pull/1288) Added driver object into `Hyperf\AsyncQueue\Event\QueueLength` event as the first parameter
+- [#1292](https://github.com/hyperf/hyperf/pull/1292) Added `Hyperf\Database\Schema\ForeignKeyDefinition` for return type of `Hyperf\Database\Schema\Blueprint::foreign()` method.
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) Added Command mode support to `hyperf\crontab`.
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) Added [hyperf/nsq](https://github.com/hyperf/nsq) component, [NSQ](https://nsq.io) is a realtime distributed messaging platform.
+
+## Fixed
+
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) Fixed `$_SERVER` has lower keys for super-globals.
+- [#1302](https://github.com/hyperf/hyperf/pull/1302) Fixed JSONRPC reconnect failed, when the node is invalid.
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) Fixed some missing traslation of validation, like gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid.
+- [#1310](https://github.com/hyperf/hyperf/pull/1310) Fixed register failed because has the exactly same service.
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) Fixed the missing config variable for `Hyperf\AsyncQueue\Process\ConsumerProcess`.
+
+# v1.1.16 - 2020-01-16
 
 ## Added
 
 - [#1263](https://github.com/hyperf/hyperf/pull/1263) Added Event `QueueLength` for async-queue.
-- [#1277](https://github.com/hyperf/hyperf/pull/1277) Add NoOp Driver to hyperf/metric.
+- [#1276](https://github.com/hyperf/hyperf/pull/1276) Added ACL token for Consul client.
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) Added NoOp Driver to hyperf/metric.
 
 ## Fixed
 
 - [#1262](https://github.com/hyperf/hyperf/pull/1262) Fixed bug that socket of keepaliveIO always exhausted.
-- [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process not restart when use timer.
+- [#1266](https://github.com/hyperf/hyperf/pull/1266) Fixed bug that process does not restart when use timer.
 - [#1272](https://github.com/hyperf/hyperf/pull/1272) Fixed bug that request id will be checked failed, when the id is null.
 
-# v1.1.15 - 2010-01-10
+## Optimized
+
+- [#1273](https://github.com/hyperf/hyperf/pull/1273) Optimized grpc client.
+  - gRPC client now automatically reconnects to the server after disconnection.
+  - When gRPC client is garbage collected, the connection is automatically closed.
+  - Fixed a bug where a closed gRPC client still holds the underlying http2 connection.
+  - Fixed a bug where channel pool for gRPC may contain non-empty channels.
+  - gRPC client now initializes itself lazily, so it can be used in constructor and container.
+
+## Deleted
+
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) Removed [phpstan/phpstan](https://github.com/phpstan/phpstan) requires from require-dev.
+
+
+# v1.1.15 - 2020-01-10
 
 ## Fixed
 
 - [#1258](https://github.com/hyperf/hyperf/pull/1258) Fixed CRITICAL error that socket of process is unavailable when amqp send heartbeat failed.
 - [#1260](https://github.com/hyperf/hyperf/pull/1260) Fixed json rpc connection confused.
 
-# v1.1.14 - 2010-01-10
+# v1.1.14 - 2020-01-10
 
 ## Added
 

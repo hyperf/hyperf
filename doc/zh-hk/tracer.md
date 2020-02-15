@@ -25,6 +25,25 @@ composer require jonahgeorge/jaeger-client-php
 php bin/hyperf.php vendor:publish hyperf/tracer
 ```
 
+### opentracking/opentracking 版本申明
+
+由於 [官方包](https://github.com/opentracing/opentracing-php) 最新版還是 `1.0.0-beta6`, 會導致 composer 安裝時不符合 `minimum-stability`, 所以 hyperf 框架 fork 了一份, 並基於當前 master 分支打上 `v1.0.0` 版本
+
+```json
+{
+    "require": {
+        ...
+        "opentracing/opentracing":"1.0.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/hyperf/opentracing-php.git"
+        }
+    ]
+}
+```
+
 ## 使用
 
 ### 配置

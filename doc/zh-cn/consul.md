@@ -10,6 +10,59 @@ Hyperf 提供了一个 [Consul](https://www.consul.io/api/index.html) 的协程�
 composer require hyperf/consul
 ```
 
+## 使用
+
+- 获取对应 Consul 客户端，下面以 KV 客户端为例：
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+    ]);
+});
+```
+
+### Consul ACL Token
+
+#### 通过 Header 添加 Token
+
+您可在调用方法时往 Client 传递 Key 为 `X-Consul-Token` 的 Header 来设置，如下所示：
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+        'headers' => [
+            'X-Consul-Token' => 'your-token'
+        ],
+    ]);
+});
+```
+
+#### 通过 Query 添加 Token
+
+您也可在调用方法时往 $options 参数传递 Key 为 `token` 的参数来设置，这样 Token 会跟随 Query 一起传递到 Server，如下所示：
+
+```php
+$response = $kv->get($namespace, ['token' => 'your-token'])->json();
+```
+
 ## KV
 
 由 `Hyperf\Consul\KV` 实现 `Hyperf\Consul\KVInterface` 提供支持。

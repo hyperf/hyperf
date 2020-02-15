@@ -12,10 +12,21 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 
 class DataFormatter implements DataFormatterInterface
 {
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    public function __construct(Context $context)
+    {
+        $this->context = $context;
+    }
+
     public function formatRequest($data)
     {
         [$path, $params, $id] = $data;
@@ -24,6 +35,7 @@ class DataFormatter implements DataFormatterInterface
             'method' => $path,
             'params' => $params,
             'id' => $id,
+            'context' => $this->context->getData(),
         ];
     }
 
@@ -34,6 +46,7 @@ class DataFormatter implements DataFormatterInterface
             'jsonrpc' => '2.0',
             'id' => $id,
             'result' => $result,
+            'context' => $this->context->getData(),
         ];
     }
 
@@ -56,6 +69,7 @@ class DataFormatter implements DataFormatterInterface
                 'message' => $message,
                 'data' => $data,
             ],
+            'context' => $this->context->getData(),
         ];
     }
 }

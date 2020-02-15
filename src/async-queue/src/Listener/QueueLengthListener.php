@@ -24,9 +24,9 @@ class QueueLengthListener implements ListenerInterface
     protected $logger;
 
     protected $level = [
-        'info' => 10,
-        'warning' => 50,
-        'error' => 100,
+        'debug' => 10,
+        'info' => 50,
+        'warning' => 500,
     ];
 
     public function __construct(StdoutLoggerInterface $logger)
@@ -52,6 +52,10 @@ class QueueLengthListener implements ListenerInterface
                 $this->logger->{$level}($message);
                 break;
             }
+        }
+
+        if ($event->length >= $value) {
+            $this->logger->error(sprintf('Queue lengh of %s is %d.', $event->key, $event->length));
         }
     }
 }

@@ -112,7 +112,7 @@ abstract class Driver implements DriverInterface
     {
         $info = $this->info();
         foreach ($info as $key => $value) {
-            $this->event && $this->event->dispatch(new QueueLength($key, $value));
+            $this->event && $this->event->dispatch(new QueueLength($this, $key, $value));
         }
     }
 

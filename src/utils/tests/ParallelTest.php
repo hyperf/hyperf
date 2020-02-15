@@ -117,6 +117,39 @@ class ParallelTest extends TestCase
         $this->assertEquals(count($res), 4);
     }
 
+    public function testParallelKeys()
+    {
+        $parallel = new Parallel();
+        $callback = function () {
+            return 1;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([1, 1, 1, 1], $res);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback, 'id_' . $i);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame(['id_0' => 1, 'id_1' => 1, 'id_2' => 1, 'id_3' => 1], $res);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback, $i - 1);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([-1 => 1, 0 => 1, 1 => 1, 2 => 1], $res);
+
+        $parallel->add($callback, 1.0);
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([1.0 => 1], $res);
+    }
+
     public function testParallelThrows()
     {
         $parallel = new Parallel();

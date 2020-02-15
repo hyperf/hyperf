@@ -39,10 +39,10 @@ class Parallel
 
     public function add(callable $callable, $key = null)
     {
-        if (is_string($key)) {
-            $this->callbacks[$key] = $callable;
-        } else {
+        if (is_null($key)) {
             $this->callbacks[] = $callable;
+        } else {
+            $this->callbacks[$key] = $callable;
         }
     }
 
