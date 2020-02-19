@@ -58,6 +58,7 @@ abstract class Pool implements PoolInterface
     public function get(): ConnectionInterface
     {
         $connection = $this->getConnection();
+
         if ($this->frequency instanceof FrequencyInterface) {
             $this->frequency->hit();
         }
@@ -81,9 +82,16 @@ abstract class Pool implements PoolInterface
         $num = $this->getConnectionsInChannel();
 
         if ($num > 0) {
+            /** @var ConnectionInterface $conn */
             while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop($this->option->getWaitTimeout())) {
                 $conn->close();
                 --$this->currentConnections;
+                --$num;
+
+                if ($num <= 0) {
+                    // Ignore connections queued during flushing.
+                    break;
+                }
             }
         }
     }
@@ -133,7 +141,7 @@ abstract class Pool implements PoolInterface
 
         $connection = $this->channel->pop($this->option->getWaitTimeout());
         if (! $connection instanceof ConnectionInterface) {
-            throw new RuntimeException('Cannot pop the connection, pop timeout.');
+            throw new RuntimeException('Connection pool exhausted. Cannot establish new connection before wait_timeout.');
         }
         return $connection;
     }

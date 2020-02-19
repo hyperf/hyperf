@@ -51,9 +51,7 @@ class ClosureValidationRule implements RuleContract
     /**
      * Determine if the validation rule passes.
      *
-     * @param string $attribute
      * @param mixed $value
-     * @return bool
      */
     public function passes(string $attribute, $value): bool
     {

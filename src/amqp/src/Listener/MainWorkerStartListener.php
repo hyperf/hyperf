@@ -17,16 +17,12 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
 class MainWorkerStartListener implements ListenerInterface
 {
     /**
@@ -78,7 +74,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
-                    $producer->declare($instance);
+                    $producer->declare($instance, null, true);
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
                         $routingKey = implode(',', $routingKey);

@@ -5,6 +5,7 @@
 .idea/
 .git/
 runtime/
+codeCoverage/
 vendor/
 .phpintel/
 .env

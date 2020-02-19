@@ -72,7 +72,7 @@ class InitProxyCommand extends Command
         $scanDirs = $annotations['scan']['paths'] ?? [];
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
-            $scanDirs = array_merge($configFromProviders['scan']['paths'] ?? [], $scanDirs);
+            $scanDirs = array_merge($configFromProviders['annotations']['scan']['paths'] ?? [], $scanDirs);
         }
 
         return $scanDirs;

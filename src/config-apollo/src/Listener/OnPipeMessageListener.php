@@ -18,29 +18,26 @@ use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 
-/**
- * @Listener
- */
 class OnPipeMessageListener implements ListenerInterface
 {
     /**
      * @var ConfigInterface
      */
-    private $config;
+    protected $config;
 
     /**
      * @var StdoutLoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var \Hyperf\ConfigApollo\ClientInterface
      */
-    private $client;
+    protected $client;
 
     public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger, ClientInterface $client)
     {
@@ -56,6 +53,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipMessage::class,
         ];
     }
 
@@ -65,7 +63,7 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;
 
@@ -83,10 +81,38 @@ class OnPipeMessageListener implements ListenerInterface
                 return;
             }
             foreach ($data->configurations ?? [] as $key => $value) {
-                $this->config->set($key, $value);
+                $this->config->set($key, $this->formatValue($value));
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
             ReleaseKey::set($cacheKey, $data->releaseKey);
         }
+    }
+
+    protected function formatValue($value)
+    {
+        if (! $this->config->get('apollo.strict_mode', false)) {
+            return $value;
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+
+        if (is_numeric($value)) {
+            $value = (strpos($value, '.') === false) ? (int) $value : (float) $value;
+        }
+
+        return $value;
     }
 }

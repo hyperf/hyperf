@@ -38,7 +38,7 @@ class TwigTest extends TestCase
     <title>Hyperf</title>
 </head>
 <body>
-Hello, Hyperf. You are using smarty template now.
+Hello, Hyperf. You are using twig template now.
 </body>
 </html>', $res);
     }

@@ -39,6 +39,11 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this;
     }
 
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
+
     /**
      * Remove a node from the node list.
      */

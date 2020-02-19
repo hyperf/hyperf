@@ -13,12 +13,18 @@ declare(strict_types=1);
 namespace Hyperf\ModelListener;
 
 use Hyperf\ModelListener\Collector\ListenerCollector;
+use Hyperf\ModelListener\Listener\ModelEventListener;
+use Hyperf\ModelListener\Listener\ModelHookEventListener;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'listeners' => [
+                ModelEventListener::class,
+                ModelHookEventListener::class => 99,
+            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [

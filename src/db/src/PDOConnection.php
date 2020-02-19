@@ -78,20 +78,21 @@ class PDOConnection extends AbstractConnection
      */
     public function reconnect(): bool
     {
-        $host = $this->config['host'];
-        $dbName = $this->config['database'];
         $username = $this->config['username'];
         $password = $this->config['password'];
-        $dsn = "mysql:host={$host};dbname={$dbName}";
+        $dsn = $this->buildDsn($this->config);
         try {
             $pdo = new \PDO($dsn, $username, $password, $this->config['options']);
         } catch (\Throwable $e) {
             throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
         }
 
+        $this->configureCharset($pdo, $this->config);
+
+        $this->configureTimezone($pdo, $this->config);
+
         $this->connection = $pdo;
         $this->lastUseTime = microtime(true);
-
         return true;
     }
 
@@ -171,6 +172,45 @@ class PDOConnection extends AbstractConnection
                 $value,
                 is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
             );
+        }
+    }
+
+    /**
+     * Build the DSN string for a host / port configuration.
+     */
+    protected function buildDsn(array $config): string
+    {
+        $host = $config['host'] ?? null;
+        $port = $config['port'] ?? 3306;
+        $database = $config['database'] ?? null;
+        return sprintf('mysql:host=%s;port=%d;dbname=%s', $host, $port, $database);
+    }
+
+    /**
+     * Configure the connection character set and collation.
+     */
+    protected function configureCharset(PDO $connection, array $config)
+    {
+        if (isset($config['charset'])) {
+            $connection->prepare(sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config)))->execute();
+        }
+    }
+
+    /**
+     * Get the collation for the configuration.
+     */
+    protected function getCollation(array $config): string
+    {
+        return isset($config['collation']) ? " collate '{$config['collation']}'" : '';
+    }
+
+    /**
+     * Configure the timezone on the connection.
+     */
+    protected function configureTimezone(PDO $connection, array $config): void
+    {
+        if (isset($config['timezone'])) {
+            $connection->prepare(sprintf('set time_zone="%s"', $config['timezone']))->execute();
         }
     }
 }

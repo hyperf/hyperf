@@ -65,6 +65,14 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile an insert ignore statement into SQL.
+     */
+    public function compileInsertOrIgnore(Builder $query, array $values): string
+    {
+        return substr_replace($this->compileInsert($query, $values), ' ignore', 6, 0);
+    }
+
+    /**
      * Compile the random statement into SQL.
      *
      * @param string $seed

@@ -538,11 +538,17 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Is Doctrine available?
-     *
-     * @return bool
+     * Reset $recordsModified property to false.
      */
-    public function isDoctrineAvailable()
+    public function resetRecordsModified(): void
+    {
+        $this->recordsModified = false;
+    }
+
+    /**
+     * Is Doctrine available?
+     */
+    public function isDoctrineAvailable(): bool
     {
         return class_exists('Doctrine\DBAL\Connection');
     }

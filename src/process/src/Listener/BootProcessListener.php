@@ -15,16 +15,12 @@ namespace Hyperf\Process\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class BootProcessListener implements ListenerInterface
 {
     /**

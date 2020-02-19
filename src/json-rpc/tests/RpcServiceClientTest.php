@@ -26,6 +26,9 @@ use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\NormalizeDataFormatter;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Logger\Logger;
+use Hyperf\Rpc\IdGenerator\IdGeneratorInterface;
+use Hyperf\Rpc\IdGenerator\UniqidIdGenerator;
+use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcClient\ProxyFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\JsonPacker;
@@ -59,9 +62,13 @@ class RpcServiceClientTest extends TestCase
         $transporter->shouldReceive('setLoadBalancer')
             ->andReturnSelf();
         $transporter->shouldReceive('send')
-            ->andReturn(json_encode([
-                'result' => 3,
-            ]));
+            ->andReturnUsing(function ($data) {
+                $id = json_decode($data, true)['id'];
+                return json_encode([
+                    'id' => $id,
+                    'result' => 3,
+                ]);
+            });
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->add(1, 2);
         $this->assertEquals(3, $ret);
@@ -76,9 +83,13 @@ class RpcServiceClientTest extends TestCase
         $transporter->shouldReceive('setLoadBalancer')
             ->andReturnSelf();
         $transporter->shouldReceive('send')
-            ->andReturn(json_encode([
-                'result' => ['params' => [1, 2], 'sum' => 3],
-            ]));
+            ->andReturnUsing(function ($data) {
+                $id = json_decode($data, true)['id'];
+                return json_encode([
+                    'id' => $id,
+                    'result' => ['params' => [1, 2], 'sum' => 3],
+                ]);
+            });
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->array(1, 2);
         $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret);
@@ -92,15 +103,50 @@ class RpcServiceClientTest extends TestCase
         $transporter->shouldReceive('setLoadBalancer')
             ->andReturnSelf();
         $transporter->shouldReceive('send')
-            ->andReturn(json_encode([
-                'result' => 3,
-            ]));
+            ->andReturnUsing(function ($data) {
+                $id = json_decode($data, true)['id'];
+                return json_encode([
+                    'id' => $id,
+                    'result' => 3,
+                ]);
+            });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
         /** @var CalculatorServiceInterface $service */
         $service = new $proxyClass($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->add(1, 2);
         $this->assertEquals(3, $ret);
+    }
+
+    public function testProxyFactoryWithErrorId()
+    {
+        $container = $this->createContainer();
+        /** @var MockInterface $transporter */
+        $transporter = $container->get(JsonRpcTransporter::class);
+        $transporter->shouldReceive('setLoadBalancer')
+            ->andReturnSelf();
+        $transporter->shouldReceive('send')
+            ->andReturn(json_encode([
+                'id' => '1234',
+                'result' => 3,
+            ]));
+        $once = true;
+        $transporter->shouldReceive('recv')->andReturnUsing(function () use (&$once) {
+            $this->assertTrue($once);
+            $once = false;
+            return json_encode([
+                'id' => '1234',
+                'result' => 3,
+            ]);
+        });
+        $factory = new ProxyFactory();
+        $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
+        /** @var CalculatorServiceInterface $service */
+        $service = new $proxyClass($container, CalculatorServiceInterface::class, 'jsonrpc');
+
+        $this->expectException(RequestException::class);
+        $this->expectExceptionMessageRegExp('/^Invalid response\. Request id\[.*\] is not equal to response id\[1234\]\.$/');
+        $service->add(1, 2);
     }
 
     public function testProxyFactoryObjectParameter()
@@ -111,9 +157,13 @@ class RpcServiceClientTest extends TestCase
         $transporter->shouldReceive('setLoadBalancer')
             ->andReturnSelf();
         $transporter->shouldReceive('send')
-            ->andReturn(json_encode([
-                'result' => ['value' => 3],
-            ]));
+            ->andReturnUsing(function ($data) {
+                $id = json_decode($data, true)['id'];
+                return json_encode([
+                    'id' => $id,
+                    'result' => ['value' => 3],
+                ]);
+            });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
         /** @var CalculatorServiceInterface $service */
@@ -159,6 +209,7 @@ class RpcServiceClientTest extends TestCase
             JsonRpcTransporter::class => function () use ($transporter) {
                 return $transporter;
             },
+            IdGeneratorInterface::class => UniqidIdGenerator::class,
         ], new ScanConfig()));
         ApplicationContext::setContainer($container);
         return $container;
