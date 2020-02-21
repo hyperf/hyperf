@@ -18,7 +18,7 @@ composer require hyperf/async-queue
 |:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
 |     channel      |  string   |                    queue                    |                队列前缀                 |
-|     timeout      |    int    |                      2                      |            pop 消息的超时时间            |
+|     timeout      |    int    |                      2                      |           pop 消息的超时时间            |
 |  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
 |  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
 |    processes     |    int    |                      1                      |               消费进程数                |
@@ -99,7 +99,43 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 #### 传统方式
 
-首先我们定义一个消息类，如下
+这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
+
+比如以下 `Job` 的定义，是 **不可取** 的
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Job;
+
+use Hyperf\AsyncQueue\Job;
+use Psr\Container\ContainerInterface;
+
+class ExampleJob extends Job
+{
+    public $container;
+
+    public $params;
+
+    public function __construct(ContainerInterface $container, $params)
+    {
+        $this->container = $container;
+        $this->params = $params;
+    }
+
+    public function handle()
+    {
+        // 根据参数处理具体逻辑
+        var_dump($this->params);
+    }
+}
+
+$job = make(ExampleJob::class);
+```
+
+正确的 `Job` 应该是只有需要处理的数据，其他相关数据，可以在 `handle` 方法中重新获取，如下。
 
 ```php
 <?php
@@ -123,12 +159,13 @@ class ExampleJob extends Job
     public function handle()
     {
         // 根据参数处理具体逻辑
+        // 通过具体参数获取模型等
         var_dump($this->params);
     }
 }
 ```
 
-生产消息
+正确定义完 `Job` 后，我们需要写一个专门投递消息的 `Service`，代码如下。
 
 ```php
 <?php
@@ -168,38 +205,9 @@ class QueueService
 }
 ```
 
-#### 注解方式
+投递消息
 
-框架除了传统方式投递消息，还提供了注解方式。
-
-让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，具体代码如下。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
-
-class QueueService
-{
-    /**
-     * @AsyncQueueMessage
-     */
-    public function example($params)
-    {
-        // 需要异步执行的代码逻辑
-        var_dump($params);
-    }
-}
-
-```
-
-#### 投递消息
-
-根据实际业务场景，动态投递消息到异步队列执行，我们演示在控制器动态投递消息，如下：
+接下来，调用我们的 `QueueService` 投递消息即可。
 
 ```php
 <?php
@@ -236,6 +244,63 @@ class QueueController extends Controller
 
         return 'success';
     }
+}
+```
+
+#### 注解方式
+
+框架除了传统方式投递消息，还提供了注解方式。
+
+让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，并加上对应注解 `AsyncQueueMessage`，具体代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
+
+class QueueService
+{
+    /**
+     * @AsyncQueueMessage
+     */
+    public function example($params)
+    {
+        // 需要异步执行的代码逻辑
+        var_dump($params);
+    }
+}
+
+```
+
+投递消息
+
+注解模式投递消息就跟平常调用方法一致，代码如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Service\QueueService;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController
+ */
+class QueueController extends Controller
+{
+    /**
+     * @Inject
+     * @var QueueService
+     */
+    protected $service;
 
     /**
      * 注解模式投递消息
@@ -251,4 +316,29 @@ class QueueController extends Controller
         return 'success';
     }
 }
+```
+
+## 事件
+
+|   事件名称   |        触发时机         |                         备注                         |
+|:------------:|:-----------------------:|:----------------------------------------------------:|
+| BeforeHandle |     处理消息前触发      |                                                      |
+| AfterHandle  |     处理消息后触发      |                                                      |
+| FailedHandle |   处理消息失败后触发    |                                                      |
+| RetryHandle  |   重试处理消息前触发    |                                                      |
+| QueueLength  | 每处理 500 个消息后触发 | 用户可以监听此事件，判断失败或超时队列是否有消息积压 |
+
+### QueueLengthListener
+
+框架自带了一个记录队列长度的监听器，默认不开启，您如果需要，可以自行添加到 `listeners` 配置中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\QueueLengthListener::class
+];
+
 ```

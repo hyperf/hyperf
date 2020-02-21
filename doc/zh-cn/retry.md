@@ -332,7 +332,7 @@ $result = \Hyperf\Retry\Retry::with(
 $result = \Hyperf\Retry\Retry::whenReturns(false) // 当返回false时重试
     ->max(3) // 最多3次
     ->inSeconds(5) // 最长5秒
-    ->sleep(1) // 间隔1秒
+    ->sleep(1) // 间隔1毫秒
     ->fallback(function(){return true;}) // fallback函数
     ->call(function(){
         if (rand(1, 100) >= 20){

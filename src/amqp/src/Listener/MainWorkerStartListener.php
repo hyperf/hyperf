@@ -74,7 +74,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
-                    $producer->declare($instance);
+                    $producer->declare($instance, null, true);
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
                         $routingKey = implode(',', $routingKey);

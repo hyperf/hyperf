@@ -33,7 +33,8 @@
         "influxdb/influxdb-php": "Required to use InfluxDB driver.",
         "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to use listeners for default metrics.",
-        "hyperf/process": "Required to use standalone process, or you have to roll your own"
+        "hyperf/process": "Required to use standalone process, or you have to roll your own",
+        "hyperf/retry": "Required to use back-off retry implementation."
     },
     "autoload": {
         "psr-4": {

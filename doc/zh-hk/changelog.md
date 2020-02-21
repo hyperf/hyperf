@@ -1,5 +1,154 @@
 # 版本更新記錄
 
+# v1.1.16 - 2020-01-16
+
+## 新增
+
+- [#1263](https://github.com/hyperf/hyperf/pull/1263) 為 async-queue 組件增加 `QueueLength` 事件；
+- [#1276](https://github.com/hyperf/hyperf/pull/1276) 為 Consul 客户端增加 ACL token 支持；
+- [#1277](https://github.com/hyperf/hyperf/pull/1277) 為 [hyperf/metric](https://github.com/hyperf/metric) 組件增加 NoOp 驅動，用來臨時關閉 metric 功能；
+
+## 修復
+
+- [#1262](https://github.com/hyperf/hyperf/pull/1262) 修復 keepaliveIO 功能下 socket 會被消耗光的問題；
+- [#1266](https://github.com/hyperf/hyperf/pull/1266) 修復當自定義進程存在 Timer 的情況下會無法重啟的問題；
+- [#1272](https://github.com/hyperf/hyperf/pull/1272) 修復 JSONRPC 下當 Request ID 為 null 時檢查會失敗的問題； 
+
+## 優化
+
+- [#1273](https://github.com/hyperf/hyperf/pull/1273) 優化 gRPC 客户端：
+  - 優化使 gRPC 客户端在當連接與 Server 斷開時會自動重連；
+  - 優化使當 gRPC 客户端被垃圾回收時，已建立的連接會自動關閉；
+  - 修復關閉了的客户端依舊會持有 HTTP2 連接的問題；
+  - 修復 gRPC 客户端的 channel pool 可能會存在非空 channel 的問題；
+  - 優化使 gRPC 客户端會自動初始化，所以現在可以在構造函數和容器注入下使用；
+
+## 刪除
+
+- [#1286](https://github.com/hyperf/hyperf/pull/1286) 從 require-dev 中移除 [phpstan/phpstan](https://github.com/phpstan/phpstan) 包的依賴。
+
+# v1.1.15 - 2020-01-10
+
+## 修復
+
+- [#1258](https://github.com/hyperf/hyperf/pull/1258) 修復 AMQP 發送心跳失敗，會導致子進程 Socket 通信不可用的問題；
+- [#1260](https://github.com/hyperf/hyperf/pull/1260) 修復 JSONRPC 在同一協程內，連接會混淆複用的問題；
+
+# v1.1.14 - 2020-01-10
+
+## 新增
+
+- [#1166](https://github.com/hyperf/hyperf/pull/1166) 為 AMQP 增加 KeepaliveIO 功能；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 為 JSON-RPC 的響應增加了 `error.data.code` 值來傳遞 Exception Code；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 為 `Hyperf\Rpc\Contract\TransporterInterface` 增加了 `recv` 方法；
+- [#1215](https://github.com/hyperf/hyperf/pull/1215) 新增 [hyperf/super-globals](https://github.com/hyperf/super-globals) 組件，用來適配一些不支持 PSR-7 的第三方包；
+- [#1219](https://github.com/hyperf/hyperf/pull/1219) 為 AMQP 消費者增加 `enable` 屬性，通過該屬性來控制該消費者是否跟隨 Server 一同啟動；
+
+## 修復
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 修復 Exception 和 error 在 JSON-RPC TCP Server 下無法被正確處理的問題；
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 修復 JSON-RPC 沒有檢查 Request ID 和 Response ID 是否一致的問題；
+- [#1223](https://github.com/hyperf/hyperf/pull/1223) 修復 ConfigProvider 掃描器不會掃描 composer.json 內 require-dev 的配置；
+- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修復執行 `init-proxy.sh` 命令在某些環境如Alpine下會報 bash 不存在的問題；
+
+## 優化
+
+- [#1208](https://github.com/hyperf/hyperf/pull/1208) 優化了 JSON-RPC 組件的部分邏輯；
+- [#1174](https://github.com/hyperf/hyperf/pull/1174) 調整了 `Hyperf\Utils\Parallel` 在輸出異常時的格式，現在會一同打印 Trace 信息；
+- [#1224](https://github.com/hyperf/hyperf/pull/1224) 允許 Aliyun ACM 配置中心的配置獲取進程解析 UTF-8 字符，同時在 Worker 啟動後會自動獲取一次配置，以及拉取的配置現在會傳遞到自定義進程了；
+- [#1235](https://github.com/hyperf/hyperf/pull/1235) 在 AMQP 生產者執行 declare 後釋放對應的連接；
+
+## 修改
+
+- [#1227](https://github.com/hyperf/hyperf/pull/1227) 升級 `jcchavezs/zipkin-php-opentracing` 依賴至 0.1.4 版本；
+
+# v1.1.13 - 2020-01-03
+
+## 新增
+
+- [#1137](https://github.com/hyperf/hyperf/pull/1137) `constants` 組件增加國際化支持；
+- [#1165](https://github.com/hyperf/hyperf/pull/1165) `Hyperf\HttpServer\Contract\RequestInterface` 新增 `route` 方法；
+- [#1195](https://github.com/hyperf/hyperf/pull/1195) 註解 `Cacheable` 和 `CachePut` 增加最大超時時間偏移量配置；
+- [#1204](https://github.com/hyperf/hyperf/pull/1204) `database` 組件增加了 `insertOrIgnore` 方法；
+- [#1216](https://github.com/hyperf/hyperf/pull/1216) `RenderInterface::render()` 方法的 `$data` 參數，添加了默認值；
+- [#1221](https://github.com/hyperf/hyperf/pull/1221) `swoole-tracker` 組件添加了 `traceId` 和 `spanId`；
+
+## 修復
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修復 `Hyperf\Utils\Collection::random` 當傳入 `null` 時，無法正常工作的 `BUG`；
+- [#1199](https://github.com/hyperf/hyperf/pull/1199) 修復使用 `Task` 註解時，參數無法使用動態變量的 `BUG`；
+- [#1200](https://github.com/hyperf/hyperf/pull/1200) 修復 `metric` 組件，請求路徑會攜帶參數的 `BUG`；
+- [#1210](https://github.com/hyperf/hyperf/pull/1210) 修復驗證器規則 `size` 無法作用於 `integer` 的 `BUG`；
+
+## 優化
+
+- [#1211](https://github.com/hyperf/hyperf/pull/1211) 自動將項目名轉化為 `prometheus` 的規範命名；
+
+## 修改
+
+- [#1217](https://github.com/hyperf/hyperf/pull/1217) 將 `zendframework/zend-mime` 替換為 `laminas/laminas-mine`；
+
+# v1.1.12 - 2019-12-26
+
+## 新增
+
+- [#1177](https://github.com/hyperf/hyperf/pull/1177) 為 `jsonrpc` 組件增加了新的協議 `jsonrpc-tcp-length-check`，並對部分代碼進行了優化；
+
+## 修復
+
+- [#1175](https://github.com/hyperf/hyperf/pull/1175) 修復 `Hyperf\Utils\Collection::random` 方法不支持傳入 `null`；
+- [#1178](https://github.com/hyperf/hyperf/pull/1178) 修復 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情況；
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修復 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能傳入 `string` 的BUG；
+
+## 優化
+
+- [#1186](https://github.com/hyperf/hyperf/pull/1186) 日誌配置中，只填寫 `formatter.class` 的情況下，可以使用默認的 `formatter.constructor` 配置；
+
+# v1.1.11 - 2019-12-19
+
+## 新增
+
+- [#849](https://github.com/hyperf/hyperf/pull/849) 為 hyperf/tracer 組件增加 span tag 配置功能；
+
+## 修復
+
+- [#1142](https://github.com/hyperf/hyperf/pull/1142) 修復 `Register::resolveConnection` 會返回 null 的問題；
+- [#1144](https://github.com/hyperf/hyperf/pull/1144) 修復配置文件形式下服務限流會失效的問題；
+- [#1145](https://github.com/hyperf/hyperf/pull/1145) 修復 `CoroutineMemoryDriver::delKey` 方法的返回值錯誤的問題；
+- [#1153](https://github.com/hyperf/hyperf/pull/1153) 修復驗證器的 `alpha_num` 規則無法按預期運行的問題；
+
+# v1.1.10 - 2019-12-12
+
+## 修復
+
+- [#1104](https://github.com/hyperf/hyperf/pull/1104) 修復了 Guzzle 客户端的重試中間件的狀態碼識別範圍為 2xx；
+- [#1105](https://github.com/hyperf/hyperf/pull/1105) 修復了 Retry 組件在重試嘗試前不還原管道堆棧的問題；
+- [#1106](https://github.com/hyperf/hyperf/pull/1106) 修復了數據庫在開啟 `sticky` 模式時連接回歸連接池時沒有重置狀態的問題；
+- [#1119](https://github.com/hyperf/hyperf/pull/1119) 修復 TCP 協議下的 JSONRPC Server 在解析 JSON 失敗時無法正確的返回預期的 Error Response 的問題；
+- [#1124](https://github.com/hyperf/hyperf/pull/1124) 修復 Session 中間件在儲存當前的 URL 時，當 URL 以 `/` 結尾時會忽略斜槓的問題；
+
+## 變更
+
+- [#1108](https://github.com/hyperf/hyperf/pull/1108) 重命名 `Hyperf\Tracer\Middleware\TraceMiddeware` 為 `Hyperf\Tracer\Middleware\TraceMiddleware`；
+- [#1108](https://github.com/hyperf/hyperf/pull/1111) 升級 `Hyperf\ServiceGovernance\Listener\ServiceRegisterListener` 類的成員屬性和方法的等級為 `protected`，以便更好的重寫相關方法；
+
+# v1.1.9 - 2019-12-05
+
+## 新增
+
+- [#948](https://github.com/hyperf/hyperf/pull/948) 為 DI Container 增加懶加載功能；
+- [#1044](https://github.com/hyperf/hyperf/pull/1044) 為 AMQP Consumer 增加 `basic_qos` 配置；
+- [#1056](https://github.com/hyperf/hyperf/pull/1056) [#1081](https://github.com/hyperf/hyperf/pull/1081) DI Container 增加 `define()` 和 `set()` 方法，同時增加 `Hyperf\Contract\ContainerInterface`；
+- [#1059](https://github.com/hyperf/hyperf/pull/1059) `job.stub` 模板增加構造函數；
+- [#1084](https://github.com/hyperf/hyperf/pull/1084) 支持 PHP 7.4，TrvisCI 增加 PHP 7.4 運行支持；
+
+## 修復
+
+- [#1007](https://github.com/hyperf/hyperf/pull/1007) 修復 `vendor:: publish` 的命令返回值；
+- [#1049](https://github.com/hyperf/hyperf/pull/1049) 修復 `Hyperf\Cache\Driver\RedisDriver::clear` 會有可能刪除所有緩存失敗的問題；
+- [#1055](https://github.com/hyperf/hyperf/pull/1055) 修復 Image 驗證時後綴大小寫的問題；
+- [#1085](https://github.com/hyperf/hyperf/pull/1085) [#1091](https://github.com/hyperf/hyperf/pull/1091) Fixed `@Retry` 註解使用時會找不到容器的問題；
+
 # v1.1.8 - 2019-11-28
 
 ## 新增
@@ -120,27 +269,27 @@
 
 ## 新增
 
-- [#778](https://github.com/hyperf/hyperf/pull/778) `Hyperf\Testing\Client` 新增 `PUT` 和 `DELETE`方法。
-- [#784](https://github.com/hyperf/hyperf/pull/784) 新增服務監控組件。
-- [#795](https://github.com/hyperf/hyperf/pull/795) `AbstractProcess` 增加 `restartInterval` 參數，允許子進程異常或正常退出後，延遲重啟。
-- [#804](https://github.com/hyperf/hyperf/pull/804) `Command` 增加事件 `BeforeHandle` `AfterHandle` 和 `FailToHandle`。
+- [#778](https://github.com/hyperf/hyperf/pull/778) `Hyperf\Testing\Client` 新增 `PUT` 和 `DELETE`方法；
+- [#784](https://github.com/hyperf/hyperf/pull/784) 新增服務監控組件；
+- [#795](https://github.com/hyperf/hyperf/pull/795) `AbstractProcess` 增加 `restartInterval` 參數，允許子進程異常或正常退出後，延遲重啟；
+- [#804](https://github.com/hyperf/hyperf/pull/804) `Command` 增加事件 `BeforeHandle` `AfterHandle` 和 `FailToHandle`；
 
 ## 變更
 
 - [#793](https://github.com/hyperf/hyperf/pull/793) `Pool::getConnectionsInChannel` 方法由 `protected` 改為 `public`.
-- [#811](https://github.com/hyperf/hyperf/pull/811) 命令 `di:init-proxy` 不再主動清理代理緩存，如果想清理緩存請使用命令 `vendor/bin/init-proxy.sh`。
+- [#811](https://github.com/hyperf/hyperf/pull/811) 命令 `di:init-proxy` 不再主動清理代理緩存，如果想清理緩存請使用命令 `vendor/bin/init-proxy.sh`；
 
 ## 修復
 
-- [#779](https://github.com/hyperf/hyperf/pull/779) 修復 `JPG` 文件驗證不通過的問題。
-- [#787](https://github.com/hyperf/hyperf/pull/787) 修復 `db:seed` 參數 `--class` 多餘，導致報錯的問題。
-- [#795](https://github.com/hyperf/hyperf/pull/795) 修復自定義進程在異常拋出後，無法正常重啟的 BUG。
-- [#796](https://github.com/hyperf/hyperf/pull/796) 修復 `etcd` 配置中心 `enable` 即時設為 `false`，在項目啟動時，依然會拉取配置的 BUG。
+- [#779](https://github.com/hyperf/hyperf/pull/779) 修復 `JPG` 文件驗證不通過的問題；
+- [#787](https://github.com/hyperf/hyperf/pull/787) 修復 `db:seed` 參數 `--class` 多餘，導致報錯的問題；
+- [#795](https://github.com/hyperf/hyperf/pull/795) 修復自定義進程在異常拋出後，無法正常重啟的 BUG；
+- [#796](https://github.com/hyperf/hyperf/pull/796) 修復 `etcd` 配置中心 `enable` 即時設為 `false`，在項目啟動時，依然會拉取配置的 BUG；
 
 ## 優化
 
-- [#781](https://github.com/hyperf/hyperf/pull/781) 可以根據國際化組件配置發佈驗證器語言包到規定位置。
-- [#796](https://github.com/hyperf/hyperf/pull/796) 優化 `ETCD` 客户端，不會多次創建 `HandlerStack`。 
+- [#781](https://github.com/hyperf/hyperf/pull/781) 可以根據國際化組件配置發佈驗證器語言包到規定位置；
+- [#796](https://github.com/hyperf/hyperf/pull/796) 優化 `ETCD` 客户端，不會多次創建 `HandlerStack`； 
 - [#797](https://github.com/hyperf/hyperf/pull/797) 優化子進程重啟
 
 # v1.1.3 - 2019-10-24

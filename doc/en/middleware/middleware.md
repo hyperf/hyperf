@@ -100,6 +100,7 @@ use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 
 /**
  * @AutoController()

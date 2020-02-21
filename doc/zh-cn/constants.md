@@ -115,3 +115,69 @@ class IndexController extends Controller
 
 ```
 
+### 可变参数
+
+在使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 来获取对应错误信息时，我们也可以传入可变参数，进行错误信息组合。比如以下情况
+
+```php
+<?php
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class ErrorCode extends AbstractConstants
+{
+    /**
+     * @Message("Params %s is invalid.")
+     */
+    const PARAMS_INVALID = 1000;
+}
+
+$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
+
+// 1.2 版本以下 可以使用以下方式，但会在 1.2 版本移除
+
+$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
+```
+
+### 国际化
+
+> 该功能仅在 v1.1.13 及往后的版本上可用
+
+要使 [hyperf/constants](https://github.com/hyperf/constants) 组件支持国际化，就必须要安装 [hyperf/translation](https://github.com/hyperf/translation) 组件并配置好语言文件，如下：
+
+```
+composer require hyperf/translation
+```
+
+相关配置详见 [国际化](./translation.md)
+
+```php
+<?php
+
+// 国际化配置
+
+return [
+    'params.invalid' => 'Params :param is invalid.',
+];
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class ErrorCode extends AbstractConstants
+{
+    /**
+     * @Message("params.invalid")
+     */
+    const PARAMS_INVALID = 1000;
+}
+
+$message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
+```
+

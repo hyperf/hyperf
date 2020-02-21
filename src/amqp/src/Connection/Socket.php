@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Connection;
 
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Utils\ApplicationContext;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
+use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Client;
 use Swoole\Timer;
@@ -82,10 +85,15 @@ class Socket
         }
 
         $client = $this->channel->pop($this->waitTimeout);
+        if ($client === false) {
+            throw new AMQPRuntimeException('Socket of keepaliveIO is exhausted. Cannot establish new socket before wait_timeout.');
+        }
 
-        $result = $closure($client);
-
-        $this->channel->push($client);
+        try {
+            $result = $closure($client);
+        } finally {
+            $this->channel->push($client);
+        }
 
         return $result;
     }
@@ -146,7 +154,17 @@ class Socket
     {
         $this->clear();
         $this->timerId = Timer::tick($this->heartbeat * 1000, function () {
-            $this->heartbeat();
+            try {
+                if ($this->isConnected()) {
+                    $this->heartbeat();
+                }
+            } catch (\Throwable $throwable) {
+                $this->close();
+                if ($logger = $this->getLogger()) {
+                    $message = sprintf('KeepaliveIO heartbeat failed, %s', (string) $throwable);
+                    $logger->error($message);
+                }
+            }
         });
     }
 
@@ -156,5 +174,16 @@ class Socket
             Timer::clear($this->timerId);
             $this->timerId = null;
         }
+    }
+
+    protected function getLogger(): ?LoggerInterface
+    {
+        if (ApplicationContext::hasContainer() && $container = ApplicationContext::getContainer()) {
+            if ($container->has(StdoutLoggerInterface::class)) {
+                return $container->get(StdoutLoggerInterface::class);
+            }
+        }
+
+        return null;
     }
 }

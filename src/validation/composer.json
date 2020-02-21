@@ -40,7 +40,6 @@
         "hyperf/db-connection": "^1.0",
         "hyperf/testing": "1.0.*",
         "mockery/mockery": "^1.2",
-        "phpstan/phpstan": "^0.10.5",
         "swoft/swoole-ide-helper": "^4.4.0"
     },
     "config": {
@@ -48,7 +47,6 @@
     },
     "scripts": {
         "test": "co-phpunit -c phpunit.xml --colors=always",
-        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {

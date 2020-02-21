@@ -13,6 +13,7 @@ declare(strict_types=1);
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 
 return [
+    // To disable hyperf/metric temporarily, set default driver to noop.
     'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('METRIC_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('METRIC_ENABLE_DEFAULT_METRIC', true),
@@ -48,6 +49,9 @@ return [
             'dbname' => env('INFLUXDB_DBNAME', true),
             'push_interval' => env('INFLUXDB_PUSH_INTERVAL', 5),
             'auto_create_db' => env('INFLUXDB_AUTO_CREATE_DB', true),
+        ],
+        'noop' => [
+            'driver' => Hyperf\Metric\Adapter\NoOp\MetricFactory::class,
         ],
     ],
 ];

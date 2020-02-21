@@ -41,7 +41,7 @@ class ConfigProvider
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for amqp.',
+                    'description' => 'The config for nats.',
                     'source' => __DIR__ . '/../publish/nats.php',
                     'destination' => BASE_PATH . '/config/autoload/nats.php',
                 ],

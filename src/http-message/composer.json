@@ -11,7 +11,7 @@
     ],
     "require": {
         "psr/http-message": "^1.0",
-        "zendframework/zend-mime": "^2.7"
+        "laminas/laminas-mime": "^2.7"
     },
     "require-dev": {
         "swoft/swoole-ide-helper": "dev-master",

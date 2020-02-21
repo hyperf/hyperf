@@ -173,10 +173,22 @@ Router::get('/user/{id}', 'App\Controller\UserController::info')
 ```
 
 ```php
-public function index(int $id)
+public function info(int $id)
 {
     $user = User::find($id);
     return $user->toArray();
+}
+```
+
+通過`route`方法獲取
+
+```php
+public function index(RequestInterface $request)
+{
+        // 存在則返回，不存在則返回預設值 null
+        $id = $request->route('id');
+        // 存在則返回，不存在則返回預設值 0
+        $id = $request->route('id', 0);
 }
 ```
 

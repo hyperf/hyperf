@@ -36,6 +36,12 @@ class CachePut extends AbstractAnnotation
     public $ttl;
 
     /**
+     * The max offset for ttl.
+     * @var int
+     */
+    public $offset = 0;
+
+    /**
      * @var string
      */
     public $group = 'default';
@@ -44,5 +50,6 @@ class CachePut extends AbstractAnnotation
     {
         parent::__construct($value);
         $this->ttl = (int) $this->ttl;
+        $this->offset = (int) $this->offset;
     }
 }

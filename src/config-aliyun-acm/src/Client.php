@@ -14,7 +14,9 @@ namespace Hyperf\ConfigAliyunAcm;
 
 use Closure;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -36,14 +38,24 @@ class Client implements ClientInterface
     private $config;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var array
      */
     private $servers;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->client = $container->get(GuzzleClientFactory::class)->create();
+        /**
+         * @var GuzzleClientFactory $clientFactory
+         */
+        $clientFactory = $container->get(GuzzleClientFactory::class);
+        $this->client = $clientFactory->create();
         $this->config = $container->get(ConfigInterface::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     public function pull(): array
@@ -65,32 +77,42 @@ class Client implements ClientInterface
         $timestamp = round(microtime(true) * 1000);
         $sign = base64_encode(hash_hmac('sha1', "{$namespace}+{$group}+{$timestamp}", $secretKey, true));
 
-        if (! $this->servers) {
-            // server list
-            $response = $client->get("http://{$endpoint}:8080/diamond-server/diamond");
-            if ($response->getStatusCode() !== 200) {
-                throw new RuntimeException('Get server list failed from Aliyun ACM.');
+        try {
+            if (! $this->servers) {
+                // server list
+                $response = $client->get("http://{$endpoint}:8080/diamond-server/diamond");
+                if ($response->getStatusCode() !== 200) {
+                    throw new RuntimeException('Get server list failed from Aliyun ACM.');
+                }
+                $this->servers = array_filter(explode("\n", $response->getBody()->getContents()));
             }
-            $this->servers = array_filter(explode("\n", $response->getBody()->getContents()));
-        }
-        $server = $this->servers[array_rand($this->servers)];
+            $server = $this->servers[array_rand($this->servers)];
 
-        // Get config
-        $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
-            'headers' => [
-                'Spas-AccessKey' => $accessKey,
-                'timeStamp' => $timestamp,
-                'Spas-Signature' => $sign,
-            ],
-            'query' => [
-                'tenant' => $namespace,
-                'dataId' => $dataId,
-                'group' => $group,
-            ],
-        ]);
-        if ($response->getStatusCode() !== 200) {
-            throw new RuntimeException('Get config failed from Aliyun ACM.');
+            // Get config
+            $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
+                'headers' => [
+                    'Spas-AccessKey' => $accessKey,
+                    'timeStamp' => $timestamp,
+                    'Spas-Signature' => $sign,
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
+                ],
+                'query' => [
+                    'tenant' => $namespace,
+                    'dataId' => $dataId,
+                    'group' => $group,
+                ],
+            ]);
+            if ($response->getStatusCode() !== 200) {
+                throw new RuntimeException('Get config failed from Aliyun ACM.');
+            }
+            $content = $response->getBody()->getContents();
+            if (! $content) {
+                return [];
+            }
+            return Json::decode($content);
+        } catch (\Throwable $throwable) {
+            $this->logger->error(sprintf('%s[line:%d] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
+            return [];
         }
-        return json_decode($response->getBody()->getContents(), true);
     }
 }

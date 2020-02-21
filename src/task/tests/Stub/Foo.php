@@ -23,4 +23,14 @@ class Foo
     {
         throw new \RuntimeException('Foo::exception failed.');
     }
+
+    public function getIdAndName($id, $name)
+    {
+        return ['id' => $id, 'name' => $name];
+    }
+
+    public function dump($id, ...$arguments)
+    {
+        return ['id' => $id, 'arguments' => $arguments];
+    }
 }

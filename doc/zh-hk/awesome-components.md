@@ -101,7 +101,7 @@
 
 ## 熱更新/熱重載
 
-- [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一個基於 fswatch 實現的通用熱更新組件
+- [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一個基於 Swoole 實現的通用熱更新組件
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一個由 Mixphp 實現的通用熱更新組件
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一個基於 Go 語言實現的通用熱更新組件
 - [remy/nodemon](https://github.com/remy/nodemon) 一個基於 node.js 實現的通用熱更新組件
@@ -116,6 +116,10 @@
 ## 開發調試
 
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發調試組件
+
+## 權限認證
+
+- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的權限組件
 
 ## 第三方 SDK
 

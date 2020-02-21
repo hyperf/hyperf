@@ -41,9 +41,15 @@ return [
 ];
 ```
 
-> 使用 `Task` 模式時，需引入 [hyperf/task](https://github.com/hyperf/task) 元件且必須配置 `task_enable_coroutine` 為 `false`，否則會出現協程資料混淆的問題，更多請查閱 [Task](zh-tw/task.md) 元件文件。
+### Task 模式
 
-> 若使用 `Sync` 模式渲染檢視時，請確保相關引擎是協程安全的，否則會出現資料混淆的問題，建議使用更加資料安全的 `Task` 模式。
+使用 `Task` 模式時，需引入 [hyperf/task](https://github.com/hyperf/task) 元件且必須配置 `task_enable_coroutine` 為 `false`，否則會出現協程資料混淆的問題，更多請查閱 [Task](zh-tw/task.md) 元件文件。
+
+另外，在 `Task` 模式下，檢視渲染工作是在 `Task Worker` 程序中完成的，而請求處理即 Controller 是在 `Worker` 程序完成的，兩部分的工作由不同的程序完成，所以像 `Request`，`Session` 等在 `Worker` 程序通過上下文管理的物件或資料在檢視頁面上是無法直接使用的，這時候就需要您在 Controller 先處理好資料或判斷結果，然後再呼叫 `render` 時傳遞資料到檢視進行資料的渲染。
+
+### Sync 模式
+
+若使用 `Sync` 模式渲染檢視時，請確保相關引擎是協程安全的，否則會出現資料混淆的問題，建議使用更加資料安全的 `Task` 模式。
 
 ### 配置靜態資源
 

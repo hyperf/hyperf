@@ -76,6 +76,32 @@ class IndexController
 }
 ```
 
+除了可以通過依賴注入獲取路由引數，還可以通過`route`方法獲取，如下所示：
+
+```php
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController()
+ */
+class IndexController
+{
+    public function info(RequestInterface $request)
+    {
+        // 存在則返回，不存在則返回預設值 null
+        $id = $request->route('id');
+        // 存在則返回，不存在則返回預設值 0
+        $id = $request->route('id', 0);
+        // ...
+    }
+}
+```
+
 ### 請求路徑 & 方法
 
 `Hyperf\HttpServer\Contract\RequestInterface` 除了使用 [PSR-7](https://www.php-fig.org/psr/psr-7/) 標準定義的 `APIs` 之外，還提供了多種方法來檢查請求，下面我們提供一些方法的示例：

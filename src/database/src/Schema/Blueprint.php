@@ -408,7 +408,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
      */
     public function foreign($columns, $name = null)
     {

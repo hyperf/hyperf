@@ -111,6 +111,41 @@ return [
             'settings' => [
                 'open_eof_split' => true,
                 'package_eof' => "\r\n",
+                'package_max_length' => 1024 * 1024 * 2,
+            ],
+        ],
+    ],
+];
+```
+
+TCP Server (適配 `jsonrpc-tcp-length-check` 協議)
+
+當前協議為 `jsonrpc` 的擴充套件協議，使用者可以很方便的修改對應的 `settings` 使用此協議，示例如下。
+
+```php
+<?php
+
+use Hyperf\Server\Server;
+use Hyperf\Server\SwooleEvent;
+
+return [
+    // 這裡省略了該檔案的其它配置
+    'servers' => [
+        [
+            'name' => 'jsonrpc',
+            'type' => Server::SERVER_BASE,
+            'host' => '0.0.0.0',
+            'port' => 9503,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+            ],
+            'settings' => [
+                'open_length_check' => true,
+                'package_length_type' => 'N',
+                'package_length_offset' => 0,
+                'package_body_offset' => 4,
+                'package_max_length' => 1024 * 1024 * 2,
             ],
         ],
     ],
@@ -154,6 +189,7 @@ return [
             // 對應容器物件 ID，可選，預設值等於 service 配置的值，用來定義依賴注入的 key
             'id' => \App\JsonRpc\CalculatorServiceInterface::class,
             // 服務提供者的服務協議，可選，預設值為 jsonrpc-http
+            // 可選 jsonrpc-http jsonrpc jsonrpc-tcp-length-check
             'protocol' => 'jsonrpc-http',
             // 負載均衡演算法，可選，預設值為 random
             'load_balancer' => 'random',
@@ -165,6 +201,29 @@ return [
             // 如果沒有指定上面的 registry 配置，即為直接對指定的節點進行消費，通過下面的 nodes 引數來配置服務提供者的節點資訊
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9504],
+            ],
+            // 配置項，會影響到 Packer 和 Transporter
+            'options' => [
+                'connect_timeout' => 5.0,
+                'recv_timeout' => 5.0,
+                'settings' => [
+                    // 根據協議不同，區分配置
+                    'open_eof_split' => true,
+                    'package_eof' => "\r\n",
+                    // 'open_length_check' => true,
+                    // 'package_length_type' => 'N',
+                    // 'package_length_offset' => 0,
+                    // 'package_body_offset' => 4,
+                ],
+                // 當使用 JsonRpcPoolTransporter 時會用到以下配置
+                'pool' => [
+                    'min_connections' => 1,
+                    'max_connections' => 32,
+                    'connect_timeout' => 10.0,
+                    'wait_timeout' => 3.0,
+                    'heartbeat' => -1,
+                    'max_idle_time' => 60.0,
+                ],
             ],
         ]
     ],
@@ -370,9 +429,7 @@ use Hyperf\JsonRpc\JsonRpcPoolTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 
 return [
-    JsonRpcTransporter::class => function () {
-        return make(JsonRpcPoolTransporter::class);
-    },
+    JsonRpcTransporter::class => JsonRpcPoolTransporter::class,
 ];
 
 ```
