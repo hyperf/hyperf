@@ -47,12 +47,15 @@ class Client implements ClientInterface
      */
     private $servers;
 
+    /**
+     * @var array[]
+     */
     private $cachedSecurityCredentials = [];
 
     public function __construct(ContainerInterface $container)
     {
         /**
-         * @var GuzzleClientFactory
+         * @var GuzzleClientFactory $clientFactory
          */
         $clientFactory = $container->get(GuzzleClientFactory::class);
         $this->client = $clientFactory->create();
@@ -130,8 +133,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * get ECS RAM authorization.
+     * Get ECS RAM authorization.
      * @see https://help.aliyun.com/document_detail/72013.html
+     * @see https://help.aliyun.com/document_detail/54579.html?#title-9w8-ufj-kz6
      */
     private function getSecurityCredentialsWithEcsRamRole(string $ecsRamRole): ?array
     {
