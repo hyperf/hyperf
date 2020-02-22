@@ -59,7 +59,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 ## 金牌赞助方
 
-<!--gold start-->
+<!--gold start test-->
 <table>
   <tbody>
     <tr>
