@@ -168,6 +168,7 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
 
         return $this->withHeader('content-description', 'File Transfer')
             ->withHeader('content-type', $contentType)
+            ->withHeader('access-control-expose-headers', 'content-disposition')
             ->withHeader('content-disposition', "attachment; filename={$filename}")
             ->withHeader('content-transfer-encoding', 'binary')
             ->withHeader('pragma', 'public')
