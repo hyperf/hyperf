@@ -18,6 +18,7 @@ use Psr\Container\ContainerInterface;
 use Hyperf\Command\Annotation\Command;
 use Symfony\Component\Console\Helper\Table;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -50,7 +51,8 @@ class InfoRouteCommand extends SymfonyCommand
 
     protected function configure()
     {
-        $this->setDescription('Get routes [{path}] to get the route info.');
+        $this->setDescription('Get routes [{path}] to get the route info.')
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Detail of single route');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -61,10 +63,14 @@ class InfoRouteCommand extends SymfonyCommand
         $factory = $this->container->get(DispatcherFactory::class);
         $router = $factory->getRouter('http');
         [$routers] = $router->getData();
+        $path = $input->getOption('path');
 
         foreach ($routers as $method => $items) {
             foreach ($items as $item) {
                 $uri = $item->route;
+                if (!is_null($path) && $path != $uri) {
+                    continue;
+                }
                 if (is_array($item->callback)) {
                     $action = $item->callback[0]. '@'. $item->callback[1];
                 } else {
