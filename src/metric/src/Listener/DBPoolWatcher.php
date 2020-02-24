@@ -23,7 +23,10 @@ use Hyperf\Event\Contract\ListenerInterface;
  */
 class DBPoolWatcher extends PoolWatcher implements ListenerInterface
 {
-    public $prefix = 'mysql';
+    public function getPrefix()
+    {
+        return 'mysql';
+    }
 
     /**
      * Periodically scan metrics.
