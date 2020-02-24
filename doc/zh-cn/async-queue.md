@@ -340,5 +340,23 @@ declare(strict_types=1);
 return [
     Hyperf\AsyncQueue\Listener\QueueLengthListener::class
 ];
-
 ```
+
+## 任务执行流转流程
+
+任务执行流转流程主要包括以下几个队列:
+
+```php
+// \Hyperf\AsyncQueue\Driver\ChannelConfig::__construct
+    public function __construct(string $channel)
+    {
+        $this->channel = $channel;
+        $this->waiting = "{$channel}:waiting";
+        $this->reserved = "{$channel}:reserved";
+        $this->delayed = "{$channel}:delayed";
+        $this->failed = "{$channel}:failed";
+        $this->timeout = "{$channel}:timeout";
+    }
+```
+
+队列流转顺序: `delayed -> wait -> reserved -> failed(失败) / timeout(超时)`, 任务执行成功直接移除
