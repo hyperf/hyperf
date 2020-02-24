@@ -100,6 +100,10 @@ class LoggerFactory
     protected function processors(array $config): array
     {
         $result = [];
+        if (! isset($config['processors']) && isset($config['processor'])) {
+            $config['processors'] = [$config['processor']];
+        }
+
         foreach ($config['processors'] ?? [] as $value) {
             if (is_array($value) && isset($value['class'])) {
                 $value = make($value['class'], $value['constructor'] ?? []);

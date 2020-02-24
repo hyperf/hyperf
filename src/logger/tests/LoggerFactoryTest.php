@@ -142,6 +142,26 @@ class LoggerFactoryTest extends TestCase
         $this->assertTrue(Context::get('test.logger.foo_handler.record')['callback']);
     }
 
+    public function testDefaultProcessor()
+    {
+        $container = $this->mockContainer();
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get('hyperf', 'default-processor');
+        $reflectionClass = new ReflectionClass($logger);
+        $handlersProperty = $reflectionClass->getProperty('processors');
+        $handlersProperty->setAccessible(true);
+        $processors = $handlersProperty->getValue($logger);
+        $this->assertSame(1, count($processors));
+        $this->assertInstanceOf(FooProcessor::class, $processors[0]);
+
+        $logger->info('Hello world.');
+
+        $this->assertSame(
+            'Hello world.Hello world.',
+            Context::get('test.logger.foo_handler.record')['message']
+        );
+    }
+
     private function mockContainer(): ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -215,6 +235,26 @@ class LoggerFactoryTest extends TestCase
                             $records['callback'] = true;
                             return $records;
                         },
+                    ],
+                ],
+                'default-processor' => [
+                    'handlers' => [
+                        [
+                            'class' => FooHandler::class,
+                            'constructor' => [
+                                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                'level' => \Monolog\Logger::DEBUG,
+                            ],
+                            'formatter' => [
+                                'class' => \Monolog\Formatter\LineFormatter::class,
+                            ],
+                        ],
+                    ],
+                    'processor' => [
+                        'class' => FooProcessor::class,
+                        'constructor' => [
+                            'repeat' => 2,
+                        ],
                     ],
                 ],
             ],
