@@ -54,10 +54,12 @@ class LoggerFactory
 
         $config = $config[$group];
         $handlers = $this->handlers($config);
+        $processors = $this->processors($config);
 
         return make(Logger::class, [
             'name' => $name,
             'handlers' => $handlers,
+            'processors' => $processors,
         ]);
     }
 
@@ -93,6 +95,24 @@ class LoggerFactory
             'class' => $handlerClass,
             'constructor' => $handlerConstructor,
         ];
+    }
+
+    protected function processors(array $config): array
+    {
+        $result = [];
+        if (! isset($config['processors']) && isset($config['processor'])) {
+            $config['processors'] = [$config['processor']];
+        }
+
+        foreach ($config['processors'] ?? [] as $value) {
+            if (is_array($value) && isset($value['class'])) {
+                $value = make($value['class'], $value['constructor'] ?? []);
+            }
+
+            $result[] = $value;
+        }
+
+        return $result;
     }
 
     protected function handlers(array $config): array

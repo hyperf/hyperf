@@ -6,6 +6,7 @@
 - [#1328](https://github.com/hyperf/hyperf/pull/1328) Added `ModelRewriteInheritanceVisitor` to rewrite the model inheritance for command `gen:model`.
 - [#1331](https://github.com/hyperf/hyperf/pull/1331) Added `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`.
 - [#1335](https://github.com/hyperf/hyperf/pull/1335) Added event `AfterExecute` for `command`.
+- [#1361](https://github.com/hyperf/hyperf/pull/1361) Added config of `processors` for logger.
 
 ## Changed
 
@@ -23,7 +24,7 @@
 ## Fixed
 
 - [#1330](https://github.com/hyperf/hyperf/pull/1330) Fixed bug when using `(new Parallel())->add($callback, $key)` and the parameter `$key` is a not string index, the returned result will sort `$key` from 0.
-- [#1388](https://github.com/hyperf/hyperf/pull/1338) Fixed bug that root settings do not works when the slave servers set their own settings.
+- [#1338](https://github.com/hyperf/hyperf/pull/1338) Fixed bug that root settings do not works when the slave servers set their own settings.
 - [#1344](https://github.com/hyperf/hyperf/pull/1344) Fixed bug that queue length check every time when not set max messages.
 
 # v1.1.17 - 2020-01-24
