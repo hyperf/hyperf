@@ -346,17 +346,108 @@ return [
 
 任务执行流转流程主要包括以下几个队列:
 
-```php
-// \Hyperf\AsyncQueue\Driver\ChannelConfig::__construct
-    public function __construct(string $channel)
-    {
-        $this->channel = $channel;
-        $this->waiting = "{$channel}:waiting";
-        $this->reserved = "{$channel}:reserved";
-        $this->delayed = "{$channel}:delayed";
-        $this->failed = "{$channel}:failed";
-        $this->timeout = "{$channel}:timeout";
-    }
+|  队列名  |                   备注                    |
+|:--------:|:-----------------------------------------:|
+| waiting  |              等待消费的队列               |
+| reserved |              正在消费的队列               |
+| delayed  |              延迟消费的队列               |
+|  failed  |              消费失败的队列               |
+| timeout  | 消费超时的队列 (虽然超时，但可能执行成功) |
+
+队列流转顺序如下: 
+
+```
+delayed -> waiting -> reserved -> failed / timeout
 ```
 
-队列流转顺序: `delayed -> wait -> reserved -> failed(失败) / timeout(超时)`, 任务执行成功直接移除
+任务执行成功直接移除。
+
+## 配置多个异步队列
+
+当您需要使用多个队列来区分消费高频和低频或其他种类的消息时，可以配置多个队列。
+
+1. 添加配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+    'other' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{other.queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+];
+
+```
+
+2. 添加一个方法，用来投递消息
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\JobInterface;
+use Hyperf\Utils\ApplicationContext;
+
+if (! function_exists('queue_push')) {
+    /**
+     * Push a job to async queue.
+     */
+    function queue_push(JobInterface $job, int $delay = 0, string $key = 'default'): bool
+    {
+        $driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get($key);
+        return $driver->push($job, $delay);
+    }
+}
+
+```
+
+3. 添加消费进程
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process()
+ */
+class ConsumerProcess extends ConsumerProcess
+{
+    /**
+     * @var string
+     */
+    protected $queue = 'other';
+}
+```
+
+4. 调用
+
+```php
+queue_push(new ExampleJob(), 0, 'other');
+```
