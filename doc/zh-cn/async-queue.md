@@ -360,7 +360,7 @@ return [
 graph LR;
 A[投递延时消息]-->C[delayed队列];
 B[投递消息]-->D[waiting队列];
-C-->D;
+C--到期-->D;
 D--消费-->E[reserved队列];
 E--成功-->F[删除消息];
 E--失败-->G[failed队列];
