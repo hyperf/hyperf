@@ -115,4 +115,15 @@ class DB
     {
         return sprintf('db.connection.%s', $this->poolName);
     }
+
+    /**
+     * Changed connection
+     */
+    public function connection(string $poolName): DB
+    {
+        $this->poolName = $poolName;
+        return $this;
+    }
+
+
 }
