@@ -398,31 +398,7 @@ return [
 
 ```
 
-2. 添加一个方法，用来投递消息
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Hyperf\AsyncQueue\Driver\DriverFactory;
-use Hyperf\AsyncQueue\JobInterface;
-use Hyperf\Utils\ApplicationContext;
-
-if (! function_exists('queue_push')) {
-    /**
-     * Push a job to async queue.
-     */
-    function queue_push(JobInterface $job, int $delay = 0, string $key = 'default'): bool
-    {
-        $driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get($key);
-        return $driver->push($job, $delay);
-    }
-}
-
-```
-
-3. 添加消费进程
+2. 添加消费进程
 
 ```php
 <?php
@@ -446,8 +422,12 @@ class ConsumerProcess extends ConsumerProcess
 }
 ```
 
-4. 调用
+3. 调用
 
 ```php
-queue_push(new ExampleJob(), 0, 'other');
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
+return $driver->push(new ExampleJob());
 ```
