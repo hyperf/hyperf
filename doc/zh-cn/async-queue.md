@@ -356,8 +356,15 @@ return [
 
 队列流转顺序如下: 
 
-```
-delayed -> waiting -> reserved -> failed / timeout
+```mermaid
+graph LR;
+A[投递延时消息]-->C[delayed队列];
+B[投递消息]-->D[waiting队列];
+C-->D;
+D--消费-->E[reserved队列];
+E--成功-->F[删除消息];
+E--失败-->G[failed队列];
+E--超时-->H[timeout队列];
 ```
 
 任务执行成功直接移除。
