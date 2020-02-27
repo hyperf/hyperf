@@ -77,7 +77,7 @@ class Client implements ClientInterface
         $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
         $accessKey = $this->config->get('aliyun_acm.access_key', '');
         $secretKey = $this->config->get('aliyun_acm.secret_key', '');
-        $ecsRamRole = strval($this->config->get('aliyun_acm.ecs_ram_role', ''));
+        $ecsRamRole = (string) $this->config->get('aliyun_acm.ecs_ram_role', '');
         $securityToken = null;
         if (empty($accessKey) && ! empty($ecsRamRole)) {
             $securityCredentials = $this->getSecurityCredentialsWithEcsRamRole($ecsRamRole);
