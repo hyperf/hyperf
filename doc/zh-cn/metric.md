@@ -406,4 +406,4 @@ Router::get('/metrics', function(){
 
 如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，导入 Grafana 中即可使用。
 
-![grafana](/grafana.png)
+![grafana](./imgs/grafana.png)
