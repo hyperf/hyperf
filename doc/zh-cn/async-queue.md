@@ -340,5 +340,99 @@ declare(strict_types=1);
 return [
     Hyperf\AsyncQueue\Listener\QueueLengthListener::class
 ];
+```
 
+## 任务执行流转流程
+
+任务执行流转流程主要包括以下几个队列:
+
+|  队列名  |                   备注                    |
+|:--------:|:-----------------------------------------:|
+| waiting  |              等待消费的队列               |
+| reserved |              正在消费的队列               |
+| delayed  |              延迟消费的队列               |
+|  failed  |              消费失败的队列               |
+| timeout  | 消费超时的队列 (虽然超时，但可能执行成功) |
+
+队列流转顺序如下: 
+
+```mermaid
+graph LR;
+A[投递延时消息]-->C[delayed队列];
+B[投递消息]-->D[waiting队列];
+C--到期-->D;
+D--消费-->E[reserved队列];
+E--成功-->F[删除消息];
+E--失败-->G[failed队列];
+E--超时-->H[timeout队列];
+```
+
+## 配置多个异步队列
+
+当您需要使用多个队列来区分消费高频和低频或其他种类的消息时，可以配置多个队列。
+
+1. 添加配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+    'other' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{other.queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+];
+
+```
+
+2. 添加消费进程
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process()
+ */
+class ConsumerProcess extends ConsumerProcess
+{
+    /**
+     * @var string
+     */
+    protected $queue = 'other';
+}
+```
+
+3. 调用
+
+```php
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
+return $driver->push(new ExampleJob());
 ```
