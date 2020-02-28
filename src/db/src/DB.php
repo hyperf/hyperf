@@ -41,7 +41,7 @@ class DB
     public function __construct(PoolFactory $factory, string $poolName = 'default')
     {
         $this->factory = $factory;
-        $this->poolName = $poolName;
+        $this->setPoolName($poolName);
     }
 
     public function __call($name, $arguments)
@@ -55,7 +55,7 @@ class DB
         } catch (Throwable $exception) {
             $result = $connection->retry($exception, $name, $arguments);
         } finally {
-            if (! $hasContextConnection) {
+            if (!$hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
@@ -101,8 +101,8 @@ class DB
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if (! $connection instanceof AbstractConnection) {
-            $pool = $this->factory->getPool($this->poolName);
+        if (!$connection instanceof AbstractConnection) {
+            $pool = $this->factory->getPool($this->getPoolName());
             $connection = $pool->get();
         }
         return $connection;
@@ -113,7 +113,17 @@ class DB
      */
     private function getContextKey(): string
     {
-        return sprintf('db.connection.%s', $this->poolName);
+        return sprintf('db.connection.%s', $this->getPoolName());
+    }
+
+    private function setPoolName(string $poolName): bool
+    {
+        Context::set('db.connection.poolName', $poolName);
+    }
+
+    private function getPoolName(): string
+    {
+        return (string)Context::get('db.connection.poolName', 'default');
     }
 
     /**
@@ -121,7 +131,7 @@ class DB
      */
     public function connection(string $poolName): DB
     {
-        $this->poolName = $poolName;
+        $this->setPoolName($poolName);
         return $this;
     }
 
