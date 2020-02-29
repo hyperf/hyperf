@@ -1,6 +1,6 @@
-# Swoole Dashboard
+# Swoole Tracker
 
-[dashboard](https://www.swoole-cloud.com/dashboard.html) 作为 `Swoole` 官方出品、更专一、更专业。
+[Swoole Tracker](https://www.swoole-cloud.com/tracker.html)是 Swoole 官方推出的一整套企业级包括 PHP 和  Swoole 分析调试工具以及应用性能管理（APM）平台，针对常规的 FPM 和 Swoole 常驻进程的业务，提供全面的性能监控、分析和调试的解决方案。（曾命名：Swoole Enterprise）
 
 - 时刻掌握应用架构模型
 - 分布式跨应用链路追踪
@@ -12,7 +12,7 @@
 
 注册完账户后，进入[控制台](https://www.swoole-cloud.com/dashboard/catdemo/)，并申请试用，下载对应客户端。
 
-相关文档，请移步 [试用文档](https://www.yuque.com/swoole-wiki/try) 或 [详细文档](https://www.yuque.com/swoole-wiki/dam5n7) 
+相关文档，请移步 [试用文档](https://www.kancloud.cn/swoole-inc/ee-base-wiki/content) 或 [详细文档](https://www.kancloud.cn/swoole-inc/ee-help-wiki/content) 
 
 > 具体文档地址，以从控制台下载的对应客户端中展示的为准。
 
@@ -37,9 +37,8 @@ extension=/opt/swoole_tracker.so
 apm.enable=1           #打开总开关
 apm.sampling_rate=100  #采样率 例如：100%
 
-# 手动埋点时再添加
-apm.enable_xhprof=1    #开启性能分析功能 默认0 即为关闭模式
-apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭
+# 开启内存泄漏检测时需要添加
+apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭状态
 ```
 
 然后将下面的 `Dockerfile` 复制到项目根目录中。
