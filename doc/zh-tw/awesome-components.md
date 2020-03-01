@@ -115,6 +115,7 @@
 
 ## 開發除錯
 
+- [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與除錯，`xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
 
 ## 許可權認證

@@ -41,7 +41,7 @@ $db->connect($config, function ($db, $r) {
 });
 ```
 
-> 注意 `MySQL` 等異步模塊已在[4.3.0](https://wiki.swoole.com/wiki/page/p-4.3.0.html)中移除，並轉移到了[swoole_async](https://github.com/swoole/ext-async)。
+> 注意 `MySQL` 等異步模塊已在[4.3.0](https://wiki.swoole.com/#/version/bc?id=430)中移除，並轉移到了[swoole_async](https://github.com/swoole/ext-async)。
 
 從上面的代碼片段可以看出，每一個操作幾乎就需要一個回調函數，在複雜的業務場景中回調的層次感和代碼結構絕對會讓你崩潰，其實不難看出這樣的寫法有點類似 `JavaScript` 上的異步方法的寫法，而 `JavaScript` 也為此提供了不少的解決方案（當然方案是源於其它編程語言），如 `Promise`，`yield + generator`, `async/await`，`Promise` 則是對回調的一種封裝方式，而 `yield + generator` 和 `async/await` 則需要在代碼上顯性的增加一些代碼語法標記，這些相對比回調函數來説，不妨都是一些非常不錯的解決方案，但是你需要另花時間來理解它的實現機制和語法。   
 Swoole 協程也是對異步回調的一種解決方案，在 `PHP` 語言下，`Swoole` 協程與 `yield + generator` 都屬於協程的解決方案，協程的解決方案可以使代碼以近乎於同步代碼的書寫方式來書寫異步代碼，顯性的區別則是 `yield + generator` 的協程機制下，每一處 `I/O` 操作的調用代碼都需要在前面加上 `yield` 語法實現協程切換，每一層調用都需要加上，否則會出現意料之外的錯誤，而 `Swoole` 協程的解決方案對比於此就高明多了，在遇到 `I/O` 時底層自動的進行隱式協程切換，無需添加任何的額外語法，無需在代碼前加上 `yield`，協程切換的過程無聲無息，極大的減輕了維護異步系統的心智負擔。
@@ -62,7 +62,7 @@ Swoole 協程也是對異步回調的一種解決方案，在 `PHP` 語言下，
 
 協程內代碼的阻塞會導致協程調度器無法切換到另一個協程繼續執行代碼，所以我們絕不能在協程內存在阻塞代碼，假設我們啟動了 `4` 個 `Worker` 來處理 `HTTP` 請求（通常啟動的 `Worker` 數量與 `CPU` 核心數一致或 `2` 倍），如果代碼中存在阻塞，暫且理論的認為每個請求都會阻塞 `1` 秒，那麼系統的 `QPS` 也將退化為 `4/s` ，這無疑就是退化成了與 `PHP-FPM` 類似的情況，所以我們絕對不能在協程中存在阻塞代碼。   
 
-那麼到底哪些是阻塞代碼呢？我們可以簡單的認為絕大多數你所熟知的非 `Swoole` 提供的異步函數的 `MySQL`、`Redis`、`Memcache`、`MongoDB`、`HTTP`、`Socket`等客户端，文件操作、`sleep/usleep` 等均為阻塞函數，這幾乎涵蓋了所有日常操作，那麼要如何解決呢？`Swoole` 提供了 `MySQL`、`PostgreSQL`、`Redis`、`HTTP`、`Socket` 的協程客户端可以使用，同時 `Swoole 4.1` 之後提供了一鍵協程化的方法 `\Swoole\Runtime::enableCoroutine()`，只需在使用協程前運行這一行代碼，`Swoole` 會將 所有使用 `php_stream` 進行 `socket` 操作均變成協程調度的異步 `I/O`，可以理解為除了 `curl` 絕大部分原生的操作都可以適用，關於此部分可查閲 [Swoole 文檔](https://wiki.swoole.com/wiki/page/965.html) 獲得更具體的信息。  
+那麼到底哪些是阻塞代碼呢？我們可以簡單的認為絕大多數你所熟知的非 `Swoole` 提供的異步函數的 `MySQL`、`Redis`、`Memcache`、`MongoDB`、`HTTP`、`Socket`等客户端，文件操作、`sleep/usleep` 等均為阻塞函數，這幾乎涵蓋了所有日常操作，那麼要如何解決呢？`Swoole` 提供了 `MySQL`、`PostgreSQL`、`Redis`、`HTTP`、`Socket` 的協程客户端可以使用，同時 `Swoole 4.1` 之後提供了一鍵協程化的方法 `\Swoole\Runtime::enableCoroutine()`，只需在使用協程前運行這一行代碼，`Swoole` 會將 所有使用 `php_stream` 進行 `socket` 操作均變成協程調度的異步 `I/O`，可以理解為除了 `curl` 絕大部分原生的操作都可以適用，關於此部分可查閲 [Swoole 文檔](https://wiki.swoole.com/#/runtime) 獲得更具體的信息。  
 
 在 `Hyperf` 中我們已經為您處理好了這一切，您只需關注 `\Swoole\Runtime::enableCoroutine()` 仍無法協程化的阻塞代碼即可。
 
