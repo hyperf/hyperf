@@ -489,7 +489,7 @@ $table->dropForeign('posts_user_id_foreign');
 
 或者傳遞一個欄位陣列，讓遷移程式按照約定的規則生成名稱：
 
-````php
+```php
 $table->dropForeign(['user_id'']);
 ```
 
