@@ -94,7 +94,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function getProperty($column): array
     {
-        $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
+        $name = $this->option->isPropertyCase() ? Str::camel($column['column_name']) : $column['column_name'];
 
         $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
 

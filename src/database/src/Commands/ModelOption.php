@@ -72,7 +72,7 @@ class ModelOption
     /**
      * @var bool
      */
-    protected $camelCase;
+    protected $propertyCase;
 
     public function getPool(): string
     {
@@ -199,14 +199,14 @@ class ModelOption
         return $this;
     }
 
-    public function isCamelCase(): bool
+    public function isPropertyCase(): bool
     {
-        return $this->camelCase;
+        return $this->propertyCase;
     }
 
-    public function setCamelCase(bool $camelCase): self
+    public function setPropertyCase(bool $propertyCase): self
     {
-        $this->camelCase = $camelCase;
+        $this->propertyCase = $propertyCase;
         return $this;
     }
 }

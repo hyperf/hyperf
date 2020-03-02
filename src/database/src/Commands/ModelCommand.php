@@ -100,7 +100,7 @@ class ModelCommand extends Command
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
             ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
-            ->setCamelCase($this->getOption("camel-case","commands.gen:model.camel_case",$pool,false));
+            ->setPropertyCase($this->getOption("property-case","commands.gen:model.property_case",$pool,false));
 
 
         if ($table) {
@@ -125,7 +125,7 @@ class ModelCommand extends Command
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
-        $this->addOPtion('camel-case',null,InputOption::VALUE_NONE,'properties as camel case, instead of snake case.');
+        $this->addOPtion('property-case',null,InputOption::VALUE_NONE,'properties as camel case, instead of snake case.');
 
     }
 
@@ -238,7 +238,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments','camel-case'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments','property-case'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {

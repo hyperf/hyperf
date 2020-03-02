@@ -30,7 +30,7 @@ $ php bin/hyperf.php db:model table_name
 |  --table-mapping   | array  |       `[]`        | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
 |  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
-|  --camel-case      |  bool  |      `false`      |                将字段转成驼峰式                 |
+|  --property-case   |  bool  |      `false`      |               是否将表字段转为驼峰式                 |
 
 
 对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
@@ -53,7 +53,7 @@ return [
                 'table_mapping' => [],
                 // 注意这里都是下划线
                 'with_comments' => true,
-                'camel_case'    => true,
+                'property_case' => true,
             ],
         ],
     ],
