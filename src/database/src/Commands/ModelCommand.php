@@ -181,7 +181,7 @@ class ModelCommand extends Command
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
-        $columns = $this->getColumns($class, $columns, $option->isForceCasts(), $option->isCamelCase());
+        $columns = $this->getColumns($class, $columns, $option->isForceCasts());
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
@@ -211,7 +211,7 @@ class ModelCommand extends Command
         }, $columns);
     }
 
-    protected function getColumns($className, $columns, $forceCasts,$camelCase): array
+    protected function getColumns($className, $columns, $forceCasts): array
     {
         /** @var Model $model */
         $model = new $className();
@@ -229,9 +229,6 @@ class ModelCommand extends Command
 
         foreach ($columns as $key => $value) {
             $columns[$key]['cast'] = $casts[$value['column_name']] ?? null;
-            if ($camelCase) {
-                $columns[$key]['column_name'] = Str::camel($columns[$key]['column_name']);
-            }
         }
 
         return $columns;
