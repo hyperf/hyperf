@@ -69,6 +69,11 @@ class ModelOption
      */
     protected $visitors = [];
 
+    /**
+     * @var bool
+     */
+    protected $camelCase;
+
     public function getPool(): string
     {
         return $this->pool;
@@ -191,6 +196,17 @@ class ModelOption
     public function setVisitors(array $visitors): self
     {
         $this->visitors = $visitors;
+        return $this;
+    }
+
+    public function isCamelCase(): bool
+    {
+        return $this->camelCase;
+    }
+
+    public function setCamelCase(bool $camelCase): self
+    {
+        $this->camelCase = $camelCase;
         return $this;
     }
 }

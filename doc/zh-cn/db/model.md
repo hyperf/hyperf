@@ -23,13 +23,15 @@ $ php bin/hyperf.php db:model table_name
 |       --pool       | string |     `default`     |      连接池，脚本会根据当前连接池配置创建       |
 |       --path       | string |    `app/Model`    |                    模型路径                     |
 |   --force-casts    |  bool  |      `false`      |            是否强制重置 `casts` 参数            |
-|      --prefix      | string |     空字符串      |                     表前缀                      |
+|      --prefix      | string |     空字符串       |                     表前缀                      |
 |   --inheritance    | string |      `Model`      |                      父类                       |
 |       --uses       | string | `App\Model\Model` |             配合 `inheritance` 使用             |
 | --refresh-fillable |  bool  |      `false`      |            是否刷新 `fillable` 参数             |
 |  --table-mapping   | array  |       `[]`        | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
 |  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
+|  --camel-case      |  bool  |      `false`      |                将字段转成驼峰式                 |
+
 
 对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
 
@@ -49,6 +51,9 @@ return [
                 'uses' => '',
                 'refresh_fillable' => true,
                 'table_mapping' => [],
+                // 注意这里都是下划线
+                'with_comments' => true,
+                'camel_case'    => true,
             ],
         ],
     ],

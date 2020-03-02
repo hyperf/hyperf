@@ -99,7 +99,9 @@ class ModelCommand extends Command
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
-            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []));
+            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
+            ->setCamelCase($this->getOption("camel-case","commands.gen:model.camel_case",$pool,false));
+
 
         if ($table) {
             $this->createModel($table, $option);
@@ -123,6 +125,8 @@ class ModelCommand extends Command
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
+        $this->addOPtion('camel-case',null,InputOption::VALUE_NONE,'properties as camel case, instead of snake case.');
+
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -177,7 +181,7 @@ class ModelCommand extends Command
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
-        $columns = $this->getColumns($class, $columns, $option->isForceCasts());
+        $columns = $this->getColumns($class, $columns, $option->isForceCasts(), $option->isCamelCase());
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
@@ -207,7 +211,7 @@ class ModelCommand extends Command
         }, $columns);
     }
 
-    protected function getColumns($className, $columns, $forceCasts): array
+    protected function getColumns($className, $columns, $forceCasts,$camelCase): array
     {
         /** @var Model $model */
         $model = new $className();
@@ -225,6 +229,9 @@ class ModelCommand extends Command
 
         foreach ($columns as $key => $value) {
             $columns[$key]['cast'] = $casts[$value['column_name']] ?? null;
+            if ($camelCase) {
+                $columns[$key]['column_name'] = Str::camel($columns[$key]['column_name']);
+            }
         }
 
         return $columns;
@@ -234,7 +241,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments','camel-case'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {
