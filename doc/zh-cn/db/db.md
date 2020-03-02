@@ -52,6 +52,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 |     execute      |     `int`      |       执行 SQL，返回受影响的行数        |
 |      query       |    `array`     |        查询 SQL，返回结果集列表         |
 |      fetch       | `array,object` |     查询 SQL，返回结果集的首行数据      |
+|      connection  | `Hyperf\DB\DB` |           修改连接库                  |
 
 ## 使用
 
