@@ -1,5 +1,9 @@
 # v1.1.19 - TBD
 
+## Added
+
+- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
+
 # v1.1.18 - 2020-02-27
 
 ## Added
