@@ -127,9 +127,9 @@ class DB
     }
 
     /**
-     * Changed connection
+     * Change the connection
      */
-    public function connection(string $poolName): DB
+    public function connection(string $poolName): self
     {
         $this->setPoolName($poolName);
         return $this;
