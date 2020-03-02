@@ -116,7 +116,7 @@ class DB
         return sprintf('db.connection.%s', $this->getPoolName());
     }
 
-    private function setPoolName(string $poolName)
+    private function setPoolName(string $poolName): void
     {
         Context::set('db.connection.poolName', $poolName);
     }
