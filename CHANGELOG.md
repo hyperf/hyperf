@@ -7,6 +7,7 @@
 - [#1331](https://github.com/hyperf/hyperf/pull/1331) Added `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`.
 - [#1335](https://github.com/hyperf/hyperf/pull/1335) Added event `AfterExecute` for `command`.
 - [#1361](https://github.com/hyperf/hyperf/pull/1361) Added config of `processors` for logger.
+- [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
 
 ## Changed
 
