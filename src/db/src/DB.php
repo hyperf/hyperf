@@ -123,7 +123,7 @@ class DB
 
     private function getPoolName(): string
     {
-        return (string)Context::get('db.connection.poolName', 'default');
+        return (string) Context::get('db.connection.poolName', 'default');
     }
 
     /**
