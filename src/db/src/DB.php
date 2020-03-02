@@ -55,7 +55,7 @@ class DB
         } catch (Throwable $exception) {
             $result = $connection->retry($exception, $name, $arguments);
         } finally {
-            if (!$hasContextConnection) {
+            if (! $hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
@@ -101,7 +101,7 @@ class DB
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if (!$connection instanceof AbstractConnection) {
+        if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->getPoolName());
             $connection = $pool->get();
         }
