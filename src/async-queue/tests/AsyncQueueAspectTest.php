@@ -88,7 +88,10 @@ class AsyncQueueAspectTest extends TestCase
 
         $ast = new Ast();
         $code = $ast->proxy(FooProxy::class, $proxy = FooProxy::class . 'Proxy');
-        file_put_contents($file = BASE_PATH . '/runtime/container/proxy/FooProxy.proxy.php', $code);
+        if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
+            mkdir($dir, 0777, true);
+        }
+        file_put_contents($file = $dir . 'FooProxy.proxy.php', $code);
         require_once $file;
 
         $container->shouldReceive('get')->with(FooProxy::class)->andReturn(new $proxy());
