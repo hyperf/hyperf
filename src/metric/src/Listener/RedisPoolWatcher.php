@@ -23,7 +23,10 @@ use Hyperf\Redis\Pool\PoolFactory;
  */
 class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
 {
-    public $prefix = 'redis';
+    public function getPrefix()
+    {
+        return 'redis';
+    }
 
     /**
      * Periodically scan metrics.
