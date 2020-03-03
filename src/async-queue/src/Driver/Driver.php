@@ -102,9 +102,11 @@ abstract class Driver implements DriverInterface
                 $this->checkQueueLength();
             }
 
-            if ($maxMessages > 0 && ++$messageCount >= $maxMessages) {
+            if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                 break;
             }
+
+            ++$messageCount;
         }
     }
 

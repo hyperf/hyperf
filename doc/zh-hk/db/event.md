@@ -68,7 +68,7 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ## 模型事件
 
-模型事件與 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 監聽模型事件。`Hyperf` 直接使用 `鈎子函數` 來處理對應的事件。如果你還是喜歡 `Observer` 的方式，可以通過 `事件監聽`，自己實現。當然，你也可以在 [issue#2](https://github.com/hyperf/hyperf/issues/2) 下面告訴我們。
+模型事件與 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 監聽模型事件。`Hyperf` 直接使用 `鈎子函數` 來處理對應的事件。如果你還是喜歡 `Observer` 的方式，可以通過 `事件監聽`，自己實現。當然，你也可以在 [issue#2](https://github.com/hyperf/hyperf/issues/2) 下面吿訴我們。
 
 ### 鈎子函數
 
