@@ -78,7 +78,7 @@ class SwooleStream implements StreamInterface
     public function detach()
     {
         $this->contents = '';
-        $this->size = null;
+        $this->size = 0;
         $this->readable = $this->writable = false;
 
         return null;
