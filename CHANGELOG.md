@@ -1,10 +1,17 @@
 # v1.1.19 - TBD
 
+## Added
+
+- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
+- [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
+
 ## Changed
 
 - [#1384](https://github.com/hyperf/hyperf/pull/1384) add `gen:model --property-case` configure. properties as camel
-case,
-instead of snake case
+
+## Fixed
+
+- [#1386](https://github.com/hyperf/hyperf/pull/1386) Fixed variadic arguments do not work in async message annotation.
 
 # v1.1.18 - 2020-02-27
 
