@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\RateLimit;
 
 use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;

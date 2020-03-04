@@ -86,33 +86,21 @@ class CircuitBreaker implements CircuitBreakerInterface
         $this->state->halfOpen();
     }
 
-    /**
-     * @return float
-     */
     public function getDuration(): float
     {
         return microtime(true) - $this->timestamp;
     }
 
-    /**
-     * @return int
-     */
     public function getFailCounter(): int
     {
         return $this->failCounter;
     }
 
-    /**
-     * @return int
-     */
     public function getSuccessCounter(): int
     {
         return $this->successCounter;
     }
 
-    /**
-     * @return float
-     */
     public function getTimestamp(): float
     {
         return $this->timestamp;

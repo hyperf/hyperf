@@ -55,7 +55,7 @@ class Client implements ClientInterface
     public function __construct(ContainerInterface $container)
     {
         /**
-         * @var GuzzleClientFactory $clientFactory
+         * @var GuzzleClientFactory
          */
         $clientFactory = $container->get(GuzzleClientFactory::class);
         $this->client = $clientFactory->create();

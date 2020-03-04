@@ -48,7 +48,7 @@ abstract class Client
     {
         // Add key of ACL token to $availableOptions
         $availableOptions[] = 'token';
-        
+
         return array_intersect_key($options, array_flip($availableOptions));
     }
 

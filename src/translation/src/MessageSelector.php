@@ -19,9 +19,7 @@ class MessageSelector
     /**
      * Select a proper translation string based on the given number.
      *
-     * @param string $line
      * @param int $number
-     * @param string $locale
      * @return mixed
      */
     public function choose(string $line, $number, string $locale)
@@ -49,10 +47,6 @@ class MessageSelector
      * The plural rules are derived from code of the Zend Framework (2010-09-25), which
      * is subject to the new BSD license (http://framework.zend.com/license/new-bsd)
      * Copyright (c) 2005-2010 - Zend Technologies USA Inc. (http://www.zend.com)
-     *
-     * @param string $locale
-     * @param int $number
-     * @return int
      */
     public function getPluralIndex(string $locale, int $number): int
     {
@@ -360,7 +354,6 @@ class MessageSelector
     /**
      * Extract a translation string using inline conditions.
      *
-     * @param array $segments
      * @param int $number
      * @return mixed
      */
@@ -376,7 +369,6 @@ class MessageSelector
     /**
      * Get the translation string if the condition matches.
      *
-     * @param string $part
      * @param int $number
      * @return mixed
      */
@@ -411,9 +403,6 @@ class MessageSelector
 
     /**
      * Strip the inline conditions from each segment, just leaving the text.
-     *
-     * @param array $segments
-     * @return array
      */
     private function stripConditions(array $segments): array
     {

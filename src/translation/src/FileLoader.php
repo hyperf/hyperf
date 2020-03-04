@@ -48,9 +48,6 @@ class FileLoader implements TranslatorLoaderInterface
 
     /**
      * Create a new file loader instance.
-     *
-     * @param Filesystem $files
-     * @param string $path
      */
     public function __construct(Filesystem $files, string $path)
     {

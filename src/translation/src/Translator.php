@@ -368,9 +368,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Set the parsed value of a key.
-     *
-     * @param string $key
-     * @param array $parsed
      */
     public function setParsedKey(string $key, array $parsed)
     {
@@ -489,9 +486,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Parse an array of namespaced segments.
-     *
-     * @param string $key
-     * @return array
      */
     protected function parseNamespacedSegments(string $key): array
     {

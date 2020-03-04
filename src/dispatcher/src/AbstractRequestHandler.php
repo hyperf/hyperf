@@ -43,7 +43,6 @@ abstract class AbstractRequestHandler
     /**
      * @param array $middlewares All middlewares to dispatch by dispatcher
      * @param object $coreHandler The core middleware of dispatcher
-     * @param ContainerInterface $container
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {
