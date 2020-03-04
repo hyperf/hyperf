@@ -19,4 +19,5 @@ return [
     'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
     'access_key' => env('ALIYUN_ACM_AK', ''),
     'secret_key' => env('ALIYUN_ACM_SK', ''),
+    'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
 ];
