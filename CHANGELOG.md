@@ -1,5 +1,11 @@
 # v1.1.19 - TBD
 
+## Changed
+
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) add `gen:model --property-case` configure. properties as camel
+case,
+instead of snake case
+
 # v1.1.18 - 2020-02-27
 
 ## Added
