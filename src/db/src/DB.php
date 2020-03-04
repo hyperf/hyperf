@@ -41,7 +41,7 @@ class DB
     public function __construct(PoolFactory $factory, string $poolName = 'default')
     {
         $this->factory = $factory;
-        $this->setPoolName($poolName);
+        $this->poolName = $poolName;
     }
 
     public function __call($name, $arguments)
@@ -102,7 +102,7 @@ class DB
             $connection = Context::get($this->getContextKey());
         }
         if (! $connection instanceof AbstractConnection) {
-            $pool = $this->factory->getPool($this->getPoolName());
+            $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get();
         }
         return $connection;
@@ -113,17 +113,7 @@ class DB
      */
     private function getContextKey(): string
     {
-        return sprintf('db.connection.%s', $this->getPoolName());
-    }
-
-    private function setPoolName(string $poolName): void
-    {
-        Context::set('db.connection.poolName', $poolName);
-    }
-
-    private function getPoolName(): string
-    {
-        return (string) Context::get('db.connection.poolName', 'default');
+        return sprintf('db.connection.%s', $this->poolName);
     }
 
     /**
@@ -131,8 +121,9 @@ class DB
      */
     public function connection(string $poolName): self
     {
-        $this->setPoolName($poolName);
-        return $this;
+        return make(static::class, [
+            'poolName' => $poolName
+        ]);
     }
 
 
