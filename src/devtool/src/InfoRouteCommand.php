@@ -7,29 +7,31 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Devtool;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
-use Psr\Container\ContainerInterface;
-use Hyperf\Command\Annotation\Command;
-use Symfony\Component\Console\Helper\Table;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Helper\TableSeparator;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @Command
  */
 class InfoRouteCommand extends SymfonyCommand
 {
+    protected $routes = [BASE_PATH . '/config/routes.php'];
+
     /**
      * @var ContainerInterface
      */
@@ -39,8 +41,6 @@ class InfoRouteCommand extends SymfonyCommand
      * @var ConfigInterface
      */
     private $config;
-
-    protected $routes = [BASE_PATH . '/config/routes.php'];
 
     public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
@@ -68,15 +68,15 @@ class InfoRouteCommand extends SymfonyCommand
         foreach ($routers as $method => $items) {
             foreach ($items as $item) {
                 $uri = $item->route;
-                if (!is_null($path) && $path != $uri) {
+                if (! is_null($path) && $path != $uri) {
                     continue;
                 }
                 if (is_array($item->callback)) {
-                    $action = $item->callback[0]. '@'. $item->callback[1];
+                    $action = $item->callback[0] . '::' . $item->callback[1];
                 } else {
                     $action = $item->callback;
                 }
-                if(isset($data[$uri])) {
+                if (isset($data[$uri])) {
                     $data[$uri]['method'][] = $method;
                 } else {
                     // method,uri,name,action,middleware
@@ -86,11 +86,11 @@ class InfoRouteCommand extends SymfonyCommand
 
                     $middlewares = array_merge($middlewares, $registedMiddlewares);
                     $data[$uri] = [
-                        'server' => $serverName ,
+                        'server' => $serverName,
                         'method' => [$method],
                         'uri' => $uri,
                         'action' => $action,
-                        'middleware' => implode(PHP_EOL, array_unique($middlewares))
+                        'middleware' => implode(PHP_EOL, array_unique($middlewares)),
                     ];
                 }
             }
@@ -107,12 +107,11 @@ class InfoRouteCommand extends SymfonyCommand
             $rows[] = $route;
             $rows[] = new TableSeparator();
         }
-        $rows = array_slice($rows, 0, count($rows) -1);
+        $rows = array_slice($rows, 0, count($rows) - 1);
         $table = new Table($output);
         $table
-            ->setHeaders(array('Server', 'Method', 'URI', 'Action', 'Middleware'))
-            ->setRows($rows)
-        ;
+            ->setHeaders(['Server', 'Method', 'URI', 'Action', 'Middleware'])
+            ->setRows($rows);
         $table->render();
     }
 }

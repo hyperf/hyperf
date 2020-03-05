@@ -2,8 +2,8 @@
 
 ## Added
 
+- [#1339](https://github.com/hyperf/hyperf/pull/1339) Added `info:routes` command.
 - [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
-- [#1339](https://github.com/hyperf/hyperf/pull/1339) Added  info:routes command.
 
 # v1.1.18 - 2020-02-27
 
