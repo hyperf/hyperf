@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Psr\Http\Message\StreamInterface;
 use Laminas\Mime\Decode;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Trait implementing functionality common to requests and responses.

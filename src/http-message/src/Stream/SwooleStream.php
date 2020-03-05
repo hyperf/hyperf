@@ -184,7 +184,6 @@ class SwooleStream implements StreamInterface
 
         $size = strlen($string);
 
-
         $this->contents .= $string;
         $this->size += $size;
 
