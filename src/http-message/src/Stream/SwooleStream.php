@@ -232,10 +232,7 @@ class SwooleStream implements StreamInterface
      */
     public function getContents()
     {
-        $content = $this->contents;
-        $this->contents = '';
-
-        return $content;
+        return $this->contents;
     }
 
     /**

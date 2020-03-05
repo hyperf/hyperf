@@ -88,7 +88,6 @@ class SwooleStreamTest extends TestCase
     public function testEof()
     {
         $random = microtime();
-        $size = strlen($random);
 
         $stream = new SwooleStream($random);
 
@@ -164,13 +163,13 @@ class SwooleStreamTest extends TestCase
         $this->assertSame('', $data);
     }
 
-    public function getContents()
+    public function testGetContents()
     {
         $random = microtime();
         $stream = new SwooleStream($random);
 
         $this->assertSame($random, $stream->getContents());
 
-        $this->assertSame('', $stream->getContents());
+        $this->assertSame($random, $stream->getContents());
     }
 }
