@@ -4,6 +4,7 @@
 
 - [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
 - [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
+- [#1392](https://github.com/hyperf/hyperf/pull/1392) Implements some method for ` Hyperf\HttpMessage\Stream\SwooleStream`.
 
 ## Fixed
 
