@@ -2,9 +2,14 @@
 
 ## Added
 
+- [#1339](https://github.com/hyperf/hyperf/pull/1339) Added `info:routes` command.
 - [#1354](https://github.com/hyperf/hyperf/pull/1354) Added ecs ram authorization for `config-aliyun-acm`.
 - [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
 - [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
+
+## Changed
+
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) Added option `property-case` for command `gen:model`.
 
 ## Fixed
 

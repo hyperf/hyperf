@@ -14,6 +14,10 @@ namespace Hyperf\Database\Commands;
 
 class ModelOption
 {
+    const PROPERTY_SNAKE_CASE = 0;
+
+    const PROPERTY_CAMEL_CASE = 1;
+
     /**
      * @var string
      */
@@ -68,6 +72,11 @@ class ModelOption
      * @var array
      */
     protected $visitors = [];
+
+    /**
+     * @var int
+     */
+    protected $propertyCase = self::PROPERTY_SNAKE_CASE;
 
     public function getPool(): string
     {
@@ -191,6 +200,17 @@ class ModelOption
     public function setVisitors(array $visitors): self
     {
         $this->visitors = $visitors;
+        return $this;
+    }
+
+    public function isCamelCase(): bool
+    {
+        return $this->propertyCase === self::PROPERTY_CAMEL_CASE;
+    }
+
+    public function setPropertyCase($propertyCase): self
+    {
+        $this->propertyCase = (int) $propertyCase;
         return $this;
     }
 }
