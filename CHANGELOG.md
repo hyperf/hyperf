@@ -6,6 +6,10 @@
 - [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
 - [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
 
+## Changed
+
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) Added option `property-case` for command `gen:model`.
+
 ## Fixed
 
 - [#1386](https://github.com/hyperf/hyperf/pull/1386) Fixed variadic arguments do not work in async message annotation.
