@@ -30,7 +30,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class InfoRouteCommand extends SymfonyCommand
 {
-    protected $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
      * @var ContainerInterface
@@ -44,15 +43,15 @@ class InfoRouteCommand extends SymfonyCommand
 
     public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
-        parent::__construct('info:routes');
+        parent::__construct('describe:routes');
         $this->container = $container;
         $this->config = $config;
     }
 
     protected function configure()
     {
-        $this->setDescription('Get routes [{path}] to get the route info.')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Detail of single route');
+        $this->setDescription('Describe the routes infomation.')
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Detail of the specified route');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -99,7 +98,7 @@ class InfoRouteCommand extends SymfonyCommand
         $io->success('success.');
     }
 
-    private function show($data, $output)
+    private function show(array $data, OutputInterface $output)
     {
         $rows = [];
         foreach ($data as $route) {
