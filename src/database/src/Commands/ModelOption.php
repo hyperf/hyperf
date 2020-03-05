@@ -14,6 +14,10 @@ namespace Hyperf\Database\Commands;
 
 class ModelOption
 {
+    const PROPERTY_SNAKE_CASE = 0;
+
+    const PROPERTY_CAMEL_CASE = 1;
+
     /**
      * @var string
      */
@@ -70,9 +74,9 @@ class ModelOption
     protected $visitors = [];
 
     /**
-     * @var bool
+     * @var int
      */
-    protected $propertyCase;
+    protected $propertyCase = self::PROPERTY_SNAKE_CASE;
 
     public function getPool(): string
     {
@@ -199,14 +203,14 @@ class ModelOption
         return $this;
     }
 
-    public function isPropertyCase(): bool
+    public function isCamelCase(): bool
     {
-        return $this->propertyCase;
+        return $this->propertyCase === self::PROPERTY_CAMEL_CASE;
     }
 
-    public function setPropertyCase(bool $propertyCase): self
+    public function setPropertyCase($propertyCase): self
     {
-        $this->propertyCase = $propertyCase;
+        $this->propertyCase = (int) $propertyCase;
         return $this;
     }
 }

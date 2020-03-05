@@ -30,15 +30,20 @@ $ php bin/hyperf.php db:model table_name
 |  --table-mapping   | array  |       `[]`        | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
 |  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
-|  --property-case   |  bool  |      `false`      |               是否将表字段转为驼峰式                 |
+|  --property-case   |  int   |      `0`          |               字段类型 0蛇形 1驼峰               |
 
+当使用 `--property-case` 将字段类型转化为驼峰时，还需要手动在模型中加入 `Hyperf\Database\Model\Concerns\CamelCase`。
 
 对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
+
+> 中划线都需要转化为下划线
 
 ```php
 <?php
 
 declare(strict_types=1);
+
+use Hyperf\Database\Commands\ModelOption;
 
 return [
     'default' => [
@@ -51,9 +56,8 @@ return [
                 'uses' => '',
                 'refresh_fillable' => true,
                 'table_mapping' => [],
-                // 注意这里都是下划线
                 'with_comments' => true,
-                'property_case' => true,
+                'property_case' => ModelOption::PROPERTY_SNAKE_CASE,
             ],
         ],
     ],

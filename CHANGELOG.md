@@ -7,7 +7,7 @@
 
 ## Changed
 
-- [#1384](https://github.com/hyperf/hyperf/pull/1384) add `gen:model --property-case` configure. properties as camel
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) Added option `property-case` for command `gen:model`.
 
 ## Fixed
 
