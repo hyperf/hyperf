@@ -50,8 +50,8 @@ class InfoRouteCommand extends SymfonyCommand
 
     protected function configure()
     {
-        $this->setDescription('Describe the routes infomation.')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Detail of the specified route');
+        $this->setDescription('Describe the routes information.')
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
