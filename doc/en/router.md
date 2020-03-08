@@ -190,5 +190,5 @@ public function index(int $id)
 
 #### 获取路由信息
 
-如果安装了 devtool 组件，可使用 `php bin/hyperf.php info:routes` 命令获取路由列表信息，
-并且提供path可选项，方便获取单个路由信息，对应的命令 `php bin/hyperf.php info:routes --path=/foo/bar`。
+如果安装了 devtool 组件，可使用 `php bin/hyperf.php describe:routes` 命令获取路由列表信息，
+并且提供path可选项，方便获取单个路由信息，对应的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。
