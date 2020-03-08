@@ -202,5 +202,5 @@ public function index(RequestInterface $request)
 
 #### 获取路由信息
 
-如果安裝了 devtool 組件，可使用 `php bin/hyperf.php info:routes` 命令獲取路由列表信息，
-並且提供path可選項，方便獲取單個路由信息，對應的命令 `php bin/hyperf.php info:routes --path=/foo/bar`。
+如果安裝了 devtool 組件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表信息，
+並且提供path可選項，方便獲取單個路由信息，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。
