@@ -200,7 +200,7 @@ public function index(RequestInterface $request)
 
 有時候您可能會希望這個參數是可選的，您可以通過 `[]` 來聲明中括號內的參數為一個可選參數，如 `/user/[{id}]`。
 
-#### 获取路由信息
+#### 獲取路由信息
 
 如果安裝了 devtool 組件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表信息，
 並且提供path可選項，方便獲取單個路由信息，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。
