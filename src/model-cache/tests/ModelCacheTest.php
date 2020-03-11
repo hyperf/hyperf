@@ -14,6 +14,8 @@ namespace HyperfTest\ModelCache;
 
 use Hyperf\Redis\RedisProxy;
 use HyperfTest\ModelCache\Stub\ContainerStub;
+use HyperfTest\ModelCache\Stub\UserExtModel;
+use HyperfTest\ModelCache\Stub\UserHiddenModel;
 use HyperfTest\ModelCache\Stub\UserModel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -43,8 +45,8 @@ class ModelCacheTest extends TestCase
     {
         ContainerStub::mockContainer();
 
-        $users = UserModel::findManyFromCache([1, 2, 3]);
-        $expects = UserModel::query()->findMany([1, 2, 3]);
+        $users = UserModel::findManyFromCache([1, 2, 999]);
+        $expects = UserModel::query()->findMany([1, 2, 999]);
 
         $this->assertTrue(count($users) == 2);
         $this->assertEquals([1, 2], array_keys($users->getDictionary()));
@@ -172,5 +174,58 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(2, UserModel::findFromCache($id)->gender);
 
         UserModel::query(true)->where('id', $id)->delete();
+    }
+
+    public function testModelWithJson()
+    {
+        /** @var UserExtModel $model */
+        $model = UserExtModel::query()->find(1);
+        $model->deleteCache();
+        $model2 = UserExtModel::findFromCache(1);
+        $model3 = UserExtModel::findFromCache(1);
+
+        $this->assertSame(1, $model->json['id']);
+        $this->assertSame(1, $model2->json['id']);
+        $this->assertSame(1, $model3->json['id']);
+        $this->assertSame($model->toArray(), $model2->toArray());
+        $this->assertSame($model->toArray(), $model3->toArray());
+        $this->assertSame($model->getAttributes(), $model2->getAttributes());
+        $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
+    }
+
+    public function testModelCacheWithHidden()
+    {
+        ContainerStub::mockContainer();
+
+        $model = UserModel::query()->find(3);
+        $model->deleteCache();
+        $model2 = UserModel::findFromCache(3);
+        $model3 = UserModel::findFromCache(3);
+        $this->assertSame($model->toArray(), $model2->toArray());
+        $this->assertSame($model->toArray(), $model3->toArray());
+        $this->assertSame($model->getAttributes(), $model2->getAttributes());
+        // TODO: The retrieved attributes from cache are strings, so they are not exactly equal.
+        $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
+
+        $model = UserHiddenModel::query()->find(3);
+        $model->deleteCache();
+        $model2 = UserHiddenModel::findFromCache(3);
+        $model3 = UserHiddenModel::findFromCache(3);
+        $this->assertSame($model->toArray(), $model2->toArray());
+        $this->assertSame($model->toArray(), $model3->toArray());
+        $this->assertSame($model->getAttributes(), $model2->getAttributes());
+        $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
+
+        $model2->gender = (int) (! $model2->gender);
+        $model2->save();
+
+        $model = UserHiddenModel::query()->find(3);
+        $model->deleteCache();
+        $model2 = UserHiddenModel::findFromCache(3);
+        $model3 = UserHiddenModel::findFromCache(3);
+        $this->assertSame($model->toArray(), $model2->toArray());
+        $this->assertSame($model->toArray(), $model3->toArray());
+        $this->assertSame($model->getAttributes(), $model2->getAttributes());
+        $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
     }
 }
