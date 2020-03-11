@@ -225,9 +225,9 @@ class Manager
     protected function formatModel(Model $model): array
     {
         $casts = $model->getCasts();
-        $result = $model->toArray();
+        $result = method_exists($model,'toOriginalArray') ? $model->toOriginalArray() :$model->toArray();
         foreach ($result as $key => $value) {
-            if (isset($casts[$key]) && $casts[$key] === 'json' && ! is_null($value)) {
+            if (isset($casts[$key]) && in_array($casts[$key],['array', 'json', 'object', 'collection'])&& ! is_null($value)) {
                 $result[$key] = json_encode($value);
             }
         }
