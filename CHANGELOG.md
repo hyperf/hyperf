@@ -1,5 +1,9 @@
 # v1.1.20 - TBD
 
+## Fixed
+
+- [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed attributes are not right, when the model has property `hidden`.
+
 # v1.1.19 - 2020-03-05
 
 ## Added
