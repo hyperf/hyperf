@@ -224,15 +224,7 @@ class Manager
 
     protected function formatModel(Model $model): array
     {
-        $casts = $model->getCasts();
-        $result = $model->toArray();
-        foreach ($result as $key => $value) {
-            if (isset($casts[$key]) && $casts[$key] === 'json' && ! is_null($value)) {
-                $result[$key] = json_encode($value);
-            }
-        }
-
-        return $result;
+        return $model->getAttributes();
     }
 
     protected function formatModels($models): array

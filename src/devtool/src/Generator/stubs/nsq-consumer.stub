@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Nsq\AbstractConsumer;
+use Hyperf\Nsq\Annotation\Consumer;
+use Hyperf\Nsq\Message;
+use Hyperf\Nsq\Result;
+
+/**
+ * @Consumer(topic="hyperf", channel="hyperf", name ="%CLASS%", nums=1)
+ */
+class %CLASS% extends AbstractConsumer
+{
+    public function consume(Message $payload): ?string
+    {
+        var_dump($payload->getBody());
+
+        return Result::ACK;
+    }
+}

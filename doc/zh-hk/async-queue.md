@@ -18,7 +18,7 @@ composer require hyperf/async-queue
 |:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                隊列前綴                 |
-|     timeout      |    int    |                      2                      |            pop 消息的超時時間            |
+|     timeout      |    int    |                      2                      |           pop 消息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            消息處理超時時間             |
 |    processes     |    int    |                      1                      |               消費進程數                |
@@ -99,7 +99,43 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 #### 傳統方式
 
-首先我們定義一個消息類，如下
+這種模式會把對象直接序列化然後存到 `Redis` 等隊列中，所以為了保證序列化後的體積，儘量不要將 `Container`，`Config` 等設置為成員變量。
+
+比如以下 `Job` 的定義，是 **不可取** 的
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Job;
+
+use Hyperf\AsyncQueue\Job;
+use Psr\Container\ContainerInterface;
+
+class ExampleJob extends Job
+{
+    public $container;
+
+    public $params;
+
+    public function __construct(ContainerInterface $container, $params)
+    {
+        $this->container = $container;
+        $this->params = $params;
+    }
+
+    public function handle()
+    {
+        // 根據參數處理具體邏輯
+        var_dump($this->params);
+    }
+}
+
+$job = make(ExampleJob::class);
+```
+
+正確的 `Job` 應該是隻有需要處理的數據，其他相關數據，可以在 `handle` 方法中重新獲取，如下。
 
 ```php
 <?php
@@ -123,12 +159,13 @@ class ExampleJob extends Job
     public function handle()
     {
         // 根據參數處理具體邏輯
+        // 通過具體參數獲取模型等
         var_dump($this->params);
     }
 }
 ```
 
-生產消息
+正確定義完 `Job` 後，我們需要寫一個專門投遞消息的 `Service`，代碼如下。
 
 ```php
 <?php
@@ -168,38 +205,9 @@ class QueueService
 }
 ```
 
-#### 註解方式
+投遞消息
 
-框架除了傳統方式投遞消息，還提供了註解方式。
-
-讓我們重寫上述 `QueueService`，直接將 `ExampleJob` 的邏輯搬到 `example` 方法中，具體代碼如下。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
-
-class QueueService
-{
-    /**
-     * @AsyncQueueMessage
-     */
-    public function example($params)
-    {
-        // 需要異步執行的代碼邏輯
-        var_dump($params);
-    }
-}
-
-```
-
-#### 投遞消息
-
-根據實際業務場景，動態投遞消息到異步隊列執行，我們演示在控制器動態投遞消息，如下：
+接下來，調用我們的 `QueueService` 投遞消息即可。
 
 ```php
 <?php
@@ -236,6 +244,63 @@ class QueueController extends Controller
 
         return 'success';
     }
+}
+```
+
+#### 註解方式
+
+框架除了傳統方式投遞消息，還提供了註解方式。
+
+讓我們重寫上述 `QueueService`，直接將 `ExampleJob` 的邏輯搬到 `example` 方法中，並加上對應註解 `AsyncQueueMessage`，具體代碼如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
+
+class QueueService
+{
+    /**
+     * @AsyncQueueMessage
+     */
+    public function example($params)
+    {
+        // 需要異步執行的代碼邏輯
+        var_dump($params);
+    }
+}
+
+```
+
+投遞消息
+
+註解模式投遞消息就跟平常調用方法一致，代碼如下。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Service\QueueService;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController
+ */
+class QueueController extends Controller
+{
+    /**
+     * @Inject
+     * @var QueueService
+     */
+    protected $service;
 
     /**
      * 註解模式投遞消息
@@ -251,4 +316,123 @@ class QueueController extends Controller
         return 'success';
     }
 }
+```
+
+## 事件
+
+|   事件名稱   |        觸發時機         |                         備註                         |
+|:------------:|:-----------------------:|:----------------------------------------------------:|
+| BeforeHandle |     處理消息前觸發      |                                                      |
+| AfterHandle  |     處理消息後觸發      |                                                      |
+| FailedHandle |   處理消息失敗後觸發    |                                                      |
+| RetryHandle  |   重試處理消息前觸發    |                                                      |
+| QueueLength  | 每處理 500 個消息後觸發 | 用户可以監聽此事件，判斷失敗或超時隊列是否有消息積壓 |
+
+### QueueLengthListener
+
+框架自帶了一個記錄隊列長度的監聽器，默認不開啟，您如果需要，可以自行添加到 `listeners` 配置中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\QueueLengthListener::class
+];
+```
+
+## 任務執行流轉流程
+
+任務執行流轉流程主要包括以下幾個隊列:
+
+|  隊列名  |                   備註                    |
+|:--------:|:-----------------------------------------:|
+| waiting  |              等待消費的隊列               |
+| reserved |              正在消費的隊列               |
+| delayed  |              延遲消費的隊列               |
+|  failed  |              消費失敗的隊列               |
+| timeout  | 消費超時的隊列 (雖然超時，但可能執行成功) |
+
+隊列流轉順序如下: 
+
+```mermaid
+graph LR;
+A[投遞延時消息]-->C[delayed隊列];
+B[投遞消息]-->D[waiting隊列];
+C--到期-->D;
+D--消費-->E[reserved隊列];
+E--成功-->F[刪除消息];
+E--失敗-->G[failed隊列];
+E--超時-->H[timeout隊列];
+```
+
+## 配置多個異步隊列
+
+當您需要使用多個隊列來區分消費高頻和低頻或其他種類的消息時，可以配置多個隊列。
+
+1. 添加配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+    'other' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{other.queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+];
+
+```
+
+2. 添加消費進程
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process()
+ */
+class ConsumerProcess extends ConsumerProcess
+{
+    /**
+     * @var string
+     */
+    protected $queue = 'other';
+}
+```
+
+3. 調用
+
+```php
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
+return $driver->push(new ExampleJob());
 ```

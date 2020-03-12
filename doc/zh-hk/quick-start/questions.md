@@ -6,9 +6,12 @@
 [ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
 ```
 
-這可能是因為你按以下的方式設置了
+您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置項
+
+如果您使用的是 1.0.x 版本，這也可能是因為你按以下的方式設置了
 
 ```
+// 在 1.0 系列版本下
 // 這些都是錯誤的，注意 `大小寫` 和 `引號`
 swoole.use_shortname = 'off'
 swoole.use_shortname = off
@@ -18,6 +21,12 @@ swoole.use_shortname = 'Off'
 ```
 
 > 注意該配置必須於 php.ini 內配置，無法通過 ini_set() 函數來重寫
+
+當然，也可以通過以下的命令來啟動服務，在執行 PHP 命令時關閉掉 Swoole 短名功能
+
+```
+php -d swoole.use_shortname=Off bin/hyperf.php start
+```
 
 ## 代理類緩存
 

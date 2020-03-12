@@ -8,6 +8,7 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
   <style>
     .app-name-link img {
       width: 16%;
@@ -20,7 +21,10 @@
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-php.min.js"></script>
   <script src="//unpkg.com/docsify-edit-on-github/index.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>
+    mermaid.initialize({ startOnLoad: false });
+
     window.$docsify = {
       name: 'Hyperf',
       repo: 'hyperf/hyperf',
@@ -56,11 +60,26 @@
       },
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/tree/master/doc/')
-      ]
+      ],
+      plantuml: {
+        skin: 'classic',
+      },
+      markdown:{
+        renderer: {
+          code: function(code, lang) {
+            if (lang === "mermaid") {
+              return ('<div class="mermaid">' + mermaid.render(lang, code) + '</div>');
+            }
+            return this.origin.code.apply(this, arguments);
+          }
+        }
+      }
     }
   </script>
   <script src="//unpkg.com/docsify-copy-code"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//unpkg.com/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
   <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
 
