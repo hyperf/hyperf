@@ -78,13 +78,15 @@ class Client implements ClientInterface
         $accessKey = $this->config->get('aliyun_acm.access_key', '');
         $secretKey = $this->config->get('aliyun_acm.secret_key', '');
         $ecsRamRole = (string) $this->config->get('aliyun_acm.ecs_ram_role', '');
-        $securityToken = null;
+        $securityToken = [];
         if (empty($accessKey) && ! empty($ecsRamRole)) {
             $securityCredentials = $this->getSecurityCredentialsWithEcsRamRole($ecsRamRole);
             if (! empty($securityCredentials)) {
                 $accessKey = $securityCredentials['AccessKeyId'];
                 $secretKey = $securityCredentials['AccessKeySecret'];
-                $securityToken = $securityCredentials['SecurityToken'];
+                $securityToken = [
+                    'Spas-SecurityToken'=>$securityCredentials['SecurityToken']
+                ];
             }
         }
 
@@ -105,13 +107,12 @@ class Client implements ClientInterface
 
             // Get config
             $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
-                'headers' => [
+                'headers' => array_merge([
                     'Spas-AccessKey' => $accessKey,
                     'timeStamp' => $timestamp,
                     'Spas-Signature' => $sign,
-                    'Spas-SecurityToken' => $securityToken ?? '',
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
-                ],
+                ], $securityToken),
                 'query' => [
                     'tenant' => $namespace,
                     'dataId' => $dataId,
