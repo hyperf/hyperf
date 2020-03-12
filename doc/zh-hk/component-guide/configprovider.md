@@ -65,7 +65,7 @@ php bin/hyperf.php vendor:publish 包名稱
 php bin/hyperf.php vendor:publish hyperf/amqp
 ```
 
-只創建一個類並不會被 Hyperf 自動的加載，您仍需在組件的 `composer.json` 添加一些定義，吿訴 Hyperf 這是一個 ConfigProvider 類需要被加載，您需要在組件內的 `composer.json` 文件內增加 `extra.hyperf.config` 配置，並指定對應的 `ConfigProvider` 類的命名空間，如下所示：
+只創建一個類並不會被 Hyperf 自動的加載，您仍需在組件的 `composer.json` 添加一些定義，告訴 Hyperf 這是一個 ConfigProvider 類需要被加載，您需要在組件內的 `composer.json` 文件內增加 `extra.hyperf.config` 配置，並指定對應的 `ConfigProvider` 類的命名空間，如下所示：
 
 ```json
 {

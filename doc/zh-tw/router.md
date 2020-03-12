@@ -199,3 +199,8 @@ public function index(RequestInterface $request)
 #### 可選引數
 
 有時候您可能會希望這個引數是可選的，您可以通過 `[]` 來宣告中括號內的引數為一個可選引數，如 `/user/[{id}]`。
+
+#### 獲取路由資訊
+
+如果安裝了 devtool 元件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表資訊，
+並且提供path可選項，方便獲取單個路由資訊，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。

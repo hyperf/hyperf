@@ -1,5 +1,64 @@
 # 版本更新記錄
 
+# v1.1.19 - 2020-03-05
+
+## 新增
+
+- [#1339](https://github.com/hyperf/hyperf/pull/1339) [#1394](https://github.com/hyperf/hyperf/pull/1394) 新增 `describe:routes` 命令來顯示路由的細節信息；
+- [#1354](https://github.com/hyperf/hyperf/pull/1354) 為  `config-aliyun-acm` 組件新增 ecs ram authorization；
+- [#1362](https://github.com/hyperf/hyperf/pull/1362) 為 `Hyperf\Pool\SimplePool\PoolFactory` 增加 `getPoolNames()` 來獲取連接池的名稱；
+- [#1371](https://github.com/hyperf/hyperf/pull/1371) 新增 `Hyperf\DB\DB::connection()` 方法來指定要使用的連接；
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) 為 `gen:model` 命令新增  `property-case` 選項來設定成員屬性的命名風格；
+
+## 修復
+
+- [#1386](https://github.com/hyperf/hyperf/pull/1386) 修復異步消息投遞註解當用在存在可變參數的方法上失效的問題；
+
+# v1.1.18 - 2020-02-27
+
+## 新增
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) 為 `hyperf\metric` 組件添加預製的 `Grafana` 面板；
+- [#1328](https://github.com/hyperf/hyperf/pull/1328) 添加 `ModelRewriteInheritanceVisitor` 來重寫 model 類繼承的 `gen:model` 命令；
+- [#1331](https://github.com/hyperf/hyperf/pull/1331) 添加 `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`；
+- [#1335](https://github.com/hyperf/hyperf/pull/1335) 為 `command` 添加 `AfterExecute` 事件；
+- [#1361](https://github.com/hyperf/hyperf/pull/1361) logger 組件添加 `processors` 配置；
+
+## 修復
+
+- [#1330](https://github.com/hyperf/hyperf/pull/1330) 修復當使用 `(new Parallel())->add($callback, $key)` 並且參數 `$key` 並非 string 類型, 返回結果將會從 0 開始排序 `$key`；
+- [#1338](https://github.com/hyperf/hyperf/pull/1338) 修復當從 server 設置自己的設置時, 主 server 的配置不生效的 bug；
+- [#1344](https://github.com/hyperf/hyperf/pull/1344) 修復隊列在沒有設置最大消息數時每次都需要校驗長度的 bug；
+
+## 變更
+
+- [#1324](https://github.com/hyperf/hyperf/pull/1324) [hyperf/async-queue](https://github.com/hyperf/async-queue) 組件不再提供默認啟用 `Hyperf\AsyncQueue\Listener\QueueLengthListener`；
+
+## 優化
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) 優化 `hyperf\metric` 中的邊界條件；
+- [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server 自動處理 HEAD 請求並且不會在 HEAD 請求時返回 Response body；
+
+## 刪除
+
+- [#1303](https://github.com/hyperf/hyperf/pull/1303) 刪除 `Hyperf\RpcServer\Router\Router` 中無用的 `$httpMethod`；
+
+# v1.1.17 - 2020-01-24
+
+## 新增
+
+- [#1220](https://github.com/hyperf/hyperf/pull/1220) 為 Apollo 組件增加 BootProcessListener 來實現在服務啟動時從 Apollo 拉取配置的功能；
+- [#1292](https://github.com/hyperf/hyperf/pull/1292) 為 `Hyperf\Database\Schema\Blueprint::foreign()` 方法的返回類型增加了 `Hyperf\Database\Schema\ForeignKeyDefinition` 類型；
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) 為 `hyperf\crontab` 組件增加了 Command 模式支持；
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) 增加 [hyperf/nsq](https://github.com/hyperf/nsq) 組件，[NSQ](https://nsq.io) 是一個實時的分佈式消息平台；
+
+## 修復
+
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) 修復 [hyperf/super-globals](https://github.com/hyperf/super-globals) 組件的 `$_SERVER` 存在小寫鍵值與 PHP-FPM 不統一的問題；
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) 修復 [hyperf/validation](https://github.com/hyperf/validation) 組件缺失的一些翻譯內容, 包括 gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid；
+- [#1310](https://github.com/hyperf/hyperf/pull/1310) 修復服務註冊在當服務同名不同協議的情況下會被覆蓋的問題；
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) 修復 `Hyperf\AsyncQueue\Process\ConsumerProcess` 類缺失的 $config 變量；
+
 # v1.1.16 - 2020-01-16
 
 ## 新增

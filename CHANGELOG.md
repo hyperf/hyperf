@@ -1,10 +1,28 @@
-# v1.1.19 - TBD
+# v1.1.20 - TBD
 
 ## Added
 
-- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
-- [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()`.
-- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements some method for ` Hyperf\HttpMessage\Stream\SwooleStream`.
+- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements methods for ` Hyperf\HttpMessage\Stream\SwooleStream`.
+- [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` to begin a transaction automatically.
+
+
+## Fixed
+
+- [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed attributes are not right, when the model has property `hidden`.
+- [#1410](https://github.com/hyperf/hyperf/pull/1410) Fixed tracer cannot trace the call chains of redis connection that created by `Hyperf\Redis\RedisFactory`.
+
+# v1.1.19 - 2020-03-05
+
+## Added
+
+- [#1339](https://github.com/hyperf/hyperf/pull/1339) [#1394](https://github.com/hyperf/hyperf/pull/1394) Added `describe:routes` command to describe the routes information by command.
+- [#1354](https://github.com/hyperf/hyperf/pull/1354) Added ecs ram authorization for `config-aliyun-acm`.
+- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` method for `Hyperf\Pool\SimplePool\PoolFactory`.
+- [#1371](https://github.com/hyperf/hyperf/pull/1371) Added `Hyperf\DB\DB::connection()` to use the specified connection.
+
+## Changed
+
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) Added option `property-case` for command `gen:model`.
 
 ## Fixed
 
