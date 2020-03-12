@@ -77,6 +77,7 @@ class Render implements RenderInterface
             default:
                 $executor = $this->container->get(TaskExecutor::class);
                 $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
+                break;
         }
 
         return $result;
