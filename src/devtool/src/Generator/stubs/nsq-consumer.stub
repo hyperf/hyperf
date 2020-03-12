@@ -14,7 +14,7 @@ use Hyperf\Nsq\Result;
  */
 class %CLASS% extends AbstractConsumer
 {
-    public function consume(Message $payload): string
+    public function consume(Message $payload): ?string
     {
         var_dump($payload->getBody());
 
