@@ -1,5 +1,9 @@
 # v1.1.20 - TBD
 
+## Added
+
+- [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` to begin a transaction automatically.
+
 ## Fixed
 
 - [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed attributes are not right, when the model has property `hidden`.
