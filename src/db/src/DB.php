@@ -48,6 +48,7 @@ class DB
     {
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
+        $connection->conifgReload($this->poolName);
 
         try {
             $connection = $connection->getConnection();

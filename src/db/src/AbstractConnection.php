@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DB;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection;
 use Hyperf\Pool\Exception\ConnectionException;
@@ -29,6 +30,16 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    public function conifgReload($poolName): bool
+    {
+        $nowConfig = $this->container->get(ConfigInterface::class)->get('db');
+        if (isset($nowConfig[$poolName]) && $this->getConfig() !== $nowConfig[$poolName]) {
+            $this->config = $nowConfig[$poolName];
+            return $this->reconnect();
+        }
+        return true;
     }
 
     public function release(): void
