@@ -5,6 +5,7 @@
 ## Added
 
 - [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` to begin a transaction automatically.
+- [#1412](https://github.com/hyperf/hyperf/pull/1412) Added `Hyperf\View\RenderInterface::getContents()`.
 
 ## Fixed
 
