@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
@@ -34,6 +35,7 @@ class RedisAspect implements AroundInterface
     public $classes
         = [
             Redis::class . '::__call',
+            RedisProxy::class . '::__call',
         ];
 
     /**

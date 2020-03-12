@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed attributes are not right, when the model has property `hidden`.
+- [#1410](https://github.com/hyperf/hyperf/pull/1410) Fixed tracer cannot trace the call chains of redis connection that created by `Hyperf\Redis\RedisFactory`.
 
 # v1.1.19 - 2020-03-05
 
