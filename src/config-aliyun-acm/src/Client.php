@@ -55,7 +55,7 @@ class Client implements ClientInterface
     public function __construct(ContainerInterface $container)
     {
         /**
-         * @var GuzzleClientFactory $clientFactory
+         * @var GuzzleClientFactory
          */
         $clientFactory = $container->get(GuzzleClientFactory::class);
         $this->client = $clientFactory->create();
@@ -85,7 +85,7 @@ class Client implements ClientInterface
                 $accessKey = $securityCredentials['AccessKeyId'];
                 $secretKey = $securityCredentials['AccessKeySecret'];
                 $securityToken = [
-                    'Spas-SecurityToken'=>$securityCredentials['SecurityToken']
+                    'Spas-SecurityToken' => $securityCredentials['SecurityToken'],
                 ];
             }
         }
