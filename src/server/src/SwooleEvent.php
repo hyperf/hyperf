@@ -35,6 +35,11 @@ class SwooleEvent
     const ON_WORKER_EXIT = 'workerExit';
 
     /**
+     * Swoole onWorkerError event.
+     */
+    const ON_WORKER_ERROR = 'workerError';
+
+    /**
      * Swoole onPipeMessage event.
      */
     const ON_PIPE_MESSAGE = 'pipeMessage';
