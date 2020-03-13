@@ -4,15 +4,15 @@
 
 ## Added
 
-- [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` to begin a transaction automatically.
-- [#1412](https://github.com/hyperf/hyperf/pull/1412) Added `Hyperf\View\RenderInterface::getContents()`.
-- [#1416](https://github.com/hyperf/hyperf/pull/1416) Added server event constants `ON_WORKER_ERROR`.
+- [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` annotation to begin a transaction automatically.
+- [#1412](https://github.com/hyperf/hyperf/pull/1412) Added `Hyperf\View\RenderInterface::getContents()` method to get the contents of view render directly.
+- [#1416](https://github.com/hyperf/hyperf/pull/1416) Added Swoole event constant `ON_WORKER_ERROR`.
 
 ## Fixed
 
-- [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed attributes are not right, when the model has property `hidden`.
+- [#1405](https://github.com/hyperf/hyperf/pull/1405) Fixed the cached attributes are not right, when the model has property `hidden`.
 - [#1410](https://github.com/hyperf/hyperf/pull/1410) Fixed tracer cannot trace the call chains of redis connection that created by `Hyperf\Redis\RedisFactory`.
-- [#1415](https://github.com/hyperf/hyperf/pull/1415) Fixed bug that decoded sts token failed when optional header `SecurityToken` is empty.
+- [#1415](https://github.com/hyperf/hyperf/pull/1415) Fixed the bug that Aliyun acm client decode sts token failed when optional header `SecurityToken` is empty.
 
 # v1.1.19 - 2020-03-05
 
