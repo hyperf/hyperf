@@ -87,6 +87,7 @@
   * [枚舉類](zh-hk/constants.md)
   * [Snowflake](zh-hk/snowflake.md)
   * [Nats](zh-hk/nats.md)
+  * [Nsq](zh-hk/nsq.md)
   * [重試](zh-hk/retry.md)
 
 * 應用部署
