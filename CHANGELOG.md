@@ -3,6 +3,7 @@
 ## Added
 
 - [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` to begin a transaction automatically.
+- [#1416](https://github.com/hyperf/hyperf/pull/1416) Added server event constants `ON_WORKER_ERROR`.
 
 ## Fixed
 
