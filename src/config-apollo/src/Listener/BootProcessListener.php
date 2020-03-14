@@ -17,6 +17,7 @@ use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\Coroutine;
 
 class BootProcessListener extends OnPipeMessageListener
 {
@@ -62,5 +63,17 @@ class BootProcessListener extends OnPipeMessageListener
             $callbacks[$namespace] = $ipcCallback;
         }
         $this->client->pull($namespaces, $callbacks);
+
+        if (! $this->config->get('apollo.use_standalone_process', true)) {
+            Coroutine::create(function () use ($namespaces, $callbacks) {
+                $interval = $this->config->get('apollo.interval', 5);
+                retry(INF, function () use ($namespaces, $callbacks, $interval) {
+                    while (true) {
+                        sleep($interval);
+                        $this->client->pull($namespaces, $callbacks);
+                    }
+                }, $interval * 1000);
+            });
+        }
     }
 }

@@ -54,7 +54,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('apollo.enable', false);
+        return $this->config->get('apollo.enable', false)
+            && $this->config->get('apollo.use_standalone_process', true);
     }
 
     public function handle(): void
