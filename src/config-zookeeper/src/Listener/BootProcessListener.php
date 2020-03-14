@@ -54,6 +54,10 @@ class BootProcessListener implements ListenerInterface
 
     public function process(object $event)
     {
+        if (! $this->config->get('zookeeper.enable', false)) {
+            return;
+        }
+
         if (! $this->config->get('zookeeper.use_standalone_process', true)) {
             Coroutine::create(function () {
                 $interval = $this->config->get('zookeeper.interval', 5);
