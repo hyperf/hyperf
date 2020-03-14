@@ -63,7 +63,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('zookeeper.enable', false);
+        return $this->config->get('zookeeper.enable', false)
+            && $this->config->get('zookeeper.use_standalone_process', true);
     }
 
     public function handle(): void
