@@ -17,8 +17,8 @@ use Hyperf\ConfigAliyunAcm\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {

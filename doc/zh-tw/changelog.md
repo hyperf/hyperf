@@ -1,5 +1,20 @@
 # 版本更新記錄
 
+# v1.1.20 - 2020-03-12
+
+## 新增
+
+- [#1402](https://github.com/hyperf/hyperf/pull/1402) 增加 `Hyperf\DbConnection\Annotation\Transactional` 註解來自動開啟一個事務；
+- [#1412](https://github.com/hyperf/hyperf/pull/1412) 增加 `Hyperf\View\RenderInterface::getContents()` 方法來直接獲取 View Render 的渲染內容；
+- [#1416](https://github.com/hyperf/hyperf/pull/1416) 增加 Swoole 事件常量 `ON_WORKER_ERROR`.
+
+## 修復
+
+- [#1405](https://github.com/hyperf/hyperf/pull/1405) 修復當模型存在 `hidden` 屬性時，模型快取功能快取的欄位資料不正確的問題；
+- [#1410](https://github.com/hyperf/hyperf/pull/1410) 修復 Tracer 無法追蹤由 `Hyperf\Redis\RedisFactory` 建立的連線的呼叫鏈；
+- [#1415](https://github.com/hyperf/hyperf/pull/1415) 修復阿里 ACM 客戶端在當 `SecurityToken` Header 為空時 sts token 會解密失敗的問題；
+
+
 # v1.1.19 - 2020-03-05
 
 ## 新增
