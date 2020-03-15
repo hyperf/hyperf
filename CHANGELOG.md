@@ -1,11 +1,13 @@
 # v1.1.21 - TBD
 
+## Added
+
+- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements methods for `Hyperf\HttpMessage\Stream\SwooleStream`.
+
 # v1.1.20 - 2020-03-12
 
 ## Added
 
-=======
-- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements methods for ` Hyperf\HttpMessage\Stream\SwooleStream`.
 - [#1402](https://github.com/hyperf/hyperf/pull/1402) Added `Hyperf\DbConnection\Annotation\Transactional` annotation to begin a transaction automatically.
 - [#1412](https://github.com/hyperf/hyperf/pull/1412) Added `Hyperf\View\RenderInterface::getContents()` method to get the contents of view render directly.
 - [#1416](https://github.com/hyperf/hyperf/pull/1416) Added Swoole event constant `ON_WORKER_ERROR`.
