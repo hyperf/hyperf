@@ -83,12 +83,14 @@ class BootProcessListener implements ListenerInterface
             Coroutine::create(function () {
                 $interval = $this->config->get('config_etcd.interval', 5);
                 retry(INF, function () use ($interval) {
+                    $prevConfig = [];
                     while (true) {
                         sleep($interval);
                         $config = $this->client->pull();
-                        if ($config !== $this->config) {
+                        if ($config !== $prevConfig) {
                             $this->updateConfig($config);
                         }
+                        $prevConfig = $config;
                     }
                 }, $interval * 1000);
             });

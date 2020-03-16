@@ -62,18 +62,27 @@ class BootProcessListener implements ListenerInterface
             Coroutine::create(function () {
                 $interval = $this->config->get('zookeeper.interval', 5);
                 retry(INF, function () use ($interval) {
+                    $prevConfig = [];
                     while (true) {
-                        $config = $this->client->pull();
-                        if ($config !== $this->config) {
-                            foreach ($config ?? [] as $key => $value) {
-                                $this->config->set($key, $value);
-                                $this->logger->debug(sprintf('Config [%s] is updated', $key));
-                            }
-                        }
                         sleep($interval);
+                        $config = $this->client->pull();
+                        if ($config !== $prevConfig) {
+                            $this->updateConfig($config);
+                        }
+                        $prevConfig = $config;
                     }
                 }, $interval * 1000);
             });
+        }
+    }
+
+    protected function updateConfig(array $config)
+    {
+        foreach ($config as $key => $value) {
+            if (is_string($key)) {
+                $this->config->set($key, $value);
+                $this->logger->debug(sprintf('Config [%s] is updated', $key));
+            }
         }
     }
 }
