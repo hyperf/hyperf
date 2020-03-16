@@ -136,23 +136,28 @@ class SwooleStreamTest extends TestCase
     public function testRead()
     {
         $random = microtime();
+        $totalSize = strlen($random);
 
         $stream = new SwooleStream($random);
 
         $this->assertSame(true, $stream->isReadable());
+        $this->assertSame($totalSize, $stream->getSize());
 
         $size = 1;
         $data = $stream->read($size);
         $this->assertSame(substr($random, 0, $size), $data);
+        $this->assertSame($totalSize - $size, $stream->getSize());
 
         // read size >= data size
         $fullSize = strlen($random);
         $data = $stream->read($fullSize);
         $this->assertSame(substr($random, $size, $fullSize), $data);
+        $this->assertSame(0, $stream->getSize());
 
         // read data from empty stream
         $data = $stream->read(1);
         $this->assertSame('', $data);
+        $this->assertSame(0, $stream->getSize());
 
         $stream->close();
 
@@ -161,6 +166,7 @@ class SwooleStreamTest extends TestCase
         // read data from empty stream
         $data = $stream->read(1);
         $this->assertSame('', $data);
+        $this->assertSame(0, $stream->getSize());
     }
 
     public function testGetContents()

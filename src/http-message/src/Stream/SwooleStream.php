@@ -215,9 +215,11 @@ class SwooleStream implements StreamInterface
         if ($length >= $this->getSize()) {
             $result = $this->contents;
             $this->contents = '';
+            $this->size = 0;
         } else {
             $result = substr($this->contents, 0, $length);
             $this->contents = substr($this->contents, $length);
+            $this->size = $this->getSize() - $length;
         }
 
         return $result;
