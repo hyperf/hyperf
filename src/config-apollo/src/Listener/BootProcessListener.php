@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigApollo\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\ConfigApollo\Option;
 use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
@@ -26,6 +27,7 @@ class BootProcessListener extends OnPipeMessageListener
         return [
             BeforeWorkerStart::class,
             BeforeProcessHandle::class,
+            BeforeHandle::class,
         ];
     }
 

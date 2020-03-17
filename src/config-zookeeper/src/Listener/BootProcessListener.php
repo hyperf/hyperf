@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigZookeeper\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\ConfigZookeeper\ClientInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -49,6 +50,7 @@ class BootProcessListener implements ListenerInterface
         return [
             BeforeWorkerStart::class,
             BeforeProcessHandle::class,
+            BeforeHandle::class,
         ];
     }
 

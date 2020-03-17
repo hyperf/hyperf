@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigEtcd\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\ConfigEtcd\ClientInterface;
 use Hyperf\ConfigEtcd\KV;
 use Hyperf\Contract\ConfigInterface;
@@ -66,6 +67,7 @@ class BootProcessListener implements ListenerInterface
         return [
             BeforeWorkerStart::class,
             BeforeProcessHandle::class,
+            BeforeHandle::class,
         ];
     }
 
