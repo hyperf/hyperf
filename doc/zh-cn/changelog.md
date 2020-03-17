@@ -1,5 +1,79 @@
 # 版本更新记录
 
+# v1.1.20 - 2020-03-12
+
+## 新增
+
+- [#1402](https://github.com/hyperf/hyperf/pull/1402) 增加 `Hyperf\DbConnection\Annotation\Transactional` 注解来自动开启一个事务；
+- [#1412](https://github.com/hyperf/hyperf/pull/1412) 增加 `Hyperf\View\RenderInterface::getContents()` 方法来直接获取 View Render 的渲染内容；
+- [#1416](https://github.com/hyperf/hyperf/pull/1416) 增加 Swoole 事件常量 `ON_WORKER_ERROR`.
+
+## 修复
+
+- [#1405](https://github.com/hyperf/hyperf/pull/1405) 修复当模型存在 `hidden` 属性时，模型缓存功能缓存的字段数据不正确的问题；
+- [#1410](https://github.com/hyperf/hyperf/pull/1410) 修复 Tracer 无法追踪由 `Hyperf\Redis\RedisFactory` 创建的连接的调用链；
+- [#1415](https://github.com/hyperf/hyperf/pull/1415) 修复阿里 ACM 客户端在当 `SecurityToken` Header 为空时 sts token 会解密失败的问题；
+
+
+# v1.1.19 - 2020-03-05
+
+## 新增
+
+- [#1339](https://github.com/hyperf/hyperf/pull/1339) [#1394](https://github.com/hyperf/hyperf/pull/1394) 新增 `describe:routes` 命令来显示路由的细节信息；
+- [#1354](https://github.com/hyperf/hyperf/pull/1354) 为  `config-aliyun-acm` 组件新增 ecs ram authorization；
+- [#1362](https://github.com/hyperf/hyperf/pull/1362) 为 `Hyperf\Pool\SimplePool\PoolFactory` 增加 `getPoolNames()` 来获取连接池的名称；
+- [#1371](https://github.com/hyperf/hyperf/pull/1371) 新增 `Hyperf\DB\DB::connection()` 方法来指定要使用的连接；
+- [#1384](https://github.com/hyperf/hyperf/pull/1384) 为 `gen:model` 命令新增  `property-case` 选项来设定成员属性的命名风格；
+
+## 修复
+
+- [#1386](https://github.com/hyperf/hyperf/pull/1386) 修复异步消息投递注解当用在存在可变参数的方法上失效的问题；
+
+# v1.1.18 - 2020-02-27
+
+## 新增
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) 为 `hyperf\metric` 组件添加预制的 `Grafana` 面板；
+- [#1328](https://github.com/hyperf/hyperf/pull/1328) 添加 `ModelRewriteInheritanceVisitor` 来重写 model 类继承的 `gen:model` 命令；
+- [#1331](https://github.com/hyperf/hyperf/pull/1331) 添加 `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`；
+- [#1335](https://github.com/hyperf/hyperf/pull/1335) 为 `command` 添加 `AfterExecute` 事件；
+- [#1361](https://github.com/hyperf/hyperf/pull/1361) logger 组件添加 `processors` 配置；
+
+## 修复
+
+- [#1330](https://github.com/hyperf/hyperf/pull/1330) 修复当使用 `(new Parallel())->add($callback, $key)` 并且参数 `$key` 并非 string 类型, 返回结果将会从 0 开始排序 `$key`；
+- [#1338](https://github.com/hyperf/hyperf/pull/1338) 修复当从 server 设置自己的设置时, 主 server 的配置不生效的 bug；
+- [#1344](https://github.com/hyperf/hyperf/pull/1344) 修复队列在没有设置最大消息数时每次都需要校验长度的 bug；
+
+## 变更
+
+- [#1324](https://github.com/hyperf/hyperf/pull/1324) [hyperf/async-queue](https://github.com/hyperf/async-queue) 组件不再提供默认启用 `Hyperf\AsyncQueue\Listener\QueueLengthListener`；
+
+## 优化
+
+- [#1305](https://github.com/hyperf/hyperf/pull/1305) 优化 `hyperf\metric` 中的边界条件；
+- [#1322](https://github.com/hyperf/hyperf/pull/1322) HTTP Server 自动处理 HEAD 请求并且不会在 HEAD 请求时返回 Response body；
+
+## 删除
+
+- [#1303](https://github.com/hyperf/hyperf/pull/1303) 删除 `Hyperf\RpcServer\Router\Router` 中无用的 `$httpMethod`；
+
+# v1.1.17 - 2020-01-24
+
+## 新增
+
+- [#1220](https://github.com/hyperf/hyperf/pull/1220) 为 Apollo 组件增加 BootProcessListener 来实现在服务启动时从 Apollo 拉取配置的功能；
+- [#1292](https://github.com/hyperf/hyperf/pull/1292) 为 `Hyperf\Database\Schema\Blueprint::foreign()` 方法的返回类型增加了 `Hyperf\Database\Schema\ForeignKeyDefinition` 类型；
+- [#1313](https://github.com/hyperf/hyperf/pull/1313) 为 `hyperf\crontab` 组件增加了 Command 模式支持；
+- [#1321](https://github.com/hyperf/hyperf/pull/1321) 增加 [hyperf/nsq](https://github.com/hyperf/nsq) 组件，[NSQ](https://nsq.io) 是一个实时的分布式消息平台；
+
+## 修复
+
+- [#1291](https://github.com/hyperf/hyperf/pull/1291) 修复 [hyperf/super-globals](https://github.com/hyperf/super-globals) 组件的 `$_SERVER` 存在小写键值与 PHP-FPM 不统一的问题；
+- [#1308](https://github.com/hyperf/hyperf/pull/1308) 修复 [hyperf/validation](https://github.com/hyperf/validation) 组件缺失的一些翻译内容, 包括 gt, gte, ipv4, ipv6, lt, lte, mimetypes, not_regex, starts_with, uuid；
+- [#1310](https://github.com/hyperf/hyperf/pull/1310) 修复服务注册在当服务同名不同协议的情况下会被覆盖的问题；
+- [#1315](https://github.com/hyperf/hyperf/pull/1315) 修复 `Hyperf\AsyncQueue\Process\ConsumerProcess` 类缺失的 $config 变量；
+
 # v1.1.16 - 2020-01-16
 
 ## 新增

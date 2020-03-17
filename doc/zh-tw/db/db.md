@@ -44,14 +44,15 @@ php bin/hyperf.php vendor:publish hyperf/db
 具體介面可以檢視 `Hyperf\DB\ConnectionInterface`。
 
 |      方法名      |   返回值型別   |                  備註                   |
-|:----------------:|:--------------:|:---------------------------------------:|
+|:----------------:|:--------------:|:------------------------------------:|
 | beginTransaction |     `void`     |          開啟事務 支援事務巢狀          |
 |      commit      |     `void`     |          提交事務 支援事務巢狀          |
 |     rollBack     |     `void`     |          回滾事務 支援事務巢狀          |
-|      insert      |     `int`      | 插入資料，返回主鍵 ID，非自增主鍵返回 0 |
+|      insert      |     `int`      | 插入資料，返回主鍵 ID，非自增主鍵返回 0   |
 |     execute      |     `int`      |       執行 SQL，返回受影響的行數        |
 |      query       |    `array`     |        查詢 SQL，返回結果集列表         |
-|      fetch       | `array,object` |     查詢 SQL，返回結果集的首行資料      |
+|      fetch       | `array, object`|     查詢 SQL，返回結果集的首行資料       |
+|      connection  |     `self`     |           指定連線的資料庫             |
 
 ## 使用
 

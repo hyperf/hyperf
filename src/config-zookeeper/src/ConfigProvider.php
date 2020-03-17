@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigZookeeper;
 
+use Hyperf\ConfigZookeeper\Listener\BootProcessListener;
 use Hyperf\ConfigZookeeper\Listener\OnPipeMessageListener;
 use Hyperf\ConfigZookeeper\Process\ConfigFetcherProcess;
 
@@ -28,6 +29,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 OnPipeMessageListener::class,
+                BootProcessListener::class,
             ],
             'annotations' => [
                 'scan' => [

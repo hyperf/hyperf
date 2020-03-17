@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelOption;
+use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
@@ -93,7 +94,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function getProperty($column): array
     {
-        $name = $column['column_name'];
+        $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
 
         $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
 

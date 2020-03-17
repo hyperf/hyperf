@@ -64,7 +64,7 @@ return [
 ];
 ```
 
-此配置文件用於管理 Server 服務，其中的 `settings` 選項可以直接使用由 `Swoole Server` 提供的選項，其他選項可參考 [Swoole 官方文檔](https://wiki.swoole.com/wiki/page/274.html) 。
+此配置文件用於管理 Server 服務，其中的 `settings` 選項可以直接使用由 `Swoole Server` 提供的選項，其他選項可參考 [Swoole 官方文檔](https://wiki.swoole.com/#/server/setting) 。
 
 如需要設置守護進程化，可在 `settings` 中增加 `'daemonize' => 1`，執行 `php bin/hyperf.php start`後，程序將轉入後台作為守護進程運行
 

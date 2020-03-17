@@ -59,7 +59,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('aliyun_acm.enable', false);
+        return $this->config->get('aliyun_acm.enable', false)
+            && $this->config->get('aliyun_acm.use_standalone_process', true);
     }
 
     public function handle(): void

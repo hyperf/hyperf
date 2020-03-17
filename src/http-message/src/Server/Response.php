@@ -37,7 +37,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
     /**
      * Handle response and send.
      */
-    public function send()
+    public function send(bool $withContent = true)
     {
         if (! $this->getSwooleResponse()) {
             return;
@@ -48,7 +48,11 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
         if ($content instanceof FileInterface) {
             return $this->swooleResponse->sendfile($content->getFilename());
         }
-        $this->swooleResponse->end($content->getContents());
+        if ($withContent) {
+            $this->swooleResponse->end($content->getContents());
+        } else {
+            $this->swooleResponse->end();
+        }
     }
 
     /**

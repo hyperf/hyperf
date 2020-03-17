@@ -26,11 +26,6 @@ abstract class PoolWatcher
      */
     protected $container;
 
-    /**
-     * @var string
-     */
-    private $prefix = '';
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -46,6 +41,8 @@ abstract class PoolWatcher
         ];
     }
 
+    abstract protected function getPrefix();
+
     /**
      * Periodically scan metrics.
      */
@@ -56,17 +53,17 @@ abstract class PoolWatcher
         $connectionsInUseGauge = $this
             ->container
             ->get(MetricFactoryInterface::class)
-            ->makeGauge($this->prefix . '_connections_in_use', ['pool', 'worker'])
+            ->makeGauge($this->getPrefix() . '_connections_in_use', ['pool', 'worker'])
             ->with($poolName, (string) $workerId);
         $connectionsInWaitingGauge = $this
             ->container
             ->get(MetricFactoryInterface::class)
-            ->makeGauge($this->prefix . '_connections_in_waiting', ['pool', 'worker'])
+            ->makeGauge($this->getPrefix() . '_connections_in_waiting', ['pool', 'worker'])
             ->with($poolName, (string) $workerId);
         $maxConnectionsGauge = $this
             ->container
             ->get(MetricFactoryInterface::class)
-            ->makeGauge($this->prefix . '_max_connections', ['pool', 'worker'])
+            ->makeGauge($this->getPrefix() . '_max_connections', ['pool', 'worker'])
             ->with($poolName, (string) $workerId);
 
         $config = $this->container->get(ConfigInterface::class);

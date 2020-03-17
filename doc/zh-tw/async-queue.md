@@ -18,7 +18,7 @@ composer require hyperf/async-queue
 |:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                佇列字首                 |
-|     timeout      |    int    |                      2                      |            pop 訊息的超時時間            |
+|     timeout      |    int    |                      2                      |           pop 訊息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            訊息處理超時時間             |
 |    processes     |    int    |                      1                      |               消費程序數                |
@@ -316,4 +316,123 @@ class QueueController extends Controller
         return 'success';
     }
 }
+```
+
+## 事件
+
+|   事件名稱   |        觸發時機         |                         備註                         |
+|:------------:|:-----------------------:|:----------------------------------------------------:|
+| BeforeHandle |     處理訊息前觸發      |                                                      |
+| AfterHandle  |     處理訊息後觸發      |                                                      |
+| FailedHandle |   處理訊息失敗後觸發    |                                                      |
+| RetryHandle  |   重試處理訊息前觸發    |                                                      |
+| QueueLength  | 每處理 500 個訊息後觸發 | 使用者可以監聽此事件，判斷失敗或超時佇列是否有訊息積壓 |
+
+### QueueLengthListener
+
+框架自帶了一個記錄佇列長度的監聽器，預設不開啟，您如果需要，可以自行新增到 `listeners` 配置中。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\QueueLengthListener::class
+];
+```
+
+## 任務執行流轉流程
+
+任務執行流轉流程主要包括以下幾個佇列:
+
+|  佇列名  |                   備註                    |
+|:--------:|:-----------------------------------------:|
+| waiting  |              等待消費的佇列               |
+| reserved |              正在消費的佇列               |
+| delayed  |              延遲消費的佇列               |
+|  failed  |              消費失敗的佇列               |
+| timeout  | 消費超時的佇列 (雖然超時，但可能執行成功) |
+
+佇列流轉順序如下: 
+
+```mermaid
+graph LR;
+A[投遞延時訊息]-->C[delayed佇列];
+B[投遞訊息]-->D[waiting佇列];
+C--到期-->D;
+D--消費-->E[reserved佇列];
+E--成功-->F[刪除訊息];
+E--失敗-->G[failed佇列];
+E--超時-->H[timeout佇列];
+```
+
+## 配置多個非同步佇列
+
+當您需要使用多個佇列來區分消費高頻和低頻或其他種類的訊息時，可以配置多個佇列。
+
+1. 新增配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+    'other' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'channel' => '{other.queue}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 2,
+        ],
+    ],
+];
+
+```
+
+2. 新增消費程序
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+/**
+ * @Process()
+ */
+class ConsumerProcess extends ConsumerProcess
+{
+    /**
+     * @var string
+     */
+    protected $queue = 'other';
+}
+```
+
+3. 呼叫
+
+```php
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
+return $driver->push(new ExampleJob());
 ```

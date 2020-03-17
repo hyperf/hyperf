@@ -47,11 +47,13 @@ class Client implements ClientInterface
      */
     private $servers;
 
+    /**
+     * @var array[]
+     */
+    private $cachedSecurityCredentials = [];
+
     public function __construct(ContainerInterface $container)
     {
-        /**
-         * @var GuzzleClientFactory $clientFactory
-         */
         $clientFactory = $container->get(GuzzleClientFactory::class);
         $this->client = $clientFactory->create();
         $this->config = $container->get(ConfigInterface::class);
@@ -72,6 +74,18 @@ class Client implements ClientInterface
         $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
         $accessKey = $this->config->get('aliyun_acm.access_key', '');
         $secretKey = $this->config->get('aliyun_acm.secret_key', '');
+        $ecsRamRole = (string) $this->config->get('aliyun_acm.ecs_ram_role', '');
+        $securityToken = [];
+        if (empty($accessKey) && ! empty($ecsRamRole)) {
+            $securityCredentials = $this->getSecurityCredentialsWithEcsRamRole($ecsRamRole);
+            if (! empty($securityCredentials)) {
+                $accessKey = $securityCredentials['AccessKeyId'];
+                $secretKey = $securityCredentials['AccessKeySecret'];
+                $securityToken = [
+                    'Spas-SecurityToken' => $securityCredentials['SecurityToken'],
+                ];
+            }
+        }
 
         // Sign
         $timestamp = round(microtime(true) * 1000);
@@ -90,12 +104,12 @@ class Client implements ClientInterface
 
             // Get config
             $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
-                'headers' => [
+                'headers' => array_merge([
                     'Spas-AccessKey' => $accessKey,
                     'timeStamp' => $timestamp,
                     'Spas-Signature' => $sign,
-                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
-                ],
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+                ], $securityToken),
                 'query' => [
                     'tenant' => $namespace,
                     'dataId' => $dataId,
@@ -114,5 +128,29 @@ class Client implements ClientInterface
             $this->logger->error(sprintf('%s[line:%d] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
             return [];
         }
+    }
+
+    /**
+     * Get ECS RAM authorization.
+     * @see https://help.aliyun.com/document_detail/72013.html
+     * @see https://help.aliyun.com/document_detail/54579.html?#title-9w8-ufj-kz6
+     */
+    private function getSecurityCredentialsWithEcsRamRole(string $ecsRamRole): ?array
+    {
+        $securityCredentials = $this->cachedSecurityCredentials[$ecsRamRole] ?? null;
+        if (! empty($securityCredentials) && time() > strtotime($securityCredentials['Expiration']) - 60) {
+            $securityCredentials = null;
+        }
+        if (empty($securityCredentials)) {
+            $response = $this->client->get('http://100.100.100.200/latest/meta-data/ram/security-credentials/' . $ecsRamRole);
+            if ($response->getStatusCode() !== 200) {
+                throw new RuntimeException('Get config failed from Aliyun ACM.');
+            }
+            $securityCredentials = Json::decode($response->getBody()->getContents());
+            if (! empty($securityCredentials)) {
+                $this->cachedSecurityCredentials[$ecsRamRole] = $securityCredentials;
+            }
+        }
+        return $securityCredentials;
     }
 }

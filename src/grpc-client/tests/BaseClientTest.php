@@ -58,15 +58,6 @@ class BaseClientTest extends TestCase
         });
     }
 
-    public function setUp()
-    {
-        if (swoole_version() === '4.4.14') {
-            $this->markTestSkipped(
-                'Swoole v4.4.14 has a bug on their side.'
-            );
-        }
-    }
-
     public function tearDown()
     {
         Mockery::close();

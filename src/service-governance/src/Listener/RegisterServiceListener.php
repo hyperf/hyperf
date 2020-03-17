@@ -82,16 +82,18 @@ class RegisterServiceListener implements ListenerInterface
             try {
                 $services = $this->serviceManager->all();
                 $servers = $this->getServers();
-                foreach ($services as $serviceName => $paths) {
-                    foreach ($paths as $path => $service) {
-                        if (! isset($service['publishTo'], $service['server'])) {
-                            continue;
-                        }
-                        [$address, $port] = $servers[$service['server']];
-                        switch ($service['publishTo']) {
-                            case 'consul':
-                                $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
-                                break;
+                foreach ($services as $serviceName => $serviceProtocols) {
+                    foreach ($serviceProtocols as $paths) {
+                        foreach ($paths as $path => $service) {
+                            if (! isset($service['publishTo'], $service['server'])) {
+                                continue;
+                            }
+                            [$address, $port] = $servers[$service['server']];
+                            switch ($service['publishTo']) {
+                                case 'consul':
+                                    $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
+                                    break;
+                            }
                         }
                     }
                 }

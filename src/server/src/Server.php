@@ -115,7 +115,7 @@ class Server implements ServerInterface
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
                 }
-                $server->getSettings() && $slaveServer->set($server->getSettings());
+                $server->getSettings() && $slaveServer->set(array_replace($config->getSettings(), $server->getSettings()));
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
                 ServerManager::add($name, [$type, $slaveServer]);
             }
@@ -129,7 +129,7 @@ class Server implements ServerInterface
             }
 
             if (class_exists(BeforeServerStart::class)) {
-                // Trigger BeforeEventStart event.
+                // Trigger BeforeServerStart event.
                 $this->eventDispatcher->dispatch(new BeforeServerStart($name));
             }
         }
@@ -191,7 +191,7 @@ class Server implements ServerInterface
             if (is_array($callback)) {
                 [$className, $method] = $callback;
                 if (array_key_exists($className . $method, $this->onRequestCallbacks)) {
-                    $this->logger->warning(sprintf('%s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
+                    $this->logger->warning(sprintf('%s will be replaced by %s. Each server should have its own onRequest callback. Please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
                 }
 
                 $this->onRequestCallbacks[$className . $method] = $serverName;

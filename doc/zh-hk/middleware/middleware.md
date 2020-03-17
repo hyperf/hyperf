@@ -1,6 +1,6 @@
 # 中間件
 
-這裏的中間件指的是 "中間件模式"，該功能屬於 [hyperf/http-server](https://github.com/hyperf/http-server) 組件內的一項主要功能，主要用於編織從 `請求(Request)` 到 `響應(Response)` 的整個流程，該功能完成基於 [PSR-15](https://www.php-fig.org/psr/psr-15/) 實現。
+這裏的中間件指的是 "中間件模式"，該功能屬於 [hyperf/http-server](https://github.com/hyperf/http-server) 組件內的一項主要功能，主要用於編織從 `請求(Request)` 到 `響應(Response)` 的整個流程，該功能完全基於 [PSR-15](https://www.php-fig.org/psr/psr-15/) 實現。
 
 ## 原理
 

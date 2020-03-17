@@ -489,7 +489,7 @@ $table->dropForeign('posts_user_id_foreign');
 
 或者傳遞一個字段數組，讓遷移程序按照約定的規則生成名稱：
 
-````php
+```php
 $table->dropForeign(['user_id'']);
 ```
 
