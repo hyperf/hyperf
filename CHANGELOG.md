@@ -1,5 +1,9 @@
 # v1.1.21 - TBD
 
+## Added
+
+- [#1424](https://github.com/hyperf/hyperf/pull/1424) Allow user modify the session_name by configuration file.
+
 # v1.1.20 - 2020-03-12
 
 ## Added
