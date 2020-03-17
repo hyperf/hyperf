@@ -13,19 +13,19 @@ declare(strict_types=1);
 namespace HyperfTest\Session;
 
 use Carbon\Carbon;
-use Hyperf\HttpMessage\Uri\Uri;
-use HyperfTest\Session\Stub\FooHandler;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Middleware\SessionMiddleware;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
+use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -61,6 +61,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.handler')->andReturn(FooHandler::class);
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(1);
+        $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $response = $middleware->process($request, $requestHandler);
@@ -103,6 +104,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.handler')->andReturn(FooHandler::class);
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $time = time();
