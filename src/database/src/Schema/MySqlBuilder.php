@@ -51,6 +51,21 @@ class MySqlBuilder extends Builder
     }
 
     /**
+     * Get the column.
+     *
+     * @return array
+     */
+    public function getColumn()
+    {
+        $results = $this->connection->select(
+            $this->grammar->compileColumn(),
+            [$this->connection->getDatabaseName()]
+        );
+
+        return $this->connection->getPostProcessor()->processColumn($results);
+    }
+
+    /**
      * Get the column type listing for a given table.
      *
      * @param string $table

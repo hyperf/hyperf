@@ -45,6 +45,8 @@ class Config
      */
     protected $emptyModelTtl = 60;
 
+    protected $useDefaultValue = false;
+
     /**
      * @var bool
      */
@@ -72,11 +74,28 @@ class Config
         if (isset($values['empty_model_ttl'])) {
             $this->emptyModelTtl = $values['empty_model_ttl'];
         }
+        if (isset($values['use_default_value'])) {
+            $this->useDefaultValue = $values['use_default_value'];
+        }
     }
 
     public function getCacheKey(): string
     {
         return $this->cacheKey;
+    }
+
+    public function isUseDefaultValue(): bool
+    {
+        return $this->useDefaultValue;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setUseDefaultValue(bool $useDefaultValue)
+    {
+        $this->useDefaultValue = $useDefaultValue;
+        return $this;
     }
 
     public function setCacheKey(string $cacheKey): Config
