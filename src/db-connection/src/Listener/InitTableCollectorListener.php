@@ -64,7 +64,7 @@ class InitTableCollectorListener implements ListenerInterface
     public function process(object $event)
     {
         try {
-            $databases = $this->config->get('database', []);
+            $databases = $this->config->get('databases', []);
             $pools = array_keys($databases);
             foreach ($pools as $name) {
                 $this->initTableCollector($name);

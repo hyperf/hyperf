@@ -31,12 +31,7 @@ class TableCollector
 
     public function add(string $pool, Column $column)
     {
-        $this->data[$pool][$column->getTable()] = array_unique(
-            array_merge(
-                $this->data[$pool][$column->getTable()] ?? [],
-                [$column]
-            )
-        );
+        $this->data[$pool][$column->getTable()][$column->getName()] = $column;
     }
 
     /**

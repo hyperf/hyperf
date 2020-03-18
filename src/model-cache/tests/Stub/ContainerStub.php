@@ -44,7 +44,6 @@ class ContainerStub
     public static function mockContainer()
     {
         $container = Mockery::mock(Container::class);
-
         $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
 
         $factory = new PoolFactory($container);
@@ -84,6 +83,7 @@ class ContainerStub
                         'ttl' => 3600 * 24,
                         'empty_model_ttl' => 3600,
                         'load_script' => true,
+                        'use_default_value' => true,
                     ],
                     'pool' => [
                         'min_connections' => 1,
