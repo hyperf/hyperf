@@ -93,6 +93,11 @@ class ConsumerManager
                 }
             }
 
+            public function isEnable(): bool
+            {
+                return $this->consumer->isEnable();
+            }
+
             public function handle(): void
             {
                 $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));

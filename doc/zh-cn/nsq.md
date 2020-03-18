@@ -62,6 +62,55 @@ class TestNsqConsumer extends AbstractConsumer
 }
 ```
 
+### 禁止消费进程自启
+
+默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
+如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
+
+这种情况，只需要在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Nsq\Consumer;
+
+use Hyperf\Nsq\AbstractConsumer;
+use Hyperf\Nsq\Annotation\Consumer;
+use Hyperf\Nsq\Message;
+use Hyperf\Nsq\Result;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Consumer(
+ *     topic="demo_topic", 
+ *     channel="demo_channel", 
+ *     name ="QgmAttrConsumer", 
+ *     nums=1
+ * )
+ */
+class QgmAttrConsumer extends AbstractConsumer
+{
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+    }
+
+    public function isEnable(): bool 
+    {
+        return false;
+    }
+
+    public function consume(Message $payload): string
+    {
+        $body = json_decode($payload->getBody(), true);
+        var_dump($body);
+        return Result::ACK;
+    }
+}
+```
+
 ### 投递消息
 
 使用 `\Hyperf\Nsq\Nsq::publish()` 投递消息, 同样可以使用 `$pool` 属性来切换不同连接
