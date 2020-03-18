@@ -247,11 +247,7 @@ class Manager
         return $result;
     }
 
-    /**
-     * @param $data
-     * @return array
-     */
-    private function getAttributes(Config $config, Model $model, $data)
+    protected function getAttributes(Config $config, Model $model, array $data)
     {
         if (! $config->isUseDefaultValue()) {
             return $data;

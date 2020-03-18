@@ -24,14 +24,6 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 
 class InitTableCollectorListener implements ListenerInterface
 {
-    const DB_TO_FUNCTION = [
-        'COLUMN_NAME' => 'setName',
-        'ORDINAL_POSITION' => 'setPosition',
-        'COLUMN_DEFAULT' => 'setDefault',
-        'DATA_TYPE' => 'setType',
-        'IS_NULLABLE' => 'setIsNull',
-    ];
-
     /**
      * @var ContainerInterface
      */
