@@ -86,11 +86,11 @@ use Psr\Container\ContainerInterface;
  * @Consumer(
  *     topic="demo_topic", 
  *     channel="demo_channel", 
- *     name ="QgmAttrConsumer", 
+ *     name ="DemoConsumer", 
  *     nums=1
  * )
  */
-class QgmAttrConsumer extends AbstractConsumer
+class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
     {
