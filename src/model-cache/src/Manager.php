@@ -15,6 +15,7 @@ namespace Hyperf\ModelCache;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
@@ -73,7 +74,7 @@ class Manager
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
             if ($data) {
-                return $instance->newFromBuilder($data);
+                return $instance->newFromBuilder($this->getResultData($handler->getConfig(), $instance, $data));
             }
 
             // Fetch it from database, because it not exist in cache handler.
@@ -143,7 +144,7 @@ class Manager
             }
             $map = [];
             foreach ($items as $item) {
-                $map[$item[$primaryKey]] = $item;
+                $map[$item[$primaryKey]] = $this->getResultData($handler->getConfig(), $instance, $item);
             }
 
             $result = [];
@@ -235,5 +236,21 @@ class Manager
         }
 
         return $result;
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    private function getResultData(Config $config, Model $model, $data)
+    {
+        if (! $config->isUseDefaultValue()) {
+            return $data;
+        }
+        $defaultData = $this->container->get(TableCollector::class)->getDefaultValue(
+            $model->getConnectionName(),
+            $model->getTable()
+        );
+        return array_merge($defaultData, $data);
     }
 }

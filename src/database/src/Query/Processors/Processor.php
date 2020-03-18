@@ -54,4 +54,13 @@ class Processor
     {
         return $results;
     }
+
+    /**
+     * @param $results
+     * @return array
+     */
+    public function processColumn($results)
+    {
+        return $results;
+    }
 }
