@@ -38,10 +38,17 @@ class Manager
      */
     protected $logger;
 
+    /**
+     * @var TableCollector
+     */
+    protected $collector;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->collector = $container->get(TableCollector::class);
+
         $config = $container->get(ConfigInterface::class);
         if (! $config->has('databases')) {
             throw new \InvalidArgumentException('config databases is not exist!');
@@ -74,7 +81,9 @@ class Manager
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
             if ($data) {
-                return $instance->newFromBuilder($this->getResultData($handler->getConfig(), $instance, $data));
+                return $instance->newFromBuilder(
+                    $this->getAttributes($handler->getConfig(), $instance, $data)
+                );
             }
 
             // Fetch it from database, because it not exist in cache handler.
@@ -144,7 +153,7 @@ class Manager
             }
             $map = [];
             foreach ($items as $item) {
-                $map[$item[$primaryKey]] = $this->getResultData($handler->getConfig(), $instance, $item);
+                $map[$item[$primaryKey]] = $this->getAttributes($handler->getConfig(), $instance, $item);
             }
 
             $result = [];
@@ -242,15 +251,15 @@ class Manager
      * @param $data
      * @return array
      */
-    private function getResultData(Config $config, Model $model, $data)
+    private function getAttributes(Config $config, Model $model, $data)
     {
         if (! $config->isUseDefaultValue()) {
             return $data;
         }
-        $defaultData = $this->container->get(TableCollector::class)->getDefaultValue(
+        $defaultData = $this->collector->getDefaultValue(
             $model->getConnectionName(),
             $model->getTable()
         );
-        return array_merge($defaultData, $data);
+        return array_replace($defaultData, $data);
     }
 }

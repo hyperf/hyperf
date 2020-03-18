@@ -12,125 +12,69 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Collector;
 
+use Hyperf\Utils\Str;
+
 class Column
 {
+    const NULLABLE = 'YES';
+
+    const NOT_NULLABLE = 'NO';
+
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var int
+     */
     protected $position;
 
+    /**
+     * @var mixed
+     */
     protected $default;
 
+    /**
+     * @var string
+     */
     protected $type;
 
+    /**
+     * @var bool
+     */
     protected $isNull;
 
-    protected $originData;
+    /**
+     * @var array
+     */
+    protected $data;
 
     /**
-     * @return mixed
+     * @param $data = [
+     *     'COLUMN_NAME' => '',
+     *     'ORDINAL_POSITION' => 0,
+     *     'COLUMN_DEFAULT' => 0,
+     *     'DATA_TYPE' => '',
+     *     'IS_NULLABLE' => 'YES',
+     * ]
      */
-    public function getName()
+    public function __construct(array $data)
     {
-        return $this->name;
+        $formatted = $this->format($data);
+
+        $this->name = $formatted['column_name'];
+        $this->position = $formatted['ordinal_position'];
+        $this->default = $formatted['column_default'];
     }
 
-    /**
-     * @param mixed $name
-     * @return $this
-     */
-    public function setName($name)
+    protected function format(array $data)
     {
-        $this->name = $name;
-        return $this;
-    }
+        $result = [];
+        foreach ($data as $key => $value) {
+            $result[Str::lower($key)] = $value;
+        }
 
-    /**
-     * @return mixed
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param mixed $position
-     * @return $this
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDefault()
-    {
-        return $this->drfault;
-    }
-
-    /**
-     * @param mixed $default
-     * @return $this
-     */
-    public function setDefault($default)
-    {
-        $this->drfault = $default;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param mixed $type
-     * @return $this
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsNull()
-    {
-        return $this->isNull;
-    }
-
-    /**
-     * @param mixed $isNull
-     * @return $this
-     */
-    public function setIsNull($isNull)
-    {
-        $this->isNull = $isNull;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOriginData()
-    {
-        return $this->originData;
-    }
-
-    /**
-     * @param mixed $originData
-     * @return $this
-     */
-    public function setOriginData($originData)
-    {
-        $this->originData = $originData;
-        return $this;
+        return $result;
     }
 }

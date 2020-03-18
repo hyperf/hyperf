@@ -17,8 +17,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\Model\Register;
-use Hyperf\DbConnection\Collector\Column;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
@@ -39,9 +37,27 @@ class InitTableCollectorListener implements ListenerInterface
      */
     protected $container;
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var TableCollector
+     */
+    protected $collector;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->config = $container->get(ConfigInterface::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->collector = $container->get(TableCollector::class);
     }
 
     public function listen(): array
@@ -55,43 +71,29 @@ class InitTableCollectorListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($this->container->has(ConnectionResolverInterface::class)) {
-            try {
-                $dbConfig = array_keys($this->container->get(ConfigInterface::class)->get('database', ['default' => 'default']));
-                foreach ($dbConfig as $connectName) {
-                    $this->initDatabaseTable($connectName);
-                }
-            } catch (\Throwable $e) {
-                $this->container->get(StdoutLoggerInterface::class)->error($e->getMessage());
+        try {
+            $databases = $this->config->get('database', []);
+            $pools = array_keys($databases);
+            foreach ($pools as $name) {
+                $this->initTableCollector($name);
             }
+        } catch (\Throwable $throwable) {
+            $this->logger->error((string) $throwable);
         }
     }
 
-    public function initDatabaseTable($connectName)
+    public function initTableCollector($pool)
     {
-        if ($this->container->get(TableCollector::class)->getDabatase($connectName)) {
+        if ($this->collector->has($pool)) {
             return;
         }
-        $schemaTables = Register::getConnectionResolver()
-            ->connection($connectName)->getSchemaBuilder()
-            ->getColumn();
-        $list = [];
-        $schemaTables = json_decode(json_encode($schemaTables), true);
-        foreach ($schemaTables as $schemaTable) {
-            $tableName = $schemaTable['TABLE_NAME'];
-            $schema = new Column();
-            $schema->setOriginData($schemaTable);
-            foreach ($schemaTable as $key => $value) {
-                if ($function = self::DB_TO_FUNCTION[$key] ?? null and method_exists($schema, $function)) {
-                    $schema->{$function}($value);
-                }
-            }
-            $list[$connectName][$tableName][] = $schema;
-        }
-        foreach ($list as $connectName => $tableData) {
-            foreach ($tableData as $tableNmame => $schema) {
-                $this->container->get(TableCollector::class)->set($connectName, $tableNmame, $schema);
-            }
+
+        $connection = $this->container->get(ConnectionResolverInterface::class)->connection($pool);
+
+        $columns = $connection->getSchemaBuilder()->getColumns();
+
+        foreach ($columns as $column) {
+            $this->collector->add($pool, $column);
         }
     }
 }

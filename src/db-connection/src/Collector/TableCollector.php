@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection\Collector;
 
+use Hyperf\Database\Schema\Column;
+
 class TableCollector
 {
     /**
@@ -22,19 +24,36 @@ class TableCollector
     /**
      * @param Column[] $columns
      */
-    public function set(string $connectName, string $table, array $columns)
+    public function set(string $pool, string $table, array $columns)
     {
-        $this->data[$connectName][$table] = $columns;
+        $this->data[$pool][$table] = $columns;
     }
 
-    public function get(string $connectName, string $table)
+    public function add(string $pool, Column $column)
     {
-        return $this->data[$connectName][$table] ?? [];
+        $this->data[$pool][$column->getTable()] = array_unique(
+            array_merge(
+                $this->data[$pool][$column->getTable()] ?? [],
+                [$column]
+            )
+        );
     }
 
-    public function getDabatase(string $connectName)
+    /**
+     * @return Column[]
+     */
+    public function get(string $pool, ?string $table = null): array
     {
-        return $this->data[$connectName] ?? [];
+        if ($table === null) {
+            return $this->data[$pool] ?? [];
+        }
+
+        return $this->data[$pool][$table] ?? [];
+    }
+
+    public function has(string $pool, ?string $table = null): bool
+    {
+        return ! empty($this->get($pool, $table));
     }
 
     public function getDefaultValue(string $connectName, string $table): array

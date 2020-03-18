@@ -55,14 +55,14 @@ class MySqlBuilder extends Builder
      *
      * @return array
      */
-    public function getColumn()
+    public function getColumns()
     {
         $results = $this->connection->select(
-            $this->grammar->compileColumn(),
+            $this->grammar->compileColumns(),
             [$this->connection->getDatabaseName()]
         );
 
-        return $this->connection->getPostProcessor()->processColumn($results);
+        return $this->connection->getPostProcessor()->processColumns($results);
     }
 
     /**

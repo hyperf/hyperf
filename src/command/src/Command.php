@@ -94,7 +94,6 @@ abstract class Command extends SymfonyCommand
         }
 
         parent::__construct($name);
-        
     }
 
     /**

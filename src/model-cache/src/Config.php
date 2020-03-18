@@ -45,6 +45,10 @@ class Config
      */
     protected $emptyModelTtl = 60;
 
+    /**
+     * Whether to use default value when resolved from cache.
+     * @var bool
+     */
     protected $useDefaultValue = false;
 
     /**
@@ -75,7 +79,7 @@ class Config
             $this->emptyModelTtl = $values['empty_model_ttl'];
         }
         if (isset($values['use_default_value'])) {
-            $this->useDefaultValue = $values['use_default_value'];
+            $this->useDefaultValue = (bool) $values['use_default_value'];
         }
     }
 
@@ -84,23 +88,20 @@ class Config
         return $this->cacheKey;
     }
 
+    public function setCacheKey(string $cacheKey): Config
+    {
+        $this->cacheKey = $cacheKey;
+        return $this;
+    }
+
     public function isUseDefaultValue(): bool
     {
         return $this->useDefaultValue;
     }
 
-    /**
-     * @return $this
-     */
-    public function setUseDefaultValue(bool $useDefaultValue)
+    public function setUseDefaultValue(bool $useDefaultValue): Config
     {
         $this->useDefaultValue = $useDefaultValue;
-        return $this;
-    }
-
-    public function setCacheKey(string $cacheKey): Config
-    {
-        $this->cacheKey = $cacheKey;
         return $this;
     }
 
