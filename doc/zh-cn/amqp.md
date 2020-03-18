@@ -21,6 +21,10 @@ composer require hyperf/amqp
 |       pool       | object |           |   连接池配置   |
 |      params      | object |           |    基本配置    |
 
+```bash
+php bin/hyperf.php vendor:publish hyperf/amqp
+```
+
 ```php
 <?php
 
@@ -205,3 +209,40 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
+
+
+### 设置properties
+
+以[阿里amqp](https://github.com/hooklife/hyperf-aliyun-amqp)为例，延时队列需要在header中设置`delay`的值来标识延迟的时间，在组件中设置方法如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Producer;
+
+use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Amqp\Message\ProducerMessage;
+use PhpAmqpLib\Wire\AMQPTable;
+
+/**
+ * @Producer(exchange="order", routingKey="order")
+ */
+class proTest extends ProducerMessage
+{
+    public function __construct($data)
+    {
+        // 获取当前组件默认properties
+        $properties = $this->getProperties();
+        // 生成PhpAmqpLib可识别的数据格式
+        $amqp_table = new AMQPTable(["delay"=>"60000"]);
+        // 将生成的数据放入application_headers
+        $properties['application_headers'] = $amqp_table;
+        // 重新赋值properties属性
+        $this->properties = $properties;
+
+        $this->payload = $data;
+    }
+}
+```
