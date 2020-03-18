@@ -19,4 +19,5 @@ return [
         'application',
     ],
     'interval' => 5,
+    'strict_mode' => false,
 ];

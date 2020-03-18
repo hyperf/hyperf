@@ -32,11 +32,11 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     {
         if (is_string($data)) {
             $ex = unserialize($data);
-            if ($ex instanceof \Exception) {
+            if ($ex instanceof \Throwable) {
                 return $ex;
             }
 
-            // Retry handle it if the exception not instanceof \Exception.
+            // Retry handle it if the exception not instanceof \Throwable.
             $data = $ex;
         }
         if (is_array($data) && isset($data['message'], $data['code'])) {
@@ -73,7 +73,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return class_exists($type) && is_a($type, \Exception::class, true);
+        return class_exists($type) && is_a($type, \Throwable::class, true);
     }
 
     /**
@@ -84,7 +84,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         if ($object instanceof \Serializable) {
             return serialize($object);
         }
-        /* @var \Exception $object */
+        /* @var \Throwable $object */
         return [
             'message' => $object->getMessage(),
             'code' => $object->getCode(),
@@ -98,7 +98,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
      */
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof \Exception;
+        return $data instanceof \Throwable;
     }
 
     /**

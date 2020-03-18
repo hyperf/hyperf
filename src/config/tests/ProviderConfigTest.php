@@ -103,11 +103,13 @@ class ProviderConfigTest extends TestCase
         $scanPaths = $res['annotations']['scan']['paths'];
         $publish = $res['publish'];
         $listeners = $res['listeners'];
+        $processes = $res['processes'];
 
         $this->assertFalse(Arr::isAssoc($commands));
         $this->assertFalse(Arr::isAssoc($scanPaths));
-        $this->assertFalse(Arr::isAssoc($listeners));
+        $this->assertTrue(Arr::isAssoc($listeners));
         $this->assertFalse(Arr::isAssoc($publish));
+        $this->assertFalse(Arr::isAssoc($processes));
         $this->assertTrue(Arr::isAssoc($dependencies));
     }
 

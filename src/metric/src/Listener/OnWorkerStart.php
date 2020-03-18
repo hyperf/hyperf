@@ -18,6 +18,7 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Retry\Retry;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -153,11 +154,14 @@ class OnWorkerStart implements ListenerInterface
     private function spawnHandle()
     {
         Coroutine::create(function () {
-            try {
-                $this->factory->handle();
-            } catch (Throwable $t) {
-                $this->spawnHandle();
-                throw $t;
+            if (class_exists(Retry::class)) {
+                Retry::whenThrows()->backoff(100)->call(function () {
+                    $this->factory->handle();
+                });
+            } else {
+                retry(PHP_INT_MAX, function(){
+                    $this->factory->handle();
+                }, 100);
             }
         });
     }

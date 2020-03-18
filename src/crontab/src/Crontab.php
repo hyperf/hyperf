@@ -47,6 +47,11 @@ class Crontab
     protected $mutexExpires = 3600;
 
     /**
+     * @var bool
+     */
+    protected $onOneServer = false;
+
+    /**
      * @var mixed
      */
     protected $callback;
@@ -113,6 +118,17 @@ class Crontab
     public function setMutexExpires(int $mutexExpires): Crontab
     {
         $this->mutexExpires = $mutexExpires;
+        return $this;
+    }
+
+    public function isOnOneServer(): bool
+    {
+        return $this->onOneServer;
+    }
+
+    public function setOnOneServer(bool $onOneServer): Crontab
+    {
+        $this->onOneServer = $onOneServer;
         return $this;
     }
 

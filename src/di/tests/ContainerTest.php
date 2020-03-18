@@ -32,4 +32,19 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has(NotExistClass::class));
         $this->assertTrue($container->has(Foo::class));
     }
+
+    public function testSet()
+    {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $subject = new Foo();
+        $container->set(FooInterface::class, $subject);
+        $this->assertSame($subject, $container->get(FooInterface::class));
+    }
+
+    public function testDefine()
+    {
+        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container->define(FooInterface::class, Foo::class);
+        $this->assertInstanceOf(Foo::class, $container->make(FooInterface::class));
+    }
 }

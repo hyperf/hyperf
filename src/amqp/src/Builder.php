@@ -42,7 +42,7 @@ class Builder
     /**
      * @throws AMQPProtocolChannelException when the channel operation is failed
      */
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
     {
         if (! $channel) {
             $pool = $this->getConnectionPool($message->getPoolName());
@@ -54,6 +54,10 @@ class Builder
         $builder = $message->getExchangeBuilder();
 
         $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+
+        if (isset($connection) && $release) {
+            $connection->release();
+        }
     }
 
     protected function getConnectionPool(string $poolName): AmqpConnectionPool

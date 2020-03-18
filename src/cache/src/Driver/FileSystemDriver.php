@@ -37,7 +37,7 @@ class FileSystemDriver extends Driver
 
     public function getCacheKey(string $key)
     {
-        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $key . 'cache';
+        return $this->getPrefix() . $key . '.cache';
     }
 
     public function get($key, $default = null)
@@ -74,8 +74,9 @@ class FileSystemDriver extends Driver
 
     public function set($key, $value, $ttl = null)
     {
+        $seconds = $this->secondsUntil($ttl);
         $file = $this->getCacheKey($key);
-        $content = $this->packer->pack(new FileStorage($value, $ttl));
+        $content = $this->packer->pack(new FileStorage($value, $seconds));
 
         $result = file_put_contents($file, $content, FILE_BINARY);
 
@@ -119,9 +120,9 @@ class FileSystemDriver extends Driver
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
         }
-
+        $seconds = $this->secondsUntil($ttl);
         foreach ($values as $key => $value) {
-            $this->set($key, $value, $ttl);
+            $this->set($key, $value, $seconds);
         }
 
         return true;
@@ -149,7 +150,7 @@ class FileSystemDriver extends Driver
 
     public function clearPrefix(string $prefix): bool
     {
-        $files = glob($this->storePath . $prefix . DIRECTORY_SEPARATOR . '*');
+        $files = glob($this->getPrefix() . $prefix . '*');
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
@@ -158,5 +159,10 @@ class FileSystemDriver extends Driver
         }
 
         return true;
+    }
+
+    protected function getPrefix()
+    {
+        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix;
     }
 }

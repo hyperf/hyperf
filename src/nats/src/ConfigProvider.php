@@ -14,6 +14,7 @@ namespace Hyperf\Nats;
 
 use Hyperf\Nats\Driver\DriverFactory;
 use Hyperf\Nats\Driver\DriverInterface;
+use Hyperf\Nats\Listener\BeforeMainServerStartListener;
 use Psr\Container\ContainerInterface;
 
 class ConfigProvider
@@ -27,6 +28,9 @@ class ConfigProvider
                     return $factory->get('default');
                 },
             ],
+            'listeners' => [
+                BeforeMainServerStartListener::class => 99,
+            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
@@ -37,7 +41,7 @@ class ConfigProvider
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for amqp.',
+                    'description' => 'The config for nats.',
                     'source' => __DIR__ . '/../publish/nats.php',
                     'destination' => BASE_PATH . '/config/autoload/nats.php',
                 ],

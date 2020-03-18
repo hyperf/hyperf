@@ -18,7 +18,7 @@
         "hyperf/guzzle": "~1.1.0",
         "hyperf/utils": "~1.1.0",
         "jcchavezs/zipkin-opentracing":"^0.1.3",
-        "opentracing/opentracing":"1.0.0-beta5"
+        "opentracing/opentracing":"1.0.*"
     },
     "require-dev": {
         "hyperf/event": "~1.1.0",

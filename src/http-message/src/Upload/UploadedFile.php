@@ -66,13 +66,6 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     private $mimeType;
 
-    /**
-     * @param string $tmpFile
-     * @param null|int $size
-     * @param int $errorStatus
-     * @param null|string $clientFilename
-     * @param null|string $clientMediaType
-     */
     public function __construct(
         string $tmpFile,
         ?int $size,
@@ -254,9 +247,6 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         return $this->clientMediaType;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [

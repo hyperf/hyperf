@@ -55,6 +55,15 @@ abstract class AbstractTestCase extends TestCase
                     ],
                     'options' => $options,
                 ],
+                'pdo' => [
+                    'driver' => 'pdo',
+                    'password' => '',
+                    'database' => 'hyperf',
+                    'pool' => [
+                        'max_connections' => 20,
+                    ],
+                    'options' => $options,
+                ],
             ],
         ]));
         $container->shouldReceive('make')->with(PDOPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
@@ -72,6 +81,9 @@ abstract class AbstractTestCase extends TestCase
         });
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory = new PoolFactory($container));
         $container->shouldReceive('get')->with(DB::class)->andReturn(new DB($factory, 'default'));
+        $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(function ($_, $params) use ($factory) {
+            return new DB($factory, $params['poolName']);
+        });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
         ApplicationContext::setContainer($container);
         return $container;

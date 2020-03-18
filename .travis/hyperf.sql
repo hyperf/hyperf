@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT 'user name',
-  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '1unknow 1male 2female',
+  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0:unknow 1:male 2:female',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -46,6 +46,7 @@ INSERT INTO `user` (`id`, `name`, `gender`, `created_at`, `updated_at`)
 VALUES
 	(1,'Hyperf',1,'2018-01-01 00:00:00','2019-06-05 03:27:14'),
 	(2,'Hyperflex',1,'2019-01-01 00:00:00','2019-02-16 09:59:36'),
+	(3,'Hidden',0,'2019-01-01 00:00:00','2019-02-16 09:59:36'),
 	(100,'John',0,NULL,NULL);
 
 DROP TABLE IF EXISTS `user_ext`;
