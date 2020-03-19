@@ -1,31 +1,32 @@
 # 模型緩存
 
-在高頻場景下，我們會頻繁的查詢數據庫，雖然有主鍵加持，但也會影響到數據庫性能。這種 kv 查詢方式，我們可以很方便的使用 `模型緩存` 來減緩數據庫壓力。本模塊實現了自動緩存，刪除和修改模型時，自動刪除緩存。累加、減操作時，直接操作緩存進行對應累加、減。
+在高頻的業務場景下，我們可能會頻繁的查詢數據庫獲取業務數據，雖然有主鍵索引的加持，但也不可避免的對數據庫性能造成了極大的考驗。而對於這種 kv 的查詢方式，我們可以很方便的通過使用 `模型緩存` 來減緩數據庫的壓力。本組件實現了 Model 數據自動緩存的功能，且當刪除和修改模型數據時，自動刪除和修改對應的緩存。執行累加、累減操作時，緩存數據自動進行對應累加、累減變更。
 
-> 模型緩存暫支持 `Redis`存儲，其他存儲引擎會慢慢補充。
+> 模型緩存暫時只支持 `Redis` 存儲驅動，其他存儲引擎歡迎社區提交對應的實現。
 
 ## 安裝
 
-```
+```bash
 composer require hyperf/model-cache
 ```
 
 ## 配置
 
-模型緩存的配置在 `databases` 中。示例如下
+模型緩存的配置默認存放在 `config/autoload/databases.php` 中。配置的屬性如下：
 
-|      配置       |  類型  |                    默認值                     |                  備註                   |
-|:---------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
-|     handler     | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   無                    |
-|    cache_key    | string |              `mc:%s:m:%s:%s:%s`               |  `mc:緩存前綴:m:表名:主鍵 KEY:主鍵值`   |
-|     prefix      | string |              db connection name               |                緩存前綴                 |
-|       ttl       |  int   |                     3600                      |                超時時間                 |
-| empty_model_ttl |  int   |                      60                       |        查詢不到數據時的超時時間         |
-|   load_script   |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+|       配置        |  類型  |                    默認值                     |                  備註                   |
+|:-----------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
+|      handler      | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   無                    |
+|     cache_key     | string |              `mc:%s:m:%s:%s:%s`               |  `mc:緩存前綴:m:表名:主鍵 KEY:主鍵值`   |
+|      prefix       | string |              db connection name               |                緩存前綴                 |
+|       pool        | string |                    default                    |                 緩存池                  |
+|        ttl        |  int   |                     3600                      |                超時時間                 |
+|  empty_model_ttl  |  int   |                      60                       |        查詢不到數據時的超時時間         |
+|    load_script    |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+| use_default_value |  bool  |                     false                     |          是否使用數據庫默認值           |
 
 ```php
 <?php
-
 return [
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
@@ -51,6 +52,7 @@ return [
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,
+            'use_default_value' => false,
         ]
     ],
 ];
@@ -62,7 +64,6 @@ return [
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -100,14 +101,17 @@ class User extends Model implements CacheableInterface
 }
 
 // 查詢單個緩存
+/** @var int|string $id */
 $model = User::findFromCache($id);
 
 // 批量查詢緩存，返回 Hyperf\Database\Model\Collection
+/** @var array $ids */
 $models = User::findManyFromCache($ids);
 
 ```
 
 對應 Redis 數據如下，其中 `HF-DATA:DEFAULT` 作為佔位符存在於 `HASH` 中，*所以用户不要使用 `HF-DATA` 作為數據庫字段*。
+
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
@@ -124,15 +128,21 @@ $models = User::findManyFromCache($ids);
 12) "DEFAULT"
 ```
 
-另外一點就是，緩存更新機制，框架內實現了對應的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 監聽器，每當數據修改，會主動刪除緩存。
-如果用户不想由框架來刪除緩存，可以主動覆寫 `deleteCache` 方法，然後由自己實現對應監聽即可。
+另外一點需要注意的就是，緩存的更新機制，框架內實現了對應的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 監聽器，每當數據修改時，框架會主動刪除對應的緩存數據。
+如果您不希望由框架來自動刪除對應的緩存，可以通過主動覆寫 Model 的 `deleteCache` 方法，然後自行實現對應監聽即可。
 
 ### 批量修改或刪除
 
-`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要用户通過以下方式修改數據，就可以自動清理緩存。
+`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要用户通過以下方式進行數據的刪除，就可以自動清理對應的緩存數據。
 
 ```php
 <?php
-// 刪除用户數據 並自動刪除緩存
+// 從數據庫刪除用户數據，框架會自動刪除對應的緩存數據
 User::query(true)->where('gender', '>', 1)->delete();
 ```
+
+### 使用默認值
+
+當生產環境使用了模型緩存時，如果已經建立了對應緩存數據，但此時又因為邏輯變更，添加了新的字段，並且默認值不是 `0`、`空字符`、`null` 這類數據時，就會導致在數據查詢時，從緩存中查出來的數據與數據庫中的數據不一致。
+
+對於這種情況，我們可以修改 `use_default_value` 為 `true`，並添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啟動時主動去獲取數據庫的字段信息，並在獲取緩存數據時與之比較並進行緩存數據修正。

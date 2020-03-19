@@ -36,6 +36,7 @@ return [
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,
+            'use_default_value' => false,
         ],
     ],
 ];

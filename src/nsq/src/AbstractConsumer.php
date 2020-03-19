@@ -107,4 +107,9 @@ abstract class AbstractConsumer
         $this->pool = $pool;
         return $this;
     }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
 }

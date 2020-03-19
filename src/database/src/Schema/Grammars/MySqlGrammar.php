@@ -54,6 +54,14 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the list of columns.
+     */
+    public function compileColumns(): string
+    {
+        return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
      * Compile a create table command.
      *
      * @return string
