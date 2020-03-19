@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Query\Processors;
 
+use Hyperf\Database\Schema\Column;
+
 class MySqlProcessor extends Processor
 {
     /**
@@ -25,6 +27,26 @@ class MySqlProcessor extends Processor
         return array_map(function ($result) {
             return ((object) $result)->column_name;
         }, $results);
+    }
+
+    public function processColumns($results)
+    {
+        $columns = [];
+        foreach ($results as $i => $value) {
+            $item = (object) $value;
+            $columns[$i] = new Column(
+                $item->table_schema,
+                $item->table_name,
+                $item->column_name,
+                $item->ordinal_position,
+                $item->column_default,
+                $item->is_nullable === 'YES',
+                $item->data_type,
+                $item->column_comment
+            );
+        }
+
+        return $columns;
     }
 
     /**

@@ -148,6 +148,22 @@ class Builder
     }
 
     /**
+     * Get the column.
+     *
+     * @return array
+     */
+    public function getColumns()
+    {
+        $results = $this->connection->selectFromWriteConnection(
+            $this->grammar->compileColumns(),
+            [
+                $this->connection->getDatabaseName(),
+            ]
+        );
+        return $this->connection->getPostProcessor()->processColumns($results);
+    }
+
+    /**
      * Modify a table on the schema.
      *
      * @param string $table

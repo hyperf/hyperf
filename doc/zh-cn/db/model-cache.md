@@ -14,14 +14,16 @@ composer require hyperf/model-cache
 
 模型缓存的配置在 `databases` 中。示例如下
 
-|      配置       |  类型  |                    默认值                     |                  备注                   |
-|:---------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
-|     handler     | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   无                    |
-|    cache_key    | string |              `mc:%s:m:%s:%s:%s`               |  `mc:缓存前缀:m:表名:主键 KEY:主键值`   |
-|     prefix      | string |              db connection name               |                缓存前缀                 |
-|       ttl       |  int   |                     3600                      |                超时时间                 |
-| empty_model_ttl |  int   |                      60                       |        查询不到数据时的超时时间         |
-|   load_script   |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+|       配置        |  类型  |                    默认值                     |                  备注                   |
+|:-----------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
+|      handler      | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   无                    |
+|     cache_key     | string |              `mc:%s:m:%s:%s:%s`               |  `mc:缓存前缀:m:表名:主键 KEY:主键值`   |
+|      prefix       | string |              db connection name               |                缓存前缀                 |
+|       pool        | string |                    default                    |                 缓存池                  |
+|        ttl        |  int   |                     3600                      |                超时时间                 |
+|  empty_model_ttl  |  int   |                      60                       |        查询不到数据时的超时时间         |
+|    load_script    |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+| use_default_value |  bool  |                     false                     |          是否使用数据库默认值           |
 
 ```php
 <?php
@@ -51,6 +53,7 @@ return [
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,
+            'use_default_value' => false,
         ]
     ],
 ];
@@ -136,3 +139,11 @@ $models = User::findManyFromCache($ids);
 // 删除用户数据 并自动删除缓存
 User::query(true)->where('gender', '>', 1)->delete();
 ```
+
+### 使用默认值
+
+线上使用模型缓存时，如果已经建立了对应缓存，这时又因为逻辑变更，添加了新的字段，并且默认值不是 `0` `空字符` `null` 这类数据时，
+
+在数据查询时，就会导致从缓存中查出来的数据与数据库中的不一致。
+
+这种情况，我们可以修改 `use_default_value` 为 `true`，并添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中就可以解决。

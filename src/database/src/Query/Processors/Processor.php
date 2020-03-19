@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Query\Processors;
 
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Schema\Column;
 
 class Processor
 {
@@ -53,5 +54,18 @@ class Processor
     public function processColumnListing($results)
     {
         return $results;
+    }
+
+    /**
+     * @return Column[]
+     */
+    public function processColumns(array $results)
+    {
+        $columns = [];
+        foreach ($results as $item) {
+            $columns[] = new Column(...array_values($item));
+        }
+
+        return $columns;
     }
 }
