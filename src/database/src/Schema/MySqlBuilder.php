@@ -58,7 +58,7 @@ class MySqlBuilder extends Builder
         $results = $this->connection->select(
             $this->grammar->compileColumns(),
             [
-                $this->connection->getDatabaseName()
+                $this->connection->getDatabaseName(),
             ]
         );
 
