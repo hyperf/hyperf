@@ -26,7 +26,7 @@ class MySqlProcessor extends Processor
         }, $results);
     }
 
-    public function processColumns($results): array
+    public function processColumns(array $results): array
     {
         $columns = [];
         foreach ($results as $i => $value) {
