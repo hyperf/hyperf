@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 
 return [
+    'enable' => true,
     'default' => [
         'host' => '127.0.0.1',
         'port' => 4150,
