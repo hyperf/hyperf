@@ -3,6 +3,7 @@
 ## Added
 
 - [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements methods for `Hyperf\HttpMessage\Stream\SwooleStream`.
+- [#1419](https://github.com/hyperf/hyperf/pull/1419) Allow config fetcher to start in a coroutine instead of a process.
 - [#1424](https://github.com/hyperf/hyperf/pull/1424) Allow user modify the session_name by configuration file.
 
 # v1.1.20 - 2020-03-12
