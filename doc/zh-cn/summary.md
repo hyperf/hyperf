@@ -65,6 +65,13 @@
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
   
+* 消息队列
+
+  * [Redis 异步队列](zh-cn/async-queue.md)
+  * [AMQP](zh-cn/amqp.md)
+  * [Nats](zh-cn/nats.md)
+  * [Nsq](zh-cn/nsq.md)
+  
 * 其它组件
 
   * [连接池](zh-cn/pool.md)
@@ -73,8 +80,6 @@
   * [Elasticsearch 协程客户端](zh-cn/elasticsearch.md)
   * [Consul 协程客户端](zh-cn/consul.md)
   * [ETCD 协程客户端](zh-cn/etcd.md)
-  * [AMQP](zh-cn/amqp.md)
-  * [异步队列](zh-cn/async-queue.md)
   * [WebSocket 服务](zh-cn/websocket-server.md)
   * [WebSocket 协程客户端](zh-cn/websocket-client.md)
   * [自定义进程](zh-cn/process.md)
@@ -86,8 +91,6 @@
   * [Task 机制](zh-cn/task.md)
   * [枚举类](zh-cn/constants.md)
   * [Snowflake](zh-cn/snowflake.md)
-  * [Nats](zh-cn/nats.md)
-  * [Nsq](zh-cn/nsq.md)
   * [重试](zh-cn/retry.md)
 
 * 应用部署
