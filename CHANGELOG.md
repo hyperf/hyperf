@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implements more methods for `Hyperf\HttpMessage\Stream\SwooleStream`.
+- [#1393](https://github.com/hyperf/hyperf/pull/1393) Implemented more methods for `Hyperf\HttpMessage\Stream\SwooleStream`.
 - [#1419](https://github.com/hyperf/hyperf/pull/1419) Allow config fetcher to start in a coroutine instead of a process.
 - [#1424](https://github.com/hyperf/hyperf/pull/1424) Allow user modify the session_name by configuration file.
 - [#1435](https://github.com/hyperf/hyperf/pull/1435) Added config `use_default_value` for model-cache to correct the cache data with database data automatically.
