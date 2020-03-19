@@ -1,31 +1,32 @@
 # 模型快取
 
-在高頻場景下，我們會頻繁的查詢資料庫，雖然有主鍵加持，但也會影響到資料庫效能。這種 kv 查詢方式，我們可以很方便的使用 `模型快取` 來減緩資料庫壓力。本模組實現了自動快取，刪除和修改模型時，自動刪除快取。累加、減操作時，直接操作快取進行對應累加、減。
+在高頻的業務場景下，我們可能會頻繁的查詢資料庫獲取業務資料，雖然有主鍵索引的加持，但也不可避免的對資料庫效能造成了極大的考驗。而對於這種 kv 的查詢方式，我們可以很方便的通過使用 `模型快取` 來減緩資料庫的壓力。本元件實現了 Model 資料自動快取的功能，且當刪除和修改模型資料時，自動刪除和修改對應的快取。執行累加、累減操作時，快取資料自動進行對應累加、累減變更。
 
-> 模型快取暫支援 `Redis`儲存，其他儲存引擎會慢慢補充。
+> 模型快取暫時只支援 `Redis` 儲存驅動，其他儲存引擎歡迎社群提交對應的實現。
 
 ## 安裝
 
-```
+```bash
 composer require hyperf/model-cache
 ```
 
 ## 配置
 
-模型快取的配置在 `databases` 中。示例如下
+模型快取的配置預設存放在 `config/autoload/databases.php` 中。配置的屬性如下：
 
-|      配置       |  型別  |                    預設值                     |                  備註                   |
-|:---------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
-|     handler     | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   無                    |
-|    cache_key    | string |              `mc:%s:m:%s:%s:%s`               |  `mc:快取字首:m:表名:主鍵 KEY:主鍵值`   |
-|     prefix      | string |              db connection name               |                快取字首                 |
-|       ttl       |  int   |                     3600                      |                超時時間                 |
-| empty_model_ttl |  int   |                      60                       |        查詢不到資料時的超時時間         |
-|   load_script   |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+|       配置        |  型別  |                    預設值                     |                  備註                   |
+|:-----------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
+|      handler      | string | Hyperf\ModelCache\Handler\RedisHandler::class |                   無                    |
+|     cache_key     | string |              `mc:%s:m:%s:%s:%s`               |  `mc:快取字首:m:表名:主鍵 KEY:主鍵值`   |
+|      prefix       | string |              db connection name               |                快取字首                 |
+|       pool        | string |                    default                    |                 快取池                  |
+|        ttl        |  int   |                     3600                      |                超時時間                 |
+|  empty_model_ttl  |  int   |                      60                       |        查詢不到資料時的超時時間         |
+|    load_script    |  bool  |                     true                      | Redis 引擎下 是否使用 evalSha 代替 eval |
+| use_default_value |  bool  |                     false                     |          是否使用資料庫預設值           |
 
 ```php
 <?php
-
 return [
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
@@ -51,6 +52,7 @@ return [
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,
+            'use_default_value' => false,
         ]
     ],
 ];
@@ -62,7 +64,6 @@ return [
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -100,14 +101,17 @@ class User extends Model implements CacheableInterface
 }
 
 // 查詢單個快取
+/** @var int|string $id */
 $model = User::findFromCache($id);
 
 // 批量查詢快取，返回 Hyperf\Database\Model\Collection
+/** @var array $ids */
 $models = User::findManyFromCache($ids);
 
 ```
 
 對應 Redis 資料如下，其中 `HF-DATA:DEFAULT` 作為佔位符存在於 `HASH` 中，*所以使用者不要使用 `HF-DATA` 作為資料庫欄位*。
+
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
@@ -124,15 +128,21 @@ $models = User::findManyFromCache($ids);
 12) "DEFAULT"
 ```
 
-另外一點就是，快取更新機制，框架內實現了對應的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 監聽器，每當資料修改，會主動刪除快取。
-如果使用者不想由框架來刪除快取，可以主動覆寫 `deleteCache` 方法，然後由自己實現對應監聽即可。
+另外一點需要注意的就是，快取的更新機制，框架內實現了對應的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 監聽器，每當資料修改時，框架會主動刪除對應的快取資料。
+如果您不希望由框架來自動刪除對應的快取，可以通過主動覆寫 Model 的 `deleteCache` 方法，然後自行實現對應監聽即可。
 
 ### 批量修改或刪除
 
-`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要使用者通過以下方式修改資料，就可以自動清理快取。
+`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要使用者通過以下方式進行資料的刪除，就可以自動清理對應的快取資料。
 
 ```php
 <?php
-// 刪除使用者資料 並自動刪除快取
+// 從資料庫刪除使用者資料，框架會自動刪除對應的快取資料
 User::query(true)->where('gender', '>', 1)->delete();
 ```
+
+### 使用預設值
+
+當生產環境使用了模型快取時，如果已經建立了對應快取資料，但此時又因為邏輯變更，添加了新的欄位，並且預設值不是 `0`、`空字元`、`null` 這類資料時，就會導致在資料查詢時，從快取中查出來的資料與資料庫中的資料不一致。
+
+對於這種情況，我們可以修改 `use_default_value` 為 `true`，並新增 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啟動時主動去獲取資料庫的欄位資訊，並在獲取快取資料時與之比較並進行快取資料修正。

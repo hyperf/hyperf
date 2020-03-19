@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 return [
     'enable' => false,
+    'use_standalone_process' => true,
     'interval' => 5,
     'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
     'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),

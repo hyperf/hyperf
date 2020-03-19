@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\ModelCache;
 
+use Hyperf\DbConnection\Listener\InitTableCollectorListener;
 use Hyperf\Redis\RedisProxy;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use HyperfTest\ModelCache\Stub\UserExtModel;
@@ -227,5 +228,26 @@ class ModelCacheTest extends TestCase
         $this->assertSame($model->toArray(), $model3->toArray());
         $this->assertSame($model->getAttributes(), $model2->getAttributes());
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
+    }
+
+    public function testWhenAddedNewColumn()
+    {
+        $container = ContainerStub::mockContainer();
+        $listener = new InitTableCollectorListener($container);
+        $listener->process((object) []);
+
+        $model = UserHiddenModel::query()->find(1);
+        $model->deleteCache();
+
+        $model = UserModel::findFromCache(1);
+        $model = UserModel::findFromCache(1);
+        $this->assertArrayHasKey('gender', $model->toArray());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->hDel('{mc:default:m:user}:id:1', 'gender');
+        $model = UserModel::findFromCache(1);
+
+        $this->assertArrayHasKey('gender', $model->toArray());
     }
 }

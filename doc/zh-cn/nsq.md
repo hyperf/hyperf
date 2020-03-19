@@ -1,12 +1,23 @@
-# Nsq
+# NSQ
 
-Nsq 是一个开源、轻量级、高性能的分布式消息中间件, 使用 go 语言实现
+[NSQ](https://nsq.io) 是一个由 Go 语言编写的开源、轻量级、高性能的实时分布式消息中间件。
+
+## 安装
+
+```bash
+composer requir hyperf/nsq
+```
 
 ## 使用
 
 ### 配置
 
-```
+NSQ 组件的配置文件默认位于 `config/autoload/nsq.php` 内，如该文件不存在，可通过 `php bin/hyperf.php vendor:publish hyperf/nsq` 命令来将发布对应的配置文件。
+
+默认配置文件如下：
+
+```php
+<?php
 return [
     'default' => [
         'host' => '127.0.0.1',
@@ -25,11 +36,23 @@ return [
 
 ### 创建消费者
 
-```
-$ php bin/hyperf.php gen:nsq-consumer DemoConsumer
+通过 `gen:nsq-consumer` 命令可以快速的生成一个 消费者(Consumer) 对消息进行消费。
+
+```bash
+php bin/hyperf.php gen:nsq-consumer DemoConsumer
 ```
 
-使用 `\Hyperf\Nsq\Annotation\Consumer` 注解可以是设置 `topic / channel / name / nums`, 使用 `$pool` 属性可以切换不同连接
+您也可以通过使用 `Hyperf\Nsq\Annotation\Consumer` 注解来对一个 `Hyperf/Nsq/AbstractConsumer` 抽象类的子类进行声明，来完成一个 消费者(Consumer) 的定义，其中`Hyperf\Nsq\Annotation\Consumer` 注解和抽象类均包含以下属性：
+ 
+|   配置  |  类型  |  注解或抽象类默认值 |       备注       |
+|:-------:|:------:|:------:|:----------------:|
+|  topic  | string |   ''   |  要监听的 topic   |
+| channel | string |   ''   |  要监听的 channel |
+|   name  | string | NsqConsumer |  消费者的名称     |
+|   nums  |  int   |   1    |  消费者的进程数   |
+|   pool  | string |   default   |  消费者对应的连接，对应配置文件的 key |
+
+这些注解属性是可选的，因为 `Hyperf/Nsq/AbstractConsumer` 抽象类中也分别定义了对应的成员属性以及 getter 和 setter，当不对注解属性进行定义时，会使用抽象类的属性默认值。
 
 ```php
 <?php
@@ -47,11 +70,11 @@ use Hyperf\Nsq\Result;
  * @Consumer(
  *     topic="hyperf", 
  *     channel="hyperf", 
- *     name ="TestNsqConsumer", 
+ *     name ="DemoNsqConsumer", 
  *     nums=1
- *     )
+ * )
  */
-class TestNsqConsumer extends AbstractConsumer
+class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
     {
@@ -63,11 +86,9 @@ class TestNsqConsumer extends AbstractConsumer
 ```
 
 ### 禁止消费进程自启
+默认情况下，使用了 `@Consumer` 注解定义后，框架会在启动时自动创建子进程来启动消费者，并且会在子进程异常退出后，自动重新拉起。但如果在处于开发阶段进行某些调试工作时，可能会因为消费者的自动消费导致调试的不便。
 
-默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
-如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
-
-这种情况，只需要在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可。
+在这种情况下，我们只需要在对应的消费者中重写父类方法 `isEnable()` 并返回 `false` 即可关闭此消费者的自启功能；
 也可在配置文件 `nsq.php` 中，将 `enable` 选项设置为 `false`。
 
 ```php
@@ -114,7 +135,7 @@ class DemoConsumer extends AbstractConsumer
 
 ### 投递消息
 
-使用 `\Hyperf\Nsq\Nsq::publish()` 投递消息, 同样可以使用 `$pool` 属性来切换不同连接
+您可以通过调用 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法来向 NSQ 投递消息, 下面是在 Command 进行消息投递的一个示例：
 
 ```php
 <?php
@@ -137,25 +158,103 @@ class NsqCommand extends HyperfCommand
     public function handle()
     {
         /** @var Nsq $nsq */
-        $nsq = make(Nsq::class); // 可以设置 `$pool` 属性
-        $nsq->publish('hyperf', 'test'. time());
+        $nsq = make(Nsq::class);
+        $topic = 'hyperf';
+        $message = 'This is message at ' . time();
+        $nsq->publish($topic, $message);
 
-        $this->line('nsq pub success', 'info');
+        $this->line('success', 'info');
     }
 }
 ```
 
-## Nsq 协议
+### 一次性投递多条消息
+
+`Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法的第二个参数除了可以传递一个字符串外，还可以传递一个字符串数组，来实现一次性向一个 Topic 投递多条消息的功能，示例如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Nsq\Nsq;
+
+/**
+ * @Command
+ */
+class NsqCommand extends HyperfCommand
+{
+    protected $name = 'nsq:pub';
+
+    public function handle()
+    {
+        /** @var Nsq $nsq */
+        $nsq = make(Nsq::class);
+        $topic = 'hyperf';
+        $messages = [
+            'This is message 1 at ' . time(),
+            'This is message 2 at ' . time(),
+            'This is message 3 at ' . time(),
+        ];
+        $nsq->publish($topic, $messages);
+
+        $this->line('success', 'info');
+    }
+}
+```
+
+### 投递延迟消息
+
+当您希望您投递的消息在特定的时间后再去消费，也可通过对 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法的第三个参数传递对应的延迟时长，单位为秒，示例如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Nsq\Nsq;
+
+/**
+ * @Command
+ */
+class NsqCommand extends HyperfCommand
+{
+    protected $name = 'nsq:pub';
+
+    public function handle()
+    {
+        /** @var Nsq $nsq */
+        $nsq = make(Nsq::class);
+        $topic = 'hyperf';
+        $message = 'This is message at ' . time();
+        $deferTime = 5.0;
+        $nsq->publish($topic, $message, $deferTime);
+
+        $this->line('success', 'info');
+    }
+}
+```
+
+## NSQ 协议
+
 > https://nsq.io/clients/tcp_protocol_spec.html
 
-- socket 基础
+- Socket 基础
 
 ```plantuml
 @startuml
 
 autonumber
 hide footbox
-title **socket 基础**
+title **Socket 基础**
 
 participant "客户端" as client
 participant "服务器" as server #orange
@@ -181,14 +280,14 @@ deactivate server
 @enduml
 ```
 
-- Nsq 协议流程
+- NSQ 协议流程
 
 ```plantuml
 @startuml
 
 autonumber
 hide footbox
-title **Nsq 协议**
+title **NSQ 协议**
 
 participant "客户端" as client
 participant "服务器" as server #orange

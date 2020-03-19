@@ -105,7 +105,7 @@ $result = $task->handle(Coroutine::id());
 
 Swoole 暫時沒有協程化的函數列表
 
-- mysql，底層使用 libmysqlclient, 不推薦使用, 推薦使用已經實現協程化的 pod_mysql/mysqli
+- mysql，底層使用 libmysqlclient, 不推薦使用, 推薦使用已經實現協程化的 pdo_mysql/mysqli
 - curl，底層使用 libcurl，在 Swoole 4.4 後底層進行了協程化(beta)
 - mongo，底層使用 mongo-c-client
 - pdo_pgsql
