@@ -26,6 +26,7 @@ class TableCollector
      */
     public function set(string $pool, string $table, array $columns)
     {
+        $this->validateColumns($columns);
         $this->data[$pool][$table] = $columns;
     }
 
@@ -59,5 +60,17 @@ class TableCollector
             $list[$column->getName()] = $column->getDefault();
         }
         return $list;
+    }
+
+    /**
+     * @throws \InvalidArgumentException When $columns is not equal to Column[]
+     */
+    protected function validateColumns(array $columns): void
+    {
+        foreach ($columns as $column) {
+            if (! $column instanceof Column) {
+                throw new \InvalidArgumentException('Invalid columns.');
+            }
+        }
     }
 }

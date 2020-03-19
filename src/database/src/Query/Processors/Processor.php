@@ -47,11 +47,8 @@ class Processor
 
     /**
      * Process the results of a column listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processColumnListing($results)
+    public function processColumnListing(array $results): array
     {
         return $results;
     }
@@ -59,7 +56,7 @@ class Processor
     /**
      * @return Column[]
      */
-    public function processColumns(array $results)
+    public function processColumns(array $results): array
     {
         $columns = [];
         foreach ($results as $item) {

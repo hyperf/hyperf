@@ -148,11 +148,9 @@ class Builder
     }
 
     /**
-     * Get the column.
-     *
-     * @return array
+     * Get the columns.
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         $results = $this->connection->selectFromWriteConnection(
             $this->grammar->compileColumns(),

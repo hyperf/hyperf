@@ -74,15 +74,19 @@ class InitTableCollectorListener implements ListenerInterface
         }
     }
 
-    public function initTableCollector($pool)
+    public function initTableCollector(string $pool)
     {
         if ($this->collector->has($pool)) {
             return;
         }
 
-        $connection = $this->container->get(ConnectionResolverInterface::class)->connection($pool);
+        /** @var ConnectionResolverInterface $connectionResolver */
+        $connectionResolver = $this->container->get(ConnectionResolverInterface::class);
+        $connection = $connectionResolver->connection($pool);
 
-        $columns = $connection->getSchemaBuilder()->getColumns();
+        /** @var \Hyperf\Database\Schema\Builder $schemaBuilder */
+        $schemaBuilder = $connection->getSchemaBuilder();
+        $columns = $schemaBuilder->getColumns();
 
         foreach ($columns as $column) {
             $this->collector->add($pool, $column);

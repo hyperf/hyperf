@@ -86,9 +86,6 @@ class Column
         return $this->position;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDefault()
     {
         return $this->default;

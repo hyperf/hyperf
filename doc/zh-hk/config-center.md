@@ -40,6 +40,8 @@ composer require hyperf/config-aliyun-acm
 return [
     // 是否開啟配置中心的接入流程，為 true 時會自動啟動一個 ConfigFetcherProcess 進程用於更新配置
     'enable' => true,
+    // 是否使用獨立進程來拉取config，如果否則將在worker內以協程方式拉取
+    'use_standalone_process' => true,
     // Apollo Server
     'server' => 'http://127.0.0.1:8080',
     // 您的 AppId
@@ -74,6 +76,8 @@ return [
 return [
     // 是否開啟配置中心的接入流程，為 true 時會自動啟動一個 ConfigFetcherProcess 進程用於更新配置
     'enable' => true,
+    // 是否使用獨立進程來拉取config，如果否則將在worker內以協程方式拉取
+    'use_standalone_process' => true,
     // 配置更新間隔（秒）
     'interval' => 5,
     // 阿里雲 ACM 斷點地址，取決於您的可用區
@@ -135,6 +139,7 @@ composer require hyperf/config-etcd
 <?php
 return [
     'enable' => true,
+    'use_standalone_process' => true,
     'namespaces' => [
         '/test',
     ],
