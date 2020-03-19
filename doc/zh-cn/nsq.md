@@ -90,7 +90,7 @@ class DemoNsqConsumer extends AbstractConsumer
 默认情况下，使用了 `@Consumer` 注解定义后，框架会在启动时自动创建子进程来启动消费者，并且会在子进程异常退出后，自动重新拉起。但如果在处于开发阶段进行某些调试工作时，可能会因为消费者的自动消费导致调试的不便。
 
 在这种情况下，我们只需要在对应的消费者中重写父类方法 `isEnable()` 并返回 `false` 即可关闭此消费者的自启功能；
-也可在配置文件 `nsq.php` 中，将 `enable` 选项设置为 `false`。
+也可在配置文件 `nsq.php` 中，将对应连接的 `enable` 选项设置为 `false`。
 
 ```php
 <?php

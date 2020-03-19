@@ -101,7 +101,10 @@ class ConsumerManager
 
             public function isEnable(): bool
             {
-                return $this->config->get('nsq.enable', true) && $this->consumer->isEnable();
+                return $this->config->get(
+                    sprintf('nsq.%s.enable', $this->consumer->getPool()),
+                    true
+                ) && $this->consumer->isEnable();
             }
 
             public function handle(): void
