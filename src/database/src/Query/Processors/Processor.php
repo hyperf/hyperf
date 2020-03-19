@@ -59,7 +59,7 @@ class Processor
     /**
      * @return Column[]
      */
-    public function processColumns(array $results)
+    public function processColumns(array $results): array
     {
         $columns = [];
         foreach ($results as $item) {

@@ -18,18 +18,15 @@ class MySqlProcessor extends Processor
 {
     /**
      * Process the results of a column listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processColumnListing($results)
+    public function processColumnListing(array $results): array
     {
         return array_map(function ($result) {
             return ((object) $result)->column_name;
         }, $results);
     }
 
-    public function processColumns($results)
+    public function processColumns($results): array
     {
         $columns = [];
         foreach ($results as $i => $value) {
@@ -51,11 +48,8 @@ class MySqlProcessor extends Processor
 
     /**
      * Process the results of a column type listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processListing($results)
+    public function processListing(array $results): array
     {
         return array_map(function ($result) {
             return (array) $result;
