@@ -65,6 +65,13 @@
   * [服務監控](zh-tw/metric.md)
   * [服務重試](zh-tw/retry.md)
   
+* 訊息佇列
+
+  * [Redis 非同步佇列](zh-tw/async-queue.md)
+  * [AMQP](zh-tw/amqp.md)
+  * [Nats](zh-tw/nats.md)
+  * [Nsq](zh-tw/nsq.md)
+  
 * 其它元件
 
   * [連線池](zh-tw/pool.md)
@@ -73,8 +80,6 @@
   * [Elasticsearch 協程客戶端](zh-tw/elasticsearch.md)
   * [Consul 協程客戶端](zh-tw/consul.md)
   * [ETCD 協程客戶端](zh-tw/etcd.md)
-  * [AMQP](zh-tw/amqp.md)
-  * [非同步佇列](zh-tw/async-queue.md)
   * [WebSocket 服務](zh-tw/websocket-server.md)
   * [WebSocket 協程客戶端](zh-tw/websocket-client.md)
   * [自定義程序](zh-tw/process.md)
@@ -86,8 +91,6 @@
   * [Task 機制](zh-tw/task.md)
   * [列舉類](zh-tw/constants.md)
   * [Snowflake](zh-tw/snowflake.md)
-  * [Nats](zh-tw/nats.md)
-  * [Nsq](zh-tw/nsq.md)
   * [重試](zh-tw/retry.md)
 
 * 應用部署
