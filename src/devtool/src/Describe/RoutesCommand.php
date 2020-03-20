@@ -10,29 +10,27 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Devtool;
+namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\HttpServer\Router\RouteCollector;
+use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @Command
  */
-class InfoRouteCommand extends SymfonyCommand
+class RoutesCommand extends HyperfCommand
 {
-
     /**
      * @var ContainerInterface
      */
@@ -50,36 +48,42 @@ class InfoRouteCommand extends SymfonyCommand
         $this->config = $config;
     }
 
+    public function handle()
+    {
+        $path = $this->input->getOption('path');
+        $server = $this->input->getOption('server');
+
+        $factory = $this->container->get(DispatcherFactory::class);
+        $router = $factory->getRouter('http');
+        $this->show(
+            $this->analyzeRouter($server, $router, $path),
+            $this->output
+        );
+
+        $this->output->success('success.');
+    }
+
     protected function configure()
     {
         $this->setDescription('Describe the routes information.')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path');
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path')
+            ->addOption('server', 'S', InputOption::VALUE_OPTIONAL, 'Which server you want to describe routes.', 'http');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function analyzeRouter(string $server, RouteCollector $router, ?string $path)
     {
-        $io = new SymfonyStyle($input, $output);
-        $factory = $this->container->get(DispatcherFactory::class);
-        $router = $factory->getRouter('http');
-        $this->show($this->analyzeRouter($input->getOption('path'),$router), $output);
-        $io->success('success.');
-    }
-
-    protected function analyzeRouter(?string $path, RouteCollector $router)
-    {
-        $serverName = 'http';
         $data = [];
-        [$staticRouters,$variableRouters] = $router->getData();
+        [$staticRouters, $variableRouters] = $router->getData();
         foreach ($staticRouters as $method => $items) {
             foreach ($items as $handler) {
-                $this->analyzeHandler($data,$serverName,$method,$path,$handler);
+                $this->analyzeHandler($data, $server, $method, $path, $handler);
             }
         }
         foreach ($variableRouters as $method => $items) {
             foreach ($items as $item) {
                 if (is_array($item['routeMap'] ?? false)) {
                     foreach ($item['routeMap'] as $routeMap) {
-                        $this->analyzeHandler($data,$serverName,$method,$path,$routeMap[0]);
+                        $this->analyzeHandler($data, $server, $method, $path, $routeMap[0]);
                     }
                 }
             }
@@ -87,10 +91,10 @@ class InfoRouteCommand extends SymfonyCommand
         return $data;
     }
 
-    protected function analyzeHandler(array &$data,string $serverName,string $method,?string $path,Handler $handler)
+    protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler)
     {
         $uri = $handler->route;
-        if (! is_null($path) && $path != $uri) {
+        if (! is_null($path) && ! Str::contains($uri, $path)) {
             return;
         }
         if (is_array($handler->callback)) {
@@ -102,7 +106,7 @@ class InfoRouteCommand extends SymfonyCommand
             $data[$uri]['method'][] = $method;
         } else {
             // method,uri,name,action,middleware
-            $registedMiddlewares = MiddlewareManager::get('http', $uri, $method);
+            $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
             $middlewares = array_merge($middlewares, $registedMiddlewares);
