@@ -1,5 +1,9 @@
 # v1.1.22 - TBD
 
+## Added 
+
+- [#1446](https://github.com/hyperf/hyperf/pull/1446) Added option `server` for `describe:routes`.
+
 # v1.1.21 - 2020-03-19
 
 ## Added

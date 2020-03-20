@@ -10,27 +10,24 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Devtool;
+namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @Command
  */
-class InfoRouteCommand extends SymfonyCommand
+class RoutesCommand extends HyperfCommand
 {
-
     /**
      * @var ContainerInterface
      */
@@ -48,26 +45,21 @@ class InfoRouteCommand extends SymfonyCommand
         $this->config = $config;
     }
 
-    protected function configure()
+    public function handle()
     {
-        $this->setDescription('Describe the routes information.')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path');
-    }
+        $path = $this->input->getOption('path');
+        $server = $this->input->getOption('server');
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $io = new SymfonyStyle($input, $output);
         $data = [];
 
         $factory = $this->container->get(DispatcherFactory::class);
-        $router = $factory->getRouter('http');
+        $router = $factory->getRouter($server);
         [$routers] = $router->getData();
-        $path = $input->getOption('path');
 
         foreach ($routers as $method => $items) {
             foreach ($items as $item) {
                 $uri = $item->route;
-                if (! is_null($path) && $path != $uri) {
+                if (! is_null($path) && ! Str::contains($uri, $path)) {
                     continue;
                 }
                 if (is_array($item->callback)) {
@@ -79,13 +71,12 @@ class InfoRouteCommand extends SymfonyCommand
                     $data[$uri]['method'][] = $method;
                 } else {
                     // method,uri,name,action,middleware
-                    $serverName = 'http';
-                    $registedMiddlewares = MiddlewareManager::get('http', $uri, $method);
-                    $middlewares = $this->config->get('middlewares.' . $serverName, []);
+                    $registedMiddlewares = MiddlewareManager::get($server, $uri, $method);
+                    $middlewares = $this->config->get('middlewares.' . $server, []);
 
                     $middlewares = array_merge($middlewares, $registedMiddlewares);
                     $data[$uri] = [
-                        'server' => $serverName,
+                        'server' => $server,
                         'method' => [$method],
                         'uri' => $uri,
                         'action' => $action,
@@ -94,11 +85,18 @@ class InfoRouteCommand extends SymfonyCommand
                 }
             }
         }
-        $this->show($data, $output);
-        $io->success('success.');
+        $this->show($data);
+        $this->output->success('success.');
     }
 
-    private function show(array $data, OutputInterface $output)
+    protected function configure()
+    {
+        $this->setDescription('Describe the routes information.')
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path')
+            ->addOption('server', 'S', InputOption::VALUE_OPTIONAL, 'Which server you want to describe routes.', 'http');
+    }
+
+    private function show(array $data)
     {
         $rows = [];
         foreach ($data as $route) {
@@ -107,7 +105,7 @@ class InfoRouteCommand extends SymfonyCommand
             $rows[] = new TableSeparator();
         }
         $rows = array_slice($rows, 0, count($rows) - 1);
-        $table = new Table($output);
+        $table = new Table($this->output);
         $table
             ->setHeaders(['Server', 'Method', 'URI', 'Action', 'Middleware'])
             ->setRows($rows);
