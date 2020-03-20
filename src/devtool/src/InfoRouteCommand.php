@@ -16,6 +16,8 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\Handler;
+use Hyperf\HttpServer\Router\RouteCollector;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Helper\Table;
@@ -57,45 +59,61 @@ class InfoRouteCommand extends SymfonyCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $data = [];
-
         $factory = $this->container->get(DispatcherFactory::class);
         $router = $factory->getRouter('http');
-        [$routers] = $router->getData();
-        $path = $input->getOption('path');
+        $this->show($this->analyzeRouter($input->getOption('path'),$router), $output);
+        $io->success('success.');
+    }
 
-        foreach ($routers as $method => $items) {
+    protected function analyzeRouter(?string $path, RouteCollector $router)
+    {
+        $serverName = 'http';
+        $data = [];
+        [$staticRouters,$variableRouters] = $router->getData();
+        foreach ($staticRouters as $method => $items) {
+            foreach ($items as $handler) {
+                $this->analyzeHandler($data,$serverName,$method,$path,$handler);
+            }
+        }
+        foreach ($variableRouters as $method => $items) {
             foreach ($items as $item) {
-                $uri = $item->route;
-                if (! is_null($path) && $path != $uri) {
-                    continue;
-                }
-                if (is_array($item->callback)) {
-                    $action = $item->callback[0] . '::' . $item->callback[1];
-                } else {
-                    $action = $item->callback;
-                }
-                if (isset($data[$uri])) {
-                    $data[$uri]['method'][] = $method;
-                } else {
-                    // method,uri,name,action,middleware
-                    $serverName = 'http';
-                    $registedMiddlewares = MiddlewareManager::get('http', $uri, $method);
-                    $middlewares = $this->config->get('middlewares.' . $serverName, []);
-
-                    $middlewares = array_merge($middlewares, $registedMiddlewares);
-                    $data[$uri] = [
-                        'server' => $serverName,
-                        'method' => [$method],
-                        'uri' => $uri,
-                        'action' => $action,
-                        'middleware' => implode(PHP_EOL, array_unique($middlewares)),
-                    ];
+                if (is_array($item['routeMap'] ?? false)) {
+                    foreach ($item['routeMap'] as $routeMap) {
+                        $this->analyzeHandler($data,$serverName,$method,$path,$routeMap[0]);
+                    }
                 }
             }
         }
-        $this->show($data, $output);
-        $io->success('success.');
+        return $data;
+    }
+
+    protected function analyzeHandler(array &$data,string $serverName,string $method,?string $path,Handler $handler)
+    {
+        $uri = $handler->route;
+        if (! is_null($path) && $path != $uri) {
+            return;
+        }
+        if (is_array($handler->callback)) {
+            $action = $handler->callback[0] . '::' . $handler->callback[1];
+        } else {
+            $action = $handler->callback;
+        }
+        if (isset($data[$uri])) {
+            $data[$uri]['method'][] = $method;
+        } else {
+            // method,uri,name,action,middleware
+            $registedMiddlewares = MiddlewareManager::get('http', $uri, $method);
+            $middlewares = $this->config->get('middlewares.' . $serverName, []);
+
+            $middlewares = array_merge($middlewares, $registedMiddlewares);
+            $data[$uri] = [
+                'server' => $serverName,
+                'method' => [$method],
+                'uri' => $uri,
+                'action' => $action,
+                'middleware' => implode(PHP_EOL, array_unique($middlewares)),
+            ];
+        }
     }
 
     private function show(array $data, OutputInterface $output)
