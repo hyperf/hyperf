@@ -29,15 +29,9 @@ class MetricMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $dispatched = $request->getAttribute(Dispatched::class);
-        if (! $dispatched) {
-            $route = $request->getUri()->getPath();
-        } else {
-            $route = $dispatched->handler->route;
-        }
         $labels = [
             'request_status' => '500', //default to 500 in case uncaught exception occur
-            'request_path' => $route,
+            'request_path' => $this->getPath($request),
             'request_method' => $request->getMethod(),
         ];
         $timer = new Timer('http_requests', $labels);
@@ -45,5 +39,17 @@ class MetricMiddleware implements MiddlewareInterface
         $labels['request_status'] = (string) $response->getStatusCode();
         $timer->end($labels);
         return $response;
+    }
+
+    protected function getPath(ServerRequestInterface $request): string
+    {
+        $dispatched = $request->getAttribute(Dispatched::class);
+        if (! $dispatched) {
+            return $request->getUri()->getPath();
+        }
+        if (! $dispatched->handler) {
+            return 'not_found';
+        }
+        return $dispatched->handler->route;
     }
 }
