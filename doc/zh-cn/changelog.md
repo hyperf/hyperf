@@ -123,7 +123,7 @@
 - [#1208](https://github.com/hyperf/hyperf/pull/1208) 修复 Exception 和 error 在 JSON-RPC TCP Server 下无法被正确处理的问题；
 - [#1208](https://github.com/hyperf/hyperf/pull/1208) 修复 JSON-RPC 没有检查 Request ID 和 Response ID 是否一致的问题；
 - [#1223](https://github.com/hyperf/hyperf/pull/1223) 修复 ConfigProvider 扫描器不会扫描 composer.json 内 require-dev 的配置；
-- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修复执行 `init-proxy.sh` 命令在某些环境如Alpine下会报 bash 不存在的问题；
+- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修复执行 `init-proxy.sh` 命令在某些环境如 Alpine 下会报 bash 不存在的问题；
 
 ## 优化
 
@@ -172,7 +172,7 @@
 
 - [#1175](https://github.com/hyperf/hyperf/pull/1175) 修复 `Hyperf\Utils\Collection::random` 方法不支持传入 `null`；
 - [#1178](https://github.com/hyperf/hyperf/pull/1178) 修复 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情况；
-- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修复 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能传入 `string` 的BUG；
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修复 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能传入 `string` 的 BUG；
 
 ## 优化
 
