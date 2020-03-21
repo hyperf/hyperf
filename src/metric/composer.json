@@ -34,7 +34,8 @@
         "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to use listeners for default metrics.",
         "hyperf/process": "Required to use standalone process, or you have to roll your own",
-        "hyperf/retry": "Required to use back-off retry implementation."
+        "hyperf/retry": "Required to use back-off retry implementation.",
+        "hyperf/http-server": "Required to capture routes in middleware."
     },
     "autoload": {
         "psr-4": {

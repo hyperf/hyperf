@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Middleware;
 
-use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Metric\Timer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,9 +29,15 @@ class MetricMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $dispatched = $request->getAttribute(Dispatched::class);
+        if (! $dispatched) {
+            $route = $request->getUri()->getPath();
+        } else {
+            $route = $dispatched->handler->route;
+        }
         $labels = [
             'request_status' => '500', //default to 500 in case uncaught exception occur
-            'request_path' => $request->getUri()->getPath(),
+            'request_path' => $route,
             'request_method' => $request->getMethod(),
         ];
         $timer = new Timer('http_requests', $labels);
