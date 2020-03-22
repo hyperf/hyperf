@@ -17,12 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class ConsumerManagerTest extends TestCase
 {
-    protected $topic;
-    protected $channel;
-    protected $name;
-    protected $nums;
-    protected $container;
-
     protected function tearDown()
     {
         parent::tearDown();
@@ -33,10 +27,10 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $this->topic = uniqid(),
-            'channel' => $this->channel = uniqid(),
-            'name' => $this->name = uniqid(),
-            'nums' => $this->nums = rand(1, 10),
+            'topic' => $topic = uniqid(),
+            'channel' => $channel = uniqid(),
+            'name' => $name = uniqid(),
+            'nums' => $nums = rand(1, 10),
         ]));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
@@ -55,10 +49,10 @@ class ConsumerManagerTest extends TestCase
                 /** @var AbstractConsumer $consumer */
                 $consumer = $item->getConsumer();
                 $this->assertTrue($item->isEnable());
-                $this->assertSame($this->name, $consumer->getName());
-                $this->assertSame($this->channel, $consumer->getChannel());
-                $this->assertSame($this->topic, $consumer->getTopic());
-                $this->assertSame($this->nums, $item->nums);
+                $this->assertSame($name, $consumer->getName());
+                $this->assertSame($channel, $consumer->getChannel());
+                $this->assertSame($topic, $consumer->getTopic());
+                $this->assertSame($nums, $item->nums);
                 break;
             }
         }
@@ -69,10 +63,10 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $this->topic = uniqid(),
-            'channel' => $this->channel = uniqid(),
-            'name' => $this->name = uniqid(),
-            'nums' => $this->nums = rand(1, 10),
+            'topic' => $topic = uniqid(),
+            'channel' => $channel = uniqid(),
+            'name' => $name = uniqid(),
+            'nums' => $nums = rand(1, 10),
         ]));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
@@ -99,10 +93,10 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         AnnotationCollector::collectClass(DisabledDemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $this->topic = uniqid(),
-            'channel' => $this->channel = uniqid(),
-            'name' => $this->name = uniqid(),
-            'nums' => $this->nums = rand(1, 10),
+            'topic' => $topic = uniqid(),
+            'channel' => $channel = uniqid(),
+            'name' => $name = uniqid(),
+            'nums' => $nums = rand(1, 10),
         ]));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
