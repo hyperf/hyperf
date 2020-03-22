@@ -400,7 +400,7 @@ Router::get('/metrics', function(){
 });
 ```
 
-## 在Grafana创建控制台
+## 在 Grafana 创建控制台
 
 > 本节只适用于 Prometheus 驱动
 
