@@ -218,6 +218,7 @@ return [
     ],
 ];
 ```
+> 本中间件中统计维度包含 `request_status`、`request_path`、`request_method`。如果您的 `request_path` 过多，则建议重写本中间件，去掉 `request_path` 维度，否则过高的基数会导致内存溢出。
 
 ### 自定义使用
 
