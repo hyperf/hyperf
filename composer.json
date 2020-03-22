@@ -140,7 +140,7 @@
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
-            "src/filesystem/src/adapter/AliyunOssHook.php"
+            "src/filesystem/src/Adapter/AliyunOssHook.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
