@@ -41,16 +41,6 @@ abstract class AbstractConsumer
      */
     protected $nums = 1;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     abstract public function consume(Message $message): ?string;
 
     public function getTopic(): string

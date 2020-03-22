@@ -91,12 +91,18 @@ class ConsumerManager
                 $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->subscriber = make(Nsq::class, [
+                    'container' => $container,
                     'pool' => $consumer->getPool(),
                 ]);
 
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
                 }
+            }
+
+            public function getConsumer()
+            {
+                return $this->consumer;
             }
 
             public function isEnable(): bool
