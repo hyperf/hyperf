@@ -1,10 +1,8 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HyperfTest\Nsq;
 
-
-use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
