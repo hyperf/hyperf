@@ -1,5 +1,9 @@
 # v1.1.22 - TBD
 
+## Fixed
+
+- [#1449](https://github.com/hyperf/hyperf/pull/1449) Fixed memory overflow for high cardinality request path.
+
 # v1.1.21 - 2020-03-19
 
 ## Added

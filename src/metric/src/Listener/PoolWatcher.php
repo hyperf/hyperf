@@ -41,8 +41,6 @@ abstract class PoolWatcher
         ];
     }
 
-    abstract protected function getPrefix();
-
     /**
      * Periodically scan metrics.
      */
@@ -79,4 +77,6 @@ abstract class PoolWatcher
             $connectionsInUseGauge->set((float) $pool->getCurrentConnections());
         });
     }
+
+    abstract protected function getPrefix();
 }
