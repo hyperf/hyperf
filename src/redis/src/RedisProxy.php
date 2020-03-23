@@ -14,6 +14,11 @@ namespace Hyperf\Redis;
 
 use Hyperf\Redis\Pool\PoolFactory;
 
+/**
+ * Class RedisProxy
+ * @package Hyperf\Redis
+ * @mixin \Redis
+ */
 class RedisProxy extends Redis
 {
     protected $poolName;
