@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Config;
 
+use Hyperf\Config\Listener\RegisterPropertyHandlerListener;
 use Hyperf\Contract\ConfigInterface;
 
 class ConfigProvider
@@ -21,6 +22,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ConfigInterface::class => ConfigFactory::class,
+            ],
+            'listeners' => [
+                RegisterPropertyHandlerListener::class,
             ],
             'annotations' => [
                 'scan' => [

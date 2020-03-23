@@ -394,7 +394,6 @@ class Arr
      * @param array|\ArrayAccess $array
      * @param null|int|string $key
      * @param mixed $value
-     * @return array
      */
     public static function set(array &$array, $key, $value): array
     {

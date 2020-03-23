@@ -49,9 +49,6 @@ class Filesystem
 
     /**
      * Get contents of a file with shared access.
-     *
-     * @param string $path
-     * @return string
      */
     public function sharedGet(string $path): string
     {
@@ -93,7 +90,6 @@ class Filesystem
     /**
      * Require the given file once.
      *
-     * @param string $file
      * @return mixed
      */
     public function requireOnce(string $file)

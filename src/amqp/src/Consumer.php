@@ -92,7 +92,7 @@ class Consumer extends Builder
         $pool->release($connection);
     }
 
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
     {
         if (! $message instanceof ConsumerMessageInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
@@ -114,6 +114,17 @@ class Consumer extends Builder
         $routineKeys = (array) $message->getRoutingKey();
         foreach ($routineKeys as $routingKey) {
             $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
+
+        if (is_array($qos = $message->getQos())) {
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
+            $channel->basic_qos($size, $count, $global);
+        }
+
+        if (isset($connection) && $release) {
+            $connection->release();
         }
     }
 

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Laminas\Mime\Decode;
 use Psr\Http\Message\StreamInterface;
-use Zend\Mime\Decode;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -192,7 +192,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     public function withHeaders(array $headers)
@@ -341,7 +340,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     private function setHeaders(array $headers)

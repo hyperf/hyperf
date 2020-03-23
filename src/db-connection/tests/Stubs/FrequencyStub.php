@@ -18,9 +18,6 @@ class FrequencyStub extends Frequency
 {
     protected $time = 2;
 
-    /**
-     * @return array
-     */
     public function getHits(): array
     {
         return $this->hits;

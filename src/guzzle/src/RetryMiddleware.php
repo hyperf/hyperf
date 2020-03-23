@@ -31,12 +31,20 @@ class RetryMiddleware implements MiddlewareInterface
     public function getMiddleware(): callable
     {
         return Middleware::retry(function ($retries, RequestInterface $request, ResponseInterface $response = null) {
-            if ($response && $response->getStatusCode() !== 200 && $retries < $this->retries) {
+            if (! $this->isOk($response) && $retries < $this->retries) {
                 return true;
             }
             return false;
         }, function () {
             return $this->delay;
         });
+    }
+
+    /**
+     * Check the response status is correct.
+     */
+    protected function isOk(?ResponseInterface $response): bool
+    {
+        return $response && $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
     }
 }

@@ -63,9 +63,7 @@ class AnnotationReader
 
     /**
      * AnnotationReader constructor.
-     * @param Reader $reader
      * @param string $mode One of self::LAX_MODE or self::STRICT_MODE
-     * @param array $strictNamespaces
      */
     public function __construct(Reader $reader, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
     {

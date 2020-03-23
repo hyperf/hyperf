@@ -56,6 +56,8 @@ class ServiceClient extends AbstractServiceClient
             throw new RequestException('Invalid response.');
         }
 
+        $response = $this->checkRequestIdAndTryAgain($response, $id);
+
         if (isset($response['result'])) {
             $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
@@ -67,13 +69,13 @@ class ServiceClient extends AbstractServiceClient
             $class = Arr::get($error, 'data.class');
             $attributes = Arr::get($error, 'data.attributes', []);
             if (isset($class) && class_exists($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
-                if ($e instanceof \Exception) {
+                if ($e instanceof \Throwable) {
                     throw $e;
                 }
             }
 
             // Throw RequestException when denormalize exception failed.
-            throw new RequestException($error['message'] ?? '', $error['code']);
+            throw new RequestException($error['message'] ?? '', $code, $error['data'] ?? []);
         }
 
         throw new RequestException('Invalid response.');

@@ -65,9 +65,7 @@ class DriverFactory
     }
 
     /**
-     * @param string $name
      * @throws InvalidDriverException when the driver invalid
-     * @return DriverInterface
      */
     public function get(string $name): DriverInterface
     {

@@ -74,8 +74,6 @@ class StatusCommand extends BaseCommand
     /**
      * Get the status for the given ran migrations.
      *
-     * @param array $ran
-     * @param array $batches
      * @return \Hyperf\Utils\Collection
      */
     protected function getStatusFor(array $ran, array $batches)

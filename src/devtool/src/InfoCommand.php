@@ -47,5 +47,7 @@ class InfoCommand extends SymfonyCommand
         }
         $adapter = $this->info->get($type);
         $adapter->execute($input, $output);
+
+        return 0;
     }
 }

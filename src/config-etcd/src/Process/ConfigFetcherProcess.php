@@ -17,16 +17,14 @@ use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="etcd-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'etcd-config-fetcher';
+
     /**
      * @var Server
      */
@@ -62,7 +60,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('config_etcd.enable', false);
+        return $this->config->get('config_etcd.enable', false)
+            && $this->config->get('config_etcd.use_standalone_process', true);
     }
 
     public function handle(): void

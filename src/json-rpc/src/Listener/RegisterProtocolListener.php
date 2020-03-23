@@ -18,6 +18,8 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Hyperf\JsonRpc\JsonRpcTransporter;
+use Hyperf\JsonRpc\Packer\JsonEofPacker;
+use Hyperf\JsonRpc\Packer\JsonLengthPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Packer\JsonPacker;
@@ -50,11 +52,19 @@ class RegisterProtocolListener implements ListenerInterface
     public function process(object $event)
     {
         $this->protocolManager->register('jsonrpc', [
-            'packer' => JsonPacker::class,
+            'packer' => JsonEofPacker::class,
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
         ]);
+
+        $this->protocolManager->register('jsonrpc-tcp-length-check', [
+            'packer' => JsonLengthPacker::class,
+            'transporter' => JsonRpcTransporter::class,
+            'path-generator' => PathGenerator::class,
+            'data-formatter' => DataFormatter::class,
+        ]);
+
         $this->protocolManager->register('jsonrpc-http', [
             'packer' => JsonPacker::class,
             'transporter' => JsonRpcHttpTransporter::class,

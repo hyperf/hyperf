@@ -69,7 +69,7 @@ class GrpcClient
     private $mainCoroutineId = 0;
 
     /**
-     * @var SwooleHttp2Client
+     * @var null|SwooleHttp2Client
      */
     private $httpClient;
 
@@ -95,7 +95,7 @@ class GrpcClient
     private $waitStatus = Status::WAIT_PENDDING;
 
     /**
-     * @var Channel
+     * @var null|Channel
      */
     private $waitYield;
 
@@ -170,15 +170,20 @@ class GrpcClient
             $shouldKill = true;
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
-            if ($shouldKill) {
-                // Set `connected` of http client to `false`
-                $this->getHttpClient()->close();
-            }
         }
+        if ($shouldKill) {
+            // Set `connected` of http client to `false`
+            $this->getHttpClient()->close();
+        }
+
         // Clear the receive channel map
         if (! empty($this->recvChannelMap)) {
             foreach ($this->recvChannelMap as $channel) {
-                $channel->push(false);
+                // If this channel has pending pop, we should push 'false' to negate the pop.
+                // Otherwise we should release it directly.
+                while ($channel->stats()['consumer_num'] !== 0) {
+                    $channel->push(false);
+                }
                 $this->channelPool->release($channel);
             }
             $this->recvChannelMap = [];
@@ -243,6 +248,11 @@ class GrpcClient
         return $streamId;
     }
 
+    public function write(int $streamId, $data, bool $end = false)
+    {
+        return $this->httpClient->write($streamId, $data, $end);
+    }
+
     public function recv(int $streamId, float $timeout = null)
     {
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
@@ -301,7 +311,7 @@ class GrpcClient
     {
         $yield = $yield === true ? -1 : $yield;
         if ($yield) {
-            $this->waitYield = self::$channelPool->get();
+            $this->waitYield = $this->channelPool->get();
             return $this->waitYield->pop($yield);
         }
     }
@@ -321,8 +331,6 @@ class GrpcClient
                     }
                     // Force close.
                     if ($this->waitStatus === Status::WAIT_CLOSE_FORCE) {
-                        $this->channelPool->release($this->recvChannelMap[$streamId]);
-                        unset($this->recvChannelMap[$streamId]);
                         if ($this->closeRecv()) {
                             break;
                         }

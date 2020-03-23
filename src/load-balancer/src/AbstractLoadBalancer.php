@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\LoadBalancer;
 
+use Swoole\Timer;
+
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
@@ -37,6 +39,11 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this;
     }
 
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
+
     /**
      * Remove a node from the node list.
      */
@@ -53,7 +60,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000)
     {
-        swoole_timer_tick($tickMs, function () use ($callback) {
+        Timer::tick($tickMs, function () use ($callback) {
             $nodes = call($callback);
             is_array($nodes) && $this->setNodes($nodes);
         });

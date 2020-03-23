@@ -19,7 +19,7 @@ interface CacheableInterface
 {
     public static function findFromCache($id): ?Model;
 
-    public static function findManyFromCache($ids): Collection;
+    public static function findManyFromCache(array $ids): Collection;
 
     public function deleteCache(): bool;
 }

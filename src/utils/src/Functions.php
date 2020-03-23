@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
@@ -67,11 +68,12 @@ if (! function_exists('retry')) {
      * Retry an operation a given number of times.
      *
      * @param int $times
-     * @param int $sleep
+     * @param int $sleep millisecond
      * @throws \Throwable
      */
     function retry($times, callable $callback, $sleep = 0)
     {
+        $backoff = new Backoff($sleep);
         beginning:
         try {
             return $callback();
@@ -79,9 +81,7 @@ if (! function_exists('retry')) {
             if (--$times < 0) {
                 throw $e;
             }
-            if ($sleep) {
-                usleep($sleep * 1000);
-            }
+            $backoff->sleep();
             goto beginning;
         }
     }

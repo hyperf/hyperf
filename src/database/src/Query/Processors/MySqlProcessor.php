@@ -12,28 +12,44 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Query\Processors;
 
+use Hyperf\Database\Schema\Column;
+
 class MySqlProcessor extends Processor
 {
     /**
      * Process the results of a column listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processColumnListing($results)
+    public function processColumnListing(array $results): array
     {
         return array_map(function ($result) {
             return ((object) $result)->column_name;
         }, $results);
     }
 
+    public function processColumns(array $results): array
+    {
+        $columns = [];
+        foreach ($results as $i => $value) {
+            $item = (object) $value;
+            $columns[$i] = new Column(
+                $item->table_schema,
+                $item->table_name,
+                $item->column_name,
+                $item->ordinal_position,
+                $item->column_default,
+                $item->is_nullable === 'YES',
+                $item->data_type,
+                $item->column_comment
+            );
+        }
+
+        return $columns;
+    }
+
     /**
      * Process the results of a column type listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processListing($results)
+    public function processListing(array $results): array
     {
         return array_map(function ($result) {
             return (array) $result;

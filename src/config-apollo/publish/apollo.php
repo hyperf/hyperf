@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 return [
     'enable' => false,
+    'use_standalone_process' => true,
     'server' => 'http://localhost:8080',
     'appid' => 'test',
     'cluster' => 'default',
@@ -19,4 +20,5 @@ return [
         'application',
     ],
     'interval' => 5,
+    'strict_mode' => false,
 ];

@@ -30,6 +30,11 @@ class ConsumerProcess extends AbstractProcess
      */
     protected $driver;
 
+    /**
+     * @var array
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);

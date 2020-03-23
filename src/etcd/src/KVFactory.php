@@ -14,6 +14,7 @@ namespace Hyperf\Etcd;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Etcd\Exception\ClientNotFindException;
+use Hyperf\Guzzle\HandlerStackFactory;
 use Psr\Container\ContainerInterface;
 
 class KVFactory
@@ -23,7 +24,7 @@ class KVFactory
         $config = $container->get(ConfigInterface::class);
         $version = $config->get('etcd.version');
 
-        $params = ['config' => $config];
+        $params = ['config' => $config, 'factory' => $container->get(HandlerStackFactory::class)];
 
         switch ($version) {
             case 'v3':

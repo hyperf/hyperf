@@ -29,6 +29,7 @@ class RequestTest extends TestCase
     {
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
+        Context::set('http.request.parsedData', null);
     }
 
     public function testRequestHasFile()
@@ -59,5 +60,39 @@ class RequestTest extends TestCase
 
         $res = $psrRequest->header('Hyperf-Version', 'v0');
         $this->assertSame('v1.0', $res);
+    }
+
+    public function testRequestInput()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertSame(1, $psrRequest->input('id'));
+        $this->assertSame('Hyperf', $psrRequest->input('name', 'Hyperf'));
+    }
+
+    public function testRequestAll()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['name' => 'Hyperf']);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->all());
+    }
+
+    public function testRequestInputs()
+    {
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->inputs(['id', 'name'], ['name' => 'Hyperf']));
     }
 }

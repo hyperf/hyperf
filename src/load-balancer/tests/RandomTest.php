@@ -32,5 +32,6 @@ class RandomTest extends TestCase
         $random = new Random($nodes);
         $node = $random->select();
         $this->assertTrue(in_array($node, $nodes));
+        $this->assertSame($nodes, $random->getNodes());
     }
 }

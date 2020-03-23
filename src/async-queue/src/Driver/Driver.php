@@ -16,6 +16,7 @@ use Hyperf\AsyncQueue\Environment;
 use Hyperf\AsyncQueue\Event\AfterHandle;
 use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
+use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
@@ -52,6 +53,11 @@ abstract class Driver implements DriverInterface
      * @var array
      */
     protected $config;
+
+    /**
+     * @var int
+     */
+    protected $lengthCheckCount = 500;
 
     public function __construct(ContainerInterface $container, $config)
     {
@@ -92,9 +98,23 @@ abstract class Driver implements DriverInterface
                 parallel([$callback]);
             }
 
-            if ($maxMessages > 0 && ++$messageCount >= $maxMessages) {
+            if ($messageCount % $this->lengthCheckCount === 0) {
+                $this->checkQueueLength();
+            }
+
+            if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                 break;
             }
+
+            ++$messageCount;
+        }
+    }
+
+    protected function checkQueueLength()
+    {
+        $info = $this->info();
+        foreach ($info as $key => $value) {
+            $this->event && $this->event->dispatch(new QueueLength($this, $key, $value));
         }
     }
 
