@@ -14,6 +14,7 @@ namespace Hyperf\Filesystem;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
+use Hyperf\Filesystem\Exception\InvalidArgumentException;
 use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
@@ -46,7 +47,7 @@ class FilesystemFactory
     public function getAdapter($options, $adapterName)
     {
         if (! $options['storage'] || ! $options['storage'][$adapterName]) {
-            throw new \InvalidArgumentException("file configurations are missing {$adapterName} options");
+            throw new InvalidArgumentException("file configurations are missing {$adapterName} options");
         }
         /** @var AdapterFactoryInterface $driver */
         $driver = $this->container->get($options['storage'][$adapterName]['driver']);
