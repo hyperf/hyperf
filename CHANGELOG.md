@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) Fixed memory overflow for high cardinality request path.
+- [#1454](https://github.com/hyperf/hyperf/pull/1454) Fixed `flatten()` failed, bacause `INF` is `float`.
 
 # v1.1.21 - 2020-03-19
 
