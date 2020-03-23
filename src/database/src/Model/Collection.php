@@ -437,6 +437,7 @@ class Collection extends BaseCollection implements CompressInterface
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
     public function flatten($depth = INF): BaseCollection
     {
