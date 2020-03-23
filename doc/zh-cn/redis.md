@@ -48,7 +48,7 @@ return [
 
 ## 使用
 
-`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接通过依赖注入容器注入 `\Redis` 来使用 Redis 客户端，实际获得的是 `Hyperf\Redis\Redis` 的一个代理对象。
+`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接通过依赖注入容器注入 `\Hyperf\Redis\Redis` 来使用 Redis 客户端，实际获得的是 `\Redis` 的一个代理对象。
 
 ```php
 <?php
@@ -56,7 +56,7 @@ use Hyperf\Utils\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-$redis = $container->get(\Redis::class);
+$redis = $container->get(Hyperf\Redis\Redis::class);
 $result = $redis->keys('*');
 ```
 

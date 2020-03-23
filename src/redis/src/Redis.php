@@ -16,6 +16,11 @@ use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
+/**
+ * Class Redis
+ * @package Hyperf\Redis
+ * @mixin \Redis
+ */
 class Redis
 {
     use ScanCaller;
