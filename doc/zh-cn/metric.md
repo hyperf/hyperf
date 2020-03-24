@@ -218,6 +218,7 @@ return [
     ],
 ];
 ```
+> 本中间件中统计维度包含 `request_status`、`request_path`、`request_method`。如果您的 `request_path` 过多，则建议重写本中间件，去掉 `request_path` 维度，否则过高的基数会导致内存溢出。
 
 ### 自定义使用
 
@@ -400,7 +401,7 @@ Router::get('/metrics', function(){
 });
 ```
 
-## 在Grafana创建控制台
+## 在 Grafana 创建控制台
 
 > 本节只适用于 Prometheus 驱动
 

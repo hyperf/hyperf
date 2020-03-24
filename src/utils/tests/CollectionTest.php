@@ -44,4 +44,18 @@ class CollectionTest extends TestCase
         $res = $col->random(1);
         $this->assertTrue($res instanceof Collection);
     }
+
+    public function testFlatten()
+    {
+        $collection = new Collection([
+            'item' => [
+                'name' => 'Hyperf',
+            ],
+            'it' => [
+                'id' => $uuid = uniqid(),
+            ],
+        ]);
+
+        $this->assertSame(['Hyperf', $uuid], $collection->flatten()->toArray());
+    }
 }
