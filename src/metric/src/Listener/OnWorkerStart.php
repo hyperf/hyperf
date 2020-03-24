@@ -24,7 +24,6 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
-use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -159,7 +158,7 @@ class OnWorkerStart implements ListenerInterface
                     $this->factory->handle();
                 });
             } else {
-                retry(PHP_INT_MAX, function(){
+                retry(PHP_INT_MAX, function () {
                     $this->factory->handle();
                 }, 100);
             }

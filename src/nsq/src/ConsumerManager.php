@@ -100,7 +100,7 @@ class ConsumerManager
                 }
             }
 
-            public function getConsumer()
+            public function getConsumer(): AbstractConsumer
             {
                 return $this->consumer;
             }
