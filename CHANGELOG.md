@@ -9,6 +9,7 @@
 - [#1424](https://github.com/hyperf/hyperf/pull/1424) Allow user modify the session_name by configuration file.
 - [#1435](https://github.com/hyperf/hyperf/pull/1435) Added config `use_default_value` for model-cache to correct the cache data with database data automatically.
 - [#1436](https://github.com/hyperf/hyperf/pull/1436) Added `isEnable()` for NSQ Consumer to control the consumer whether they start automatically.
+- [#1440](https://github.com/hyperf/hyperf/pull/1440) Added config `enable` for NSQ host to control the consumer whether they start automatically.
 
 # v1.1.20 - 2020-03-12
 
