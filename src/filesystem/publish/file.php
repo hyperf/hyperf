@@ -19,9 +19,9 @@ return [
         ],
         'ftp' => [
             'driver' => \Hyperf\Filesystem\Adapter\FtpAdapterFactory::class,
-            'host' => env('FTP_HOST'),
-            'username' => env('FTP_USERNAME'),
-            'password' => env('FTP_PASSWORD'),
+            'host' => 'ftp.example.com',
+            'username' => 'username',
+            'password' => 'password',
             // 'port' => 21,
             // 'root' => '/path/to/root',
             // 'passive' => true,
