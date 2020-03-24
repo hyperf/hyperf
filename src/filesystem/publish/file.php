@@ -19,17 +19,15 @@ return [
         ],
         'ftp' => [
             'driver' => \Hyperf\Filesystem\Adapter\FtpAdapterFactory::class,
-            'host' => 'ftp.example.com',
-            'username' => 'username',
-            'password' => 'password',
-
-            /* optional config settings */
-            'port' => 21,
-            'root' => '/path/to/root',
-            'passive' => true,
-            'ssl' => true,
-            'timeout' => 30,
-            'ignorePassiveAddress' => false,
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+            // 'port' => 21,
+            // 'root' => '/path/to/root',
+            // 'passive' => true,
+            // 'ssl' => true,
+            // 'timeout' => 30,
+            // 'ignorePassiveAddress' => false,
         ],
         'memory' => [
             'driver' => \Hyperf\Filesystem\Adapter\MemoryAdapterFactory::class,
