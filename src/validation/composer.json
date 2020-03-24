@@ -40,7 +40,7 @@
         "hyperf/db-connection": "^1.0",
         "hyperf/testing": "1.0.*",
         "mockery/mockery": "^1.2",
-        "swoft/swoole-ide-helper": "^4.4.0"
+        "swoole/ide-helper": "dev-master"
     },
     "config": {
         "sort-packages": true

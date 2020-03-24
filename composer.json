@@ -67,7 +67,7 @@
         "phpstan/phpstan": "^0.11.15",
         "phpunit/phpunit": "^7.0.0",
         "smarty/smarty": "^3.1",
-        "swoft/swoole-ide-helper": "dev-master",
+        "swoole/ide-helper": "dev-master",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3",
         "sy-records/think-template": "^2.0",

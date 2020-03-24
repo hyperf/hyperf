@@ -30,7 +30,7 @@
         "friendsofphp/php-cs-fixer": "^2.14",
         "hyperf/testing": "1.1.*",
         "mockery/mockery": "^1.0",
-        "swoft/swoole-ide-helper": "dev-master"
+        "swoole/ide-helper": "dev-master"
     },
     "config": {
         "sort-packages": true
