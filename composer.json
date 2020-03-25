@@ -349,5 +349,11 @@
         "analyse": "phpstan analyse --memory-limit 300M -l 3 -c phpstan.neon"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
 }

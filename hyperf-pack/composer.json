@@ -1,0 +1,35 @@
+{
+    "name": "fanxinx/hyperf-pack",
+    "description": "a phar packing tool for hyperf",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "hyperf",
+        "swoole"
+    ],
+    "homepage": "https://hyperf.io/",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Fanxinx",
+            "email": "931779653@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.13",
+        "hyperf/logger": "^1.1",
+        "hyperf/http-server": "^1.1",
+        "mix/console": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+          "Phar\\": "src/"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
+}
