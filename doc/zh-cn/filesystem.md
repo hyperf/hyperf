@@ -21,7 +21,7 @@ composer require league/flysystem-memory
 安装完成后，执行
 
 ```bash
-php bin/hyperf vendor:publish hyperf/filesystem
+php bin/hyperf.php vendor:publish hyperf/filesystem
 ```
 
 就会生成 `config/autoload/file.php` 文件。在该文件中设置默认驱动，并配置对应驱动的 access key、access secret 等信息就可以使用了。
