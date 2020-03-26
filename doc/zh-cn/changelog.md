@@ -4,6 +4,7 @@
 
 ## 新增
 
+- [#1440](https://github.com/hyperf/hyperf/pull/1440) 为 NSQ 的每个连接新增 `enable` 配置项来控制连接下的所有消费者的自启功能；
 - [#1451](https://github.com/hyperf/hyperf/pull/1451) 新增 Filesystem 组件；
 - [#1459](https://github.com/hyperf/hyperf/pull/1459) 模型 Collection 新增 macroable 支持；
 - [#1463](https://github.com/hyperf/hyperf/pull/1463) 为 Guzzle Handler 增加 `on_stats` 选项的功能支持；
