@@ -10,6 +10,7 @@
 
 ## Fixed
 
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) Fixed command describe:route missing variable route.
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) Fixed memory overflow for high cardinality request path.
 - [#1454](https://github.com/hyperf/hyperf/pull/1454) Fixed `flatten()` failed, bacause `INF` is `float`.
 - [#1458](https://github.com/hyperf/hyperf/pull/1458) Fixed guzzle handler not support elasticsearch which version is larger than 7.0.
