@@ -1,14 +1,24 @@
-# v1.1.22 - TBD
+# v1.1.23 - TBD
+
+# v1.1.22 - 2020-03-26
 
 ## Added
 
+- [#1440](https://github.com/hyperf/hyperf/pull/1440) Added config `enable` of every NSQ connection to control the consumer whether they start automatically.
+- [#1451](https://github.com/hyperf/hyperf/pull/1451) Added Filesystem component.
+- [#1459](https://github.com/hyperf/hyperf/pull/1459) Support macroable model, as laravel does.
 - [#1463](https://github.com/hyperf/hyperf/pull/1463) Added option `on_stats` for guzzle handler.
 
 ## Fixed
 
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) Fixed command describe:route missing variable route.
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) Fixed memory overflow for high cardinality request path.
 - [#1454](https://github.com/hyperf/hyperf/pull/1454) Fixed `flatten()` failed, bacause `INF` is `float`.
 - [#1458](https://github.com/hyperf/hyperf/pull/1458) Fixed guzzle handler not support elasticsearch which version is larger than 7.0.
+
+## Changed
+
+- [#1452](https://github.com/hyperf/hyperf/pull/1452) Encourage the use of `\Hyperf\Redis\Redis` instead of `\Redis` because of [#938](https://github.com/hyperf/hyperf/issues/938).
 
 # v1.1.21 - 2020-03-19
 
