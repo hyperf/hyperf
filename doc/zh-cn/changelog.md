@@ -1,5 +1,34 @@
 # 版本更新记录
 
+# v1.1.22 - 2020-03-26
+
+## 新增
+
+- [#1451](https://github.com/hyperf/hyperf/pull/1451) 新增 Filesystem 组件；
+- [#1459](https://github.com/hyperf/hyperf/pull/1459) 模型 Collection 新增 macroable 支持；
+- [#1463](https://github.com/hyperf/hyperf/pull/1463) 为 Guzzle Handler 增加 `on_stats` 选项的功能支持；
+
+## 变更
+
+- [#1452](https://github.com/hyperf/hyperf/pull/1452) 在注入 Redis 客户端时，推荐使用 `\Hyperf\Redis\Redis` 来替代 `\Redis`，原因在 [#938](https://github.com/hyperf/hyperf/issues/938)；
+
+## 修复
+
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修复命令 `describe:route` 缺失了带参数的路由；
+- [#1449](https://github.com/hyperf/hyperf/pull/1449) 修复了高基数请求路径的内存溢出的问题；
+- [#1454](https://github.com/hyperf/hyperf/pull/1454) 修复 Collection 的 `flatten()` 方法因为 `INF` 参数值为 `float` 类型导致无法使用的问题；
+- [#1458](https://github.com/hyperf/hyperf/pull/1458) 修复了 Guzzle 不支持 Elasticsearch 版本大于 7.0 的问题；
+
+# v1.1.21 - 2020-03-19
+
+## 新增
+
+- [#1393](https://github.com/hyperf/hyperf/pull/1393) 为 `Hyperf\HttpMessage\Stream\SwooleStream` 实现更多的方法；
+- [#1419](https://github.com/hyperf/hyperf/pull/1419) 允许 ConfigFetcher 通过一个协程启动而无需额外启动一个进程；
+- [#1424](https://github.com/hyperf/hyperf/pull/1424) 允许用户通过配置文件的形式修改 `session_name` 配置；
+- [#1435](https://github.com/hyperf/hyperf/pull/1435) 为模型缓存增加 `use_default_value` 属性来自动修正缓存数据与数据库数据之间的差异；
+- [#1436](https://github.com/hyperf/hyperf/pull/1436) 为 NSQ 消费者增加 `isEnable()` 方法来控制消费者进程是否启用自启功能；
+
 # v1.1.20 - 2020-03-12
 
 ## 新增
