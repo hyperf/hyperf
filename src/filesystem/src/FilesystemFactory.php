@@ -45,7 +45,7 @@ class FilesystemFactory
             'storage' => [
                 'local' => [
                     'driver' => LocalAdapterFactory::class,
-                    'root' => __DIR__ . '/../../runtime',
+                    'root' => BASE_PATH.'/runtime',
                 ],
             ],
         ]);
