@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace HyperfTest\Nsq;
 
@@ -15,6 +24,10 @@ use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown()
@@ -36,9 +49,9 @@ class ConsumerManagerTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
                 'default' => [
-                    'enable' => true
-                ]
-            ]
+                    'enable' => true,
+                ],
+            ],
         ]));
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -72,9 +85,9 @@ class ConsumerManagerTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
                 'default' => [
-                    'enable' => false
-                ]
-            ]
+                    'enable' => false,
+                ],
+            ],
         ]));
 
         $manager = new ConsumerManager($container);
@@ -82,7 +95,7 @@ class ConsumerManagerTest extends TestCase
 
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer')) {
-                /** @var AbstractConsumer $consumer */
+                /* @var AbstractConsumer $consumer */
                 $this->assertFalse($item->isEnable());
                 break;
             }
@@ -102,9 +115,9 @@ class ConsumerManagerTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
                 'default' => [
-                    'enable' => true
-                ]
-            ]
+                    'enable' => true,
+                ],
+            ],
         ]));
         $manager = new ConsumerManager($container);
         $manager->run();

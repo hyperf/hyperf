@@ -12,11 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Nsq\Stub;
 
-use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Container;
-use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\MessageBuilder;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Utils\ApplicationContext;
