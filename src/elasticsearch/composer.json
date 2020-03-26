@@ -24,7 +24,6 @@
         "elasticsearch/elasticsearch": "^6.1"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },

@@ -39,8 +39,7 @@
         "friendsofphp/php-cs-fixer": "^2.14",
         "hyperf/db-connection": "^1.0",
         "hyperf/testing": "1.0.*",
-        "mockery/mockery": "^1.2",
-        "swoft/swoole-ide-helper": "^4.4.0"
+        "mockery/mockery": "^1.2"
     },
     "config": {
         "sort-packages": true
