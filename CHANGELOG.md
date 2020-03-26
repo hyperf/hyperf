@@ -1,5 +1,9 @@
 # v1.1.23 - TBD
 
+## Added
+
+- [#1469](https://github.com/hyperf/hyperf/pull/1469) Added property `useMake` for `HandlerStackFactory`.
+
 # v1.1.22 - 2020-03-26
 
 ## Added

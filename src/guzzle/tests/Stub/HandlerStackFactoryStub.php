@@ -19,5 +19,6 @@ class HandlerStackFactoryStub extends HandlerStackFactory
     public function __construct()
     {
         $this->usePoolHandler = false;
+        $this->useMake = true;
     }
 }
