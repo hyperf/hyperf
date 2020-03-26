@@ -42,9 +42,15 @@ class HandlerStackFactory
      */
     protected $usePoolHandler = false;
 
+    /**
+     * @var bool
+     */
+    protected $useMake = false;
+
     public function __construct()
     {
         if (class_exists(ApplicationContext::class)) {
+            $this->useMake = true;
             $this->usePoolHandler = class_exists(PoolFactory::class) && ApplicationContext::getContainer() instanceof Container;
         }
     }
@@ -56,13 +62,7 @@ class HandlerStackFactory
         $middlewares = array_merge($this->middlewares, $middlewares);
 
         if (Coroutine::getCid() > 0) {
-            if ($this->usePoolHandler) {
-                $handler = make(PoolHandler::class, [
-                    'option' => $option,
-                ]);
-            } else {
-                $handler = new CoroutineHandler();
-            }
+            $handler = $this->getHandler($option);
         }
 
         $stack = HandlerStack::create($handler);
@@ -79,5 +79,20 @@ class HandlerStackFactory
         }
 
         return $stack;
+    }
+
+    protected function getHandler(array $option)
+    {
+        if ($this->usePoolHandler) {
+            return make(PoolHandler::class, [
+                'option' => $option,
+            ]);
+        }
+
+        if ($this->useMake) {
+            return make(CoroutineHandler::class);
+        }
+
+        return new CoroutineHandler();
     }
 }
