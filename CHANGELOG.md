@@ -1,6 +1,4 @@
 # v1.1.22 - TBD
-## Added
-- [#1440](https://github.com/hyperf/hyperf/pull/1440) Added config `enable` of every NSQ connection to control the consumer whether they start automatically.
 
 ## Added
 
