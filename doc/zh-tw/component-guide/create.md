@@ -39,7 +39,7 @@ Loading composer repositories with package information
 Updating dependencies (including require-dev)
 Package operations: 85 installs, 0 updates, 0 removals
   - Installing ocramius/package-versions (1.4.0): Loading from cache
-  - Installing swoft/swoole-ide-helper (dev-master 9de6d57): Cloning 9de6d57310 from cache
+  - Installing swoole/ide-helper (dev-master 9de6d57): Cloning 9de6d57310 from cache
   - Installing doctrine/inflector (v1.3.0): Loading from cache
   - Installing psr/log (1.1.0): Loading from cache
   - Installing psr/event-dispatcher (1.0.0): Loading from cache

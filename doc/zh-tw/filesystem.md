@@ -1,34 +1,34 @@
-# 文件系统
+# 檔案系統
 
-文件系统组件集成了 PHP 生态中大名鼎鼎的 League\Flysystem (这也是 Laravel 等诸多知名框架的底层库)。通过合理抽象，程序不必感知存储引擎究竟是本地硬盘还是云服务器，实现解耦。本组件对常用的云存储服务提供了协程化支持。
+檔案系統元件集成了 PHP 生態中大名鼎鼎的 League\Flysystem (這也是 Laravel 等諸多知名框架的底層庫)。通過合理抽象，程式不必感知儲存引擎究竟是本地硬碟還是雲伺服器，實現解耦。本元件對常用的雲端儲存服務提供了協程化支援。
 
-## 安装
+## 安裝
 
 ```bash
-# 首先执行
+# 首先執行
 composer require hyperf/filesystem
-# 使用阿里云 OSS 适配器时执行
+# 使用阿里雲 OSS 介面卡時執行
 composer require xxtime/flysystem-aliyun-oss
-# 使用 S3 适配器时执行
+# 使用 S3 介面卡時執行
 composer require league/flysystem-aws-s3-v3
 composer require hyperf/guzzle
-# 使用七牛云（测试）适配器时执行
+# 使用七牛雲（測試）介面卡時執行
 composer require overtrue/flysystem-qiniu
-# 使用内存适配器时执行
+# 使用記憶體介面卡時執行
 composer require league/flysystem-memory
 ```
 
-安装完成后，执行
+安裝完成後，執行
 
 ```bash
 php bin/hyperf vendor:publish hyperf/filesystem
 ```
 
-就会生成 `config/autoload/file.php` 文件。在该文件中设置默认驱动，并配置对应驱动的 access key、access secret 等信息就可以使用了。
+就會生成 `config/autoload/file.php` 檔案。在該檔案中設定預設驅動，並配置對應驅動的 access key、access secret 等資訊就可以使用了。
 
 ## 使用
 
-通过 DI 注入 `League\Flysystem\Filesystem` 即可使用。
+通過 DI 注入 `League\Flysystem\Filesystem` 即可使用。
 
 API 如下：
 
@@ -77,7 +77,7 @@ class IndexController
 }
 ```
 
-在某些时候，您会需要同时使用多种存储媒介。这时可以注入 `Hyperf\Filesystem\FilesystemFactory` 来动态选择使用哪种驱动。
+在某些時候，您會需要同時使用多種儲存媒介。這時可以注入 `Hyperf\Filesystem\FilesystemFactory` 來動態選擇使用哪種驅動。
 
 ```php
 <?php
@@ -101,17 +101,17 @@ class IndexController
 }
 ```
 
-## 注意事项
+## 注意事項
 
-1. S3 存储请确认安装 `hyperf/guzzle` 组件以提供协程化支持。阿里云、七牛云存储请[开启 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)来使用协程。因 Curl Hook 的参数支持性问题，请使用 Swoole 4.4.13 以上版本。
-2. minIO, ceph radosgw 等私有对象存储方案均支持 S3 协议，可以使用 S3 适配器。
-3. 以阿里云 OSS 为例，1 核 1 进程读操作性能对比：
+1. S3 儲存請確認安裝 `hyperf/guzzle` 元件以提供協程化支援。阿里雲、七牛雲端儲存請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的引數支援性問題，請使用 Swoole 4.4.13 以上版本。
+2. minIO, ceph radosgw 等私有物件儲存方案均支援 S3 協議，可以使用 S3 介面卡。
+3. 以阿里雲 OSS 為例，1 核 1 程序讀操作效能對比：
 
 ```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
 
-未开启 CURL HOOK：
+未開啟 CURL HOOK：
 
 ```
 Concurrency Level:      10
@@ -127,7 +127,7 @@ Time per request:       202.902 [ms] (mean, across all concurrent requests)
 Transfer rate:          0.70 [Kbytes/sec] received
 ```
 
-开启 CURL HOOK 后：
+開啟 CURL HOOK 後：
 
 ```
 Concurrency Level:      10
@@ -143,11 +143,11 @@ Time per request:       9.252 [ms] (mean, across all concurrent requests)
 Transfer rate:          15.41 [Kbytes/sec] received
 ```
 
-## 详细配置
+## 詳細配置
 
 ```php
 return [
-    // 选择storage下对应驱动的键即可。
+    // 選擇storage下對應驅動的鍵即可。
     'default' => 'local',
     'storage' => [
         'local' => [
