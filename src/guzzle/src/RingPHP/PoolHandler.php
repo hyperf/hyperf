@@ -40,7 +40,7 @@ class PoolHandler extends CoroutineHandler
         $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
-            $params['port'] = $ssl ? 443 : 80;
+            $params['port'] = $this->getPort($request, $ssl);
         }
         $port = $params['port'];
         $path = $params['path'] ?? '/';

@@ -40,7 +40,7 @@ class CoroutineHandler
         $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
-            $params['port'] = $ssl ? 443 : 80;
+            $params['port'] = $this->getPort($request, $ssl);
         }
         $port = $params['port'];
         $path = $params['path'] ?? '/';
@@ -90,6 +90,15 @@ class CoroutineHandler
         }
 
         return $settings;
+    }
+
+    protected function getPort(array $request, bool $ssl = false): int
+    {
+        if ($port = $request['client']['curl'][CURLOPT_PORT] ?? null) {
+            return (int) $port;
+        }
+
+        return $ssl ? 443 : 80;
     }
 
     protected function initHeaders(Client $client, $request)
