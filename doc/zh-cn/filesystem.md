@@ -1,20 +1,20 @@
-# 文件系统
+# 
 
-文件系统组件集成了 PHP 生态中大名鼎鼎的 League\Flysystem(这也是 Laravel 等诸多知名框架的底层库)。通过合理抽象，程序不必感知存储引擎究竟是本地硬盘还是云服务器，实现解耦。本组件对常用的云存储服务提供了协程化支持。
-
+文件系统组件集成了 PHP 生态中大名鼎鼎的 League\Flysystem (这也是 Laravel 等诸多知名框架的底层库)。通过合理抽象，程序不必感知存储引擎究竟是本地硬盘还是云服务器，实现解耦。本组件对常用的云存储服务提供了协程化支持。
+文件系统
 ## 安装
 
 ```bash
-#首先执行
+# 首先执行
 composer require hyperf/filesystem
-#使用阿里云OSS适配器时执行
+# 使用阿里云 OSS 适配器时执行
 composer require xxtime/flysystem-aliyun-oss
-#使用S3适配器时执行
+# 使用 S3 适配器时执行
 composer require league/flysystem-aws-s3-v3
 composer require hyperf/guzzle
-#使用七牛云（测试）适配器时执行
+# 使用七牛云（测试）适配器时执行
 composer require overtrue/flysystem-qiniu
-#使用内存适配器时执行
+# 使用内存适配器时执行
 composer require league/flysystem-memory
 ```
 
@@ -106,10 +106,13 @@ class IndexController
 1. S3 存储请确认安装 `hyperf/guzzle` 组件以提供协程化支持。阿里云、七牛云存储请[开启 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)来使用协程。因 Curl Hook 的参数支持性问题，请使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有对象存储方案均支持 S3 协议，可以使用 S3 适配器。
 3. 以阿里云 OSS 为例，1 核 1 进程读操作性能对比：
-```
+
+```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
+
 未开启 CURL HOOK：
+
 ```
 Concurrency Level:      10
 Time taken for tests:   202.902 seconds
@@ -123,7 +126,9 @@ Time per request:       2029.016 [ms] (mean)
 Time per request:       202.902 [ms] (mean, across all concurrent requests)
 Transfer rate:          0.70 [Kbytes/sec] received
 ```
+
 开启 CURL HOOK 后：
+
 ```
 Concurrency Level:      10
 Time taken for tests:   9.252 seconds
