@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1459](https://github.com/hyperf/hyperf/pull/1459) Support macroable model, as laravel does.
 - [#1463](https://github.com/hyperf/hyperf/pull/1463) Added option `on_stats` for guzzle handler.
 
 ## Fixed
