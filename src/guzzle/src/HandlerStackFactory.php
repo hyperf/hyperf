@@ -42,15 +42,9 @@ class HandlerStackFactory
      */
     protected $usePoolHandler = false;
 
-    /**
-     * @var bool
-     */
-    protected $useMake = false;
-
     public function __construct()
     {
         if (class_exists(ApplicationContext::class)) {
-            $this->useMake = true;
             $this->usePoolHandler = class_exists(PoolFactory::class) && ApplicationContext::getContainer() instanceof Container;
         }
     }
@@ -89,7 +83,7 @@ class HandlerStackFactory
             ]);
         }
 
-        if ($this->useMake) {
+        if (class_exists(ApplicationContext::class)) {
             return make(CoroutineHandler::class);
         }
 
