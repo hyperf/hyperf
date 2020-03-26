@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class PublicMethodVistorTest extends TestCase
+class PublicMethodVisitorTest extends TestCase
 {
     public function testVisitInterface()
     {
