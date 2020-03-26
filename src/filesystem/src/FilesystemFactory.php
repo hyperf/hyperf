@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Filesystem;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Filesystem\Adapter\LocalAdapterFactory;
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
 use Hyperf\Filesystem\Exception\InvalidArgumentException;
 use League\Flysystem\Config;
@@ -39,7 +40,15 @@ class FilesystemFactory
 
     public function get($adapterName): Filesystem
     {
-        $options = $this->config->get('file');
+        $options = $this->config->get('file', [
+            'default' => 'local',
+            'storage' => [
+                'local' => [
+                    'driver' => LocalAdapterFactory::class,
+                    'root' => __DIR__ . '/../../runtime',
+                ],
+            ],
+        ]);
         $adapter = $this->getAdapter($options, $adapterName);
         return new Filesystem($adapter, new Config($options['storage'][$adapterName]));
     }
