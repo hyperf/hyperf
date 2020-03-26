@@ -4,6 +4,7 @@
 
 ## Added
 
+- [#1440](https://github.com/hyperf/hyperf/pull/1440) Added config `enable` of every NSQ connection to control the consumer whether they start automatically.
 - [#1451](https://github.com/hyperf/hyperf/pull/1451) Added Filesystem component.
 - [#1459](https://github.com/hyperf/hyperf/pull/1459) Support macroable model, as laravel does.
 - [#1463](https://github.com/hyperf/hyperf/pull/1463) Added option `on_stats` for guzzle handler.
