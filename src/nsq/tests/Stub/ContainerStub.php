@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace HyperfTest\Nsq\Stub;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
 use Hyperf\Nsq\MessageBuilder;
+use Hyperf\Nsq\Nsq;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -27,7 +29,7 @@ class ContainerStub
      */
     public static function getContainer()
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
@@ -49,6 +51,16 @@ class ContainerStub
         $container->shouldReceive('get')->with(MessageBuilder::class)->andReturnUsing(function () {
             return new MessageBuilder();
         });
+
+        $container->shouldReceive('make')->with(DemoConsumer::class, Mockery::any())->andReturnUsing(function () use ($container) {
+            return new DemoConsumer($container);
+        });
+
+        $container->shouldReceive('make')->with(DisabledDemoConsumer::class, Mockery::any())->andReturnUsing(function () use ($container) {
+            return new DisabledDemoConsumer($container);
+        });
+
+        $container->shouldReceive('make')->with(Nsq::class, Mockery::any())->andReturn(Mockery::mock(Nsq::class));
 
         return $container;
     }

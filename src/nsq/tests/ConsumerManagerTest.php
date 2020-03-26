@@ -22,6 +22,7 @@ use Hyperf\Process\ProcessManager;
 use HyperfTest\Nsq\Stub\ContainerStub;
 use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,7 +33,7 @@ class ConsumerManagerTest extends TestCase
 {
     protected function tearDown()
     {
-        parent::tearDown();
+        Mockery::close();
         ProcessManager::clear();
     }
 
