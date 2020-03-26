@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "ext-redis": "*",
         "hyperf/contract": "~1.1.0",
         "hyperf/pool": "~1.1.0",
         "hyperf/utils": "~1.1.0",
