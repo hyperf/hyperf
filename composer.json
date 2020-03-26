@@ -33,7 +33,7 @@
         "doctrine/inflector": "^1.3",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^2.1",
-        "elasticsearch/elasticsearch": "^6.1",
+        "elasticsearch/elasticsearch": "^7.0",
         "endclothing/prometheus_client_php": "^0.9.1",
         "fig/http-message-util": "^1.1.2",
         "google/protobuf": "^3.6.1",
