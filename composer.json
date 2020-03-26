@@ -19,6 +19,7 @@
         "php": ">=7.2",
         "ext-bcmath": "*",
         "ext-json": "*",
+        "ext-redis": "*",
         "ext-swoole": ">=4.4",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^0.7",
@@ -71,7 +72,12 @@
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3",
         "sy-records/think-template": "^2.0",
-        "twig/twig": "^2.12"
+        "twig/twig": "^2.12",
+        "league/flysystem": "^1.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-memory": "^1.0",
+        "overtrue/flysystem-qiniu": "^1.0",
+        "xxtime/flysystem-aliyun-oss": "^1.5"
     },
     "replace": {
         "hyperf/amqp": "self.version",
@@ -94,6 +100,7 @@
         "hyperf/etcd": "self.version",
         "hyperf/event": "self.version",
         "hyperf/exception-handler": "self.version",
+        "hyperf/filesystem": "self.version",
         "hyperf/framework": "self.version",
         "hyperf/graphql": "self.version",
         "hyperf/grpc": "self.version",
@@ -133,7 +140,8 @@
             "src/di/src/Functions.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
-            "src/utils/src/Functions.php"
+            "src/utils/src/Functions.php",
+            "src/filesystem/src/Adapter/AliyunOssHook.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
@@ -160,6 +168,7 @@
             "Hyperf\\Etcd\\": "src/etcd/src/",
             "Hyperf\\Event\\": "src/event/src/",
             "Hyperf\\ExceptionHandler\\": "src/exception-handler/src/",
+            "Hyperf\\Filesystem\\": "src/filesystem/src/",
             "Hyperf\\Framework\\": "src/framework/src/",
             "Hyperf\\GraphQL\\": "src/graphql/src/",
             "Hyperf\\GrpcClient\\": "src/grpc-client/src/",
@@ -232,6 +241,7 @@
             "HyperfTest\\Etcd\\": "src/etcd/tests/",
             "HyperfTest\\Event\\": "src/event/tests/",
             "HyperfTest\\ExceptionHandler\\": "src/exception-handler/tests/",
+            "HyperfTest\\Filesystem\\": "src/filesystem/tests/",
             "HyperfTest\\Framework\\": "src/framework/tests/",
             "HyperfTest\\GrpcClient\\": "src/grpc-client/tests/",
             "HyperfTest\\GrpcServer\\": "src/grpc-server/tests/",
@@ -296,6 +306,7 @@
                 "Hyperf\\Etcd\\ConfigProvider",
                 "Hyperf\\Event\\ConfigProvider",
                 "Hyperf\\ExceptionHandler\\ConfigProvider",
+                "Hyperf\\Filesystem\\ConfigProvider",
                 "Hyperf\\Framework\\ConfigProvider",
                 "Hyperf\\GraphQL\\ConfigProvider",
                 "Hyperf\\GrpcClient\\ConfigProvider",
