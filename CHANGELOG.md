@@ -1,5 +1,9 @@
 # v1.1.22 - TBD
 
+## Added
+
+- [#1463](https://github.com/hyperf/hyperf/pull/1463) Added option `on_stats` for guzzle handler.
+
 ## Fixed
 
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) Fixed memory overflow for high cardinality request path.
