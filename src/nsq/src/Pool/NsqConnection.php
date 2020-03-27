@@ -40,6 +40,9 @@ class NsqConnection extends KeepaliveConnection
     {
         $this->config = array_merge($this->config, $config);
         $this->builder = $container->get(MessageBuilder::class);
+        if ($pool instanceof NsqPool) {
+            $this->name = 'nsq.connection.' . $pool->getName();
+        }
         parent::__construct($container, $pool);
     }
 
