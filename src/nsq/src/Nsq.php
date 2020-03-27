@@ -104,7 +104,7 @@ class Nsq
                         if ($result === Result::REQUEUE) {
                             $socket->sendAll($this->builder->buildTouch($message->getMessageId()));
                             $socket->sendAll($this->builder->buildReq($message->getMessageId()));
-                            return;
+                            continue;
                         }
 
                         $socket->sendAll($this->builder->buildFin($message->getMessageId()));
