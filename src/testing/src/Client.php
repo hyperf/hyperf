@@ -194,7 +194,9 @@ class Client extends Server
 
     protected function flushContext()
     {
-        $context = SwCoroutine::getContext();
+        // https://github.com/hyperf/hyperf/issues/1473
+        // SwCoroutine::getContext() 返回 null 时, foreach Invalid argument supplied for foreach()
+        $context = SwCoroutine::getContext() ?? [];
 
         foreach ($context as $key => $value) {
             if (Str::startsWith($key, $this->ignoreContextPrefix)) {
