@@ -2,8 +2,8 @@
 
 ## Fixed
 
-- [#1472](https://github.com/hyperf/hyperf/pull/1472) Fixed consume failed, when publish message in consumer.
-- [#1474](https://github.com/hyperf/hyperf/pull/1474) Fixed consumer restart again because requeue the message.
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) Fixed consume failed when publish message in consumer of NSQ.
+- [#1474](https://github.com/hyperf/hyperf/pull/1474) Fixed the consumer of NSQ will restart when requeue message.
 
 # v1.1.22 - 2020-03-26
 
