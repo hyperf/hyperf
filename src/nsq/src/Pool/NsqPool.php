@@ -45,6 +45,11 @@ class NsqPool extends Pool
         parent::__construct($container, $options);
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     protected function createConnection(): ConnectionInterface
     {
         return make(NsqConnection::class, [

@@ -61,6 +61,11 @@ class PoolFactory
         return $this->pools[$name];
     }
 
+    public function getPoolNames(): array
+    {
+        return array_keys($this->pools);
+    }
+
     protected function hasConfig(string $name): bool
     {
         return isset($this->configs[$name]);
@@ -69,10 +74,5 @@ class PoolFactory
     protected function getConfig(string $name): Config
     {
         return $this->configs[$name];
-    }
-
-    public function getPoolNames(): array
-    {
-        return array_keys($this->pools);
     }
 }

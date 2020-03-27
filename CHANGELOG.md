@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1471](https://github.com/hyperf/hyperf/pull/1471) Fixed data recved failed, when the body is larger than max-output-buffer-size.
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) Fixed consume failed, when publish message in consumer.
 
 # v1.1.22 - 2020-03-26
 
