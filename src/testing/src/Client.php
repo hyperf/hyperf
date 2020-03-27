@@ -194,7 +194,7 @@ class Client extends Server
 
     protected function flushContext()
     {
-        $context = SwCoroutine::getContext();
+        $context = SwCoroutine::getContext() ?? [];
 
         foreach ($context as $key => $value) {
             if (Str::startsWith($key, $this->ignoreContextPrefix)) {
