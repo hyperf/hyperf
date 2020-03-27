@@ -1,5 +1,9 @@
 # v1.1.23 - TBD
 
+## Fixed
+
+- [#1471](https://github.com/hyperf/hyperf/pull/1471) Fixed data recved failed, when the body is larger than max-output-buffer-size.
+
 # v1.1.22 - 2020-03-26
 
 ## Added
