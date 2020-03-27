@@ -54,6 +54,11 @@ abstract class KeepaliveConnection implements ConnectionInterface
      */
     protected $connected = false;
 
+    /**
+     * @var string
+     */
+    protected $name = 'keepalive.connection';
+
     public function __construct(ContainerInterface $container, Pool $pool)
     {
         $this->container = $container;
