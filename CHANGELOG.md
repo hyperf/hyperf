@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#1469](https://github.com/hyperf/hyperf/pull/1469) Added property `useMake` for `HandlerStackFactory`.
+- [#1469](https://github.com/hyperf/hyperf/pull/1469) Added method `getHandler()` for `HandlerStackFactory`.
 
 # v1.1.22 - 2020-03-26
 
