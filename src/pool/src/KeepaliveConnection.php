@@ -157,7 +157,8 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
     public function isTimeout(): bool
     {
-        return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime();
+        return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime()
+            && $this->channel->length() > 0;
     }
 
     protected function addHeartbeat()
