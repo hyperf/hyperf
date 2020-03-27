@@ -1,5 +1,9 @@
 # v1.1.23 - TBD
 
+## Fixed
+
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) Fixed consume failed, when publish message in consumer.
+
 # v1.1.22 - 2020-03-26
 
 ## Added
