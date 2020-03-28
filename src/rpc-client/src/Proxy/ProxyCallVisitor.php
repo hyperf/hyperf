@@ -89,14 +89,21 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         return new Node\Stmt\ClassMethod($method->getName(), [
             'flags' => 1,
-            'stmts' => [new Node\Stmt\Return_(new Node\Expr\MethodCall(
-                new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
-                new Node\Identifier('__call'),
-                [
-                    new Node\Scalar\MagicConst\Function_(),
-                    new Node\Expr\FuncCall(new Node\Name('func_get_args')),
-                ]
-            ))],
+            'stmts' => value(function () use ($method) {
+                $methodCall = new Node\Expr\MethodCall(
+                    new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
+                    new Node\Identifier('__call'),
+                    [
+                        new Node\Scalar\MagicConst\Function_(),
+                        new Node\Expr\FuncCall(new Node\Name('func_get_args')),
+                    ]
+                );
+                if (((string) $method->getReturnType()) !== 'void') {
+                    return [new Node\Stmt\Return_($methodCall)];
+                } else {
+                    return [$methodCall];
+                }
+            }),
             'params' => value(function () use ($method) {
                 $parameters = [];
                 foreach ($method->getParameters() as $parameter) {
