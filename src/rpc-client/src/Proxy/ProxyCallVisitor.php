@@ -107,7 +107,15 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                             if ($parameter->isCallable()) {
                                 return new Node\Identifier('callable');
                             }
-                            return (string) $parameter->getType();
+                            $prefix = '';
+                            if (! $parameter->getType()->isBuiltin()) {
+                                $prefix = '\\';
+                            }
+                            $classType = $prefix . (string) $parameter->getType();
+                            if ($parameter->getType()->allowsNull()) {
+                                return new Node\NullableType(new Node\Name($classType));
+                            }
+                            return $classType;
                         }),
                         $parameter->isPassedByReference(),
                         $parameter->isVariadic()
