@@ -72,7 +72,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 ],
             ]);
         }
-        return parent::leaveNode($node);
     }
 
     public function generateStmts(Interface_ $node): array
@@ -101,10 +100,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             'params' => value(function () use ($method) {
                 $parameters = [];
                 foreach ($method->getParameters() as $parameter) {
-                    $default = $this->handleDefaultValue($parameter);
                     $parameters[] = new Node\Param(
                         new Node\Expr\Variable($parameter->getName()),
-                        $default,
+                        $this->handleDefaultValue($parameter),
                         value(function () use ($parameter) {
                             if ($parameter->isCallable()) {
                                 return new Node\Identifier('callable');
