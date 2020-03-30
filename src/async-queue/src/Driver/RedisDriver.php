@@ -64,7 +64,7 @@ class RedisDriver extends Driver
 
     public function push(JobInterface $job, int $delay = 0): bool
     {
-        $message = new Message($job);
+        $message = make(Message::class, [$job]);
         $data = $this->packer->pack($message);
 
         if ($delay === 0) {
@@ -76,7 +76,7 @@ class RedisDriver extends Driver
 
     public function delete(JobInterface $job): bool
     {
-        $message = new Message($job);
+        $message = make(Message::class, [$job]);
         $data = $this->packer->pack($message);
 
         return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);
