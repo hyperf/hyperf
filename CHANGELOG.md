@@ -4,6 +4,12 @@
 
 - [#1469](https://github.com/hyperf/hyperf/pull/1469) Added method `getHandler()` for `HandlerStackFactory`.
 
+## Fixed
+
+- [#1471](https://github.com/hyperf/hyperf/pull/1471) Fixed data recved failed, when the body is larger than max-output-buffer-size.
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) Fixed consume failed when publish message in consumer of NSQ.
+- [#1474](https://github.com/hyperf/hyperf/pull/1474) Fixed the consumer of NSQ will restart when requeue message.
+
 # v1.1.22 - 2020-03-26
 
 ## Added
