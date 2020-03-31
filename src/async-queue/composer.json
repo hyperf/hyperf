@@ -30,6 +30,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to dispatch a event.",
         "hyperf/process": "Auto register the consumer process for server."
     },
