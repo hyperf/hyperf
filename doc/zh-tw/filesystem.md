@@ -21,7 +21,7 @@ composer require league/flysystem-memory
 安裝完成後，執行
 
 ```bash
-php bin/hyperf vendor:publish hyperf/filesystem
+php bin/hyperf.php vendor:publish hyperf/filesystem
 ```
 
 就會生成 `config/autoload/file.php` 檔案。在該檔案中設定預設驅動，並配置對應驅動的 access key、access secret 等資訊就可以使用了。
@@ -210,7 +210,7 @@ return [
         ],
         'qiniu' => [
             'driver' => \Hyperf\Filesystem\Adapter\QiniuAdapterFactory::class,
-            'accessId' => env('QINIU_ACCESS_ID'),
+            'accessKey' => env('QINIU_ACCESS_KEY'),
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
             'domain' => env('QINBIU_DOMAIN'),
