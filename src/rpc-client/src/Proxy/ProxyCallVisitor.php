@@ -84,9 +84,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $stmts;
     }
 
-    protected function overrideMethod(Node\Stmt\ClassMethod $method)
+    protected function overrideMethod(Node\Stmt\ClassMethod $stmt)
     {
-        $method->stmts = value(function () use ($method) {
+        $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(
                 new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
                 new Node\Identifier('__call'),
@@ -95,13 +95,13 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Node\Expr\FuncCall(new Node\Name('func_get_args')),
                 ]
             );
-            if (((string) $method->getReturnType()) !== 'void') {
+            if (((string) $stmt->getReturnType()) !== 'void') {
                 return [new Node\Stmt\Return_($methodCall)];
             } else {
-                return [$methodCall];
+                return [new Node\Stmt\Expression($methodCall)];
             }
         });
-        return $method;
+        return $stmt;
     }
 
 }
