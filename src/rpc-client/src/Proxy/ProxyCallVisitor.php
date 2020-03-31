@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Di\ReflectionManager;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionMethod;
-use ReflectionParameter;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
@@ -76,113 +75,33 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function generateStmts(Interface_ $node): array
     {
-        $reflectionInterface = ReflectionManager::reflectClass($this->namespace . '\\' . $node->name);
-        $reflectionMethods = $reflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
+        $betterReflectionInterface = ReflectionClass::createFromName($this->namespace . '\\' . $node->name);
+        $reflectionMethods = $betterReflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
         $stmts = [];
         foreach ($reflectionMethods as $method) {
-            $stmts[] = $this->handleMethodStmt($method);
+            $stmts[] = $this->overrideMethod($method->getAst());
         }
         return $stmts;
     }
 
-    protected function handleMethodStmt(ReflectionMethod $method): Node\Stmt\ClassMethod
+    protected function overrideMethod(Node\Stmt\ClassMethod $method)
     {
-        return new Node\Stmt\ClassMethod($method->getName(), [
-            'flags' => 1,
-            'stmts' => value(function () use ($method) {
-                $methodCall = new Node\Expr\MethodCall(
-                    new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
-                    new Node\Identifier('__call'),
-                    [
-                        new Node\Scalar\MagicConst\Function_(),
-                        new Node\Expr\FuncCall(new Node\Name('func_get_args')),
-                    ]
-                );
-                if (((string) $method->getReturnType()) !== 'void') {
-                    return [new Node\Stmt\Return_($methodCall)];
-                } else {
-                    return [$methodCall];
-                }
-            }),
-            'params' => value(function () use ($method) {
-                $parameters = [];
-                foreach ($method->getParameters() as $parameter) {
-                    $parameters[] = new Node\Param(
-                        new Node\Expr\Variable($parameter->getName()),
-                        $this->handleDefaultValue($parameter),
-                        value(function () use ($parameter) {
-                            if ($parameter->isCallable()) {
-                                return new Node\Identifier('callable');
-                            }
-                            $prefix = '';
-                            if (! $parameter->getType()->isBuiltin()) {
-                                $prefix = '\\';
-                            }
-                            $classType = $prefix . (string) $parameter->getType();
-                            if ($parameter->getType()->allowsNull()) {
-                                return new Node\NullableType(new Node\Name($classType));
-                            }
-                            return $classType;
-                        }),
-                        $parameter->isPassedByReference(),
-                        $parameter->isVariadic()
-                    );
-                }
-                return $parameters;
-            }),
-            'returnType' => new Node\Identifier((string) $method->getReturnType()),
-        ]);
+        $method->stmts = value(function () use ($method) {
+            $methodCall = new Node\Expr\MethodCall(
+                new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
+                new Node\Identifier('__call'),
+                [
+                    new Node\Scalar\MagicConst\Function_(),
+                    new Node\Expr\FuncCall(new Node\Name('func_get_args')),
+                ]
+            );
+            if (((string) $method->getReturnType()) !== 'void') {
+                return [new Node\Stmt\Return_($methodCall)];
+            } else {
+                return [$methodCall];
+            }
+        });
+        return $method;
     }
 
-    protected function handleDefaultValue(ReflectionParameter $parameter): ?Node\Expr
-    {
-        if (! $parameter->isDefaultValueAvailable()) {
-            return null;
-        }
-        if ($parameter->getDefaultValueConstantName()) {
-            [$class, $name] = explode('::', $parameter->getDefaultValueConstantName());
-            return new Node\Expr\ClassConstFetch(new Node\Name($class), $name);
-        }
-        return $this->transferParamValueToExpr($parameter->getDefaultValue());
-    }
-
-    protected function transferParamValueToExpr($value): Node\Expr
-    {
-        $type = gettype($value);
-        switch ($type) {
-            case 'boolean':
-            case 'bool':
-                return new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false'));
-                break;
-            case 'integer':
-            case 'int':
-                return new Node\Scalar\LNumber($value);
-                break;
-            case 'float':
-            case 'double':
-                return new Node\Scalar\DNumber($value);
-                break;
-            case 'string':
-                return new Node\Scalar\String_($value);
-                break;
-            case 'array':
-                return new Node\Expr\Array_(value(function () use ($value) {
-                    $items = [];
-                    foreach ($value as $k => $v) {
-                        $items[] = new Node\Expr\ArrayItem(
-                            $this->transferParamValueToExpr($v),
-                            $this->transferParamValueToExpr($k)
-                        );
-                    }
-                    return $items;
-                }));
-                break;
-            case 'object':
-                // There is no object type of default value
-                break;
-            case 'NULL':
-                return new Node\Expr\ConstFetch(new Node\Name('null'));
-                break;
-        }
-    }
 }
