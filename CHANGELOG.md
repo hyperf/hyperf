@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#1469](https://github.com/hyperf/hyperf/pull/1469) Added method `getHandler()` for `HandlerStackFactory`.
+- [#1469](https://github.com/hyperf/hyperf/pull/1469) Added method `getHandler()` for `Hyperf/Guzzle/HandlerStackFactory` and use `make()` function to create the handler instead of `new` operator when it is possible.
 
 ## Fixed
 
