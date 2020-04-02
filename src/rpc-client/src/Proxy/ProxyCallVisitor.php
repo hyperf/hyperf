@@ -20,15 +20,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var \PhpParser\Parser
-     */
-    protected $astParser;
-
-    /**
-     * @var CodeLoader
-     */
-    protected $codeLoader;
 
     /**
      * @var string
@@ -45,11 +36,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      */
     private $constants = [];
 
-    public function __construct(string $classname, CodeLoader $codeLoader, \PhpParser\Parser $astParser)
+    public function __construct(string $classname)
     {
         $this->classname = $classname;
-        $this->codeLoader = $codeLoader;
-        $this->astParser = $astParser;
     }
 
     public function enterNode(Node $node)
@@ -84,7 +73,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $stmts;
     }
 
-    protected function overrideMethod(Node\Stmt\ClassMethod $stmt)
+    protected function overrideMethod(Node\Stmt\ClassMethod $stmt): Node\Stmt\ClassMethod
     {
         $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(
