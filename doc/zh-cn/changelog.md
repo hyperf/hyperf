@@ -2,21 +2,21 @@
 
 # v1.1.23 - 2020-04-02
 
-## Added
+## 新增
 
 - [#1467](https://github.com/hyperf/hyperf/pull/1467) 为 `filesystem` 组件添加默认配置。
 - [#1469](https://github.com/hyperf/hyperf/pull/1469) 为 `Hyperf/Guzzle/HandlerStackFactory` 添加 `getHandler()` 方法，并尽可能的使用 `make()` 创建 `handler`。
 
-## Fixed
+## 变更
+
+- [#1481](https://github.com/hyperf/hyperf/pull/1481) 异步队列创建消息时，使用 `make` 方法创建。
+
+## 修复
 
 - [#1471](https://github.com/hyperf/hyperf/pull/1471) 修复 `NSQ` 组件，数据量超过 `max-output-buffer-size` 接收数据失败的 `BUG`。
 - [#1472](https://github.com/hyperf/hyperf/pull/1472) 修复 `NSQ` 组件，在消费者中发布消息时，会导致消费者无法正常消费的 `BUG`。
 - [#1474](https://github.com/hyperf/hyperf/pull/1474) 修复 `NSQ` 组件，`requeue` 消息时，消费者会意外重启的 `BUG`。
 - [#1477](https://github.com/hyperf/hyperf/pull/1477) 修复使用 `Hyperf\Testing\Client::flushContext` 时，会引发 `Fixed Invalid argument supplied` 异常的 `BUG`。
-
-## Changed
-
-- [#1481](https://github.com/hyperf/hyperf/pull/1481) 异步队列创建消息时，使用 `make` 方法。
 
 # v1.1.22 - 2020-03-26
 

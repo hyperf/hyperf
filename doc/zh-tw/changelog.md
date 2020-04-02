@@ -1,5 +1,23 @@
 # 版本更新記錄
 
+# v1.1.23 - 2020-04-02
+
+## 新增
+
+- [#1467](https://github.com/hyperf/hyperf/pull/1467) 為 `filesystem` 元件新增預設配置。
+- [#1469](https://github.com/hyperf/hyperf/pull/1469) 為 `Hyperf/Guzzle/HandlerStackFactory` 新增 `getHandler()` 方法，並儘可能的使用 `make()` 建立 `handler`。
+
+## 變更
+
+- [#1481](https://github.com/hyperf/hyperf/pull/1481) 非同步佇列建立訊息時，使用 `make` 方法建立。
+
+## 修復
+
+- [#1471](https://github.com/hyperf/hyperf/pull/1471) 修復 `NSQ` 元件，資料量超過 `max-output-buffer-size` 接收資料失敗的 `BUG`。
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) 修復 `NSQ` 元件，在消費者中釋出訊息時，會導致消費者無法正常消費的 `BUG`。
+- [#1474](https://github.com/hyperf/hyperf/pull/1474) 修復 `NSQ` 元件，`requeue` 訊息時，消費者會意外重啟的 `BUG`。
+- [#1477](https://github.com/hyperf/hyperf/pull/1477) 修復使用 `Hyperf\Testing\Client::flushContext` 時，會引發 `Fixed Invalid argument supplied` 異常的 `BUG`。
+
 # v1.1.22 - 2020-03-26
 
 ## 新增
