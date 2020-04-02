@@ -1,5 +1,9 @@
 # v1.1.24 - TBD
 
+## Fixed
+
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component
+
 # v1.1.23 - 2020-04-02
 
 ## Added
