@@ -23,6 +23,7 @@ use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
+use HyperfTest\Guzzle\Stub\HandlerStackFactoryStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -39,6 +40,30 @@ class HandlerStackFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
 
         $factory = new HandlerStackFactory();
+        $stack = $factory->create();
+        $this->assertInstanceOf(HandlerStack::class, $stack);
+        $this->assertTrue($stack->hasHandler());
+
+        $ref = new \ReflectionClass($stack);
+
+        $handler = $ref->getProperty('handler');
+        $handler->setAccessible(true);
+        $this->assertInstanceOf(CoroutineHandler::class, $handler->getValue($stack));
+
+        $property = $ref->getProperty('stack');
+        $property->setAccessible(true);
+        foreach ($property->getValue($stack) as $stack) {
+            $this->assertTrue(in_array($stack[1], ['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry']));
+        }
+    }
+
+    public function testMakeCoroutineHandler()
+    {
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('make')->with(CoroutineHandler::class, Mockery::any())->andReturn(new CoroutineHandler());
+
+        $factory = new HandlerStackFactoryStub();
         $stack = $factory->create();
         $this->assertInstanceOf(HandlerStack::class, $stack);
         $this->assertTrue($stack->hasHandler());
