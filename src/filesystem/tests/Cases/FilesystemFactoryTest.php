@@ -84,4 +84,15 @@ class FilesystemFactoryTest extends AbstractTestCase
         $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
         $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
     }
+
+    public function testMissingConfiguration()
+    {
+        $config = new Config([]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+    }
 }
