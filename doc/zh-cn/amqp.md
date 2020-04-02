@@ -229,18 +229,13 @@ use PhpAmqpLib\Wire\AMQPTable;
 /**
  * @Producer(exchange="order", routingKey="order")
  */
-class proTest extends ProducerMessage
+class ProducerTest extends ProducerMessage
 {
     public function __construct($data)
     {
-        // 获取当前组件默认properties
-        $properties = $this->getProperties();
-        // 生成PhpAmqpLib可识别的数据格式
-        $amqp_table = new AMQPTable(["delay"=>"60000"]);
-        // 将生成的数据放入application_headers
-        $properties['application_headers'] = $amqp_table;
-        // 重新赋值properties属性
-        $this->properties = $properties;
+        // 阿里云amqp 特有的功能, rabbitmq 并没有
+        // https://help.aliyun.com/document_detail/148083.html
+        $this->properties['application_headers'] = new AMQPTable(["delay"=>"60000"]);
 
         $this->payload = $data;
     }
