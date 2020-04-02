@@ -55,7 +55,7 @@ Support this project with your organization or company. Your logo will show up h
     <tr>
       <td align="left" valign="middle">
         <a href="https://guojiang.club/?utm_source=hyperf&utm_campaign=sponsor" target="_blank">
-          <img height="80px" src="https://hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
+          <img height="110px" src="https://hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
         </a>
       </td>
       <td align="left" valign="middle">
