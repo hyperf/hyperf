@@ -26,6 +26,9 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+                'ignore_annotations' => [
+                    'mixin',
+                ],
             ],
             'publish' => [
                 [
