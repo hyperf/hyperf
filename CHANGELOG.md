@@ -6,6 +6,7 @@
 
 - [#1467](https://github.com/hyperf/hyperf/pull/1467) Added default configuration for filesystem component.
 - [#1469](https://github.com/hyperf/hyperf/pull/1469) Added method `getHandler()` for `Hyperf/Guzzle/HandlerStackFactory` and use `make()` function to create the handler instead of `new` operator when it is possible.
+- [#1480](https://github.com/hyperf/hyperf/pull/1480) RPC client will generate the methods of inherited interface automatically now.
 
 ## Fixed
 
@@ -37,10 +38,6 @@
 ## Changed
 
 - [#1452](https://github.com/hyperf/hyperf/pull/1452) Encourage the use of `\Hyperf\Redis\Redis` instead of `\Redis` because of [#938](https://github.com/hyperf/hyperf/issues/938).
-
-## Added
-
-- [#1480](https://github.com/hyperf/hyperf/pull/1480) RPC client will generate the methods of inherited interface automatically now.
 
 # v1.1.21 - 2020-03-19
 
