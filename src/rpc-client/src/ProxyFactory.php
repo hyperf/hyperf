@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient;
 
 use Hyperf\RpcClient\Proxy\Ast;
+use Hyperf\RpcClient\Proxy\CodeLoader;
 use Hyperf\Utils\Coroutine\Locker;
 use Hyperf\Utils\Traits\Container;
 
@@ -23,11 +24,17 @@ class ProxyFactory
     /**
      * @var Ast
      */
-    private $ast;
+    protected $ast;
+
+    /**
+     * @var \Hyperf\RpcClient\Proxy\CodeLoader
+     */
+    protected $codeLoader;
 
     public function __construct()
     {
         $this->ast = new Ast();
+        $this->codeLoader = new CodeLoader();
     }
 
     public function createProxy($serviceClass): string
@@ -41,7 +48,7 @@ class ProxyFactory
         }
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
-        $proxyClassName = $serviceClass . '_' . md5($this->ast->getCodeByClassName($serviceClass));
+        $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
         $path = $dir . $proxyFileName . '.proxy.php';
 
         $key = md5($path);
