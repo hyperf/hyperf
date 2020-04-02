@@ -1,12 +1,14 @@
 English | [中文](./README-CN.md)
 
-<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
+<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
 
-[![Build Status](https://travis-ci.org/hyperf/hyperf.svg?branch=master)](https://travis-ci.org/hyperf/hyperf)
-[![Financial Contributors on Open Collective](https://opencollective.com/hyperf/all/badge.svg?label=financial+contributors)](https://opencollective.com/hyperf) 
-[![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
-[![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
-[![Hyperf License](https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000)](https://github.com/hyperf/hyperf/blob/master/LICENSE)
+<p align="center">
+  <a href="https://travis-ci.org/hyperf/hyperf"><img src="https://travis-ci.org/hyperf/hyperf.svg?branch=master" alt="Build Status"></a>
+  <a href="https://opencollective.com/hyperf"><img src="https://opencollective.com/hyperf/all/badge.svg?label=financial+contributors" alt="Financial Contributors on Open Collective"></a>
+  <a href="https://secure.php.net/"><img src="https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
+  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
+  <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
+</p>
 
 # Introduction
 
