@@ -1,5 +1,7 @@
 English | [中文](./README-CN.md)
 
+<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
+
 [![Build Status](https://travis-ci.org/hyperf/hyperf.svg?branch=master)](https://travis-ci.org/hyperf/hyperf)
 [![Financial Contributors on Open Collective](https://opencollective.com/hyperf/all/badge.svg?label=financial+contributors)](https://opencollective.com/hyperf) 
 [![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
@@ -52,8 +54,13 @@ Support this project with your organization or company. Your logo will show up h
   <tbody>
     <tr>
       <td align="left" valign="middle">
-        <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh-cn/imgs/1shanghu.jpg">
+        <a href="https://guojiang.club/?utm_source=hyperf&utm_campaign=sponsor" target="_blank">
+          <img height="80px" src="https://www.hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
+        </a>
+      </td>
+      <td align="left" valign="middle">
+        <a href="https://1shanghu.com?from=hyperf" target="_blank">
+          <img height="80px" src="https://www.hyperf.wiki/zh-cn/imgs/1shanghu.jpg">
         </a>
       </td>
     </tr><tr></tr>
