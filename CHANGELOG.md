@@ -1,5 +1,9 @@
 # v1.1.22 - TBD
 
+## Added
+
+- [#1480](https://github.com/hyperf/hyperf/pull/1480) RPC client will generate the methods of inherited interface automatically now.
+
 # v1.1.21 - 2020-03-19
 
 ## Added
