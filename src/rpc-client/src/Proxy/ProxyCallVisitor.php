@@ -84,7 +84,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Node\Expr\FuncCall(new Node\Name('func_get_args')),
                 ]
             );
-            if (((string) $stmt->getReturnType()) !== 'void') {
+            if ($stmt->getReturnType() instanceof \PhpParser\Node\NullableType || ((string) $stmt->getReturnType()) !== 'void') {
                 return [new Node\Stmt\Return_($methodCall)];
             } else {
                 return [new Node\Stmt\Expression($methodCall)];
