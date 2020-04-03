@@ -86,6 +86,12 @@ class AnnotationReaderTest extends TestCase
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_NOT_EXIST, ['name' => 'Hyperf']);
         $this->assertSame('Hyperf is not exist.', $res);
 
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, 'user_id');
+        $this->assertSame('Params[user_id] is invalid.', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, ['order_id']);
+        $this->assertSame('Params[order_id] is invalid.', $res);
+
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), 'zh_CN');
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_ERROR_MESSAGE);
         $this->assertSame('错误信息', $res);
