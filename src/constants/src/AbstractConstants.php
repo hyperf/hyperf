@@ -38,7 +38,10 @@ abstract class AbstractConstants
         array_shift($arguments);
 
         if ($result = self::translate($message, $arguments)) {
-            return $result;
+            // If the result of translate doesn't exist, the result is equal with message, so we will skip it.
+            if ($result !== $message) {
+                return $result;
+            }
         }
 
         $count = count($arguments);
