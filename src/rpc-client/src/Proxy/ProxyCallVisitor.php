@@ -20,7 +20,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-
     /**
      * @var string
      */
@@ -86,11 +85,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             );
             if ($stmt->getReturnType() instanceof \PhpParser\Node\NullableType || ((string) $stmt->getReturnType()) !== 'void') {
                 return [new Node\Stmt\Return_($methodCall)];
-            } else {
-                return [new Node\Stmt\Expression($methodCall)];
             }
+            return [new Node\Stmt\Expression($methodCall)];
         });
         return $stmt;
     }
-
 }
