@@ -63,6 +63,7 @@ class AsyncQueueAspect extends AbstractAspect
 
         $pool = 'default';
         $delay = 0;
+        $maxAttempts = 0;
 
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         /** @var AsyncQueueMessage $annotation */
@@ -70,11 +71,12 @@ class AsyncQueueAspect extends AbstractAspect
         if ($annotation instanceof AsyncQueueMessage) {
             $pool = $annotation->pool;
             $delay = $annotation->delay;
+            $maxAttempts = $annotation->maxAttempts;
         }
 
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($pool);
 
-        $driver->push(new AnnotationJob($class, $method, $arguments), $delay);
+        $driver->push(new AnnotationJob($class, $method, $arguments, $maxAttempts), $delay);
     }
 }
