@@ -23,4 +23,6 @@ interface CalculatorServiceInterface
     public function array(int $a, int $b): array;
 
     public function error();
+
+    public function getString(): ?string;
 }

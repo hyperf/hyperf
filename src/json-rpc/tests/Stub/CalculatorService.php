@@ -41,4 +41,9 @@ class CalculatorService implements CalculatorServiceInterface
     {
         throw new \Error('Not only a exception.');
     }
+
+    public function getString(): ?string
+    {
+        return uniqid();
+    }
 }
