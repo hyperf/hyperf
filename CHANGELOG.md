@@ -1,5 +1,9 @@
 # v1.1.24 - TBD
 
+## Added
+
+- [#1502](https://github.com/hyperf/hyperf/pull/1502) Added `maxAttempts` for annotation `AsyncQueueMessage`.
+
 ## Fixed
 
 - [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component
