@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component
+- [#1499](https://github.com/hyperf/hyperf/pull/1499) Fixed dynamic parameter does not work after requiring translation for `hyperf/constants`.
 
 # v1.1.23 - 2020-04-02
 
