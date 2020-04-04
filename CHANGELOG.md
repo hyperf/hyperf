@@ -1,5 +1,9 @@
 # v1.1.24 - TBD
 
+## Added
+
+- [#1501](https://github.com/hyperf/hyperf/pull/1501) Bridged Symfony command events to Hyperf event dispatcher.
+
 ## Fixed
 
 - [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component
