@@ -17,6 +17,10 @@ use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class SymfonyEventDispatcher.
+ * @internal
+ */
 class SymfonyEventDispatcher implements SymfonyDispatcherInterface
 {
     /**
@@ -29,25 +33,16 @@ class SymfonyEventDispatcher implements SymfonyDispatcherInterface
         $this->psrDispatcher = $psrDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addListener($eventName, $listener, $priority = 0)
     {
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addSubscriber(EventSubscriberInterface $subscriber)
     {
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeListener($eventName, $listener)
     {
         throw new NotImplementedException();
@@ -58,33 +53,21 @@ class SymfonyEventDispatcher implements SymfonyDispatcherInterface
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getListeners($eventName = null)
     {
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch($event)
     {
         $this->psrDispatcher->dispatch($event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getListenerPriority($eventName, $listener)
     {
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasListeners($eventName = null)
     {
         throw new NotImplementedException();
