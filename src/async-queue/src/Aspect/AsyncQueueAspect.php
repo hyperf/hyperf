@@ -77,6 +77,7 @@ class AsyncQueueAspect extends AbstractAspect
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($pool);
 
-        $driver->push(new AnnotationJob($class, $method, $arguments, $maxAttempts), $delay);
+        $job = make(AnnotationJob::class, [$class, $method, $arguments, $maxAttempts]);
+        $driver->push($job, $delay);
     }
 }
