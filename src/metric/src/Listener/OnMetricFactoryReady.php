@@ -17,6 +17,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -95,7 +96,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
         $server = $this->container->get(Server::class);
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();
@@ -106,6 +107,12 @@ class OnMetricFactoryReady implements ListenerInterface
             $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
             $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
+        });
+        // Clean up timer on worker exit;
+        Coroutine::create(function () use ($timerId) {
+            $coordinator = CoordinatorManager::get('workerExit');
+            $coordinator->yield();
+            Timer::clear($timerId);
         });
     }
 }

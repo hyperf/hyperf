@@ -26,7 +26,9 @@ use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
+use Hyperf\Server\SwooleEvent;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -97,6 +99,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
+            $coordinator = CoordinatorManager::get(SwooleEvent::ON_WORKER_START);
+            $coordinator->yield();
+
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);

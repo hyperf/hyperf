@@ -19,6 +19,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class BootProcessListener implements ListenerInterface
@@ -66,7 +67,11 @@ class BootProcessListener implements ListenerInterface
                 retry(INF, function () use ($interval) {
                     $prevConfig = [];
                     while (true) {
-                        sleep($interval);
+                        $coordinator = CoordinatorManager::get('workerExit');
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
                         $config = $this->client->pull();
                         if ($config !== $prevConfig) {
                             $this->updateConfig($config);

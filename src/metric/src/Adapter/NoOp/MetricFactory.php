@@ -17,7 +17,7 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Swoole\Coroutine;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -48,6 +48,7 @@ class MetricFactory implements MetricFactoryInterface
 
     public function handle(): void
     {
-        Coroutine::yield();
+        $coordinator = CoordinatorManager::get('workerExit');
+        $coordinator->yield();
     }
 }
