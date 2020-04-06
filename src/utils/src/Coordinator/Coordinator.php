@@ -29,11 +29,13 @@ class Coordinator
     /**
      * Yield the current coroutine for a given timeout,
      * unless the coordinator is woke up from outside.
+     *
+     * @param int|float $timeout
      * @return bool returns true if the coordinator has been woken up
      */
-    public function yield(float $timeout = -1): bool
+    public function yield($timeout = -1): bool
     {
-        $this->channel->pop($timeout);
+        $this->channel->pop((float) $timeout);
         $code = $this->channel->errCode;
         if ($code == -2) {
             return true;
