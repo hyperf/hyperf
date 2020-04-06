@@ -26,8 +26,8 @@ use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\Server\SwooleEvent;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -116,8 +116,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
-            $coordinator = CoordinatorManager::get(SwooleEvent::ON_WORKER_START);
-            $coordinator->yield();
+            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
 
             $security = $this->container->get(Security::class);
 

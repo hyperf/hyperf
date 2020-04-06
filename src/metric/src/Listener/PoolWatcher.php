@@ -16,6 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
@@ -79,8 +80,7 @@ abstract class PoolWatcher
             $connectionsInUseGauge->set((float) $pool->getCurrentConnections());
         });
         Coroutine::create(function () use ($timerId) {
-            $coordinator = CoordinatorManager::get('workerExit');
-            $coordinator->yield();
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
     }

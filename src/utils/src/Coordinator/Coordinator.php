@@ -36,11 +36,7 @@ class Coordinator
     public function yield($timeout = -1): bool
     {
         $this->channel->pop((float) $timeout);
-        $code = $this->channel->errCode;
-        if ($code == -2) {
-            return true;
-        }
-        return false;
+        return $this->channel->errCode === -2;
     }
 
     /**

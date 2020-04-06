@@ -19,6 +19,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Retry\Retry;
+use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
@@ -145,8 +146,7 @@ class OnWorkerStart implements ListenerInterface
         });
         // Clean up timer on worker exit;
         Coroutine::create(function () use ($timerId) {
-            $coordinator = CoordinatorManager::get('workerExit');
-            $coordinator->yield();
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
     }
