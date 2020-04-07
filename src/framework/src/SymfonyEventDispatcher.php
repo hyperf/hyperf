@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyDispatc
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class SymfonyEventDispatcher.
  * @internal
  */
 class SymfonyEventDispatcher implements SymfonyDispatcherInterface
