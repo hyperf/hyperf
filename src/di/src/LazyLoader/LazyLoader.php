@@ -17,7 +17,6 @@ use Hyperf\Utils\Coroutine\Locker as CoLocker;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
-use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionClass;
@@ -127,17 +126,16 @@ class LazyLoader
     protected function generatorLazyProxy(string $proxy, string $target): string
     {
         $targetReflection = ReflectionClass::createFromName($target);
-        $ast = $targetReflection->getAst();
         if ($this->isUnsupportedReflectionType($targetReflection)) {
             $builder = new FallbackLazyProxyBuilder();
-            return $this->buildNewCode($builder, [$ast], $proxy, $target, $targetReflection);
+            return $this->buildNewCode($builder, $proxy, $targetReflection);
         }
         if ($targetReflection->isInterface()) {
             $builder = new InterfaceLazyProxyBuilder();
-            return $this->buildNewCode($builder, [$ast], $proxy, $target, $targetReflection);
+            return $this->buildNewCode($builder, $proxy, $targetReflection);
         }
         $builder = new ClassLazyProxyBuilder();
-        return $this->buildNewCode($builder, [$ast], $proxy, $target, $targetReflection);
+        return $this->buildNewCode($builder, $proxy, $targetReflection);
     }
 
     /**
@@ -168,17 +166,18 @@ class LazyLoader
         return false;
     }
 
-    private function buildNewCode(AbstractLazyProxyBuilder $builder, array $ast, string $proxy, string $target, ReflectionClass $targetReflection): string
+    private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
     {
+        $target = $reflectionClass->getName();
+        $ast = $reflectionClass->getAst();
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getStmts($targetReflection));
+        $visitor = new PublicMethodVisitor($this->getStmts($reflectionClass));
         $nameResolver = new NameResolver();
         $traverser->addVisitor($nameResolver);
         $traverser->addVisitor($visitor);
-        $ast = $traverser->traverse($ast);
+        $traverser->traverse([$ast]);
         $builder->addNodes($visitor->nodes);
         $prettyPrinter = new Standard();
         $stmts = [$builder->getNode()];
