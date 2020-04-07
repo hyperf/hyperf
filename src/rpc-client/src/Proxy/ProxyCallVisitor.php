@@ -30,11 +30,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      */
     private $namespace;
 
-    /**
-     * @var array
-     */
-    private $constants = [];
-
     public function __construct(string $classname)
     {
         $this->classname = $classname;
@@ -83,7 +78,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Node\Expr\FuncCall(new Node\Name('func_get_args')),
                 ]
             );
-            if ($this->hasReturn($stmt)) {
+            if ($this->shouldReturn($stmt)) {
                 return [new Node\Stmt\Return_($methodCall)];
             }
             return [new Node\Stmt\Expression($methodCall)];
@@ -91,7 +86,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $stmt;
     }
 
-    protected function hasReturn(Node\Stmt\ClassMethod $stmt): bool
+    protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
     {
         return $stmt->getReturnType() instanceof Node\NullableType
             || $stmt->getReturnType() instanceof Node\UnionType
