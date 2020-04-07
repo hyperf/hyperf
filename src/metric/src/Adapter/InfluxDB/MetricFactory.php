@@ -31,7 +31,6 @@ use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
-use Swoole\Coroutine;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -119,7 +118,7 @@ class MetricFactory implements MetricFactoryInterface
         }
         while (true) {
             $workerExited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($interval);
-            if ($workerExited){
+            if ($workerExited) {
                 break;
             }
             $points = [];

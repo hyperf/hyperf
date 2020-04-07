@@ -15,7 +15,6 @@ namespace Hyperf\Metric\Listener;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Bootstrap\WorkerExitCallback;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -82,9 +81,9 @@ class QueueWatcher implements ListenerInterface
             $failed->set((float) $info['failed']);
             $timeout->set((float) $info['timeout']);
         });
-        Coroutine::create(function() use ($timerId) {
-           CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
-           Timer::clear($timerId);
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            Timer::clear($timerId);
         });
     }
 }

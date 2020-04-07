@@ -21,7 +21,6 @@ use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Swoole\Coroutine;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -91,7 +90,7 @@ class MetricFactory implements MetricFactoryInterface
                 $this->client->startBatch();
                 $workerExited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
-                if ($workerExited){
+                if ($workerExited) {
                     break;
                 }
             } while (true);
