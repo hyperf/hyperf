@@ -17,6 +17,10 @@ use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\BetterReflection;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
+use Roave\BetterReflection\Reflector\ClassReflector;
+use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 /**
  * @internal
@@ -44,7 +48,7 @@ public function hope(bool $a) : int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(ConfigInterface $a) : void
+public function it(\bar\ConfigInterface $a) : void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
@@ -56,7 +60,7 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor();
+        $visitor = new PublicMethodVisitor($this->getStmt($code));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
@@ -89,7 +93,7 @@ public function hope(bool $a) : int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(ConfigInterface $a) : void
+public function it(\bar\ConfigInterface $a) : void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
@@ -101,12 +105,25 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor();
+        $visitor = new PublicMethodVisitor($this->getStmt($code));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
         $newCode = $prettyPrinter->prettyPrintFile($visitor->nodes);
         $this->assertEquals($expected, $newCode);
         $this->assertEquals(3, count($visitor->nodes));
+    }
+
+    private function getStmt($code)
+    {
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = new ClassReflector(new StringSourceLocator($code, $astLocator));
+        $reflectionClass = $reflector->reflect('foo\\foo');
+        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $stmts = [];
+        foreach ($reflectionMethods as $method) {
+            $stmts[] = $method->getAst();
+        }
+        return $stmts;
     }
 }

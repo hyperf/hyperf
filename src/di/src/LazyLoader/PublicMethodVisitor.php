@@ -21,6 +21,7 @@ use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitorAbstract;
 
@@ -33,8 +34,24 @@ class PublicMethodVisitor extends NodeVisitorAbstract
      */
     public $nodes = [];
 
+    /**
+     * @var Node\Stmt[]
+     */
+    private $stmts;
+
+    public function __construct(array $stmts)
+    {
+        $this->stmts = $stmts;
+    }
+
     public function enterNode(Node $node)
     {
+        if ($node instanceof Interface_) {
+            $node->stmts = $this->stmts;
+        }
+        if ($node instanceof Class_) {
+            $node->stmts = $this->stmts;
+        }
         if ($node instanceof ClassMethod) {
             $methodCall =
                 new MethodCall(new Variable('this'), '__call', [
