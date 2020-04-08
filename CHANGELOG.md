@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#1502](https://github.com/hyperf/hyperf/pull/1502) Added `maxAttempts` for annotation `AsyncQueueMessage`.
+- [#1502](https://github.com/hyperf/hyperf/pull/1502) Added `maxAttempts` parameter for `Hyperf\AsyncQueue\Annotation\AsyncQueueMessage` annotation to control the maximum retry time of job.
 
 ## Fixed
 
