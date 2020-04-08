@@ -42,7 +42,7 @@ class Coordinator
     /**
      * Wakeup all coroutines yielding for this coordinator.
      */
-    public function resume()
+    public function resume(): void
     {
         $this->channel->close();
     }
