@@ -122,6 +122,9 @@ class RedisDriverTest extends TestCase
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new ChannelConfig($args['channel']);
         });
+        $container->shouldReceive('make')->with(Message::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Message(...$args);
+        });
 
         ApplicationContext::setContainer($container);
 

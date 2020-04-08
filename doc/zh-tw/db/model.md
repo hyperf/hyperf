@@ -30,7 +30,7 @@ $ php bin/hyperf.php db:model table_name
 |  --table-mapping   | array  |       `[]`        | 為表名 -> 模型增加對映關係 比如 ['users:Account'] |
 |  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
 |  --with-comments   |  bool  |      `false`      |                是否增加欄位註釋                 |
-|  --property-case   |  int   |      `0`          |               欄位型別 0蛇形 1駝峰               |
+|  --property-case   |  int   |      `0`          |               欄位型別 0 蛇形 1 駝峰               |
 
 當使用 `--property-case` 將欄位型別轉化為駝峰時，還需要手動在模型中加入 `Hyperf\Database\Model\Concerns\CamelCase`。
 

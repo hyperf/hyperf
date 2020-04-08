@@ -82,10 +82,9 @@ class Nsq
 
     public function subscribe(string $topic, string $channel, callable $callback): void
     {
-        $this->sendSub($topic, $channel);
-
-        while ($this->sendRdy()) {
-            $this->call(function (Socket $socket) use ($callback) {
+        $this->call(function (Socket $socket) use ($topic, $channel,$callback) {
+            $this->sendSub($socket, $topic, $channel);
+            while ($this->sendRdy($socket)) {
                 $reader = new Subscriber($socket);
                 $reader->recv();
 
@@ -105,14 +104,14 @@ class Nsq
                         if ($result === Result::REQUEUE) {
                             $socket->sendAll($this->builder->buildTouch($message->getMessageId()));
                             $socket->sendAll($this->builder->buildReq($message->getMessageId()));
-                            return;
+                            continue;
                         }
 
                         $socket->sendAll($this->builder->buildFin($message->getMessageId()));
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     protected function sendMPub(string $topic, array $messages): bool
@@ -162,26 +161,22 @@ class Nsq
         }
     }
 
-    protected function sendSub(string $topic, string $channel): void
+    protected function sendSub(Socket $socket, string $topic, string $channel): void
     {
-        $this->call(function (Socket $socket) use ($topic, $channel) {
-            $result = $socket->sendAll($this->builder->buildSub($topic, $channel));
-            if ($result === false) {
-                throw new SocketSendException('SUB send failed, the errorCode is ' . $socket->errCode);
-            }
-            $socket->recv();
-        });
+        $result = $socket->sendAll($this->builder->buildSub($topic, $channel));
+        if ($result === false) {
+            throw new SocketSendException('SUB send failed, the errorCode is ' . $socket->errCode);
+        }
+        $socket->recv();
     }
 
-    protected function sendRdy()
+    protected function sendRdy(Socket $socket)
     {
-        return $this->call(function (Socket $socket) {
-            $result = $socket->sendAll($this->builder->buildRdy(1));
-            if ($result === false) {
-                throw new SocketSendException('RDY send failed, the errorCode is ' . $socket->errCode);
-            }
+        $result = $socket->sendAll($this->builder->buildRdy(1));
+        if ($result === false) {
+            throw new SocketSendException('RDY send failed, the errorCode is ' . $socket->errCode);
+        }
 
-            return $result;
-        });
+        return $result;
     }
 }

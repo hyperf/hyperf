@@ -29,4 +29,9 @@ class AsyncQueueMessage extends AbstractAnnotation
      * @var int
      */
     public $delay = 0;
+
+    /**
+     * @var int
+     */
+    public $maxAttempts = 0;
 }

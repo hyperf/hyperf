@@ -24,6 +24,8 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -104,6 +106,8 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     {
         $request = $response = null;
         try {
+            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));

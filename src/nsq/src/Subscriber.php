@@ -53,7 +53,14 @@ class Subscriber
         $data = $this->socket->recv(8);
         $this->size = (int) sprintf('%u', unpack('N', substr($data, 0, 4))[1]);
         $this->type = sprintf('%u', unpack('N', substr($data, 4, 4))[1]);
-        $data = $this->socket->recv($this->size - 4);
+        $length = $this->size - 4;
+        $data = '';
+        while ($len = $length - strlen($data)) {
+            if ($len <= 0) {
+                break;
+            }
+            $data .= $this->socket->recv($len);
+        }
         $this->payload = Packer::unpackString($data);
         return $this;
     }

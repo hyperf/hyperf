@@ -121,6 +121,7 @@
 ## 許可權認證
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的許可權元件
+- [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 元件改寫的, 適配 hyperf 框架
 
 ## 第三方 SDK
 
