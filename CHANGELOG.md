@@ -6,8 +6,9 @@
 
 ## Fixed
 
-- [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) Ignore `@mixin` annotation in redis component.
 - [#1499](https://github.com/hyperf/hyperf/pull/1499) Fixed dynamic parameter does not work after requiring translation for `hyperf/constants`.
+- [#1504](https://github.com/hyperf/hyperf/pull/1504) Fixed the proxy client of RPC does not handle the Nullable return type.
 - [#1507](https://github.com/hyperf/hyperf/pull/1507) Fixed consul catalog register method, modified to PUT from GET.
 
 # v1.1.23 - 2020-04-02
