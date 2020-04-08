@@ -3,6 +3,7 @@
 ## Added
 
 - [#1501](https://github.com/hyperf/hyperf/pull/1501) Bridged Symfony command events to Hyperf event dispatcher.
+- [#1523](https://github.com/hyperf/hyperf/pull/1523) Add help function `process2go()`.
 
 ## Fixed
 
