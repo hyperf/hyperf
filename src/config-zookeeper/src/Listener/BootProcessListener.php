@@ -60,22 +60,22 @@ class BootProcessListener implements ListenerInterface
             return;
         }
 
-        if (! $this->config->get('zookeeper.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('zookeeper.interval', 5);
-                retry(INF, function () use ($interval) {
-                    $prevConfig = [];
-                    while (true) {
-                        sleep($interval);
-                        $config = $this->client->pull();
-                        if ($config !== $prevConfig) {
-                            $this->updateConfig($config);
-                        }
-                        $prevConfig = $config;
-                    }
-                }, $interval * 1000);
-            });
+        if ($this->config->get('zookeeper.use_standalone_process', true)) {
+            if ($config = $this->client->pull()) {
+                $this->updateConfig($config);
+            }
+            return;
         }
+
+        $interval = $this->config->get('zookeeper.interval', 5);
+        $prevConfig = [];
+        process2go($interval, function () use (&$prevConfig) {
+            $config = $this->client->pull();
+            if ($config !== $prevConfig) {
+                $this->updateConfig($config);
+            }
+            $prevConfig = $config;
+        });
     }
 
     protected function updateConfig(array $config)

@@ -68,8 +68,9 @@ if (! function_exists('retry')) {
      * Retry an operation a given number of times.
      *
      * @param int $times
+     * @param callable $callback
      * @param int $sleep millisecond
-     * @throws \Throwable
+     * @throws Throwable
      */
     function retry($times, callable $callback, $sleep = 0)
     {
@@ -84,6 +85,25 @@ if (! function_exists('retry')) {
             $backoff->sleep();
             goto beginning;
         }
+    }
+}
+if (! function_exists('process2go')) {
+    /**
+     * process to coroutine
+     *
+     * @param int $second
+     * @param callable $handler
+     */
+    function process2go(int $second, callable $handler)
+    {
+        Coroutine::create(function () use ($second, $handler) {
+            retry(INF, function () use ($second, $handler) {
+                while (true) {
+                    $handler();
+                    sleep($second);
+                }
+            }, 1000 * $second);
+        });
     }
 }
 if (! function_exists('with')) {
