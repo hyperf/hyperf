@@ -33,10 +33,11 @@ class AnnotationJob extends Job
      */
     public $params = [];
 
-    public function __construct(string $class, string $method, array $params)
+    public function __construct(string $class, string $method, array $params, int $maxAttempts = 0)
     {
         $this->class = $class;
         $this->method = $method;
+        $this->maxAttempts = $maxAttempts;
         foreach ($params as $key => $value) {
             if ($value instanceof CompressInterface) {
                 $value = $value->compress();

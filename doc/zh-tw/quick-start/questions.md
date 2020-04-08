@@ -85,3 +85,15 @@ RUN composer install --no-dev \
     && composer dump-autoload -o \
     && ./init-proxy.sh
 ```
+
+## 非同步佇列訊息丟失
+
+如果在使用 `async-queue` 元件時，發現 `handle` 中的方法沒有執行，請先檢查以下幾種情況：
+
+1. `Redis` 是否與其他人共用，訊息被其他人消費走
+2. 本地程序是否存在殘餘，被其他程序消費掉
+
+以下提供萬無一失的解決辦法：
+
+1. killall php
+2. 修改 `async-queue` 配置 `channel`

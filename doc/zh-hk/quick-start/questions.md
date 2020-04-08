@@ -85,3 +85,15 @@ RUN composer install --no-dev \
     && composer dump-autoload -o \
     && ./init-proxy.sh
 ```
+
+## 異步隊列消息丟失
+
+如果在使用 `async-queue` 組件時，發現 `handle` 中的方法沒有執行，請先檢查以下幾種情況：
+
+1. `Redis` 是否與其他人共用，消息被其他人消費走
+2. 本地進程是否存在殘餘，被其他進程消費掉
+
+以下提供萬無一失的解決辦法：
+
+1. killall php
+2. 修改 `async-queue` 配置 `channel`
