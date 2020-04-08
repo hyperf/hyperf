@@ -59,7 +59,7 @@ class Request implements RequestInterface
         }
         return data_get($this->getQueryParams(), $key, $default);
     }
-    
+
     /**
      * Retrieve the data from route parameters.
      *
