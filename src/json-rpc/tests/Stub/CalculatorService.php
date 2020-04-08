@@ -46,4 +46,9 @@ class CalculatorService implements CalculatorServiceInterface
     {
         return uniqid();
     }
+
+    public function callable(callable $a, ?callable $b): array
+    {
+        return [[], null];
+    }
 }
