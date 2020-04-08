@@ -24,7 +24,6 @@ class ServerManager
     protected static $container = [];
 
     /**
-     * @param string $name
      * @param array $value [$serverType, $server]
      */
     public static function add(string $name, array $value)
