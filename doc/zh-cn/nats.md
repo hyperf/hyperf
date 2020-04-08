@@ -5,7 +5,7 @@ NATS 是一个开源、轻量级、高性能的分布式消息中间件，实现
 ## 安装
 
 ```bash
-composer requir hyperf/nats
+composer require hyperf/nats
 ```
 
 ## 使用
