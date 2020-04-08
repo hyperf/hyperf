@@ -39,30 +39,45 @@ class PublicMethodVisitor extends NodeVisitorAbstract
      */
     private $stmts;
 
-    public function __construct(array $stmts)
+    /**
+     * @var string
+     */
+    private $originalClassName;
+
+    public function __construct(array $stmts, string $originalClassName)
     {
         $this->stmts = $stmts;
+        if (strpos($originalClassName, '\\') !== 0) {
+            $originalClassName = '\\' . $originalClassName;
+        }
+        $this->originalClassName = $originalClassName;
     }
 
     public function enterNode(Node $node)
     {
-        if ($node instanceof Interface_) {
-            $node->stmts = $this->stmts;
-        }
-        if ($node instanceof Class_) {
+        if ($node instanceof Interface_ || $node instanceof Class_) {
             $node->stmts = $this->stmts;
         }
         if ($node instanceof ClassMethod) {
-            $methodCall =
-                new MethodCall(new Variable('this'), '__call', [
+            $methodCall = new MethodCall(
+                new Variable('this'),
+                '__call',
+                [
                     new Node\Arg(new MagicConstFunction()),
                     new Node\Arg(new FuncCall(new Name('func_get_args'))),
-                ]);
-            if ($node->returnType && $node->returnType->toString() === 'void') {
-                $methodCall = new Expression($methodCall);
-            } else {
-                $methodCall = new Return_($methodCall);
+                ]
+            );
+            $shouldReturn = true;
+            if ($node->getReturnType() && method_exists($node->getReturnType(), 'toString')) {
+                if ($node->getReturnType()->toString() === 'self') {
+                    $node->returnType = new Name($this->originalClassName);
+                }
+                if ($node->getReturnType()->toString() === 'void') {
+                    $shouldReturn = false;
+                    $methodCall = new Expression($methodCall);
+                }
             }
+            $shouldReturn && $methodCall = new Return_($methodCall);
             $node->stmts = [
                 $methodCall,
             ];

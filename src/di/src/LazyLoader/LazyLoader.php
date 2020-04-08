@@ -159,7 +159,7 @@ class LazyLoader
      */
     private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
-        //Final class
+        // Final class
         if ($targetReflection->isFinal()) {
             return true;
         }
@@ -173,7 +173,7 @@ class LazyLoader
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getStmts($reflectionClass));
+        $visitor = new PublicMethodVisitor($this->getMethodsStmts($reflectionClass), $builder->getOriginalClassName());
         $nameResolver = new NameResolver();
         $traverser->addVisitor($nameResolver);
         $traverser->addVisitor($visitor);
@@ -184,7 +184,7 @@ class LazyLoader
         return $prettyPrinter->prettyPrintFile($stmts);
     }
 
-    private function getStmts(ReflectionClass $reflectionClass)
+    private function getMethodsStmts(ReflectionClass $reflectionClass)
     {
         $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
         $stmts = [];
