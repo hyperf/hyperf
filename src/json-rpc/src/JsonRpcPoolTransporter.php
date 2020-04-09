@@ -12,16 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\Context;
 use RuntimeException;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var PoolFactory
      */
@@ -50,14 +54,9 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
-    /**
-     * TODO: Set config.
-     * @var array
-     */
     private $config = [
         'connect_timeout' => 5.0,
-        'eof' => "\r\n",
-        'options' => [],
+        'settings' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 32,
@@ -73,59 +72,70 @@ class JsonRpcPoolTransporter implements TransporterInterface
     {
         $this->factory = $factory;
         $this->config = array_replace_recursive($this->config, $config);
+
+        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
+        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
     }
 
     public function send(string $data)
     {
         $client = retry(2, function () use ($data) {
-            $pool = $this->getPool();
-            $connection = $pool->get();
             try {
-                /** @var RpcConnection $client */
-                $client = $connection->getConnection();
-                if ($client->send($data . $this->getEof()) === false) {
+                $client = $this->getConnection();
+                if ($client->send($data) === false) {
                     if ($client->errCode == 104) {
                         throw new RuntimeException('Connect to server failed.');
                     }
                 }
                 return $client;
             } catch (\Throwable $throwable) {
-                if ($connection instanceof RpcConnection) {
-                    // Reconnect again next time.
-                    $connection->resetLastUseTime();
+                if (isset($client) && $client instanceof ConnectionInterface) {
+                    $client->close();
                 }
-                $connection->release();
                 throw $throwable;
             }
         });
-        try {
-            $data = $client->recv($this->recvTimeout);
-        } finally {
-            $client->release();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    public function recv()
+    {
+        $client = $this->getConnection();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    /**
+     * Get RpcConnection from Context.
+     */
+    public function getConnection(): RpcConnection
+    {
+        $class = spl_object_hash($this) . '.Connection';
+        if (Context::has($class)) {
+            return Context::get($class);
         }
-        return $data;
+
+        $connection = $this->getPool()->get();
+
+        defer(function () use ($connection) {
+            $connection->release();
+        });
+
+        return Context::set($class, $connection->getConnection());
     }
 
     public function getPool(): Pool
     {
-        $node = $this->getNode();
-        $name = sprintf('%s:%s', $node->host, $node->port);
-        return $this->factory->getPool($name, [
-            'host' => $node->host,
-            'port' => $node->port,
-            'connect_timeout' => $this->config['connect_timeout'],
-        ]);
-    }
-
-    public function getClient(): Pool
-    {
-        $node = $this->getNode();
+        $name = spl_object_hash($this) . '.Pool';
         $config = [
-            'host' => $node->host,
-            'port' => $node->port,
-            'connectTimeout' => $this->connectTimeout,
+            'connect_timeout' => $this->config['connect_timeout'],
+            'settings' => $this->config['settings'],
+            'node' => function () {
+                return $this->getNode();
+            },
         ];
-        $name = $node->host . ':' . $node->port;
+
         return $this->factory->getPool($name, $config);
     }
 
@@ -160,11 +170,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function getConfig(): array
     {
         return $this->config;
-    }
-
-    private function getEof(): string
-    {
-        return $this->config['eof'] ?? "\r\n";
     }
 
     /**

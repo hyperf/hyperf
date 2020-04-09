@@ -91,4 +91,19 @@ abstract class AbstractLazyProxyBuilder
         }
         return $this->builder->getNode();
     }
+
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    public function getProxyClassName(): string
+    {
+        return $this->proxyClassName;
+    }
+
+    public function getOriginalClassName(): string
+    {
+        return $this->originalClassName;
+    }
 }

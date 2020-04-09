@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
+use Hyperf\Amqp\Connection\KeepaliveIO;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
@@ -113,6 +114,10 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
+        if ($this->connection && $this->connection->getIO() instanceof KeepaliveIO) {
+            $this->connection->getIO()->close();
+        }
+
         $this->connection = $this->initConnection();
         $this->channel = null;
         $this->confirmChannel = null;
@@ -127,6 +132,10 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         $this->connection->close();
+        if ($this->connection->getIO() instanceof KeepaliveIO) {
+            $this->connection->getIO()->close();
+        }
+
         $this->channel = null;
         $this->confirmChannel = null;
         return true;

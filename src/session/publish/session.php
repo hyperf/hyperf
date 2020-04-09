@@ -18,5 +18,6 @@ return [
         'connection' => 'default',
         'path' => BASE_PATH . '/runtime/session',
         'gc_maxlifetime' => 1200,
+        'session_name' => 'HYPERF_SESSION_ID',
     ],
 ];

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\ConfigEtcd\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\ConfigEtcd\ClientInterface;
 use Hyperf\ConfigEtcd\KV;
 use Hyperf\Contract\ConfigInterface;
@@ -20,6 +21,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
@@ -65,6 +69,7 @@ class BootProcessListener implements ListenerInterface
         return [
             BeforeWorkerStart::class,
             BeforeProcessHandle::class,
+            BeforeHandle::class,
         ];
     }
 
@@ -75,13 +80,39 @@ class BootProcessListener implements ListenerInterface
         }
 
         if ($config = $this->client->pull()) {
-            $configurations = $this->format($config);
-            foreach ($configurations as $kv) {
-                $key = $this->mapping[$kv->key] ?? null;
-                if (is_string($key)) {
-                    $this->config->set($key, $this->packer->unpack($kv->value));
-                    $this->logger->debug(sprintf('Config [%s] is updated', $key));
-                }
+            $this->updateConfig($config);
+        }
+
+        if (! $this->config->get('config_etcd.use_standalone_process', true)) {
+            Coroutine::create(function () {
+                $interval = $this->config->get('config_etcd.interval', 5);
+                retry(INF, function () use ($interval) {
+                    $prevConfig = [];
+                    while (true) {
+                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
+                        $config = $this->client->pull();
+                        if ($config !== $prevConfig) {
+                            $this->updateConfig($config);
+                        }
+                        $prevConfig = $config;
+                    }
+                }, $interval * 1000);
+            });
+        }
+    }
+
+    protected function updateConfig(array $config)
+    {
+        $configurations = $this->format($config);
+        foreach ($configurations as $kv) {
+            $key = $this->mapping[$kv->key] ?? null;
+            if (is_string($key)) {
+                $this->config->set($key, $this->packer->unpack($kv->value));
+                $this->logger->debug(sprintf('Config [%s] is updated', $key));
             }
         }
     }

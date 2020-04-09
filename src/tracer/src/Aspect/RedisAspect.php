@@ -16,7 +16,9 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
@@ -33,6 +35,7 @@ class RedisAspect implements AroundInterface
     public $classes
         = [
             Redis::class . '::__call',
+            RedisProxy::class . '::__call',
         ];
 
     /**
@@ -50,10 +53,16 @@ class RedisAspect implements AroundInterface
      */
     private $switchManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    /**
+     * @var SpanTagManager
+     */
+    private $spanTagManager;
+
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
         $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -67,9 +76,9 @@ class RedisAspect implements AroundInterface
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $span = $this->startSpan('Redis' . '::' . $arguments['name']);
-        $span->setTag('arguments', json_encode($arguments['arguments']));
+        $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
         $result = $proceedingJoinPoint->process();
-        $span->setTag('result', json_encode($result));
+        $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
         $span->finish();
         return $result;
     }

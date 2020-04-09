@@ -61,7 +61,7 @@ abstract class AbstractRequestHandler
             is_string($handler) && $handler = $this->container->get($handler);
         }
         if (! method_exists($handler, 'process')) {
-            throw new InvalidArgumentException(sprintf('Invalid middleware, it have to provide a process() method.'));
+            throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
         return $handler->process($request, $this->next());
     }

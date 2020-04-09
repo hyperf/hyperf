@@ -15,8 +15,10 @@ namespace HyperfTest\ModelCache\Stub;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Frequency;
 use Hyperf\DbConnection\Pool\DbPool;
@@ -42,12 +44,13 @@ class ContainerStub
     public static function mockContainer()
     {
         $container = Mockery::mock(Container::class);
+        $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
 
         $factory = new PoolFactory($container);
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         $config = new Config([
             StdoutLoggerInterface::class => [
@@ -80,6 +83,7 @@ class ContainerStub
                         'ttl' => 3600 * 24,
                         'empty_model_ttl' => 3600,
                         'load_script' => true,
+                        'use_default_value' => true,
                     ],
                     'pool' => [
                         'min_connections' => 1,

@@ -16,6 +16,8 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\TransferStats;
 use Psr\Http\Message\RequestInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client;
@@ -60,6 +62,9 @@ class CoroutineHandler
         if (! empty($settings)) {
             $client->set($settings);
         }
+
+        $ms = microtime(true);
+
         $this->execute($client, $path);
 
         $ex = $this->checkStatusCode($client, $request);
@@ -67,7 +72,7 @@ class CoroutineHandler
             return \GuzzleHttp\Promise\rejection_for($ex);
         }
 
-        $response = $this->getResponse($client);
+        $response = $this->getResponse($client, $request, $options, microtime(true) - $ms);
 
         return new FulfilledPromise($response);
     }
@@ -169,16 +174,31 @@ class CoroutineHandler
         return $settings;
     }
 
-    protected function getResponse(Client $client)
+    protected function getResponse(Client $client, RequestInterface $request, array $options, float $transferTime)
     {
         if ($client->set_cookie_headers) {
             $client->headers['set-cookie'] = $client->set_cookie_headers;
         }
-        return new \GuzzleHttp\Psr7\Response(
+
+        $response = new \GuzzleHttp\Psr7\Response(
             $client->statusCode,
             isset($client->headers) ? $client->headers : [],
             $client->body
         );
+
+        if ($callback = $options[RequestOptions::ON_STATS] ?? null) {
+            $stats = new TransferStats(
+                $request,
+                $response,
+                $transferTime,
+                $client->errCode,
+                []
+            );
+
+            $callback($stats);
+        }
+
+        return $response;
     }
 
     protected function checkStatusCode(Client $client, $request)
