@@ -41,7 +41,7 @@ class ApplicationFactory
         $commands = array_unique(array_merge($commands, $annotationCommands));
         $application = new Application();
 
-        if (isset($eventDispatcher)) {
+        if (isset($eventDispatcher) && class_exists(SymfonyEventDispatcher::class)) {
             $application->setDispatcher(new SymfonyEventDispatcher($eventDispatcher));
         }
 

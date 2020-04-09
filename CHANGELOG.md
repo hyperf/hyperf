@@ -1,4 +1,10 @@
-# v1.1.25 - TBD
+# v1.1.26 - TBD
+
+# v1.1.25 - 2020-04-09
+
+## Fixed
+
+- [#1532](https://github.com/hyperf/hyperf/pull/1532) Fixed interface 'Symfony\Component\EventDispatcher\EventDispatcherInterface' not found.
 
 # v1.1.24 - 2020-04-09
 
