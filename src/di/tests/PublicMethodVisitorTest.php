@@ -39,6 +39,7 @@ interface foo {
 	public function hope(bool $a): int;
 	public function it(ConfigInterface $a): void;
 	public function works(bool $a, float $b = 1);
+	public function fluent(): self;
 }
 CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
@@ -56,11 +57,15 @@ public function works(bool $a, float $b = 1)
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
+public function fluent() : \foo\foo
+{
+    return $this->__call(__FUNCTION__, func_get_args());
+}
 CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getStmt($code));
+        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
@@ -84,6 +89,9 @@ class foo {
 	public function works(bool $a, float $b = 1): int{
 		return self::works(false);
 	}
+	public function fluent(): self {
+	    return $this;
+	}
 }
 CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
@@ -101,17 +109,21 @@ public function works(bool $a, float $b = 1) : int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
+public function fluent() : \foo\foo
+{
+    return $this->__call(__FUNCTION__, func_get_args());
+}
 CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getStmt($code));
+        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
         $newCode = $prettyPrinter->prettyPrintFile($visitor->nodes);
         $this->assertEquals($expected, $newCode);
-        $this->assertEquals(3, count($visitor->nodes));
+        $this->assertEquals(4, count($visitor->nodes));
     }
 
     private function getStmt($code)
@@ -124,6 +136,6 @@ CODETEMPLATE;
         foreach ($reflectionMethods as $method) {
             $stmts[] = $method->getAst();
         }
-        return $stmts;
+        return [$stmts, 'foo\\foo'];
     }
 }

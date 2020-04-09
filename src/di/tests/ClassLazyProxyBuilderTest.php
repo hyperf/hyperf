@@ -46,6 +46,9 @@ class foo {
 	public function works(bool $a, float $b = 1): int{
 		return self::works(false);
 	}
+	public function fluent(bool $a, float $b = 1): self{
+		return $this;
+	}
 }
 CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
@@ -74,6 +77,10 @@ class SomeClass extends \App\SomeClass
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
+    public function fluent(bool $a, float $b = 1) : \foo\foo
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
 }
 CODETEMPLATE;
 
@@ -83,7 +90,7 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getStmt($code));
+        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
         $nameResolver = new NameResolver();
         $traverser->addVisitor($nameResolver);
         $traverser->addVisitor($visitor);
@@ -105,6 +112,6 @@ CODETEMPLATE;
         foreach ($reflectionMethods as $method) {
             $stmts[] = $method->getAst();
         }
-        return $stmts;
+        return [$stmts, 'foo\\foo'];
     }
 }
