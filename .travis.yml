@@ -5,16 +5,17 @@ sudo: required
 matrix:
   include:
     - php: 7.2
+      env: SW_VERSION="4.5.0RC1"
+    - php: 7.3
+      env: SW_VERSION="4.5.0RC1"
+    - php: 7.4
+      env: SW_VERSION="4.5.0RC1"
+    - php: 7.2
       env: SW_VERSION="4.4.17"
     - php: 7.3
       env: SW_VERSION="4.4.17"
     - php: 7.4
       env: SW_VERSION="4.4.17"
-    - php: master
-      env: SW_VERSION="4.4.17"
-
-  allow_failures:
-    - php: master
 
 services:
   - mysql
