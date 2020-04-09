@@ -1,5 +1,29 @@
 # 版本更新記錄
 
+# v1.1.25 - 2020-04-09
+
+## Fixed
+
+- [#1532](https://github.com/hyperf/hyperf/pull/1532) 修復 'Symfony\Component\EventDispatcher\EventDispatcherInterface' 在 --no-dev 條件下安裝會出現找不到接口的問題；
+
+
+# v1.1.24 - 2020-04-09
+
+## Added
+
+- [#1501](https://github.com/hyperf/hyperf/pull/1501) 添加 `Symfony` 命令行事件觸發器，使之可以與 `hyperf/event` 組件結合使用；
+- [#1502](https://github.com/hyperf/hyperf/pull/1502) 為註解 `Hyperf\AsyncQueue\Annotation\AsyncQueueMessage` 添加 `maxAttempts` 參數，用於控制消息失敗時重複消費的次數；
+- [#1510](https://github.com/hyperf/hyperf/pull/1510) 添加 `Hyperf/Utils/CoordinatorManager`，用於提供更優雅的啟動和停止服務，服務啟動前不響應請求，服務停止前，保證某些循環邏輯能夠正常結束；
+- [#1517](https://github.com/hyperf/hyperf/pull/1517) 為依賴注入容器的懶加載功能添加了對接口繼承和抽象方法繼承的支持；
+- [#1529](https://github.com/hyperf/hyperf/pull/1529) 處理 `response cookies` 中的 `SameSite` 屬性；
+
+## Fixed
+
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) 修復單獨使用 `Redis` 組件時，註釋 `@mixin` 會被當成註解的BUG；
+- [#1499](https://github.com/hyperf/hyperf/pull/1499) 修復引入 `hyperf/translation` 組件後，`hyperf/constants` 組件的動態參數不生效的 BUG；
+- [#1504](https://github.com/hyperf/hyperf/pull/1504) 修復 `RPC` 代理客户端無法正常處理返回值為 `nullable` 類型的方法；
+- [#1507](https://github.com/hyperf/hyperf/pull/1507) 修復 `hyperf/consul` 組件的 `catalog` 註冊方法調用會失敗的 BUG；
+
 # v1.1.23 - 2020-04-02
 
 ## 新增

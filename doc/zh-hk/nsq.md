@@ -5,7 +5,7 @@
 ## 安裝
 
 ```bash
-composer requir hyperf/nsq
+composer require hyperf/nsq
 ```
 
 ## 使用

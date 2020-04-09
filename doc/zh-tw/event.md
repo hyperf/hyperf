@@ -160,6 +160,10 @@ class UserService
 }
 ```
 
+## Hyperf 生命週期事件
+
+![](imgs/hyperf-events.svg)
+
 ## 注意事項
 
 ### 不要在 `Listener` 中注入 `EventDispatcherInterface`
@@ -170,15 +174,7 @@ class UserService
 
 ### 最好只在 `Listener` 中注入 `ContainerInterface`。
 
-最好只在 `Listener` 中注入 `ContainerInterface`，而其他的元件在 `process` 中通過 `container` 獲取。
-
-框架啟動開始時，會例項化 `EventDispatcherInterface`，如果 `Listener` 中注入了其他元件，可能會導致以下情況。
-
-1. 這個時候還不是協程環境，如果 `Listener` 中注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
-2. 執行 `di:init-proxy` 指令碼時，因為例項化了 `EventDispatcherInterface`，進而導致所有的 `Listener` 例項化，一旦這個過程生成了代理物件(.proxy.php 副檔名的類)，而指令碼內部又有刪除代理類的邏輯，就會導致代理類生成有誤。
-3. 條件與上述一致，只不過代理類又配置了別名，會導致生成這個別名物件時，因為判斷代理類不存在，則會重新生成，但又已經生成了 AST 語法樹，並被修改為代理類的 AST 語法樹（AST 註解樹內部節點為引用物件），則會導致代理類生成有誤。
-
-> 上述兩個問題會在後面的版本修復，修改 `di:init-proxy` 指令碼不再刪除快取。
+最好只在 `Listener` 中注入 `ContainerInterface`，而其他的元件在 `process` 中通過 `container` 獲取。框架啟動開始時，會例項化 `EventDispatcherInterface`，這個時候還不是協程環境，如果 `Listener` 中注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
 
 ### `BootApplication` 事件儘量避免 IO 操作 
 
