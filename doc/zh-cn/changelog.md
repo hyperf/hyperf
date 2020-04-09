@@ -1,5 +1,20 @@
 # 版本更新记录
 
+# v1.1.24 - 2020-04-09
+
+## Added
+
+- [#1501](https://github.com/hyperf/hyperf/pull/1501) 添加 `Symfony` 命令行事件触发器。
+- [#1502](https://github.com/hyperf/hyperf/pull/1502) 为注解 `Hyperf\AsyncQueue\Annotation\AsyncQueueMessage` 添加 `maxAttempts` 参数，用于控制消息失败时重复消费的次数。
+- [#1510](https://github.com/hyperf/hyperf/pull/1510) 添加 `Hyperf/Utils/CoordinatorManager` ，用于更优雅的启动和停止服务（启动前，不响应请求。停止前，保证某些循环逻辑正常结束）。
+
+## Fixed
+
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) 修复使用 `Redis` 组件时，注释 `@mixin` 会被当成注解的BUG。
+- [#1499](https://github.com/hyperf/hyperf/pull/1499) 修复引入国际化组件后，`hyperf/constants` 组件动态参数没有办法生效的BUG。
+- [#1504](https://github.com/hyperf/hyperf/pull/1504) 修复 `RPC` 代理客户端无法正常处理返回值可以为 `null` 的方法。
+- [#1507](https://github.com/hyperf/hyperf/pull/1507) 修复 `consul catalog` 注册失败的BUG。
+
 # v1.1.23 - 2020-04-02
 
 ## 新增
