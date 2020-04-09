@@ -20,7 +20,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-
     /**
      * @var string
      */
@@ -30,11 +29,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      * @var string
      */
     private $namespace;
-
-    /**
-     * @var array
-     */
-    private $constants = [];
 
     public function __construct(string $classname)
     {
@@ -84,13 +78,18 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     new Node\Expr\FuncCall(new Node\Name('func_get_args')),
                 ]
             );
-            if (((string) $stmt->getReturnType()) !== 'void') {
+            if ($this->shouldReturn($stmt)) {
                 return [new Node\Stmt\Return_($methodCall)];
-            } else {
-                return [new Node\Stmt\Expression($methodCall)];
             }
+            return [new Node\Stmt\Expression($methodCall)];
         });
         return $stmt;
     }
 
+    protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
+    {
+        return $stmt->getReturnType() instanceof Node\NullableType
+            || $stmt->getReturnType() instanceof Node\UnionType
+            || ((string) $stmt->getReturnType()) !== 'void';
+    }
 }

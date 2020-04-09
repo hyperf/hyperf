@@ -18,6 +18,8 @@ use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class BootProcessListener extends OnPipeMessageListener
@@ -71,7 +73,11 @@ class BootProcessListener extends OnPipeMessageListener
                 $interval = $this->config->get('apollo.interval', 5);
                 retry(INF, function () use ($namespaces, $callbacks, $interval) {
                     while (true) {
-                        sleep($interval);
+                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
                         $this->client->pull($namespaces, $callbacks);
                     }
                 }, $interval * 1000);

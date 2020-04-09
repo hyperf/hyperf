@@ -17,6 +17,8 @@ use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\Event\OtherWorkerStart;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server as SwooleServer;
 
@@ -58,5 +60,6 @@ class WorkerStartCallback
         }
 
         $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
+        CoordinatorManager::get(Constants::ON_WORKER_START)->resume();
     }
 }
