@@ -16,6 +16,9 @@ use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
 
@@ -71,12 +74,16 @@ class QueueWatcher implements ListenerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
             $info = $queue->info();
             $waiting->set((float) $info['waiting']);
             $delayed->set((float) $info['delayed']);
             $failed->set((float) $info['failed']);
             $timeout->set((float) $info['timeout']);
+        });
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            Timer::clear($timerId);
         });
     }
 }
