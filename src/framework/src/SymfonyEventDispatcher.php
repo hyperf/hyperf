@@ -12,16 +12,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework;
 
-use Hyperf\Framework\Exception\NotImplementedException;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 if (interface_exists(SymfonyDispatcherInterface::class)) {
     /**
      * @internal
      */
-    class SymfonyEventDispatcher implements SymfonyDispatcherInterface
+    class SymfonyEventDispatcher implements EventDispatcherInterface
     {
         /**
          * @var PsrDispatcherInterface
@@ -33,44 +32,9 @@ if (interface_exists(SymfonyDispatcherInterface::class)) {
             $this->psrDispatcher = $psrDispatcher;
         }
 
-        public function addListener($eventName, $listener, $priority = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function addSubscriber(EventSubscriberInterface $subscriber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function removeListener($eventName, $listener)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function removeSubscriber(EventSubscriberInterface $subscriber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function getListeners($eventName = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function dispatch($event)
+        public function dispatch(object $event, string $eventName = null): object
         {
             $this->psrDispatcher->dispatch($event);
-        }
-
-        public function getListenerPriority($eventName, $listener)
-        {
-            throw new NotImplementedException();
-        }
-
-        public function hasListeners($eventName = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }
