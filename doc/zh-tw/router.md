@@ -169,7 +169,7 @@ class UserController
 > 本框架定義的路由引數必須和控制器引數鍵名、型別保持一致，否則控制器無法接受到相關引數
 
 ```php
-Router::get('/user/{id}', 'App\Controller\UserController::info')
+Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
 
 ```php

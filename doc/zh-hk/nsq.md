@@ -330,7 +330,7 @@ client -> server: DPUB
 note left of client: client 使用 channel 訂閲 topic
 note right of server: SUB 成功後, client 出於 RDY 0 階段
 client -> server: SUB <topic_name> <channel_name>
-note left of client: 使用 RDY 告訴 server 準備好消費 <count> 條消息
+note left of client: 使用 RDY 吿訴 server 準備好消費 <count> 條消息
 client -> server: RDY <count>
 note right of server: server 返回 client <count> 條消息
 server -> client: <count> msg
