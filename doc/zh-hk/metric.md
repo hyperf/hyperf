@@ -222,7 +222,7 @@ return [
 
 ### 自定義使用
 
-通過 HTTP 中間件遙測僅僅是本組件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務數據。比如：創建的訂單數量、廣吿的點擊數量等。
+通過 HTTP 中間件遙測僅僅是本組件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務數據。比如：創建的訂單數量、廣告的點擊數量等。
 
 ```php
 <?php
