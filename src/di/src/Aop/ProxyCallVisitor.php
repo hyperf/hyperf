@@ -125,7 +125,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
-                break;
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -133,7 +132,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 $node->stmts = $stmts;
                 unset($stmts);
                 return $node;
-                break;
             case $node instanceof StaticPropertyFetch && $this->extends:
                 // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
                 if ($node->class instanceof Node\Name && $node->class->toString() === 'parent') {
@@ -144,12 +142,11 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Scalar\MagicConst\Function_:
                 // Rewrite __FUNCTION__ to $__function__ variable.
                 return new Variable('__function__');
-                break;
             case $node instanceof Node\Scalar\MagicConst\Method:
                 // Rewrite __METHOD__ to $__method__ variable.
                 return new Variable('__method__');
-                break;
         }
+        return null;
     }
 
     /**

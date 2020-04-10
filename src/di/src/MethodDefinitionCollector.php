@@ -99,7 +99,7 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
         static::set($key, $type);
         return $type;
     }
-
+    
     private function createType($name, ?\ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
     {
         return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [

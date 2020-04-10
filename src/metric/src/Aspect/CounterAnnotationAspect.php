@@ -46,8 +46,8 @@ class CounterAnnotationAspect implements AroundInterface
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
-        /** @var Counter $annotation */
         if ($annotation = $metadata->method[Counter::class] ?? null) {
+            /** @var Counter $annotation */
             $name = $annotation->name ?: $source;
         } else {
             $name = $source;

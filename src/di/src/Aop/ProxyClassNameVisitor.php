@@ -39,5 +39,6 @@ class ProxyClassNameVisitor extends NodeVisitorAbstract
             $node->name = new Node\Identifier($this->proxyClassName);
             return $node;
         }
+        return null;
     }
 }

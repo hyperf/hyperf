@@ -36,8 +36,8 @@ class HistogramAnnotationAspect implements AroundInterface
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
-        /** @var Histogram $annotation */
         if ($annotation = $metadata->method[Histogram::class] ?? null) {
+            /** @var Histogram $annotation */
             $name = $annotation->name ?: $source;
         } else {
             $name = $source;

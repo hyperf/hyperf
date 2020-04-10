@@ -74,6 +74,7 @@ class LazyLoader
             $this->loadProxy($proxy);
             return true;
         }
+        return null;
     }
 
     /**

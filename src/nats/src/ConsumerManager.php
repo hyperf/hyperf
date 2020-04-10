@@ -40,11 +40,8 @@ class ConsumerManager
     public function run()
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
-        /**
-         * @var string
-         * @var ConsumerAnnotation $annotation
-         */
         foreach ($classes as $class => $annotation) {
+            /** @var ConsumerAnnotation $annotation */
             $instance = make($class);
             if (! $instance instanceof AbstractConsumer) {
                 continue;

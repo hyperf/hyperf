@@ -49,8 +49,8 @@ class TraceAnnotationAspect implements AroundInterface
     {
         $source = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var Trace $annotation */
         if ($annotation = $metadata->method[Trace::class] ?? null) {
+            /** @var Trace $annotation */
             $name = $annotation->name;
             $tag = $annotation->tag;
         } else {

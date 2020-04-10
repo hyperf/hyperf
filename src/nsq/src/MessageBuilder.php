@@ -167,9 +167,11 @@ class MessageBuilder
         $command = "IDENTIFY\n";
         $version = PrettyVersions::getVersion('hyperf/nsq') ?? '1.0';
         $hostname = value(function () {
-            $ip = gethostbyname(gethostname());
-            if (is_string($ip)) {
-                return $ip;
+            if ($name = gethostname()) {
+                $ip = gethostbyname($name);
+                if (is_string($ip)) {
+                    return $ip;
+                }
             }
             return 'consumer-' . rand(0, 9999);
         });
