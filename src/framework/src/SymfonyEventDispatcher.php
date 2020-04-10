@@ -34,7 +34,7 @@ if (interface_exists(SymfonyDispatcherInterface::class)) {
 
         public function dispatch(object $event, string $eventName = null): object
         {
-            $this->psrDispatcher->dispatch($event);
+            return $this->psrDispatcher->dispatch($event);
         }
     }
 }
