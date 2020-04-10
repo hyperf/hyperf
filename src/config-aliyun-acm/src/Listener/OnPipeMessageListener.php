@@ -18,6 +18,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {
@@ -50,6 +51,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipeMessage::class,
         ];
     }
 
@@ -59,7 +61,10 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
+        if (! $this->config->get('aliyun_acm.enable', false)) {
+            return;
+        }
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             foreach ($event->data->data ?? [] as $key => $value) {
                 $this->config->set($key, $value);
                 $this->logger->debug(sprintf('Config [%s] is updated', $key));

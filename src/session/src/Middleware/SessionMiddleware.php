@@ -77,7 +77,7 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function url(RequestInterface $request): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $request->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', $request->getUri()));
     }
 
     /**

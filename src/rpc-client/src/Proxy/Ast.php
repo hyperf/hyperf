@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Utils\Composer;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -23,18 +22,24 @@ class Ast
     /**
      * @var \PhpParser\Parser
      */
-    private $astParser;
+    protected $astParser;
 
     /**
      * @var PrettyPrinterAbstract
      */
-    private $printer;
+    protected $printer;
+
+    /**
+     * @var CodeLoader
+     */
+    protected $codeLoader;
 
     public function __construct()
     {
         $parserFactory = new ParserFactory();
         $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
         $this->printer = new Standard();
+        $this->codeLoader = new CodeLoader();
     }
 
     public function proxy(string $className, string $proxyClassName)
@@ -47,20 +52,11 @@ class Ast
             $proxyClassName = end($exploded);
         }
 
-        $code = $this->getCodeByClassName($className);
+        $code = $this->codeLoader->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new ProxyCallVisitor($proxyClassName));
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
-    }
-
-    public function getCodeByClassName(string $className): string
-    {
-        $file = Composer::getLoader()->findFile($className);
-        if (! $file) {
-            return '';
-        }
-        return file_get_contents($file);
     }
 }

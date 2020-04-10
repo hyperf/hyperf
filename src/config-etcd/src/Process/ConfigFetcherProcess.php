@@ -60,7 +60,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('config_etcd.enable', false);
+        return $this->config->get('config_etcd.enable', false)
+            && $this->config->get('config_etcd.use_standalone_process', true);
     }
 
     public function handle(): void

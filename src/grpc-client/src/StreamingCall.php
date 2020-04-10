@@ -83,7 +83,7 @@ class StreamingCall
         return $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
     }
 
-    public function recv(float $timeout = -1)
+    public function recv(float $timeout = -1.0)
     {
         if ($this->getStreamId() <= 0) {
             $recv = false;

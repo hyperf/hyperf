@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Framework\Event\OnWorkerExit;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 
@@ -31,5 +34,8 @@ class WorkerExitCallback
     public function onWorkerExit(Server $server, int $workerId)
     {
         $this->dispatcher->dispatch(new OnWorkerExit($server, $workerId));
+        Coroutine::create(function () {
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->resume();
+        });
     }
 }

@@ -170,7 +170,7 @@ class Arr
 
     /**
      * Flatten a multi-dimensional array into a single level.
-     * @param mixed $depth
+     * @param float|int $depth
      */
     public static function flatten(array $array, $depth = INF): array
     {

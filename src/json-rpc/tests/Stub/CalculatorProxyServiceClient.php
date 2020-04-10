@@ -35,4 +35,19 @@ class CalculatorProxyServiceClient extends AbstractProxyService implements Calcu
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }
+
+    public function error()
+    {
+        return $this->client->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getString(): ?string
+    {
+        return $this->client->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function callable(callable $a, ?callable $b): array
+    {
+        return $this->client->__call(__FUNCTION__, func_get_args());
+    }
 }

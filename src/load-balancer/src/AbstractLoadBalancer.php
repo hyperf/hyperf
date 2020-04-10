@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\LoadBalancer;
 
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Swoole\Timer;
 
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
@@ -39,6 +42,11 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this;
     }
 
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
+
     /**
      * Remove a node from the node list.
      */
@@ -55,9 +63,13 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000)
     {
-        Timer::tick($tickMs, function () use ($callback) {
+        $timerId = Timer::tick($tickMs, function () use ($callback) {
             $nodes = call($callback);
             is_array($nodes) && $this->setNodes($nodes);
+        });
+        Coroutine::create(function() use ($timerId){
+            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            Timer::clear($timerId);
         });
     }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 basepath=$(cd `dirname $0`; pwd)
 

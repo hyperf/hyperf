@@ -7,7 +7,12 @@
         "hyperf",
         "async-queue"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
@@ -25,6 +30,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to dispatch a event.",
         "hyperf/process": "Auto register the consumer process for server."
     },

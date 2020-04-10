@@ -20,9 +20,12 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -81,13 +84,11 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         ContainerInterface $container,
         DispatcherInterface $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        Protocol $protocol,
         LoggerInterface $logger
     ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->protocol = $protocol;
         $this->logger = $logger;
     }
 
@@ -98,15 +99,15 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
-            HttpExceptionHandler::class,
-        ]);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void
     {
         $request = $response = null;
         try {
+            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
@@ -139,20 +140,16 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
+    }
+
     protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
     {
-        $eof = $server->setting['package_eof'] ?? '';
-        $serverPort = $server->getClientInfo($fd)['server_port'] ?? null;
-        if ($serverPort) {
-            foreach ($server->ports ?? [] as $port) {
-                if ($port->port === $serverPort) {
-                    $eof = $port->setting['package_eof'] ?? $eof;
-                    break;
-                }
-            }
-        }
-
-        $server->send($fd, (string) $response->getBody() . $eof);
+        $server->send($fd, (string) $response->getBody());
     }
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
@@ -168,5 +165,10 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             return $psr7Response->withBody(new SwooleStream($response));
         }
         return null;
+    }
+
+    protected function getContext()
+    {
+        return $this->container->get(RpcContext::class);
     }
 }

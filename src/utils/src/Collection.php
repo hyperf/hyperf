@@ -557,8 +557,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): self
+    public function flatten($depth = INF): self
     {
         return new static(Arr::flatten($this->items, $depth));
     }
@@ -1017,8 +1018,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get one or a specified number of items randomly from the collection.
      *
      * @throws \InvalidArgumentException
+     * @return mixed|self
      */
-    public function random(int $number = null): self
+    public function random(int $number = null)
     {
         if (is_null($number)) {
             return Arr::random($this->items);
@@ -1449,9 +1451,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an operator checker callback.
+     * @param mixed|string $operator
      * @param null|mixed $value
      */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
     {
         if (func_num_args() === 1) {
             $value = true;
