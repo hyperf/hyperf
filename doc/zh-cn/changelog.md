@@ -19,7 +19,7 @@
 
 ## Fixed
 
-- [#1494](https://github.com/hyperf/hyperf/pull/1494) 修复单独使用 `Redis` 组件时，注释 `@mixin` 会被当成注解的BUG；
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) 修复单独使用 `Redis` 组件时，注释 `@mixin` 会被当成注解的 BUG；
 - [#1499](https://github.com/hyperf/hyperf/pull/1499) 修复引入 `hyperf/translation` 组件后，`hyperf/constants` 组件的动态参数不生效的 BUG；
 - [#1504](https://github.com/hyperf/hyperf/pull/1504) 修复 `RPC` 代理客户端无法正常处理返回值为 `nullable` 类型的方法；
 - [#1507](https://github.com/hyperf/hyperf/pull/1507) 修复 `hyperf/consul` 组件的 `catalog` 注册方法调用会失败的 BUG；
