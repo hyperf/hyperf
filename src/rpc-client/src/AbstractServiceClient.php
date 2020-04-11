@@ -233,7 +233,7 @@ abstract class AbstractServiceClient
         $services = $health->service($this->serviceName)->json();
         $nodes = [];
         foreach ($services as $node) {
-            $passing = true;
+            $passing = false;
             $service = $node['Service'] ?? [];
             $checks = $node['Checks'] ?? [];
 
