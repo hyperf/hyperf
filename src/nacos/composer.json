@@ -1,0 +1,48 @@
+{
+  "name": "hyperf/nacos",
+  "license": "Apache-2.0",
+  "description": "nacos php sdk with hyperf framework",
+  "type": "library",
+  "authors": [
+    {
+      "name": "daodao97",
+      "email": "daodao97@fixmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Hyperf\\Nacos\\": "./src"
+    },
+    "files": [
+      "./src/Helper/func.php"
+    ]
+  },
+  "require": {
+    "ext-json": "*",
+    "ext-simplexml": "*",
+    "ext-yaml": "*",
+    "hyperf/config": "^1.1",
+    "hyperf/event": "^1.1",
+    "hyperf/framework": "^1.1",
+    "hyperf/guzzle": "^1.1",
+    "hyperf/http-server": "^1.1",
+    "hyperf/load-balancer": "^1.1",
+    "hyperf/logger": "^1.1",
+    "hyperf/process": "^1.1",
+    "hyperf/utils": "^1.1"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^5.0"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "hyperf": {
+      "config": "Hyperf\\Nacos\\ConfigProvider"
+    },
+    "branch-alias": {
+      "dev-master": "*"
+    }
+  }
+}
