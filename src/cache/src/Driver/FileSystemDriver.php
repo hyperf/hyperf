@@ -78,7 +78,7 @@ class FileSystemDriver extends Driver
         $file = $this->getCacheKey($key);
         $content = $this->packer->pack(new FileStorage($value, $seconds));
 
-        $result = file_put_contents($file, $content, FILE_BINARY);
+        $result = file_put_contents($file, $content, FILE_BINARY|LOCK_EX);
 
         return (bool) $result;
     }
