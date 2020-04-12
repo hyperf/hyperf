@@ -15,6 +15,7 @@ namespace Hyperf\Cache\Driver;
 use Hyperf\Cache\Collector\FileStorage;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
 class FileSystemDriver extends Driver
@@ -48,7 +49,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(file_get_contents($file));
+        $obj = $this->packer->unpack(Filesystem::get($file, true));
         if ($obj->isExpired()) {
             return $default;
         }
@@ -64,7 +65,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(file_get_contents($file));
+        $obj = $this->packer->unpack(Filesystem::get($file, true));
         if ($obj->isExpired()) {
             return [false, $default];
         }
@@ -78,7 +79,7 @@ class FileSystemDriver extends Driver
         $file = $this->getCacheKey($key);
         $content = $this->packer->pack(new FileStorage($value, $seconds));
 
-        $result = file_put_contents($file, $content, FILE_BINARY);
+        $result = Filesystem::put($file, $content, true);
 
         return (bool) $result;
     }
