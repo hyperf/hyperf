@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\CircuitBreaker;
 
 use Psr\Container\ContainerInterface;
@@ -86,33 +85,21 @@ class CircuitBreaker implements CircuitBreakerInterface
         $this->state->halfOpen();
     }
 
-    /**
-     * @return float
-     */
     public function getDuration(): float
     {
         return microtime(true) - $this->timestamp;
     }
 
-    /**
-     * @return int
-     */
     public function getFailCounter(): int
     {
         return $this->failCounter;
     }
 
-    /**
-     * @return int
-     */
     public function getSuccessCounter(): int
     {
         return $this->successCounter;
     }
 
-    /**
-     * @return float
-     */
     public function getTimestamp(): float
     {
         return $this->timestamp;

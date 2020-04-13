@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc\Stub;
 
 interface CalculatorServiceInterface
@@ -26,5 +25,5 @@ interface CalculatorServiceInterface
 
     public function getString(): ?string;
 
-    public function callable(callable $a, ?callable $b): array ;
+    public function callable(callable $a, ?callable $b): array;
 }
