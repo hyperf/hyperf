@@ -24,6 +24,10 @@ class FileSystemDriver extends Driver
      * @var string
      */
     protected $storePath = BASE_PATH . '/runtime/caches';
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     public function __construct(ContainerInterface $container, array $config)
     {
@@ -34,6 +38,7 @@ class FileSystemDriver extends Driver
                 throw new CacheException('Has no permission to create cache directory!');
             }
         }
+        $this->filesystem = $container->get(Filesystem::class);
     }
 
     public function getCacheKey(string $key)
@@ -49,7 +54,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(Filesystem::get($file, true));
+        $obj = $this->packer->unpack($this->filesystem->get($file, true));
         if ($obj->isExpired()) {
             return $default;
         }
@@ -65,7 +70,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(Filesystem::get($file, true));
+        $obj = $this->packer->unpack($this->filesystem->get($file, true));
         if ($obj->isExpired()) {
             return [false, $default];
         }
@@ -79,7 +84,7 @@ class FileSystemDriver extends Driver
         $file = $this->getCacheKey($key);
         $content = $this->packer->pack(new FileStorage($value, $seconds));
 
-        $result = Filesystem::put($file, $content, true);
+        $result = $this->filesystem->put($file, $content, true);
 
         return (bool) $result;
     }
