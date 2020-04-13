@@ -1,14 +1,9 @@
 <?php
-
-declare(strict_types=1);
 /**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @notice Install https://github.com/nauxliu/opencc4php extension before use this script.
+ * Run this PHP script to generate the zh-tw and zh-hk doucmentations via zh-cn.
  */
+
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 
 require BASE_PATH . '/vendor/autoload.php';
