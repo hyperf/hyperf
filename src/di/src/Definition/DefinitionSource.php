@@ -74,7 +74,7 @@ class DefinitionSource implements DefinitionSourceInterface
         $this->enableCache = $enableCache;
 
         // Scan the specified paths and collect the ast and annotations.
-        $this->scan($scanConfig->getDirs(), $scanConfig->getCollectors());
+        // $this->scan($scanConfig->getDirs(), $scanConfig->getCollectors());
         $this->source = $this->normalizeSource($source);
     }
 
@@ -209,7 +209,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
         }
 
-        $definition->setNeedProxy($this->isNeedProxy($class));
+        // $definition->setNeedProxy($this->isNeedProxy($class));
 
         return $definition;
     }

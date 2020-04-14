@@ -70,4 +70,9 @@ class AnnotationCollector extends MetadataCollector
         }
         return $result;
     }
+
+    public static function getContainer(): array
+    {
+        return static::$container;
+    }
 }

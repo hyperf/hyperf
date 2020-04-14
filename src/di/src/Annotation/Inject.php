@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
+use Hyperf\Autoload\AnnotationReader;
+use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ReflectionManager;
 use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
@@ -51,7 +53,8 @@ class Inject extends AbstractAnnotation
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
+            $reflectionProperty = BetterReflectionManager::reflectClass($className)->getProperty($target);
+            $this->value = $this->docReader->getPropertyClass($reflectionProperty);
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;

@@ -16,6 +16,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ReflectionManager;
+use Roave\BetterReflection\BetterReflection;
 use Symfony\Component\Finder\Finder;
 
 class Scanner
@@ -70,7 +71,7 @@ class Scanner
         $reader = new AnnotationReader();
         // Because the annotation class should loaded before use it, so load file via $finder previous, and then parse annotation here.
         foreach ($classCollection as $className) {
-            $reflectionClass = ReflectionManager::reflectClass($className);
+            $reflectionClass = (new BetterReflection())->classReflector()->reflect($className);
             $classAnnotations = $reader->getClassAnnotations($reflectionClass);
             if (! empty($classAnnotations)) {
                 foreach ($classAnnotations as $classAnnotation) {
@@ -81,7 +82,7 @@ class Scanner
             }
 
             // Parse properties annotations.
-            $properties = $reflectionClass->getProperties();
+            $properties = $reflectionClass->getImmediateProperties();
             foreach ($properties as $property) {
                 $propertyAnnotations = $reader->getPropertyAnnotations($property);
                 if (! empty($propertyAnnotations)) {
@@ -94,7 +95,7 @@ class Scanner
             }
 
             // Parse methods annotations.
-            $methods = $reflectionClass->getMethods();
+            $methods = $reflectionClass->getImmediateMethods();
             foreach ($methods as $method) {
                 $methodAnnotations = $reader->getMethodAnnotations($method);
                 if (! empty($methodAnnotations)) {

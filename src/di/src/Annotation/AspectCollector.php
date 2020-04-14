@@ -45,4 +45,10 @@ class AspectCollector extends MetadataCollector
     {
         return static::$aspectRules;
     }
+
+    public static function getContainer(): array
+    {
+        return static::$container;
+    }
+
 }

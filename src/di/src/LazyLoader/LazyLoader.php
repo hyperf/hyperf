@@ -70,10 +70,15 @@ class LazyLoader
      */
     public function load(string $proxy)
     {
-        if (array_key_exists($proxy, $this->config) || Str::startsWith($proxy, 'HyperfLazy\\')) {
+        if (array_key_exists($proxy, $this->config) || $this->startsWith($proxy, 'HyperfLazy\\')) {
             $this->loadProxy($proxy);
             return true;
         }
+    }
+
+    private function startsWith($haystack, $needle): bool
+    {
+        return substr($haystack, 0, strlen($needle)) === (string) $needle;
     }
 
     /**
