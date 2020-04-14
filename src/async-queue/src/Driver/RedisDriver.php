@@ -16,8 +16,8 @@ use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\Redis\RedisFactory;
 use Psr\Container\ContainerInterface;
-use Redis;
 
 class RedisDriver extends Driver
 {
@@ -53,8 +53,8 @@ class RedisDriver extends Driver
     {
         parent::__construct($container, $config);
         $channel = $config['channel'] ?? 'queue';
-
-        $this->redis = $container->get(Redis::class);
+        $pool = $config['pool'] ?? 'default';
+        $this->redis = $container->get(RedisFactory::class)->get($pool);
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
         $this->handleTimeout = $config['handle_timeout'] ?? 10;
