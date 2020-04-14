@@ -78,7 +78,7 @@ class MySQLConnection extends AbstractConnection
 
         $this->connection = $connection;
         $this->lastUseTime = microtime(true);
-
+        $this->transactions = 0;
         return true;
     }
 
