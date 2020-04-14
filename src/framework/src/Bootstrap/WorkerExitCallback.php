@@ -35,7 +35,7 @@ class WorkerExitCallback
     {
         $this->dispatcher->dispatch(new OnWorkerExit($server, $workerId));
         Coroutine::create(function () {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->resume();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         });
     }
 }

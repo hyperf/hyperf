@@ -23,3 +23,22 @@ Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用�
 ### Hyperf\Utils\Context
 
 用于处理协程上下文，本质上是对 `Swoole\Coroutine::getContext()` 方法的一个封装，但区别在于这里兼容了非协程环境下的运行。
+
+### Hyperf\Utils\Coordinator\CoordinatorManager
+
+该辅助类用于指挥协程等待事件发生。
+
+```php
+<?php
+use \Hyperf\Utils\Coordinator\CoordinatorManager as CM;
+use \Hyperf\Utils\Coordinator\Constants as C;
+
+go(function(){
+    CM::until(C::WORKER_START)->yield(); //所有OnWorkerStart事件回调完成后唤醒。
+    echo 'worker started';
+    // 分配资源
+    CM::until(C::WORKER_EXIT)->yield(); //所有OnWorkerExit事件回调完成后唤醒。
+    echo 'worker exited';
+    // 回收资源
+});
+```
