@@ -58,18 +58,22 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
 
     public function retry(\Throwable $throwable, $name, $arguments)
     {
-        if ($this->transactionLevel() > 0 || ! $this->causedByLostConnection($throwable)) {
+        if ($this->transactionLevel() > 0) {
             throw $throwable;
         }
 
-        try {
-            $this->reconnect();
-            return $this->{$name}(...$arguments);
-        } catch (\Throwable $throwable) {
-            if ($this->container->has(StdoutLoggerInterface::class)) {
-                $logger = $this->container->get(StdoutLoggerInterface::class);
-                $logger->error('Connection execute retry failed. message = ' . $throwable->getMessage());
+        if ($this->causedByLostConnection($throwable)) {
+            try {
+                $this->reconnect();
+                return $this->{$name}(...$arguments);
+            } catch (\Throwable $throwable) {
+                if ($this->container->has(StdoutLoggerInterface::class)) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $logger->error('Connection execute retry failed. message = ' . $throwable->getMessage());
+                }
             }
         }
+
+        throw $throwable;
     }
 }
