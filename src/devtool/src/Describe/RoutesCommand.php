@@ -94,7 +94,7 @@ class RoutesCommand extends HyperfCommand
     protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler)
     {
         $uri = $handler->route;
-        if (! is_null($path) && ! Str::contains($uri, $path)) {
+        if ($path !== null && ! Str::contains($uri, $path)) {
             return;
         }
         if (is_array($handler->callback)) {
@@ -102,15 +102,16 @@ class RoutesCommand extends HyperfCommand
         } else {
             $action = $handler->callback;
         }
-        if (isset($data[$uri])) {
-            $data[$uri]['method'][] = $method;
+        $unique = "{$serverName}|{$action}";
+        if (isset($data[$unique])) {
+            $data[$unique]['method'][] = $method;
         } else {
             // method,uri,name,action,middleware
             $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
             $middlewares = array_merge($middlewares, $registedMiddlewares);
-            $data[$uri] = [
+            $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],
                 'uri' => $uri,
