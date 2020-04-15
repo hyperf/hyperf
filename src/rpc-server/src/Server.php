@@ -106,7 +106,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     {
         $request = $response = null;
         try {
-            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));

@@ -80,7 +80,7 @@ abstract class PoolWatcher
             $connectionsInUseGauge->set((float) $pool->getCurrentConnections());
         });
         Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
     }

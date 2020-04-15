@@ -73,7 +73,7 @@ class BootProcessListener extends OnPipeMessageListener
                 $interval = $this->config->get('apollo.interval', 5);
                 retry(INF, function () use ($namespaces, $callbacks, $interval) {
                     while (true) {
-                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
                         $workerExited = $coordinator->yield($interval);
                         if ($workerExited) {
                             break;

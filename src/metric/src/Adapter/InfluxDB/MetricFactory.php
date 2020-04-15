@@ -117,7 +117,7 @@ class MetricFactory implements MetricFactoryInterface
             $database->create(new RetentionPolicy($dbname, '1d', 1, true));
         }
         while (true) {
-            $workerExited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($interval);
+            $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
                 break;
             }
