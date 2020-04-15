@@ -88,14 +88,14 @@ class MetricFactory implements MetricFactoryInterface
         if ($batchEnabled) {
             do {
                 $this->client->startBatch();
-                $workerExited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($interval);
+                $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
                 if ($workerExited) {
                     break;
                 }
             } while (true);
         } else {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
         }
     }
 

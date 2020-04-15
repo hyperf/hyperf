@@ -49,7 +49,7 @@ class MetricFactory implements MetricFactoryInterface
 
     public function handle(): void
     {
-        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
         $coordinator->yield();
     }
 }
