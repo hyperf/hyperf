@@ -17,7 +17,7 @@ composer require hyperf/redis
 | cluster.enable | boolean |    false    |          是否集群模式          |
 |  cluster.name  | string  |    null     |             集群名             |
 | cluster.seeds  |  array  |     []      | 集群连接地址数组 ['host:port'] |
-|      pool      | object  |     {}      |           连接池配置           |
+|   redis.pool   | string  |  'default'  |           连接池配置           |
 |    options     | object  |     {}      |         Redis 配置选项         |
 
 ```php
@@ -28,6 +28,9 @@ return [
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
+        'redis' => [
+            'pool' => 'default' 
+        ],
         'cluster' => [
             'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,

@@ -53,8 +53,7 @@ class RedisDriver extends Driver
     {
         parent::__construct($container, $config);
         $channel = $config['channel'] ?? 'queue';
-        $pool = $config['pool'] ?? 'default';
-        $this->redis = $container->get(RedisFactory::class)->get($pool);
+        $this->redis = $container->get(RedisFactory::class)->get($config['redis']['pool'] ?? 'default');
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
         $this->handleTimeout = $config['handle_timeout'] ?? 10;

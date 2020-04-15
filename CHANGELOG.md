@@ -4,6 +4,10 @@
 
 - [#1563](https://github.com/hyperf/hyperf/pull/1563) Fixed crontab's `onOneServer` option not resetting mutex on shutdown
 
+## Changed
+
+- [#1568](https://github.com/hyperf/hyperf/pull/1568) Changed `\Redis` to `RedisProxy` for `RedisDriver` in `async-queue`.
+
 # v1.1.25 - 2020-04-09
 
 ## Fixed
