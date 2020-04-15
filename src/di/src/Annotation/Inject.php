@@ -15,6 +15,7 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Autoload\AnnotationReader;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\TypesFinderManager;
 use Hyperf\Utils\Str;
 use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
@@ -43,15 +44,9 @@ class Inject extends AbstractAnnotation
      */
     public $lazy = false;
 
-    /**
-     * @var FindPropertyType
-     */
-    private $typeInvoker;
-
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->typeInvoker = make(FindPropertyType::class);
     }
 
     public function collectProperty(string $className, ?string $target): void
@@ -59,7 +54,7 @@ class Inject extends AbstractAnnotation
         try {
             $reflectionClass = BetterReflectionManager::reflectClass($className);
             $reflectionProperty = $reflectionClass->getProperty($target);
-            $reflectionTypes = $this->typeInvoker->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
+            $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
             if ($reflectionTypes[0] instanceof Object_) {
                 $this->value = ltrim((string)$reflectionTypes[0], '\\');
             }
