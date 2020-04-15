@@ -93,6 +93,7 @@ class Scanner
             unset($finder, $astLocator, $annotationReader);
         } catch (\Throwable $throwable) {
             echo $throwable->getMessage() . PHP_EOL;
+            // var_dump((string)$throwable);
         }
         return $classes;
     }

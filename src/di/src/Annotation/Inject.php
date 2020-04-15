@@ -15,8 +15,12 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Autoload\AnnotationReader;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Str;
 use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
+use phpDocumentor\Reflection\Type;
+use phpDocumentor\Reflection\Types\Object_;
+use Roave\BetterReflection\TypesFinder\FindPropertyType;
 
 /**
  * @Annotation
@@ -40,21 +44,25 @@ class Inject extends AbstractAnnotation
     public $lazy = false;
 
     /**
-     * @var PhpDocReader
+     * @var FindPropertyType
      */
-    private $docReader;
+    private $typeInvoker;
 
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->docReader = make(PhpDocReader::class);
+        $this->typeInvoker = make(FindPropertyType::class);
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $reflectionProperty = BetterReflectionManager::reflectClass($className)->getProperty($target);
-            $this->value = $this->docReader->getPropertyClass($reflectionProperty);
+            $reflectionClass = BetterReflectionManager::reflectClass($className);
+            $reflectionProperty = $reflectionClass->getProperty($target);
+            $reflectionTypes = $this->typeInvoker->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
+            if ($reflectionTypes[0] instanceof Object_) {
+                $this->value = ltrim((string)$reflectionTypes[0], '\\');
+            }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;
