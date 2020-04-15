@@ -26,14 +26,10 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader)
     {
         $this->composerLoader = $classLoader;
-        $configs = ProviderConfig::load();
+        $config = ScanConfig::instance();
 
-        $scanner = new Scanner($this);
-        $paths = array_merge([
-            // @TODO 优化 app 路径为可配置的
-            BASE_PATH . '/app',
-        ], $configs['annotations']['scan']['paths'] ?? []);
-        $classes = $scanner->scan($paths);
+        $scanner = new Scanner($this,$config->getIgnoreAnnotations());
+        $classes = $scanner->scan($config->getPaths());
         $this->proxies = ProxyManager::init($classes);
         var_dump($this->proxies);
     }
