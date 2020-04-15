@@ -73,7 +73,7 @@ class BootProcessListener implements ListenerInterface
                 retry(INF, function () use ($interval) {
                     $prevConfig = [];
                     while (true) {
-                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
                         $workerExited = $coordinator->yield($interval);
                         if ($workerExited) {
                             break;

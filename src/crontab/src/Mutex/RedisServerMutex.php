@@ -54,7 +54,7 @@ class RedisServerMutex implements ServerMutex
 
         if ($result === true) {
             Coroutine::create(function() use ($crontab, $redis, $mutexName) {
-               $exited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($crontab->getMutexExpires());
+               $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
                $exited && $redis->del($mutexName);
             });
             return $result;

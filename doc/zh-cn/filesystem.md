@@ -101,6 +101,23 @@ class IndexController
 }
 ```
 
+### 配置静态资源
+
+如果您希望通过 http 访问上传到本地的文件，请在 `config/autoload/server.php` 配置中增加以下配置。
+
+```
+return [
+    'settings' => [
+        ...
+        // 将 public 替换为上传目录
+        'document_root' => BASE_PATH . '/public',
+        'static_handler_locations' => ['/'],
+        'enable_static_handler' => true,
+    ],
+];
+
+```
+
 ## 注意事项
 
 1. S3 存储请确认安装 `hyperf/guzzle` 组件以提供协程化支持。阿里云、七牛云存储请[开启 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)来使用协程。因 Curl Hook 的参数支持性问题，请使用 Swoole 4.4.13 以上版本。

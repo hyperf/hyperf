@@ -30,11 +30,11 @@ class CoordinatorManager
     }
 
     /**
-     * Get a coordinator from container by the identifier.
+     * Get a Coordinator from container by the identifier.
      *
-     * @throws \RuntimeException when the Lock with the identifier has not initialization
+     * @throws \RuntimeException when the Coordinator with the identifier has not initialization
      */
-    public static function get(string $identifier): Coordinator
+    public static function until(string $identifier): Coordinator
     {
         if (! isset(static::$container[$identifier])) {
             static::$container[$identifier] = new Coordinator();
@@ -44,7 +44,15 @@ class CoordinatorManager
     }
 
     /**
-     * Remove the coordinator by the identifier from container after used,
+     * Alias of static::until
+     */
+    public static function get(string $identifier): Coordinator
+    {
+        return static::until($identifier);
+    }
+
+    /**
+     * Remove the Coordinator by the identifier from container after used,
      * otherwise memory leaks will occur.
      */
     public static function clear(string $identifier): void

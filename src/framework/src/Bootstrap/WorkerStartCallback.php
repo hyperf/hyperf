@@ -60,6 +60,6 @@ class WorkerStartCallback
         }
 
         $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
-        CoordinatorManager::get(Constants::ON_WORKER_START)->resume();
+        CoordinatorManager::until(Constants::WORKER_START)->resume();
     }
 }
