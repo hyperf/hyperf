@@ -58,6 +58,10 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
 
     public function retry(\Throwable $throwable, $name, $arguments)
     {
+        if ($this->transactionLevel() > 0) {
+            throw $throwable;
+        }
+
         if ($this->causedByLostConnection($throwable)) {
             try {
                 $this->reconnect();

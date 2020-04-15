@@ -115,4 +115,17 @@ class PDODriverTest extends AbstractTestCase
 
         $this->assertSame('Hyperf', $res['name']);
     }
+
+    public function testTransactionLevelWhenReconnect()
+    {
+        $container = $this->getContainer();
+        $factory = $container->get(PoolFactory::class);
+        $pool = $factory->getPool('default');
+        $connection = $pool->get();
+        $this->assertSame(0, $connection->transactionLevel());
+        $connection->beginTransaction();
+        $this->assertSame(1, $connection->transactionLevel());
+        $connection->reconnect();
+        $this->assertSame(0, $connection->transactionLevel());
+    }
 }
