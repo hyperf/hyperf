@@ -30,9 +30,9 @@ class Scanner
     public function __construct(\Hyperf\Autoload\ClassLoader $classloader, array $ignoreAnnotations = [])
     {
         $this->classloader = $classloader;
-        AnnotationRegistry::registerLoader(function ($class) {
-            return class_exists($class, false);
-        });
+        // AnnotationRegistry::registerLoader(function ($class) {
+        //     return class_exists($class, false);
+        // });
 
         foreach ($ignoreAnnotations as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);

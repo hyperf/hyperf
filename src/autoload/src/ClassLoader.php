@@ -32,7 +32,7 @@ class ClassLoader
         $paths = array_merge([
             // @TODO 优化 app 路径为可配置的
             BASE_PATH . '/app',
-        ], $consfigs['annotations']['scan']['paths'] ?? []);
+        ], $configs['annotations']['scan']['paths'] ?? []);
         $classes = $scanner->scan($paths);
         $this->proxies = ProxyManager::init($classes);
         var_dump($this->proxies);
