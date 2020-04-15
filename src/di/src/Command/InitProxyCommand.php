@@ -15,10 +15,12 @@ namespace Hyperf\Di\Command;
 use Hyperf\Command\Command;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Finder\Finder;
 
 class InitProxyCommand extends Command
 {
@@ -44,6 +46,7 @@ class InitProxyCommand extends Command
         parent::__construct('di:init-proxy');
         $this->container = $container;
         $this->scanner = $scanner;
+        $this->parser = new Ast();
     }
 
     public function handle()
@@ -80,9 +83,24 @@ class InitProxyCommand extends Command
 
     private function createAopProxies()
     {
-        $scanDirs = $this->getScanDir();
+        $paths = $this->getScanDir();
 
-        $meta = $this->scanner->scan($scanDirs);
+        $finder = new Finder();
+        $finder->files()->in($paths)->name('*.php');
+        $meta = [];
+        foreach ($finder as $file) {
+            try {
+                $stmts = $this->parser->parse($file->getContents());
+                $className = $this->parser->parseClassByStmts($stmts);
+                if (! $className) {
+                    continue;
+                }
+                $meta[$className] = $stmts;
+            } catch (\RuntimeException $e) {
+                continue;
+            }
+        }
+        
         $classCollection = array_keys($meta);
 
         foreach ($classCollection as $item) {
