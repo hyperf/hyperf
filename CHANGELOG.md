@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1563](https://github.com/hyperf/hyperf/pull/1563) Fixed crontab's `onOneServer` option not resetting mutex on shutdown
+- [#1577](https://github.com/hyperf/hyperf/pull/1577) Fixed `describe:routes` command's `server` option not take effect
 
 # v1.1.25 - 2020-04-09
 
