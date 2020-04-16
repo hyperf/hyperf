@@ -15,6 +15,7 @@ use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\AsyncQueue\Driver\RedisDriver;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\Di\Container;
+use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -117,12 +118,17 @@ class RedisDriverTest extends TestCase
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn($packer);
         $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
-        $container->shouldReceive('get')->once()->with(\Redis::class)->andReturn(new Redis());
+        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis());
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new ChannelConfig($args['channel']);
         });
         $container->shouldReceive('make')->with(Message::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new Message(...$args);
+        });
+        $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function ($_) {
+            $factory = Mockery::mock(RedisFactory::class);
+            $factory->shouldReceive('get')->with('default')->andReturn(new Redis());
+            return $factory;
         });
 
         ApplicationContext::setContainer($container);
