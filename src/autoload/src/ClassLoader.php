@@ -6,6 +6,7 @@ namespace Hyperf\Autoload;
 use App\Foo;
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Dotenv\Test;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
@@ -23,6 +24,11 @@ class ClassLoader
      */
     protected $proxies = [];
 
+    /**
+     * @var array
+     */
+    protected $classAspects = [];
+
     public function __construct(ComposerClassLoader $classLoader)
     {
         $this->composerLoader = $classLoader;
@@ -31,7 +37,7 @@ class ClassLoader
         $scanner = new Scanner($this, $config->getIgnoreAnnotations(), $config->getGlobalImports());
         $classes = $scanner->scan($config->getPaths());
         $this->proxies = ProxyManager::init($classes);
-        var_dump($this->proxies);
+        $this->classAspects = $this->getClassAspects();
     }
 
     public function loadClass(string $class): void
@@ -49,8 +55,23 @@ class ClassLoader
             echo '[Load Proxy] ' . $className . PHP_EOL;
             $file = $this->proxies[$className];
         } else {
-            echo '[Load Composer] ' . $className . PHP_EOL;
-            $file = $this->composerLoader->findFile($className);
+            $match = [];
+            foreach ($this->classAspects as $aspect => $rules) {
+                foreach ($rules as $rule) {
+                    if (ProxyManager::isMatch($rule, $className)) {
+                        $match[] = $aspect;
+                    }
+                }
+            }
+            if ($match) {
+                $match = array_flip(array_flip($match));
+                $proxies = ProxyManager::generateProxyFiles([$className => $match]);
+                $this->proxies = array_merge($this->proxies, $proxies);
+                return $this->locateFile($className);
+            } else {
+                echo '[Load Composer] ' . $className . PHP_EOL;
+                $file = $this->composerLoader->findFile($className);
+            }
         }
 
         return $file;
@@ -85,6 +106,18 @@ class ClassLoader
     public static function init(): void
     {
         self::registerClassLoader();
+    }
+
+    public function getClassAspects(): array
+    {
+        $aspects = AspectCollector::get('classes', []);
+        // Remove the useless aspect rules
+        foreach ($aspects as $aspect => $rules) {
+            if (! $rules) {
+                unset($aspects[$aspect]);
+            }
+        }
+        return $aspects;
     }
 
     public function getComposerLoader(): ComposerClassLoader

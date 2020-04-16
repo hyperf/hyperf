@@ -59,7 +59,7 @@ class Scanner
 
             foreach ($classes as $reflectionClass) {
                 $className = $reflectionClass->getName();
-                echo '[Scan] ' . $className . PHP_EOL;
+                // echo '[Scan] ' . $className . PHP_EOL;
                 // Parse class annotations
                 $classAnnotations = $annotationReader->getClassAnnotations($reflectionClass);
                 if (! empty($classAnnotations)) {
