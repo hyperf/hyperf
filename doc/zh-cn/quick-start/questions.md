@@ -62,30 +62,6 @@ vendor/bin/init-proxy.sh && composer test
 vendor/bin/init-proxy.sh && php bin/hyperf.php start
 ```
 
-## PHP7.3 下预先生成代理的脚本 执行失败
-
-`php bin/hyperf.php di:init-proxy` 脚本在 `PHP7.3` 的 `Docker` 打包时，会因为返回码是 `1` 而失败。
-
-> 具体原因还在定位中
-
-以下通过重写 `init-proxy.sh` 脚本绕过这个问题。
-
-```bash
-#!/usr/bin/env bash
-
-php /opt/www/bin/hyperf.php di:init-proxy
-
-echo Started.
-```
-
-对应的 `Dockerfile` 修改以下代码，省略无用的代码展示。
-
-```dockerfile
-RUN composer install --no-dev \
-    && composer dump-autoload -o \
-    && ./init-proxy.sh
-```
-
 ## 异步队列消息丢失
 
 如果在使用 `async-queue` 组件时，发现 `handle` 中的方法没有执行，请先检查以下几种情况：
@@ -97,3 +73,27 @@ RUN composer install --no-dev \
 
 1. killall php
 2. 修改 `async-queue` 配置 `channel`
+
+## 1.1.24 - 1.1.26 版本 SymfonyEventDispatcher 报错
+
+因为 `symfony/console` 默认使用的 `^4.2` 版本，而 `symfony/event-dispatcher` 的 `^4.3` 版本与 `<4.3` 版本不兼容。
+
+`hyperf/framework` 默认推荐使用 `^4.3` 版本的 `symfony/event-dispatcher`，就有一定概率导致实现上的冲突。
+
+如果有类似的情况出现，可以尝试以下操作
+
+```
+rm -rf vendor
+rm -rf composer.lock
+composer require "symfony/event-dispatcher:^4.3"
+```
+
+当前问题，在 1.1.27 版本中，会在 `composer.json` 中添加以下配置，来处理这个问题。
+
+```
+    "conflict": {
+        "symfony/event-dispatcher": "<4.3"
+    },
+```
+
+
