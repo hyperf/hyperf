@@ -66,7 +66,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
             $nodes = call($callback);
             is_array($nodes) && $this->setNodes($nodes);
         });
-        Coroutine::create(function() use ($timerId){
+        Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
