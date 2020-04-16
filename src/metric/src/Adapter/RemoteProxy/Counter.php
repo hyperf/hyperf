@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\RemoteProxy;
 
 use Hyperf\Metric\Contract\CounterInterface;
@@ -27,9 +26,6 @@ class Counter implements CounterInterface
      */
     public $name;
 
-    /**
-     * @var string[];
-     */
     public $labelNames = [];
 
     /**
