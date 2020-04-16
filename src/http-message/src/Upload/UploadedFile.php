@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Upload;
 
+use Hyperf\HttpMessage\Stream\StandardStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -139,7 +140,10 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     public function getStream()
     {
-        throw new \BadMethodCallException('Not implemented');
+        if ($this->moved){
+            throw new \RuntimeException('uploaded file is moved');
+        }
+        return StandardStream::create(fopen($this->tmpFile, 'r+'));
     }
 
     /**
