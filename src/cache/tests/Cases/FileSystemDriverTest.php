@@ -17,6 +17,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use HyperfTest\Cache\Stub\Foo;
 use Mockery;
@@ -111,6 +112,7 @@ class FileSystemDriverTest extends TestCase
         $logger->shouldReceive(Mockery::any())->andReturn(null);
 
         $container->shouldReceive('get')->with(CacheManager::class)->andReturn(new CacheManager($config, $logger));
+        $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
         $container->shouldReceive('make')->with(FileSystemDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new FileSystemDriver($container, $args['config']);
         });
