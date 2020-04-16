@@ -88,7 +88,7 @@ rm -rf composer.lock
 composer require "symfony/event-dispatcher:^4.3"
 ```
 
-当前问题，在 1.1.27 版本中，会在 `composer.json` 中添加以下配置，来处理这个问题。
+1.1.27 版本中，会在 `composer.json` 中添加以下配置，来处理这个问题。
 
 ```
     "conflict": {
