@@ -101,6 +101,23 @@ class IndexController
 }
 ```
 
+### 配置靜態資源
+
+如果您希望通過 http 訪問上傳到本地的檔案，請在 `config/autoload/server.php` 配置中增加以下配置。
+
+```
+return [
+    'settings' => [
+        ...
+        // 將 public 替換為上傳目錄
+        'document_root' => BASE_PATH . '/public',
+        'static_handler_locations' => ['/'],
+        'enable_static_handler' => true,
+    ],
+];
+
+```
+
 ## 注意事項
 
 1. S3 儲存請確認安裝 `hyperf/guzzle` 元件以提供協程化支援。阿里雲、七牛雲端儲存請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的引數支援性問題，請使用 Swoole 4.4.13 以上版本。
