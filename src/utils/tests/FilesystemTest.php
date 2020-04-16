@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
