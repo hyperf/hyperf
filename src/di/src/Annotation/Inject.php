@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Autoload\AnnotationReader;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\TypesFinderManager;

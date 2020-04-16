@@ -34,7 +34,7 @@ class ClassLoader
         $this->composerLoader = $classLoader;
         $config = ScanConfig::instance();
 
-        $scanner = new Scanner($this, $config->getIgnoreAnnotations(), $config->getGlobalImports());
+        $scanner = new Scanner($this, $config);
         $classes = $scanner->scan($config->getPaths());
         $this->proxies = ProxyManager::init($classes);
         $this->classAspects = $this->getClassAspects();

@@ -27,17 +27,14 @@ class Scanner
      */
     protected $classloader;
 
-    public function __construct(\Hyperf\Autoload\ClassLoader $classloader, array $ignoreAnnotations = [], array $globalImports = [])
+    public function __construct(\Hyperf\Autoload\ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
-        AnnotationRegistry::registerLoader(function ($class) {
-            return class_exists($class, false);
-        });
 
-        foreach ($ignoreAnnotations as $annotation) {
+        foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
         }
-        foreach ($globalImports as $alias => $annotation) {
+        foreach ($scanConfig->getGlobalImports() as $alias => $annotation) {
             AnnotationReader::addGlobalImports($alias, $annotation);
         }
 
@@ -45,61 +42,55 @@ class Scanner
 
     public function scan(array $paths): array
     {
-        try {
-            $classes = [];
-            if (! $paths) {
-                return $classes;
-            }
-            $paths = $this->normalizeDir($paths);
-
-            $reflector = BetterReflectionManager::initClassReflector($paths);
-            $classes = $reflector->getAllClasses();
-
-            $annotationReader = new AnnotationReader();
-
-            foreach ($classes as $reflectionClass) {
-                $className = $reflectionClass->getName();
-                // echo '[Scan] ' . $className . PHP_EOL;
-                // Parse class annotations
-                $classAnnotations = $annotationReader->getClassAnnotations($reflectionClass);
-                if (! empty($classAnnotations)) {
-                    foreach ($classAnnotations as $classAnnotation) {
-                        if ($classAnnotation instanceof AnnotationInterface) {
-                            $classAnnotation->collectClass($className);
-                        }
-                    }
-                }
-                // Parse properties annotations
-                $properties = $reflectionClass->getImmediateProperties();
-                foreach ($properties as $property) {
-                    $propertyAnnotations = $annotationReader->getPropertyAnnotations($property);
-                    if (! empty($propertyAnnotations)) {
-                        foreach ($propertyAnnotations as $propertyAnnotation) {
-                            if ($propertyAnnotation instanceof AnnotationInterface) {
-                                $propertyAnnotation->collectProperty($className, $property->getName());
-                            }
-                        }
-                    }
-                }
-                // Parse methods annotations
-                $methods = $reflectionClass->getImmediateMethods();
-                foreach ($methods as $method) {
-                    $methodAnnotations = $annotationReader->getMethodAnnotations($method);
-                    if (! empty($methodAnnotations)) {
-                        foreach ($methodAnnotations as $methodAnnotation) {
-                            if ($methodAnnotation instanceof AnnotationInterface) {
-                                $methodAnnotation->collectMethod($className, $method->getName());
-                            }
-                        }
-                    }
-                }
-                unset($reflectionClass, $classAnnotations, $properties, $methods);
-            }
-            unset($finder, $astLocator, $annotationReader);
-        } catch (\Throwable $throwable) {
-            echo $throwable->getMessage() . PHP_EOL;
-            // var_dump((string)$throwable);
+        $classes = [];
+        if (! $paths) {
+            return $classes;
         }
+        $paths = $this->normalizeDir($paths);
+
+        $reflector = BetterReflectionManager::initClassReflector($paths);
+        $classes = $reflector->getAllClasses();
+
+        $annotationReader = new AnnotationReader();
+
+        foreach ($classes as $reflectionClass) {
+            $className = $reflectionClass->getName();
+            // Parse class annotations
+            $classAnnotations = $annotationReader->getClassAnnotations($reflectionClass);
+            if (! empty($classAnnotations)) {
+                foreach ($classAnnotations as $classAnnotation) {
+                    if ($classAnnotation instanceof AnnotationInterface) {
+                        $classAnnotation->collectClass($className);
+                    }
+                }
+            }
+            // Parse properties annotations
+            $properties = $reflectionClass->getImmediateProperties();
+            foreach ($properties as $property) {
+                $propertyAnnotations = $annotationReader->getPropertyAnnotations($property);
+                if (! empty($propertyAnnotations)) {
+                    foreach ($propertyAnnotations as $propertyAnnotation) {
+                        if ($propertyAnnotation instanceof AnnotationInterface) {
+                            $propertyAnnotation->collectProperty($className, $property->getName());
+                        }
+                    }
+                }
+            }
+            // Parse methods annotations
+            $methods = $reflectionClass->getImmediateMethods();
+            foreach ($methods as $method) {
+                $methodAnnotations = $annotationReader->getMethodAnnotations($method);
+                if (! empty($methodAnnotations)) {
+                    foreach ($methodAnnotations as $methodAnnotation) {
+                        if ($methodAnnotation instanceof AnnotationInterface) {
+                            $methodAnnotation->collectMethod($className, $method->getName());
+                        }
+                    }
+                }
+            }
+            unset($reflectionClass, $classAnnotations, $properties, $methods);
+        }
+        unset($finder, $astLocator, $annotationReader);
         return $classes;
     }
 

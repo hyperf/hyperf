@@ -48,13 +48,6 @@ class DefinitionSource implements DefinitionSourceInterface
 {
 
     /**
-     * Path of annotation meta data cache.
-     *
-     * @var string
-     */
-    private $cachePath = BASE_PATH . '/runtime/container/annotations';
-
-    /**
      * @var array
      */
     private $source;
