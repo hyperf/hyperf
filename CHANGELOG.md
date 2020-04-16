@@ -1,5 +1,10 @@
 # v1.1.26 - TBD
 
+## Fixed
+
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) Fixed when jsonrpc server register the same service to consul
+with jsonrpc and jsonrpc-http protocol the jsonrpc client 
+
 # v1.1.25 - 2020-04-09
 
 ## Fixed
