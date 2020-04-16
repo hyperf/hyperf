@@ -68,10 +68,9 @@ class ClassLoader
                 $proxies = ProxyManager::generateProxyFiles([$className => $match]);
                 $this->proxies = array_merge($this->proxies, $proxies);
                 return $this->locateFile($className);
-            } else {
-                echo '[Load Composer] ' . $className . PHP_EOL;
-                $file = $this->composerLoader->findFile($className);
             }
+            echo '[Load Composer] ' . $className . PHP_EOL;
+            $file = $this->composerLoader->findFile($className);
         }
 
         return $file;
@@ -96,7 +95,7 @@ class ClassLoader
         }
 
         unset($loader);
-
+        
         // Re-register the loaders
         foreach ($loaders as $loader) {
             spl_autoload_register($loader);

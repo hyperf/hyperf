@@ -46,10 +46,6 @@ use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-    /**
-     * @var bool
-     */
-    private $enableCache = false;
 
     /**
      * Path of annotation meta data cache.
@@ -63,18 +59,8 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private $source;
 
-    /**
-     * @var Scanner
-     */
-    private $scanner;
-
-    public function __construct(array $source, ScanConfig $scanConfig, bool $enableCache = false)
+    public function __construct(array $source, ScanConfig $scanConfig)
     {
-        $this->scanner = new Scanner($scanConfig->getIgnoreAnnotations());
-        $this->enableCache = $enableCache;
-
-        // Scan the specified paths and collect the ast and annotations.
-        // $this->scan($scanConfig->getDirs(), $scanConfig->getCollectors());
         $this->source = $this->normalizeSource($source);
     }
 
@@ -214,169 +200,8 @@ class DefinitionSource implements DefinitionSourceInterface
         return $definition;
     }
 
-    private function scan(array $paths, array $collectors): bool
-    {
-        $appPaths = $vendorPaths = [];
-
-        /**
-         * If you are a hyperf developer
-         * this value will be your local path, like hyperf/src.
-         * @var string
-         */
-        $ident = 'vendor';
-        $isDefinedBasePath = defined('BASE_PATH');
-
-        foreach ($paths as $path) {
-            if ($isDefinedBasePath) {
-                if (Str::startsWith($path, BASE_PATH . '/' . $ident)) {
-                    $vendorPaths[] = $path;
-                } else {
-                    $appPaths[] = $path;
-                }
-            } else {
-                if (strpos($path, $ident) !== false) {
-                    $vendorPaths[] = $path;
-                } else {
-                    $appPaths[] = $path;
-                }
-            }
-        }
-
-        $this->loadMetadata($appPaths, 'app');
-        $this->loadMetadata($vendorPaths, 'vendor');
-
-        return true;
-    }
-
-    private function loadMetadata(array $paths, $type)
-    {
-        if (empty($paths)) {
-            return true;
-        }
-        $cachePath = $this->cachePath . '.' . $type . '.cache';
-        $pathsHash = md5(implode(',', $paths));
-        if ($this->hasAvailableCache($paths, $pathsHash, $cachePath)) {
-            $this->printLn('Detected an available cache, skip the ' . $type . ' scan process.');
-            [, $serialized] = explode(PHP_EOL, file_get_contents($cachePath));
-            $this->scanner->collect(unserialize($serialized));
-            return false;
-        }
-        $this->printLn('Scanning ' . $type . ' ...');
-        $startTime = microtime(true);
-        $meta = $this->scanner->scan($paths);
-        foreach ($meta as $className => $stmts) {
-            AstCollector::set($className, $stmts);
-        }
-        $useTime = microtime(true) - $startTime;
-        $this->printLn('Scan ' . $type . ' completed, took ' . $useTime * 1000 . ' milliseconds.');
-        if (! $this->enableCache) {
-            return true;
-        }
-        // enableCache: set cache
-        if (! file_exists($cachePath)) {
-            $exploded = explode('/', $cachePath);
-            unset($exploded[count($exploded) - 1]);
-            $dirPath = implode('/', $exploded);
-            if (! is_dir($dirPath)) {
-                mkdir($dirPath, 0755, true);
-            }
-        }
-
-        $data = implode(PHP_EOL, [$pathsHash, serialize(array_keys($meta))]);
-        file_put_contents($cachePath, $data);
-        return true;
-    }
-
-    private function hasAvailableCache(array $paths, string $pathsHash, string $filename): bool
-    {
-        if (! $this->enableCache) {
-            return false;
-        }
-        if (! file_exists($filename) || ! is_readable($filename)) {
-            return false;
-        }
-        $handler = fopen($filename, 'r');
-        while (! feof($handler)) {
-            $line = fgets($handler);
-            if (trim($line) !== $pathsHash) {
-                return false;
-            }
-            break;
-        }
-        $cacheLastModified = filemtime($filename) ?? 0;
-        $finder = new Finder();
-        $finder->files()->in($paths)->name('*.php');
-        foreach ($finder as $file) {
-            if ($file->getMTime() > $cacheLastModified) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private function printLn(string $message): void
     {
         print_r($message . PHP_EOL);
-    }
-
-    private function isNeedProxy(ReflectionClass $reflectionClass): bool
-    {
-        $className = $reflectionClass->getName();
-        $classesAspects = AspectCollector::get('classes', []);
-        foreach ($classesAspects as $aspect => $rules) {
-            foreach ($rules as $rule) {
-                if ($this->isMatch($rule, $className)) {
-                    return true;
-                }
-            }
-        }
-
-        // Get the controller annotations.
-        $classAnnotations = value(function () use ($className) {
-            $annotations = AnnotationCollector::get($className . '._c', []);
-            return array_keys($annotations);
-        });
-        // Aggregate all methods annotations.
-        $methodAnnotations = value(function () use ($className) {
-            $defined = [];
-            $annotations = AnnotationCollector::get($className . '._m', []);
-            foreach ($annotations as $method => $annotation) {
-                $defined = array_merge($defined, array_keys($annotation));
-            }
-            return $defined;
-        });
-        $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations));
-        if ($annotations) {
-            $annotationsAspects = AspectCollector::get('annotations', []);
-            foreach ($annotationsAspects as $aspect => $rules) {
-                foreach ($rules as $rule) {
-                    foreach ($annotations as $annotation) {
-                        if ($this->isMatch($rule, $annotation)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private function isMatch(string $rule, string $target): bool
-    {
-        if (strpos($rule, '::') !== false) {
-            [$rule,] = explode('::', $rule);
-        }
-        if (strpos($rule, '*') === false && $rule === $target) {
-            return true;
-        }
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^{$preg}$/";
-
-        if (preg_match($pattern, $target)) {
-            return true;
-        }
-
-        return false;
     }
 }
