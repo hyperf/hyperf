@@ -21,6 +21,11 @@ final class ScanConfig
     /**
      * @var array
      */
+    protected $globalImports;
+
+    /**
+     * @var array
+     */
     protected $dependencies;
 
     /**
@@ -28,11 +33,12 @@ final class ScanConfig
      */
     protected static $instance;
 
-    public function __construct(array $paths = [], array $ignoreAnnotations = [], array $dependencies = [])
+    public function __construct(array $paths = [], array $dependencies = [], array $ignoreAnnotations = [], array $globalImports = [])
     {
         $this->paths = $paths;
-        $this->ignoreAnnotations = $ignoreAnnotations;
         $this->dependencies = $dependencies;
+        $this->ignoreAnnotations = $ignoreAnnotations;
+        $this->globalImports = $globalImports;
     }
 
     public function getPaths(): array
@@ -43,6 +49,11 @@ final class ScanConfig
     public function getIgnoreAnnotations(): array
     {
         return $this->ignoreAnnotations;
+    }
+
+    public function getGlobalImports(): array
+    {
+        return $this->globalImports;
     }
 
     public function getDependencies(): array
@@ -70,12 +81,14 @@ final class ScanConfig
 
         $scanDirs = $configFromProviders['annotations']['scan']['paths'] ?? [];
         $ignoreAnnotations = $configFromProviders['annotations']['scan']['ignore_annotations'] ?? [];
+        $globalImports = $configFromProviders['annotations']['scan']['global_imports'] ?? [];
 
         // Load the config/autoload/annotations.php and merge the config
         if (file_exists($configDir . '/autoload/annotations.php')) {
             $annotations = include $configDir . '/autoload/annotations.php';
             $scanDirs = array_merge($scanDirs, $annotations['scan']['paths'] ?? []);
             $ignoreAnnotations = array_merge($ignoreAnnotations, $annotations['scan']['ignore_annotations'] ?? []);
+            $globalImports = array_merge($globalImports, $annotations['scan']['global_imports'] ?? []);
         }
 
         // Load the config/config.php and merge the config
@@ -84,9 +97,10 @@ final class ScanConfig
             if (isset($configContent['annotations'])) {
                 $scanDirs = array_merge($scanDirs, $configContent['annotations']['scan']['paths'] ?? []);
                 $ignoreAnnotations = array_merge($ignoreAnnotations, $configContent['annotations']['scan']['ignore_annotations'] ?? []);
+                $globalImports = array_merge($globalImports, $configContent['annotations']['scan']['global_imports'] ?? []);
             }
         }
 
-        return self::$instance = new self($scanDirs, $ignoreAnnotations,$serverDependencies);
+        return self::$instance = new self($scanDirs, $serverDependencies, $ignoreAnnotations, $globalImports);
     }
 }

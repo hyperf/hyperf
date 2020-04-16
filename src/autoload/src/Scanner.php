@@ -27,23 +27,28 @@ class Scanner
      */
     protected $classloader;
 
-    public function __construct(\Hyperf\Autoload\ClassLoader $classloader, array $ignoreAnnotations = [])
+    public function __construct(\Hyperf\Autoload\ClassLoader $classloader, array $ignoreAnnotations = [], array $globalImports = [])
     {
         $this->classloader = $classloader;
-        // AnnotationRegistry::registerLoader(function ($class) {
-        //     return class_exists($class, false);
-        // });
+        AnnotationRegistry::registerLoader(function ($class) {
+            return class_exists($class, false);
+        });
 
         foreach ($ignoreAnnotations as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
         }
+        foreach ($globalImports as $alias => $annotation) {
+            AnnotationReader::addGlobalImports($alias, $annotation);
+        }
+
     }
 
     public function scan(array $paths): array
     {
         try {
+            $classes = [];
             if (! $paths) {
-                return [];
+                return $classes;
             }
             $paths = $this->normalizeDir($paths);
 
