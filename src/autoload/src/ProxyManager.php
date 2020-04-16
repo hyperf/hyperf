@@ -12,11 +12,11 @@ class ProxyManager
 
     public static function init(array $classes = []): array
     {
-        $proxies = static::initProxyList($classes);
-        return static::generateProxyFiles($proxies);
+        $list = static::initProxyList($classes);
+        return static::generateProxyFiles($list);
     }
 
-    private static function generateProxyFiles(array $proxies = []): array
+    public static function generateProxyFiles(array $proxies = []): array
     {
         $proxyFiles = [];
         $proxyFileDir = BASE_PATH . '/runtime/container/proxy/';
@@ -26,7 +26,7 @@ class ProxyManager
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
             $code = $ast->proxy($className, $className);
-            $proxyFilePath = $proxyFileDir . md5($code) . '.php';
+            $proxyFilePath = $proxyFileDir . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
             if (! file_exists($proxyFilePath)) {
                 file_put_contents($proxyFilePath, $code);
             }
@@ -85,7 +85,7 @@ class ProxyManager
         return $proxies;
     }
 
-    private static function isMatch(string $rule, string $target): bool
+    public static function isMatch(string $rule, string $target): bool
     {
         if (strpos($rule, '::') !== false) {
             [$rule,] = explode('::', $rule);
