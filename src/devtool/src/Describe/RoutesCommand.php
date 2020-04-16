@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Annotation\Command;
@@ -102,15 +101,16 @@ class RoutesCommand extends HyperfCommand
         } else {
             $action = $handler->callback;
         }
-        if (isset($data[$uri])) {
-            $data[$uri]['method'][] = $method;
+        $unique = "{$serverName}|{$action}";
+        if (isset($data[$unique])) {
+            $data[$unique]['method'][] = $method;
         } else {
             // method,uri,name,action,middleware
             $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
             $middlewares = array_merge($middlewares, $registedMiddlewares);
-            $data[$uri] = [
+            $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],
                 'uri' => $uri,
