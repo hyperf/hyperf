@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DB;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -58,6 +57,10 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
 
     public function retry(\Throwable $throwable, $name, $arguments)
     {
+        if ($this->transactionLevel() > 0) {
+            throw $throwable;
+        }
+
         if ($this->causedByLostConnection($throwable)) {
             try {
                 $this->reconnect();
