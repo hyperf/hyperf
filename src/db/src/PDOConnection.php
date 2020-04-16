@@ -92,6 +92,7 @@ class PDOConnection extends AbstractConnection
 
         $this->connection = $pdo;
         $this->lastUseTime = microtime(true);
+        $this->transactions = 0;
         return true;
     }
 

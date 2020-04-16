@@ -1,5 +1,10 @@
 # v1.1.26 - TBD
 
+## Fixed
+
+- [#1563](https://github.com/hyperf/hyperf/pull/1563) Fixed crontab's `onOneServer` option not resetting mutex on shutdown.
+- [#1565](https://github.com/hyperf/hyperf/pull/1565) Reset transaction level to zero, when reconnent to mysql server.
+
 # v1.1.25 - 2020-04-09
 
 ## Fixed
