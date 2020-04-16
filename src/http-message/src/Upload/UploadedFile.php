@@ -140,7 +140,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     public function getStream()
     {
-        if ($this->moved){
+        if ($this->moved) {
             throw new \RuntimeException('uploaded file is moved');
         }
         return StandardStream::create(fopen($this->tmpFile, 'r+'));
