@@ -71,6 +71,19 @@ class AnnotationCollector extends MetadataCollector
         return $result;
     }
 
+    public static function getPropertiesByAnnotation(string $annotation): array
+    {
+        $properties = [];
+        foreach (static::$container as $class => $metadata) {
+            foreach ($metadata['_p'] ?? [] as $property => $_metadata) {
+                if ($value = $_metadata[$annotation] ?? null) {
+                    $properties[] = ['class' => $class, 'property' => $property, 'annotation' => $value];
+                }
+            }
+        }
+        return $properties;
+    }
+
     public static function getContainer(): array
     {
         return static::$container;
