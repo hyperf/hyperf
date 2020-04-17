@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Annotation\Command;
@@ -54,7 +53,7 @@ class RoutesCommand extends HyperfCommand
         $server = $this->input->getOption('server');
 
         $factory = $this->container->get(DispatcherFactory::class);
-        $router = $factory->getRouter('http');
+        $router = $factory->getRouter($server);
         $this->show(
             $this->analyzeRouter($server, $router, $path),
             $this->output

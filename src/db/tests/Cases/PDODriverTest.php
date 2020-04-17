@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\DB\DB;
@@ -114,5 +113,18 @@ class PDODriverTest extends AbstractTestCase
         $res = DB::fetch('SELECT * FROM `user` WHERE id = ?;', [1]);
 
         $this->assertSame('Hyperf', $res['name']);
+    }
+
+    public function testTransactionLevelWhenReconnect()
+    {
+        $container = $this->getContainer();
+        $factory = $container->get(PoolFactory::class);
+        $pool = $factory->getPool('default');
+        $connection = $pool->get();
+        $this->assertSame(0, $connection->transactionLevel());
+        $connection->beginTransaction();
+        $this->assertSame(1, $connection->transactionLevel());
+        $connection->reconnect();
+        $this->assertSame(0, $connection->transactionLevel());
     }
 }

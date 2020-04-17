@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Consul;
 
 use GuzzleHttp\ClientInterface;
@@ -48,7 +47,7 @@ abstract class Client
     {
         // Add key of ACL token to $availableOptions
         $availableOptions[] = 'token';
-        
+
         return array_intersect_key($options, array_flip($availableOptions));
     }
 

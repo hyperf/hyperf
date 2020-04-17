@@ -30,14 +30,17 @@ Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用�
 
 ```php
 <?php
-use \Hyperf\Utils\Coordinator\CoordinatorManager as CM;
-use \Hyperf\Utils\Coordinator\Constants as C;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coroutine;
 
-go(function(){
-    CM::until(C::WORKER_START)->yield(); //所有OnWorkerStart事件回调完成后唤醒。
+Coroutine::create(function() {
+    // 所有OnWorkerStart事件回调完成后唤醒
+    CoordinatorManager::until(Constants::WORKER_START)->yield();
     echo 'worker started';
     // 分配资源
-    CM::until(C::WORKER_EXIT)->yield(); //所有OnWorkerExit事件回调完成后唤醒。
+    // 所有OnWorkerExit事件回调完成后唤醒
+    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
     echo 'worker exited';
     // 回收资源
 });
