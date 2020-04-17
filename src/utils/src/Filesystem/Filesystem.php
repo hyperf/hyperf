@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils\Filesystem;
 
 use ErrorException;
 use FilesystemIterator;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
@@ -52,25 +52,22 @@ class Filesystem
      */
     public function sharedGet(string $path): string
     {
-        $contents = '';
-
-        $handle = fopen($path, 'rb');
-
-        if ($handle) {
-            try {
-                if (flock($handle, LOCK_SH)) {
-                    clearstatcache(true, $path);
-
-                    $contents = fread($handle, $this->size($path) ?: 1);
-
-                    flock($handle, LOCK_UN);
+        return $this->atomic($path, function ($path) {
+            $contents = '';
+            $handle = fopen($path, 'rb');
+            if ($handle) {
+                try {
+                    if (flock($handle, LOCK_SH)) {
+                        clearstatcache(true, $path);
+                        $contents = fread($handle, $this->size($path) ?: 1);
+                        flock($handle, LOCK_UN);
+                    }
+                } finally {
+                    fclose($handle);
                 }
-            } finally {
-                fclose($handle);
             }
-        }
-
-        return $contents;
+            return $contents;
+        });
     }
 
     /**
@@ -113,7 +110,12 @@ class Filesystem
      */
     public function put(string $path, $contents, bool $lock = false)
     {
-        return file_put_contents($path, $contents, $lock ? LOCK_EX : 0);
+        if ($lock) {
+            return $this->atomic($path, function ($path) use ($contents, $lock) {
+                return file_put_contents($path, $contents, LOCK_EX);
+            });
+        }
+        return file_put_contents($path, $contents);
     }
 
     /**
@@ -506,5 +508,21 @@ class Filesystem
     public function windowsOs(): bool
     {
         return stripos(PHP_OS, 'win') === 0;
+    }
+
+    protected function atomic($path, $callback)
+    {
+        if (Coroutine::inCoroutine()) {
+            try {
+                while (! Coroutine\Locker::lock($path)) {
+                    usleep(1000);
+                }
+                return $callback($path);
+            } finally {
+                Coroutine\Locker::unlock($path);
+            }
+        } else {
+            return $callback($path);
+        }
     }
 }
