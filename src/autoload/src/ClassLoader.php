@@ -13,8 +13,10 @@ namespace Hyperf\Autoload;
 
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Utils\Composer;
 
 class ClassLoader
 {
@@ -54,6 +56,30 @@ class ClassLoader
         $this->proxies = $this->proxyManager->getProxies();
         $this->injects = AnnotationCollector::getPropertiesByAnnotation(Inject::class);
         $this->classAspects = $this->getClassAspects();
+        $this->initProxies();
+    }
+
+    public function initProxies()
+    {
+        $map = $this->composerLoader->getClassMap();
+        $classes = [];
+        foreach ($map as $class => $file) {
+            $match = [];
+            foreach ($this->classAspects as $aspect => $rules) {
+                foreach ($rules as $rule) {
+                    if (ProxyManager::isMatch($rule, $class)) {
+                        $match[] = $aspect;
+                    }
+                }
+            }
+            if ($match) {
+                $match = array_flip(array_flip($match));
+                $classes[$class] = $match;
+            }
+        }
+
+        $proxies = $this->proxyManager->generateProxyFiles($classes);
+        $this->proxies = array_merge($this->proxies, $proxies);
     }
 
     public function loadClass(string $class): void
@@ -75,7 +101,7 @@ class ClassLoader
         $aspects = AspectCollector::get('classes', []);
         // Remove the useless aspect rules
         foreach ($aspects as $aspect => $rules) {
-            if (! $rules) {
+            if (!$rules) {
                 unset($aspects[$aspect]);
             }
         }
@@ -93,22 +119,22 @@ class ClassLoader
             // echo '[Load Proxy] ' . $className . PHP_EOL;
             $file = $this->proxies[$className];
         } else {
-            if (! $this->proxyManager->isScaned($className)) {
-                $match = [];
-                foreach ($this->classAspects as $aspect => $rules) {
-                    foreach ($rules as $rule) {
-                        if (ProxyManager::isMatch($rule, $className)) {
-                            $match[] = $aspect;
-                        }
-                    }
-                }
-                if ($match) {
-                    $match = array_flip(array_flip($match));
-                    $proxies = $this->proxyManager->generateProxyFiles([$className => $match]);
-                    $this->proxies = array_merge($this->proxies, $proxies);
-                    return $this->locateFile($className);
-                }
-            }
+            // if (!$this->proxyManager->isScaned($className)) {
+            //     $match = [];
+            //     foreach ($this->classAspects as $aspect => $rules) {
+            //         foreach ($rules as $rule) {
+            //             if (ProxyManager::isMatch($rule, $className)) {
+            //                 $match[] = $aspect;
+            //             }
+            //         }
+            //     }
+            //     if ($match) {
+            //         $match = array_flip(array_flip($match));
+            //         $proxies = $this->proxyManager->generateProxyFiles([$className => $match]);
+            //         $this->proxies = array_merge($this->proxies, $proxies);
+            //         return $this->locateFile($className);
+            //     }
+            // }
             // echo '[Load Composer] ' . $className . PHP_EOL;
             $file = $this->composerLoader->findFile($className);
         }
