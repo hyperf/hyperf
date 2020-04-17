@@ -57,10 +57,10 @@ class Inject extends AbstractAnnotation
             if ($reflectionTypes[0] instanceof Object_) {
                 $this->value = ltrim((string)$reflectionTypes[0], '\\');
             }
-            AnnotationCollector::collectProperty($className, $target, static::class, $this);
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
         } catch (AnnotationException $e) {
             if ($this->required) {
                 throw $e;

@@ -4,30 +4,18 @@ namespace Hyperf\Autoload;
 
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\BetterReflectionManager;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\DirectoriesSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\EvaledCodeSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
-use Roave\BetterReflection\Util\Autoload\ClassLoader;
-use Roave\BetterReflection\Util\Autoload\ClassLoaderMethod\FileCacheLoader;
 
 class Scanner
 {
 
     /**
-     * @var \Hyperf\Autoload\ClassLoader
+     * @var ClassLoader
      */
     protected $classloader;
 
-    public function __construct(\Hyperf\Autoload\ClassLoader $classloader, ScanConfig $scanConfig)
+    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
 
