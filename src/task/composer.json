@@ -23,8 +23,8 @@
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0",
-        "symfony/property-access": "^4.3",
-        "symfony/serializer": "^4.3"
+        "symfony/property-access": "^5.0",
+        "symfony/serializer": "^5.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.9",
