@@ -17,7 +17,7 @@ use Monolog\Handler\StreamHandler;
 
 class FooHandler extends StreamHandler
 {
-    public function write(array $record)
+    public function write(array $record): void
     {
         Context::set('test.logger.foo_handler.record', $record);
     }
