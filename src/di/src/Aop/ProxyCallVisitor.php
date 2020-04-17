@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Autoload\VisitorInterface;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -32,7 +33,7 @@ use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
 
-class ProxyCallVisitor extends NodeVisitorAbstract
+class ProxyCallVisitor extends NodeVisitorAbstract implements VisitorInterface
 {
     /**
      * Determine if the class used proxy trait.

@@ -14,6 +14,7 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Command\InitProxyCommand;
 use Hyperf\Di\Listener\BootApplicationListener;
 
@@ -30,6 +31,11 @@ class ConfigProvider
             ],
             'listeners' => [
                 BootApplicationListener::class,
+            ],
+            'autoload' => [
+                'visitors' => [
+                    ProxyCallVisitor::class
+                ],
             ],
             'annotations' => [
                 'scan' => [

@@ -11,17 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
-class ConfigProvider
+interface VisitorInterface
 {
-    public function __invoke(): array
-    {
-        return [
-            'dependencies' => [
-            ],
-            'annotations' => [
-            ],
-            'publish' => [
-            ],
-        ];
-    }
+    public function __construct(string $classname);
 }
