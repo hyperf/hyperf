@@ -10,6 +10,7 @@ use Dotenv\Test;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Inject;
 
 class ClassLoader
 {
@@ -27,6 +28,11 @@ class ClassLoader
     /**
      * @var array
      */
+    protected $injects = [];
+
+    /**
+     * @var array
+     */
     protected $classAspects = [];
 
     public function __construct(ComposerClassLoader $classLoader)
@@ -37,6 +43,7 @@ class ClassLoader
         $scanner = new Scanner($this, $config);
         $classes = $scanner->scan($config->getPaths());
         $this->proxies = ProxyManager::init($classes);
+        $this->injects = AnnotationCollector::getPropertiesByAnnotation(Inject::class);
         $this->classAspects = $this->getClassAspects();
     }
 
@@ -52,7 +59,7 @@ class ClassLoader
     protected function locateFile(string $className)
     {
         if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
-            echo '[Load Proxy] ' . $className . PHP_EOL;
+            // echo '[Load Proxy] ' . $className . PHP_EOL;
             $file = $this->proxies[$className];
         } else {
             $match = [];
@@ -69,7 +76,7 @@ class ClassLoader
                 $this->proxies = array_merge($this->proxies, $proxies);
                 return $this->locateFile($className);
             }
-            echo '[Load Composer] ' . $className . PHP_EOL;
+            // echo '[Load Composer] ' . $className . PHP_EOL;
             $file = $this->composerLoader->findFile($className);
         }
 
