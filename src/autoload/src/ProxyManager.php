@@ -1,7 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Autoload;
-
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
@@ -9,20 +17,43 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
+    /**
+     * The class names which be scaned.
+     * @var array
+     */
+    protected $classNames = [];
 
-    public static function init(array $classes = []): array
+    /**
+     * The classes which be rewrited by proxy.
+     * @var array
+     */
+    protected $proxies = [];
+
+    public function __construct(array $classes = [])
     {
-        $list = static::initProxyList($classes);
-        return static::generateProxyFiles($list);
+        $this->proxies = $this->generateProxyFiles(
+            $this->initProxyList($classes)
+        );
     }
 
-    public static function generateProxyFiles(array $proxies = []): array
+    public function getProxies(): array
+    {
+        return $this->proxies;
+    }
+
+    public function isScaned(string $class): bool
+    {
+        return in_array($class, $this->classNames);
+    }
+
+    public function generateProxyFiles(array $proxies = []): array
     {
         $proxyFiles = [];
         $proxyFileDir = BASE_PATH . '/runtime/container/proxy/';
         if (! file_exists($proxyFileDir)) {
             mkdir($proxyFileDir, 0755, true);
         }
+        // WARNING: Ast should not use static instance. Because it will read code from file, it can be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
             $code = $ast->proxy($className, $className);
@@ -35,7 +66,25 @@ class ProxyManager
         return $proxyFiles;
     }
 
-    private static function initProxyList(array $classes = [])
+    public static function isMatch(string $rule, string $target): bool
+    {
+        if (strpos($rule, '::') !== false) {
+            [$rule,] = explode('::', $rule);
+        }
+        if (strpos($rule, '*') === false && $rule === $target) {
+            return true;
+        }
+        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
+        $pattern = "/^{$preg}$/";
+
+        if (preg_match($pattern, $target)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function initProxyList(array $classes = [])
     {
         // According to the data of AspectCollector to parse all the classes that need proxy.
         $proxies = [];
@@ -54,6 +103,7 @@ class ProxyManager
 
         foreach ($classes as $class) {
             $className = $class->getName();
+            $this->classNames[] = $className;
             // Get the controller annotations.
             $classAnnotations = value(function () use ($className) {
                 $annotations = AnnotationCollector::get($className . '._c', []);
@@ -84,23 +134,4 @@ class ProxyManager
         }
         return $proxies;
     }
-
-    public static function isMatch(string $rule, string $target): bool
-    {
-        if (strpos($rule, '::') !== false) {
-            [$rule,] = explode('::', $rule);
-        }
-        if (strpos($rule, '*') === false && $rule === $target) {
-            return true;
-        }
-        $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
-        $pattern = "/^{$preg}$/";
-
-        if (preg_match($pattern, $target)) {
-            return true;
-        }
-
-        return false;
-    }
-
 }

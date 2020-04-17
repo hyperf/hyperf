@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Autoload;
 
-
-use App\Foo;
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Dotenv\Test;
-use Hyperf\Config\ProviderConfig;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 
 class ClassLoader
 {
-
     /**
      * @var \Composer\Autoload\ClassLoader
      */
@@ -29,6 +32,11 @@ class ClassLoader
      */
     protected $classAspects = [];
 
+    /**
+     * @var ProxyManager
+     */
+    protected $proxyManager;
+
     public function __construct(ComposerClassLoader $classLoader)
     {
         $this->composerLoader = $classLoader;
@@ -36,7 +44,8 @@ class ClassLoader
 
         $scanner = new Scanner($this, $config);
         $classes = $scanner->scan($config->getPaths());
-        $this->proxies = ProxyManager::init($classes);
+        $this->proxyManager = new ProxyManager($classes);
+        $this->proxies = $this->proxyManager->getProxies();
         $this->classAspects = $this->getClassAspects();
     }
 
@@ -49,25 +58,49 @@ class ClassLoader
         }
     }
 
+    public static function init(): void
+    {
+        self::registerClassLoader();
+    }
+
+    public function getClassAspects(): array
+    {
+        $aspects = AspectCollector::get('classes', []);
+        // Remove the useless aspect rules
+        foreach ($aspects as $aspect => $rules) {
+            if (! $rules) {
+                unset($aspects[$aspect]);
+            }
+        }
+        return $aspects;
+    }
+
+    public function getComposerLoader(): ComposerClassLoader
+    {
+        return $this->composerLoader;
+    }
+
     protected function locateFile(string $className)
     {
         if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
             echo '[Load Proxy] ' . $className . PHP_EOL;
             $file = $this->proxies[$className];
         } else {
-            $match = [];
-            foreach ($this->classAspects as $aspect => $rules) {
-                foreach ($rules as $rule) {
-                    if (ProxyManager::isMatch($rule, $className)) {
-                        $match[] = $aspect;
+            if (! $this->proxyManager->isScaned($className)) {
+                $match = [];
+                foreach ($this->classAspects as $aspect => $rules) {
+                    foreach ($rules as $rule) {
+                        if (ProxyManager::isMatch($rule, $className)) {
+                            $match[] = $aspect;
+                        }
                     }
                 }
-            }
-            if ($match) {
-                $match = array_flip(array_flip($match));
-                $proxies = ProxyManager::generateProxyFiles([$className => $match]);
-                $this->proxies = array_merge($this->proxies, $proxies);
-                return $this->locateFile($className);
+                if ($match) {
+                    $match = array_flip(array_flip($match));
+                    $proxies = $this->proxyManager->generateProxyFiles([$className => $match]);
+                    $this->proxies = array_merge($this->proxies, $proxies);
+                    return $this->locateFile($className);
+                }
             }
             echo '[Load Composer] ' . $className . PHP_EOL;
             $file = $this->composerLoader->findFile($className);
@@ -95,33 +128,10 @@ class ClassLoader
         }
 
         unset($loader);
-        
+
         // Re-register the loaders
         foreach ($loaders as $loader) {
             spl_autoload_register($loader);
         }
     }
-
-    public static function init(): void
-    {
-        self::registerClassLoader();
-    }
-
-    public function getClassAspects(): array
-    {
-        $aspects = AspectCollector::get('classes', []);
-        // Remove the useless aspect rules
-        foreach ($aspects as $aspect => $rules) {
-            if (! $rules) {
-                unset($aspects[$aspect]);
-            }
-        }
-        return $aspects;
-    }
-
-    public function getComposerLoader(): ComposerClassLoader
-    {
-        return $this->composerLoader;
-    }
-
 }
