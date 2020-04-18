@@ -52,7 +52,8 @@ class Inject extends AbstractAnnotation
     {
         try {
             $reflectionClass = BetterReflectionManager::reflectClass($className);
-            $reflectionProperty = $reflectionClass->getProperty($target);
+            $properties = $reflectionClass->getImmediateProperties();
+            $reflectionProperty = $properties[$target] ?? null;
             $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
             if ($reflectionTypes[0] instanceof Object_) {
                 $this->value = ltrim((string)$reflectionTypes[0], '\\');

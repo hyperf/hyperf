@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use InvalidArgumentException;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
@@ -63,9 +62,6 @@ class BetterReflectionManager extends MetadataCollector
     public static function reflectClass(string $className): ReflectionClass
     {
         if (! isset(static::$container['class'][$className])) {
-            if (! class_exists($className) && ! interface_exists($className)) {
-                throw new InvalidArgumentException("Class {$className} not exist");
-            }
             static::$container['class'][$className] = static::getClassReflector()->reflect($className);
         }
         return static::$container['class'][$className];
@@ -75,11 +71,9 @@ class BetterReflectionManager extends MetadataCollector
     {
         $key = $className . '::' . $method;
         if (! isset(static::$container['method'][$key])) {
-            // TODO check interface_exist
-            if (! class_exists($className)) {
-                throw new InvalidArgumentException("Class {$className} not exist");
-            }
-            static::$container['method'][$key] = static::reflectClass($className)->getMethod($method);
+            $reflectionClass = static::reflectClass($className);
+            $methods = $reflectionClass->getImmediateMethods();
+            static::$container['method'][$key] = $methods($method);
         }
         return static::$container['method'][$key];
     }
@@ -88,10 +82,9 @@ class BetterReflectionManager extends MetadataCollector
     {
         $key = $className . '::' . $property;
         if (! isset(static::$container['property'][$key])) {
-            if (! class_exists($className)) {
-                throw new InvalidArgumentException("Class {$className} not exist");
-            }
-            static::$container['property'][$key] = static::reflectClass($className)->getProperty($property);
+            $reflectionClass = static::reflectClass($className);
+            $properties = $reflectionClass->getImmediateProperties();
+            static::$container['property'][$key] = $properties[$property];
         }
         return static::$container['property'][$key];
     }
