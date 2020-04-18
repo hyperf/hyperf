@@ -39,14 +39,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-class IndexController
+class IndexController extends AbstractController
 {
     public function example(\League\Flysystem\Filesystem $filesystem)
     {
+        // Process Upload
+        $file = $this->request->file('upload');
+        $stream = fopen($file->getRealPath(), 'r+');
+        $filesystem->writeStream(
+            'uploads/'.$file->getClientFilename(),
+            $stream
+        );
+        fclose($stream);
+        
         // Write Files
         $filesystem->write('path/to/file.txt', 'contents');
 
-        // Write Use writeStream
+        // Add local file
         $stream = fopen('local/path/to/file.txt', 'r+');
         $result = $filesystem->writeStream('path/to/file.txt', $stream);
         if (is_resource($stream)) {
@@ -122,7 +131,8 @@ return [
 
 1. S3 存储请确认安装 `hyperf/guzzle` 组件以提供协程化支持。阿里云、七牛云存储请[开启 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)来使用协程。因 Curl Hook 的参数支持性问题，请使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有对象存储方案均支持 S3 协议，可以使用 S3 适配器。
-3. 以阿里云 OSS 为例，1 核 1 进程读操作性能对比：
+3. 使用Local驱动时，根目录是配置好的地址，而不是操作系统的根目录。例如，Local驱动 `root` 设置为 `/var/www`, 则本地磁盘上 `/var/www/public/file.txt` 下的文件通过 flysystem API 访问时应使用 `/public/file.txt` 或 `public/file.txt` 。
+4. 以阿里云 OSS 为例，1 核 1 进程读操作性能对比：
 
 ```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
