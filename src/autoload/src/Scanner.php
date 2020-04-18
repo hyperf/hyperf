@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
+use App\Controller\AbstractController;
+use App\Controller\IndexController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\BetterReflectionManager;
@@ -78,7 +80,7 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods);
     }
 
-    public function scan(array $paths = [], array $shouldCached = [], array $collectors = []): array
+    public function scan(array $paths = [], array $shouldCache = [], array $collectors = []): array
     {
         $classes = [];
         if (! $paths) {
@@ -93,7 +95,7 @@ class Scanner
         $cached = $this->deserializeCachedCollectors($collectors);
         if (! $cached) {
             foreach ($classes as $reflectionClass) {
-                if (Str::startsWith($reflectionClass->getName(), $shouldCached)) {
+                if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
                     $this->collect($annotationReader, $reflectionClass);
                 }
             }
@@ -111,7 +113,7 @@ class Scanner
         }
 
         foreach ($classes as $reflectionClass) {
-            if (Str::startsWith($reflectionClass->getName(), $shouldCached)) {
+            if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
                 continue;
             }
 

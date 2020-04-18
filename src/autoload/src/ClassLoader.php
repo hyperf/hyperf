@@ -51,7 +51,7 @@ class ClassLoader
         $config = ScanConfig::instance();
 
         $scanner = new Scanner($this, $config);
-        $classes = $scanner->scan($config->getPaths(), $config->getShouldCached(), $config->getCollectors());
+        $classes = $scanner->scan($config->getPaths(), $config->getCacheNamespaces(), $config->getCollectors());
         $this->proxyManager = new ProxyManager($classes);
         $this->proxies = $this->proxyManager->getProxies();
         $this->injects = AnnotationCollector::getPropertiesByAnnotation(Inject::class);

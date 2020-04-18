@@ -17,15 +17,17 @@ final class ScanConfig
 {
     /**
      * The paths should be scaned everytime.
+     *
      * @var array
      */
     private $paths;
 
     /**
      * The namespaces should be cached after scaned.
+     *
      * @var array
      */
-    private $shouldCached;
+    private $cache;
 
     /**
      * @var array
@@ -52,13 +54,13 @@ final class ScanConfig
      */
     private static $instance;
 
-    public function __construct(array $paths = [], array $dependencies = [], array $ignoreAnnotations = [], array $globalImports = [], array $shouldCached = [], array $collectors)
+    public function __construct(array $paths = [], array $dependencies = [], array $ignoreAnnotations = [], array $globalImports = [], array $cacheNamespaces = [], array $collectors)
     {
         $this->paths = $paths;
         $this->dependencies = $dependencies;
         $this->ignoreAnnotations = $ignoreAnnotations;
         $this->globalImports = $globalImports;
-        $this->shouldCached = $shouldCached;
+        $this->cacheNamespaces = $cacheNamespaces;
         $this->collectors = $collectors;
     }
 
@@ -67,9 +69,9 @@ final class ScanConfig
         return $this->paths;
     }
 
-    public function getShouldCached(): array
+    public function getCacheNamespaces(): array
     {
-        return $this->shouldCached;
+        return $this->cacheNamespaces;
     }
 
     public function getCollectors(): array
@@ -113,7 +115,7 @@ final class ScanConfig
         $paths = $configFromProviders['annotations']['scan']['paths'] ?? [];
         $ignoreAnnotations = $configFromProviders['annotations']['scan']['ignore_annotations'] ?? [];
         $globalImports = $configFromProviders['annotations']['scan']['global_imports'] ?? [];
-        $shouldCached = $configFromProviders['annotations']['scan']['should_cached_namespaces'] ?? [];
+        $cacheNamespaces = $configFromProviders['annotations']['scan']['cache_namespaces'] ?? [];
         $collectors = $configFromProviders['annotations']['scan']['collectors'] ?? [];
 
         // Load the config/autoload/annotations.php and merge the config
@@ -122,7 +124,7 @@ final class ScanConfig
             $paths = array_merge($paths, $annotations['scan']['paths'] ?? []);
             $ignoreAnnotations = array_merge($ignoreAnnotations, $annotations['scan']['ignore_annotations'] ?? []);
             $globalImports = array_merge($globalImports, $annotations['scan']['global_imports'] ?? []);
-            $shouldCached = array_merge($shouldCached, $annotations['scan']['should_cached_namespaces'] ?? []);
+            $cacheNamespaces = array_merge($cacheNamespaces, $annotations['scan']['cache_namespaces'] ?? []);
             $collectors = array_merge($collectors, $annotations['scan']['collectors'] ?? []);
         }
 
@@ -133,11 +135,11 @@ final class ScanConfig
                 $paths = array_merge($paths, $configContent['annotations']['scan']['paths'] ?? []);
                 $ignoreAnnotations = array_merge($ignoreAnnotations, $configContent['annotations']['scan']['ignore_annotations'] ?? []);
                 $globalImports = array_merge($globalImports, $configContent['annotations']['scan']['global_imports'] ?? []);
-                $shouldCached = array_merge($shouldCached, $configContent['annotations']['scan']['should_cached_namespaces'] ?? []);
+                $cacheNamespaces = array_merge($cacheNamespaces, $configContent['annotations']['scan']['cache_namespaces'] ?? []);
                 $collectors = array_merge($collectors, $configContent['annotations']['scan']['collectors'] ?? []);
             }
         }
 
-        return self::$instance = new self($paths, $serverDependencies, $ignoreAnnotations, $globalImports, $shouldCached, $collectors);
+        return self::$instance = new self($paths, $serverDependencies, $ignoreAnnotations, $globalImports, $cacheNamespaces, $collectors);
     }
 }
