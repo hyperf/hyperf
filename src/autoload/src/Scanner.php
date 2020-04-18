@@ -94,7 +94,7 @@ class Scanner
         $cached = $this->deserializeCachedCollectors($collectors);
         if (! $cached) {
             foreach ($classes as $reflectionClass) {
-                if (Str::contains($reflectionClass->getName(), $shouldCached)) {
+                if (Str::startsWith($reflectionClass->getName(), $shouldCached)) {
                     $this->collect($annotationReader, $reflectionClass);
                 }
             }
@@ -112,7 +112,7 @@ class Scanner
         }
 
         foreach ($classes as $reflectionClass) {
-            if (Str::contains($reflectionClass->getName(), $shouldCached)) {
+            if (Str::startsWith($reflectionClass->getName(), $shouldCached)) {
                 continue;
             }
 
