@@ -51,4 +51,16 @@ class AspectCollector extends MetadataCollector
         return static::$container;
     }
 
+    public static function serialize(): string
+    {
+        return serialize([static::$aspectRules, static::$container]);
+    }
+
+    public static function deserialize(string $metadata): bool
+    {
+        [$rules, $container] = unserialize($metadata);
+        static::$aspectRules = $rules;
+        static::$container = $container;
+        return true;
+    }
 }

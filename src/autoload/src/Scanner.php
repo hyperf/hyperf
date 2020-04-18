@@ -13,7 +13,11 @@ namespace Hyperf\Autoload;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Hyperf\Di\Annotation\AnnotationInterface;
+use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\MetadataCollector;
+use Hyperf\Utils\Str;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class Scanner
 {
@@ -21,6 +25,8 @@ class Scanner
      * @var ClassLoader
      */
     protected $classloader;
+
+    protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
@@ -34,7 +40,46 @@ class Scanner
         }
     }
 
-    public function scan(array $paths): array
+    public function collect(AnnotationReader $reader, ReflectionClass $reflection)
+    {
+        $className = $reflection->getName();
+        // Parse class annotations
+        $classAnnotations = $reader->getClassAnnotations($reflection);
+        if (! empty($classAnnotations)) {
+            foreach ($classAnnotations as $classAnnotation) {
+                if ($classAnnotation instanceof AnnotationInterface) {
+                    $classAnnotation->collectClass($className);
+                }
+            }
+        }
+        // Parse properties annotations
+        $properties = $reflection->getImmediateProperties();
+        foreach ($properties as $property) {
+            $propertyAnnotations = $reader->getPropertyAnnotations($property);
+            if (! empty($propertyAnnotations)) {
+                foreach ($propertyAnnotations as $propertyAnnotation) {
+                    if ($propertyAnnotation instanceof AnnotationInterface) {
+                        $propertyAnnotation->collectProperty($className, $property->getName());
+                    }
+                }
+            }
+        }
+        // Parse methods annotations
+        $methods = $reflection->getImmediateMethods();
+        foreach ($methods as $method) {
+            $methodAnnotations = $reader->getMethodAnnotations($method);
+            if (! empty($methodAnnotations)) {
+                foreach ($methodAnnotations as $methodAnnotation) {
+                    if ($methodAnnotation instanceof AnnotationInterface) {
+                        $methodAnnotation->collectMethod($className, $method->getName());
+                    }
+                }
+            }
+        }
+        unset($reflection, $classAnnotations, $properties, $methods);
+    }
+
+    public function scan(array $paths = [], array $shouldCached = [], array $collectors = []): array
     {
         $classes = [];
         if (! $paths) {
@@ -46,45 +91,36 @@ class Scanner
         $classes = $reflector->getAllClasses();
 
         $annotationReader = new AnnotationReader();
+        $cached = $this->deserializeCachedCollectors($collectors);
+        if (! $cached) {
+            foreach ($classes as $reflectionClass) {
+                if (Str::contains($reflectionClass->getName(), $shouldCached)) {
+                    $this->collect($annotationReader, $reflectionClass);
+                }
+            }
+
+            $data = [];
+            /** @var MetadataCollector $collector */
+            foreach ($collectors as $collector) {
+                $data[$collector] = $collector::serialize();
+            }
+
+            if ($data) {
+                @mkdir(dirname($this->path), 0777, true);
+                file_put_contents($this->path, serialize($data));
+            }
+        }
 
         foreach ($classes as $reflectionClass) {
-            $className = $reflectionClass->getName();
-            // Parse class annotations
-            $classAnnotations = $annotationReader->getClassAnnotations($reflectionClass);
-            if (! empty($classAnnotations)) {
-                foreach ($classAnnotations as $classAnnotation) {
-                    if ($classAnnotation instanceof AnnotationInterface) {
-                        $classAnnotation->collectClass($className);
-                    }
-                }
+            if (Str::contains($reflectionClass->getName(), $shouldCached)) {
+                continue;
             }
-            // Parse properties annotations
-            $properties = $reflectionClass->getImmediateProperties();
-            foreach ($properties as $property) {
-                $propertyAnnotations = $annotationReader->getPropertyAnnotations($property);
-                if (! empty($propertyAnnotations)) {
-                    foreach ($propertyAnnotations as $propertyAnnotation) {
-                        if ($propertyAnnotation instanceof AnnotationInterface) {
-                            $propertyAnnotation->collectProperty($className, $property->getName());
-                        }
-                    }
-                }
-            }
-            // Parse methods annotations
-            $methods = $reflectionClass->getImmediateMethods();
-            foreach ($methods as $method) {
-                $methodAnnotations = $annotationReader->getMethodAnnotations($method);
-                if (! empty($methodAnnotations)) {
-                    foreach ($methodAnnotations as $methodAnnotation) {
-                        if ($methodAnnotation instanceof AnnotationInterface) {
-                            $methodAnnotation->collectMethod($className, $method->getName());
-                        }
-                    }
-                }
-            }
-            unset($reflectionClass, $classAnnotations, $properties, $methods);
+
+            $this->collect($annotationReader, $reflectionClass);
         }
-        unset($finder, $astLocator, $annotationReader);
+
+        unset($annotationReader);
+
         return $classes;
     }
 
@@ -101,5 +137,22 @@ class Scanner
         }
 
         return $result;
+    }
+
+    protected function deserializeCachedCollectors(array $collectors): bool
+    {
+        if (! file_exists($this->path)) {
+            return false;
+        }
+
+        $data = unserialize(file_get_contents($this->path));
+        foreach ($data as $collector => $deserialized) {
+            /** @var MetadataCollector $collector */
+            if (in_array($collector, $collectors)) {
+                $collector::deserialize($deserialized);
+            }
+        }
+
+        return true;
     }
 }
