@@ -20,7 +20,10 @@ class ConfigProvider
             ],
             'annotations' => [
                 'scan' => [
-                    'should_cached_namespaces' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                    'cache_namespaces' => [
                         'Hyperf',
                     ],
                 ],

@@ -23,7 +23,16 @@ class Aspect extends AbstractAnnotation
 {
     public function collectClass(string $className): void
     {
-        // @TODO Add order property.
+        $this->collect($className);
+    }
+
+    public function collectProperty(string $className, ?string $target): void
+    {
+        $this->collect($className);
+    }
+
+    protected function collect(string $className)
+    {
         if (class_exists($className)) {
             // Create the aspect instance without invoking their constructor.
             $instantitor = new Instantiator();

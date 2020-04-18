@@ -118,7 +118,15 @@ class ProxyManager
                 }
                 return $defined;
             });
-            $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations));
+            $propertyAnnotations = value(function () use ($className) {
+                $defined = [];
+                $annotations = AnnotationCollector::get($className . '._p', []);
+                foreach ($annotations as $property => $annotation) {
+                    $defined = array_merge($defined, array_keys($annotation));
+                }
+                return $defined;
+            });
+            $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations, $propertyAnnotations));
             if ($annotations) {
                 $annotationsAspects = AspectCollector::get('annotations', []);
                 foreach ($annotationsAspects as $aspect => $rules) {

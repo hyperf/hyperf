@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
-use App\Controller\AbstractController;
-use App\Controller\IndexController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\BetterReflectionManager;
@@ -77,7 +75,8 @@ class Scanner
                 }
             }
         }
-        unset($reflection, $classAnnotations, $properties, $methods);
+
+        unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
     }
 
     public function scan(array $paths = [], array $shouldCache = [], array $collectors = []): array

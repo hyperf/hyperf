@@ -13,9 +13,7 @@ namespace Hyperf\Autoload;
 
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Composer;
 
 class ClassLoader
@@ -29,11 +27,6 @@ class ClassLoader
      * @var array
      */
     protected $proxies = [];
-
-    /**
-     * @var array
-     */
-    protected $injects = [];
 
     /**
      * @var array
@@ -54,7 +47,6 @@ class ClassLoader
         $classes = $scanner->scan($config->getPaths(), $config->getCacheNamespaces(), $config->getCollectors());
         $this->proxyManager = new ProxyManager($classes);
         $this->proxies = $this->proxyManager->getProxies();
-        $this->injects = AnnotationCollector::getPropertiesByAnnotation(Inject::class);
         $this->classAspects = $this->getClassAspects();
         $this->initProxies();
     }
@@ -63,18 +55,18 @@ class ClassLoader
     {
         $map = $this->composerLoader->getClassMap();
         $classes = [];
-        foreach ($map as $class => $file) {
+        foreach ($map as $className => $file) {
             $match = [];
             foreach ($this->classAspects as $aspect => $rules) {
                 foreach ($rules as $rule) {
-                    if (ProxyManager::isMatch($rule, $class)) {
+                    if (ProxyManager::isMatch($rule, $className)) {
                         $match[] = $aspect;
                     }
                 }
             }
             if ($match) {
                 $match = array_flip(array_flip($match));
-                $classes[$class] = $match;
+                $classes[$className] = $match;
             }
         }
 

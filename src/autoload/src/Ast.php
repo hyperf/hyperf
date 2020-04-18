@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
+use Hyperf\Autoload\Inject\InjectVisitor;
 use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Utils\Composer;
@@ -54,6 +55,7 @@ class Ast
         $traverser = new NodeTraverser();
         // @TODO Allow user modify or replace node vistor.
         $traverser->addVisitor(new ProxyCallVisitor($className));
+        $traverser->addVisitor(new InjectVisitor());
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }

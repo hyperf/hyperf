@@ -171,12 +171,6 @@ class DefinitionSource implements DefinitionSourceInterface
         $propertyHandlers = PropertyHandlerManager::all();
         if (isset($propertiesMetadata['_p'])) {
             foreach ($propertiesMetadata['_p'] as $propertyName => $value) {
-                // Because `@Inject` is a internal logical of DI component, so leave the code here.
-                /** @var Inject $injectAnnotation */
-                if ($injectAnnotation = $value[Inject::class] ?? null) {
-                    $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
-                    $definition->addPropertyInjection($propertyInjection);
-                }
                 // Handle PropertyHandler mechanism.
                 foreach ($value as $annotationClassName => $annotationObject) {
                     if (isset($propertyHandlers[$annotationClassName])) {
