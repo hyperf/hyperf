@@ -13,7 +13,6 @@ namespace Hyperf\Autoload;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Hyperf\Di\Annotation\AnnotationInterface;
-use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Str;

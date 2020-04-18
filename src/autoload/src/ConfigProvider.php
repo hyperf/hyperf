@@ -19,6 +19,11 @@ class ConfigProvider
             'dependencies' => [
             ],
             'annotations' => [
+                'scan' => [
+                    'should_cached_namespaces' => [
+                        'Hyperf',
+                    ],
+                ],
             ],
             'publish' => [
             ],
