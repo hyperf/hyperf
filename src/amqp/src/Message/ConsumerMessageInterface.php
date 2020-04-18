@@ -32,4 +32,8 @@ interface ConsumerMessageInterface extends MessageInterface
     public function isEnable(): bool;
 
     public function setEnable(bool $enable);
+
+    public function getMaxConsumption(): int;
+
+    public function setMaxConsumption(int $maxConsumption);
 }

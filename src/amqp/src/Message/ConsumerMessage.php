@@ -48,6 +48,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $enable = true;
 
+    /**
+     * @var int
+     */
+    protected $maxConsumption = 0;
+
     public function setQueue(string $queue): self
     {
         $this->queue = $queue;
@@ -95,6 +100,17 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     public function setEnable(bool $enable): self
     {
         $this->enable = $enable;
+        return $this;
+    }
+
+    public function getMaxConsumption(): int
+    {
+        return $this->maxConsumption;
+    }
+
+    public function setMaxConsumption(int $maxConsumption)
+    {
+        $this->maxConsumption = $maxConsumption;
         return $this;
     }
 }
