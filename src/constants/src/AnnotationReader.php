@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Constants;
 
 use Hyperf\Utils\Str;
@@ -43,10 +42,10 @@ class AnnotationReader
 
                 $result = [];
                 foreach ($keys as $i => $key) {
-                    if (isset($values[$i]) && !empty($values[$i])) {
+                    if (isset($values[$i]) && ! empty($values[$i])) {
                         $result[Str::lower($key)] = $values[$i];
-                    } elseif (isset($intValues[$i]) && !empty($intValues[$i])) {
-                        $result[Str::lower($key)] = (int)$intValues[$i];
+                    } elseif (isset($intValues[$i]) && ! empty($intValues[$i])) {
+                        $result[Str::lower($key)] = (int) $intValues[$i];
                     }
                 }
                 return $result;

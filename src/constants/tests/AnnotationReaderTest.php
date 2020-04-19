@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Constants;
 
-use Hyperf\Constants\AnnotationReader;
+use Hyperf\Constants\Annotation\Constants;
 use Hyperf\Constants\ConstantsCollector;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
@@ -20,6 +20,7 @@ use Hyperf\Translation\Translator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
+use HyperfTest\Constants\Stub\SpecificErrorCodeStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -31,28 +32,25 @@ class AnnotationReaderTest extends TestCase
 {
     protected function setUp()
     {
-        $reader = new AnnotationReader();
-
-        $ref = new \ReflectionClass(ErrorCodeStub::class);
-        $classConstants = $ref->getReflectionConstants();
-
-        $data = $reader->getAnnotations($classConstants);
-        ConstantsCollector::set(ErrorCodeStub::class, $data);
-
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), null);
     }
 
     public function testGetAnnotations()
     {
-        $this->getContainer();
+        $constant = new Constants();
+        $constant->collectClass(ErrorCodeStub::class);
+        $constant->collectClass(SpecificErrorCodeStub::class);
+
+        $this->assertSame('Server Error!', ErrorCodeStub::getMessage(ErrorCodeStub::SERVER_ERROR));
+        $this->assertSame('SHOW ECHO', ErrorCodeStub::getMessage(ErrorCodeStub::SHOW_ECHO));
+        $this->assertSame('ECHO', ErrorCodeStub::getEcho(ErrorCodeStub::SHOW_ECHO));
+        $this->assertSame(500, ErrorCodeStub::getHttpStatus(ErrorCodeStub::SHOW_ECHO));
+        $this->assertSame('SHOW ECHO', ErrorCodeStub::getMessage(SpecificErrorCodeStub::SPECIFIC_SHOW_ECHO));
+        $this->assertSame(5012, ErrorCodeStub::getHttpStatus(SpecificErrorCodeStub::SPECIFIC_SHOW_ECHO));
+        $this->assertSame('SHOW ECHO', SpecificErrorCodeStub::getMessage(SpecificErrorCodeStub::SPECIFIC_SHOW_ECHO));
+        $this->assertSame(5012, SpecificErrorCodeStub::getHttpStatus(SpecificErrorCodeStub::SPECIFIC_SHOW_ECHO));
 
         $data = ConstantsCollector::get(ErrorCodeStub::class);
-
-        $this->assertSame('Server Error!', $data[ErrorCodeStub::SERVER_ERROR]['message']);
-        $this->assertSame('SHOW ECHO', $data[ErrorCodeStub::SHOW_ECHO]['message']);
-        $this->assertSame('ECHO', $data[ErrorCodeStub::SHOW_ECHO]['echo']);
-        $this->assertSame(500, $data[ErrorCodeStub::SHOW_ECHO]['httpstatus']);
-
         $this->assertArrayNotHasKey(ErrorCodeStub::NO_MESSAGE, $data);
     }
 
