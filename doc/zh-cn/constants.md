@@ -49,18 +49,63 @@ class ErrorCode extends AbstractConstants
 {
     /**
      * @Message("Server Error！")
+     * @HttpStatus(500)
      */
     const SERVER_ERROR = 500;
 
     /**
      * @Message("系统参数错误")
+     * @HttpStatus(422)
      */
     const SYSTEM_INVALID = 700;
 }
 
 ```
 
-用户可以使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 来获取对应错误信息。
+
+用户可以使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 来获取 `@Message("xxx")` 对应信息。
+用户可以使用 `ErrorCode::getHttpStatus(ErrorCode::SERVER_ERROR)` 来获取 `@HttpStatus(xxx)` 对应 int 类型信息
+
+
+### 共享父类
+
+> 只能承载一级继承关系，当判定为parent class 为非 Hyperf\Constants\AbstractConstants 扫描到的值将会合并并存储在 parent class 中
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Constants;
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class SpecificErrorCode extends ErrorCode
+{
+    /**
+     * @Message("Server Error！")
+     * @HttpStatus(500)
+     */
+    const SPECIFIC_SERVER_ERROR = 501;
+
+    /**
+     * @Message("系统参数错误")
+     * @HttpStatus(422)
+     */
+    const SPECIFIC_SYSTEM_INVALID = 701;
+}
+```
+
+用户可以使用 `ErrorCode::getMessage(SpecificErrorCode::SPECIFIC_SERVER_ERROR)` 来获取 `@Message("xxx")` 对应信息。
+用户可以使用 `ErrorCode::getHttpStatus(SpecificErrorCode::SPECIFIC_SERVER_ERROR)` 来获取 `@HttpStatus(xxx)` 对应 int 类型信息
+或者
+使用 `SpecificErrorCode::getMessage(SpecificErrorCode::SPECIFIC_SERVER_ERROR)` 来获取 `@Message("xxx")` 对应信息。
+使用 `SpecificErrorCode::getHttpStatus(SpecificErrorCode::SPECIFIC_SERVER_ERROR)` 来获取 `@HttpStatus(xxx)` 对应 int 类型信息
+
 
 ### 定义异常类
 
