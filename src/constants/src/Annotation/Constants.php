@@ -26,9 +26,15 @@ class Constants extends AbstractAnnotation
         $reader = new AnnotationReader();
 
         $ref = new \ReflectionClass($className);
+        $class = $ref->getParentClass()->getName();
+
+        if ($class !== AbstractConstants::class) {
+            $className = $class;
+        }
         $classConstants = $ref->getReflectionConstants();
         $data = $reader->getAnnotations($classConstants);
 
+        $data = $data + (ConstantsCollector::get($className) ?? []);
         ConstantsCollector::set($className, $data);
     }
 }

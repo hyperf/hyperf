@@ -30,7 +30,10 @@ abstract class AbstractConstants
 
         $code = $arguments[0];
         $name = strtolower(substr($name, 3));
-        $class = get_called_class();
+        $class = get_parent_class(static::class);
+        if ($class === AbstractConstants::class) {
+            $class = get_called_class();
+        }
 
         $message = ConstantsCollector::getValue($class, $code, $name);
 
