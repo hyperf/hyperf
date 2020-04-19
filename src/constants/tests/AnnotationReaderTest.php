@@ -51,6 +51,7 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('Server Error!', $data[ErrorCodeStub::SERVER_ERROR]['message']);
         $this->assertSame('SHOW ECHO', $data[ErrorCodeStub::SHOW_ECHO]['message']);
         $this->assertSame('ECHO', $data[ErrorCodeStub::SHOW_ECHO]['echo']);
+        $this->assertSame(500, $data[ErrorCodeStub::SHOW_ECHO]['httpstatus']);
 
         $this->assertArrayNotHasKey(ErrorCodeStub::NO_MESSAGE, $data);
     }

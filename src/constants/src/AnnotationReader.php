@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use Hyperf\Utils\Str;
@@ -33,16 +34,19 @@ class AnnotationReader
 
     protected function parse(string $doc)
     {
-        $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
+        $pattern = '/\\@(\\w+)\\(\\s*\\"?(\\d*)(.*?)\\"?\\s*\\)/';
         if (preg_match_all($pattern, $doc, $result)) {
-            if (isset($result[1], $result[2])) {
+            if (isset($result[1], $result[3])) {
                 $keys = $result[1];
-                $values = $result[2];
+                $values = $result[3];
+                $intValues = $result[2];
 
                 $result = [];
                 foreach ($keys as $i => $key) {
-                    if (isset($values[$i])) {
+                    if (isset($values[$i]) && !empty($values[$i])) {
                         $result[Str::lower($key)] = $values[$i];
+                    } elseif (isset($intValues[$i]) && !empty($intValues[$i])) {
+                        $result[Str::lower($key)] = (int)$intValues[$i];
                     }
                 }
                 return $result;

@@ -23,6 +23,7 @@ class ErrorCodeStub extends AbstractConstants
     /**
      * @Message("SHOW ECHO")
      * @Echo("ECHO")
+     * @HttpStatus(500)
      */
     const SHOW_ECHO = 501;
 
