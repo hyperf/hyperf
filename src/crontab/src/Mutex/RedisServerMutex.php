@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Crontab\Crontab;
@@ -53,9 +52,9 @@ class RedisServerMutex implements ServerMutex
         $result = (bool) $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
         if ($result === true) {
-            Coroutine::create(function() use ($crontab, $redis, $mutexName) {
-               $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
-               $exited && $redis->del($mutexName);
+            Coroutine::create(function () use ($crontab, $redis, $mutexName) {
+                $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
+                $exited && $redis->del($mutexName);
             });
             return $result;
         }

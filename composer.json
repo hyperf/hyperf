@@ -74,6 +74,7 @@
         "swoole/ide-helper": "dev-master",
         "sy-records/think-template": "^2.0",
         "symfony/console": "^4.2",
+        "symfony/event-dispatcher": "^4.3",
         "symfony/finder": "^4.1",
         "symfony/property-access": "^4.3",
         "symfony/serializer": "^4.3",
@@ -136,6 +137,9 @@
         "hyperf/websocket-server": "self.version"
     },
     "suggest": {},
+    "conflict": {
+        "symfony/event-dispatcher": "<4.3"
+    },
     "autoload": {
         "files": [
             "src/config/src/Functions.php",

@@ -18,6 +18,7 @@ composer require hyperf/async-queue
 |:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
 |     channel      |  string   |                    queue                    |                队列前缀                 |
+|    redis.pool    |  string   |                    default                  |                redis连接池              |
 |     timeout      |    int    |                      2                      |           pop 消息的超时时间            |
 |  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
 |  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
@@ -31,6 +32,9 @@ composer require hyperf/async-queue
 return [
     'default' => [
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
         'channel' => 'queue',
         'timeout' => 2,
         'retry_seconds' => 5,

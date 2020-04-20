@@ -53,7 +53,7 @@ class RoutesCommand extends HyperfCommand
         $server = $this->input->getOption('server');
 
         $factory = $this->container->get(DispatcherFactory::class);
-        $router = $factory->getRouter('http');
+        $router = $factory->getRouter($server);
         $this->show(
             $this->analyzeRouter($server, $router, $path),
             $this->output

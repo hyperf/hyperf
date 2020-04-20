@@ -1,5 +1,24 @@
 # 版本更新记录
 
+# v1.1.26 - 2020-04-16
+
+## Added
+
+- [#1578](https://github.com/hyperf/hyperf/pull/1578) `UploadedFile` 支持 `getStream` 方法。
+
+## Fixed
+
+- [#1563](https://github.com/hyperf/hyperf/pull/1563) 修复服务关停后，定时器的 `onOneServer` 配置不会被重置。
+- [#1565](https://github.com/hyperf/hyperf/pull/1565) 当 `DB` 组件重连 `Mysql` 时，重置事务等级为 0。
+- [#1572](https://github.com/hyperf/hyperf/pull/1572) 修复 `Hyperf\GrpcServer\CoreMiddleware` 中，自定义类的父类找不到时报错的BUG。
+- [#1577](https://github.com/hyperf/hyperf/pull/1577) 修复 `describe:routes` 脚本 `server` 配置不生效的BUG。
+- [#1579](https://github.com/hyperf/hyperf/pull/1579) 修复 `migrate:refresh` 脚本 `step` 参数不为 `int` 时会报错的BUG。
+
+## Changed
+
+- [#1560](https://github.com/hyperf/hyperf/pull/1560) 修改 `hyperf/cache` 组件文件缓存引擎中 原生的文件操作为 `Filesystem`。
+- [#1568](https://github.com/hyperf/hyperf/pull/1568) 修改 `hyperf/async-queue` 组件 `Redis` 引擎中的 `\Redis` 为 `RedisProxy`。
+
 # v1.1.25 - 2020-04-09
 
 ## Fixed
