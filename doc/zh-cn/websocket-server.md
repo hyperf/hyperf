@@ -111,12 +111,12 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
     public function onMessage(WebSocketServer $server, Frame $frame): void
     {
-        $server->push($frame->fd, 'Cookie: ' . Context::get('cookie'));
+        $server->push($frame->fd, 'Username: ' . Context::get('username'));
     }
 
     public function onOpen(WebSocketServer $server, Request $request): void
     {
-        Context::set('cookie', $request->cookie);
+        Context::set('username', $request->cookie['username']);
     }
 }
 ```
