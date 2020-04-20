@@ -41,8 +41,7 @@ class Context
     {
         $fd = $fd ?? CoContext::get(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
-        $notFound = new stdClass();
-        return data_get(self::$container, $key, $notFound) !== $notFound;
+        return data_get(self::$container, $key) !== null;
     }
 
     public static function destroy(string $id)
