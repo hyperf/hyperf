@@ -1,5 +1,9 @@
 # v1.1.27 - TBD
 
+## Added
+
+- [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
+
 # v1.1.26 - 2020-04-16
 
 ## Added
