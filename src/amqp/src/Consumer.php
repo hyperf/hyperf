@@ -96,7 +96,6 @@ class Consumer extends Builder
                 $channel->wait();
             }
         } catch (MaxConsumptionException $ex) {
-
         }
 
         $pool->release($connection);

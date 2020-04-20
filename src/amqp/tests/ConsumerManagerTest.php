@@ -57,7 +57,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
                 $this->assertSame($nums, $item->nums);
-                $this->assertSame($maxConsumption, $this->getMaxConsumption());
+                $this->assertSame($maxConsumption, $message->getMaxConsumption());
                 break;
             }
         }
