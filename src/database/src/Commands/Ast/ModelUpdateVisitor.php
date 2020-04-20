@@ -363,7 +363,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected static function getReflector(): ClassReflector
     {
-        if (isset(self::$reflector)) {
+        if (self::$reflector instanceof ClassReflector) {
             return self::$reflector;
         }
 

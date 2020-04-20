@@ -30,7 +30,6 @@
     },
     "require-dev": {
         "bandwidth-throttle/token-bucket": "^2.0",
-        "barryvdh/reflection-docblock": "^2.0",
         "doctrine/annotations": "^1.6",
         "doctrine/common": "@stable",
         "doctrine/inflector": "^1.3",
