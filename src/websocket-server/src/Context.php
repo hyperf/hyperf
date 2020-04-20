@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Utils\Context as CoContext;
@@ -26,22 +25,23 @@ class Context
     public static function set(string $id, $value)
     {
         $fd = CoContext::get(Context::FD, 0);
-        $key = sprintf('%s.%s', $fd, $id);
+        $key = sprintf('%d.%s', $fd, $id);
         data_set(self::$container, $key, $value);
         return $value;
     }
 
     public static function get(string $id, $default = null, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD);
-        $key = sprintf('%s.%s', $fd, $id);
+        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $key = sprintf('%d.%s', $fd, $id);
         return data_get(self::$container, $key, $default);
     }
 
     public static function has(string $id, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD);
-        return isset(self::$container[strval($fd)]) && isset(self::$container[strval($fd)][$id]);
+        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $key = sprintf('%d.%s', $fd, $id);
+        return data_get(self::$container, $key) !== null;
     }
 
     public static function destroy(string $id)
@@ -50,8 +50,9 @@ class Context
         unset(self::$container[strval($fd)][$id]);
     }
 
-    public static function release(int $fd)
+    public static function release(?int $fd = null)
     {
+        $fd = $fd ?? CoContext::get(Context::FD, 0);
         unset(self::$container[strval($fd)]);
     }
 
