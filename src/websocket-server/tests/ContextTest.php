@@ -60,7 +60,6 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         Context::set('override.id', 1);
         $this->assertSame(2, Context::override('override.id', function ($id) {
-            var_dump($id);
             return $id + 1;
         }));
 
