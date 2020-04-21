@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils\Coordinator;
 
 class CoordinatorManager
@@ -44,7 +43,7 @@ class CoordinatorManager
     }
 
     /**
-     * Alias of static::until
+     * Alias of static::until.
      */
     public static function get(string $identifier): Coordinator
     {

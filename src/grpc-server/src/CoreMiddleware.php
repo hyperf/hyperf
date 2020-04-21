@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcServer;
 
 use FastRoute\Dispatcher;
@@ -131,7 +130,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         $ref = $definition['ref'];
                         $class = ReflectionManager::reflectClass($ref);
                         $parentClass = $class->getParentClass();
-                        if ($parentClass->getName() === ProtobufMessage::class) {
+                        if ($parentClass && $parentClass->getName() === ProtobufMessage::class) {
                             $request = $this->request();
                             $stream = $request->getBody();
                             return Parser::deserializeMessage([$class->getName(), null], $stream->getContents());
