@@ -56,13 +56,17 @@ class Filesystem
             $contents = '';
             $handle = fopen($path, 'rb');
             if ($handle) {
+                $wouldBlock = false;
+                flock($handle, LOCK_SH | LOCK_NB, $wouldBlock);
+                while ($wouldBlock) {
+                    usleep(1000);
+                    flock($handle, LOCK_SH | LOCK_NB, $wouldBlock);
+                }
                 try {
-                    if (flock($handle, LOCK_SH)) {
-                        clearstatcache(true, $path);
-                        $contents = fread($handle, $this->size($path) ?: 1);
-                        flock($handle, LOCK_UN);
-                    }
+                    clearstatcache(true, $path);
+                    $contents = fread($handle, $this->size($path) ?: 1);
                 } finally {
+                    flock($handle, LOCK_UN);
                     fclose($handle);
                 }
             }
@@ -112,7 +116,21 @@ class Filesystem
     {
         if ($lock) {
             return $this->atomic($path, function ($path) use ($contents, $lock) {
-                return file_put_contents($path, $contents, LOCK_EX);
+                $handle = fopen($path, 'w+');
+                if ($handle) {
+                    $wouldBlock = false;
+                    flock($handle, LOCK_EX | LOCK_NB, $wouldBlock);
+                    while ($wouldBlock) {
+                        usleep(1000);
+                        flock($handle, LOCK_EX | LOCK_NB, $wouldBlock);
+                    }
+                    try {
+                        fwrite($handle, $contents);
+                    } finally {
+                        flock($handle, LOCK_UN);
+                        fclose($handle);
+                    }
+                }
             });
         }
         return file_put_contents($path, $contents);
