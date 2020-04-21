@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DB;
 
 use Hyperf\DB\Exception\RuntimeException;
@@ -78,7 +77,7 @@ class MySQLConnection extends AbstractConnection
 
         $this->connection = $connection;
         $this->lastUseTime = microtime(true);
-
+        $this->transactions = 0;
         return true;
     }
 

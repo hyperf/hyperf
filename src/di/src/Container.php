@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
 use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
@@ -31,8 +30,6 @@ class Container implements HyperfContainerInterface
 
     /**
      * Map of definitions that are already fetched (local cache).
-     *
-     * @var (DefinitionInterface|null)[]
      */
     private $fetchedDefinitions = [];
 
