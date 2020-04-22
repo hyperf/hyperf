@@ -5,6 +5,10 @@
 - [#1575](https://github.com/hyperf/hyperf/pull/1575) Added document of property with relation, scope and attributes.
 - [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
 
+## Fixed
+
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) Fixed bug that the return value of function `go` is not adaptive with `swoole`.
+
 # v1.1.26 - 2020-04-16
 
 ## Added

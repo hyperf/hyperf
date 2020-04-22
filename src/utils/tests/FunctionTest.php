@@ -29,6 +29,17 @@ class FunctionTest extends TestCase
         $this->assertSame(2, $result);
     }
 
+    public function testReturnOfGo()
+    {
+        $uniqid = uniqid();
+        $id = go(function () use (&$uniqid) {
+            $uniqid = 'Hyperf';
+        });
+
+        $this->assertTrue(is_int($id));
+        $this->assertSame('Hyperf', $uniqid);
+    }
+
     public function testDataGet()
     {
         $data = ['id' => 1];
