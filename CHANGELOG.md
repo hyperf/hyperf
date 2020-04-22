@@ -4,6 +4,7 @@
 
 - [#1575](https://github.com/hyperf/hyperf/pull/1575) Added document of property with relation, scope and attributes.
 - [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) Fixed `describe:routes` when router handler is `Closure`.
 
 ## Fixed
 
