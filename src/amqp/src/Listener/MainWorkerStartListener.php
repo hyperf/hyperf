@@ -70,6 +70,9 @@ class MainWorkerStartListener implements ListenerInterface
                 if (! $instance instanceof ProducerMessageInterface) {
                     continue;
                 }
+                if (! $annotation->enable) {
+                    continue;
+                }
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {

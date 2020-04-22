@@ -28,4 +28,9 @@ class Producer extends AbstractAnnotation
      * @var string
      */
     public $routingKey = '';
+
+    /**
+     * @var bool
+     */
+    public $enable = true;
 }
