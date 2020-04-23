@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
@@ -150,7 +149,7 @@ class RpcServiceClientTest extends TestCase
         $transporter->shouldReceive('setLoadBalancer')
             ->andReturnSelf();
         $transporter->shouldReceive('send')
-            ->andReturnUsing(function ($data)  {
+            ->andReturnUsing(function ($data) {
                 $data = json_decode($data, true);
                 return json_encode([
                     'id' => $data['id'],

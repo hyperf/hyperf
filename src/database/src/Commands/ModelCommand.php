@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
@@ -184,6 +183,7 @@ class ModelCommand extends Command
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
         $traverser->addVisitor(make(ModelUpdateVisitor::class, [
+            'class' => $class,
             'columns' => $columns,
             'option' => $option,
         ]));

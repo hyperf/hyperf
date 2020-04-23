@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigZookeeper\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -68,7 +67,7 @@ class BootProcessListener implements ListenerInterface
                 retry(INF, function () use ($interval) {
                     $prevConfig = [];
                     while (true) {
-                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
                         $workerExited = $coordinator->yield($interval);
                         if ($workerExited) {
                             break;

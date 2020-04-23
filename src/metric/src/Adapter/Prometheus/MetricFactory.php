@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
@@ -130,7 +129,7 @@ class MetricFactory implements MetricFactoryInterface
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
             $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
-            $workerExited = CoordinatorManager::get(Coord::ON_WORKER_EXIT)->yield($interval);
+            $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
                 break;
             }
@@ -139,7 +138,7 @@ class MetricFactory implements MetricFactoryInterface
 
     protected function customHandle()
     {
-        CoordinatorManager::get(Coord::ON_WORKER_EXIT)->yield(); // Yield forever
+        CoordinatorManager::until(Coord::WORKER_EXIT)->yield(); // Yield forever
     }
 
     private function getNamespace(): string
