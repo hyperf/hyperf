@@ -40,6 +40,7 @@ class ConsumerManagerTest extends TestCase
             'routingKey' => $routingKey = uniqid(),
             'queue' => $queue = uniqid(),
             'nums' => $nums = rand(1, 10),
+            'maxConsumption' => $maxConsumption = rand(1, 10),
         ]));
 
         $manager = new ConsumerManager($container);
@@ -56,6 +57,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
                 $this->assertSame($nums, $item->nums);
+                $this->assertSame($maxConsumption, $message->getMaxConsumption());
                 break;
             }
         }

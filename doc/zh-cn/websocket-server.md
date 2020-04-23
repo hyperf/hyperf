@@ -89,3 +89,34 @@ $ php bin/hyperf.php start
 [INFO] WebSocket Server listening at 0.0.0.0:9502
 [INFO] HTTP Server listening at 0.0.0.0:9501
 ```
+
+## 连接上下文
+
+WebSocket 服务的 onOpen, onMessage, onClose 回调并不在同一个协程下触发，因此不能直接使用协程上下文存储状态信息。WebSocket Server 组件提供了 **连接级** 的上下文，API 与协程上下文完全一样。
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\Contract\OnMessageInterface;
+use Hyperf\Contract\OnOpenInterface;
+use Hyperf\WebSocketServer\Context;
+use Swoole\Http\Request;
+use Swoole\Websocket\Frame;
+use Swoole\WebSocket\Server as WebSocketServer;
+
+class WebSocketController implements OnMessageInterface, OnOpenInterface
+{
+    public function onMessage(WebSocketServer $server, Frame $frame): void
+    {
+        $server->push($frame->fd, 'Username: ' . Context::get('username'));
+    }
+
+    public function onOpen(WebSocketServer $server, Request $request): void
+    {
+        Context::set('username', $request->cookie['username']);
+    }
+}
+```

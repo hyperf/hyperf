@@ -4,10 +4,13 @@
 
 - [#1575](https://github.com/hyperf/hyperf/pull/1575) Added document of property with relation, scope and attributes.
 - [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
+- [#1597](https://github.com/hyperf/hyperf/pull/1597) Added `maxConsumption` for amqp consumer.
 - [#1624](https://github.com/hyperf/hyperf/pull/1624) Fixed `describe:routes` when router handler is `Closure`.
 
 ## Fixed
 
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) Fixed the rpc client do not work, when jsonrpc server register the same service to consul with jsonrpc and jsonrpc-http protocol.
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) Fixed unsafe file locks in coroutines.
 - [#1607](https://github.com/hyperf/hyperf/pull/1607) Fixed bug that the return value of function `go` is not adaptive with `swoole`.
 
 # v1.1.26 - 2020-04-16
@@ -15,6 +18,10 @@
 ## Added
 
 - [#1578](https://github.com/hyperf/hyperf/pull/1578) Support `getStream` method in `UploadedFile.php`.
+
+## Added
+
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) Added connection level context for `hyperf/websocket-server`.
 
 ## Fixed
 
