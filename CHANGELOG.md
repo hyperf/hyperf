@@ -1,10 +1,13 @@
-# v1.1.27 - TBD
+# v1.1.28 - TBD
+
+# v1.1.27 - 2020-04-23
 
 ## Added
 
 - [#1575](https://github.com/hyperf/hyperf/pull/1575) Added document of property with relation, scope and attributes.
 - [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
 - [#1597](https://github.com/hyperf/hyperf/pull/1597) Added `maxConsumption` for amqp consumer.
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) Added WebSocket Context to save data from the same fd.
 
 ## Fixed
 
