@@ -192,8 +192,6 @@ abstract class AbstractServiceClient
 
         // Current $consumer is the config of the specified consumer.
         if (isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
-            // set protocol
-            $this->protocol = $consumer['protocol'];
             // According to the protocol and address of the registry, retrieve the nodes.
             switch ($registryProtocol = $consumer['registry']['protocol'] ?? '') {
                 case 'consul':
