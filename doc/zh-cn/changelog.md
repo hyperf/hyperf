@@ -13,8 +13,8 @@
 
 - [#1553](https://github.com/hyperf/hyperf/pull/1553) 修复 `jsonrpc` 服务，发布了相同名字不同协议到 `consul` 后，客户端无法正常工作的BUG。
 - [#1589](https://github.com/hyperf/hyperf/pull/1589) 修复了文件锁在协程下可能会造成死锁的BUG。
-- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修复了重写后的 `go` 方法，返回值与 `swoole` 远程方法不符的BUG。
-- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修复当 `Handler` 是匿名函数时，脚本 `describe:routes` 执行失败的BUG。
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修复了重写后的 `go` 方法，返回值与 `swoole` 原生方法不符的BUG。
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修复当路由 `Handler` 是匿名函数时，脚本 `describe:routes` 执行失败的BUG。
 
 # v1.1.26 - 2020-04-16
 
