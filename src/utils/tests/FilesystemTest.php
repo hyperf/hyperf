@@ -11,8 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -20,6 +22,27 @@ use Swoole\Coroutine\Channel;
  */
 class FilesystemTest extends TestCase
 {
+    public function testLock()
+    {
+        Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
+        file_put_contents('./test.txt', str_repeat('a', 10000));
+        $p = new Parallel();
+        for ($i = 0; $i < 100; ++$i) {
+            $p->add(function () {
+                $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+                $fs->put('./test.txt', str_repeat('b', 100000), true);
+                $this->assertEquals(100000, strlen($fs->get('./test.txt', true)));
+            });
+            $p->add(function () {
+                $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+                $this->assertEquals(100000, strlen($fs->get('./test.txt', true)));
+                $fs->put('./test.txt', str_repeat('c', 100000), true);
+            });
+        }
+        $p->wait();
+        unlink('./test.txt');
+    }
+
     /**
      * @group NonCoroutine
      */
