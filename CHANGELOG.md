@@ -1,5 +1,7 @@
 # v1.1.27 - TBD
 
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) Fixed file locks not safe in coroutines.
+
 # v1.1.26 - 2020-04-16
 
 ## Added
