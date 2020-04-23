@@ -82,6 +82,21 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 </table>
 <!--gold end-->
 
+# 性能
+
+### 阿里云 8 核 16G
+命令: `wrk -c 1024 -t 8 http://127.0.0.1:9501/`
+```bash
+Running 10s test @ http://127.0.0.1:9501/
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    10.08ms    6.82ms  56.66ms   70.19%
+    Req/Sec    13.17k     5.94k   33.06k    84.12%
+  1049478 requests in 10.10s, 190.16MB read
+Requests/sec: 103921.49
+Transfer/sec:     18.83MB
+```
+
 # 开源协议
 
 Hyperf 是一个基于 [MIT 协议](https://github.com/hyperf/hyperf/blob/master/LICENSE) 开源的软件。
