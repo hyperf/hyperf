@@ -2,7 +2,6 @@
 <?php
 
 $code = 0;
-
 \Swoole\Coroutine::create(function () use (&$code) {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
