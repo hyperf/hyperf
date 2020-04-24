@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-$exit_code = 0;
+$code = 0;
 
-\Swoole\Coroutine::create(function () {
+\Swoole\Coroutine::create(function () use (&$code) {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
             STDERR,
@@ -60,10 +60,9 @@ $exit_code = 0;
 
     require PHPUNIT_COMPOSER_INSTALL;
 
-    global $exit_code;
-    $exit_code = PHPUnit\TextUI\Command::main(false);
+    $code = PHPUnit\TextUI\Command::main(false);
 });
 
 swoole_event_wait();
 
-exit($exit_code);
+exit($code);
