@@ -1,5 +1,9 @@
 # v1.1.28 - TBD
 
+## Fixed
+
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
+
 ## Optimized 
 
 - [#1636](https://github.com/hyperf/hyperf/pull/1636) Optimized `co-phpunit` do not broken in coroutine environment, when cases failed.
