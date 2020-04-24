@@ -61,11 +61,6 @@ class ClientTest extends TestCase
         $this->assertSame('Server Error', $data['message']);
     }
 
-    public function testFailed()
-    {
-        $this->assertSame(1, 2);
-    }
-
     public function getContainer()
     {
         $container = Mockery::mock(Container::class);
