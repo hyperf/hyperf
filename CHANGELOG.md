@@ -1,5 +1,9 @@
 # v1.1.28 - TBD
 
+## Optimized 
+
+- [#1636](https://github.com/hyperf/hyperf/pull/1636) Optimized `co-phpunit` do not broken in coroutine environment, when cases failed.
+
 # v1.1.27 - 2020-04-23
 
 ## Added
