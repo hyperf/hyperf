@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Autoload\Inject;
+namespace Hyperf\Di\Inject;
 
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;
@@ -27,6 +27,7 @@ class InjectAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        // Do nothing, just to mark the class should be generate the proxy classs.
         return $proceedingJoinPoint->process();
     }
 }

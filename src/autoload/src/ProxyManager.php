@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Autoload;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -19,7 +18,7 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 class ProxyManager
 {
     /**
-     * The class names which be handled.
+     * The map to collect the class names which has been handled.
      *
      * @var array
      */
@@ -42,9 +41,9 @@ class ProxyManager
     public function __construct(
         array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
-        ?string $proxyFileDir = null
+        string $proxyFileDir
     ) {
-        $this->proxyFileDir = $proxyFileDir ?? BASE_PATH . '/runtime/container/proxy/';
+        $this->proxyFileDir = $proxyFileDir;
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
@@ -82,7 +81,7 @@ class ProxyManager
         // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
-            $code = $ast->proxy($className, $className);
+            $code = $ast->proxy($className);
             $proxyFilePath = $this->getProxyFileDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
             if (! file_exists($proxyFilePath)) {
                 file_put_contents($proxyFilePath, $code);
@@ -114,6 +113,9 @@ class ProxyManager
     {
         // According to the data of AspectCollector to parse all the classes that need proxy.
         $proxies = [];
+        if (! $reflectionClassMap) {
+            return $proxies;
+        }
         $classesAspects = AspectCollector::get('classes', []);
         foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
@@ -155,16 +157,10 @@ class ProxyManager
     protected function initProxiesByComposerClassMap(array $classMap = []): array
     {
         $proxies = [];
-        $classAspects = value(function () {
-            $aspects = AspectCollector::get('classes', []);
-            // Remove the useless aspect rules
-            foreach ($aspects as $aspect => $rules) {
-                if (! $rules) {
-                    unset($aspects[$aspect]);
-                }
-            }
-            return $aspects;
-        });
+        if (! $classMap) {
+            return $proxies;
+        }
+        $classAspects = $this->getClassAspects();
         if ($classAspects) {
             foreach ($classMap as $className => $file) {
                 $match = [];
@@ -186,6 +182,18 @@ class ProxyManager
         return $proxies;
     }
 
+    protected function getClassAspects(): array
+    {
+        $aspects = AspectCollector::get('classes', []);
+        // Remove the useless aspect rules
+        foreach ($aspects as $aspect => $rules) {
+            if (! $rules) {
+                unset($aspects[$aspect]);
+            }
+        }
+        return $aspects;
+    }
+
     protected function retriveAnnotations(string $annotationCollectorKey): array
     {
         $defined = [];
@@ -199,5 +207,4 @@ class ProxyManager
         }
         return $defined;
     }
-
 }

@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use Hyperf\Autoload\AstVisitorCollector;
+use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Aop\ProxyCallVisitor;
@@ -22,6 +24,10 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
+        // Register AST visitors to the collector.
+        AstVisitorCollector::set(ProxyCallVisitor::class, new ProxyCallVisitor());
+        AstVisitorCollector::set(InjectVisitor::class, new InjectVisitor());
+
         return [
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,

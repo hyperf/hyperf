@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Autoload\VisitorInterface;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -33,7 +32,7 @@ use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
 
-class ProxyCallVisitor extends NodeVisitorAbstract implements VisitorInterface
+class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
      * Determine if the class used proxy trait.
@@ -65,11 +64,15 @@ class ProxyCallVisitor extends NodeVisitorAbstract implements VisitorInterface
     /**
      * @var string
      */
-    private $classname;
+    private $className;
 
-    public function __construct(string $classname)
+    /**
+     * @return $this
+     */
+    public function setClassName(string $className)
     {
-        $this->classname = $classname;
+        $this->className = $className;
+        return $this;
     }
 
     public function beforeTraverse(array $nodes)
@@ -282,7 +285,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract implements VisitorInterface
             return false;
         }
 
-        $rewriteCollection = Aspect::parse($this->classname);
+        $rewriteCollection = Aspect::parse($this->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
     }

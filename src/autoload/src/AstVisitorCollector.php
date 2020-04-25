@@ -11,7 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
-interface VisitorInterface
+use Hyperf\Utils\Traits\Container;
+
+class AstVisitorCollector
 {
-    public function __construct(string $classname);
+    use Container;
+
+    /**
+     * @var array
+     */
+    protected static $container = [];
 }

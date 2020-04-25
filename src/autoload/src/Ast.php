@@ -11,9 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Autoload;
 
-use Hyperf\Autoload\Inject\InjectVisitor;
-use Hyperf\Di\Aop\AstCollector;
-use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Utils\Composer;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;
@@ -46,16 +43,18 @@ class Ast
         return $this->astParser->parse($code);
     }
 
-    public function proxy(string $className, string $proxyClassName)
+    public function proxy(string $className)
     {
-        $stmts = AstCollector::get($className, value(function () use ($className) {
-            $code = $this->getCodeByClassName($className);
-            return $stmts = $this->astParser->parse($code);
-        }));
+        $code = $this->getCodeByClassName($className);
+        $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
-        // @TODO Allow user modify or replace node vistor.
-        $traverser->addVisitor(new ProxyCallVisitor($className));
-        $traverser->addVisitor(new InjectVisitor());
+        // User could modify or replace the node vistors by Hyperf\Autoload\AstVisitorCollector.
+        foreach (AstVisitorCollector::list() as $visitor) {
+            if (method_exists($visitor, 'setClassName')) {
+                $visitor->setClassName($className);
+            }
+            $traverser->addVisitor($visitor);
+        }
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }
