@@ -107,9 +107,6 @@ final class ScanConfig
             return self::$instance;
         }
 
-        $config = [];
-        $serverDependencies = [];
-
         [$config, $serverDependencies] = static::initConfigByFile(BASE_PATH . '/config');
 
         return self::$instance = new self(
