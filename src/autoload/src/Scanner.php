@@ -25,11 +25,17 @@ class Scanner
      */
     protected $classloader;
 
+    /**
+     * @var \Hyperf\Autoload\ScanConfig
+     */
+    protected $scanConfig;
+
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
+        $this->scanConfig = $scanConfig;
 
         foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
@@ -81,6 +87,15 @@ class Scanner
 
     public function scan(array $paths = [], array $shouldCache = [], array $collectors = []): array
     {
+        if (! $paths) {
+            $paths = $this->scanConfig->getPaths();
+        }
+        if (! $shouldCache) {
+            $shouldCache = $this->scanConfig->getCacheNamespaces();
+        }
+        if (! $collectors) {
+            $collectors = $this->scanConfig->getCollectors();
+        }
         $classes = [];
         if (! $paths) {
             return $classes;

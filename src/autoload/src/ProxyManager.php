@@ -19,11 +19,11 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 class ProxyManager
 {
     /**
-     * The class names which be scaned.
+     * The class names which be handled.
      *
      * @var array
      */
-    protected $classNames = [];
+    protected $classNameMap = [];
 
     /**
      * The classes which be rewrited by proxy.
@@ -32,12 +32,22 @@ class ProxyManager
      */
     protected $proxies = [];
 
-    public function __construct(array $reflectionClassMap = [], array $composerLoaderClassMap = [])
-    {
-        $this->proxies = array_merge(
-            $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap)),
-            $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap))
-        );
+    /**
+     * The directory which the proxy file places in.
+     *
+     * @var string
+     */
+    protected $proxyFileDir;
+
+    public function __construct(
+        array $reflectionClassMap = [],
+        array $composerLoaderClassMap = [],
+        ?string $proxyFileDir = null
+    ) {
+        $this->proxyFileDir = $proxyFileDir ?? BASE_PATH . '/runtime/container/proxy/';
+        $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
+        $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
+        $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
     }
 
     public function getProxies(): array
@@ -45,56 +55,35 @@ class ProxyManager
         return $this->proxies;
     }
 
-    public function isScaned(string $class): bool
+    public function getProxyFileDir(): string
     {
-        return in_array($class, $this->classNames);
+        return $this->proxyFileDir;
     }
 
-    protected function initProxiesByComposerClassMap(array $classMap)
+    public function getClassNameMap(): array
     {
-        $classes = [];
-        $classAspects = value(function () {
-            $aspects = AspectCollector::get('classes', []);
-            // Remove the useless aspect rules
-            foreach ($aspects as $aspect => $rules) {
-                if (! $rules) {
-                    unset($aspects[$aspect]);
-                }
-            }
-            return $aspects;
-        });
-        if ($classAspects) {
-            foreach ($classMap as $className => $file) {
-                $match = [];
-                foreach ($classAspects as $aspect => $rules) {
-                    foreach ($rules as $rule) {
-                        if (ProxyManager::isMatch($rule, $className)) {
-                            $match[] = $aspect;
-                        }
-                    }
-                }
-                if ($match) {
-                    $match = array_flip(array_flip($match));
-                    $classes[$className] = $match;
-                }
-            }
-        }
+        return $this->classNameMap;
+    }
 
-        return $this->generateProxyFiles($classes);
+    public function isClassHandled(string $className): bool
+    {
+        return in_array($className, $this->getClassNameMap());
     }
 
     protected function generateProxyFiles(array $proxies = []): array
     {
         $proxyFiles = [];
-        $proxyFileDir = BASE_PATH . '/runtime/container/proxy/';
-        if (! file_exists($proxyFileDir)) {
-            mkdir($proxyFileDir, 0755, true);
+        if (! $proxies) {
+            return $proxyFiles;
         }
-        // WARNING: Ast should not use static instance. Because it will read code from file, it can be caused coroutine switch.
+        if (! file_exists($this->getProxyFileDir())) {
+            mkdir($this->getProxyFileDir(), 0755, true);
+        }
+        // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
             $code = $ast->proxy($className, $className);
-            $proxyFilePath = $proxyFileDir . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
+            $proxyFilePath = $this->getProxyFileDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
             if (! file_exists($proxyFilePath)) {
                 file_put_contents($proxyFilePath, $code);
             }
@@ -103,7 +92,7 @@ class ProxyManager
         return $proxyFiles;
     }
 
-    protected static function isMatch(string $rule, string $target): bool
+    protected function isMatch(string $rule, string $target): bool
     {
         if (strpos($rule, '::') !== false) {
             [$rule,] = explode('::', $rule);
@@ -121,15 +110,15 @@ class ProxyManager
         return false;
     }
 
-    protected function initProxiesByReflectionClassMap(array $betterReflectionClasses = []): array
+    protected function initProxiesByReflectionClassMap(array $reflectionClassMap = []): array
     {
         // According to the data of AspectCollector to parse all the classes that need proxy.
         $proxies = [];
         $classesAspects = AspectCollector::get('classes', []);
         foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                foreach ($betterReflectionClasses as $class) {
-                    if ($class instanceof ReflectionClass || ! static::isMatch($rule, $class->getName())) {
+                foreach ($reflectionClassMap as $class) {
+                    if ($class instanceof ReflectionClass || ! $this->isMatch($rule, $class->getName())) {
                         continue;
                     }
                     $proxies[$class->getName()][] = $aspect;
@@ -137,9 +126,9 @@ class ProxyManager
             }
         }
 
-        foreach ($betterReflectionClasses as $class) {
+        foreach ($reflectionClassMap as $class) {
             $className = $class->getName();
-            $this->classNames[] = $className;
+            $this->classNameMap[] = $className;
             // Aggregate the class annotations
             $classAnnotations = $this->retriveAnnotations($className . '._c');
             // Aggregate all methods annotations
@@ -152,7 +141,7 @@ class ProxyManager
                 foreach ($annotationsAspects as $aspect => $rules) {
                     foreach ($rules as $rule) {
                         foreach ($annotations as $annotation) {
-                            if (static::isMatch($rule, $annotation)) {
+                            if ($this->isMatch($rule, $annotation)) {
                                 $proxies[$className][] = $aspect;
                             }
                         }
@@ -160,6 +149,40 @@ class ProxyManager
                 }
             }
         }
+        return $proxies;
+    }
+
+    protected function initProxiesByComposerClassMap(array $classMap = []): array
+    {
+        $proxies = [];
+        $classAspects = value(function () {
+            $aspects = AspectCollector::get('classes', []);
+            // Remove the useless aspect rules
+            foreach ($aspects as $aspect => $rules) {
+                if (! $rules) {
+                    unset($aspects[$aspect]);
+                }
+            }
+            return $aspects;
+        });
+        if ($classAspects) {
+            foreach ($classMap as $className => $file) {
+                $match = [];
+                $this->classNameMap[] = $className;
+                foreach ($classAspects as $aspect => $rules) {
+                    foreach ($rules as $rule) {
+                        if ($this->isMatch($rule, $className)) {
+                            $match[] = $aspect;
+                        }
+                    }
+                }
+                if ($match) {
+                    $match = array_flip(array_flip($match));
+                    $proxies[$className] = $match;
+                }
+            }
+        }
+
         return $proxies;
     }
 

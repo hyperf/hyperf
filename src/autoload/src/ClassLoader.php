@@ -31,11 +31,11 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader)
     {
         $this->composerLoader = $classLoader;
-        $config = ScanConfig::instance();
-
-        $scanner = new Scanner($this, $config);
-        $reflectionClassMap = $scanner->scan($config->getPaths(), $config->getCacheNamespaces(), $config->getCollectors());
-        $proxyManager = new ProxyManager($reflectionClassMap, $this->getComposerLoader()->getClassMap());
+        // Scan by ScanConfig to generate the reflection class map
+        $reflectionClassMap = (new Scanner($this, ScanConfig::instance()))->scan();
+        // Get the class map of Composer loader
+        $composerLoaderClassMap = $this->getComposerLoader()->getClassMap();
+        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap);
         $this->proxies = $proxyManager->getProxies();
     }
 
