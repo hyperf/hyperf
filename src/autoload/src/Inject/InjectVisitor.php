@@ -23,6 +23,9 @@ class InjectVisitor extends NodeVisitorAbstract
      */
     protected $hasConstructor = false;
 
+    /**
+     * @var array
+     */
     protected $proxyTraits
         = [
             InjectTrait::class,

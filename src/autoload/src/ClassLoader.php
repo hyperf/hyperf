@@ -28,50 +28,15 @@ class ClassLoader
      */
     protected $proxies = [];
 
-    /**
-     * @var array
-     */
-    protected $classAspects = [];
-
-    /**
-     * @var ProxyManager
-     */
-    protected $proxyManager;
-
     public function __construct(ComposerClassLoader $classLoader)
     {
         $this->composerLoader = $classLoader;
         $config = ScanConfig::instance();
 
         $scanner = new Scanner($this, $config);
-        $classes = $scanner->scan($config->getPaths(), $config->getCacheNamespaces(), $config->getCollectors());
-        $this->proxyManager = new ProxyManager($classes);
-        $this->proxies = $this->proxyManager->getProxies();
-        $this->classAspects = $this->getClassAspects();
-        $this->initProxies();
-    }
-
-    public function initProxies()
-    {
-        $map = $this->composerLoader->getClassMap();
-        $classes = [];
-        foreach ($map as $className => $file) {
-            $match = [];
-            foreach ($this->classAspects as $aspect => $rules) {
-                foreach ($rules as $rule) {
-                    if (ProxyManager::isMatch($rule, $className)) {
-                        $match[] = $aspect;
-                    }
-                }
-            }
-            if ($match) {
-                $match = array_flip(array_flip($match));
-                $classes[$className] = $match;
-            }
-        }
-
-        $proxies = $this->proxyManager->generateProxyFiles($classes);
-        $this->proxies = array_merge($this->proxies, $proxies);
+        $reflectionClassMap = $scanner->scan($config->getPaths(), $config->getCacheNamespaces(), $config->getCollectors());
+        $proxyManager = new ProxyManager($reflectionClassMap, $this->getComposerLoader()->getClassMap());
+        $this->proxies = $proxyManager->getProxies();
     }
 
     public function loadClass(string $class): void
@@ -88,18 +53,6 @@ class ClassLoader
         self::registerClassLoader();
     }
 
-    public function getClassAspects(): array
-    {
-        $aspects = AspectCollector::get('classes', []);
-        // Remove the useless aspect rules
-        foreach ($aspects as $aspect => $rules) {
-            if (! $rules) {
-                unset($aspects[$aspect]);
-            }
-        }
-        return $aspects;
-    }
-
     public function getComposerLoader(): ComposerClassLoader
     {
         return $this->composerLoader;
@@ -108,26 +61,8 @@ class ClassLoader
     protected function locateFile(string $className)
     {
         if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
-            // echo '[Load Proxy] ' . $className . PHP_EOL;
             $file = $this->proxies[$className];
         } else {
-            // if (!$this->proxyManager->isScaned($className)) {
-            //     $match = [];
-            //     foreach ($this->classAspects as $aspect => $rules) {
-            //         foreach ($rules as $rule) {
-            //             if (ProxyManager::isMatch($rule, $className)) {
-            //                 $match[] = $aspect;
-            //             }
-            //         }
-            //     }
-            //     if ($match) {
-            //         $match = array_flip(array_flip($match));
-            //         $proxies = $this->proxyManager->generateProxyFiles([$className => $match]);
-            //         $this->proxies = array_merge($this->proxies, $proxies);
-            //         return $this->locateFile($className);
-            //     }
-            // }
-            // echo '[Load Composer] ' . $className . PHP_EOL;
             $file = $this->composerLoader->findFile($className);
         }
 
