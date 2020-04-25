@@ -18,7 +18,7 @@ use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Str;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
-class Scanner
+class Scanner implements ScannerInterface
 {
     /**
      * @var ClassLoader
@@ -85,17 +85,11 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
     }
 
-    public function scan(array $paths = [], array $shouldCache = [], array $collectors = []): array
+    public function scan(): array
     {
-        if (! $paths) {
-            $paths = $this->scanConfig->getPaths();
-        }
-        if (! $shouldCache) {
-            $shouldCache = $this->scanConfig->getCacheNamespaces();
-        }
-        if (! $collectors) {
-            $collectors = $this->scanConfig->getCollectors();
-        }
+        $paths = $this->scanConfig->getPaths();
+        $shouldCache = $this->scanConfig->getCacheNamespaces();
+        $collectors = $this->scanConfig->getCollectors();
         $classes = [];
         if (! $paths) {
             return $classes;

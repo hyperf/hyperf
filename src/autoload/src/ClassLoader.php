@@ -20,7 +20,7 @@ class ClassLoader
     /**
      * @var \Composer\Autoload\ClassLoader
      */
-    protected $composerLoader;
+    protected $composerClassLoader;
 
     /**
      * The container to collect all the classes that would be proxy.
@@ -32,11 +32,12 @@ class ClassLoader
 
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir)
     {
-        $this->composerLoader = $classLoader;
+        $this->setComposerClassLoader($classLoader);
         // Scan by ScanConfig to generate the reflection class map
-        $reflectionClassMap = (new Scanner($this, ScanConfig::instance()))->scan();
+        $scanner = new Scanner($this, ScanConfig::instance());
+        $reflectionClassMap = $scanner->scan();
         // Get the class map of Composer loader
-        $composerLoaderClassMap = $this->getComposerLoader()->getClassMap();
+        $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
         $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
         $this->proxies = $proxyManager->getProxies();
     }
@@ -45,7 +46,7 @@ class ClassLoader
     {
         $path = $this->locateFile($class);
 
-        if ($path !== false) {
+        if ($path) {
             include $path;
         }
     }
@@ -63,12 +64,12 @@ class ClassLoader
         foreach ($loaders as &$loader) {
             $unregisterLoader = $loader;
             if (is_array($loader) && $loader[0] instanceof ComposerClassLoader) {
-                $composerLoader = $loader[0];
-                AnnotationRegistry::registerLoader(function ($class) use ($composerLoader) {
-                    $composerLoader->loadClass($class);
+                $composerClassLoader = $loader[0];
+                AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
+                    $composerClassLoader->loadClass($class);
                     return class_exists($class, false);
                 });
-                $loader[0] = new static($composerLoader, $proxyFileDirPath);
+                $loader[0] = new static($composerClassLoader, $proxyFileDirPath);
             }
             spl_autoload_unregister($unregisterLoader);
         }
@@ -81,19 +82,27 @@ class ClassLoader
         }
     }
 
-    public function getComposerLoader(): ComposerClassLoader
+    public function setComposerClassLoader(ComposerClassLoader $classLoader): self
     {
-        return $this->composerLoader;
+        $this->composerClassLoader = $classLoader;
+        // Set the ClassLoader to Hyperf\Utils\Composer to avoid unnecessary find process.
+        Composer::setLoader($classLoader);
+        return $this;
     }
 
-    protected function locateFile(string $className)
+    public function getComposerClassLoader(): ComposerClassLoader
+    {
+        return $this->composerClassLoader;
+    }
+
+    protected function locateFile(string $className): ?string
     {
         if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
             $file = $this->proxies[$className];
         } else {
-            $file = $this->getComposerLoader()->findFile($className);
+            $file = $this->getComposerClassLoader()->findFile($className);
         }
 
-        return $file;
+        return is_string($file) ? $file : null;
     }
 }

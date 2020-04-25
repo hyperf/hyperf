@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Autoload;
 
 use Hyperf\Config\ProviderConfig;
-use Hyperf\Utils\Str;
 
 final class ScanConfig
 {

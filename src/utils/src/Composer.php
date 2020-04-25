@@ -42,6 +42,11 @@ class Composer
     private static $versions = [];
 
     /**
+     * @var ClassLoaders
+     */
+    private static $classLoader;
+
+    /**
      * @throws \RuntimeException When composer.lock does not exist.
      */
     public static function getLockContent(): Collection
@@ -126,7 +131,16 @@ class Composer
 
     public static function getLoader(): ClassLoader
     {
-        return self::findLoader();
+        if (! self::$classLoader) {
+            self::$classLoader = self::findLoader();
+        }
+        return self::$classLoader;
+    }
+
+    public static function setLoader(ClassLoader $classLoader): ClassLoader
+    {
+        self::$classLoader = $classLoader;
+        return $classLoader;
     }
 
     private static function findLoader(): ClassLoader
