@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Autoload;
 
 use Hyperf\Config\ProviderConfig;
+use Hyperf\Utils\Str;
 
 final class ScanConfig
 {
@@ -54,8 +55,14 @@ final class ScanConfig
      */
     private static $instance;
 
-    public function __construct(array $paths = [], array $dependencies = [], array $ignoreAnnotations = [], array $globalImports = [], array $cacheNamespaces = [], array $collectors)
-    {
+    public function __construct(
+        array $paths = [],
+        array $dependencies = [],
+        array $ignoreAnnotations = [],
+        array $globalImports = [],
+        array $cacheNamespaces = [],
+        array $collectors
+    ) {
         $this->paths = $paths;
         $this->dependencies = $dependencies;
         $this->ignoreAnnotations = $ignoreAnnotations;
@@ -100,7 +107,24 @@ final class ScanConfig
             return self::$instance;
         }
 
-        $configDir = BASE_PATH . '/config';
+        $config = [];
+        $serverDependencies = [];
+
+        [$config, $serverDependencies] = static::initConfigByFile(BASE_PATH . '/config');
+
+        return self::$instance = new self(
+            $config['paths'] ?? [],
+            $serverDependencies ?? [],
+            $config['ignore_annotations'] ?? [],
+            $config['global_imports'] ?? [],
+            $config['cache_namespaces'] ?? [],
+            $config['collectors'] ?? []
+        );
+    }
+
+    private static function initConfigByFile(string $configDir): array
+    {
+        $config = [];
         $configFromProviders = [];
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
@@ -112,34 +136,38 @@ final class ScanConfig
             $serverDependencies = array_replace($serverDependencies, $definitions ?? []);
         }
 
-        $paths = $configFromProviders['annotations']['scan']['paths'] ?? [];
-        $ignoreAnnotations = $configFromProviders['annotations']['scan']['ignore_annotations'] ?? [];
-        $globalImports = $configFromProviders['annotations']['scan']['global_imports'] ?? [];
-        $cacheNamespaces = $configFromProviders['annotations']['scan']['cache_namespaces'] ?? [];
-        $collectors = $configFromProviders['annotations']['scan']['collectors'] ?? [];
+        $config = static::allocateConfigValue($configFromProviders['annotations'], $config);
 
         // Load the config/autoload/annotations.php and merge the config
         if (file_exists($configDir . '/autoload/annotations.php')) {
             $annotations = include $configDir . '/autoload/annotations.php';
-            $paths = array_merge($paths, $annotations['scan']['paths'] ?? []);
-            $ignoreAnnotations = array_merge($ignoreAnnotations, $annotations['scan']['ignore_annotations'] ?? []);
-            $globalImports = array_merge($globalImports, $annotations['scan']['global_imports'] ?? []);
-            $cacheNamespaces = array_merge($cacheNamespaces, $annotations['scan']['cache_namespaces'] ?? []);
-            $collectors = array_merge($collectors, $annotations['scan']['collectors'] ?? []);
+            $config = static::allocateConfigValue($annotations, $config);
         }
 
         // Load the config/config.php and merge the config
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
             if (isset($configContent['annotations'])) {
-                $paths = array_merge($paths, $configContent['annotations']['scan']['paths'] ?? []);
-                $ignoreAnnotations = array_merge($ignoreAnnotations, $configContent['annotations']['scan']['ignore_annotations'] ?? []);
-                $globalImports = array_merge($globalImports, $configContent['annotations']['scan']['global_imports'] ?? []);
-                $cacheNamespaces = array_merge($cacheNamespaces, $configContent['annotations']['scan']['cache_namespaces'] ?? []);
-                $collectors = array_merge($collectors, $configContent['annotations']['scan']['collectors'] ?? []);
+                $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
         }
+        return [$config, $serverDependencies];
+    }
 
-        return self::$instance = new self($paths, $serverDependencies, $ignoreAnnotations, $globalImports, $cacheNamespaces, $collectors);
+    private static function allocateConfigValue(array $content, array $config): array
+    {
+        if (! isset($content['scan'])) {
+            return [];
+        }
+        foreach ($content['scan'] as $key => $value) {
+            if (! isset($config[$key])) {
+                $config[$key] = [];
+            }
+            if (! is_array($value)) {
+                $value = [$value];
+            }
+            $config[$key] = array_merge($config[$key], $value);
+        }
+        return $config;
     }
 }
