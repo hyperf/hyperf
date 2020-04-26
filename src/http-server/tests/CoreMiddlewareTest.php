@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\ClosureDefinitionCollector;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Dispatcher\HttpRequestHandler;
@@ -181,6 +183,8 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
             ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(new ClosureDefinitionCollector());
         $container->shouldReceive('get')->with(NormalizerInterface::class)
             ->andReturn(new SimpleNormalizer());
         return $container;

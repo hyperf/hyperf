@@ -54,7 +54,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     private $methodDefinitionCollector;
 
     /**
-     * @var ClosureDefinitionCollectorInterface
+     * @var ClosureDefinitionCollectorInterface | null
      */
     private $closureDefinitionCollector;
 
@@ -69,7 +69,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
-        $this->closureDefinitionCollector = $this->container->get(ClosureDefinitionCollectorInterface::class);
+        if ($this->container->has(ClosureDefinitionCollectorInterface::class)) {
+            $this->closureDefinitionCollector = $this->container->get(ClosureDefinitionCollectorInterface::class);
+        }
     }
 
     public function dispatch(ServerRequestInterface $request): ServerRequestInterface
