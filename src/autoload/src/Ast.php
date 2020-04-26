@@ -49,7 +49,8 @@ class Ast
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         // User could modify or replace the node vistors by Hyperf\Autoload\AstVisitorCollector.
-        foreach (AstVisitorCollector::list() as $visitor) {
+        foreach (AstVisitorCollector::list() as $string) {
+            $visitor = new $string();
             if (method_exists($visitor, 'setClassName')) {
                 $visitor->setClassName($className);
             }

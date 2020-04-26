@@ -25,8 +25,8 @@ class ConfigProvider
     public function __invoke(): array
     {
         // Register AST visitors to the collector.
-        AstVisitorCollector::set(ProxyCallVisitor::class, new ProxyCallVisitor());
-        AstVisitorCollector::set(InjectVisitor::class, new InjectVisitor());
+        AstVisitorCollector::set(ProxyCallVisitor::class, ProxyCallVisitor::class);
+        AstVisitorCollector::set(InjectVisitor::class, InjectVisitor::class);
 
         return [
             'dependencies' => [

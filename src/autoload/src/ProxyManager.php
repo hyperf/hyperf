@@ -13,7 +13,6 @@ namespace Hyperf\Autoload;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
@@ -47,6 +46,7 @@ class ProxyManager
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
+        var_dump(array_keys($reflectionClassProxies), array_keys($composerLoaderProxies));
     }
 
     public function getProxies(): array
@@ -120,7 +120,7 @@ class ProxyManager
         foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
                 foreach ($reflectionClassMap as $class) {
-                    if ($class instanceof ReflectionClass || ! $this->isMatch($rule, $class->getName())) {
+                    if (! $this->isMatch($rule, $class->getName())) {
                         continue;
                     }
                     $proxies[$class->getName()][] = $aspect;
