@@ -14,7 +14,6 @@ namespace Hyperf\ModelCache\Handler;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
-use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -36,11 +35,6 @@ class RedisStringHandler implements HandlerInterface
      * @var Config
      */
     protected $config;
-
-    /**
-     * @var LuaManager
-     */
-    protected $manager;
 
     /**
      * @var PackerInterface
