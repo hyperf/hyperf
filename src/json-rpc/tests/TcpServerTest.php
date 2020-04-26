@@ -165,7 +165,7 @@ class TcpServerTest extends TestCase
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturnUsing(function () {
             return Mockery::mock(MethodDefinitionCollectorInterface::class);
         });
-        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(null);
         return $container;
     }
 }

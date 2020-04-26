@@ -202,6 +202,8 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new MethodDefinitionCollector());
         $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
             ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(null);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)
             ->andReturn(new Logger('App', [new StreamHandler('php://stderr')]));
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)
