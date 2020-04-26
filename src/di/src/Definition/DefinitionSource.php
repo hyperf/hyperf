@@ -13,36 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\Aop\AstCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\Str;
-use ReflectionClass;
 use ReflectionFunctionAbstract;
-use Symfony\Component\Finder\Finder;
 use function class_exists;
-use function count;
-use function explode;
-use function feof;
-use function fgets;
-use function file_exists;
-use function file_put_contents;
-use function filemtime;
-use function fopen;
-use function implode;
 use function interface_exists;
 use function is_callable;
-use function is_dir;
-use function is_readable;
 use function is_string;
-use function md5;
 use function method_exists;
-use function preg_match;
 use function print_r;
-use function str_replace;
-use function trim;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
