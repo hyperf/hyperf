@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -53,6 +54,11 @@ class CoreMiddleware implements CoreMiddlewareInterface
     private $methodDefinitionCollector;
 
     /**
+     * @var ClosureDefinitionCollectorInterface
+     */
+    private $closureDefinitionCollector;
+
+    /**
      * @var NormalizerInterface
      */
     private $normalizer;
@@ -63,6 +69,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
+        $this->closureDefinitionCollector = $this->container->get(ClosureDefinitionCollectorInterface::class);
     }
 
     public function dispatch(ServerRequestInterface $request): ServerRequestInterface
@@ -111,6 +118,11 @@ class CoreMiddleware implements CoreMiddlewareInterface
         return $this->methodDefinitionCollector;
     }
 
+    public function getClosureDefinitionCollector(): ClosureDefinitionCollectorInterface
+    {
+        return $this->closureDefinitionCollector;
+    }
+
     public function getNormalizer(): NormalizerInterface
     {
         return $this->normalizer;
@@ -130,7 +142,8 @@ class CoreMiddleware implements CoreMiddlewareInterface
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
     {
         if ($dispatched->handler->callback instanceof Closure) {
-            $response = call($dispatched->handler->callback);
+            $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
+            $response = call($dispatched->handler->callback, $parameters);
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
@@ -138,7 +151,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
                 // Route found, but the handler does not exist.
                 return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
             }
-            $parameters = $this->parseParameters($controller, $action, $dispatched->params);
+            $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
             $response = $controllerInstance->{$action}(...$parameters);
         }
         return $response;
@@ -219,14 +232,41 @@ class CoreMiddleware implements CoreMiddlewareInterface
     }
 
     /**
+     * Keep it to maintain backward compatibility. Users may have extended core middleware.
+     */
+    protected function parseParameters(string $controller, string $action, array $arguments): array
+    {
+        return $this->parseMethodParameters($controller, $action, $arguments);
+    }
+
+    /**
      * Parse the parameters of method definitions, and then bind the specified arguments or
      * get the value from DI container, combine to a argument array that should be injected
      * and return the array.
      */
-    protected function parseParameters(string $controller, string $action, array $arguments): array
+    protected function parseMethodParameters(string $controller, string $action, array $arguments): array
+    {
+        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
+        return $this->getInjections($definitions, "{$controller}::{$action}", $arguments);
+    }
+
+    /**
+     * Parse the parameters of closure definitions, and then bind the specified arguments or
+     * get the value from DI container, combine to a argument array that should be injected
+     * and return the array.
+     */
+    protected function parseClosureParameters(Closure $closure, array $arguments): array
+    {
+        if (! $this->container->has(ClosureDefinitionCollectorInterface::class)) {
+            return [];
+        }
+        $definitions = $this->getClosureDefinitionCollector()->getParameters($closure);
+        return $this->getInjections($definitions, 'Closure', $arguments);
+    }
+
+    private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];
-        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
         foreach ($definitions ?? [] as $pos => $definition) {
             $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
             if ($value === null) {
@@ -238,13 +278,12 @@ class CoreMiddleware implements CoreMiddlewareInterface
                     $injections[] = $this->container->get($definition->getName());
                 } else {
                     throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
-                        . "of {$controller}::{$action} should not be null");
+                        . "of {$callableName} should not be null");
                 }
             } else {
                 $injections[] = $this->getNormalizer()->denormalize($value, $definition->getName());
             }
         }
-
         return $injections;
     }
 }

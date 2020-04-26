@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
-class MethodDefinitionCollector extends MetadataCollector implements MethodDefinitionCollectorInterface
+class MethodDefinitionCollector extends AbstractCallableDefinitionCollector implements MethodDefinitionCollectorInterface
 {
     /**
      * @var array
@@ -72,17 +72,8 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
             return static::get($key);
         }
         $parameters = ReflectionManager::reflectClass($class)->getMethod($method)->getParameters();
-        $definitions = [];
-        foreach ($parameters as $parameter) {
-            $definitions[] = $this->createType(
-                $parameter->getName(),
-                $parameter->getType(),
-                $parameter->allowsNull(),
-                $parameter->isDefaultValueAvailable(),
-                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
-            );
-        }
 
+        $definitions = $this->getDefinitionsFromParameters($parameters);
         static::set($key, $definitions);
         return $definitions;
     }
@@ -97,14 +88,5 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
         $type = $this->createType('', $returnType, $returnType ? $returnType->allowsNull() : true);
         static::set($key, $type);
         return $type;
-    }
-
-    private function createType($name, ?\ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
-    {
-        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
-            'defaultValueAvailable' => $hasDefault,
-            'defaultValue' => $defaultValue,
-            'name' => $name,
-        ]);
     }
 }
