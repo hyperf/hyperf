@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
+use GuzzleHttp\Client;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nsq\Annotation\Consumer as ConsumerAnnotation;
+use Hyperf\Nsq\Batch;
 use Hyperf\Nsq\Event\AfterConsume;
 use Hyperf\Nsq\Event\AfterSubscribe;
 use Hyperf\Nsq\Event\BeforeConsume;
@@ -23,7 +25,8 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-
+use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 class ConsumerManager
 {
     /**
@@ -31,35 +34,86 @@ class ConsumerManager
      */
     private $container;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
+     * @var Hyperf\Nsq\Batch
+     */
+    private $batch;
+    public function __construct(ContainerInterface $container, ConfigInterface $config,CacheInterface $cache,Batch $batch)
     {
         $this->container = $container;
+        $this->config = $config;
+        $this->cache = $cache;
+        $this->batch = $batch;
     }
 
     public function run()
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
-        /**
-         * @var string
-         * @var ConsumerAnnotation $annotation
-         */
-        foreach ($classes as $class => $annotation) {
-            $instance = make($class);
-            if (! $instance instanceof AbstractConsumer) {
-                continue;
-            }
-            $annotation->topic && $instance->setTopic($annotation->topic);
-            $annotation->channel && $instance->setChannel($annotation->channel);
-            $annotation->name && $instance->setName($annotation->name);
-            $annotation->pool && $instance->setPool($annotation->pool);
+        $nsq=$this->config->get('nsq');
+        if (!empty($nsq['nsqlookup']) && !$nsq['nsqlookup']['debug']) {
+            $nsqlookup=$nsq['nsqlookup'];
+            $this->cache->set('nsqIpList', '');
+            $nsqIpList = $this->batch->getNsqIpList($nsqlookup);
+            $nsqConfig = $nsqIpList;
+            $nsqConfig['nsqlookup'] = $nsqlookup;
+            $this->config->set('nsq', $nsqConfig);
+            /**
+             * @var string
+             * @var ConsumerAnnotation $annotation
+             */
+            foreach ($classes as $class => $annotation) {
+                $instance = make($class);
+                if (! $instance instanceof AbstractConsumer) {
+                    continue;
+                }
+                if($annotation->topic){$instance->setTopic($annotation->topic);}else{$instance->setTopic($nsqConfig['nsqlookup']['topic']);}
 
-            $nums = $annotation->nums;
-            $process = $this->createProcess($instance);
-            $process->nums = (int) $nums;
-            $process->name = $instance->getName() . '-' . $instance->getTopic();
-            ProcessManager::register($process);
+                if($annotation->channel){$instance->setChannel($annotation->channel);}else{$instance->setChannel($nsqConfig['nsqlookup']['channel']);}
+
+                if($annotation->name){$instance->setName($annotation->name);}else{$instance->setName($nsqConfig['nsqlookup']['name']);}
+                foreach ($nsqIpList as $k => $v) {
+                    $instance->setPool($k);
+                    $process = $this->createProcess($instance);
+                    if($annotation->nums){$process->nums=$annotation->nums;}else{ $process->nums = $nsqConfig['nsqlookup']['nums'];}
+                    $process->name = $instance->getName() . $k . '-' . $instance->getTopic();
+                    ProcessManager::register($process);
+                }
+            }
+        }else{
+            /**
+             * @var string
+             * @var ConsumerAnnotation $annotation
+             */
+            foreach ($classes as $class => $annotation) {
+                $instance = make($class);
+                if (! $instance instanceof AbstractConsumer) {
+                    continue;
+                }
+                $annotation->topic && $instance->setTopic($annotation->topic);
+                $annotation->channel && $instance->setChannel($annotation->channel);
+                $annotation->name && $instance->setName($annotation->name);
+                $annotation->pool && $instance->setPool($annotation->pool);
+
+                $nums = $annotation->nums;
+                $process = $this->createProcess($instance);
+                $process->nums = (int) $nums;
+                $process->name = $instance->getName() . '-' . $instance->getTopic();
+                ProcessManager::register($process);
+            }
         }
+
     }
+
 
     private function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
