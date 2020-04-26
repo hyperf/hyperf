@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Inject;
 
+use Hyperf\Di\BetterReflectionManager;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\TraitUse;
@@ -24,12 +25,29 @@ class InjectVisitor extends NodeVisitorAbstract
     protected $hasConstructor = false;
 
     /**
+     * @var bool
+     */
+    protected $hasReflectConstructor = false;
+
+    /**
+     * @var string
+     */
+    protected $classname = '';
+
+    /**
      * @var array
      */
     protected $proxyTraits
         = [
             InjectTrait::class,
         ];
+
+    public function setClassName(string $classname)
+    {
+        $this->classname = $classname;
+        $reflection = BetterReflectionManager::getClassReflector()->reflect($classname);
+        $this->hasReflectConstructor = $reflection->hasMethod('__construct');
+    }
 
     public function enterNode(Node $node)
     {
@@ -44,8 +62,14 @@ class InjectVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if (! $this->hasConstructor && $node instanceof Node\Stmt\Class_ && ! $node->isAbstract() && ! $node->isAnonymous()) {
-            $constructor = new Node\Stmt\ClassMethod('__construct');
-            $constructor->stmts = [$this->buildStaticCallStatement()];
+            if ($this->hasReflectConstructor && $this->classname) {
+                $reflection = BetterReflectionManager::getClassReflector()->reflect($this->classname);
+                $constructor = $reflection->getParentClass()->getMethod('__construct')->getAst();
+                $constructor->stmts = [$this->buildUseParentConstructor($constructor->getParams()), $this->buildStaticCallStatement()];
+            } else {
+                $constructor = new Node\Stmt\ClassMethod('__construct');
+                $constructor->stmts = [$this->buildStaticCallStatement()];
+            }
             $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], [$constructor], $node->stmts);
         } else {
             if ($node instanceof Node\Stmt\ClassMethod && $node->name->toString() === '__construct') {
@@ -62,6 +86,17 @@ class InjectVisitor extends NodeVisitorAbstract
         return new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('self'), '__injectProperties', [
             // OriginalClass::class
             new Node\Arg(new Node\Scalar\MagicConst\Class_()),
+        ]));
+    }
+
+    /**
+     * @param Node\Param[] $params
+     * @return Node\Stmt\Expression
+     */
+    protected function buildUseParentConstructor(array $params = [])
+    {
+        return new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('parent'), '__construct', [
+            new Node\Arg(new Node\Expr\FuncCall(new Name('func_get_args')), false, true),
         ]));
     }
 
