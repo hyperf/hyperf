@@ -46,7 +46,6 @@ class ProxyManager
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
-        var_dump(array_keys($reflectionClassProxies), array_keys($composerLoaderProxies));
     }
 
     public function getProxies(): array
