@@ -98,10 +98,12 @@ class RoutesCommand extends HyperfCommand
         }
         if (is_array($handler->callback)) {
             $action = $handler->callback[0] . '::' . $handler->callback[1];
+        } elseif (is_string($handler->callback)) {
+            $action = $handler->callback;
         } elseif (is_callable($handler->callback)) {
             $action = 'Closure';
         } else {
-            $action = $handler->callback;
+            $action = (string) $handler->callback;
         }
         $unique = "{$serverName}|{$action}";
         if (isset($data[$unique])) {
