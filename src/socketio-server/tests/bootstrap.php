@@ -9,4 +9,5 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';

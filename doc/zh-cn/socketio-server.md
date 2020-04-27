@@ -9,20 +9,23 @@ composer require hyperf/socketio-server
 hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添加了WebSocket服务配置。
 
 ```php
-        [
-            'name' => 'socket-io',
-            'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9502,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-                SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-                SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
-            ],
-        ],
-```
+<?php
 
+'servers' => [
+    [
+        'name' => 'ws',
+        'type' => Server::SERVER_WEBSOCKET,
+        'host' => '0.0.0.0',
+        'port' => 9502,
+        'sock_type' => SWOOLE_SOCK_TCP,
+        'callbacks' => [
+            SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+            SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+            SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+        ],
+    ],
+],
+```
 
 ## 快速开始
 
@@ -148,7 +151,7 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
 
 Socket.io通过自定义命名空间实现多路复用。（注意：不是PHP的命名空间）
 
-1. 可以通过 `@IONamespace("/xxx")` 将控制器映射为xxx的命名空间，
+1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为xxx的命名空间，
 
 2. 也可通过
 
@@ -237,7 +240,7 @@ use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\SocketIOServer\Socket;
 use Hyperf\WebSocketServer\Sender;
 
-class WebSocketController extends BaseNamespace
+class SocketIOController extends BaseNamespace
 {
     public function __construct(Sender $sender, SidProviderInterface $sidProvider) {
         parent::__construct($sender,$sidProvider);
@@ -251,7 +254,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@AutoNamespace()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
+2. 可以在类上添加 `@Event()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
 
 ```php
 <?php
@@ -259,16 +262,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Hyperf\SocketIOServer\Annotation\AutoNamespace;
+use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
 /**
  * @SocketIONamespace("/")
- * @AutoNamespace()
+ * @Event()
  */
-class WebSocketController extends BaseNamespace
+class SocketIOController extends BaseNamespace
 {
     public function event(Socket $socket, $data)
     {
