@@ -14,7 +14,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\SocketIOServer\\": "tests"
         }
     },
     "require": {

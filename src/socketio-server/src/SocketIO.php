@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\Contract\OnCloseInterface;
@@ -268,7 +267,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'sender' => $this->sender,
             'fd' => $fd,
             'nsp' => $nsp,
-            'addCallback' => function (string $ackId, Channel $channel, ?float $timeout = null) {
+            'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                 $this->addCallback($ackId, $channel, $timeout);
             }, ]);
     }

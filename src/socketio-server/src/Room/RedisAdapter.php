@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SocketIOServer\Room;
 
 use Hyperf\Redis\RedisFactory;
@@ -140,7 +139,7 @@ class RedisAdapter implements AdapterInterface
     {
         Coroutine::create(function () {
             CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
-            retry(INF, function () {
+            retry((int) INF, function () {
                 $sub = ApplicationContext::getContainer()->get(Subscriber::class);
                 if ($sub) {
                     $this->mixSubscribe($sub);
@@ -266,12 +265,13 @@ class RedisAdapter implements AdapterInterface
     private function phpRedisSubscribe()
     {
         $redis = $this->redis;
-        $redis->subscribe([$this->getChannelKey()], function ($redis, $chan, $msg) {
+        $callback = function ($redis, $chan, $msg) {
             Coroutine::create(function () use ($msg) {
                 [$packet, $opts] = unserialize($msg);
                 $this->doBroadcast($packet, $opts);
             });
-        });
+        };
+        $redis->subscribe([$this->getChannelKey()], 'callback');
     }
 
     private function mixSubscribe(Subscriber $sub)

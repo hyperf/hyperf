@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SocketIOServer\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
