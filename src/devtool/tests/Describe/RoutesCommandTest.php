@@ -16,6 +16,7 @@ use Hyperf\Devtool\Describe\RoutesCommand;
 use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\Devtool\Stub\ContainerStub;
 use HyperfTest\Devtool\Stub\IndexController;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,6 +25,11 @@ use PHPUnit\Framework\TestCase;
  */
 class RoutesCommandTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testAnalyzeHandler()
     {
         $container = ContainerStub::getContainer();
