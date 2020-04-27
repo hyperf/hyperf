@@ -92,7 +92,7 @@ class SocketIOController extends BaseNamespace
   var socket = io(':9502', {transports:["websocket"]});
   socket.on('connect', data => {
     socket.emit('event', 'hello, hyperf', console.log);
-    socket.emit('join-room', 'room1', console.log);
+    socket.emit('join-room', 'room1');
   });
   socket.on('event', console.log);
 </script>
