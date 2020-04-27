@@ -1,4 +1,5 @@
-Socket.io是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server支持了Socket.io的WebSocket传输协议。
+Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。
+hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议，并且进行了部分优化来实现多实例分布式部署。
 
 ## 安装
 
@@ -6,7 +7,7 @@ Socket.io是一款非常流行的应用层实时通讯协议和框架，可以�
 composer require hyperf/socketio-server
 ```
 
-hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添加了WebSocket服务配置。
+hyperf/socketio-server 是基于 WebSocket 实现的，请确保服务端已经添加了 WebSocket 服务配置。
 
 ```php
 <?php
@@ -84,7 +85,7 @@ class SocketIOController extends BaseNamespace
 
 ### 客户端
 
-由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
+由于服务端只实现了 WebSocket 通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
@@ -149,9 +150,9 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
 
 ### 设置 Socket.io 命名空间
 
-Socket.io通过自定义命名空间实现多路复用。（注意：不是PHP的命名空间）
+Socket.io 通过自定义命名空间实现多路复用。（注意：不是 PHP 的命名空间）
 
-1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为xxx的命名空间，
+1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为 xxx 的命名空间，
 
 2. 也可通过
 
@@ -166,7 +167,7 @@ IORouter::addNamespace('/xxx' , SocketIOController::class);
 
 ### 开启 Session 
 
-安装并配置好 hyperf/session 组件及其对应中间件，并且通过 `SessionAspect` 切入在SocketIO。
+安装并配置好 hyperf/session 组件及其对应中间件，并且通过 `SessionAspect` 切入在 SocketIO。
 
 ```php
 <?php
@@ -176,7 +177,7 @@ return [
 ];
 ```
 
-> swoole 4.4.17 及以下版本只能读取 http 创建好的Cookie，4.4.18 及以上版本可以在WebSocket握手时创建Cookie
+> swoole 4.4.17 及以下版本只能读取 http 创建好的 Cookie，4.4.18 及以上版本可以在 WebSocket 握手时创建 Cookie
 
 ### 调整房间适配器
 
@@ -201,11 +202,11 @@ return [
 ];
 ```
 
-### 调整SocketID
+### 调整 SocketID
 
-默认ID使用 `ServerID#FD` 的格式，可以适应分布式场景。
+默认 ID 使用 `ServerID#FD` 的格式，可以适应分布式场景。
 
-1. 可以替换为直接使用Fd。
+1. 可以替换为直接使用 Fd。
 
 ```php
 <?php
@@ -215,7 +216,7 @@ return [
 ];
 ```
 
-2. 也可以替换为SessionID。
+2. 也可以替换为 SessionID。
 
 ```php
 <?php
