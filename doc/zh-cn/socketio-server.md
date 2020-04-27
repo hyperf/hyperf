@@ -34,14 +34,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Hyperf\SocketIOServer\Annotation\Event;
-use Hyperf\SocketIOServer\Annotation\IONamespace;
+use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
 /**
- * @IONamespace("/")
+ * @SocketIONamespace("/")
  */
-class WebSocketController extends BaseNamespace
+class SocketIOController extends BaseNamespace
 {
     /**
      * @Event("connect")
@@ -113,9 +113,6 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
-  // WARNING: `socket.to(socket.id).emit()` will NOT work, as it will send to everyone in the room
-  // named `socket.id` but the sender. Please use the classic `socket.emit()` instead.
-
   // sending with acknowledgement
   $reply = $socket->emit('question', 'do you think so?')->reply();
 
@@ -158,8 +155,8 @@ Socket.io通过自定义命名空间实现多路复用。（注意：不是PHP�
 ```php
 <?php
 use Hyperf\SocketIOServer\Collector\IORouter;
-use App\Controller\WebSocketController;
-IORouter::addNsp('/xxx' , WebSocketController::class);
+use App\Controller\SocketIOController;
+IORouter::addNamespace('/xxx' , SocketIOController::class);
 ```
 
 在路由中添加。
@@ -183,6 +180,7 @@ return [
 默认的房间功能通过 Redis 适配器实现，可以适应多进程乃至分布式场景。
 
 1. 可以替换为内存适配器，只适用于单 worker 场景。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -200,9 +198,9 @@ return [
 ];
 ```
 
-### 调整会话ID
+### 调整SocketID
 
-默认会话ID使用 `ServerID#FD` 的格式，可以适应分布式场景。
+默认ID使用 `ServerID#FD` 的格式，可以适应分布式场景。
 
 1. 可以替换为直接使用Fd。
 
@@ -262,12 +260,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Hyperf\SocketIOServer\Annotation\AutoNamespace;
-use Hyperf\SocketIOServer\Annotation\IONamespace;
+use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
 /**
- * @IONamespace("/")
+ * @SocketIONamespace("/")
  * @AutoNamespace()
  */
 class WebSocketController extends BaseNamespace
