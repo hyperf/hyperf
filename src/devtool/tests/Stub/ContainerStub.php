@@ -14,7 +14,6 @@ namespace HyperfTest\Devtool\Stub;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 
 class ContainerStub
@@ -22,7 +21,6 @@ class ContainerStub
     public static function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
-        ApplicationContext::setContainer($container);
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
             return new Config([
