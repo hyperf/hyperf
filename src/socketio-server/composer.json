@@ -38,7 +38,6 @@
         "swoft/swoole-ide-helper": "dev-master"
     },
     "suggest": {
-        "mix/redis-subscribe": "Required for graceful restart",
         "hyperf/command": "Required to use RemoveRedisGarbage command",
         "hyperf/session": "Required to use session"
     },
