@@ -13,6 +13,7 @@ namespace Hyperf\SocketIOServer\Emitter;
 
 use Hyperf\SocketIOServer\Collector\IORouter;
 use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
@@ -176,7 +177,7 @@ trait Emitter
             'id' => $id,
             'data' => array_merge([$event], $data),
         ]);
-        return '4' . $encoder->encode($packet);
+        return Engine::MESSAGE . $encoder->encode($packet);
     }
 
     private function realGet($flag)
