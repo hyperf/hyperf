@@ -12,6 +12,7 @@
 - [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when result is null.
 - [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service check do not work for protocol `jsonrpc-tcp-length-check`.
 - [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the server is 8.0.
 
 ## Optimized 
 
