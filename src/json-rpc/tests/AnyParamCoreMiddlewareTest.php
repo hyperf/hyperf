@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -212,6 +213,10 @@ class AnyParamCoreMiddlewareTest extends TestCase
             ->andReturn($normalizer = new SymfonyNormalizer((new SerializerFactory())->__invoke()));
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
             ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(null);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)
             ->andReturn(new Logger('App', [new StreamHandler('php://stderr')]));
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)

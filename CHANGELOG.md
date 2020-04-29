@@ -1,5 +1,9 @@
 # v1.1.28 - TBD
 
+## Added
+
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
+
 ## Fixed
 
 - [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
