@@ -69,7 +69,7 @@ class RegisterServiceListenerTest extends TestCase
         $listener = new RegisterServiceListener($container);
         $mockAgent = $container->get(ConsulAgent::class);
         $mockAgent->shouldReceive('registerService')
-            ->twice()
+            ->times(3)
             ->with(Mockery::on(function ($args) use (&$serviceDefinition) {
                 $serviceDefinition[] = $args;
                 return true;
@@ -86,6 +86,11 @@ class RegisterServiceListenerTest extends TestCase
             'server' => 'jsonrpc',
             'protocol' => 'jsonrpc',
         ]);
+        $serviceManager->register('Foo\\FooService', 'Foo/FooService/foo', [
+            'publishTo' => 'consul',
+            'server' => 'jsonrpc2',
+            'protocol' => 'jsonrpc-tcp-length-check',
+        ]);
         $listener->process((object) []);
 
         $this->assertEquals('Foo\\FooService', $serviceDefinition[0]['Name']);
@@ -97,6 +102,11 @@ class RegisterServiceListenerTest extends TestCase
         $this->assertEquals(['Protocol' => 'jsonrpc'], $serviceDefinition[1]['Meta']);
         $this->assertArrayHasKey('Check', $serviceDefinition[1]);
         $this->assertArrayHasKey('TCP', $serviceDefinition[1]['Check']);
+
+        $this->assertEquals('Foo\\FooService', $serviceDefinition[2]['Name']);
+        $this->assertEquals(['Protocol' => 'jsonrpc-tcp-length-check'], $serviceDefinition[2]['Meta']);
+        $this->assertArrayHasKey('Check', $serviceDefinition[2]);
+        $this->assertArrayHasKey('TCP', $serviceDefinition[2]['Check']);
     }
 
     private function createContainer()
@@ -125,6 +135,11 @@ class RegisterServiceListenerTest extends TestCase
                             'name' => 'jsonrpc',
                             'host' => '0.0.0.0',
                             'port' => 9502,
+                        ],
+                        [
+                            'name' => 'jsonrpc2',
+                            'host' => '0.0.0.0',
+                            'port' => 9503,
                         ],
                     ],
                 ],
