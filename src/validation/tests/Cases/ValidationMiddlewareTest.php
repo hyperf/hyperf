@@ -13,6 +13,7 @@ namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\ValidatorInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -134,7 +135,8 @@ class ValidationMiddlewareTest extends TestCase
             ->andReturn(new DemoRequest($container));
         $container->shouldReceive('has')->with(DemoRequest::class)
             ->andReturn(true);
-
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
         ApplicationContext::setContainer($container);
 
         return $container;

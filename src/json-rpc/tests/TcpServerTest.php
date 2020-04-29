@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
@@ -164,6 +165,7 @@ class TcpServerTest extends TestCase
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturnUsing(function () {
             return Mockery::mock(MethodDefinitionCollectorInterface::class);
         });
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(null);
         return $container;
     }
 }

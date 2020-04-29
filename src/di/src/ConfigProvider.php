@@ -23,6 +23,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
+                ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
             ],
             'commands' => [
                 InitProxyCommand::class,

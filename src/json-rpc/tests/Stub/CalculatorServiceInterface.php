@@ -26,4 +26,6 @@ interface CalculatorServiceInterface
     public function getString(): ?string;
 
     public function callable(callable $a, ?callable $b): array;
+
+    public function null();
 }
