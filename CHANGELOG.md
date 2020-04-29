@@ -1,5 +1,8 @@
 # v1.1.28 - TBD
 
+## Added
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
+
 # v1.1.27 - 2020-04-23
 
 ## Added
