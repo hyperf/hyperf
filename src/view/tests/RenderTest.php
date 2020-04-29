@@ -53,9 +53,14 @@ class RenderTest extends TestCase
             ],
         ]));
 
-        $this->expectException(RenderException::class);
-        $this->expectExceptionMessage('Undefined index: name');
-        $render->getContents('index.tpl', ['title' => 'Hyperf']);
+        try {
+            $render->getContents('index.tpl', ['title' => 'Hyperf']);
+            $this->assertTrue(false);
+        } catch (\Throwable $throwable) {
+            $this->assertInstanceOf(RenderException::class, $throwable);
+            $this->assertSame('Undefined index: name', $throwable->getMessage());
+            $this->assertNotNull($throwable->getPrevious());
+        }
     }
 
     public function testRender()
