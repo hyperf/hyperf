@@ -235,6 +235,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Keep it to maintain backward compatibility. Users may have extended core middleware.
+     * @depreacted
      */
     protected function parseParameters(string $controller, string $action, array $arguments): array
     {
