@@ -1,8 +1,17 @@
 # v1.1.28 - TBD
 
+## Added
+
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added RedisStringHandler for model-cache.
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `RenderException` to catch render exceptions in view.
+
 ## Fixed
 
 - [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when result is null.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service check do not work for protocol `jsonrpc-tcp-length-check`.
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
 
 ## Optimized 
 

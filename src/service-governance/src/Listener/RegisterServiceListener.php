@@ -136,7 +136,7 @@ class RegisterServiceListener implements ListenerInterface
                 'Interval' => '1s',
             ];
         }
-        if ($service['protocol'] === 'jsonrpc') {
+        if (in_array($service['protocol'], ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => '90m',
                 'TCP' => "{$address}:{$port}",

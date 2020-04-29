@@ -11,17 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
+use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
-use Hyperf\ModelCache\Redis\HashGetMultiple;
-use Hyperf\ModelCache\Redis\HashIncr;
-use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
-use Redis;
 
-class RedisHandler implements HandlerInterface
+class RedisStringHandler implements HandlerInterface
 {
     /**
      * @var ContainerInterface
@@ -39,13 +37,9 @@ class RedisHandler implements HandlerInterface
     protected $config;
 
     /**
-     * @var LuaManager
+     * @var PackerInterface
      */
-    protected $manager;
-
-    protected $defaultKey = 'HF-DATA';
-
-    protected $defaultValue = 'DEFAULT';
+    protected $packer;
 
     public function __construct(ContainerInterface $container, Config $config)
     {
@@ -56,23 +50,17 @@ class RedisHandler implements HandlerInterface
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
         $this->config = $config;
-        $this->manager = make(LuaManager::class, [$config]);
+        $this->packer = $container->get(PhpSerializerPacker::class);
     }
 
     public function get($key, $default = null)
     {
-        $data = $this->redis->hGetAll($key);
+        $data = $this->redis->get($key);
         if (! $data) {
             return $default;
         }
 
-        unset($data[$this->defaultKey]);
-
-        if (empty($data)) {
-            return [];
-        }
-
-        return $data;
+        return $this->packer->unpack($data);
     }
 
     public function set($key, $value, $ttl = null)
@@ -85,10 +73,11 @@ class RedisHandler implements HandlerInterface
             throw new CacheException(sprintf('The value must is array.'));
         }
 
-        $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
-        $res = $this->redis->hMSet($key, $data);
+        $serialized = $this->packer->pack($data);
         if ($ttl && $ttl > 0) {
-            $this->redis->expire($key, $ttl);
+            $res = $this->redis->set($key, $serialized, ['EX' => $ttl]);
+        } else {
+            $res = $this->redis->set($key, $serialized);
         }
 
         return $res;
@@ -106,12 +95,11 @@ class RedisHandler implements HandlerInterface
 
     public function getMultiple($keys, $default = null)
     {
-        $data = $this->manager->handle(HashGetMultiple::class, $keys);
+        $data = $this->redis->mget($keys);
         $result = [];
         foreach ($data as $item) {
-            unset($item[$this->defaultKey]);
             if (! empty($item)) {
-                $result[] = $item;
+                $result[] = $this->packer->unpack($item);
             }
         }
         return $result;
@@ -139,8 +127,6 @@ class RedisHandler implements HandlerInterface
 
     public function incr($key, $column, $amount): bool
     {
-        $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount], 1);
-
-        return is_numeric($data);
+        return $this->delete($key);
     }
 }
