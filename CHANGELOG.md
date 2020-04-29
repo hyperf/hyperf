@@ -10,6 +10,7 @@
 - [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
 - [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when result is null.
 - [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service check do not work for protocol `jsonrpc-tcp-length-check`.
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
 
 ## Optimized 
 

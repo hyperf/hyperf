@@ -240,6 +240,7 @@
             "HyperfTest\\DB\\": "src/db/tests/",
             "HyperfTest\\Database\\": "src/database/tests/",
             "HyperfTest\\DbConnection\\": "src/db-connection/tests/",
+            "HyperfTest\\Devtool\\": "src/devtool/tests/",
             "HyperfTest\\Di\\": "src/di/tests/",
             "HyperfTest\\Dispatcher\\": "src/dispatcher/tests/",
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",
