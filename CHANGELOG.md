@@ -3,6 +3,7 @@
 ## Added
 
 - [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added RedisStringHandler for model-cache.
 
 ## Fixed
 
