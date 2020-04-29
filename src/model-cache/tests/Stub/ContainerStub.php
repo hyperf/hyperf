@@ -27,6 +27,7 @@ use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\ModelCache\Handler\RedisHandler;
+use Hyperf\ModelCache\Handler\RedisStringHandler;
 use Hyperf\ModelCache\Manager;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Pool\Channel;
@@ -34,6 +35,7 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
@@ -150,8 +152,11 @@ class ContainerStub
         $container->shouldReceive('make')->with(RedisHandler::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new RedisHandler($container, $args['config']);
         });
+        $container->shouldReceive('make')->with(RedisStringHandler::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
+            return new RedisStringHandler($container, $args['config']);
+        });
         $container->shouldReceive('get')->with(Manager::class)->andReturn(new Manager($container));
-
+        $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
         return $container;
     }
 }

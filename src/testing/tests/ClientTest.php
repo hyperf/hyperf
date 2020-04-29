@@ -14,6 +14,7 @@ namespace HyperfTest\Testing;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -70,6 +71,7 @@ class ClientTest extends TestCase
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn($factory = new DispatcherFactory());
         $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)->andReturn(false);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'exceptions' => [
                 'handler' => [
