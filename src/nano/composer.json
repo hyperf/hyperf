@@ -1,0 +1,54 @@
+{
+    "name": "hyperf/nano",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "Scale Hyperf application down to a single file",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Nano\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.4",
+        "hyperf/command": "^1.1",
+        "hyperf/config": "^1.1",
+        "hyperf/di": "1.1.*",
+        "hyperf/framework": "^1.1",
+        "hyperf/http-server": "^1.1",
+        "hyperf/utils": "^1.1"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "hyperf/crontab": "^1.1",
+        "hyperf/db": "^1.1",
+        "hyperf/process": "^1.1",
+        "hyperf/testing": "1.1.*",
+        "phpstan/phpstan": "^0.10.5",
+        "swoft/swoole-ide-helper": "dev-master"
+    },
+    "suggest": {
+        "hyperf/crontab": "Required to use closure crontab",
+        "hyperf/process": "Required to use closure process"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyse": "phpstan analyse --memory-limit 300M -l 5 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Nano\\ConfigProvider"
+        }
+    }
+}
