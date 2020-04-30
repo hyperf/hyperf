@@ -120,7 +120,6 @@ return [
         ...
         // 將 public 替換為上傳目錄
         'document_root' => BASE_PATH . '/public',
-        'static_handler_locations' => ['/'],
         'enable_static_handler' => true,
     ],
 ];
