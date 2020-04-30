@@ -1,18 +1,20 @@
-# v1.1.28 - TBD
+# v1.1.29 - TBD
+
+# v1.1.28 - 2020-04-30
 
 ## Added
 
 - [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
-- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added RedisStringHandler for model-cache.
-- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `RenderException` to catch render exceptions in view.
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added `Hyperf\ModelCache\Handler\RedisStringHandler` for [hyperf/model-cache](https://github.com/hyperf/model-cache) component, store the cache data in string type.
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `Hyperf\View\Exception\RenderException` to rethrow render exceptions in view.
 
 ## Fixed
 
 - [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when result is null.
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service check do not work for protocol `jsonrpc-tcp-length-check`.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when the JSONRPC result is null.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service health check does not works for `jsonrpc-tcp-length-check` protocol.
 - [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
-- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the server is 8.0.
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the MySQL server is 8.0 version.
 
 ## Optimized 
 
