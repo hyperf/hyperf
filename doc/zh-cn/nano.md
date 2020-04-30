@@ -104,7 +104,7 @@ $app->run();
 ```
 > 所有 $app 管理的闭包回调中，$this 都被绑定到了 `Hyperf\Nano\ContainerProxy` 上。
 
-### Middleware
+### 中间件
 ```php
 <?php
 use Hyperf\Nano\Factory\AppFactory;
@@ -125,9 +125,9 @@ $app->addMiddleware(function ($request, $handler) {
 $app->run();
 ```
 
-> 除了闭包之外，所有 $app->addXXX() 方法都接受类名作为参数。可以传入对应的标准 Hyperf 类。
+> 除了闭包之外，所有 $app->addXXX() 方法还接受类名作为参数。可以传入对应的 Hyperf 类。
 
-### ExceptionHandler
+### 异常处理
 
 ```php
 <?php
@@ -213,7 +213,7 @@ $app->addProcess(function(){
 $app->run();
 ```
 
-### Crontab
+### 定时任务
 
 ```php
 <?php
