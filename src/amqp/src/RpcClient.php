@@ -33,10 +33,6 @@ class RpcClient extends Builder
 
         $channel->basic_publish($msg, $rpcMessage->getExchange(), $rpcMessage->getRoutingKey());
 
-        return $rpcMessage->unserialize($connection->getAMQPMessage()->getBody());
-    }
-
-    public function request()
-    {
+        return $rpcMessage->unserialize($connection->getAMQPMessage($timeout)->getBody());
     }
 }

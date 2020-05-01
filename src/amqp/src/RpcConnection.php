@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
+use Hyperf\Amqp\Exception\TimeoutException;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -57,7 +58,6 @@ class RpcConnection extends Connection
                 $builder->getTicket()
             );
 
-            var_dump(111);
             $this->channel->basic_consume(
                 $this->queue,
                 '',
@@ -66,7 +66,6 @@ class RpcConnection extends Connection
                 false,
                 false,
                 function (AMQPMessage $message) {
-                    var_dump($message->get('correlation_id'));
                     if ($message->get('correlation_id') == $this->correlationId) {
                         $this->message = $message;
                     }
@@ -76,11 +75,14 @@ class RpcConnection extends Connection
         return $this->channel;
     }
 
-    public function getAMQPMessage(): AMQPMessage
+    public function getAMQPMessage(int $timeout): AMQPMessage
     {
+        $ms = microtime(true);
         while (is_null($this->message)) {
-            var_dump('wait...');
-            $this->channel->wait();
+            $this->channel->wait(null, false, $timeout);
+            if ((microtime(true) - $ms) > $timeout) {
+                throw new TimeoutException('RPC execute timeout.');
+            }
         }
 
         $message = $this->message;
