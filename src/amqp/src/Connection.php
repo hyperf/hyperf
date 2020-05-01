@@ -58,12 +58,12 @@ class Connection extends BaseConnection implements ConnectionInterface
     /**
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
-    private $channel;
+    protected $channel;
 
     /**
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
-    private $confirmChannel;
+    protected $confirmChannel;
 
     public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {

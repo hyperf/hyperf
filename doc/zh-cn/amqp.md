@@ -209,3 +209,84 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
+
+## RPC 功能
+
+1. 创建对应消费者
+
+RPC 使用的消费者，与普通消费者基本无差，但需要通过 `reply` 方法返回数据。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumer;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+/**
+ * @Consumer(exchange="hyperf", routingKey="reply", queue="reply.test", name="ReplyConsumer", nums=1, enable=true)
+ */
+class ReplyConsumer extends ConsumerMessage
+{
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        $data['message'] = 'Hello Hyperf.';
+
+        $this->reply($data, $message);
+
+        return Result::ACK;
+    }
+}
+```
+
+2. 创建 RPCMessage
+
+RpcMessage 需要设置与消费者一致的 `exchange` 和 `routingKey`。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\RpcMessage;
+
+use Hyperf\Amqp\Message\RpcMessage;
+
+class DemoRpcMessage extends RpcMessage
+{
+    public $exchange = 'hyperf';
+
+    public $routingKey = 'reply';
+
+    public function __construct(array $data)
+    {
+        $this->payload = $data;
+    }
+}
+
+```
+
+3. 调用 RPC
+
+```php
+<?php
+use App\Amqp\RpcMessage\DemoRpcMessage;
+use Hyperf\Amqp\RpcClient;
+use Hyperf\Utils\ApplicationContext;
+
+$message = new DemoRpcMessage(['id' => uniqid()]);
+$result = ApplicationContext::getContainer()->get(RpcClient::class)->call($message); 
+
+// array(2) {
+//     ["id"]=>
+//     string(13) "5eac1339b542b"
+//     ["message"]=>
+//     string(13) "Hello Hyperf."
+// }
+
+```

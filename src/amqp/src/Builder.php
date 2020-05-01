@@ -30,7 +30,7 @@ class Builder
     /**
      * @var PoolFactory
      */
-    private $poolFactory;
+    protected $poolFactory;
 
     public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
     {
