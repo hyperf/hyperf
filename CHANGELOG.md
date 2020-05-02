@@ -1,4 +1,10 @@
-# v1.1.29 - TBD
+# v1.1.31 - TBD
+
+# v1.1.30 - 2020-05-07
+
+## Added
+
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) Added RPC Client for amqp.
 
 # v1.1.28 - 2020-04-30
 
