@@ -19,6 +19,7 @@ use Hyperf\Utils\Context;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\EngineNotFindException;
+use Hyperf\View\Exception\RenderException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -66,20 +67,24 @@ class Render implements RenderInterface
 
     public function getContents(string $template, array $data = []): string
     {
-        switch ($this->mode) {
-            case Mode::SYNC:
-                /** @var EngineInterface $engine */
-                $engine = $this->container->get($this->engine);
-                $result = $engine->render($template, $data, $this->config);
-                break;
-            case Mode::TASK:
-            default:
-                $executor = $this->container->get(TaskExecutor::class);
-                $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
-                break;
-        }
+        try {
+            switch ($this->mode) {
+                case Mode::SYNC:
+                    /** @var EngineInterface $engine */
+                    $engine = $this->container->get($this->engine);
+                    $result = $engine->render($template, $data, $this->config);
+                    break;
+                case Mode::TASK:
+                default:
+                    $executor = $this->container->get(TaskExecutor::class);
+                    $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
+                    break;
+            }
 
-        return $result;
+            return $result;
+        } catch (\Throwable $throwable) {
+            throw new RenderException($throwable->getMessage(), $throwable->getCode(), $throwable);
+        }
     }
 
     protected function response(): ResponseInterface

@@ -56,8 +56,7 @@ class ServiceClient extends AbstractServiceClient
         }
 
         $response = $this->checkRequestIdAndTryAgain($response, $id);
-
-        if (isset($response['result'])) {
+        if (array_key_exists('result', $response)) {
             $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }

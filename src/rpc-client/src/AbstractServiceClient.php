@@ -234,6 +234,11 @@ abstract class AbstractServiceClient
             $service = $node['Service'] ?? [];
             $checks = $node['Checks'] ?? [];
 
+            if (isset($service['Meta']['Protocol']) && $this->protocol !== $service['Meta']['Protocol']) {
+                // The node is invalid, if the protocol is not equal with the client's protocol.
+                continue;
+            }
+
             foreach ($checks as $check) {
                 $status = $check['Status'] ?? false;
                 if ($status !== 'passing') {

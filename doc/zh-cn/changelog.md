@@ -1,12 +1,49 @@
 # 版本更新记录
 
+# v1.1.28 - 2020-04-30
+
+## 新增
+
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) 匿名函数路由支持参数注入。
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) 为 `model-cache` 组件添加 `RedisStringHandler`。
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) 新增 `RenderException` 统一捕获 `view` 组件抛出的异常。
+
+## 修复
+
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修复 `rpc-client` 会从 `consul` 中获取到不健康节点的BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-client` 获取到的结果为 `null` 时，会抛出 `RequestException` 的BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-server` 中 `jsonrpc-tcp-length-check` 协议，无法在 `consul` 中添加心跳检查的BUG。
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修复脚本 `describe:routes` 列表展示有误的BUG。
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修复 `MysqlProcessor::processColumns` 无法在 `MySQL Server 8.0` 版本中正常工作的BUG。
+
+## 优化 
+
+- [#1636](https://github.com/hyperf/hyperf/pull/1636) 优化 `co-phpunit` 脚本，当出现 `case` 验证失败后，协程也可以正常结束。
+
+
+# v1.1.27 - 2020-04-23
+
+## 新增
+
+- [#1575](https://github.com/hyperf/hyperf/pull/1575) 为脚本 `gen:model` 生成的模型，自动添加 `relation` `scope` 和 `attributes` 的变量注释。
+- [#1586](https://github.com/hyperf/hyperf/pull/1586) 添加 `symfony/event-dispatcher` 组件小于 `4.3` 时的 `conflict` 配置。用于解决用户使用了 `4.3` 以下版本时，导致 `SymfonyDispatcher` 实现冲突的BUG。
+- [#1597](https://github.com/hyperf/hyperf/pull/1597) 为 `AMQP` 消费者，添加最大消费次数 `maxConsumption`。
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) 为 `WebSocket` 服务添加基于 `fd` 存储的 `Context`。
+
+## 修复
+
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) 修复 `jsonrpc` 服务，发布了相同名字不同协议到 `consul` 后，客户端无法正常工作的BUG。
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) 修复了文件锁在协程下可能会造成死锁的BUG。
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修复了重写后的 `go` 方法，返回值与 `swoole` 原生方法不符的BUG。
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修复当路由 `Handler` 是匿名函数时，脚本 `describe:routes` 执行失败的BUG。
+
 # v1.1.26 - 2020-04-16
 
-## Added
+## 新增
 
 - [#1578](https://github.com/hyperf/hyperf/pull/1578) `UploadedFile` 支持 `getStream` 方法。
 
-## Fixed
+## 修复
 
 - [#1563](https://github.com/hyperf/hyperf/pull/1563) 修复服务关停后，定时器的 `onOneServer` 配置不会被重置。
 - [#1565](https://github.com/hyperf/hyperf/pull/1565) 当 `DB` 组件重连 `Mysql` 时，重置事务等级为 0。
@@ -14,21 +51,21 @@
 - [#1577](https://github.com/hyperf/hyperf/pull/1577) 修复 `describe:routes` 脚本 `server` 配置不生效的BUG。
 - [#1579](https://github.com/hyperf/hyperf/pull/1579) 修复 `migrate:refresh` 脚本 `step` 参数不为 `int` 时会报错的BUG。
 
-## Changed
+## 变更
 
 - [#1560](https://github.com/hyperf/hyperf/pull/1560) 修改 `hyperf/cache` 组件文件缓存引擎中 原生的文件操作为 `Filesystem`。
 - [#1568](https://github.com/hyperf/hyperf/pull/1568) 修改 `hyperf/async-queue` 组件 `Redis` 引擎中的 `\Redis` 为 `RedisProxy`。
 
 # v1.1.25 - 2020-04-09
 
-## Fixed
+## 修复
 
 - [#1532](https://github.com/hyperf/hyperf/pull/1532) 修复 'Symfony\Component\EventDispatcher\EventDispatcherInterface' 在 --no-dev 条件下安装会出现找不到接口的问题；
 
 
 # v1.1.24 - 2020-04-09
 
-## Added
+## 新增
 
 - [#1501](https://github.com/hyperf/hyperf/pull/1501) 添加 `Symfony` 命令行事件触发器，使之可以与 `hyperf/event` 组件结合使用；
 - [#1502](https://github.com/hyperf/hyperf/pull/1502) 为注解 `Hyperf\AsyncQueue\Annotation\AsyncQueueMessage` 添加 `maxAttempts` 参数，用于控制消息失败时重复消费的次数；
@@ -36,7 +73,7 @@
 - [#1517](https://github.com/hyperf/hyperf/pull/1517) 为依赖注入容器的懒加载功能添加了对接口继承和抽象方法继承的支持；
 - [#1529](https://github.com/hyperf/hyperf/pull/1529) 处理 `response cookies` 中的 `SameSite` 属性；
 
-## Fixed
+## 修复
 
 - [#1494](https://github.com/hyperf/hyperf/pull/1494) 修复单独使用 `Redis` 组件时，注释 `@mixin` 会被当成注解的 BUG；
 - [#1499](https://github.com/hyperf/hyperf/pull/1499) 修复引入 `hyperf/translation` 组件后，`hyperf/constants` 组件的动态参数不生效的 BUG；

@@ -50,4 +50,9 @@ class CalculatorService implements CalculatorServiceInterface
     {
         return [[], null];
     }
+
+    public function null()
+    {
+        return null;
+    }
 }
