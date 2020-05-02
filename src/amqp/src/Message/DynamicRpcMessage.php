@@ -1,9 +1,7 @@
 <?php
 
-namespace Hyperf\Amqp;
+namespace Hyperf\Amqp\Message;
 
-
-use Hyperf\Amqp\Message\RpcMessage;
 
 class DynamicRpcMessage extends RpcMessage
 {
