@@ -100,6 +100,7 @@ class ModelMorphEagerLoadingTest extends TestCase
 
     public function testWhereHasMorph()
     {
+        $this->getContainer();
         $images = Image::query()->whereHasMorph(
             'imageable',
             [
@@ -114,6 +115,12 @@ class ModelMorphEagerLoadingTest extends TestCase
         $this->assertSame(2, $images->count());
         $this->assertSame('user', $images[0]->imageable_type);
         $this->assertSame('book', $images[1]->imageable_type);
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame('select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `imageable_id` = ?)) or (`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `imageable_id` = ?)))', $event->sql);
+            }
+        }
     }
 
     protected function getContainer()
