@@ -18,21 +18,25 @@ class RpcClient extends Builder
 {
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
-        $pool = $this->poolFactory->getRpcPool($rpcMessage->getPoolName());
-        /** @var RpcConnection $connection */
-        $connection = $pool->get();
-        $channel = $connection->initChannel($rpcMessage->getQueueBuilder(), uniqid());
+        try {
+            $pool = $this->poolFactory->getRpcPool($rpcMessage->getPoolName());
+            /** @var RpcConnection $connection */
+            $connection = $pool->get();
+            $channel = $connection->initChannel($rpcMessage->getQueueBuilder(), uniqid());
 
-        $msg = new AMQPMessage(
-            $rpcMessage->serialize(),
-            [
-                'correlation_id' => $connection->getCorrelationId(),
-                'reply_to' => $connection->getQueue(),
-            ]
-        );
+            $message = new AMQPMessage(
+                $rpcMessage->serialize(),
+                [
+                    'correlation_id' => $connection->getCorrelationId(),
+                    'reply_to' => $connection->getQueue(),
+                ]
+            );
 
-        $channel->basic_publish($msg, $rpcMessage->getExchange(), $rpcMessage->getRoutingKey());
-
-        return $rpcMessage->unserialize($connection->getAMQPMessage($timeout)->getBody());
+            $channel->basic_publish($message, $rpcMessage->getExchange(), $rpcMessage->getRoutingKey());
+            $body = $connection->getAMQPMessage($timeout)->getBody();
+            return $rpcMessage->unserialize($body);
+        } finally {
+            $connection && $connection->release();
+        }
     }
 }
