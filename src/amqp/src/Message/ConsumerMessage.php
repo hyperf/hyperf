@@ -13,7 +13,10 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
+use Hyperf\Amqp\Result;
 use Hyperf\Utils\ApplicationContext;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
@@ -52,6 +55,16 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      * @var int
      */
     protected $maxConsumption = 0;
+
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        return $this->consume($data);
+    }
+
+    public function consume($data): string
+    {
+        return Result::ACK;
+    }
 
     public function setQueue(string $queue): self
     {
@@ -112,5 +125,20 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     {
         $this->maxConsumption = $maxConsumption;
         return $this;
+    }
+
+    protected function reply($data, AMQPMessage $message)
+    {
+        $packer = ApplicationContext::getContainer()->get(Packer::class);
+
+        /** @var AMQPChannel $channel */
+        $channel = $message->delivery_info['channel'];
+        $channel->basic_publish(
+            new AMQPMessage($packer->pack($data), [
+                'correlation_id' => $message->get('correlation_id'),
+            ]),
+            '',
+            $message->get('reply_to')
+        );
     }
 }

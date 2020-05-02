@@ -92,7 +92,7 @@ class Consumer extends Builder
         );
 
         try {
-            while (count($channel->callbacks) > 0) {
+            while ($channel->is_consuming()) {
                 $channel->wait();
             }
         } catch (MaxConsumptionException $ex) {
@@ -158,7 +158,7 @@ class Consumer extends Builder
 
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
-                $result = $consumerMessage->consume($data);
+                $result = $consumerMessage->consumeMessage($data, $message);
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
