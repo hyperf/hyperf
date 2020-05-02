@@ -218,13 +218,13 @@ class MorphTo extends BelongsTo
     /**
      * Specify which relations to load for a given morph type.
      *
-     * @param array $with
      * @return $this
      */
     public function morphWith(array $with)
     {
         $this->morphableEagerLoads = array_merge(
-            $this->morphableEagerLoads, $with
+            $this->morphableEagerLoads,
+            $with
         );
 
         return $this;
@@ -264,7 +264,8 @@ class MorphTo extends BelongsTo
         $whereIn = $this->whereInMethod($instance, $ownerKey);
 
         return $query->{$whereIn}(
-            $instance->getTable().'.'.$ownerKey, $this->gatherKeysByType($type)
+            $instance->getTable() . '.' . $ownerKey,
+            $this->gatherKeysByType($type)
         )->get();
     }
 

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
@@ -240,6 +239,62 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     *
+     * @param string $relation
+     * @param array|string $types
+     * @param string $operator
+     * @param int $count
+     * @return mixed
+     */
+    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'and', $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query.
+     *
+     * @param string $relation
+     * @param array|string $types
+     * @param string $operator
+     * @param int $count
+     * @param string $boolean
+     * @return mixed
+     */
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    {
+        $relation = $this->getRelationWithoutConstraints($relation);
+
+        $types = (array) $types;
+
+        if ($types === ['*']) {
+            $types = $this->model->newModelQuery()->distinct()->pluck($relation->getMorphType())->all();
+
+            foreach ($types as &$type) {
+                $type = Relation::getMorphedModel($type) ?? $type;
+            }
+        }
+
+        return $this->where(function ($query) use ($relation, $callback, $operator, $count, $types) {
+            foreach ($types as $type) {
+                $query->orWhere(function ($query) use ($relation, $callback, $operator, $count, $type) {
+                    $belongsTo = $this->getBelongsToRelation($relation, $type);
+
+                    if ($callback) {
+                        $callback = function ($query) use ($callback, $type) {
+                            return $callback($query, $type);
+                        };
+                    }
+
+                    $query->where($relation->getMorphType(), '=', (new $type())->getMorphClass())
+                        ->whereHas($belongsTo, $callback, $operator, $count);
+                });
+            }
+        }, null, null, $boolean);
+    }
+
+    /**
      * Add nested relationship count / exists conditions to the query.
      *
      * Sets up recursive call to whereHas until we finish the nested relation.
@@ -337,67 +392,8 @@ trait QueriesRelationships
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with where clauses.
-     *
-     * @param string $relation
-     * @param string|array $types
-     * @param \Closure|null $callback
-     * @param string $operator
-     * @param int $count
-     * @return mixed
-     */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
-    {
-        return $this->hasMorph($relation, $types, $operator, $count, 'and', $callback);
-    }
-
-    /**
-     * Add a polymorphic relationship count / exists condition to the query.
-     *
-     * @param string $relation
-     * @param string|array $types
-     * @param string $operator
-     * @param int $count
-     * @param string $boolean
-     * @param \Closure|null $callback
-     * @return mixed
-     */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
-    {
-        $relation = $this->getRelationWithoutConstraints($relation);
-
-        $types = (array)$types;
-
-        if ($types === ['*']) {
-            $types = $this->model->newModelQuery()->distinct()->pluck($relation->getMorphType())->all();
-
-            foreach ($types as &$type) {
-                $type = Relation::getMorphedModel($type) ?? $type;
-            }
-        }
-
-        return $this->where(function ($query) use ($relation, $callback, $operator, $count, $types) {
-            foreach ($types as $type) {
-                $query->orWhere(function ($query) use ($relation, $callback, $operator, $count, $type) {
-                    $belongsTo = $this->getBelongsToRelation($relation, $type);
-
-                    if ($callback) {
-                        $callback = function ($query) use ($callback, $type) {
-                            return $callback($query, $type);
-                        };
-                    }
-
-                    $query->where($relation->getMorphType(), '=', (new $type)->getMorphClass())
-                        ->whereHas($belongsTo, $callback, $operator, $count);
-                });
-            }
-        }, null, null, $boolean);
-    }
-
-    /**
      * Get the BelongsTo relationship for a single polymorphic type.
      *
-     * @param MorphTo $relation
      * @param string $type
      * @return mixed
      */
