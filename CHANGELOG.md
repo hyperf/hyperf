@@ -1,4 +1,8 @@
-# v1.1.29 - TBD
+# v1.1.30 - TBD
+
+## Added
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
 
 # v1.1.28 - 2020-04-30
 
