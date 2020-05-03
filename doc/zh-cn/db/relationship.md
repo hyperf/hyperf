@@ -212,7 +212,6 @@ return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
 return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
 ```
 
-
 ## 预加载
 
 当以属性方式访问 `Hyperf` 关联时，关联数据「懒加载」。这着直到第一次访问属性时关联数据才会被真实加载。不过 `Hyperf` 能在查询父模型时「预先载入」子关联。预加载可以缓解 N + 1 查询问题。为了说明 N + 1 查询问题，考虑 `User` 模型关联到 `Role` 的情形：
@@ -263,4 +262,250 @@ foreach ($users as $user){
 SELECT * FROM `user`;
 
 SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
+```
+
+## 多态关联
+
+多态关联允许目标模型借助关联关系，关联多个模型。
+
+### 一对一（多态）
+
+#### 表结构
+
+一对一多态关联与简单的一对一关联类似；不过，目标模型能够在一个关联上从属于多个模型。
+例如，Book 和 User 可能共享一个关联到 Image 模型的关系。使用一对一多态关联允许使用一个唯一图片列表同时用于 Book 和 User。让我们先看看表结构：
+
+```
+book
+  id - integer
+  title - string
+
+user 
+  id - integer
+  name - string
+
+image
+  id - integer
+  url - string
+  imageable_id - integer
+  imageable_type - string
+```
+
+image 表中的 imageable_id 字段会根据 imageable_type 的不同代表不同含义，默认情况下，imageable_type 直接是相关模型类名。
+
+#### 模型示例
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+```
+
+#### 获取关联
+
+按照上述定义模型后，我们就可以通过模型关系获取对应的模型。
+
+比如，我们获取某用户的图片。
+
+```php
+use App\Model\User;
+
+$user = User::find(1);
+
+$image = $user->image;
+```
+
+或者我们获取某个图片对应用户或书本。`imageable` 会根据 `imageable_type` 获取对应的 `User` 或者 `Book`。
+
+```php
+use App\Model\Image;
+
+$image = Image::find(1);
+
+$imageable = $image->imageable;
+```
+
+### 一对多（多态）
+
+#### 模型示例
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+```
+
+#### 获取关联
+
+获取用户所有的图片
+
+```php
+use App\Model\User;
+
+$user = User::query()->find(1);
+foreach ($user->images as $image) {
+    // ...
+}
+```
+
+### 自定义多态映射
+
+默认情况下，框架要求 `type` 必须存储对应模型类名，比如上述 `imageable_type` 必须是对应的 `User::class` 和 `Book::class`，但显然在实际应用中，这是十分不方便的。所以我们可以自定义映射关系，来解耦数据库与应用内部结构。
+
+```php
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+Relation::morphMap([
+    'user' => Model\User::class,
+    'book' => Model\Book::class,
+]);
+```
+
+因为 `Relation::morphMap` 修改后会常驻内存，所以我们可以在项目启动时，就创建好对应的关系映射。我们可以创建一下 监听器：
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Listener;
+
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener
+ */
+class MorphMapRelationListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Relation::morphMap([
+            'user' => Model\User::class,
+            'book' => Model\Book::class,
+        ]);
+    }
+}
+
+```
+
+### 嵌套预加载 `morphTo` 关联
+
+如果你希望加载一个 `morphTo` 关系，以及该关系可能返回的各种实体的嵌套关系，可以将 `with` 方法与 `morphTo` 关系的 `morphWith` 方法结合使用。
+
+比如我们打算预加载 image 的 book.user 的关系。
+
+```php
+
+use App\Model\Book;
+use App\Model\Image;
+use Hyperf\Database\Model\Relations\MorphTo;
+
+$images = Image::query()->with([
+    'imageable' => function (MorphTo $morphTo) {
+        $morphTo->morphWith([
+            Book::class => ['user'],
+        ]);
+    },
+])->get();
+```
+
+对应的SQL查询如下：
+
+```sql
+// 查询所有图片
+select * from `images`;
+// 查询图片对应的用户列表
+select * from `user` where `user`.`id` in (1, 2);
+// 查询图片对应的书本列表
+select * from `book` where `book`.`id` in (1, 2, 3);
+// 查询书本列表对应的用户列表
+select * from `user` where `user`.`id` in (1, 2);
+```
+
+### 多态关联查询
+
+要查询 `MorphTo` 关联的存在，可以使用 `whereHasMorph` 方法及其相应的方法：
+
+以下示例会查询，书本或用户 `ID` 为 1 的图片列表。
+
+```php
+use App\Model\Book;
+use App\Model\Image;
+use App\Model\User;
+use Hyperf\Database\Model\Builder;
+
+$images = Image::query()->whereHasMorph(
+    'imageable',
+    [
+        User::class,
+        Book::class,
+    ],
+    function (Builder $query) {
+        $query->where('imageable_id', 1);
+    }
+)->get();
 ```
