@@ -29,37 +29,53 @@ hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添
 ### 服务端
 ```php
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
 
 use Hyperf\SocketIOServer\Annotation\Event;
-use Hyperf\SocketIOServer\Annotation\SocketIONamespace;use Hyperf\SocketIOServer\BaseNamespace;
+use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
+use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
+use Hyperf\Utils\Codec\Json;
 
 /**
- * @IONamespace("/")
+ * @SocketIONamespace("/")
  */
 class WebSocketController extends BaseNamespace
 {
     /**
      * @Event("event")
+     * @param string $data
      */
     public function onEvent(Socket $socket, $data)
     {
-        return 'Event Received: '.$data;
+        return 'Event Received: ' . $data;
     }
 
     /**
      * @Event("join-room")
+     * @param string $data
      */
     public function onJoinRoom(Socket $socket, $data)
     {
         $socket->join($data);
-        $socket->to($data)->emit('event', $socket->getSid()."has joined $data");
-        $socket->emit('event', 'There are '.$socket->getAdapter()->clients($data)." players in $data");
+        $socket->to($data)->emit('event', $socket->getSid() . "has joined {$data}");
+        $socket->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
+    }
+
+    /**
+     * @Event("say")
+     * @param string $data
+     */
+    public function onSay(Socket $socket, $data)
+    {
+        $data = Json::decode($data);
+        $socket->to($data['room'])->emit('event', $socket->getSid() . " say: {$data['message']}");
     }
 }
+
 ```
 
 ### 客户端
@@ -69,12 +85,15 @@ class WebSocketController extends BaseNamespace
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
 <script>
-  var socket = io(':9502', {transports:["websocket"]});
-  socket.on('connect', data => {
-    socket.emit('event', 'hello, hyperf', console.log);
-    socket.emit('join-room', 'room1', console.log);
-  });
-  socket.on('event', console.log);
+    var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
+    socket.on('connect', data => {
+        socket.emit('event', 'hello, hyperf', console.log);
+        socket.emit('join-room', 'room1', console.log);
+        setInterval(function () {
+            socket.emit('say', '{"room":"room1", "message":"Hello Hyperf."}', console.log);
+        }, 1000);
+    });
+    socket.on('event', console.log);
 </script>
 ```
 
