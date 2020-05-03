@@ -26,11 +26,20 @@ class AspectCollector extends MetadataCollector
      */
     protected static $aspectRules = [];
 
-    public static function setAround(string $aspect, array $classes, array $annotations): void
+    /**
+     * @var \SplPriorityQueue[]
+     */
+    protected static $aspectQueues = [];
+
+    public static function setAround(string $aspect, array $classes, array $annotations, ?int $priority = null): void
     {
+        if (! is_int($priority)) {
+            $priority = static::getDefaultPriority();
+        }
         static::set('classes.' . $aspect, $classes);
         static::set('annotations.' . $aspect, $annotations);
         static::$aspectRules[$aspect] = [
+            'priority' => $priority,
             'classes' => $classes,
             'annotations' => $annotations,
         ];
@@ -39,6 +48,11 @@ class AspectCollector extends MetadataCollector
     public static function getRule(string $aspect): array
     {
         return static::$aspectRules[$aspect] ?? [];
+    }
+
+    public static function getPriority(string $aspect): int
+    {
+        return static::$aspectRules[$aspect]['priority'] ?? static::getDefaultPriority();
     }
 
     public static function getRules(): array
@@ -63,4 +77,10 @@ class AspectCollector extends MetadataCollector
         static::$container = $container;
         return true;
     }
+
+    private static function getDefaultPriority(): int
+    {
+        return (int) (PHP_INT_MAX / 2);
+    }
+
 }

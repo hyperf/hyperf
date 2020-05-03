@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Aop;
 
 use Closure;
@@ -20,13 +19,20 @@ use Hyperf\Utils\ApplicationContext;
 
 trait ProxyTrait
 {
+    /**
+     * Cache the aspects for the proxy class.
+     *
+     * @var array
+     */
+    protected static $aspects;
+
     protected static function __proxyCall(
-        string $originalClassName,
+        string $className,
         string $method,
         array $arguments,
         Closure $closure
     ) {
-        $proceedingJoinPoint = new ProceedingJoinPoint($closure, $originalClassName, $method, $arguments);
+        $proceedingJoinPoint = new ProceedingJoinPoint($closure, $className, $method, $arguments);
         $result = self::handleAround($proceedingJoinPoint);
         unset($proceedingJoinPoint);
         return $result;
@@ -35,7 +41,7 @@ trait ProxyTrait
     /**
      * @TODO This method will be called everytime, should optimize it later.
      */
-    protected static function getParamsMap(string $className, string $method, array $args): array
+    protected static function __getParamsMap(string $className, string $method, array $args): array
     {
         $map = [
             'keys' => [],
@@ -58,28 +64,46 @@ trait ProxyTrait
 
     private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $aspects = self::getAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $aspects = array_unique(array_merge($aspects, $annotationAspects));
-        if (empty($aspects)) {
+        if (self::$aspects === null) {
+            $className = $proceedingJoinPoint->className;
+            $methodName = $proceedingJoinPoint->methodName;
+            $aspects = array_unique(array_merge(self::getClassesAspects($className, $methodName), self::getAnnotationAspects($className, $methodName)));
+            $queue = new \SplPriorityQueue();
+            foreach ($aspects as $aspect) {
+                $queue->insert($aspect, AspectCollector::getPriority($aspect));
+            }
+            while ($queue->valid()) {
+                static::$aspects[] = $queue->current();
+                $queue->next();
+            }
+
+            unset($annotationAspects, $aspects, $className, $methodName, $queue);
+        }
+
+        if (empty(self::$aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
-        $container = ApplicationContext::getContainer();
-        if (method_exists($container, 'make')) {
-            $pipeline = $container->make(Pipeline::class);
-        } else {
-            $pipeline = new Pipeline($container);
-        }
-        return $pipeline->via('process')
-            ->through($aspects)
+        return self::makePipeline()->via('process')
+            ->through(self::$aspects)
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });
     }
 
-    private static function getAspects(string $className, string $method): array
+    private static function makePipeline(): Pipeline
+    {
+        $container = ApplicationContext::getContainer();
+        if (method_exists($container, 'make')) {
+            $pipeline = $container->make(Pipeline::class);
+        } else {
+            $pipeline = new Pipeline($container);
+        }
+        return $pipeline;
+    }
+
+    private static function getClassesAspects(string $className, string $method): array
     {
         $aspects = AspectCollector::get('classes', []);
         $matchedAspect = [];

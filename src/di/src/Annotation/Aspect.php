@@ -41,7 +41,8 @@ class Aspect extends AbstractAnnotation
                 case $instance instanceof AroundInterface:
                     $classes = property_exists($instance, 'classes') ? $instance->classes : [];
                     $annotations = property_exists($instance, 'annotations') ? $instance->annotations : [];
-                    AspectCollector::setAround($className, $classes, $annotations);
+                    $priority = property_exists($instance, 'priority') ? $instance->priority : null;
+                    AspectCollector::setAround($className, $classes, $annotations, $priority);
                     break;
             }
         }
