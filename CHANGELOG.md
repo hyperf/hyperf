@@ -4,6 +4,7 @@
 
 ## Added
 
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
 - [#1666](https://github.com/hyperf/hyperf/pull/1666) Added RPC Client for amqp.
 
 # v1.1.28 - 2020-04-30

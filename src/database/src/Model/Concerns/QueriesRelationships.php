@@ -33,22 +33,24 @@ trait QueriesRelationships
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
     {
-        if (strpos($relation, '.') !== false) {
-            return $this->hasNested($relation, $operator, $count, $boolean, $callback);
+        if (is_string($relation)) {
+            if (strpos($relation, '.') !== false) {
+                return $this->hasNested($relation, $operator, $count, $boolean, $callback);
+            }
+
+            $relation = $this->getRelationWithoutConstraints($relation);
         }
 
-        $relation = $this->getRelationWithoutConstraints($relation);
-
         if ($relation instanceof MorphTo) {
-            throw new RuntimeException('has() and whereHas() do not support MorphTo relationships.');
+            throw new RuntimeException('Please use whereHasMorph() for MorphTo relationships.');
         }
 
         // If we only need to check for the existence of the relation, then we can optimize
         // the subquery to only run a "where exists" clause instead of this full "count"
         // clause. This will make these queries run much faster compared with a count.
         $method = $this->canUseExistsForExistenceCheck($operator, $count)
-                        ? 'getRelationExistenceQuery'
-                        : 'getRelationExistenceCountQuery';
+            ? 'getRelationExistenceQuery'
+            : 'getRelationExistenceCountQuery';
 
         $hasQuery = $relation->{$method}(
             $relation->getRelated()->newQueryWithoutRelationships(),
@@ -237,6 +239,62 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     *
+     * @param string $relation
+     * @param array|string $types
+     * @param string $operator
+     * @param int $count
+     * @return mixed
+     */
+    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'and', $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query.
+     *
+     * @param string $relation
+     * @param array|string $types
+     * @param string $operator
+     * @param int $count
+     * @param string $boolean
+     * @return mixed
+     */
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    {
+        $relation = $this->getRelationWithoutConstraints($relation);
+
+        $types = (array) $types;
+
+        if ($types === ['*']) {
+            $types = $this->model->newModelQuery()->distinct()->pluck($relation->getMorphType())->all();
+
+            foreach ($types as &$type) {
+                $type = Relation::getMorphedModel($type) ?? $type;
+            }
+        }
+
+        return $this->where(function ($query) use ($relation, $callback, $operator, $count, $types) {
+            foreach ($types as $type) {
+                $query->orWhere(function ($query) use ($relation, $callback, $operator, $count, $type) {
+                    $belongsTo = $this->getBelongsToRelation($relation, $type);
+
+                    if ($callback) {
+                        $callback = function ($query) use ($callback, $type) {
+                            return $callback($query, $type);
+                        };
+                    }
+
+                    $query->where($relation->getMorphType(), '=', (new $type())->getMorphClass())
+                        ->whereHas($belongsTo, $callback, $operator, $count);
+                });
+            }
+        }, null, null, $boolean);
+    }
+
+    /**
      * Add nested relationship count / exists conditions to the query.
      *
      * Sets up recursive call to whereHas until we finish the nested relation.
@@ -284,8 +342,8 @@ trait QueriesRelationships
         $hasQuery->mergeConstraintsFrom($relation->getQuery());
 
         return $this->canUseExistsForExistenceCheck($operator, $count)
-                ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, $operator === '<' && $count === 1)
-                : $this->addWhereCountQuery($hasQuery->toBase(), $operator, $count, $boolean);
+            ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, $operator === '<' && $count === 1)
+            : $this->addWhereCountQuery($hasQuery->toBase(), $operator, $count, $boolean);
     }
 
     /**
@@ -331,5 +389,26 @@ trait QueriesRelationships
     protected function canUseExistsForExistenceCheck($operator, $count)
     {
         return ($operator === '>=' || $operator === '<') && $count === 1;
+    }
+
+    /**
+     * Get the BelongsTo relationship for a single polymorphic type.
+     *
+     * @param string $type
+     * @return mixed
+     */
+    protected function getBelongsToRelation(MorphTo $relation, $type)
+    {
+        $belongsTo = Relation::noConstraints(function () use ($relation, $type) {
+            return $this->model->belongsTo(
+                $type,
+                $relation->getForeignKeyName(),
+                $relation->getOwnerKeyName()
+            );
+        });
+
+        $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
+
+        return $belongsTo;
     }
 }

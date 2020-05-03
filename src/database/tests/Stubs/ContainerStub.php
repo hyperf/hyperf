@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface;
 
 class ContainerStub
 {
-    public static function getContainer()
+    public static function getContainer($callback = null)
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
@@ -42,6 +42,9 @@ class ContainerStub
         ];
 
         $connection = $connector->make($dbConfig);
+        if (is_callable($callback)) {
+            $callback($connection);
+        }
 
         $resolver = new ConnectionResolver(['default' => $connection]);
 
