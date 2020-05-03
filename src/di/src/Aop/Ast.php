@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Utils\Composer;
@@ -44,16 +43,19 @@ class Ast
         return $this->astParser->parse($code);
     }
 
-    public function proxy(string $className, string $proxyClassName)
+    public function proxy(string $className)
     {
-        $stmts = AstCollector::get($className, value(function () use ($className) {
-            $code = $this->getCodeByClassName($className);
-            return $stmts = $this->astParser->parse($code);
-        }));
+        $code = $this->getCodeByClassName($className);
+        $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
-        // @TODO Allow user modify or replace node vistor.
-        $traverser->addVisitor(new ProxyClassNameVisitor($proxyClassName));
-        $traverser->addVisitor(new ProxyCallVisitor($className));
+        // User could modify or replace the node vistors by Hyperf\Autoload\AstVisitorCollector.
+        foreach (AstVisitorCollector::list() as $string) {
+            $visitor = new $string();
+            if (method_exists($visitor, 'setClassName')) {
+                $visitor->setClassName($className);
+            }
+            $traverser->addVisitor($visitor);
+        }
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }

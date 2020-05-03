@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use Hyperf\Autoload\AstVisitorCollector;
+use Hyperf\Di\Aop\AstVisitorCollector;
 use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
@@ -31,9 +31,6 @@ class ConfigProvider
         return [
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
-            ],
-            'commands' => [
-                InitProxyCommand::class,
             ],
             'listeners' => [
                 BootApplicationListener::class,

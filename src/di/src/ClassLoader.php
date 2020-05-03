@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Autoload;
+namespace Hyperf\Di;
 
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Hyperf\Di\Annotation\ScanConfig;
+use Hyperf\Di\Annotation\Scanner;
+use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Utils\Composer;
 
 class ClassLoader
