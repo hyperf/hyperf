@@ -33,7 +33,7 @@ class ClassLoader
      */
     protected $proxies = [];
 
-    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir)
+    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $aspectConfigFilePath)
     {
         $this->setComposerClassLoader($classLoader);
         // Scan by ScanConfig to generate the reflection class map
@@ -41,7 +41,7 @@ class ClassLoader
         $reflectionClassMap = $scanner->scan();
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
+        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $aspectConfigFilePath);
         $this->proxies = $proxyManager->getProxies();
     }
 
@@ -54,11 +54,16 @@ class ClassLoader
         }
     }
 
-    public static function init(?string $proxyFileDirPath = null): void
+    public static function init(?string $proxyFileDirPath = null, ?string $aspectConfigFilePath = null): void
     {
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
             $proxyFileDirPath = BASE_PATH . '/runtime/container/proxy/';
+        }
+
+        if (! $aspectConfigFilePath) {
+            // This dir is the default proxy file dir path of Hyperf
+            $aspectConfigFilePath = BASE_PATH . '/config/autoload/aspects.php';
         }
 
         $loaders = spl_autoload_functions();
@@ -72,7 +77,7 @@ class ClassLoader
                     $composerClassLoader->loadClass($class);
                     return class_exists($class, false);
                 });
-                $loader[0] = new static($composerClassLoader, $proxyFileDirPath);
+                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $aspectConfigFilePath);
             }
             spl_autoload_unregister($unregisterLoader);
         }

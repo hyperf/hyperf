@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Doctrine\Instantiator\Instantiator;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 
@@ -40,9 +42,11 @@ class ProxyManager
     public function __construct(
         array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
-        string $proxyFileDir
+        string $proxyFileDir = '',
+        string $aspectConfigFilePath = ''
     ) {
         $this->proxyFileDir = $proxyFileDir;
+        $this->loadAspects($aspectConfigFilePath);
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
@@ -205,5 +209,36 @@ class ProxyManager
             }
         }
         return $defined;
+    }
+
+    protected function loadAspects(string $filePath)
+    {
+        if (! $filePath) {
+            return;
+        }
+        $aspects = require $filePath;
+        foreach ($aspects as $key => $value) {
+            if (is_numeric($key)) {
+                $aspect = $value;
+                $priority = null;
+            } else {
+                $aspect = $key;
+                $priority = (int) $value;
+            }
+            // Create the aspect instance without invoking their constructor.
+            $instantitor = new Instantiator();
+            $instance = $instantitor->instantiate($aspect);
+            switch ($instance) {
+                case $instance instanceof AroundInterface:
+                    $classes = property_exists($instance, 'classes') ? $instance->classes : [];
+                    // Annotations
+                    $annotations = property_exists($instance, 'annotations') ? $instance->annotations : [];
+                    // Priority
+                    $priority = property_exists($instance, 'priority') ? $instance->priority : null;
+                    // Save the metadata to AspectCollector
+                    AspectCollector::setAround($aspect, $classes, $annotations, $priority);
+                    break;
+            }
+        }
     }
 }
