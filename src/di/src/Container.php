@@ -47,25 +47,17 @@ class Container implements HyperfContainerInterface
     private $definitionResolver;
 
     /**
-     * @TODO Extract ProxyFactory to a Interface.
-     * @var ProxyFactory
-     */
-    private $proxyFactory;
-
-    /**
      * Container constructor.
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
-        $this->proxyFactory = new ProxyFactory();
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
             PsrContainerInterface::class => $this,
             HyperfContainerInterface::class => $this,
-            ProxyFactory::class => $this->proxyFactory,
         ];
     }
 
@@ -157,11 +149,6 @@ class Container implements HyperfContainerInterface
         }
 
         return true;
-    }
-
-    public function getProxyFactory(): ProxyFactory
-    {
-        return $this->proxyFactory;
     }
 
     public function getDefinitionSource(): Definition\DefinitionSourceInterface

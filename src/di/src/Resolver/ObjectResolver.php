@@ -25,10 +25,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {
-    /**
-     * @var ProxyFactory
-     */
-    private $proxyFactory;
 
     /**
      * @var ParameterResolver
@@ -52,7 +48,6 @@ class ObjectResolver implements ResolverInterface
     {
         $this->container = $container;
         $this->definitionResolver = $definitionResolver;
-        $this->proxyFactory = $container->get(ProxyFactory::class);
         $this->parameterResolver = new ParameterResolver($definitionResolver);
     }
 
@@ -110,10 +105,6 @@ class ObjectResolver implements ResolverInterface
         $classReflection = null;
         try {
             $className = $definition->getClassName();
-            if ($definition->isNeedProxy()) {
-                $definition = $this->proxyFactory->createProxyDefinition($definition);
-                $className = $definition->getProxyClassName();
-            }
             $classReflection = ReflectionManager::reflectClass($className);
             $constructorInjection = $definition->getConstructorInjection();
 
