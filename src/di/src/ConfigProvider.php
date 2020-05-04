@@ -12,20 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Aop\AroundInterface;
-use Hyperf\Di\Aop\AstVisitorCollector;
-use Hyperf\Di\Definition\ObjectDefinition;
-use Hyperf\Di\Definition\PropertyHandlerManager;
-use Hyperf\Di\Definition\PropertyInjection;
-use Hyperf\Di\Definition\Reference;
-use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Aop\AstVisitorCollector;
 use Hyperf\Di\Aop\ProxyCallVisitor;
+use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
 use Hyperf\Di\Command\InitProxyCommand;
+use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Listener\BootApplicationListener;
-use ReflectionClass;
 
 class ConfigProvider
 {
@@ -35,17 +29,8 @@ class ConfigProvider
         AstVisitorCollector::set(ProxyCallVisitor::class, ProxyCallVisitor::class);
         AstVisitorCollector::set(InjectVisitor::class, InjectVisitor::class);
 
-        PropertyHandlerManager::register(Inject::class, function (ObjectDefinition $definition, string $propertyName, $annotationObject, $value, ReflectionClass $reflectionClass) {
-            if (in_array(AroundInterface::class, $reflectionClass->getInterfaceNames())) {
-                // Even the Inject has been handled by constructor of proxy class, but the Aspect class does not works,
-                // So inject the value one more time here.
-                /** @var Inject $injectAnnotation */
-                if ($injectAnnotation = $value[Inject::class] ?? null) {
-                    $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
-                    $definition->addPropertyInjection($propertyInjection);
-                }
-            }
-        });
+        // Register Property Handler.
+        RegisterInjectPropertyHandler::register();
 
         return [
             'dependencies' => [
@@ -56,7 +41,8 @@ class ConfigProvider
             ],
             'autoload' => [
                 'visitors' => [
-                    ProxyCallVisitor::class
+                    ProxyCallVisitor::class,
+                    InjectVisitor::class
                 ],
             ],
             'annotations' => [
