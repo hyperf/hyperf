@@ -14,16 +14,16 @@
     
 ## Dependencies Upgrade
 
-- Upgrade `psr/event-dispatcher` to `^1.0`;
-- Upgrade `monolog/monolog` to `^2.0`;
-- Upgrade `phpstan/phpstan` to `^0.12.18`;
-- Upgrade `vlucas/phpdotenv` to `^4.0`;
-- Upgrade `symfony/finder` to `^5.0`;
-- Upgrade `symfony/event-dispatcher` to `^5.0`;
-- Upgrade `symfony/console` to `^5.0`;
-- Upgrade `symfony/property-access` to `^5.0`;
-- Upgrade `symfony/serializer` to `^5.0`;
-- Upgrade `elasticsearch/elasticsearch` to `^7.0`;
+- Upgraded `psr/event-dispatcher` to `^1.0`;
+- Upgraded `monolog/monolog` to `^2.0`;
+- Upgraded `phpstan/phpstan` to `^0.12.18`;
+- Upgraded `vlucas/phpdotenv` to `^4.0`;
+- Upgraded `symfony/finder` to `^5.0`;
+- Upgraded `symfony/event-dispatcher` to `^5.0`;
+- Upgraded `symfony/console` to `^5.0`;
+- Upgraded `symfony/property-access` to `^5.0`;
+- Upgraded `symfony/serializer` to `^5.0`;
+- Upgraded `elasticsearch/elasticsearch` to `^7.0`;
 
 ## Removed
 
