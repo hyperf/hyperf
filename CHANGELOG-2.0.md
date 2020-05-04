@@ -23,6 +23,7 @@
 - Upgrade `symfony/console` to `^5.0`;
 - Upgrade `symfony/property-access` to `^5.0`;
 - Upgrade `symfony/serializer` to `^5.0`;
+- Upgrade `elasticsearch/elasticsearch` to `^7.0`;
 
 ## Removed
 
