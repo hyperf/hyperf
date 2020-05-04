@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Doctrine\Instantiator\Instantiator;
+use Hyperf\Config\ProviderConfig;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
@@ -37,16 +38,16 @@ class ProxyManager
      *
      * @var string
      */
-    protected $proxyFileDir;
+    protected $proxyDir;
 
     public function __construct(
         array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
-        string $proxyFileDir = '',
-        string $aspectConfigFilePath = ''
+        string $proxyDir = '',
+        string $configDir = ''
     ) {
-        $this->proxyFileDir = $proxyFileDir;
-        $this->loadAspects($aspectConfigFilePath);
+        $this->proxyDir = $proxyDir;
+        $this->loadAspects($configDir);
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
@@ -57,9 +58,9 @@ class ProxyManager
         return $this->proxies;
     }
 
-    public function getProxyFileDir(): string
+    public function getProxyDir(): string
     {
-        return $this->proxyFileDir;
+        return $this->proxyDir;
     }
 
     public function getClassNameMap(): array
@@ -78,14 +79,14 @@ class ProxyManager
         if (! $proxies) {
             return $proxyFiles;
         }
-        if (! file_exists($this->getProxyFileDir())) {
+        if (! file_exists($this->getProxyDir())) {
             mkdir($this->getProxyFileDir(), 0755, true);
         }
         // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
             $code = $ast->proxy($className);
-            $proxyFilePath = $this->getProxyFileDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
+            $proxyFilePath = $this->getProxyDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
             if (! file_exists($proxyFilePath)) {
                 file_put_contents($proxyFilePath, $code);
             }
@@ -211,13 +212,29 @@ class ProxyManager
         return $defined;
     }
 
-    protected function loadAspects(string $filePath)
+    /**
+     * Load aspects to AspectCollector by configuration files and ConfigProvider.
+     */
+    protected function loadAspects(string $configDir): void
     {
-        if (! $filePath) {
+        if (! $configDir) {
             return;
         }
-        $aspects = require $filePath;
-        foreach ($aspects as $key => $value) {
+        $aspects = require $configDir . 'autoload/aspects.php';
+        $baseConfig = require $configDir . 'config.php';
+        $providerConfig = ProviderConfig::load();
+        if (! isset($aspects) || ! is_array($aspects)) {
+            $aspects = [];
+        }
+        if (! isset($baseConfig['aspects']) || ! is_array($baseConfig['aspects'])) {
+            $baseConfig['aspects'] = [];
+        }
+        if (! isset($providerConfig['aspects']) || ! is_array($providerConfig['aspects'])) {
+            $providerConfig['aspects'] = [];
+        }
+        $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
+
+        foreach ($aspects ?? [] as $key => $value) {
             if (is_numeric($key)) {
                 $aspect = $value;
                 $priority = null;

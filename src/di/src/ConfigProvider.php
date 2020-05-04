@@ -17,6 +17,7 @@ use Hyperf\Di\Aop\AstVisitorCollector;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
 use Hyperf\Di\Command\InitProxyCommand;
+use Hyperf\Di\Inject\InjectAspect;
 use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Listener\BootApplicationListener;
 
@@ -44,6 +45,9 @@ class ConfigProvider
                     ProxyCallVisitor::class,
                     InjectVisitor::class
                 ],
+            ],
+            'aspects' => [
+                InjectAspect::class,
             ],
             'annotations' => [
                 'scan' => [

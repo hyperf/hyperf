@@ -16,9 +16,6 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
 class InjectAspect extends AbstractAspect
 {
     public $annotations = [

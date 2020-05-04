@@ -33,7 +33,7 @@ class ClassLoader
      */
     protected $proxies = [];
 
-    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $aspectConfigFilePath)
+    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {
         $this->setComposerClassLoader($classLoader);
         // Scan by ScanConfig to generate the reflection class map
@@ -41,7 +41,7 @@ class ClassLoader
         $reflectionClassMap = $scanner->scan();
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $aspectConfigFilePath);
+        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $configDir);
         $this->proxies = $proxyManager->getProxies();
     }
 
@@ -54,16 +54,16 @@ class ClassLoader
         }
     }
 
-    public static function init(?string $proxyFileDirPath = null, ?string $aspectConfigFilePath = null): void
+    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null): void
     {
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
             $proxyFileDirPath = BASE_PATH . '/runtime/container/proxy/';
         }
 
-        if (! $aspectConfigFilePath) {
+        if (! $configDir) {
             // This dir is the default proxy file dir path of Hyperf
-            $aspectConfigFilePath = BASE_PATH . '/config/autoload/aspects.php';
+            $configDir = BASE_PATH . '/config/';
         }
 
         $loaders = spl_autoload_functions();
@@ -77,7 +77,7 @@ class ClassLoader
                     $composerClassLoader->loadClass($class);
                     return class_exists($class, false);
                 });
-                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $aspectConfigFilePath);
+                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
             }
             spl_autoload_unregister($unregisterLoader);
         }
