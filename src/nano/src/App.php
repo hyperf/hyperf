@@ -129,7 +129,7 @@ class App
     public function addExceptionHandler($exceptionHandler)
     {
         if (is_string($exceptionHandler)) {
-            $this->appendConfig('exceptions.handler' . $this->serverName, $exceptionHandler);
+            $this->appendConfig('exceptions.handler.' . $this->serverName, $exceptionHandler);
             return;
         }
 
