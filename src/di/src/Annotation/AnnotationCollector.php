@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\MetadataCollector;
@@ -36,7 +35,15 @@ class AnnotationCollector extends MetadataCollector
         static::$container[$class]['_m'][$method][$annotation] = $value;
     }
 
+    /**
+     * @deprecated v3.0
+     */
     public static function getClassByAnnotation(string $annotation): array
+    {
+        return self::getClassesByAnnotation($annotation);
+    }
+
+    public static function getClassesByAnnotation()
     {
         $result = [];
         foreach (static::$container as $class => $metadata) {
@@ -48,17 +55,15 @@ class AnnotationCollector extends MetadataCollector
         return $result;
     }
 
-    public static function getClassAnnotation(string $class, string $annotation)
-    {
-        return static::get($class . '._c.' . $annotation);
-    }
-
-    public static function getClassMethodAnnotation(string $class, string $method)
-    {
-        return static::get($class . '._m.' . $method);
-    }
-
+    /**
+     * @deprecated v3.0
+     */
     public static function getMethodByAnnotation(string $annotation): array
+    {
+        return static::getMethodsByAnnotation($annotation);
+    }
+
+    public static function getMethodsByAnnotation(string $annotation): array
     {
         $result = [];
         foreach (static::$container as $class => $metadata) {
@@ -82,6 +87,21 @@ class AnnotationCollector extends MetadataCollector
             }
         }
         return $properties;
+    }
+
+    public static function getClassAnnotation(string $class, string $annotation)
+    {
+        return static::get($class . '._c.' . $annotation);
+    }
+
+    public static function getClassMethodAnnotation(string $class, string $method)
+    {
+        return static::get($class . '._m.' . $method);
+    }
+
+    public static function getClassPropertyAnnotation(string $class, string $property)
+    {
+        return static::get($class . '._p.' . $property);
     }
 
     public static function getContainer(): array

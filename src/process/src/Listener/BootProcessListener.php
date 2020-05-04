@@ -86,6 +86,6 @@ class BootProcessListener implements ListenerInterface
 
     private function getAnnotationProcesses()
     {
-        return AnnotationCollector::getClassByAnnotation(Process::class);
+        return AnnotationCollector::getClassesByAnnotation(Process::class);
     }
 }
