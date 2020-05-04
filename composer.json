@@ -72,10 +72,7 @@
         "start-point/etcd-php": "^1.1",
         "swoole/ide-helper": "dev-master",
         "sy-records/think-template": "^2.0",
-        "symfony/console": "^5.0",
-        "symfony/finder": "^5.0",
-        "symfony/property-access": "^5.0",
-        "symfony/serializer": "^5.0",
+        "symfony/event-dispatcher": "^4.3",
         "twig/twig": "^2.12",
         "vlucas/phpdotenv": "^4.0",
         "xxtime/flysystem-aliyun-oss": "^1.5"
@@ -135,6 +132,9 @@
         "hyperf/websocket-server": "self.version"
     },
     "suggest": {},
+    "conflict": {
+        "symfony/event-dispatcher": "<4.3"
+    },
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
@@ -236,6 +236,7 @@
             "HyperfTest\\DB\\": "src/db/tests/",
             "HyperfTest\\Database\\": "src/database/tests/",
             "HyperfTest\\DbConnection\\": "src/db-connection/tests/",
+            "HyperfTest\\Devtool\\": "src/devtool/tests/",
             "HyperfTest\\Di\\": "src/di/tests/",
             "HyperfTest\\Dispatcher\\": "src/dispatcher/tests/",
             "HyperfTest\\Elasticsearch\\": "src/elasticsearch/tests/",

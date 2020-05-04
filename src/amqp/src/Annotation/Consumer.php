@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -49,4 +48,9 @@ class Consumer extends AbstractAnnotation
      * @var null|bool
      */
     public $enable;
+
+    /**
+     * @var int
+     */
+    public $maxConsumption = 0;
 }

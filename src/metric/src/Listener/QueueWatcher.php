@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
@@ -82,7 +81,7 @@ class QueueWatcher implements ListenerInterface
             $timeout->set((float) $info['timeout']);
         });
         Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
     }

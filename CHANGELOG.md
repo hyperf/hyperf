@@ -1,4 +1,71 @@
-# v1.1.26 - TBD
+# v1.1.30 - TBD
+
+## Added
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
+
+## Optimized 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
+
+# v1.1.28 - 2020-04-30
+
+## Added
+
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added `Hyperf\ModelCache\Handler\RedisStringHandler` for [hyperf/model-cache](https://github.com/hyperf/model-cache) component, store the cache data in string type.
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `Hyperf\View\Exception\RenderException` to rethrow render exceptions in view.
+
+## Fixed
+
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when the JSONRPC result is null.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service health check does not works for `jsonrpc-tcp-length-check` protocol.
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the MySQL server is 8.0 version.
+
+## Optimized 
+
+- [#1636](https://github.com/hyperf/hyperf/pull/1636) Optimized `co-phpunit` do not broken in coroutine environment, when cases failed.
+
+# v1.1.27 - 2020-04-23
+
+## Added
+
+- [#1575](https://github.com/hyperf/hyperf/pull/1575) Added document of property with relation, scope and attributes.
+- [#1586](https://github.com/hyperf/hyperf/pull/1586) Added conflict of symfony/event-dispatcher which < 4.3.
+- [#1597](https://github.com/hyperf/hyperf/pull/1597) Added `maxConsumption` for amqp consumer.
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) Added WebSocket Context to save data from the same fd.
+
+## Fixed
+
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) Fixed the rpc client do not work, when jsonrpc server register the same service to consul with jsonrpc and jsonrpc-http protocol.
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) Fixed unsafe file locks in coroutines.
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) Fixed bug that the return value of function `go` is not adaptive with `swoole`.
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) Fixed `describe:routes` failed when router handler is `Closure`.
+
+# v1.1.26 - 2020-04-16
+
+## Added
+
+- [#1578](https://github.com/hyperf/hyperf/pull/1578) Support `getStream` method in `UploadedFile.php`.
+
+## Added
+
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) Added connection level context for `hyperf/websocket-server`.
+
+## Fixed
+
+- [#1563](https://github.com/hyperf/hyperf/pull/1563) Fixed crontab's `onOneServer` option not resetting mutex on shutdown.
+- [#1565](https://github.com/hyperf/hyperf/pull/1565) Reset transaction level to zero, when reconnent to mysql server.
+- [#1572](https://github.com/hyperf/hyperf/pull/1572) Fixed parent class does not exists in `Hyperf\GrpcServer\CoreMiddleware`.
+- [#1577](https://github.com/hyperf/hyperf/pull/1577) Fixed `describe:routes` command's `server` option not take effect.
+- [#1579](https://github.com/hyperf/hyperf/pull/1579) Fixed `migrate:refresh` command's `step` is int.
+
+## Changed
+
+- [#1560](https://github.com/hyperf/hyperf/pull/1560) Changed functions of file to `filesystem` for `FileSystemDriver` in `hyperf/cache`.
+- [#1568](https://github.com/hyperf/hyperf/pull/1568) Changed `\Redis` to `RedisProxy` for `RedisDriver` in `async-queue`.
 
 # v1.1.25 - 2020-04-09
 

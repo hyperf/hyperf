@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -35,6 +34,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
+                ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
             ],
             'listeners' => [
                 BootApplicationListener::class,

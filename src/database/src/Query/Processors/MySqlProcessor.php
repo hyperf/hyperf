@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Query\Processors;
 
 use Hyperf\Database\Schema\Column;
@@ -30,16 +29,16 @@ class MySqlProcessor extends Processor
     {
         $columns = [];
         foreach ($results as $i => $value) {
-            $item = (object) $value;
+            $item = array_change_key_case((array) $value, CASE_LOWER);
             $columns[$i] = new Column(
-                $item->table_schema,
-                $item->table_name,
-                $item->column_name,
-                $item->ordinal_position,
-                $item->column_default,
-                $item->is_nullable === 'YES',
-                $item->data_type,
-                $item->column_comment
+                $item['table_schema'],
+                $item['table_name'],
+                $item['column_name'],
+                $item['ordinal_position'],
+                $item['column_default'],
+                $item['is_nullable'] === 'YES',
+                $item['data_type'],
+                $item['column_comment']
             );
         }
 

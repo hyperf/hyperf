@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\IdGeneratorInterface;
@@ -57,8 +56,7 @@ class ServiceClient extends AbstractServiceClient
         }
 
         $response = $this->checkRequestIdAndTryAgain($response, $id);
-
-        if (isset($response['result'])) {
+        if (array_key_exists('result', $response)) {
             $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }

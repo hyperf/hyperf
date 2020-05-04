@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Framework\Event\OnWorkerExit;
@@ -35,7 +34,7 @@ class WorkerExitCallback
     {
         $this->dispatcher->dispatch(new OnWorkerExit($server, $workerId));
         Coroutine::create(function () {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->resume();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         });
     }
 }

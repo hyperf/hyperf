@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc\Stub;
 
 use Hyperf\RpcClient\Proxy\AbstractProxyService;
@@ -47,6 +46,11 @@ class CalculatorProxyServiceClient extends AbstractProxyService implements Calcu
     }
 
     public function callable(callable $a, ?callable $b): array
+    {
+        return $this->client->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function null()
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }

@@ -39,14 +39,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-class IndexController
+class IndexController extends AbstractController
 {
     public function example(\League\Flysystem\Filesystem $filesystem)
     {
+        // Process Upload
+        $file = $this->request->file('upload');
+        $stream = fopen($file->getRealPath(), 'r+');
+        $filesystem->writeStream(
+            'uploads/'.$file->getClientFilename(),
+            $stream
+        );
+        fclose($stream);
+        
         // Write Files
         $filesystem->write('path/to/file.txt', 'contents');
 
-        // Write Use writeStream
+        // Add local file
         $stream = fopen('local/path/to/file.txt', 'r+');
         $result = $filesystem->writeStream('path/to/file.txt', $stream);
         if (is_resource($stream)) {
@@ -101,11 +110,28 @@ class IndexController
 }
 ```
 
+### 配置靜態資源
+
+如果您希望通過 http 訪問上傳到本地的檔案，請在 `config/autoload/server.php` 配置中增加以下配置。
+
+```
+return [
+    'settings' => [
+        ...
+        // 將 public 替換為上傳目錄
+        'document_root' => BASE_PATH . '/public',
+        'enable_static_handler' => true,
+    ],
+];
+
+```
+
 ## 注意事項
 
 1. S3 儲存請確認安裝 `hyperf/guzzle` 元件以提供協程化支援。阿里雲、七牛雲端儲存請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的引數支援性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有物件儲存方案均支援 S3 協議，可以使用 S3 介面卡。
-3. 以阿里雲 OSS 為例，1 核 1 程序讀操作效能對比：
+3. 使用Local驅動時，根目錄是配置好的地址，而不是作業系統的根目錄。例如，Local驅動 `root` 設定為 `/var/www`, 則本地磁碟上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
+4. 以阿里雲 OSS 為例，1 核 1 程序讀操作效能對比：
 
 ```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
