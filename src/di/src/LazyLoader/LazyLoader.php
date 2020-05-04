@@ -75,11 +75,6 @@ class LazyLoader
         }
     }
 
-    private function startsWith($haystack, $needle): bool
-    {
-        return substr($haystack, 0, strlen($needle)) === (string) $needle;
-    }
-
     /**
      * Register the loader on the auto-loader stack.
      */
@@ -150,6 +145,11 @@ class LazyLoader
         /** @var callable(string): void */
         $load = [$this, 'load'];
         spl_autoload_register($load, true, true);
+    }
+
+    private function startsWith($haystack, $needle): bool
+    {
+        return substr($haystack, 0, strlen($needle)) === (string) $needle;
     }
 
     /**

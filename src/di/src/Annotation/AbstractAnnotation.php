@@ -17,7 +17,6 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
-
     public function __construct($value = null)
     {
         if (is_array($value)) {

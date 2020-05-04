@@ -11,13 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Str;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\Adapter;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class Scanner
 {

@@ -1,6 +1,14 @@
 <?php
 
-
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Di\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
@@ -14,12 +22,6 @@ use ReflectionProperty;
 
 /**
  * A reader for docblock annotations.
- *
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
- * @author  Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class AnnotationReader implements Reader
 {
@@ -46,37 +48,37 @@ class AnnotationReader implements Reader
         'Required' => true,
         'Target' => true,
         // Widely used tags (but not existent in phpdoc)
-        'fix' => true , 'fixme' => true,
+        'fix' => true, 'fixme' => true,
         'override' => true,
         // PHPDocumentor 1 tags
-        'abstract'=> true, 'access'=> true,
+        'abstract' => true, 'access' => true,
         'code' => true,
-        'deprec'=> true,
-        'endcode' => true, 'exception'=> true,
-        'final'=> true,
-        'ingroup' => true, 'inheritdoc'=> true, 'inheritDoc'=> true,
+        'deprec' => true,
+        'endcode' => true, 'exception' => true,
+        'final' => true,
+        'ingroup' => true, 'inheritdoc' => true, 'inheritDoc' => true,
         'magic' => true,
-        'name'=> true,
-        'toc' => true, 'tutorial'=> true,
+        'name' => true,
+        'toc' => true, 'tutorial' => true,
         'private' => true,
-        'static'=> true, 'staticvar'=> true, 'staticVar'=> true,
+        'static' => true, 'staticvar' => true, 'staticVar' => true,
         'throw' => true,
         // PHPDocumentor 2 tags.
-        'api' => true, 'author'=> true,
-        'category'=> true, 'copyright'=> true,
-        'deprecated'=> true,
-        'example'=> true,
-        'filesource'=> true,
-        'global'=> true,
-        'ignore'=> true, /* Can we enable this? 'index' => true, */ 'internal'=> true,
-        'license'=> true, 'link'=> true,
+        'api' => true, 'author' => true,
+        'category' => true, 'copyright' => true,
+        'deprecated' => true,
+        'example' => true,
+        'filesource' => true,
+        'global' => true,
+        'ignore' => true, /* Can we enable this? 'index' => true, */ 'internal' => true,
+        'license' => true, 'link' => true,
         'method' => true,
-        'package'=> true, 'param'=> true, 'property' => true, 'property-read' => true, 'property-write' => true,
-        'return'=> true,
-        'see'=> true, 'since'=> true, 'source' => true, 'subpackage'=> true,
-        'throws'=> true, 'todo'=> true, 'TODO'=> true,
-        'usedby'=> true, 'uses' => true,
-        'var'=> true, 'version'=> true,
+        'package' => true, 'param' => true, 'property' => true, 'property-read' => true, 'property-write' => true,
+        'return' => true,
+        'see' => true, 'since' => true, 'source' => true, 'subpackage' => true,
+        'throws' => true, 'todo' => true, 'TODO' => true,
+        'usedby' => true, 'uses' => true,
+        'var' => true, 'version' => true,
         // PHPUnit tags
         'codeCoverageIgnore' => true, 'codeCoverageIgnoreStart' => true, 'codeCoverageIgnoreEnd' => true,
         // PHPCheckStyle
@@ -106,31 +108,6 @@ class AnnotationReader implements Reader
      * @var array
      */
     private static $globalIgnoredNamespaces = [];
-
-    static public function addGlobalImports(string $alias, string $annotation)
-    {
-        self::$globalImports[$alias] = $annotation;
-    }
-
-    /**
-     * Add a new annotation to the globally ignored annotation names with regard to exception handling.
-     *
-     * @param string $name
-     */
-    static public function addGlobalIgnoredName($name)
-    {
-        self::$globalIgnoredNames[$name] = true;
-    }
-
-    /**
-     * Add a new annotation to the globally ignored annotation namespaces with regard to exception handling.
-     *
-     * @param string $namespace
-     */
-    static public function addGlobalIgnoredNamespace($namespace)
-    {
-        self::$globalIgnoredNamespaces[$namespace] = true;
-    }
 
     /**
      * Annotations parser.
@@ -178,7 +155,7 @@ class AnnotationReader implements Reader
      */
     public function __construct(DocParser $parser = null)
     {
-        if (extension_loaded('Zend Optimizer+') && (ini_get('zend_optimizerplus.save_comments') === "0" || ini_get('opcache.save_comments') === "0")) {
+        if (extension_loaded('Zend Optimizer+') && (ini_get('zend_optimizerplus.save_comments') === '0' || ini_get('opcache.save_comments') === '0')) {
             throw AnnotationException::optimizerPlusSaveComments();
         }
 
@@ -191,7 +168,7 @@ class AnnotationReader implements Reader
 
         $this->parser = $parser ?: new DocParser();
 
-        $this->preParser = new DocParser;
+        $this->preParser = new DocParser();
 
         $this->preParser->setImports(self::$globalImports);
         $this->preParser->setIgnoreNotImportedAnnotations(true);
@@ -200,9 +177,31 @@ class AnnotationReader implements Reader
         $this->phpParser = new PhpParser();
     }
 
+    public static function addGlobalImports(string $alias, string $annotation)
+    {
+        self::$globalImports[$alias] = $annotation;
+    }
+
     /**
-     * {@inheritDoc}
+     * Add a new annotation to the globally ignored annotation names with regard to exception handling.
+     *
+     * @param string $name
      */
+    public static function addGlobalIgnoredName($name)
+    {
+        self::$globalIgnoredNames[$name] = true;
+    }
+
+    /**
+     * Add a new annotation to the globally ignored annotation namespaces with regard to exception handling.
+     *
+     * @param string $namespace
+     */
+    public static function addGlobalIgnoredNamespace($namespace)
+    {
+        self::$globalIgnoredNamespaces[$namespace] = true;
+    }
+
     public function getClassAnnotations(ReflectionClass $class)
     {
         $this->parser->setTarget(Target::TARGET_CLASS);
@@ -213,9 +212,6 @@ class AnnotationReader implements Reader
         return $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getClassAnnotation(ReflectionClass $class, $annotationName)
     {
         $annotations = $this->getClassAnnotations($class);
@@ -229,13 +225,10 @@ class AnnotationReader implements Reader
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
-        $class   = $property->getDeclaringClass();
-        $context = 'property ' . $class->getName() . "::\$" . $property->getName();
+        $class = $property->getDeclaringClass();
+        $context = 'property ' . $class->getName() . '::$' . $property->getName();
 
         $this->parser->setTarget(Target::TARGET_PROPERTY);
         $this->parser->setImports($this->getPropertyImports($property));
@@ -245,9 +238,6 @@ class AnnotationReader implements Reader
         return $this->parser->parse($property->getDocComment(), $context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPropertyAnnotation(ReflectionProperty $property, $annotationName)
     {
         $annotations = $this->getPropertyAnnotations($property);
@@ -261,12 +251,9 @@ class AnnotationReader implements Reader
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getMethodAnnotations(ReflectionMethod $method)
     {
-        $class   = $method->getDeclaringClass();
+        $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
 
         $this->parser->setTarget(Target::TARGET_METHOD);
@@ -277,9 +264,6 @@ class AnnotationReader implements Reader
         return $this->parser->parse($method->getDocComment(), $context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
         $annotations = $this->getMethodAnnotations($method);
@@ -295,8 +279,6 @@ class AnnotationReader implements Reader
 
     /**
      * Returns the ignored annotations for the given class.
-     *
-     * @param \ReflectionClass $class
      *
      * @return array
      */
@@ -315,8 +297,6 @@ class AnnotationReader implements Reader
     /**
      * Retrieves imports.
      *
-     * @param \ReflectionClass $class
-     *
      * @return array
      */
     private function getClassImports(ReflectionClass $class)
@@ -333,8 +313,6 @@ class AnnotationReader implements Reader
 
     /**
      * Retrieves imports for methods.
-     *
-     * @param \ReflectionMethod $method
      *
      * @return array
      */
@@ -359,8 +337,6 @@ class AnnotationReader implements Reader
     /**
      * Retrieves imports for properties.
      *
-     * @param \ReflectionProperty $property
-     *
      * @return array
      */
     private function getPropertyImports(ReflectionProperty $property)
@@ -381,17 +357,15 @@ class AnnotationReader implements Reader
 
     /**
      * Collects parsing metadata for a given class.
-     *
-     * @param \ReflectionClass $class
      */
     private function collectParsingMetadata(ReflectionClass $class)
     {
         $ignoredAnnotationNames = self::$globalIgnoredNames;
-        $annotations            = $this->preParser->parse($class->getDocComment(), 'class ' . $class->name);
+        $annotations = $this->preParser->parse($class->getDocComment(), 'class ' . $class->name);
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof IgnoreAnnotation) {
-                foreach ($annotation->names AS $annot) {
+                foreach ($annotation->names as $annot) {
                     $ignoredAnnotationNames[$annot] = true;
                 }
             }
@@ -408,4 +382,3 @@ class AnnotationReader implements Reader
         $this->ignoredAnnotationNames[$name] = $ignoredAnnotationNames;
     }
 }
-

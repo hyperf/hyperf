@@ -20,7 +20,6 @@ use Hyperf\Di\Aop\AroundInterface;
  */
 class Aspect extends AbstractAnnotation
 {
-
     /**
      * @var array
      */
@@ -34,7 +33,7 @@ class Aspect extends AbstractAnnotation
     /**
      * @var int
      */
-    public $priority = null;
+    public $priority;
 
     public function collectClass(string $className): void
     {

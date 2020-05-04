@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Inject;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;

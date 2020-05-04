@@ -16,7 +16,6 @@ use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Aop\AstVisitorCollector;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
-use Hyperf\Di\Command\InitProxyCommand;
 use Hyperf\Di\Inject\InjectAspect;
 use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Listener\BootApplicationListener;
@@ -39,12 +38,6 @@ class ConfigProvider
             ],
             'listeners' => [
                 BootApplicationListener::class,
-            ],
-            'autoload' => [
-                'visitors' => [
-                    ProxyCallVisitor::class,
-                    InjectVisitor::class
-                ],
             ],
             'aspects' => [
                 InjectAspect::class,

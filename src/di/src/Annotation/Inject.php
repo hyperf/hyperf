@@ -12,14 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\BetterReflectionManager;
-use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\TypesFinderManager;
-use Hyperf\Utils\Str;
 use PhpDocReader\AnnotationException;
-use PhpDocReader\PhpDocReader;
-use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\Object_;
-use Roave\BetterReflection\TypesFinder\FindPropertyType;
 
 /**
  * @Annotation
@@ -59,7 +54,7 @@ class Inject extends AbstractAnnotation
             }
             $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
             if ($reflectionTypes[0] instanceof Object_) {
-                $this->value = ltrim((string)$reflectionTypes[0], '\\');
+                $this->value = ltrim((string) $reflectionTypes[0], '\\');
             }
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;

@@ -20,6 +20,7 @@ trait Container
 
     /**
      * Add a value to container by identifier.
+     * @param mixed $value
      */
     public static function set(string $id, $value)
     {
@@ -29,6 +30,7 @@ trait Container
     /**
      * Finds an entry of the container by its identifier and returns it,
      * Retunrs $default when does not exists in the container.
+     * @param null|mixed $default
      */
     public static function get(string $id, $default = null)
     {
