@@ -55,7 +55,7 @@ class DeleteListener implements ListenerInterface
         $driver = $this->manager->getDriver($group);
         $driver->delete($key);
 
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable) {
+        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
             $driver->delKey($annotation->prefix . 'MEMBERS', $key);
         }
     }
