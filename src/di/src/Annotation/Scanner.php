@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
