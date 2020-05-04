@@ -352,7 +352,7 @@ use App\Service\LazyUserService;
 
 class Foo{
     public $service;
-    public function __construct(LazyUserService $sevice){
+    public function __construct(LazyUserService $service){
         $this->service = $service;
     }
 }

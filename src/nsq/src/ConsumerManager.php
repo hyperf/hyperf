@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nsq\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Nsq\Event\AfterConsume;
@@ -79,12 +79,18 @@ class ConsumerManager
              */
             private $dispatcher;
 
+            /**
+             * @var ConfigInterface
+             */
+            private $config;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
                 $this->consumer = $consumer;
-
+                $this->config = $container->get(ConfigInterface::class);
                 $this->subscriber = make(Nsq::class, [
+                    'container' => $container,
                     'pool' => $consumer->getPool(),
                 ]);
 
@@ -93,9 +99,17 @@ class ConsumerManager
                 }
             }
 
+            public function getConsumer(): AbstractConsumer
+            {
+                return $this->consumer;
+            }
+
             public function isEnable(): bool
             {
-                return $this->consumer->isEnable();
+                return $this->config->get(
+                    sprintf('nsq.%s.enable', $this->consumer->getPool()),
+                    true
+                ) && $this->consumer->isEnable();
             }
 
             public function handle(): void

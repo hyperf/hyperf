@@ -61,7 +61,6 @@ return [
         ...
         // 靜態資源
         'document_root' => BASE_PATH . '/public',
-        'static_handler_locations' => ['/'],
         'enable_static_handler' => true,
     ],
 ];

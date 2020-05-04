@@ -5,7 +5,7 @@ NATS 是一個開源、輕量級、高效能的分散式訊息中介軟體，實
 ## 安裝
 
 ```bash
-composer requir hyperf/nats
+composer require hyperf/nats
 ```
 
 ## 使用

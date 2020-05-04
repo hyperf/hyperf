@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use HyperfTest\Utils\Exception\RetryException;
@@ -28,6 +27,17 @@ class FunctionTest extends TestCase
         }, [1]);
 
         $this->assertSame(2, $result);
+    }
+
+    public function testReturnOfGo()
+    {
+        $uniqid = uniqid();
+        $id = go(function () use (&$uniqid) {
+            $uniqid = 'Hyperf';
+        });
+
+        $this->assertTrue(is_int($id));
+        $this->assertSame('Hyperf', $uniqid);
     }
 
     public function testDataGet()

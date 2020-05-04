@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Nsq\MessageBuilder;
@@ -40,6 +39,9 @@ class NsqConnection extends KeepaliveConnection
     {
         $this->config = array_merge($this->config, $config);
         $this->builder = $container->get(MessageBuilder::class);
+        if ($pool instanceof NsqPool) {
+            $this->name = 'nsq.connection.' . $pool->getName();
+        }
         parent::__construct($container, $pool);
     }
 

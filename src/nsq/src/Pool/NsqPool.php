@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Contract\ConfigInterface;
@@ -43,6 +42,11 @@ class NsqPool extends Pool
         $options = Arr::get($this->config, 'pool', []);
 
         parent::__construct($container, $options);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     protected function createConnection(): ConnectionInterface

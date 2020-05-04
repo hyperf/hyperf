@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SwooleTracker\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
@@ -36,8 +35,8 @@ class HttpServerMiddleware implements MiddlewareInterface
         if (class_exists(Stats::class)) {
             $path = $request->getUri()->getPath();
             $ip = current(swoole_get_local_ip());
-            $traceId = $request->getHeaderLine("x-swoole-traceid") ?: "";
-            $spanId = $request->getHeaderLine("x-swoole-spanid") ?: "";
+            $traceId = $request->getHeaderLine('x-swoole-traceid') ?: '';
+            $spanId = $request->getHeaderLine('x-swoole-spanid') ?: '';
 
             $tick = Stats::beforeExecRpc($path, $this->name, $ip, $traceId, $spanId);
             try {

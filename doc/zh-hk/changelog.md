@@ -1,5 +1,134 @@
 # 版本更新記錄
 
+# v1.1.28 - 2020-04-30
+
+## 新增
+
+- [#1645](https://github.com/hyperf/hyperf/pull/1645) 匿名函數路由支持參數注入。
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) 為 `model-cache` 組件添加 `RedisStringHandler`。
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) 新增 `RenderException` 統一捕獲 `view` 組件拋出的異常。
+
+## 修復
+
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修復 `rpc-client` 會從 `consul` 中獲取到不健康節點的BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-client` 獲取到的結果為 `null` 時，會拋出 `RequestException` 的BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-server` 中 `jsonrpc-tcp-length-check` 協議，無法在 `consul` 中添加心跳檢查的BUG。
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修復腳本 `describe:routes` 列表展示有誤的BUG。
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修復 `MysqlProcessor::processColumns` 無法在 `MySQL Server 8.0` 版本中正常工作的BUG。
+
+## 優化 
+
+- [#1636](https://github.com/hyperf/hyperf/pull/1636) 優化 `co-phpunit` 腳本，當出現 `case` 驗證失敗後，協程也可以正常結束。
+
+
+# v1.1.27 - 2020-04-23
+
+## 新增
+
+- [#1575](https://github.com/hyperf/hyperf/pull/1575) 為腳本 `gen:model` 生成的模型，自動添加 `relation` `scope` 和 `attributes` 的變量註釋。
+- [#1586](https://github.com/hyperf/hyperf/pull/1586) 添加 `symfony/event-dispatcher` 組件小於 `4.3` 時的 `conflict` 配置。用於解決用户使用了 `4.3` 以下版本時，導致 `SymfonyDispatcher` 實現衝突的BUG。
+- [#1597](https://github.com/hyperf/hyperf/pull/1597) 為 `AMQP` 消費者，添加最大消費次數 `maxConsumption`。
+- [#1603](https://github.com/hyperf/hyperf/pull/1603) 為 `WebSocket` 服務添加基於 `fd` 存儲的 `Context`。
+
+## 修復
+
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) 修復 `jsonrpc` 服務，發佈了相同名字不同協議到 `consul` 後，客户端無法正常工作的BUG。
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) 修復了文件鎖在協程下可能會造成死鎖的BUG。
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修復了重寫後的 `go` 方法，返回值與 `swoole` 原生方法不符的BUG。
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修復當路由 `Handler` 是匿名函數時，腳本 `describe:routes` 執行失敗的BUG。
+
+# v1.1.26 - 2020-04-16
+
+## 新增
+
+- [#1578](https://github.com/hyperf/hyperf/pull/1578) `UploadedFile` 支持 `getStream` 方法。
+
+## 修復
+
+- [#1563](https://github.com/hyperf/hyperf/pull/1563) 修復服務關停後，定時器的 `onOneServer` 配置不會被重置。
+- [#1565](https://github.com/hyperf/hyperf/pull/1565) 當 `DB` 組件重連 `Mysql` 時，重置事務等級為 0。
+- [#1572](https://github.com/hyperf/hyperf/pull/1572) 修復 `Hyperf\GrpcServer\CoreMiddleware` 中，自定義類的父類找不到時報錯的BUG。
+- [#1577](https://github.com/hyperf/hyperf/pull/1577) 修復 `describe:routes` 腳本 `server` 配置不生效的BUG。
+- [#1579](https://github.com/hyperf/hyperf/pull/1579) 修復 `migrate:refresh` 腳本 `step` 參數不為 `int` 時會報錯的BUG。
+
+## 變更
+
+- [#1560](https://github.com/hyperf/hyperf/pull/1560) 修改 `hyperf/cache` 組件文件緩存引擎中 原生的文件操作為 `Filesystem`。
+- [#1568](https://github.com/hyperf/hyperf/pull/1568) 修改 `hyperf/async-queue` 組件 `Redis` 引擎中的 `\Redis` 為 `RedisProxy`。
+
+# v1.1.25 - 2020-04-09
+
+## 修復
+
+- [#1532](https://github.com/hyperf/hyperf/pull/1532) 修復 'Symfony\Component\EventDispatcher\EventDispatcherInterface' 在 --no-dev 條件下安裝會出現找不到接口的問題；
+
+
+# v1.1.24 - 2020-04-09
+
+## 新增
+
+- [#1501](https://github.com/hyperf/hyperf/pull/1501) 添加 `Symfony` 命令行事件觸發器，使之可以與 `hyperf/event` 組件結合使用；
+- [#1502](https://github.com/hyperf/hyperf/pull/1502) 為註解 `Hyperf\AsyncQueue\Annotation\AsyncQueueMessage` 添加 `maxAttempts` 參數，用於控制消息失敗時重複消費的次數；
+- [#1510](https://github.com/hyperf/hyperf/pull/1510) 添加 `Hyperf/Utils/CoordinatorManager`，用於提供更優雅的啟動和停止服務，服務啟動前不響應請求，服務停止前，保證某些循環邏輯能夠正常結束；
+- [#1517](https://github.com/hyperf/hyperf/pull/1517) 為依賴注入容器的懶加載功能添加了對接口繼承和抽象方法繼承的支持；
+- [#1529](https://github.com/hyperf/hyperf/pull/1529) 處理 `response cookies` 中的 `SameSite` 屬性；
+
+## 修復
+
+- [#1494](https://github.com/hyperf/hyperf/pull/1494) 修復單獨使用 `Redis` 組件時，註釋 `@mixin` 會被當成註解的 BUG；
+- [#1499](https://github.com/hyperf/hyperf/pull/1499) 修復引入 `hyperf/translation` 組件後，`hyperf/constants` 組件的動態參數不生效的 BUG；
+- [#1504](https://github.com/hyperf/hyperf/pull/1504) 修復 `RPC` 代理客户端無法正常處理返回值為 `nullable` 類型的方法；
+- [#1507](https://github.com/hyperf/hyperf/pull/1507) 修復 `hyperf/consul` 組件的 `catalog` 註冊方法調用會失敗的 BUG；
+
+# v1.1.23 - 2020-04-02
+
+## 新增
+
+- [#1467](https://github.com/hyperf/hyperf/pull/1467) 為 `filesystem` 組件添加默認配置；
+- [#1469](https://github.com/hyperf/hyperf/pull/1469) 為 `Hyperf/Guzzle/HandlerStackFactory` 添加 `getHandler()` 方法，並儘可能的使用 `make()` 創建 `handler`；
+- [#1480](https://github.com/hyperf/hyperf/pull/1480) RPC client 現在會自動代理父接口的方法定義；
+
+## 變更
+
+- [#1481](https://github.com/hyperf/hyperf/pull/1481) 異步隊列創建消息時，使用 `make` 方法創建；
+
+## 修復
+
+- [#1471](https://github.com/hyperf/hyperf/pull/1471) 修復 `NSQ` 組件，數據量超過 `max-output-buffer-size` 接收數據失敗的 `BUG`；
+- [#1472](https://github.com/hyperf/hyperf/pull/1472) 修復 `NSQ` 組件，在消費者中發佈消息時，會導致消費者無法正常消費的 `BUG`；
+- [#1474](https://github.com/hyperf/hyperf/pull/1474) 修復 `NSQ` 組件，`requeue` 消息時，消費者會意外重啟的 `BUG`；
+- [#1477](https://github.com/hyperf/hyperf/pull/1477) 修復使用 `Hyperf\Testing\Client::flushContext` 時，會引發 `Fixed Invalid argument supplied` 異常的 `BUG`；
+
+# v1.1.22 - 2020-03-26
+
+## 新增
+
+- [#1440](https://github.com/hyperf/hyperf/pull/1440) 為 NSQ 的每個連接新增 `enable` 配置項來控制連接下的所有消費者的自啟功能；
+- [#1451](https://github.com/hyperf/hyperf/pull/1451) 新增 Filesystem 組件；
+- [#1459](https://github.com/hyperf/hyperf/pull/1459) 模型 Collection 新增 macroable 支持；
+- [#1463](https://github.com/hyperf/hyperf/pull/1463) 為 Guzzle Handler 增加 `on_stats` 選項的功能支持；
+
+## 變更
+
+- [#1452](https://github.com/hyperf/hyperf/pull/1452) 在注入 Redis 客户端時，推薦使用 `\Hyperf\Redis\Redis` 來替代 `\Redis`，原因在 [#938](https://github.com/hyperf/hyperf/issues/938)；
+
+## 修復
+
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修復命令 `describe:route` 缺失了帶參數的路由；
+- [#1449](https://github.com/hyperf/hyperf/pull/1449) 修復了高基數請求路徑的內存溢出的問題；
+- [#1454](https://github.com/hyperf/hyperf/pull/1454) 修復 Collection 的 `flatten()` 方法因為 `INF` 參數值為 `float` 類型導致無法使用的問題；
+- [#1458](https://github.com/hyperf/hyperf/pull/1458) 修復了 Guzzle 不支持 Elasticsearch 版本大於 7.0 的問題；
+
+# v1.1.21 - 2020-03-19
+
+## 新增
+
+- [#1393](https://github.com/hyperf/hyperf/pull/1393) 為 `Hyperf\HttpMessage\Stream\SwooleStream` 實現更多的方法；
+- [#1419](https://github.com/hyperf/hyperf/pull/1419) 允許 ConfigFetcher 通過一個協程啟動而無需額外啟動一個進程；
+- [#1424](https://github.com/hyperf/hyperf/pull/1424) 允許用户通過配置文件的形式修改 `session_name` 配置；
+- [#1435](https://github.com/hyperf/hyperf/pull/1435) 為模型緩存增加 `use_default_value` 屬性來自動修正緩存數據與數據庫數據之間的差異；
+- [#1436](https://github.com/hyperf/hyperf/pull/1436) 為 NSQ 消費者增加 `isEnable()` 方法來控制消費者進程是否啟用自啟功能；
+
 # v1.1.20 - 2020-03-12
 
 ## 新增
@@ -123,7 +252,7 @@
 - [#1208](https://github.com/hyperf/hyperf/pull/1208) 修復 Exception 和 error 在 JSON-RPC TCP Server 下無法被正確處理的問題；
 - [#1208](https://github.com/hyperf/hyperf/pull/1208) 修復 JSON-RPC 沒有檢查 Request ID 和 Response ID 是否一致的問題；
 - [#1223](https://github.com/hyperf/hyperf/pull/1223) 修復 ConfigProvider 掃描器不會掃描 composer.json 內 require-dev 的配置；
-- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修復執行 `init-proxy.sh` 命令在某些環境如Alpine下會報 bash 不存在的問題；
+- [#1254](https://github.com/hyperf/hyperf/pull/1254) 修復執行 `init-proxy.sh` 命令在某些環境如 Alpine 下會報 bash 不存在的問題；
 
 ## 優化
 
@@ -172,7 +301,7 @@
 
 - [#1175](https://github.com/hyperf/hyperf/pull/1175) 修復 `Hyperf\Utils\Collection::random` 方法不支持傳入 `null`；
 - [#1178](https://github.com/hyperf/hyperf/pull/1178) 修復 `Hyperf\Database\Query\Builder::chunkById` 方法不支持元素是 `array` 的情況；
-- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修復 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能傳入 `string` 的BUG；
+- [#1189](https://github.com/hyperf/hyperf/pull/1189) 修復 `Hyperf\Utils\Collection::operatorForWhere` 方法，`operator` 只能傳入 `string` 的 BUG；
 
 ## 優化
 

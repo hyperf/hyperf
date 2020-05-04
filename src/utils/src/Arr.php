@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use ArrayAccess;
@@ -170,7 +169,7 @@ class Arr
 
     /**
      * Flatten a multi-dimensional array into a single level.
-     * @param mixed $depth
+     * @param float|int $depth
      */
     public static function flatten(array $array, $depth = INF): array
     {

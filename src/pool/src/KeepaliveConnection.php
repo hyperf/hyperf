@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool;
 
 use Closure;
@@ -53,6 +52,11 @@ abstract class KeepaliveConnection implements ConnectionInterface
      * @var bool
      */
     protected $connected = false;
+
+    /**
+     * @var string
+     */
+    protected $name = 'keepalive.connection';
 
     public function __construct(ContainerInterface $container, Pool $pool)
     {
@@ -152,7 +156,8 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
     public function isTimeout(): bool
     {
-        return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime();
+        return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime()
+            && $this->channel->length() > 0;
     }
 
     protected function addHeartbeat()

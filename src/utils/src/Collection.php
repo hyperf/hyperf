@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use ArrayAccess;
@@ -557,8 +556,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): self
+    public function flatten($depth = INF): self
     {
         return new static(Arr::flatten($this->items, $depth));
     }

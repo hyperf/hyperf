@@ -38,7 +38,6 @@
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持註解及 AOP 的依賴注入容器
-- [reasno/lazy-loader](https://github.com/Reasno/LazyLoader) 為 Hyperf DI 補充基於類型提示的懶加載注入。
 
 ## 服務
 
@@ -112,6 +111,7 @@
 
 - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的對接 Swoole Tracker 的組件，提供阻塞分析、性能分析、內存泄漏分析、運行狀態及調用統計等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 組件，對 Swoole 的 Task 機制進行了封裝及抽象，提供便捷的註解用法
+- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通過 Swoole 進程管理功能啟動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 
 ## 開發調試
 
@@ -121,6 +121,7 @@
 ## 權限認證
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的權限組件
+- [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 組件改寫的, 適配 hyperf 框架
 
 ## 第三方 SDK
 

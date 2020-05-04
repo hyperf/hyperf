@@ -47,7 +47,7 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
-            'read_write_timeout' => 3.0,
+            'read_write_timeout' => 6.0,
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 3,
@@ -194,6 +194,10 @@ class DemoConsumer extends ConsumerMessage
     }
 }
 ```
+
+### 設置最大消費數
+
+可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啟。
 
 ### 消費結果
 

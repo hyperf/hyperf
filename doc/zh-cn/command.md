@@ -281,7 +281,7 @@ array(2) {
 |   InputOption::VALUE_NONE   | 1  | 是否传入可选项 default 字段无效 |
 | InputOption::VALUE_REQUIRED | 2  |   选项必填   |
 | InputOption::VALUE_OPTIONAL | 4  |   选项可选   |
-| InputOption::VALUE_IS_ARRAY | 4  |   选项数组   |
+| InputOption::VALUE_IS_ARRAY | 8  |   选项数组   |
 
 #### 是否传入可选项
 

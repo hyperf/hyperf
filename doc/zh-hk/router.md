@@ -169,7 +169,7 @@ class UserController
 > 本框架定義的路由參數必須和控制器參數鍵名、類型保持一致，否則控制器無法接受到相關參數
 
 ```php
-Router::get('/user/{id}', 'App\Controller\UserController::info')
+Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
 
 ```php
@@ -180,7 +180,7 @@ public function info(int $id)
 }
 ```
 
-通過`route`方法獲取
+通過 `route` 方法獲取
 
 ```php
 public function index(RequestInterface $request)
@@ -203,4 +203,4 @@ public function index(RequestInterface $request)
 #### 獲取路由信息
 
 如果安裝了 devtool 組件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表信息，
-並且提供path可選項，方便獲取單個路由信息，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。
+並且提供 path 可選項，方便獲取單個路由信息，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。

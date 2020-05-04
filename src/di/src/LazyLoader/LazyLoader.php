@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\LazyLoader;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,9 +16,9 @@ use Hyperf\Utils\Coroutine\Locker as CoLocker;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
-use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
-use ReflectionClass;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class LazyLoader
 {
@@ -125,23 +124,17 @@ class LazyLoader
      */
     protected function generatorLazyProxy(string $proxy, string $target): string
     {
-        $targetReflection = new ReflectionClass($target);
-        $fileName = $targetReflection->getFileName();
-        if (! $fileName) {
-            $code = ''; // Classes and Interfaces from PHP internals
-        } else {
-            $code = file_get_contents($fileName);
-        }
+        $targetReflection = ReflectionClass::createFromName($target);
         if ($this->isUnsupportedReflectionType($targetReflection)) {
             $builder = new FallbackLazyProxyBuilder();
-            return $this->buildNewCode($builder, $code, $proxy, $target);
+            return $this->buildNewCode($builder, $proxy, $targetReflection);
         }
         if ($targetReflection->isInterface()) {
             $builder = new InterfaceLazyProxyBuilder();
-            return $this->buildNewCode($builder, $code, $proxy, $target);
+            return $this->buildNewCode($builder, $proxy, $targetReflection);
         }
         $builder = new ClassLazyProxyBuilder();
-        return $this->buildNewCode($builder, $code, $proxy, $target);
+        return $this->buildNewCode($builder, $proxy, $targetReflection);
     }
 
     /**
@@ -165,43 +158,38 @@ class LazyLoader
      */
     private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
-        //Final class
+        // Final class
         if ($targetReflection->isFinal()) {
-            return true;
-        }
-        // Internal Interface
-        if ($targetReflection->isInterface() && $targetReflection->isInternal()) {
-            return true;
-        }
-        // Nested Interface
-        if ($targetReflection->isInterface() && ! empty($targetReflection->getInterfaces())) {
-            return true;
-        }
-        // Nested AbstractClass
-        if ($targetReflection->isAbstract()
-            && $targetReflection->getParentClass()
-            && $targetReflection->getParentClass()->isAbstract()
-        ) {
             return true;
         }
         return false;
     }
 
-    private function buildNewCode(AbstractLazyProxyBuilder $builder, string $code, string $proxy, string $target): string
+    private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
     {
+        $target = $reflectionClass->getName();
+        $ast = $reflectionClass->getAst();
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor();
+        $visitor = new PublicMethodVisitor($this->getMethodsStmts($reflectionClass), $builder->getOriginalClassName());
         $nameResolver = new NameResolver();
         $traverser->addVisitor($nameResolver);
         $traverser->addVisitor($visitor);
-        $ast = $traverser->traverse($ast);
+        $traverser->traverse([$ast]);
         $builder->addNodes($visitor->nodes);
         $prettyPrinter = new Standard();
         $stmts = [$builder->getNode()];
         return $prettyPrinter->prettyPrintFile($stmts);
+    }
+
+    private function getMethodsStmts(ReflectionClass $reflectionClass)
+    {
+        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $stmts = [];
+        foreach ($reflectionMethods as $method) {
+            $stmts[] = $method->getAst();
+        }
+        return $stmts;
     }
 }

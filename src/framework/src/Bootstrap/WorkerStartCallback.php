@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -17,6 +16,8 @@ use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\Event\OtherWorkerStart;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server as SwooleServer;
 
@@ -58,5 +59,6 @@ class WorkerStartCallback
         }
 
         $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
+        CoordinatorManager::until(Constants::WORKER_START)->resume();
     }
 }

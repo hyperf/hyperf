@@ -25,7 +25,8 @@
         "php-di/phpdoc-reader": "^2.0.1",
         "doctrine/instantiator": "^1.0",
         "hyperf/event": "~1.1.0",
-        "hyperf/framework": "~1.1.0"
+        "hyperf/framework": "~1.1.0",
+        "roave/better-reflection": "^4.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

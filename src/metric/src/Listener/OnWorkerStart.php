@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -19,12 +18,13 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Retry\Retry;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
-use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -132,7 +132,7 @@ class OnWorkerStart implements ListenerInterface
 
         $server = $this->container->get(Server::class);
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             if (function_exists('gc_status')) {
                 $this->trySet('gc_', $metrics, gc_status());
@@ -142,6 +142,11 @@ class OnWorkerStart implements ListenerInterface
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
+        });
+        // Clean up timer on worker exit;
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+            Timer::clear($timerId);
         });
     }
 
@@ -159,7 +164,7 @@ class OnWorkerStart implements ListenerInterface
                     $this->factory->handle();
                 });
             } else {
-                retry(PHP_INT_MAX, function(){
+                retry(PHP_INT_MAX, function () {
                     $this->factory->handle();
                 }, 100);
             }

@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Event\AfterConsume;
 use Hyperf\Amqp\Event\BeforeConsume;
 use Hyperf\Amqp\Event\FailToConsume;
+use Hyperf\Amqp\Exception\MaxConsumptionException;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
@@ -68,6 +68,9 @@ class Consumer extends Builder
         $this->declare($consumerMessage, $channel);
         $concurrent = $this->getConcurrent();
 
+        $maxConsumption = $consumerMessage->getMaxConsumption();
+        $currentConsumption = 0;
+
         $channel->basic_consume(
             $consumerMessage->getQueue(),
             $consumerMessage->getConsumerTag(),
@@ -75,7 +78,10 @@ class Consumer extends Builder
             false,
             false,
             false,
-            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+            function (AMQPMessage $message) use ($consumerMessage, $concurrent, $maxConsumption, &$currentConsumption) {
+                if ($maxConsumption > 0 && $currentConsumption++ >= $maxConsumption) {
+                    throw new MaxConsumptionException();
+                }
                 $callback = $this->getCallback($consumerMessage, $message);
                 if (! $concurrent instanceof Concurrent) {
                     return parallel([$callback]);
@@ -85,8 +91,11 @@ class Consumer extends Builder
             }
         );
 
-        while (count($channel->callbacks) > 0) {
-            $channel->wait();
+        try {
+            while ($channel->is_consuming()) {
+                $channel->wait();
+            }
+        } catch (MaxConsumptionException $ex) {
         }
 
         $pool->release($connection);
@@ -149,7 +158,7 @@ class Consumer extends Builder
 
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
-                $result = $consumerMessage->consume($data);
+                $result = $consumerMessage->consumeMessage($data, $message);
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));

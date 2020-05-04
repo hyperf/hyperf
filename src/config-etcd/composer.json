@@ -25,8 +25,7 @@
         "hyperf/etcd": "~1.1.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "swoft/swoole-ide-helper": "dev-master"
+        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "config": {
         "sort-packages": true

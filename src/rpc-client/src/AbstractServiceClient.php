@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient;
 
 use Hyperf\Consul\Health;
@@ -234,6 +233,11 @@ abstract class AbstractServiceClient
             $passing = true;
             $service = $node['Service'] ?? [];
             $checks = $node['Checks'] ?? [];
+
+            if (isset($service['Meta']['Protocol']) && $this->protocol !== $service['Meta']['Protocol']) {
+                // The node is invalid, if the protocol is not equal with the client's protocol.
+                continue;
+            }
 
             foreach ($checks as $check) {
                 $status = $check['Status'] ?? false;

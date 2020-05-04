@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Constants;
 
 use Hyperf\Constants\Exception\ConstantsException;
@@ -37,7 +36,9 @@ abstract class AbstractConstants
 
         array_shift($arguments);
 
-        if ($result = self::translate($message, $arguments)) {
+        $result = self::translate($message, $arguments);
+        // If the result of translate doesn't exist, the result is equal with message, so we will skip it.
+        if ($result && $result !== $message) {
             return $result;
         }
 

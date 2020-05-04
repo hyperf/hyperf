@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -24,6 +23,8 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -104,6 +105,8 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     {
         $request = $response = null;
         try {
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));

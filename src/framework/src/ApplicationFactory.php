@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework;
 
 use Hyperf\Command\Annotation\Command;
@@ -40,6 +39,11 @@ class ApplicationFactory
 
         $commands = array_unique(array_merge($commands, $annotationCommands));
         $application = new Application();
+
+        if (isset($eventDispatcher) && class_exists(SymfonyEventDispatcher::class)) {
+            $application->setDispatcher(new SymfonyEventDispatcher($eventDispatcher));
+        }
+
         foreach ($commands as $command) {
             $application->add($container->get($command));
         }

@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     'default' => [
+        'enable' => true,
         'host' => '127.0.0.1',
         'port' => 4150,
         'pool' => [

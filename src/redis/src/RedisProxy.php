@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
 use Hyperf\Redis\Pool\PoolFactory;
 
+/**
+ * @mixin \Redis
+ */
 class RedisProxy extends Redis
 {
     protected $poolName;
@@ -29,5 +31,4 @@ class RedisProxy extends Redis
     {
         return parent::__call($name, $arguments);
     }
-
 }

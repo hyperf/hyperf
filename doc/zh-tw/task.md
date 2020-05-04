@@ -192,3 +192,7 @@ $result = $client->query('hyperf.test', [], [
 ]);
 ```
 
+## 其他方案
+
+如果 Task 機制無法滿足效能要求，可以嘗試一下 Hyperf 組織下的另一個開源專案[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+

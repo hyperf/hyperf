@@ -76,7 +76,7 @@ class IndexController
 }
 ```
 
-除了可以通過依賴注入獲取路由引數，還可以通過`route`方法獲取，如下所示：
+除了可以通過依賴注入獲取路由引數，還可以通過 `route` 方法獲取，如下所示：
 
 ```php
 declare(strict_types=1);

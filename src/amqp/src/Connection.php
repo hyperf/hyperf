@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
@@ -59,12 +58,12 @@ class Connection extends BaseConnection implements ConnectionInterface
     /**
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
-    private $channel;
+    protected $channel;
 
     /**
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
-    private $confirmChannel;
+    protected $confirmChannel;
 
     public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {

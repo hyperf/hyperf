@@ -81,6 +81,7 @@ return PhpCsFixer\Config::create()
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
+            ->exclude('bin')
             ->exclude('public')
             ->exclude('runtime')
             ->exclude('vendor')
