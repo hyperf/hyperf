@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
 use function class_exists;
@@ -153,14 +155,12 @@ class DefinitionSource implements DefinitionSourceInterface
                 foreach ($value as $annotationClassName => $annotationObject) {
                     if (isset($propertyHandlers[$annotationClassName])) {
                         foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
-                            call($callback, [$definition, $propertyName, $annotationObject]);
+                            call($callback, [$definition, $propertyName, $annotationObject, $value, $class]);
                         }
                     }
                 }
             }
         }
-
-        // $definition->setNeedProxy($this->isNeedProxy($class));
 
         return $definition;
     }
