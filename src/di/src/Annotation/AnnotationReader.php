@@ -5,6 +5,9 @@ namespace Hyperf\Di\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\Common\Annotations\Annotation\Target;
+use Doctrine\Common\Annotations\DocParser;
+use Doctrine\Common\Annotations\PhpParser;
+use Doctrine\Common\Annotations\Reader;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -194,7 +197,7 @@ class AnnotationReader implements Reader
         $this->preParser->setIgnoreNotImportedAnnotations(true);
         $this->preParser->setIgnoredAnnotationNames(self::$globalIgnoredNames);
 
-        $this->phpParser = new PhpParser;
+        $this->phpParser = new PhpParser();
     }
 
     /**
