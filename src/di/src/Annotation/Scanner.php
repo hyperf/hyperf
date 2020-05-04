@@ -18,6 +18,7 @@ use Hyperf\Di\ClassLoader;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Str;
 use Roave\BetterReflection\Reflection\ReflectionClass;
+use Roave\BetterReflection\Reflection\Adapter;
 
 class Scanner
 {
@@ -50,7 +51,7 @@ class Scanner
     {
         $className = $reflection->getName();
         // Parse class annotations
-        $classAnnotations = $reader->getClassAnnotations($reflection);
+        $classAnnotations = $reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
         if (! empty($classAnnotations)) {
             foreach ($classAnnotations as $classAnnotation) {
                 if ($classAnnotation instanceof AnnotationInterface) {
@@ -61,7 +62,7 @@ class Scanner
         // Parse properties annotations
         $properties = $reflection->getImmediateProperties();
         foreach ($properties as $property) {
-            $propertyAnnotations = $reader->getPropertyAnnotations($property);
+            $propertyAnnotations = $reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
             if (! empty($propertyAnnotations)) {
                 foreach ($propertyAnnotations as $propertyAnnotation) {
                     if ($propertyAnnotation instanceof AnnotationInterface) {
@@ -73,7 +74,7 @@ class Scanner
         // Parse methods annotations
         $methods = $reflection->getImmediateMethods();
         foreach ($methods as $method) {
-            $methodAnnotations = $reader->getMethodAnnotations($method);
+            $methodAnnotations = $reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
             if (! empty($methodAnnotations)) {
                 foreach ($methodAnnotations as $methodAnnotation) {
                     if ($methodAnnotation instanceof AnnotationInterface) {
