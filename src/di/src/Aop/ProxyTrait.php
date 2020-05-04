@@ -64,10 +64,10 @@ trait ProxyTrait
 
     private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (self::$aspects === null) {
+        if (static::$aspects === null) {
             $className = $proceedingJoinPoint->className;
             $methodName = $proceedingJoinPoint->methodName;
-            $aspects = array_unique(array_merge(self::getClassesAspects($className, $methodName), self::getAnnotationAspects($className, $methodName)));
+            $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
             $queue = new \SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
@@ -80,11 +80,11 @@ trait ProxyTrait
             unset($annotationAspects, $aspects, $className, $methodName, $queue);
         }
 
-        if (empty(self::$aspects)) {
+        if (empty(static::$aspects)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
-        return self::makePipeline()->via('process')
+        return static::makePipeline()->via('process')
             ->through(self::$aspects)
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
