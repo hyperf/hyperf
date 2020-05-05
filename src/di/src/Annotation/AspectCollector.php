@@ -35,13 +35,29 @@ class AspectCollector extends MetadataCollector
         if (! is_int($priority)) {
             $priority = static::getDefaultPriority();
         }
-        static::set('classes.' . $aspect, $classes);
-        static::set('annotations.' . $aspect, $annotations);
-        static::$aspectRules[$aspect] = [
-            'priority' => $priority,
-            'classes' => $classes,
-            'annotations' => $annotations,
-        ];
+        $setter = function ($key, $value) {
+            if (static::has($key)) {
+                $value = array_merge(static::get($key), $value);
+                static::set($key, $value);
+            } else {
+                static::set($key, $value);
+            }
+        };
+        $setter('classes.' . $aspect, $classes);
+        $setter('annotations.' . $aspect, $annotations);
+        if (isset(static::$aspectRules[$aspect])) {
+            static::$aspectRules[$aspect] = [
+                'priority' => $priority,
+                'classes' => array_merge(static::$aspectRules[$aspect]['classes'], $classes),
+                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'], $annotations),
+            ];
+        } else {
+            static::$aspectRules[$aspect] = [
+                'priority' => $priority,
+                'classes' => $classes,
+                'annotations' => $annotations,
+            ];
+        }
     }
 
     public static function getRule(string $aspect): array
