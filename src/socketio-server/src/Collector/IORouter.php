@@ -46,13 +46,13 @@ class IORouter extends MetadataCollector
             throw new RouteNotFoundException("Namespace {$nsp} is not registered in the router.");
         }
         if (! ApplicationContext::getContainer()->has($class)) {
-            throw new RouteNotFoundException("namespace $nsp cannot be instantiated.");
+            throw new RouteNotFoundException("namespace {$nsp} cannot be instantiated.");
         }
 
         $instance = ApplicationContext::getContainer()->get($class);
 
-        if (! ($instance instanceof NamespaceInterface)){
-            throw new RouteNotFoundException("namespace $nsp must be an instance of NamespaceInterface");
+        if (! ($instance instanceof NamespaceInterface)) {
+            throw new RouteNotFoundException("namespace {$nsp} must be an instance of NamespaceInterface");
         }
 
         return $instance->getAdapter();

@@ -24,7 +24,6 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;

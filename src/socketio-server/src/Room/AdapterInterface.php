@@ -14,7 +14,7 @@ namespace Hyperf\SocketIOServer\Room;
 interface AdapterInterface
 {
     /**
-     * add adds a known sid to one or more room
+     * add adds a known sid to one or more room.
      */
     public function add(string $sid, string ...$rooms);
 
@@ -26,6 +26,8 @@ interface AdapterInterface
 
     /**
      * broadcast sends a packet out based the options specified in $opts.
+     * @param mixed $packet
+     * @param mixed $opts
      */
     public function broadcast($packet, $opts);
 

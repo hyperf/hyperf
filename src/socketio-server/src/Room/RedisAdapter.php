@@ -14,7 +14,6 @@ namespace Hyperf\SocketIOServer\Room;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;

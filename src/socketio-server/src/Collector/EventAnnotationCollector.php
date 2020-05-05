@@ -13,10 +13,6 @@ namespace Hyperf\SocketIOServer\Collector;
 
 use Hyperf\Di\MetadataCollector;
 use Hyperf\SocketIOServer\Annotation\Event;
-use Hyperf\SocketIOServer\BaseNamespace;
-use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
-use Hyperf\SocketIOServer\NamespaceInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class EventAnnotationCollector extends MetadataCollector
 {

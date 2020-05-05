@@ -219,16 +219,16 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @return NamespaceInterface possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead.
+     * @return NamespaceInterface possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead
      */
-    public function of(string $nsp) : NamespaceInterface
+    public function of(string $nsp): NamespaceInterface
     {
         $class = IORouter::getClassName($nsp);
         if (! $class) {
-            throw new RouteNotFoundException("namespace $nsp is not registered.");
+            throw new RouteNotFoundException("namespace {$nsp} is not registered.");
         }
         if (! ApplicationContext::getContainer()->has($class)) {
-            throw new RouteNotFoundException("namespace $nsp cannot be instantiated.");
+            throw new RouteNotFoundException("namespace {$nsp} cannot be instantiated.");
         }
         return ApplicationContext::getContainer()->get($class);
     }
@@ -281,7 +281,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
 
         foreach ($instance->getEventHandlers() as $key => $callbacks) {
-            if ($key === $event){
+            if ($key === $event) {
                 $output = array_merge($output, $callbacks);
             }
         }

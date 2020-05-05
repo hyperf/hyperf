@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Emitter;
 
-use Hyperf\SocketIOServer\Collector\IORouter;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
@@ -158,7 +157,7 @@ trait Emitter
         ]);
     }
 
-    public function getAdapter() : AdapterInterface
+    public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
     }

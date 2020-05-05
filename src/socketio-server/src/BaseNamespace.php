@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer;
 
-use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
 use Hyperf\SocketIOServer\Collector\IORouter;
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
@@ -61,9 +60,8 @@ class BaseNamespace implements NamespaceInterface
 
     /**
      * getNsp method returns the current namespace in string form.
-     * @return string
      */
-    public function getNsp() : string
+    public function getNsp(): string
     {
         return IORouter::getNamespace(static::class);
     }

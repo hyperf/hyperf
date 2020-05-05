@@ -91,7 +91,7 @@ class Socket
         $server->disconnect($this->fd);
     }
 
-    public function getNsp() : string
+    public function getNsp(): string
     {
         return $this->nsp;
     }

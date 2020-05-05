@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
-use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
