@@ -30,5 +30,5 @@ abstract class AbstractAspect implements AroundInterface
     /**
      * @var null|int
      */
-    public $priority = null;
+    public $priority;
 }

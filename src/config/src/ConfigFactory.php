@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Config;
 
 use Dotenv\Dotenv;
+use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
-use Dotenv\Repository\Adapter;
 
 class ConfigFactory
 {

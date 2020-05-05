@@ -13,7 +13,6 @@ namespace Hyperf\Di\Aop;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Config\ProviderConfig;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\BetterReflectionManager;

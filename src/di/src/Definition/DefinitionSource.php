@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
 use function class_exists;
@@ -25,7 +23,6 @@ use function print_r;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-
     /**
      * @var array
      */

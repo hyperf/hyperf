@@ -17,14 +17,12 @@ use Hyperf\Di\Definition\PropertyInjection;
 use Hyperf\Di\Definition\Reference;
 use Hyperf\Di\Exception\DependencyException;
 use Hyperf\Di\Exception\InvalidDefinitionException;
-use Hyperf\Di\ProxyFactory;
 use Hyperf\Di\ReflectionManager;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {
-
     /**
      * @var ParameterResolver
      */

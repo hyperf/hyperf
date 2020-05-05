@@ -11,9 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework;
 
-use Hyperf\Framework\Exception\NotImplementedException;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 if (interface_exists(EventDispatcherInterface::class)) {

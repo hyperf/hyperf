@@ -97,5 +97,4 @@ class AspectCollector extends MetadataCollector
     {
         return (int) (PHP_INT_MAX / 2);
     }
-
 }

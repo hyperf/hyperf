@@ -40,9 +40,6 @@
         "hyperf/command": "Required to use Command annotation.",
         "symfony/event-dispatcher": "Required to use symfony event dispatcher (^5.0)."
     },
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Framework\\": "src/"
