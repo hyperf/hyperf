@@ -27,6 +27,14 @@ abstract class Seeder
      */
     protected $connection = 'default';
 
+
+    /**
+     * The seeder priority. priority higher will execute early
+     *
+     * @var int
+     */
+    public $priority = 0;
+
     /**
      * Get the seeder connection name.
      *

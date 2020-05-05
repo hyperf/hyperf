@@ -104,22 +104,38 @@ class Seed
             return;
         }
 
-        foreach ($seeders as $file) {
-            $this->runSeeder($file);
+        foreach ($this->sort($seeders) as $seeder) {
+            $this->runSeeder(...$seeder);
         }
+    }
+
+    /**
+     * @param array $seeders
+     * @return array
+     */
+    public function sort(array $seeders)
+    {
+        $sort = [];
+        foreach ($seeders as $seeder) {
+            $name = $this->getSeederName($seeder);
+            if($name instanceof Seeder) {
+                $class = $this->resolve($name);
+                $sort[$class->priority] = [$name, $class];
+            }
+        }
+        ksort($sort,SORT_DESC);
+        return $sort;
     }
 
     /**
      * Run a seeder.
      *
-     * @param string $file
+     * @param $name
+     * @param Seeder $seeder
      */
-    public function runSeeder($file)
+    public function runSeeder($name,$seeder)
     {
-        Model::unguarded(function () use ($file) {
-            $seeder = $this->resolve(
-                $name = $this->getSeederName($file)
-            );
+        Model::unguarded(function () use ($name,$seeder) {
 
             $this->note("<comment>Seed:</comment> {$name}");
 
