@@ -72,10 +72,10 @@ class ClassLoader
         foreach ($loaders as &$loader) {
             $unregisterLoader = $loader;
             if (is_array($loader) && $loader[0] instanceof ComposerClassLoader) {
+                /** @var ComposerClassLoader $composerClassLoader */
                 $composerClassLoader = $loader[0];
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
-                    $composerClassLoader->loadClass($class);
-                    return class_exists($class, false);
+                    return (bool) $composerClassLoader->findFile($class);
                 });
                 $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
             }
