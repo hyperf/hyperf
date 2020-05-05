@@ -32,12 +32,11 @@ class AddRouteListener implements ListenerInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function listen(): array
     {
-        return [BootApplication::class];
+        return [
+            BootApplication::class,
+        ];
     }
 
     /**

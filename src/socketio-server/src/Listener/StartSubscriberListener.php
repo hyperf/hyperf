@@ -15,10 +15,20 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\SocketIOServer\Collector\IORouter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
-use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
 class StartSubscriberListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function listen(): array
     {
         return [
@@ -26,13 +36,10 @@ class StartSubscriberListener implements ListenerInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(object $event)
     {
         foreach (IORouter::get('forward') as $class) {
-            $instance = ApplicationContext::getContainer()->get($class);
+            $instance = $this->container->get($class);
             if ($instance->getAdapter() instanceof RedisAdapter) {
                 $instance->getAdapter()->subscribe();
             }

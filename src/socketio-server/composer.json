@@ -20,22 +20,21 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
+        "ext-redis": "*",
         "ext-swoole": ">=4.4",
-        "hyperf/di": "1.1.*",
-        "hyperf/redis": "^1.1",
-        "hyperf/websocket-server": "^1.1",
-        "mix/redis-subscribe": "^2.1",
-        "ext-redis": "*"
+        "hyperf/di": "~1.1.0",
+        "hyperf/redis": "~1.1.0",
+        "hyperf/websocket-server": "~1.1.0",
+        "mix/redis-subscribe": "^2.1"
     },
     "require-dev": {
-        "hyperf/command": "^1.1",
         "friendsofphp/php-cs-fixer": "^2.14",
-        "hyperf/config": "^1.1",
-        "hyperf/session": "^1.1",
-        "hyperf/testing": "1.1.*",
+        "hyperf/command": "~1.1.0",
+        "hyperf/config": "~1.1.0",
+        "hyperf/session": "~1.1.0",
+        "hyperf/testing": "~1.1.0",
         "mockery/mockery": "^1.3",
-        "phpstan/phpstan": "^0.10.5",
-        "swoft/swoole-ide-helper": "dev-master"
+        "phpstan/phpstan": "^0.10.5"
     },
     "suggest": {
         "hyperf/command": "Required to use RemoveRedisGarbage command",

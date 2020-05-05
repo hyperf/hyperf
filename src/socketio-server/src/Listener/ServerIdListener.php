@@ -20,12 +20,11 @@ class ServerIdListener implements ListenerInterface
 {
     public function listen(): array
     {
-        return [BeforeMainServerStart::class];
+        return [
+            BeforeMainServerStart::class,
+        ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(object $event)
     {
         SocketIO::$serverId = uniqid();
