@@ -50,8 +50,8 @@ class RedisHandler implements HandlerInterface
     public function __construct(ContainerInterface $container, Config $config)
     {
         $this->container = $container;
-        if (! $container->has(Redis::class)) {
-            throw new CacheException(sprintf('Entry[%s] of the container is not exist.', Redis::class));
+        if (! $container->has(RedisProxy::class)) {
+            throw new CacheException(sprintf('Entry[%s] of the container is not exist.', RedisProxy::class));
         }
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);

@@ -12,10 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
+use PhpAmqpLib\Message\AMQPMessage;
 
 interface ConsumerMessageInterface extends MessageInterface
 {
+    /**
+     * @deprecated v2.0
+     * @param array $data
+     */
     public function consume($data): string;
+
+    public function consumeMessage($data, AMQPMessage $message): string;
 
     public function setQueue(string $queue);
 

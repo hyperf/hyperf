@@ -18,6 +18,7 @@ use Hyperf\Task\TaskExecutor;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\View\Engine\SmartyEngine;
+use Hyperf\View\Exception\RenderException;
 use Hyperf\View\Mode;
 use Hyperf\View\Render;
 use Mockery;
@@ -35,6 +36,31 @@ class RenderTest extends TestCase
     {
         Mockery::close();
         Context::set(ResponseInterface::class, null);
+    }
+
+    public function testRenderException()
+    {
+        $container = $this->getContainer();
+        Context::set(ResponseInterface::class, new Response());
+        $render = new Render($container, new Config([
+            'view' => [
+                'engine' => SmartyEngine::class,
+                'mode' => Mode::SYNC,
+                'config' => [
+                    'view_path' => __DIR__ . '/tpl',
+                    'cache_path' => __DIR__ . '/runtime',
+                ],
+            ],
+        ]));
+
+        try {
+            $render->getContents('index.tpl', ['title' => 'Hyperf']);
+            $this->assertTrue(false);
+        } catch (\Throwable $throwable) {
+            $this->assertInstanceOf(RenderException::class, $throwable);
+            $this->assertSame('Undefined index: name', $throwable->getMessage());
+            $this->assertNotNull($throwable->getPrevious());
+        }
     }
 
     public function testRender()
