@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\SocketIOServer\BaseNamespace;
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\SocketIOServer\SocketIO;
@@ -65,7 +65,7 @@ class IONamespaceTest extends AbstractTestCase
         $sender = Mockery::Spy(Sender::class);
         $sidProvider = new LocalSidProvider();
         $io = new BaseNamespace($sender, $sidProvider);
-        IORouter::addNamespace('/', BaseNamespace::class);
+        SocketIORouter::addNamespace('/', BaseNamespace::class);
         SocketIO::$messageId = new Atomic();
         $io->getAdapter()->add('1');
         $io->getAdapter()->add('2');

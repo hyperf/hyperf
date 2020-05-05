@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 
 /**
  * @Annotation
@@ -30,7 +30,7 @@ class SocketIONamespace extends AbstractAnnotation
 
     public function collectClass(string $className): void
     {
-        IORouter::addNamespace($this->namespace, $className);
+        SocketIORouter::addNamespace($this->namespace, $className);
         parent::collectClass($className);
     }
 }

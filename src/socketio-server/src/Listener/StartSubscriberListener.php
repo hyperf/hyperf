@@ -13,7 +13,7 @@ namespace Hyperf\SocketIOServer\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Psr\Container\ContainerInterface;
 
@@ -38,7 +38,7 @@ class StartSubscriberListener implements ListenerInterface
 
     public function process(object $event)
     {
-        foreach (IORouter::get('forward') ?? [] as $class) {
+        foreach (SocketIORouter::get('forward') ?? [] as $class) {
             $instance = $this->container->get($class);
             if ($instance->getAdapter() instanceof RedisAdapter) {
                 $instance->getAdapter()->subscribe();

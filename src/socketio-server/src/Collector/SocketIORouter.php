@@ -16,7 +16,7 @@ use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\Utils\ApplicationContext;
 
-class IORouter extends MetadataCollector
+class SocketIORouter extends MetadataCollector
 {
     /**
      * @var array

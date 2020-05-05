@@ -16,7 +16,7 @@ use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
 use Hyperf\SocketIOServer\Parser\Decoder;
 use Hyperf\SocketIOServer\Parser\Encoder;
@@ -209,7 +209,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     public function onClose(Server $server, int $fd, int $reactorId): void
     {
-        $all = IORouter::list();
+        $all = SocketIORouter::list();
         if (! array_key_exists('forward', $all)) {
             return;
         }
@@ -223,7 +223,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function of(string $nsp): NamespaceInterface
     {
-        $class = IORouter::getClassName($nsp);
+        $class = SocketIORouter::getClassName($nsp);
         if (! $class) {
             throw new RouteNotFoundException("namespace {$nsp} is not registered.");
         }
@@ -269,7 +269,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     private function getEventHandlers(string $nsp, string $event): array
     {
-        $class = IORouter::getClassName($nsp);
+        $class = SocketIORouter::getClassName($nsp);
         /** @var NamespaceInterface $instance */
         $instance = ApplicationContext::getContainer()->get($class);
 
@@ -292,7 +292,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     private function makeSocket(int $fd, string $nsp = '/'): Socket
     {
         return make(Socket::class, [
-            'adapter' => IORouter::getAdapter($nsp),
+            'adapter' => SocketIORouter::getAdapter($nsp),
             'sender' => $this->sender,
             'fd' => $fd,
             'nsp' => $nsp,

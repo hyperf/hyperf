@@ -151,24 +151,24 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
 
 ### 设置 Socket.io 命名空间
 
-Socket.io通过自定义命名空间实现多路复用。（注意：不是PHP的命名空间）
+Socket.io 通过自定义命名空间实现多路复用。（注意：不是 PHP 的命名空间）
 
-1. 可以通过 `@IONamespace("/xxx")` 将控制器映射为xxx的命名空间，
+1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为 xxx 的命名空间，
 
 2. 也可通过
 
 ```php
 <?php
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use App\Controller\WebSocketController;
-IORouter::addNamespace('/xxx' , WebSocketController::class);
+SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 ```
 
 在路由中添加。
 
 ### 开启 Session 
 
-安装并配置好 hyperf/session 组件及其对应中间件，并且通过 `SessionAspect` 切入在SocketIO。
+安装并配置好 hyperf/session 组件及其对应中间件，再通过 `SessionAspect` 切入 SocketIO 来使用 Session 。
 
 ```php
 <?php
@@ -216,7 +216,7 @@ return [
 ];
 ```
 
-2. 也可以替换为SessionID。
+2. 也可以替换为 SessionID。
 
 ```php
 <?php
@@ -255,7 +255,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@AutoNamespace()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
+2. 可以在控制器上添加 `@Event()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
 
 ```php
 <?php
@@ -269,8 +269,8 @@ use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
 /**
- * @IONamespace("/")
- * @AutoNamespace()
+ * @SocketIONamespace("/")
+ * @Event()
  */
 class WebSocketController extends BaseNamespace
 {

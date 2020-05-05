@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
-use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Command\RemoveRedisGarbage;
 use Hyperf\SocketIOServer\Listener\AddRouteListener;
 use Hyperf\SocketIOServer\Listener\ServerIdListener;
@@ -49,7 +49,7 @@ class ConfigProvider
                     ],
                     'collectors' => [
                         EventAnnotationCollector::class,
-                        IORouter::class,
+                        SocketIORouter::class,
                     ],
                 ],
             ],
