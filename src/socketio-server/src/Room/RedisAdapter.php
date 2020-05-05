@@ -15,6 +15,7 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\SocketIOServer\BaseNamespace;
+use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
@@ -33,7 +34,7 @@ class RedisAdapter implements AdapterInterface
     protected $connection = 'default';
 
     /**
-     * @var BaseNamespace
+     * @var NamespaceInterface
      */
     private $nsp;
 
@@ -52,7 +53,7 @@ class RedisAdapter implements AdapterInterface
      */
     private $sender;
 
-    public function __construct(RedisFactory $redis, Sender $sender, BaseNamespace $nsp, SidProviderInterface $sidProvider)
+    public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
         $this->sender = $sender;
         $this->nsp = $nsp;

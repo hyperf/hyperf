@@ -12,6 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\Collector;
 
 use Hyperf\Di\MetadataCollector;
+use Hyperf\SocketIOServer\Annotation\Event;
+use Hyperf\SocketIOServer\BaseNamespace;
+use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
+use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\Utils\ApplicationContext;
 
 class EventAnnotationCollector extends MetadataCollector
@@ -21,38 +25,12 @@ class EventAnnotationCollector extends MetadataCollector
      */
     protected static $container = [];
 
-    public static function collectEvent(string $class, string $method, $value): void
+    public static function collectEvent(string $class, string $method, Event $value): void
     {
-        if (static::has($class . '.' . $value->value)) {
-            static::$container[$class][$value->value][] = [$class, $method];
+        if (static::has($class . '.' . $value->event)) {
+            static::$container[$class][$value->event][] = [$class, $method];
         } else {
-            static::$container[$class][$value->value] = [[$class, $method]];
+            static::$container[$class][$value->event] = [[$class, $method]];
         }
-    }
-
-    public static function collectInlineEvent(string $nsp, string $event, callable $callback): void
-    {
-        if (static::has("_inline.{$nsp}.{$event}")) {
-            static::$container['_inline'][$nsp][$event][] = $callback;
-        } else {
-            static::$container['_inline'][$nsp][$event] = [$callback];
-        }
-    }
-
-    /**
-     * @return callable[]
-     */
-    public static function getEventHandler(string $nsp, string $event): array
-    {
-        $class = IORouter::getClass($nsp);
-        /** @var callable[] $output */
-        $output = [];
-        foreach (static::get($class . '.' . $event, []) as [$class, $method]) {
-            $output[] = [ApplicationContext::getContainer()->get($class), $method];
-        }
-        foreach (static::get("_inline.{$nsp}.{$event}", []) as $callback) {
-            $output[] = $callback;
-        }
-        return $output;
     }
 }

@@ -22,12 +22,12 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
  */
 class Event extends AbstractAnnotation
 {
-    public $value;
+    public $event = 'event';
 
     public function __construct($value = [])
     {
         parent::__construct();
-        $this->value = $value['value'] ?? 'event';
+        $this->bindMainProperty('event', $value);
     }
 
     public function collectMethod(string $className, ?string $target): void

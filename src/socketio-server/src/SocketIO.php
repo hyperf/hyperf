@@ -17,6 +17,7 @@ use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
 use Hyperf\SocketIOServer\Collector\IORouter;
+use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
 use Hyperf\SocketIOServer\Parser\Decoder;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
@@ -72,11 +73,6 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      * @var \Swoole\Atomic
      */
     public static $messageId;
-
-    /**
-     * @var array<string, callable[]>
-     */
-    protected $eventHandlers = [];
 
     /**
      * @var Channel[]
@@ -139,8 +135,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     public function __call($method, $args)
     {
-        $nsp = ApplicationContext::getContainer()->get(IORouter::getClass('/'));
-        return $nsp->{$method}(...$args);
+        return $this->of('/')->{$method}(...$args);
     }
 
     public function onMessage(WebSocketServer $server, Frame $frame): void
@@ -223,9 +218,19 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    public function of(string $nsp): BaseNamespace
+    /**
+     * @return NamespaceInterface possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead.
+     */
+    public function of(string $nsp) : NamespaceInterface
     {
-        return ApplicationContext::getContainer()->get(IORouter::getClass($nsp));
+        $class = IORouter::getClassName($nsp);
+        if (! $class) {
+            throw new RouteNotFoundException("namespace $nsp is not registered.");
+        }
+        if (! ApplicationContext::getContainer()->has($class)) {
+            throw new RouteNotFoundException("namespace $nsp cannot be instantiated.");
+        }
+        return ApplicationContext::getContainer()->get($class);
     }
 
     public function addCallback(string $ackId, Channel $channel, int $timeoutMs = null)
@@ -246,18 +251,42 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     {
         $socket = $this->makeSocket($fd, $nsp);
         $ack = null;
+
+        // Check if ack is required
         $last = array_pop($payloads);
         if ($last instanceof \Closure) {
             $ack = $last;
         } else {
             array_push($payloads, $last);
         }
-        $handlers = EventAnnotationCollector::getEventHandler($nsp, $event);
-        $handlers = array_merge($handlers, $this->eventHandlers[$nsp][$event] ?? []);
+
+        $handlers = $this->getEventHandlers($nsp, $event);
         foreach ($handlers as $handler) {
             $result = $handler($socket, ...$payloads);
             $ack && $ack([$result]);
         }
+    }
+
+    private function getEventHandlers(string $nsp, string $event): array
+    {
+        $class = IORouter::getClassName($nsp);
+        /** @var NamespaceInterface $instance */
+        $instance = ApplicationContext::getContainer()->get($class);
+
+        /** @var callable[] $output */
+        $output = [];
+
+        foreach (EventAnnotationCollector::get($class . '.' . $event, []) as [, $method]) {
+            $output[] = [$instance, $method];
+        }
+
+        foreach ($instance->getEventHandlers() as $key => $callbacks) {
+            if ($key === $event){
+                $output = array_merge($output, $callbacks);
+            }
+        }
+
+        return $output;
     }
 
     private function makeSocket(int $fd, string $nsp = '/'): Socket

@@ -12,19 +12,20 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
+use Hyperf\SocketIOServer\Collector\IORouter;
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
-class BaseNamespace
+class BaseNamespace implements NamespaceInterface
 {
     use Emitter;
 
     /**
      * @var array<string, callable[]>
      */
-    private $eventHandlers;
+    private $eventHandlers = [];
 
     public function __construct(Sender $sender, SidProviderInterface $sidProvider)
     {
@@ -32,7 +33,6 @@ class BaseNamespace
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
         $this->sidProvider = $sidProvider;
         $this->sender = $sender;
-        $this->eventHandlers = ['/' => []];
         $this->broadcast = true;
         $this->on('connect', function (Socket $socket) {
             $this->adapter->add($socket->getSid(), $socket->getSid());
@@ -43,18 +43,28 @@ class BaseNamespace
     }
 
     /**
-     * register socketio event.
+     * register socket.io event.
      */
     public function on(string $event, callable $callback)
     {
-        EventAnnotationCollector::collectInlineEvent((string) $this->getNsp(), $event, $callback);
+        $this->eventHandlers[$event][] = $callback;
     }
 
     /**
-     * Get the adatper for namespace.
+     * getEventHandlers retrieves all callbacks for any events.
+     * @return array<string, callable[]>
      */
-    public function getAdapter(): AdapterInterface
+    public function getEventHandlers()
     {
-        return $this->adapter;
+        return $this->eventHandlers;
+    }
+
+    /**
+     * getNsp method returns the current namespace in string form.
+     * @return string
+     */
+    public function getNsp() : string
+    {
+        return IORouter::getNamespace(static::class);
     }
 }

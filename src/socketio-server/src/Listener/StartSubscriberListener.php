@@ -38,7 +38,7 @@ class StartSubscriberListener implements ListenerInterface
 
     public function process(object $event)
     {
-        foreach (IORouter::get('forward') as $class) {
+        foreach (IORouter::get('forward') ?? [] as $class) {
             $instance = $this->container->get($class);
             if ($instance->getAdapter() instanceof RedisAdapter) {
                 $instance->getAdapter()->subscribe();

@@ -25,6 +25,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\SocketIOServer\BaseNamespace;
+use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
@@ -41,11 +42,10 @@ class RoomAdapterTest extends AbstractTestCase
 {
     public function testMemoryAdapter()
     {
-        $nsp = Mockery::Mock(BaseNamespace::class);
         $sidProvider = new LocalSidProvider();
         $server = Mockery::Mock(Sender::class);
         $server->shouldReceive('push')->twice();
-        $room = new MemoryAdapter($server, $nsp, $sidProvider);
+        $room = new MemoryAdapter($server, $sidProvider);
         $room->add('42', 'universe', '42');
         $room->add('43', 'universe', '43');
         $this->assertContains('universe', $room->clientRooms('43'));
@@ -68,7 +68,7 @@ class RoomAdapterTest extends AbstractTestCase
 
     public function testRedisAdapter()
     {
-        $nsp = Mockery::Mock(BaseNamespace::class);
+        $nsp = Mockery::Mock(NamespaceInterface::class);
         $nsp->shouldReceive('getNsp')->andReturn('test');
         $redis = $this->getRedis();
         $server = Mockery::Mock(Sender::class);

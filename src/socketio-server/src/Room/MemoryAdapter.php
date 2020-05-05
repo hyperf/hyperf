@@ -22,11 +22,6 @@ class MemoryAdapter implements AdapterInterface
     protected $sids = [];
 
     /**
-     * @var BaseNamespace
-     */
-    private $nsp;
-
-    /**
      * @var SidProviderInterface
      */
     private $sidProvider;
@@ -36,10 +31,9 @@ class MemoryAdapter implements AdapterInterface
      */
     private $sender;
 
-    public function __construct(Sender $sender, BaseNamespace $nsp, SidProviderInterface $sidProvider)
+    public function __construct(Sender $sender, SidProviderInterface $sidProvider)
     {
         $this->sender = $sender;
-        $this->nsp = $nsp;
         $this->sidProvider = $sidProvider;
     }
 

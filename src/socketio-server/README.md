@@ -90,7 +90,7 @@ class WebSocketController extends BaseNamespace
         socket.emit('event', 'hello, hyperf', console.log);
         socket.emit('join-room', 'room1', console.log);
         setInterval(function () {
-            socket.emit('say', '{"room":"room1", "message":"Hello Hyperf."}', console.log);
+            socket.emit('say', '{"room":"room1", "message":"Hello Hyperf."}');
         }, 1000);
     });
     socket.on('event', console.log);
@@ -130,10 +130,10 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   $io->in('game')->emit('big-announcement', 'the game will start soon');
 
   // sending to all clients in namespace 'myNamespace', including sender
-  $io->of('myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
+  $io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
 
   // sending to a specific room in a specific namespace, including sender
-  $io->of('myNamespace')->to('room')->emit('event', 'message');
+  $io->of('/myNamespace')->to('room')->emit('event', 'message');
 
   // sending to individual socketid (private message)
   $io->to('socketId')->emit('hey', 'I just met you');

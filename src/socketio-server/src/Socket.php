@@ -13,6 +13,7 @@ namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
@@ -84,13 +85,13 @@ class Socket
             'nsp' => $this->nsp,
         ]);
         //notice client is about to disconnect
-        $this->sender->push($this->fd, '4' . $this->encoder->encode($closePacket));
+        $this->sender->push($this->fd, Engine::MESSAGE . $this->encoder->encode($closePacket));
         /** @var \Swoole\WebSocket\Server $server */
         $server = ApplicationContext::getContainer()->get(Server::class);
         $server->disconnect($this->fd);
     }
 
-    public function getNsp()
+    public function getNsp() : string
     {
         return $this->nsp;
     }

@@ -20,17 +20,17 @@ use Hyperf\SocketIOServer\Collector\IORouter;
  */
 class SocketIONamespace extends AbstractAnnotation
 {
-    public $value;
+    public $namespace = '/';
 
     public function __construct($value = [])
     {
         parent::__construct();
-        $this->value = $value['value'] ?? '/';
+        $this->bindMainProperty('namespace', $value);
     }
 
     public function collectClass(string $className): void
     {
-        IORouter::addNamespace($this->value, $className);
+        IORouter::addNamespace($this->namespace, $className);
         parent::collectClass($className);
     }
 }

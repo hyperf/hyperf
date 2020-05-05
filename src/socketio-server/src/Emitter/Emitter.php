@@ -158,12 +158,7 @@ trait Emitter
         ]);
     }
 
-    public function getNsp()
-    {
-        return IORouter::getNamespace(static::class);
-    }
-
-    public function getAdapter()
+    public function getAdapter() : AdapterInterface
     {
         return $this->adapter;
     }
