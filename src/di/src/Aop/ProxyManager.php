@@ -16,6 +16,8 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\BetterReflectionManager;
+use ReflectionProperty;
 
 class ProxyManager
 {
@@ -202,6 +204,7 @@ class ProxyManager
     {
         $defined = [];
         $annotations = AnnotationCollector::get($annotationCollectorKey, []);
+
         foreach ($annotations as $k => $annotation) {
             if (is_object($annotation)) {
                 $defined[] = $k;
@@ -243,19 +246,27 @@ class ProxyManager
                 $priority = (int) $value;
             }
             // Create the aspect instance without invoking their constructor.
-            $instantitor = new Instantiator();
-            $instance = $instantitor->instantiate($aspect);
-            switch ($instance) {
-                case $instance instanceof AroundInterface:
-                    $classes = property_exists($instance, 'classes') ? $instance->classes : [];
-                    // Annotations
-                    $annotations = property_exists($instance, 'annotations') ? $instance->annotations : [];
-                    // Priority
-                    $priority = property_exists($instance, 'priority') ? $instance->priority : null;
-                    // Save the metadata to AspectCollector
-                    AspectCollector::setAround($aspect, $classes, $annotations, $priority);
-                    break;
+            $reflectionClass = BetterReflectionManager::reflectClass($aspect);
+            $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
+            $instanceClasses = $instanceAnnotations = [];
+            $instancePriority = null;
+            foreach ($properties as $property) {
+                if ($property->getName() === 'classes') {
+                    $instanceClasses = $property->getDefaultValue();
+                } elseif ($property->getName() === 'annotations') {
+                    $instanceAnnotations = $property->getDefaultValue();
+                } elseif ($property->getName() === 'priority') {
+                    $instancePriority = $property->getDefaultValue();
+                }
             }
+
+            $classes = $instanceClasses ?: [];
+            // Annotations
+            $annotations = $instanceAnnotations ?: [];
+            // Priority
+            $priority = $priority ?: ($instancePriority ?? null);
+            // Save the metadata to AspectCollector
+            AspectCollector::setAround($aspect, $classes, $annotations, $priority);
         }
     }
 }
