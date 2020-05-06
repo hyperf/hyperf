@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Bootstrap;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
@@ -47,7 +46,7 @@ class Server implements ServerInterface
     protected $onRequestCallbacks = [];
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -80,7 +79,7 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
-    public function getServer(): SwooleServer
+    public function getServer()
     {
         return $this->server;
     }
