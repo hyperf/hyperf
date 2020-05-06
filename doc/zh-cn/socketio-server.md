@@ -269,8 +269,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Hyperf\SocketIOServer\Annotation\AutoNamespace;
-use Hyperf\SocketIOServer\Annotation\IONamespace;
+use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
+use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 

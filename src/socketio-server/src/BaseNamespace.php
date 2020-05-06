@@ -42,7 +42,7 @@ class BaseNamespace implements NamespaceInterface
     }
 
     /**
-     * register socket.io event.
+     * Register socket.io event.
      */
     public function on(string $event, callable $callback)
     {
@@ -50,7 +50,7 @@ class BaseNamespace implements NamespaceInterface
     }
 
     /**
-     * getEventHandlers retrieves all callbacks for any events.
+     * Retrieves all callbacks for any events.
      * @return array<string, callable[]>
      */
     public function getEventHandlers()
@@ -59,7 +59,7 @@ class BaseNamespace implements NamespaceInterface
     }
 
     /**
-     * getNsp method returns the current namespace in string form.
+     * Returns the current namespace in string form.
      */
     public function getNsp(): string
     {
