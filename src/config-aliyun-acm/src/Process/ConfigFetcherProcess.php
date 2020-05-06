@@ -50,15 +50,16 @@ class ConfigFetcherProcess extends AbstractProcess
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
-        return $this->config->get('aliyun_acm.enable', false)
+        return $server instanceof Server
+            && $this->config->get('aliyun_acm.enable', false)
             && $this->config->get('aliyun_acm.use_standalone_process', true);
     }
 

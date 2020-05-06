@@ -87,7 +87,7 @@ class ConsumerManager
                 return $this->consumerMessage;
             }
 
-            public function isEnable(): bool
+            public function isEnable($server): bool
             {
                 return $this->consumerMessage->isEnable();
             }

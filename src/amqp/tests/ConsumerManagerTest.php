@@ -52,7 +52,7 @@ class ConsumerManagerTest extends TestCase
                 $hasRegisted = true;
                 /** @var ConsumerMessageInterface $message */
                 $message = $item->getConsumerMessage();
-                $this->assertTrue($item->isEnable());
+                $this->assertTrue($item->isEnable(new \stdClass()));
                 $this->assertSame($exchange, $message->getExchange());
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
@@ -84,7 +84,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
                 $hasRegisted = true;
-                $this->assertFalse($item->isEnable());
+                $this->assertFalse($item->isEnable(new \stdClass()));
                 break;
             }
         }

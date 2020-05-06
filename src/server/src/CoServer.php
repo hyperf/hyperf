@@ -72,7 +72,7 @@ class CoServer implements ServerInterface
         run(function () {
             $this->initServer($this->config);
 
-            $this->eventDispatcher->dispatch(new CoServerStart($this->server));
+            $this->eventDispatcher->dispatch(new CoServerStart($this->server, $this->config->toArray()));
 
             CoordinatorManager::until(Constants::WORKER_START)->resume();
 
@@ -130,5 +130,10 @@ class CoServer implements ServerInterface
         }
 
         throw new RuntimeException('Server type is invalid.');
+    }
+
+    public static function isCoServer($server): bool
+    {
+        return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
     }
 }

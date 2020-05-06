@@ -13,6 +13,7 @@ namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 
@@ -32,6 +33,7 @@ class LogBeforeProcessStartListener implements ListenerInterface
     {
         return [
             BeforeProcessHandle::class,
+            BeforeCoroutineHandle::class,
         ];
     }
 
