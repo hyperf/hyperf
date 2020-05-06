@@ -5,6 +5,7 @@
 ## Added
 
 - [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
+- [#1651](https://github.com/hyperf/hyperf/pull/1651) Added socket.io-server component.
 - [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added RPC Client for amqp.
 
 ## Optimized 
