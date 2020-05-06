@@ -22,9 +22,9 @@ interface NamespaceInterface
     public function getEventHandlers();
 
     /**
-     * getNsp method retrieves a string representation of this namespace.
+     * getNamespace method retrieves a string representation of this namespace.
      */
-    public function getNsp(): string;
+    public function getNamespace(): string;
 
     /**
      * getAdapter method retrieves an adapter to be used in this namespace.

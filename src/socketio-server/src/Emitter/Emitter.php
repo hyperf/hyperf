@@ -167,7 +167,7 @@ trait Emitter
         $encoder = ApplicationContext::getContainer()->get(Encoder::class);
         $packet = Packet::create([
             'type' => Packet::EVENT,
-            'nsp' => method_exists($this, 'getNsp') ? $this->getNsp() : '/',
+            'nsp' => method_exists($this, 'getNamespace') ? $this->getNamespace() : '/',
             'id' => $id,
             'data' => array_merge([$event], $data),
         ]);

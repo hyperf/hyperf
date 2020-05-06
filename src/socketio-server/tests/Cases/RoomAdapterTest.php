@@ -68,7 +68,7 @@ class RoomAdapterTest extends AbstractTestCase
     public function testRedisAdapter()
     {
         $nsp = Mockery::Mock(NamespaceInterface::class);
-        $nsp->shouldReceive('getNsp')->andReturn('test');
+        $nsp->shouldReceive('getNamespace')->andReturn('test');
         $redis = $this->getRedis();
         $server = Mockery::Mock(Sender::class);
         $server->shouldReceive('push')->twice();

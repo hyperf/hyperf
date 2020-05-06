@@ -84,6 +84,8 @@ class WebSocketController extends BaseNamespace
 
 > 每个 socket 会自动加入以自己 `sid` 命名的房间（`$socket->getSid()`），发送私聊信息就推送到对应 `sid` 即可。
 
+> 框架会触发 `connect` 和 `disconnect` 两个事件。
+
 ### 客户端
 
 由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。

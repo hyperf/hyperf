@@ -61,7 +61,7 @@ class BaseNamespace implements NamespaceInterface
     /**
      * Returns the current namespace in string form.
      */
-    public function getNsp(): string
+    public function getNamespace(): string
     {
         return SocketIORouter::getNamespace(static::class);
     }

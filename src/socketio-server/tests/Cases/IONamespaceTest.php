@@ -49,7 +49,7 @@ class IONamespaceTest extends AbstractTestCase
         $sender = Mockery::Mock(Sender::class);
         $sidProvider = new LocalSidProvider();
         $io = new BaseNamespace($sender, $sidProvider);
-        $this->assertEquals('/', $io->getNsp());
+        $this->assertEquals('/', $io->getNamespace());
     }
 
     public function testGetAdapter()

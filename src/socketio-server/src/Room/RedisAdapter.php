@@ -155,7 +155,7 @@ class RedisAdapter implements AdapterInterface
     {
         $prefix = join(':', [
             $this->redisPrefix,
-            $this->nsp->getNsp(),
+            $this->nsp->getNamespace(),
         ]);
         $iterator = null;
         while (true) {
@@ -223,7 +223,7 @@ class RedisAdapter implements AdapterInterface
     {
         return join(':', [
             $this->redisPrefix,
-            $this->nsp->getNsp(),
+            $this->nsp->getNamespace(),
             'rooms',
             $room,
         ]);
@@ -233,7 +233,7 @@ class RedisAdapter implements AdapterInterface
     {
         return join(':', [
             $this->redisPrefix,
-            $this->nsp->getNsp(),
+            $this->nsp->getNamespace(),
             'stat',
         ]);
     }
@@ -242,7 +242,7 @@ class RedisAdapter implements AdapterInterface
     {
         return join(':', [
             $this->redisPrefix,
-            $this->nsp->getNsp(),
+            $this->nsp->getNamespace(),
             'fds',
             $sid,
         ]);
@@ -252,7 +252,7 @@ class RedisAdapter implements AdapterInterface
     {
         return join(':', [
             $this->redisPrefix,
-            $this->nsp->getNsp(),
+            $this->nsp->getNamespace(),
             'channel',
         ]);
     }
