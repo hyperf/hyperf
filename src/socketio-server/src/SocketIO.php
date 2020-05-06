@@ -179,7 +179,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                 break;
             case Packet::ACK: // server ack
                 $ackId = $packet->id;
-                if ($this->clientCallbacks[$ackId] instanceof Channel) {
+                if (isset($this->clientCallbacks[$ackId]) && $this->clientCallbacks[$ackId] instanceof Channel) {
                     if (is_array($packet->data)) {
                         foreach ($packet->data as $piece) {
                             $this->clientCallbacks[$ackId]->push($piece);

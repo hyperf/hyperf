@@ -151,7 +151,11 @@ trait Emitter
         }
         return make(Future::class, [
             'fd' => $this->fd,
-            'data' => $this->encode('', $event, $data),
+            'event' => $event,
+            'data' => $data,
+            'encode' => function ($i, $event, $data) {
+                return $this->encode($i, $event, $data);
+            },
             'opcode' => SWOOLE_WEBSOCKET_OPCODE_TEXT,
             'flag' => $wsFlag,
         ]);

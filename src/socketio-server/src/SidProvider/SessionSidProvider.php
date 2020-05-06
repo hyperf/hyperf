@@ -44,8 +44,12 @@ class SessionSidProvider implements SidProviderInterface
 
     public function getSid(int $fd): string
     {
+        if ($fd === -1 || $fd === 0) {
+            return '';
+        }
         $this->session->set('fd', $fd);
         $this->session->set('server', SocketIO::$serverId);
+        $this->session->save();
         return $this->session->getId();
     }
 
@@ -63,7 +67,9 @@ class SessionSidProvider implements SidProviderInterface
 
     protected function getSession(string $sid): SessionInterface
     {
-        return new Session($this->getSessionName(), $this->buildSessionHandler(), $sid);
+        $session = new Session($this->getSessionName(), $this->buildSessionHandler(), $sid);
+        $session->start();
+        return $session;
     }
 
     protected function getSessionName(): string

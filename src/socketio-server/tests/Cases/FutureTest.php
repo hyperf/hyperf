@@ -37,7 +37,14 @@ class FutureTest extends AbstractTestCase
         $mock = Mockery::mock(Sender::class);
         $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
         $container->set(Sender::class, $mock);
-        $future = make(Future::class, ['fd' => 1, 'data' => '', 'opcode' => 0, 'flag' => 0]);
+        $future = make(Future::class, ['fd' => 1,
+            'event' => 'event',
+            'data' => [''],
+            'encode' => function () {
+                return '';
+            },
+            'opcode' => 0,
+            'flag' => 0, ]);
         unset($future);
         $this->assertTrue(true);
     }
@@ -50,8 +57,35 @@ class FutureTest extends AbstractTestCase
         $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
         $container->set(Sender::class, $mock);
         /** @var Future $future */
-        $future = make(Future::class, ['fd' => 1, 'data' => '', 'opcode' => 0, 'flag' => 0]);
+        $future = make(Future::class, ['fd' => 1,
+            'event' => 'event',
+            'data' => [''],
+            'encode' => function () {
+                return '';
+            },
+            'opcode' => 0,
+            'flag' => 0, ]);
         $ch = $future->channel();
         $this->assertInstanceOf(Channel::class, $ch);
+    }
+
+    public function testReply()
+    {
+        /** @var ContainerInterface $container */
+        $container = ApplicationContext::getContainer();
+        $mock = Mockery::mock(Sender::class);
+        $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $container->set(Sender::class, $mock);
+        /** @var Future $future */
+        $future = make(Future::class, ['fd' => 1,
+            'event' => 'event',
+            'data' => [''],
+            'encode' => function () {
+                return '';
+            },
+            'opcode' => 0,
+            'flag' => 0, ]);
+        $ch = $future->reply(1);
+        $this->assertTrue(true);
     }
 }

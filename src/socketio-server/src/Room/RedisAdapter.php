@@ -202,6 +202,7 @@ class RedisAdapter implements AdapterInterface
             }
         } else {
             $sids = $this->redis->sMembers($this->getStatKey());
+
             foreach ($sids as $sid) {
                 $fd = $this->getFd($sid);
                 if (in_array($sid, $except)) {

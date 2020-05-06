@@ -28,7 +28,7 @@ class Future
     private $fd;
 
     /**
-     * @var string
+     * @var array
      */
     private $data;
 
@@ -43,36 +43,80 @@ class Future
     private $opcode;
 
     /**
+     * @var string
+     */
+    private $event;
+
+    /**
+     * @var callable
+     */
+    private $encode;
+
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
      * @var SocketIO
      */
     private $socketIO;
 
-    public function __construct(SocketIO $socketIO, Sender $sender, int $fd, string $data, int $opcode, int $flag)
-    {
+    /**
+     * @var bool
+     */
+    private $sent;
+
+    public function __construct(
+        SocketIO $socketIO,
+        Sender $sender,
+        int $fd,
+        string $event,
+        array $data,
+        callable $encode,
+        int $opcode,
+        int $flag
+    ) {
         $this->socketIO = $socketIO;
         $this->sender = $sender;
         $this->fd = $fd;
+        $this->id = '';
+        $this->event = $event;
         $this->data = $data;
+        $this->encode = $encode;
         $this->opcode = $opcode;
         $this->flag = $flag;
+        $this->sent = false;
     }
 
     public function __destruct()
     {
-        $this->sender->push($this->fd, $this->data, $this->opcode, $this->flag);
+        $this->send();
     }
 
     public function channel(?int $timeout = null): Channel
     {
         $channel = new Channel(1);
-        $i = strval(SocketIO::$messageId->get());
+        $this->id = strval(SocketIO::$messageId->get());
         SocketIO::$messageId->add();
-        $this->socketIO->addCallback($i, $channel, $timeout);
+        $this->socketIO->addCallback($this->id, $channel, $timeout);
         return $channel;
     }
 
     public function reply(?int $timeout = null)
     {
-        return $this->channel($timeout)->pop();
+        $channel = $this->channel($timeout);
+        $this->send();
+        return $channel->pop();
+    }
+
+    private function send()
+    {
+        if ($this->sent) {
+            return;
+        }
+        $message = ($this->encode)($this->id, $this->event, $this->data);
+        $this->sent = true;
+        $this->sender->push($this->fd, $message, $this->opcode, $this->flag);
     }
 }
