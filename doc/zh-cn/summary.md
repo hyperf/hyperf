@@ -83,6 +83,7 @@
   * [ETCD 协程客户端](zh-cn/etcd.md)
   * [WebSocket 服务](zh-cn/websocket-server.md)
   * [WebSocket 协程客户端](zh-cn/websocket-client.md)
+  * [Socket.io 服务](zh-cn/socketio-server.md)
   * [自定义进程](zh-cn/process.md)
   * [开发者工具](zh-cn/devtool.md)
   * [辅助类](zh-cn/utils.md)
