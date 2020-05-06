@@ -7,6 +7,10 @@
 - [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
 - [#1666](https://github.com/hyperf/hyperf/pull/1666) Added RPC Client for amqp.
 
+## Optimized 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
+
 # v1.1.28 - 2020-04-30
 
 ## Added
