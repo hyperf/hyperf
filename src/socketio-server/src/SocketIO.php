@@ -59,6 +59,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
  *  basic format    => $socket->emit("message", "hello world");
  *                  => sprintf('%d%d%s', $packetType, $packetDataType, json_encode([$event, $data]))
  *                  => 42["message", "hello world"].
+ * @mixin BaseNamespace
  */
 class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
@@ -219,7 +220,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @return NamespaceInterface possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead
+     * @return NamespaceInterface | BaseNamespace possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead
      */
     public function of(string $nsp): NamespaceInterface
     {

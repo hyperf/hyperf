@@ -51,6 +51,7 @@ class WebSocketController extends BaseNamespace
      */
     public function onEvent(Socket $socket, $data)
     {
+        // 应答
         return 'Event Received: ' . $data;
     }
 
@@ -60,9 +61,12 @@ class WebSocketController extends BaseNamespace
      */
     public function onJoinRoom(Socket $socket, $data)
     {
+        // 将当前用户加入房间
         $socket->join($data);
+        // 向房间内其他用户推送（不含当前用户）
         $socket->to($data)->emit('event', $socket->getSid() . "has joined {$data}");
-        $socket->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
+        // 向房间内所有人广播（含当前用户）
+        $this->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
     }
 
     /**
@@ -77,6 +81,8 @@ class WebSocketController extends BaseNamespace
 }
 
 ```
+
+> 每个 socket 会自动加入以自己 `sid` 命名的房间（`$socket->getSid()`），发送私聊信息就推送到对应 `sid` 即可。
 
 ### 客户端
 
@@ -115,8 +121,8 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
-  // WARNING: `socket.to(socket.id).emit()` will NOT work, as it will send to everyone in the room
-  // named `socket.id` but the sender. Please use the classic `socket.emit()` instead.
+  // WARNING: `$socket->to($socket->getSid())->emit()` will NOT work, as it will send to everyone in the room
+  // named `$socket->getSid()` but the sender. Please use the classic `$socket->emit()` instead.
 
   // sending with acknowledgement
   $reply = $socket->emit('question', 'do you think so?')->reply();
@@ -202,11 +208,11 @@ return [
 ];
 ```
 
-### 调整会话ID
+### 调整 SocketID (`sid`)
 
-默认会话ID使用 `ServerID#FD` 的格式，可以适应分布式场景。
+默认 SocketID 使用 `ServerID#FD` 的格式，可以适应分布式场景。
 
-1. 可以替换为直接使用Fd。
+1. 可以替换为直接使用 Fd 。
 
 ```php
 <?php
@@ -216,7 +222,7 @@ return [
 ];
 ```
 
-2. 也可以替换为 SessionID。
+2. 也可以替换为 SessionID 。
 
 ```php
 <?php
@@ -274,7 +280,7 @@ use Hyperf\SocketIOServer\Socket;
  */
 class WebSocketController extends BaseNamespace
 {
-    public function event(Socket $socket, $data)
+    public function echo(Socket $socket, $data)
     {
         $socket->emit('event', $data);
     }

@@ -1,4 +1,4 @@
-Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议。
+Socket.io是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server支持了Socket.io的WebSocket传输协议。
 
 ## 安装
 
@@ -6,7 +6,7 @@ Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以�
 composer require hyperf/socketio-server
 ```
 
-hyperf/socketio-server 是基于 WebSocket 实现的，请确保服务端已经添加了 WebSocket 服务配置。
+hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添加了WebSocket服务配置。
 
 ```php
         [
@@ -51,6 +51,7 @@ class WebSocketController extends BaseNamespace
      */
     public function onEvent(Socket $socket, $data)
     {
+        // 应答
         return 'Event Received: ' . $data;
     }
 
@@ -60,9 +61,12 @@ class WebSocketController extends BaseNamespace
      */
     public function onJoinRoom(Socket $socket, $data)
     {
+        // 将当前用户加入房间
         $socket->join($data);
+        // 向房间内其他用户推送（不含当前用户）
         $socket->to($data)->emit('event', $socket->getSid() . "has joined {$data}");
-        $socket->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
+        // 向房间内所有人广播（含当前用户）
+        $this->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
     }
 
     /**
@@ -78,9 +82,11 @@ class WebSocketController extends BaseNamespace
 
 ```
 
+> 每个 socket 会自动加入以自己 `sid` 命名的房间（`$socket->getSid()`），发送私聊信息就推送到对应 `sid` 即可。
+
 ### 客户端
 
-由于服务端只实现了 WebSocket 通讯，所以客户端要加上 `{transports:["websocket"]}` 。
+由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
@@ -115,8 +121,8 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
-  // WARNING: `socket.to(socket.id).emit()` will NOT work, as it will send to everyone in the room
-  // named `socket.id` but the sender. Please use the classic `socket.emit()` instead.
+  // WARNING: `$socket->to($socket->getSid())->emit()` will NOT work, as it will send to everyone in the room
+  // named `$socket->getSid()` but the sender. Please use the classic `$socket->emit()` instead.
 
   // sending with acknowledgement
   $reply = $socket->emit('question', 'do you think so?')->reply();
@@ -178,7 +184,7 @@ return [
 ];
 ```
 
-> swoole 4.4.17 及以下版本只能读取 http 创建好的 Cookie，4.4.18 及以上版本可以在 WebSocket 握手时创建 Cookie
+> swoole 4.4.17 及以下版本只能读取 http 创建好的Cookie，4.4.18 及以上版本可以在WebSocket握手时创建Cookie
 
 ### 调整房间适配器
 
@@ -202,11 +208,11 @@ return [
 ];
 ```
 
-### 调整会话 ID
+### 调整 SocketID (`sid`)
 
-默认会话 ID 使用 `ServerID#FD` 的格式，可以适应分布式场景。
+默认 SocketID 使用 `ServerID#FD` 的格式，可以适应分布式场景。
 
-1. 可以替换为直接使用 Fd。
+1. 可以替换为直接使用 Fd 。
 
 ```php
 <?php
@@ -216,7 +222,7 @@ return [
 ];
 ```
 
-2. 也可以替换为 SessionID。
+2. 也可以替换为 SessionID 。
 
 ```php
 <?php
@@ -274,7 +280,7 @@ use Hyperf\SocketIOServer\Socket;
  */
 class WebSocketController extends BaseNamespace
 {
-    public function event(Socket $socket, $data)
+    public function echo(Socket $socket, $data)
     {
         $socket->emit('event', $data);
     }
