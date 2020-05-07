@@ -26,7 +26,8 @@
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "friendsofphp/php-cs-fixer": "^2.9",
+        "fzaninotto/faker": "^1.9"
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^2.6).",

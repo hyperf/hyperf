@@ -1,0 +1,12 @@
+<?php
+declare(strict_types=1);
+
+use Faker\Generator as Faker;
+use Hyperf\Database\Model\Factory;
+
+/** @var Factory $factory */
+$factory->define(%MODEL%::class, function (Faker $faker) {
+    return [
+        //
+    ];
+});
