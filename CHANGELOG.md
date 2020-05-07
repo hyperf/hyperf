@@ -4,14 +4,14 @@
 
 ## Added
 
-- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added `morphWith` and `whereHasMorph` for hyperf/database component.
 - [#1651](https://github.com/hyperf/hyperf/pull/1651) Added socket.io-server component.
-- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added RPC Client for amqp.
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added support for AMQP RPC mode.
 
 ## Fixed
 
-- [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed pool does not work in json rpc pool transporter.
-- [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed connection reset failed, when the connection was closed in context.
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed the connection pool does not works in JSONRPC pool transporter.
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed JSONRPC client connection reset failed, when the connection was closed in context.
 
 ## Optimized 
 
