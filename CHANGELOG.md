@@ -8,6 +8,11 @@
 - [#1651](https://github.com/hyperf/hyperf/pull/1651) Added socket.io-server component.
 - [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added RPC Client for amqp.
 
+## Fixed
+
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed pool does not work in json rpc pool transporter.
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed connection reset failed, when the connection was closed in context.
+
 ## Optimized 
 
 - [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
