@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v1.1.30 - 2020-05-07
+
+## 新增
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) 新增 ORM 方法 `morphWith` 和 `whereHasMorph`。
+- [#1651](https://github.com/hyperf/hyperf/pull/1651) 新增 `socket.io-server` 组件。
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) 新增 AMQP RPC 客户端。
+
+## 修复
+
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) 修复 `RpcPoolTransporter` 的连接池配置不生效的 BUG。
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) 修复 `RpcConnection` 连接失败后，相同协程内无法正常重置连接的 BUG。
+
+## 优化 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) 优化掉 `Cache 组件` 一条无意义的删除指令。
+
 # v1.1.28 - 2020-04-30
 
 ## 新增
