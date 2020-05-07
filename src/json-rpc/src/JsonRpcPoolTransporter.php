@@ -130,6 +130,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $config = [
             'connect_timeout' => $this->config['connect_timeout'],
             'settings' => $this->config['settings'],
+            'pool' => $this->config['pool'],
             'node' => function () {
                 return $this->getNode();
             },

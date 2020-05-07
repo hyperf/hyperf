@@ -54,6 +54,25 @@ class JsonRpcPoolTransporterTest extends TestCase
         $this->assertSame($settings, $transporter->getConfig()['settings']);
     }
 
+    public function testJsonRpcPoolTransporterGetPool()
+    {
+        $container = $this->getContainer();
+        $factory = new PoolFactory($container);
+        $transporter = new JsonRpcPoolTransporter($factory, [
+            'pool' => ['min_connections' => 8, 'max_connections' => 88],
+            'settings' => $settings = [
+                'open_length_check' => true,
+                'package_length_type' => 'N',
+                'package_length_offset' => 0,
+                'package_body_offset' => 4,
+            ],
+        ]);
+
+        $options = $transporter->getPool()->getOption();
+        $this->assertSame(8, $options->getMinConnections());
+        $this->assertSame(88, $options->getMaxConnections());
+    }
+
     public function testJsonRpcPoolTransporterSendLengthCheck()
     {
         $container = $this->getContainer();
