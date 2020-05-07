@@ -75,6 +75,9 @@ class HttpClientAspect implements AroundInterface
         $uri = $arguments['keys']['uri'] ?? 'Null';
         $key = "HTTP Request [{$method}] {$uri}";
         $span = $this->startSpan($key);
+        if (empty($span->getOperationName())) {
+            return $proceedingJoinPoint->process();
+        }
         $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         if ($this->spanTagManager->has('http_client', 'http.url')) {
             $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $uri);
