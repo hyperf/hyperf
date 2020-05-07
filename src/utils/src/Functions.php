@@ -445,3 +445,24 @@ if (! function_exists('swoole_hook_flags')) {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
     }
 }
+
+if (! function_exists('factory')) {
+    /**
+     * @return \Hyperf\Database\Model\FactoryBuilder
+     */
+    function factory()
+    {
+        $factory = make(\Hyperf\Database\Model\Factory::class);
+
+        $arguments = func_get_args();
+
+        if (isset($arguments[1]) && is_string($arguments[1])) {
+            return $factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
+        }
+        if (isset($arguments[1])) {
+            return $factory->of($arguments[0])->times($arguments[1]);
+        }
+
+        return $factory->of($arguments[0]);
+    }
+}
