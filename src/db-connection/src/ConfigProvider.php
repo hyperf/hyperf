@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Commands\Factories\GenFactoryCommand;
 use Hyperf\Database\Commands\Migrations\FreshCommand;
 use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
 use Hyperf\Database\Commands\Migrations\InstallCommand;
@@ -25,7 +26,9 @@ use Hyperf\Database\Commands\Seeders\SeedCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Factory\FactoryResolver as ModelFactoryResolver;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
+use Hyperf\Database\Model\Factory as ModelFactory;
 use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
@@ -40,6 +43,7 @@ class ConfigProvider
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
                 MigrationRepositoryInterface::class => DatabaseMigrationRepositoryFactory::class,
+                ModelFactory::class => ModelFactoryResolver::class
             ],
             'commands' => [
                 ModelCommand::class,
@@ -53,6 +57,7 @@ class ConfigProvider
                 StatusCommand::class,
                 GenSeederCommand::class,
                 SeedCommand::class,
+                GenFactoryCommand::class,
             ],
             'listeners' => [
                 RegisterConnectionResolverListener::class,
