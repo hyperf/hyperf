@@ -124,6 +124,7 @@ class ModelCommand extends Command
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
         $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
+        $this->addOption('factory', 'f', InputOption::VALUE_NONE, 'create a model factory');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -196,7 +197,22 @@ class ModelCommand extends Command
         $code = $this->printer->prettyPrintFile($stms);
 
         file_put_contents($path, $code);
+
+        if ($this->input->getOption('factory')) {
+            $this->createModelFactory($class);
+        }
+
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
+    }
+
+    protected function createModelFactory($class)
+    {
+        $classname = substr($class, strripos($class, '\\') + 1);
+
+        $this->call('gen:factory', [
+            'name' => $classname . 'Factory',
+            '--model' => $class
+        ]);
     }
 
     /**
