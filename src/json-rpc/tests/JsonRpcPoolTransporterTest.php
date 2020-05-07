@@ -96,6 +96,28 @@ class JsonRpcPoolTransporterTest extends TestCase
         $this->assertSame($data, $packer->unpack($string));
     }
 
+    public function testGetConnection()
+    {
+        $container = $this->getContainer();
+        $factory = $container->get(PoolFactory::class);
+        $transporter = new JsonRpcPoolTransporter($factory, [
+            'pool' => ['min_connections' => 10],
+            'settings' => $settings = [
+                'open_length_check' => true,
+                'package_length_type' => 'N',
+                'package_length_offset' => 0,
+                'package_body_offset' => 4,
+            ],
+        ]);
+
+        $conn = $transporter->getConnection();
+        $conn2 = $transporter->getConnection();
+        $this->assertSame($conn, $conn2);
+        $conn->close();
+        $conn2 = $transporter->getConnection();
+        $this->assertNotEquals($conn, $conn2);
+    }
+
     public function testsplObjectHash()
     {
         $class = new \stdClass();
