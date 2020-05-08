@@ -55,4 +55,18 @@ class ContextTest extends TestCase
             $this->assertSame($uid, Context::get('test.store.id'));
         }]);
     }
+
+    public function testCopyAfterSet()
+    {
+        Context::set('test.store.id', $uid = uniqid());
+        $id = Coroutine::id();
+        parallel([function () use ($id, $uid) {
+            Context::set('test.store.name', 'Hyperf');
+            Context::copy($id, ['test.store.id']);
+            $this->assertSame($uid, Context::get('test.store.id'));
+
+            // TODO: Context::copy will delete origin values.
+            $this->assertNull(Context::get('test.store.name'));
+        }]);
+    }
 }
