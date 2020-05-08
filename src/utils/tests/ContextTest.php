@@ -84,7 +84,7 @@ class ContextTest extends TestCase
             $this->assertSame($uid, $obj->id);
             $obj->id = $tid;
         }]);
-        
+
         $this->assertSame($tid, Context::get('test.store.id')->id);
     }
 }
