@@ -93,8 +93,10 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: Unknown reason, it will cause 400 some time.
-        unset($headers['Content-Length']);
+        // TODO: Content-Length: Unknown reason, it will cause 400 some time.
+        // Expect header is not supported by \Swoole\Coroutine\Http\Client
+        unset($headers['Content-Length'], $headers['Expect']);
+        $client->setHeaders($headers);
         $client->setHeaders($headers);
     }
 
