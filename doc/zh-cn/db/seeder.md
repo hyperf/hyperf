@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             ->insert([
                 'username' => \Hyperf\Utils\Str::random(8),
                 'email' => \Hyperf\Utils\Str::random(10) . '@gmail.com',
-                'password' => hash('sha256', \Hyperf\Utils\Str::random(8)),
+                'password' => password_hash(\Hyperf\Utils\Str::random(8), PASSWORD_BCRYPT),
             ]);
     }
 }
