@@ -81,7 +81,7 @@ class ProxyManager
             return $proxyFiles;
         }
         if (! file_exists($this->getProxyDir())) {
-            mkdir($this->getProxyFileDir(), 0755, true);
+            mkdir($this->getProxyDir(), 0755, true);
         }
         // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
