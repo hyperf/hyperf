@@ -1,5 +1,9 @@
 # v1.1.31 - TBD
 
+## Fixed
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
+
 # v1.1.30 - 2020-05-07
 
 ## Added

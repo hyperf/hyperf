@@ -48,11 +48,15 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         CoContext::set(Context::FD, 2);
         Context::set('a', 42);
-        go(function () {
+        parallel([function () {
             CoContext::set(Context::FD, 3);
             Context::copy(2);
             $this->assertEquals(42, Context::get('a'));
-        });
+        }, function () {
+            CoContext::set(Context::FD, 3);
+            Context::copy(2, ['a']);
+            $this->assertEquals(42, Context::get('a'));
+        }]);
         $this->assertEquals(42, Context::get('a', 0, 3));
     }
 
