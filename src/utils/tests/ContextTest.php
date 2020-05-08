@@ -69,4 +69,22 @@ class ContextTest extends TestCase
             $this->assertNull(Context::get('test.store.name'));
         }]);
     }
+
+    public function testContextChangeAfterCopy()
+    {
+        $obj = new \stdClass();
+        $obj->id = $uid = uniqid();
+
+        Context::set('test.store.id', $obj);
+        $id = Coroutine::id();
+        $tid = uniqid();
+        parallel([function () use ($id, $uid, $tid) {
+            Context::copy($id, ['test.store.id']);
+            $obj = Context::get('test.store.id');
+            $this->assertSame($uid, $obj->id);
+            $obj->id = $tid;
+        }]);
+        
+        $this->assertSame($tid, Context::get('test.store.id')->id);
+    }
 }
