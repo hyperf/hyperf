@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,5 +44,15 @@ class ContextTest extends TestCase
 
         Context::set('test.store.id', null);
         $this->assertSame(1, Context::getOrSet('test.store.id', 1));
+    }
+
+    public function testCopy()
+    {
+        Context::set('test.store.id', $uid = uniqid());
+        $id = Coroutine::id();
+        parallel([function () use ($id, $uid) {
+            Context::copy($id, ['test.store.id']);
+            $this->assertSame($uid, Context::get('test.store.id'));
+        }]);
     }
 }
