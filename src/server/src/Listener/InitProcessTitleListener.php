@@ -82,7 +82,7 @@ class InitProcessTitleListener implements ListenerInterface
     protected function setTitle(string $title)
     {
         if ($this->isSupport()) {
-            cli_set_process_title($title);
+            @cli_set_process_title($title);
         }
     }
 
