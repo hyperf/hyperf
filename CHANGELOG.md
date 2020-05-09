@@ -4,6 +4,10 @@
 
 - [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
 
+## Optimized
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) Don't set process title in Darwin OS.
+
 # v1.1.30 - 2020-05-07
 
 ## Added
