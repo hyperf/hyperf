@@ -141,8 +141,8 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
+                $container = ApplicationContext::getContainer();
                 try {
-                    $container = ApplicationContext::getContainer();
                     $sub = $container->get(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
