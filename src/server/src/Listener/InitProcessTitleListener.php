@@ -81,12 +81,12 @@ class InitProcessTitleListener implements ListenerInterface
 
     protected function setTitle(string $title)
     {
-        if ($this->isSupport()) {
+        if ($this->isSupportedOS()) {
             @cli_set_process_title($title);
         }
     }
 
-    protected function isSupport(): bool
+    protected function isSupportedOS(): bool
     {
         return ! in_array(PHP_OS, [
             'Darwin',
