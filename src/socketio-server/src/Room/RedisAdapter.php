@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
@@ -140,12 +141,20 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $sub = ApplicationContext::getContainer()->get(Subscriber::class);
-                if ($sub) {
-                    $this->mixSubscribe($sub);
-                } else {
-                    // Fallback to PhpRedis, which has a very bad blocking subscribe model.
-                    $this->phpRedisSubscribe();
+                try {
+                    $sub = ApplicationContext::getContainer()->get(Subscriber::class);
+                    if ($sub) {
+                        $this->mixSubscribe($sub);
+                    } else {
+                        // Fallback to PhpRedis, which has a very bad blocking subscribe model.
+                        $this->phpRedisSubscribe();
+                    }
+                } catch (\Throwable $e) {
+                    if (ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
+                        $logger = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                        $logger->error($e->getMessage() . ' : ' . $e->getTraceAsString());
+                    }
+                    throw $e;
                 }
             }, $this->retryInterval);
         });
