@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
@@ -98,7 +97,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
-            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 

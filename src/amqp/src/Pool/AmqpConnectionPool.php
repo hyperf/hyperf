@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Pool;
 
 use Hyperf\Amqp\Connection;
@@ -25,6 +24,8 @@ class AmqpConnectionPool extends Pool
     protected $name;
 
     protected $config;
+
+    protected $class = Connection::class;
 
     public function __construct(ContainerInterface $container, string $name)
     {
@@ -48,8 +49,14 @@ class AmqpConnectionPool extends Pool
         return $this->name;
     }
 
+    public function setClass(string $class): self
+    {
+        $this->class = $class;
+        return $this;
+    }
+
     protected function createConnection(): ConnectionInterface
     {
-        return new Connection($this->container, $this, $this->config);
+        return make($this->class, [$this->container, $this, $this->config]);
     }
 }

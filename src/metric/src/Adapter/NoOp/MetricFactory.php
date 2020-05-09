@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\NoOp;
 
 use Hyperf\Contract\ConfigInterface;
@@ -49,7 +48,7 @@ class MetricFactory implements MetricFactoryInterface
 
     public function handle(): void
     {
-        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
         $coordinator->yield();
     }
 }

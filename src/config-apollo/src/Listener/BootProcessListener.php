@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -73,7 +72,7 @@ class BootProcessListener extends OnPipeMessageListener
                 $interval = $this->config->get('apollo.interval', 5);
                 retry(INF, function () use ($namespaces, $callbacks, $interval) {
                     while (true) {
-                        $coordinator = CoordinatorManager::get(Constants::ON_WORKER_EXIT);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
                         $workerExited = $coordinator->yield($interval);
                         if ($workerExited) {
                             break;

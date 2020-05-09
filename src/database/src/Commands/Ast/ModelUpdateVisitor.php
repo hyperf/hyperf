@@ -9,17 +9,54 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelOption;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Relations\BelongsTo;
+use Hyperf\Database\Model\Relations\BelongsToMany;
+use Hyperf\Database\Model\Relations\HasMany;
+use Hyperf\Database\Model\Relations\HasManyThrough;
+use Hyperf\Database\Model\Relations\HasOne;
+use Hyperf\Database\Model\Relations\HasOneThrough;
+use Hyperf\Database\Model\Relations\MorphMany;
+use Hyperf\Database\Model\Relations\MorphOne;
+use Hyperf\Database\Model\Relations\MorphTo;
+use Hyperf\Database\Model\Relations\MorphToMany;
+use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
+use Roave\BetterReflection\BetterReflection;
+use Roave\BetterReflection\Reflection\ReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionMethod;
+use Roave\BetterReflection\Reflector\ClassReflector;
+use Roave\BetterReflection\TypesFinder\FindReturnType;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
+    const RELATION_METHODS = [
+        'hasMany' => HasMany::class,
+        'hasManyThrough' => HasManyThrough::class,
+        'hasOneThrough' => HasOneThrough::class,
+        'belongsToMany' => BelongsToMany::class,
+        'hasOne' => HasOne::class,
+        'belongsTo' => BelongsTo::class,
+        'morphOne' => MorphOne::class,
+        'morphTo' => MorphTo::class,
+        'morphMany' => MorphMany::class,
+        'morphToMany' => MorphToMany::class,
+        'morphedByMany' => MorphToMany::class,
+    ];
+
+    /**
+     * @var string
+     */
+    protected $class;
+
     /**
      * @var array
      */
@@ -30,31 +67,48 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected $option;
 
-    public function __construct($columns = [], ModelOption $option)
+    /**
+     * @var array
+     */
+    protected $methods = [];
+
+    /**
+     * @var array
+     */
+    protected $properties = [];
+
+    /**
+     * @deprecated v2.0
+     * @var ClassReflector
+     */
+    protected static $reflector;
+
+    /**
+     * @deprecated v2.0
+     * @var FindReturnType
+     */
+    protected static $return;
+
+    public function __construct($class, $columns, ModelOption $option)
     {
+        $this->class = $class;
         $this->columns = $columns;
         $this->option = $option;
+        $this->initPropertiesFromMethods();
     }
 
     public function leaveNode(Node $node)
     {
         switch ($node) {
             case $node instanceof Node\Stmt\PropertyProperty:
-                if ($node->name == 'fillable' && $this->option->isRefreshFillable()) {
+                if ((string) $node->name === 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
-                } elseif ($node->name == 'casts') {
+                } elseif ((string) $node->name === 'casts') {
                     $node = $this->rewriteCasts($node);
                 }
-
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $doc = '/**' . PHP_EOL;
-                foreach ($this->columns as $column) {
-                    [$name, $type, $comment] = $this->getProperty($column);
-                    $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
-                }
-                $doc .= ' */';
-                $node->setDocComment(new Doc($doc));
+                $node->setDocComment(new Doc($this->parseProperty()));
                 return $node;
         }
     }
@@ -90,6 +144,147 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             'kind' => Node\Expr\Array_::KIND_SHORT,
         ]);
         return $node;
+    }
+
+    protected function parseProperty(): string
+    {
+        $doc = '/**' . PHP_EOL;
+        foreach ($this->columns as $column) {
+            [$name, $type, $comment] = $this->getProperty($column);
+            $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
+        }
+        foreach ($this->properties as $name => $property) {
+            if ($property['read'] && $property['write']) {
+                $doc .= sprintf(' * @property %s $%s', $property['type'], $name) . PHP_EOL;
+                continue;
+            }
+            if ($property['read']) {
+                $doc .= sprintf(' * @property-read %s $%s', $property['type'], $name) . PHP_EOL;
+                continue;
+            }
+            if ($property['write']) {
+                $doc .= sprintf(' * @property-write %s $%s', $property['type'], $name) . PHP_EOL;
+                continue;
+            }
+        }
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function initPropertiesFromMethods()
+    {
+        /** @var ReflectionClass $reflection */
+        $reflection = self::getReflector()->reflect($this->class);
+        $methods = $reflection->getImmediateMethods();
+        $namespace = $reflection->getDeclaringNamespaceAst();
+        if (empty($methods)) {
+            return;
+        }
+
+        sort($methods);
+        /** @var ReflectionMethod $method */
+        foreach ($methods as $method) {
+            if (Str::startsWith($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
+                // Magic get<name>Attribute
+                $name = Str::snake(substr($method->getName(), 3, -9));
+                if (! empty($name)) {
+                    $type = self::getReturnFinder()->__invoke($method, $namespace);
+                    $this->setProperty($name, $type, true, null);
+                }
+                continue;
+            }
+
+            if (Str::startsWith($method->getName(), 'set') && Str::endsWith($method->getName(), 'Attribute')) {
+                // Magic set<name>Attribute
+                $name = Str::snake(substr($method->getName(), 3, -9));
+                if (! empty($name)) {
+                    $this->setProperty($name, null, null, true);
+                }
+                continue;
+            }
+
+            if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
+                $name = Str::camel(substr($method->getName(), 5));
+                if (! empty($name)) {
+                    $args = $method->getParameters();
+                    // Remove the first ($query) argument
+                    array_shift($args);
+                    $this->setMethod($name, [Builder::class, $method->getDeclaringClass()->getName()], $args);
+                }
+                continue;
+            }
+
+            if ($method->getNumberOfParameters() > 0) {
+                continue;
+            }
+
+            $return = $method->getReturnStatementsAst();
+            // Magic Relation
+            if (count($return) === 1 && $return[0] instanceof Node\Stmt\Return_) {
+                $expr = $return[0]->expr;
+                if (
+                    $expr instanceof Node\Expr\MethodCall
+                    && $expr->name instanceof Node\Identifier
+                    && is_string($expr->name->name)
+                    && isset($expr->args[0])
+                    && $expr->args[0] instanceof Node\Arg
+                ) {
+                    $name = $expr->name->name;
+                    if (array_key_exists($name, self::RELATION_METHODS)) {
+                        if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                            $related = $expr->args[0]->value->class->toCodeString();
+                        } else {
+                            $related = (string) ($expr->args[0]->value);
+                        }
+
+                        if (strpos($name, 'Many') !== false) {
+                            // Collection or array of models (because Collection is Arrayable)
+                            $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
+                        } elseif ($name === 'morphTo') {
+                            // Model isn't specified because relation is polymorphic
+                            $this->setProperty($method->getName(), [Model::class], true);
+                        } else {
+                            // Single model is returned
+                            $this->setProperty($method->getName(), [$related], true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false)
+    {
+        if (! isset($this->properties[$name])) {
+            $this->properties[$name] = [];
+            $this->properties[$name]['type'] = 'mixed';
+            $this->properties[$name]['read'] = false;
+            $this->properties[$name]['write'] = false;
+            $this->properties[$name]['comment'] = (string) $comment;
+        }
+        if ($type !== null) {
+            if ($nullable) {
+                $type[] = 'null';
+            }
+            $this->properties[$name]['type'] = implode('|', array_unique($type));
+        }
+        if ($read !== null) {
+            $this->properties[$name]['read'] = $read;
+        }
+        if ($write !== null) {
+            $this->properties[$name]['write'] = $write;
+        }
+    }
+
+    protected function setMethod(string $name, array $type = [], array $arguments = [])
+    {
+        $methods = array_change_key_case($this->methods, CASE_LOWER);
+
+        if (! isset($methods[strtolower($name)])) {
+            $this->methods[$name] = [];
+            $this->methods[$name]['type'] = implode('|', $type);
+            $this->methods[$name]['arguments'] = $arguments;
+        }
     }
 
     protected function getProperty($column): array
@@ -142,5 +337,36 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
 
         return $cast;
+    }
+
+    protected function getCollectionClass($className): string
+    {
+        // Return something in the very very unlikely scenario the model doesn't
+        // have a newCollection() method.
+        if (! method_exists($className, 'newCollection')) {
+            return Collection::class;
+        }
+
+        /** @var Model $model */
+        $model = new $className();
+        return '\\' . get_class($model->newCollection());
+    }
+
+    protected static function getReturnFinder(): FindReturnType
+    {
+        if (static::$return instanceof FindReturnType) {
+            return static::$return;
+        }
+
+        return static::$return = new FindReturnType();
+    }
+
+    protected static function getReflector(): ClassReflector
+    {
+        if (self::$reflector instanceof ClassReflector) {
+            return self::$reflector;
+        }
+
+        return self::$reflector = (new BetterReflection())->classReflector();
     }
 }

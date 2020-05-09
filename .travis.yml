@@ -5,17 +5,17 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.5.0RC1"
+      env: SW_VERSION="4.5.0"
     - php: 7.3
-      env: SW_VERSION="4.5.0RC1"
+      env: SW_VERSION="4.5.0"
     - php: 7.4
-      env: SW_VERSION="4.5.0RC1"
+      env: SW_VERSION="4.5.0"
     - php: 7.2
-      env: SW_VERSION="4.4.17"
+      env: SW_VERSION="4.4.18"
     - php: 7.3
-      env: SW_VERSION="4.4.17"
+      env: SW_VERSION="4.4.18"
     - php: 7.4
-      env: SW_VERSION="4.4.17"
+      env: SW_VERSION="4.4.18"
 
 services:
   - mysql
@@ -41,7 +41,20 @@ before_script:
   - composer config -g process-timeout 900 && composer update
 
 script:
-  - composer analyse src/di src/json-rpc src/tracer src/metric src/redis src/nats src/db src/retry src/grpc-client src/nsq src/filesystem
-  - composer analyse src/load-balancer
+  - |
+    composer analyse \
+    src/di \
+    src/json-rpc \
+    src/tracer \
+    src/metric \
+    src/redis \
+    src/nats \
+    src/db \
+    src/retry \
+    src/grpc-client \
+    src/nsq \
+    src/filesystem \
+    src/socketio-server \
+    src/load-balancer
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine

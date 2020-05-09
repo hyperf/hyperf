@@ -169,7 +169,7 @@ class UserController
 > 本框架定義的路由參數必須和控制器參數鍵名、類型保持一致，否則控制器無法接受到相關參數
 
 ```php
-Router::get('/user/{id}', 'App\Controller\UserController::info')
+Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
 
 ```php

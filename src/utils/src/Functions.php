@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Backoff;
@@ -280,16 +279,24 @@ if (! function_exists('call')) {
 }
 
 if (! function_exists('go')) {
+    /**
+     * @return bool|int
+     */
     function go(callable $callable)
     {
-        Coroutine::create($callable);
+        $id = Coroutine::create($callable);
+        return $id > 0 ? $id : false;
     }
 }
 
 if (! function_exists('co')) {
+    /**
+     * @return bool|int
+     */
     function co(callable $callable)
     {
-        Coroutine::create($callable);
+        $id = Coroutine::create($callable);
+        return $id > 0 ? $id : false;
     }
 }
 

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -30,6 +29,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\WebSocketServer\Collector\FdCollector;
+use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Container\ContainerInterface;
@@ -116,8 +116,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
-            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
-
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+            Context::set(WsContext::FD, $request->fd);
             $security = $this->container->get(Security::class);
 
             $psr7Request = $this->initRequest($request);
@@ -167,6 +167,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     public function onMessage(WebSocketServer $server, Frame $frame): void
     {
+        Context::set(WsContext::FD, $frame->fd);
         $fdObj = FdCollector::get($frame->fd);
         if (! $fdObj) {
             $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $frame->fd));
@@ -191,12 +192,16 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         if (! $fdObj) {
             return;
         }
+        Context::set(WsContext::FD, $fd);
+        defer(function () use ($fd) {
+            // Move those functions to defer, because onClose may throw exceptions
+            FdCollector::del($fd);
+            WsContext::release($fd);
+        });
         $instance = $this->container->get($fdObj->class);
         if ($instance instanceof OnCloseInterface) {
             $instance->onClose($server, $fd, $reactorId);
         }
-
-        FdCollector::del($fd);
     }
 
     /**
@@ -205,6 +210,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected function initRequest(SwooleRequest $request): RequestInterface
     {
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+        WsContext::set(ServerRequestInterface::class, $psr7Request);
         return $psr7Request;
     }
 

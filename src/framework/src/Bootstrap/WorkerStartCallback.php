@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -60,6 +59,6 @@ class WorkerStartCallback
         }
 
         $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
-        CoordinatorManager::get(Constants::ON_WORKER_START)->resume();
+        CoordinatorManager::until(Constants::WORKER_START)->resume();
     }
 }

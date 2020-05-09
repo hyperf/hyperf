@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\StatsD;
 
 use Domnikl\Statsd\Client;
@@ -88,14 +87,14 @@ class MetricFactory implements MetricFactoryInterface
         if ($batchEnabled) {
             do {
                 $this->client->startBatch();
-                $workerExited = CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield($interval);
+                $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
                 if ($workerExited) {
                     break;
                 }
             } while (true);
         } else {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
         }
     }
 

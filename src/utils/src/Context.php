@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Swoole\Coroutine as SwCoroutine;
@@ -71,7 +70,7 @@ class Context
          */
         $from = SwCoroutine::getContext($fromCoroutineId);
         $current = SwCoroutine::getContext();
-        $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
+        $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
     }
 
     /**
