@@ -206,6 +206,13 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         ];
         $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
         $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        foreach (array_keys($all['forward']) as $nsp) {
+            $this->dispatch($request->fd, $nsp, 'connect', null);
+        }
     }
 
     public function onClose(Server $server, int $fd, int $reactorId): void
