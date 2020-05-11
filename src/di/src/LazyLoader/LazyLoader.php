@@ -22,7 +22,7 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class LazyLoader
 {
-    public const CONFIG_FILE_NAME = 'lazy_loader';
+    public const CONFIG_FILE_NAME = 'lazy_loader.php';
 
     /**
      * Indicates if a loader has been registered.
@@ -45,17 +45,25 @@ class LazyLoader
      */
     protected $config;
 
-    private function __construct(ConfigInterface $config)
+    private function __construct(array $config)
     {
-        $this->config = $config->get(self::CONFIG_FILE_NAME, []);
+        $this->config = $config;
         $this->register();
     }
 
     /**
      * Get or create the singleton lazy loader instance.
      */
-    public static function bootstrap(ConfigInterface $config): LazyLoader
+    public static function bootstrap(string $configDir): LazyLoader
     {
+        $path = $configDir . self::CONFIG_FILE_NAME;
+
+        if (file_exists($path)) {
+            $config = include $configDir . self::CONFIG_FILE_NAME;
+        } else {
+            $config = [];
+        }
+
         if (is_null(static::$instance)) {
             static::$instance = new static($config);
         }

@@ -16,6 +16,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\ProxyManager;
+use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Utils\Composer;
 
 class ClassLoader
@@ -88,6 +89,9 @@ class ClassLoader
         foreach ($loaders as $loader) {
             spl_autoload_register($loader);
         }
+
+        // Initialize Lazy Loader. This will prepend LazyLoader to the top of autoload queue.
+        LazyLoader::bootstrap($configDir);
     }
 
     public function setComposerClassLoader(ComposerClassLoader $classLoader): self
