@@ -144,8 +144,9 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
+                $container = ApplicationContext::getContainer();
                 try {
-                    $sub = ApplicationContext::getContainer()->get(Subscriber::class);
+                    $sub = $container->get(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
@@ -153,8 +154,8 @@ class RedisAdapter implements AdapterInterface
                         $this->phpRedisSubscribe();
                     }
                 } catch (\Throwable $e) {
-                    if (ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
-                        $logger = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                    if ($container->has(StdoutLoggerInterface::class)) {
+                        $logger = $container->get(StdoutLoggerInterface::class);
                         $logger->error($e->getMessage() . ' : ' . $e->getTraceAsString());
                     }
                     throw $e;
