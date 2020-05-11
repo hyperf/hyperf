@@ -54,6 +54,10 @@ class TaskExecutor
 
     public function execute(Task $task, float $timeout = 10)
     {
+        if (! $this->server instanceof Server) {
+            throw new TaskExecuteException('The server not support task.');
+        }
+
         $taskId = $this->server->task($task);
         if ($taskId === false) {
             throw new TaskExecuteException('Task execute failed.');
