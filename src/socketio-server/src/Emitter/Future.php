@@ -33,7 +33,7 @@ class Future
     private $data;
 
     /**
-     * @var int
+     * @var bool|int
      */
     private $flag;
 

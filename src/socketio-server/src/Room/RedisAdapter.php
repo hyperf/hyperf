@@ -15,6 +15,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
@@ -27,6 +28,8 @@ use Redis;
 
 class RedisAdapter implements AdapterInterface
 {
+    use Flagger;
+
     protected $redisPrefix = 'ws';
 
     protected $retryInterval = 1000;
@@ -184,11 +187,8 @@ class RedisAdapter implements AdapterInterface
         $except = data_get($opts, 'except', []);
         $volatile = data_get($opts, 'flag.volatile', false);
         $compress = data_get($opts, 'flag.compress', false);
-        if ($compress) {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN | SWOOLE_WEBSOCKET_FLAG_COMPRESS;
-        } else {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN;
-        }
+        $wsFlag = $this->guessFlags((bool) $compress);
+
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
@@ -218,7 +218,12 @@ class RedisAdapter implements AdapterInterface
                     continue;
                 }
                 if ($this->isLocal($sid)) {
-                    $this->sender->push($fd, $packet, SWOOLE_WEBSOCKET_OPCODE_TEXT, $wsFlag);
+                    $this->sender->push(
+                        $fd,
+                        $packet,
+                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
+                        $wsFlag
+                    );
                 }
             }
         }
