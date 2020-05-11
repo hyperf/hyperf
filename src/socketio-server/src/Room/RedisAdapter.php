@@ -156,7 +156,7 @@ class RedisAdapter implements AdapterInterface
                 } catch (\Throwable $e) {
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
-                        $logger->error($e->getMessage() . ' : ' . $e->getTraceAsString());
+                        $logger->error($this->formatThrowable($e));
                     }
                     throw $e;
                 }
@@ -276,6 +276,19 @@ class RedisAdapter implements AdapterInterface
     protected function getFd(string $sid): int
     {
         return $this->sidProvider->getFd($sid);
+    }
+
+    private function formatThrowable(\Throwable $throwable): string
+    {
+        sprintf(
+            "%s:%s(%s) in %s:%s\nStack trace:\n%s",
+            get_class($throwable),
+            $throwable->getMessage(),
+            $throwable->getCode(),
+            $throwable->getFile(),
+            $throwable->getLine(),
+            $throwable->getTraceAsString()
+        );
     }
 
     private function phpRedisSubscribe()
