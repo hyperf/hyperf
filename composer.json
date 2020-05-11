@@ -39,6 +39,7 @@
         "elasticsearch/elasticsearch": "^7.0",
         "endclothing/prometheus_client_php": "^0.9.1",
         "fig/http-message-util": "^1.1.2",
+        "filp/whoops": "^2.7",
         "friendsofphp/php-cs-fixer": "^2.14",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
