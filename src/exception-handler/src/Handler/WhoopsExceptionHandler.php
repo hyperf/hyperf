@@ -1,14 +1,21 @@
 <?php
 
-
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\ExceptionHandler\Handler;
 
-
+use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -29,7 +36,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         $whoops = new Run();
-        [$handler, $contentType, $request] = $this->negotiateHandler();
+        [$handler, $contentType] = $this->negotiateHandler();
 
         // CLI mode restriction hack
         if (method_exists($handler, 'handleUnconditionally')) {
@@ -39,7 +46,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
-        $whoops->{Run::EXCEPTION_HANDLER}($throwable, $request);
+        $whoops->{Run::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
         return $response
             ->withStatus(500)
@@ -59,10 +66,37 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $accepts = $request->getHeaderLine('accept');
         foreach (self::$preference as $contentType => $handler) {
             if (Str::contains($accepts, $contentType)) {
-                return [new $handler,  $contentType, $request];
+                return [$this->setupHandler(new $handler()),  $contentType];
+            }
+        }
+        return [new PlainTextHandler(),  'text/plain'];
+    }
+
+    private function setupHandler($handler)
+    {
+        if ($handler instanceof PrettyPageHandler) {
+            $handler->handleUnconditionally(true);
+
+            if (defined('BASE_PATH')) {
+                $handler->setApplicationRootPath(BASE_PATH);
+            }
+
+            $request = Context::get(ServerRequestInterface::class);
+            if ($request) {
+                $handler->addDataTableCallback('PSR7 Query', [$request, 'getQueryParams']);
+                $handler->addDataTableCallback('PSR7 Post', [$request, 'getParsedBody']);
+                $handler->addDataTableCallback('PSR7 Server', [$request, 'getServerParams']);
+                $handler->addDataTableCallback('PSR7 Cookie', [$request, 'getCookieParams']);
+                $handler->addDataTableCallback('PSR7 File', [$request, 'getUploadedFiles']);
+                $handler->addDataTableCallback('PSR7 Attribute', [$request, 'getAttributes']);
+            }
+
+            $session = Context::get(SessionInterface::class);
+            if ($session) {
+                $handler->addDataTableCallback('Hyperf Session', [$session, 'all']);
             }
         }
 
-        return [new PlainTextHandler(),  'text/plain'];
+        return $handler;
     }
 }
