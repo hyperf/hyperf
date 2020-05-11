@@ -298,7 +298,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             }, ]);
     }
 
-    private function dispatchAllNamespaceEvent($fd, $event)
+    private function dispatchEventInAllNamespaces(int $fd, string $event)
     {
         $all = SocketIORouter::list();
         if (! array_key_exists('forward', $all)) {
