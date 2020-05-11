@@ -38,11 +38,6 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops = new Run();
         [$handler, $contentType] = $this->negotiateHandler();
 
-        // CLI mode restriction hack
-        if (method_exists($handler, 'handleUnconditionally')) {
-            $handler->handleUnconditionally(true);
-        }
-
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
