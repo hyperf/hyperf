@@ -207,12 +207,12 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
         $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
         
-        $this->dispatchAllNamespaceEvent($request->fd, 'connect');
+        $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
     public function onClose(Server $server, int $fd, int $reactorId): void
     {
-        $this->dispatchAllNamespaceEvent($fd, 'disconnect');
+        $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }
 
     /**
