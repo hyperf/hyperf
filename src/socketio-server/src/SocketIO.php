@@ -206,17 +206,13 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         ];
         $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
         $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        
+        $this->dispatchAllNamespaceEvent($request->fd, 'connect');
     }
 
     public function onClose(Server $server, int $fd, int $reactorId): void
     {
-        $all = SocketIORouter::list();
-        if (! array_key_exists('forward', $all)) {
-            return;
-        }
-        foreach (array_keys($all['forward']) as $nsp) {
-            $this->dispatch($fd, $nsp, 'disconnect', null);
-        }
+        $this->dispatchAllNamespaceEvent($fd, 'disconnect');
     }
 
     /**
@@ -300,5 +296,16 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                 $this->addCallback($ackId, $channel, $timeout);
             }, ]);
+    }
+
+    private function dispatchAllNamespaceEvent($fd, $event)
+    {
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        foreach (array_keys($all['forward']) as $nsp) {
+            $this->dispatch($fd, $nsp, $event, null);
+        }
     }
 }
