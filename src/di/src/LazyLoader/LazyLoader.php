@@ -103,15 +103,17 @@ class LazyLoader
         if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
-        $path = str_replace('\\', '_', $dir . $proxy . '.lazy.php');
+
+        $code = $this->generatorLazyProxy(
+            $proxy,
+            $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
+        );
+
+        $path = str_replace('\\', '_', $dir . $proxy . '_'. crc32($code) . '.php');
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if (! file_exists($path) && CoLocker::lock($key)) {
             $targetPath = $path . '.' . uniqid();
-            $code = $this->generatorLazyProxy(
-                $proxy,
-                $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
-            );
             file_put_contents($targetPath, $code);
             rename($targetPath, $path);
             CoLocker::unlock($key);
