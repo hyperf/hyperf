@@ -298,12 +298,14 @@ class RedisAdapter implements AdapterInterface
     private function phpRedisSubscribe()
     {
         $redis = $this->redis;
+        /** @var string $callback */
         $callback = function ($redis, $chan, $msg) {
             Coroutine::create(function () use ($msg) {
                 [$packet, $opts] = unserialize($msg);
                 $this->doBroadcast($packet, $opts);
             });
         };
+        // cast to string because PHPStan asked so.
         $redis->subscribe([$this->getChannelKey()], $callback);
     }
 
