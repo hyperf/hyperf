@@ -253,6 +253,47 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @param  string  $relation
+     * @param  string|array  $types
+     * @param  \Closure  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return mixed
+     */
+    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'or', $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     *
+     * @param  string  $relation
+     * @param  string|array  $types
+     * @param  \Closure|null  $callback
+     * @return mixed
+     */
+    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null)
+    {
+        return $this->doesntHaveMorph($relation, $types, 'and', $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @param  string  $relation
+     * @param  string|array  $types
+     * @param  \Closure  $callback
+     * @return mixed
+     */
+    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null)
+    {
+        return $this->doesntHaveMorph($relation, $types, 'or', $callback);
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
@@ -410,5 +451,19 @@ trait QueriesRelationships
         $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
 
         return $belongsTo;
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query.
+     *
+     * @param  string  $relation
+     * @param  string|array  $types
+     * @param  string  $boolean
+     * @param  \Closure|null  $callback
+     * @return mixed
+     */
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null)
+    {
+        return $this->hasMorph($relation, $types, '<', 1, $boolean, $callback);
     }
 }
