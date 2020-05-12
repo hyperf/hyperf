@@ -78,7 +78,11 @@ class RedisAdapter implements AdapterInterface
     public function del(string $sid, string ...$rooms)
     {
         if (count($rooms) === 0) {
-            $this->del($sid, ...$this->clientRooms($sid));
+            $clientRooms = $this->clientRooms($sid);
+            if (empty($clientRooms)) {
+                return;
+            }
+            $this->del($sid, ...$clientRooms);
             $this->redis->multi();
             $this->redis->del($this->getSidKey($sid));
             $this->redis->sRem($this->getStatKey(), $sid);
