@@ -300,7 +300,7 @@ class RedisAdapter implements AdapterInterface
                 $this->doBroadcast($packet, $opts);
             });
         };
-        $redis->subscribe([$this->getChannelKey()], 'callback');
+        $redis->subscribe([$this->getChannelKey()], $callback);
     }
 
     private function mixSubscribe(Subscriber $sub)
