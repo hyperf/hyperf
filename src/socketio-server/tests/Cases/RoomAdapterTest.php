@@ -94,6 +94,14 @@ class RoomAdapterTest extends AbstractTestCase
         $room->broadcast('', ['rooms' => ['universe'], 'flag' => ['local' => true]]);
         $room->cleanUp();
         $this->assertNotContains('42', $room->clientRooms('42'));
+
+        // Test empty room
+        try {
+            $room->del('non-exist');
+        } catch (\Throwable $t) {
+            $this->assertTrue(false);
+        }
+
     }
 
     private function getRedis($options = [])
