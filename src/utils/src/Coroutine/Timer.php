@@ -17,8 +17,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class Timer
 {
-    public $interval;
-
     public function run(int $second, callable $handler)
     {
         go(function () use ($second, $handler) {
