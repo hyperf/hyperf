@@ -40,7 +40,7 @@ abstract class Command extends SymfonyCommand
     protected $input;
 
     /**
-     * @var OutputInterface|SymfonyStyle
+     * @var SymfonyStyle
      */
     protected $output;
 
