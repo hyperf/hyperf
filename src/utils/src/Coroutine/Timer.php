@@ -28,7 +28,7 @@ class Timer
                 while (true) {
                     // handler worker exit
                     $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                    $workerExited = $coordinator->yield($ms);
+                    $workerExited = $coordinator->yield($ms / 1000);
                     if ($workerExited) {
                         break;
                     }
