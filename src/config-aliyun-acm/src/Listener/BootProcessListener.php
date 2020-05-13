@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigAliyunAcm\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -19,8 +18,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -65,7 +62,7 @@ class BootProcessListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (!$this->config->get('aliyun_acm.enable', false)) {
+        if (! $this->config->get('aliyun_acm.enable', false)) {
             return;
         }
 
@@ -76,7 +73,7 @@ class BootProcessListener implements ListenerInterface
         if ($this->config->get('aliyun_acm.use_standalone_process', true)) {
             return;
         }
-        
+
         $interval = $this->config->get('aliyun_acm.interval', 5);
         $prevConfig = [];
         $this->timer->run($interval, function () use (&$prevConfig) {
