@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\LazyLoader;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine\Locker as CoLocker;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
@@ -117,7 +116,7 @@ class LazyLoader
             $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
         );
 
-        $path = str_replace('\\', '_', $dir . $proxy . '_'. crc32($code) . '.php');
+        $path = str_replace('\\', '_', $dir . $proxy . '_' . crc32($code) . '.php');
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if (! file_exists($path) && CoLocker::lock($key)) {

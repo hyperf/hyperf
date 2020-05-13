@@ -38,7 +38,8 @@ class ClassLoader
     {
         $this->setComposerClassLoader($classLoader);
         // Scan by ScanConfig to generate the reflection class map
-        $scanner = new Scanner($this, ScanConfig::instance());
+        $scanner = new Scanner($this, $config = ScanConfig::instance());
+        $classLoader->addClassMap($config->getClassMap());
         $reflectionClassMap = $scanner->scan();
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();

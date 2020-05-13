@@ -50,6 +50,11 @@ final class ScanConfig
     private $dependencies;
 
     /**
+     * @var array
+     */
+    private $classMap;
+
+    /**
      * @var ScanConfig
      */
     private static $instance;
@@ -60,7 +65,8 @@ final class ScanConfig
         array $ignoreAnnotations = [],
         array $globalImports = [],
         array $cacheNamespaces = [],
-        array $collectors
+        array $collectors = [],
+        array $classMap = []
     ) {
         $this->paths = $paths;
         $this->dependencies = $dependencies;
@@ -68,6 +74,7 @@ final class ScanConfig
         $this->globalImports = $globalImports;
         $this->cacheNamespaces = $cacheNamespaces;
         $this->collectors = $collectors;
+        $this->classMap = $classMap;
     }
 
     public function getPaths(): array
@@ -100,6 +107,11 @@ final class ScanConfig
         return $this->dependencies;
     }
 
+    public function getClassMap(): array
+    {
+        return $this->classMap;
+    }
+
     public static function instance(): self
     {
         if (self::$instance) {
@@ -114,7 +126,8 @@ final class ScanConfig
             $config['ignore_annotations'] ?? [],
             $config['global_imports'] ?? [],
             $config['cache_namespaces'] ?? [],
-            $config['collectors'] ?? []
+            $config['collectors'] ?? [],
+            $config['class_map'] ?? []
         );
     }
 

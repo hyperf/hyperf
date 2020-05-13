@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Instantiator\Instantiator;
-use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\BetterReflectionManager;
 use ReflectionProperty;
 
@@ -59,7 +57,7 @@ class Aspect extends AbstractAnnotation
                 $instancePriority = $property->getDefaultValue();
             }
         }
-        
+
         // Classes
         $classes = $this->classes;
         $classes = $instanceClasses ? array_merge($classes, $instanceClasses) : $classes;

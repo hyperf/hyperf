@@ -33,6 +33,13 @@ class ConfigProvider
                     NormalizerInterface::class => SimpleNormalizer::class,
                 ];
             }),
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
+            ],
         ];
     }
 }

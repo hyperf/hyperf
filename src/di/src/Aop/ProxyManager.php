@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
