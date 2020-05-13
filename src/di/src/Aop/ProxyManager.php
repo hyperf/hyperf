@@ -136,11 +136,11 @@ class ProxyManager
             $className = $class->getName();
             $this->classNameMap[] = $className;
             // Aggregate the class annotations
-            $classAnnotations = $this->retriveAnnotations($className . '._c');
+            $classAnnotations = $this->retrieveAnnotations($className . '._c');
             // Aggregate all methods annotations
-            $methodAnnotations = $this->retriveAnnotations($className . '._m');
+            $methodAnnotations = $this->retrieveAnnotations($className . '._m');
             // Aggregate all properties annotations
-            $propertyAnnotations = $this->retriveAnnotations($className . '._p');
+            $propertyAnnotations = $this->retrieveAnnotations($className . '._p');
             $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations, $propertyAnnotations));
             if ($annotations) {
                 $annotationsAspects = AspectCollector::get('annotations', []);
@@ -198,7 +198,7 @@ class ProxyManager
         return $aspects;
     }
 
-    protected function retriveAnnotations(string $annotationCollectorKey): array
+    protected function retrieveAnnotations(string $annotationCollectorKey): array
     {
         $defined = [];
         $annotations = AnnotationCollector::get($annotationCollectorKey, []);
