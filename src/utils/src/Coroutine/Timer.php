@@ -17,21 +17,25 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class Timer
 {
-    public function run(int $second, callable $handler)
+    /**
+     * @param int $ms millisecond
+     * @param callable $handler
+     */
+    public function run(int $ms, callable $handler)
     {
-        go(function () use ($second, $handler) {
-            retry(INF, function () use ($second, $handler) {
+        go(function () use ($ms, $handler) {
+            retry(INF, function () use ($ms, $handler) {
                 while (true) {
                     // handler worker exit
                     $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                    $workerExited = $coordinator->yield($second);
+                    $workerExited = $coordinator->yield($ms);
                     if ($workerExited) {
                         break;
                     }
 
                     $handler();
                 }
-            }, 1000 * $second);
+            }, $ms);
         });
     }
 }
