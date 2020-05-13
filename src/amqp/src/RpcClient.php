@@ -20,7 +20,7 @@ class RpcClient extends Builder
     {
         try {
             $pool = $this->poolFactory->getRpcPool($rpcMessage->getPoolName());
-            /** @var RpcConnection $connection */
+            /** @var null|RpcConnection $connection */
             $connection = $pool->get();
             $channel = $connection->initChannel($rpcMessage->getQueueBuilder(), uniqid());
 

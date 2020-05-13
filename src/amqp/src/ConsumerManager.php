@@ -34,7 +34,7 @@ class ConsumerManager
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
         /**
-         * @var string
+         * @var string $class
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {

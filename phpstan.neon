@@ -1,3 +1,12 @@
 # Magic behaviour with __get, __set, __call and __callStatic is not exactly static analyser-friendly :)
 # Fortunately, You can ingore it by the following config.
 #
+
+parameters:
+  bootstrap: "bootstrap.php"
+  inferPrivatePropertyTypeFromConstructor: true
+  treatPhpDocTypesAsCertain: true
+  excludes_analyse:
+    - %currentWorkingDirectory%/src/*/tests/*
+  ignoreErrors:
+    - '#Right side of && is always *.#'
