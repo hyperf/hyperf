@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigAliyunAcm\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -40,11 +41,17 @@ class BootProcessListener implements ListenerInterface
      */
     protected $client;
 
+    /**
+     * @var Coroutine\Timer
+     */
+    protected $timer;
+
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->client = $container->get(ClientInterface::class);
+        $this->timer = $container->get(Coroutine\Timer::class);
     }
 
     public function listen(): array
@@ -58,7 +65,7 @@ class BootProcessListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (! $this->config->get('aliyun_acm.enable', false)) {
+        if (!$this->config->get('aliyun_acm.enable', false)) {
             return;
         }
 
@@ -66,26 +73,19 @@ class BootProcessListener implements ListenerInterface
             $this->updateConfig($config);
         }
 
-        if (! $this->config->get('aliyun_acm.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('aliyun_acm.interval', 5);
-                retry(INF, function () use ($interval) {
-                    $prevConfig = [];
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->client->pull();
-                        if ($config !== $prevConfig) {
-                            $this->updateConfig($config);
-                        }
-                        $prevConfig = $config;
-                    }
-                }, $interval * 1000);
-            });
+        if ($this->config->get('aliyun_acm.use_standalone_process', true)) {
+            return;
         }
+        
+        $interval = $this->config->get('aliyun_acm.interval', 5);
+        $prevConfig = [];
+        $this->timer->run($interval, function () use (&$prevConfig) {
+            $config = $this->client->pull();
+            if ($config !== $prevConfig) {
+                $this->updateConfig($config);
+            }
+            $prevConfig = $config;
+        });
     }
 
     protected function updateConfig(array $config)
