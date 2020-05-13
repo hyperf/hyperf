@@ -77,14 +77,12 @@ class WhoopsExceptionHandler extends ExceptionHandler
             }
 
             $request = Context::get(ServerRequestInterface::class);
-            if ($request) {
-                $handler->addDataTableCallback('PSR7 Query', [$request, 'getQueryParams']);
-                $handler->addDataTableCallback('PSR7 Post', [$request, 'getParsedBody']);
-                $handler->addDataTableCallback('PSR7 Server', [$request, 'getServerParams']);
-                $handler->addDataTableCallback('PSR7 Cookie', [$request, 'getCookieParams']);
-                $handler->addDataTableCallback('PSR7 File', [$request, 'getUploadedFiles']);
-                $handler->addDataTableCallback('PSR7 Attribute', [$request, 'getAttributes']);
-            }
+            $handler->addDataTableCallback('PSR7 Query', [$request, 'getQueryParams']);
+            $handler->addDataTableCallback('PSR7 Post', [$request, 'getParsedBody']);
+            $handler->addDataTableCallback('PSR7 Server', [$request, 'getServerParams']);
+            $handler->addDataTableCallback('PSR7 Cookie', [$request, 'getCookieParams']);
+            $handler->addDataTableCallback('PSR7 File', [$request, 'getUploadedFiles']);
+            $handler->addDataTableCallback('PSR7 Attribute', [$request, 'getAttributes']);
 
             $session = Context::get(SessionInterface::class);
             if ($session) {
