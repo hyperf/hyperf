@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils\Coroutine;
 
 use Hyperf\Utils\Coordinator\Constants;
@@ -19,7 +18,6 @@ class Timer
 {
     /**
      * @param int $ms millisecond
-     * @param callable $handler
      */
     public function run(int $ms, callable $handler)
     {
