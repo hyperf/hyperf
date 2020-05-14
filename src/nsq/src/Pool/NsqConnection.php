@@ -83,7 +83,7 @@ class NsqConnection extends KeepaliveConnection
         if ($this->pool->getOption()->getHeartbeat() <= 0) {
             return;
         }
-        // only link is idle and heartbeat time exceeded since last execution
+        // When the connection is idle and heartbeat time exceeded since last execution
         if ($this->channel->length() > 0 && $this->lastExecutionTime <= microtime(true) - $this->pool->getOption()->getHeartbeat()) {
             $this->call(function ($connect) {
                 $connect->send($this->builder->buildNop(), false);
