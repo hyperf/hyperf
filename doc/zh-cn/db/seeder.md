@@ -93,6 +93,8 @@ $factory->define(App\Model\User::class, function (Faker $faker) {
 declare(strict_types=1);
 
 use Hyperf\Database\Seeders\Seeder;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Database\Model\Factory;
 
 class UserSeeder extends Seeder
 {
@@ -103,7 +105,8 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Model\User::class, 50)->create();
+        $factory = ApplicationContext::getContainer()->get(Factory::class);
+        $factory->of(App\Model\User::class)->times(50)->create();
     }
 }
 
