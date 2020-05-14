@@ -452,7 +452,9 @@ if (! function_exists('factory')) {
      */
     function factory()
     {
-        $factory = make(\Hyperf\Database\Model\Factory::class);
+        $container = \Hyperf\Utils\ApplicationContext::getContainer();
+
+        $factory = $container->get(\Hyperf\Database\Model\Factory::class);
 
         $arguments = func_get_args();
 
