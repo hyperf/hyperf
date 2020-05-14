@@ -136,4 +136,110 @@ class ModelMorphEagerLoadingTest extends TestCase
 
         return $container;
     }
+
+    public function testOrWhereHasMorph()
+    {
+        $this->getContainer();
+        $images = Image::query()
+            ->whereHasMorph('imageable',
+                [
+                    User::class
+                ],
+                function (Builder $query) {
+                    $query->where('id', '=', 1);
+                }
+            )
+            ->orWhereHasMorph('imageable',
+                [
+                    Book::class
+                ],
+                function (Builder $query) {
+                    $query->where('id', '=', 1);
+                }
+            )->get();
+        $this->assertSame(1, $images[0]->imageable->id);
+        $this->assertSame(1, $images[1]->imageable->id);
+        $sqls = [
+            'select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` = ?))) or ((`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` = ?)))',
+            'select * from `user` where `user`.`id` = ? limit 1',
+            'select * from `book` where `book`.`id` = ? limit 1'
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
+    public function testWhereDoesntHaveMorph()
+    {
+        $this->getContainer();
+        $images = Image::query()
+            ->whereDoesntHaveMorph('imageable',
+                [
+                    User::class,
+                    Book::class
+                ],
+                function (Builder $query, $type) {
+                    if ($type === User::class) {
+                        $query->where('id', '<>', 1);
+                    }
+                    if ($type === Book::class) {
+                        $query->where('id', '<>', 1);
+                    }
+                }
+            )
+            ->get();
+        $res = $images->every(function ($item, $key) {
+            return $item->imageable->id == 1;
+        });
+        $this->assertSame(true, $res);
+        $sqls = [
+            'select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?)) or (`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))',
+            'select * from `user` where `user`.`id` = ? limit 1',
+            'select * from `book` where `book`.`id` = ? limit 1'
+            ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
+    public function testOrWhereDoesntHaveMorph()
+    {
+        $this->getContainer();
+        $images = Image::query()
+            ->whereDoesntHaveMorph('imageable',
+                [
+                    User::class
+                ],
+                function (Builder $query) {
+                    $query->where('id', '<>', 1);
+                }
+            )
+            ->orWhereDoesntHaveMorph('imageable',
+                [
+                    Book::class
+                ],
+                function (Builder $query) {
+                    $query->where('id', '<>', 1);
+                }
+            )
+            ->get();
+        $res = $images->every(function ($item, $key) {
+            return $item->imageable->id == 1;
+        });
+        $this->assertSame(true, $res);
+        $sqls = [
+            'select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?))) or ((`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))',
+            'select * from `user` where `user`.`id` = ? limit 1',
+            'select * from `book` where `book`.`id` = ? limit 1'
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
 }
