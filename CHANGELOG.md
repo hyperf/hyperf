@@ -1,5 +1,9 @@
 # v1.1.31 - TBD
 
+## Added
+
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
+
 ## Fixed
 
 - [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
