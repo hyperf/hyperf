@@ -31,7 +31,8 @@
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^2.6).",
-        "roave/better-reflection": "Required to use ModelCommand (^4.0)."
+        "roave/better-reflection": "Required to use ModelCommand (^4.0).",
+        "fzaninotto/faker": "Required to use the model factory builder (^1.9)."
     },
     "autoload": {
         "psr-4": {
