@@ -4,6 +4,7 @@
 
 ## 新增
 
+- [#1723](https://github.com/hyperf/hyperf/pull/1730) 异常处理器集成了 filp/whoops 。
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) 为命令 `gen:model` 可选项 `--refresh-fillable` 添加简写 `-R`。
 
 ## Fixed
