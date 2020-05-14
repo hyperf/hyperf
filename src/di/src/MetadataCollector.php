@@ -29,7 +29,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
      */
     public static function get(string $key, $default = null)
     {
-        return Arr::get(static::$container, $key) ?? $default;
+        return Arr::get(static::$container, $key, $default);
     }
 
     /**

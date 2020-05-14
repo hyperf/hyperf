@@ -46,10 +46,10 @@ class Ast
 
     public function proxy(string $className, string $proxyClassName)
     {
-        $stmts = AstCollector::get($className, value(function () use ($className) {
+        $stmts = AstCollector::get($className, function () use ($className) {
             $code = $this->getCodeByClassName($className);
             return $stmts = $this->astParser->parse($code);
-        }));
+        });
         $traverser = new NodeTraverser();
         // @TODO Allow user modify or replace node vistor.
         $traverser->addVisitor(new ProxyClassNameVisitor($proxyClassName));
