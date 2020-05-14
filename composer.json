@@ -145,10 +145,10 @@
         "files": [
             "src/config/src/Functions.php",
             "src/di/src/Functions.php",
+            "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
-            "src/utils/src/Functions.php",
-            "src/filesystem/src/Adapter/AliyunOssHook.php"
+            "src/utils/src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
@@ -191,6 +191,7 @@
             "Hyperf\\Metric\\": "src/metric/src/",
             "Hyperf\\ModelCache\\": "src/model-cache/src/",
             "Hyperf\\ModelListener\\": "src/model-listener/src/",
+            "Hyperf\\Nano\\": "src/nano/src/",
             "Hyperf\\Nats\\": "src/nats/src/",
             "Hyperf\\Nsq\\": "src/nsq/src/",
             "Hyperf\\Paginator\\": "src/paginator/src/",
@@ -329,6 +330,7 @@
                 "Hyperf\\Metric\\ConfigProvider",
                 "Hyperf\\ModelCache\\ConfigProvider",
                 "Hyperf\\ModelListener\\ConfigProvider",
+                "Hyperf\\Nano\\ConfigProvider",
                 "Hyperf\\Nats\\ConfigProvider",
                 "Hyperf\\Nsq\\ConfigProvider",
                 "Hyperf\\Paginator\\ConfigProvider",
