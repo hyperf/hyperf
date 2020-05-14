@@ -156,3 +156,32 @@ $factory->define(Model::class, function (Faker $faker) {
 ```bash
 php bin/hyperf.php gen:factory user_factory -m App/Model/User
 ```
+
+## 补充说明
+
+如果你想像在laravel中直接使用 `factory` 方法来调用模型工厂，可以在 **可以自动引入的文件** 中添加以下代码。但是我们不建议这么做，因为这是个 **强耦合的行为**。
+
+```php
+if (! function_exists('factory')) {
+    /**
+     * @return \Hyperf\Database\Model\FactoryBuilder
+     */
+    function factory()
+    {
+        $container = \Hyperf\Utils\ApplicationContext::getContainer();
+
+        $factory = $container->get(\Hyperf\Database\Model\Factory::class);
+
+        $arguments = func_get_args();
+
+        if (isset($arguments[1]) && is_string($arguments[1])) {
+            return $factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
+        }
+        if (isset($arguments[1])) {
+            return $factory->of($arguments[0])->times($arguments[1]);
+        }
+
+        return $factory->of($arguments[0]);
+    }
+}
+```
