@@ -4,6 +4,7 @@
 
 ## Added
 
+- [#1723](https://github.com/hyperf/hyperf/pull/1730) Added filp/whoops integration in hyperf/exception-handler component.
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
 
 ## Fixed
