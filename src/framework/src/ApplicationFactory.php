@@ -47,6 +47,11 @@ class ApplicationFactory
         foreach ($commands as $command) {
             $application->add($container->get($command));
         }
+
+        if (! empty(env('APP_TIMEZONE'))) {
+            date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
+        }
+
         return $application;
     }
 }
