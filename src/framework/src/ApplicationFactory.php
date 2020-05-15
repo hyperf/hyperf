@@ -49,7 +49,7 @@ class ApplicationFactory
         }
 
         if (! empty(env('APP_TIMEZONE'))) {
-            date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
+            date_default_timezone_set(env('APP_TIMEZONE', 'PRC'));
         }
 
         return $application;
