@@ -646,8 +646,6 @@ trait HasAttributes
             }
         }
 
-        dump($dirty);
-
         return $dirty;
     }
 
