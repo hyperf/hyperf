@@ -19,7 +19,9 @@ use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -82,8 +84,14 @@ abstract class Driver implements DriverInterface
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (true) {
+        $running = true;
+        pcntl_signal(SIGTERM, function () use (&$running) {
+            $running = false;
+        });
+
+        while ($running) {
             [$data, $message] = $this->pop();
+            pcntl_signal_dispatch();
 
             if ($data === false) {
                 continue;
@@ -106,6 +114,25 @@ abstract class Driver implements DriverInterface
             }
 
             ++$messageCount;
+        }
+
+        $done = false;
+        $maxWaitTime = (int)$this->container->get(ConfigInterface::class)->get('server.settings.max_wait_time', 3);
+        for ($i = 0; $i < $maxWaitTime; $i++) {
+            if ($this->concurrent instanceof Concurrent) {
+                $length = $this->concurrent->getLength();
+                if($length == 0) {
+                    $done = true;
+                    break;
+                }
+            }
+
+            sleep(1);
+        }
+
+        if(false == $done) {
+            $channel = $this->config['channel'] ?? 'queue';
+            $this->container->get(StdoutLoggerInterface::class)->warning("Async Queue [{$channel}] Force Exit");
         }
     }
 
