@@ -1,8 +1,37 @@
-# v1.1.30 - TBD
+# v1.1.32 - TBD
+
+# v1.1.31 - 2020-05-14
 
 ## Added
 
-- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added ORM methods `morphWith` and `whereHasMorph`.
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) Added filp/whoops integration in hyperf/exception-handler component.
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
+
+## Fixed
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) Fixed a series of issues for `hyperf/socketio-server`.
+
+## Optimized
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) Don't set process title in Darwin OS.
+
+# v1.1.30 - 2020-05-07
+
+## Added
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added `morphWith` and `whereHasMorph` for hyperf/database component.
+- [#1651](https://github.com/hyperf/hyperf/pull/1651) Added socket.io-server component.
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added support for AMQP RPC mode.
+
+## Fixed
+
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed the connection pool does not works in JSONRPC pool transporter.
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed JSONRPC client connection reset failed, when the connection was closed in context.
+
+## Optimized 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
 
 # v1.1.28 - 2020-04-30
 

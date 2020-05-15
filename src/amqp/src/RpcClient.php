@@ -36,7 +36,7 @@ class RpcClient extends Builder
             $body = $connection->getAMQPMessage($timeout)->getBody();
             return $rpcMessage->unserialize($body);
         } finally {
-            $connection && $connection->release();
+            isset($connection) && $connection->release();
         }
     }
 }
