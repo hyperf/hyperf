@@ -160,13 +160,13 @@ class ModelMorphEagerLoadingTest extends TestCase
         $this->assertSame(1, $images[0]->imageable->id);
         $this->assertSame(1, $images[1]->imageable->id);
         $sqls = [
-            'select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` = ?))) or ((`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` = ?)))',
-            'select * from `user` where `user`.`id` = ? limit 1',
-            'select * from `book` where `book`.`id` = ? limit 1'
+            ['select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` = ?))) or ((`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` = ?)))',['user', 1, 'book', 1]],
+            ['select * from `user` where `user`.`id` = ? limit 1', [1]],
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
-                $this->assertSame($event->sql, array_shift($sqls));
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
     }
@@ -195,13 +195,13 @@ class ModelMorphEagerLoadingTest extends TestCase
         });
         $this->assertSame(true, $res);
         $sqls = [
-            'select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?)) or (`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))',
-            'select * from `user` where `user`.`id` = ? limit 1',
-            'select * from `book` where `book`.`id` = ? limit 1'
+            ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?)) or (`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],
+            ['select * from `user` where `user`.`id` = ? limit 1', [1]],
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
             ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
-                $this->assertSame($event->sql, array_shift($sqls));
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
     }
@@ -232,13 +232,13 @@ class ModelMorphEagerLoadingTest extends TestCase
         });
         $this->assertSame(true, $res);
         $sqls = [
-            'select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?))) or ((`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))',
-            'select * from `user` where `user`.`id` = ? limit 1',
-            'select * from `book` where `book`.`id` = ? limit 1'
+            ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?))) or ((`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],
+            ['select * from `user` where `user`.`id` = ? limit 1', [1]],
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
-                $this->assertSame($event->sql, array_shift($sqls));
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
     }
