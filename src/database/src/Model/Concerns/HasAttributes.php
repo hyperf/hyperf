@@ -412,8 +412,8 @@ trait HasAttributes
         $defaults = [static::CREATED_AT, static::UPDATED_AT];
 
         return $this->usesTimestamps()
-                    ? array_unique(array_merge($this->dates, $defaults))
-                    : $this->dates;
+            ? array_unique(array_merge($this->dates, $defaults))
+            : $this->dates;
     }
 
     /**
@@ -684,16 +684,16 @@ trait HasAttributes
 
         if ($this->isDateAttribute($key)) {
             return $this->fromDateTime($current) ===
-                   $this->fromDateTime($original);
+                $this->fromDateTime($original);
         }
 
         if ($this->hasCast($key, static::$primitiveCastTypes)) {
             return $this->castAttribute($key, $current) ===
-                   $this->castAttribute($key, $original);
+                $this->castAttribute($key, $original);
         }
 
         return is_numeric($current) && is_numeric($original)
-                && strcmp((string) $current, (string) $original) === 0;
+            && strcmp((string) $current, (string) $original) === 0;
     }
 
     /**
@@ -1027,8 +1027,8 @@ trait HasAttributes
         $caster = $this->resolveCasterClass($key);
 
         return $this->classCastCache[$key] = $caster instanceof CastsInboundAttributes
-                ? $value
-                : $caster->get($this, $key, $value, $this->attributes);
+            ? $value
+            : $caster->get($this, $key, $value, $this->attributes);
     }
 
     /**
@@ -1059,7 +1059,7 @@ trait HasAttributes
     protected function isCustomDateTimeCast($cast)
     {
         return strncmp($cast, 'date:', 5) === 0 ||
-               strncmp($cast, 'datetime:', 9) === 0;
+            strncmp($cast, 'datetime:', 9) === 0;
     }
 
     /**
@@ -1093,7 +1093,7 @@ trait HasAttributes
     protected function isDateAttribute($key)
     {
         return in_array($key, $this->getDates(), true) ||
-                                    $this->isDateCastable($key);
+            $this->isDateCastable($key);
     }
 
     /**
@@ -1160,7 +1160,7 @@ trait HasAttributes
     protected function getArrayAttributeByKey($key)
     {
         return isset($this->attributes[$key]) ?
-                    $this->fromJson($this->attributes[$key]) : [];
+            $this->fromJson($this->attributes[$key]) : [];
     }
 
     /**
