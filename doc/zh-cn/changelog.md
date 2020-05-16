@@ -1,5 +1,21 @@
 # 版本更新记录
 
+# v1.1.31 - 2020-05-14
+
+## 新增
+
+- [#1723](https://github.com/hyperf/hyperf/pull/1730) 异常处理器集成了 filp/whoops 。
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) 为命令 `gen:model` 可选项 `--refresh-fillable` 添加简写 `-R`。
+
+## Fixed
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修复方法 `Context::copy` 传入字段 `keys` 后无法正常使用的BUG。
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修复 `hyperf/socketio-server` 组件内存溢出等BUG。
+
+## Optimized
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系统下不再使用 `cli_set_process_title` 方法设置进程名。
+
 # v1.1.30 - 2020-05-07
 
 ## 新增

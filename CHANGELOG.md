@@ -1,8 +1,25 @@
-# v1.1.31 - TBD
+# v1.1.32 - TBD
+
+## Fixed
+
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) Fixed the bug that the morph association is empty and cannot be queried.
+
+# v1.1.31 - 2020-05-14
+
+## Added
+
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) Added filp/whoops integration in hyperf/exception-handler component.
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
 
 ## Fixed
 
 - [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) Fixed a series of issues for `hyperf/socketio-server`.
+
+## Optimized
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) Don't set process title in Darwin OS.
 
 # v1.1.30 - 2020-05-07
 

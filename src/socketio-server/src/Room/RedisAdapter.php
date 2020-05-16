@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
@@ -26,6 +28,8 @@ use Redis;
 
 class RedisAdapter implements AdapterInterface
 {
+    use Flagger;
+
     protected $redisPrefix = 'ws';
 
     protected $retryInterval = 1000;
@@ -74,7 +78,11 @@ class RedisAdapter implements AdapterInterface
     public function del(string $sid, string ...$rooms)
     {
         if (count($rooms) === 0) {
-            $this->del($sid, ...$this->clientRooms($sid));
+            $clientRooms = $this->clientRooms($sid);
+            if (empty($clientRooms)) {
+                return;
+            }
+            $this->del($sid, ...$clientRooms);
             $this->redis->multi();
             $this->redis->del($this->getSidKey($sid));
             $this->redis->sRem($this->getStatKey(), $sid);
@@ -140,12 +148,21 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $sub = ApplicationContext::getContainer()->get(Subscriber::class);
-                if ($sub) {
-                    $this->mixSubscribe($sub);
-                } else {
-                    // Fallback to PhpRedis, which has a very bad blocking subscribe model.
-                    $this->phpRedisSubscribe();
+                $container = ApplicationContext::getContainer();
+                try {
+                    $sub = $container->get(Subscriber::class);
+                    if ($sub) {
+                        $this->mixSubscribe($sub);
+                    } else {
+                        // Fallback to PhpRedis, which has a very bad blocking subscribe model.
+                        $this->phpRedisSubscribe();
+                    }
+                } catch (\Throwable $e) {
+                    if ($container->has(StdoutLoggerInterface::class)) {
+                        $logger = $container->get(StdoutLoggerInterface::class);
+                        $logger->error($this->formatThrowable($e));
+                    }
+                    throw $e;
                 }
             }, $this->retryInterval);
         });
@@ -175,11 +192,8 @@ class RedisAdapter implements AdapterInterface
         $except = data_get($opts, 'except', []);
         $volatile = data_get($opts, 'flag.volatile', false);
         $compress = data_get($opts, 'flag.compress', false);
-        if ($compress) {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN | SWOOLE_WEBSOCKET_FLAG_COMPRESS;
-        } else {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN;
-        }
+        $wsFlag = $this->guessFlags((bool) $compress);
+
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
@@ -209,7 +223,12 @@ class RedisAdapter implements AdapterInterface
                     continue;
                 }
                 if ($this->isLocal($sid)) {
-                    $this->sender->push($fd, $packet, SWOOLE_WEBSOCKET_OPCODE_TEXT, $wsFlag);
+                    $this->sender->push(
+                        $fd,
+                        $packet,
+                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
+                        $wsFlag
+                    );
                 }
             }
         }
@@ -263,16 +282,31 @@ class RedisAdapter implements AdapterInterface
         return $this->sidProvider->getFd($sid);
     }
 
+    private function formatThrowable(\Throwable $throwable): string
+    {
+        sprintf(
+            "%s:%s(%s) in %s:%s\nStack trace:\n%s",
+            get_class($throwable),
+            $throwable->getMessage(),
+            $throwable->getCode(),
+            $throwable->getFile(),
+            $throwable->getLine(),
+            $throwable->getTraceAsString()
+        );
+    }
+
     private function phpRedisSubscribe()
     {
         $redis = $this->redis;
+        /** @var string $callback */
         $callback = function ($redis, $chan, $msg) {
             Coroutine::create(function () use ($msg) {
                 [$packet, $opts] = unserialize($msg);
                 $this->doBroadcast($packet, $opts);
             });
         };
-        $redis->subscribe([$this->getChannelKey()], 'callback');
+        // cast to string because PHPStan asked so.
+        $redis->subscribe([$this->getChannelKey()], $callback);
     }
 
     private function mixSubscribe(Subscriber $sub)
