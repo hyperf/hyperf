@@ -146,7 +146,7 @@ class RedisAdapter implements AdapterInterface
     public function subscribe()
     {
         Coroutine::create(function () {
-            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::get(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
                 $container = ApplicationContext::getContainer();
                 try {
@@ -317,7 +317,7 @@ class RedisAdapter implements AdapterInterface
             return;
         }
         Coroutine::create(function () use ($sub) {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::get(Constants::WORKER_EXIT)->yield();
             $sub->close();
         });
         while (true) {
