@@ -76,7 +76,7 @@ class BootProcessListener implements ListenerInterface
 
         $interval = $this->config->get('aliyun_acm.interval', 5);
         $prevConfig = [];
-        $this->timer->run($interval, function () use (&$prevConfig) {
+        $this->timer->tick($interval, function () use (&$prevConfig) {
             $config = $this->client->pull();
             if ($config !== $prevConfig) {
                 $this->updateConfig($config);
