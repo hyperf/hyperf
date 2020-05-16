@@ -1,5 +1,9 @@
 # v1.1.32 - TBD
 
+## Fixed
+
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+
 # v1.1.31 - 2020-05-14
 
 ## Added
