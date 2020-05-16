@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
 use Hyperf\Contract\Castable;
+use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
@@ -69,7 +70,7 @@ trait HasAttributes
     protected $classCastCache = [];
 
     /**
-     * The built-in, primitive cast types supported by Eloquent.
+     * The built-in, primitive cast types supported.
      *
      * @var array
      */
@@ -476,6 +477,7 @@ trait HasAttributes
      */
     public function getAttributes()
     {
+        // TODO: This will be called everytime, so it must optimise.
         $this->mergeAttributesFromClassCasts();
 
         return $this->attributes;
@@ -1026,9 +1028,17 @@ trait HasAttributes
         }
         $caster = $this->resolveCasterClass($key);
 
-        return $this->classCastCache[$key] = $caster instanceof CastsInboundAttributes
+        $value = $caster instanceof CastsInboundAttributes
             ? $value
             : $caster->get($this, $key, $value, $this->attributes);
+
+        if ($caster instanceof CastsInboundAttributes || ! is_object($value)) {
+            unset($this->classCastCache[$key]);
+        } else {
+            $this->classCastCache[$key] = $value;
+        }
+
+        return $value;
     }
 
     /**
@@ -1341,7 +1351,7 @@ trait HasAttributes
      * Resolve the custom caster class for a given key.
      *
      * @param string $key
-     * @return mixed
+     * @return CastsAttributes|CastsInboundAttributes
      */
     protected function resolveCasterClass($key)
     {
@@ -1364,6 +1374,7 @@ trait HasAttributes
             return $castType;
         }
 
+        // TODO: Use Container to optimize it.
         return new $castType(...$arguments);
     }
 
