@@ -217,8 +217,7 @@ trait HasAttributes
         // If the attribute exists in the attribute array or has a "get" mutator we will
         // get the attribute's value. Otherwise, we will proceed as if the developers
         // are asking for a relationship's value. This covers both types of values.
-        if (array_key_exists($key, $this->attributes) ||
-            array_key_exists($key, $this->getCasts()) ||
+        if (array_key_exists($key, $this->getAttributes()) ||
             $this->hasGetMutator($key) ||
             $this->isClassCastable($key)) {
             return $this->getAttributeValue($key);
@@ -478,10 +477,16 @@ trait HasAttributes
      */
     public function getAttributes()
     {
-        // TODO: This will be called everytime, so it must optimise.
-        $this->mergeAttributesFromClassCasts();
-
         return $this->attributes;
+    }
+
+    /**
+     * @return $this
+     */
+    public function syncAttributes()
+    {
+        $this->mergeAttributesFromClassCasts();
+        return $this;
     }
 
     /**
@@ -848,6 +853,8 @@ trait HasAttributes
      */
     protected function getArrayableAttributes()
     {
+        $this->syncAttributes();
+
         return $this->getArrayableItems($this->getAttributes());
     }
 
@@ -902,7 +909,7 @@ trait HasAttributes
      */
     protected function getAttributeFromArray($key)
     {
-        return $this->attributes[$key] ?? null;
+        return $this->getAttributes()[$key] ?? null;
     }
 
     /**

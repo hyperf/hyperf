@@ -59,7 +59,7 @@ class DatabaseModelCustomCastingTest extends TestCase
 
         $model->address = $address = new Address('110 Kingsbrook St.', 'My Childhood House');
         $address->lineOne = '117 Spencer St.';
-        $this->assertSame('117 Spencer St.', $model->getAttributes(true)['address_line_one']);
+        $this->assertSame('117 Spencer St.', $model->syncAttributes()->getAttributes(true)['address_line_one']);
 
         $model = new TestModelWithCustomCast();
 
