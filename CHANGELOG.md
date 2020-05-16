@@ -1,10 +1,14 @@
 # v1.1.32 - TBD
 
+## Fixed
+
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+
 # v1.1.31 - 2020-05-14
 
 ## Added
 
-- [#1723](https://github.com/hyperf/hyperf/pull/1730) Added filp/whoops integration in hyperf/exception-handler component.
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) Added filp/whoops integration in hyperf/exception-handler component.
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
 
 ## Fixed
