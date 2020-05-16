@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) Fixed the bug that the morph association is empty and cannot be queried.
 
 # v1.1.31 - 2020-05-14
 
