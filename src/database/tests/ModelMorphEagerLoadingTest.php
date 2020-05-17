@@ -123,35 +123,23 @@ class ModelMorphEagerLoadingTest extends TestCase
         }
     }
 
-    protected function getContainer()
-    {
-        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
-        $dispatcher->shouldReceive('dispatch')->with(Mockery::any())->andReturnUsing(function ($event) {
-            $this->channel->push($event);
-        });
-        $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
-            $conn->setEventDispatcher($dispatcher);
-        });
-        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
-
-        return $container;
-    }
-
     public function testOrWhereHasMorph()
     {
         $this->getContainer();
         $images = Image::query()
-            ->whereHasMorph('imageable',
+            ->whereHasMorph(
+                'imageable',
                 [
-                    User::class
+                    User::class,
                 ],
                 function (Builder $query) {
                     $query->where('id', '=', 1);
                 }
             )
-            ->orWhereHasMorph('imageable',
+            ->orWhereHasMorph(
+                'imageable',
                 [
-                    Book::class
+                    Book::class,
                 ],
                 function (Builder $query) {
                     $query->where('id', '=', 1);
@@ -160,9 +148,9 @@ class ModelMorphEagerLoadingTest extends TestCase
         $this->assertSame(1, $images[0]->imageable->id);
         $this->assertSame(1, $images[1]->imageable->id);
         $sqls = [
-            ['select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` = ?))) or ((`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` = ?)))',['user', 1, 'book', 1]],
+            ['select * from `images` where ((`imageable_type` = ? and exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` = ?))) or ((`imageable_type` = ? and exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` = ?)))', ['user', 1, 'book', 1]],
             ['select * from `user` where `user`.`id` = ? limit 1', [1]],
-            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -175,10 +163,11 @@ class ModelMorphEagerLoadingTest extends TestCase
     {
         $this->getContainer();
         $images = Image::query()
-            ->whereDoesntHaveMorph('imageable',
+            ->whereDoesntHaveMorph(
+                'imageable',
                 [
                     User::class,
-                    Book::class
+                    Book::class,
                 ],
                 function (Builder $query, $type) {
                     if ($type === User::class) {
@@ -197,8 +186,8 @@ class ModelMorphEagerLoadingTest extends TestCase
         $sqls = [
             ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?)) or (`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],
             ['select * from `user` where `user`.`id` = ? limit 1', [1]],
-            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
-            ];
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]],
+        ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
@@ -210,17 +199,19 @@ class ModelMorphEagerLoadingTest extends TestCase
     {
         $this->getContainer();
         $images = Image::query()
-            ->whereDoesntHaveMorph('imageable',
+            ->whereDoesntHaveMorph(
+                'imageable',
                 [
-                    User::class
+                    User::class,
                 ],
                 function (Builder $query) {
                     $query->where('id', '<>', 1);
                 }
             )
-            ->orWhereDoesntHaveMorph('imageable',
+            ->orWhereDoesntHaveMorph(
+                'imageable',
                 [
-                    Book::class
+                    Book::class,
                 ],
                 function (Builder $query) {
                     $query->where('id', '<>', 1);
@@ -234,12 +225,26 @@ class ModelMorphEagerLoadingTest extends TestCase
         $sqls = [
             ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?))) or ((`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],
             ['select * from `user` where `user`.`id` = ? limit 1', [1]],
-            ['select * from `book` where `book`.`id` = ? limit 1', [1]]
+            ['select * from `book` where `book`.`id` = ? limit 1', [1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
+    }
+
+    protected function getContainer()
+    {
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->with(Mockery::any())->andReturnUsing(function ($event) {
+            $this->channel->push($event);
+        });
+        $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
+            $conn->setEventDispatcher($dispatcher);
+        });
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
+        return $container;
     }
 }
