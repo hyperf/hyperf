@@ -1382,7 +1382,6 @@ trait HasAttributes
             return $castType;
         }
 
-        // TODO: Use Container to optimize it.
         return new $castType(...$arguments);
     }
 

@@ -59,7 +59,7 @@ class DatabaseModelCustomCastingTest extends TestCase
 
         $model->address = $address = new Address('110 Kingsbrook St.', 'My Childhood House');
         $address->lineOne = '117 Spencer St.';
-        $this->assertSame('117 Spencer St.', $model->syncAttributes()->getAttributes(true)['address_line_one']);
+        $this->assertSame('117 Spencer St.', $model->syncAttributes()->getAttributes()['address_line_one']);
 
         $model = new TestModelWithCustomCast();
 
@@ -192,6 +192,19 @@ class DatabaseModelCustomCastingTest extends TestCase
 
         $this->assertSame(1, $model->mockery->value);
     }
+
+    public function testResolveCasterClass()
+    {
+        $model = new TestModelWithCustomCast();
+        $ref = new \ReflectionClass($model);
+        $method = $ref->getMethod('resolveCasterClass');
+        $method->setAccessible(true);
+        CastUsing::$castsAttributes = UppercaseCaster::class;
+        $this->assertNotSame($method->invokeArgs($model, ['cast_using']), $method->invokeArgs($model, ['cast_using']));
+
+        CastUsing::$castsAttributes = new UppercaseCaster();
+        $this->assertSame($method->invokeArgs($model, ['cast_using']), $method->invokeArgs($model, ['cast_using']));
+    }
 }
 
 class TestModelWithCustomCast extends Model
@@ -217,7 +230,21 @@ class TestModelWithCustomCast extends Model
         'value_object_with_caster' => ValueObject::class,
         'value_object_caster_with_argument' => ValueObject::class . ':argument',
         'value_object_caster_with_caster_instance' => ValueObjectWithCasterInstance::class,
+        'cast_using' => CastUsing::class,
     ];
+}
+
+class CastUsing implements Castable
+{
+    /**
+     * @var CastsAttributes
+     */
+    public static $castsAttributes;
+
+    public static function castUsing()
+    {
+        return self::$castsAttributes;
+    }
 }
 
 class HashCaster implements CastsInboundAttributes
@@ -316,13 +343,6 @@ class MockeryAttribute implements CastsAttributes
 
 class ValueObject implements Castable
 {
-    public $name;
-
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
-
     public static function castUsing()
     {
         return ValueObjectCaster::class;
