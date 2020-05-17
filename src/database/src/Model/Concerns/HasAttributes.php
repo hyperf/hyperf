@@ -553,7 +553,7 @@ trait HasAttributes
      */
     public function syncOriginal()
     {
-        $this->original = $this->getAttributes();
+        $this->original = $this->syncAttributes()->getAttributes();
 
         return $this;
     }
@@ -579,7 +579,7 @@ trait HasAttributes
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $modelAttributes = $this->getAttributes();
+        $modelAttributes = $this->syncAttributes()->getAttributes();
 
         foreach ($attributes as $attribute) {
             $this->original[$attribute] = $modelAttributes[$attribute];
@@ -648,7 +648,7 @@ trait HasAttributes
     {
         $dirty = [];
 
-        foreach ($this->getAttributes() as $key => $value) {
+        foreach ($this->syncAttributes()->getAttributes() as $key => $value) {
             if (! $this->originalIsEquivalent($key, $value)) {
                 $dirty[$key] = $value;
             }
