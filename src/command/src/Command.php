@@ -189,6 +189,7 @@ abstract class Command extends SymfonyCommand
      * @param array $choices
      * @param null|mixed $default
      * @param null|int $attempts
+     * @param null|bool $multiple Deprecated: use choiceMultiple method instead
      * 
      * @return string
      */
@@ -196,7 +197,8 @@ abstract class Command extends SymfonyCommand
         string $question,
         array $choices,
         $default = null,
-        $attempts = null
+        $attempts = null,
+        $multiple = null
     ): string {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
