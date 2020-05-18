@@ -347,6 +347,61 @@ $user->syncAttributes();
 var_dump($user->getAttributes());
 ```
 
+当然，如果您仍然需要修改对应的 `value` 后，同步修改 `attributes` 的功能，可以尝试使用以下方式。首先，我们实现一个 `UserInfo` 并继承 `CastsValue`。
+
+```php
+namespace App\Caster;
+
+use Hyperf\Database\Model\CastsValue;
+
+/**
+ * @property string $name
+ * @property int $gender
+ */
+class UserInfo extends CastsValue
+{
+}
+```
+
+然后实现对应的 `UserInfoCaster`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Caster;
+
+use Hyperf\Contract\CastsAttributes;
+use Hyperf\Utils\Arr;
+
+class UserInfoCaster implements CastsAttributes
+{
+    public function get($model, string $key, $value, array $attributes)
+    {
+        return new UserInfo($model, Arr::only($attributes, ['name', 'gender']));
+    }
+
+    public function set($model, string $key, $value, array $attributes)
+    {
+        return [
+            'name' => $value->name,
+            'gender' => $value->gender,
+        ];
+    }
+}
+
+```
+
+当我们再使用以下方式修改 UserInfo 时，便可以同步修改到 attributes 的数据。
+
+```php
+/** @var User $user */
+$user = User::query()->find(100);
+$user->userInfo->name = 'John1';
+var_dump($user->getAttributes()); // ['name' => 'John1']
+```
+
 #### 入站类型转换
 
 有时候，你可能只需要对写入模型的属性值进行类型转换而不需要对从模型中获取的属性值进行任何处理。一个典型入站类型转换的例子就是「hashing」。入站类型转换类需要实现 `CastsInboundAttributes` 接口，只需要实现 `set` 方法。
