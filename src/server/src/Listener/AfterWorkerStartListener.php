@@ -55,9 +55,9 @@ class AfterWorkerStartListener implements ListenerInterface
                 $type = value(function () use ($type, $sockType) {
                     switch ($type) {
                         case Server::SERVER_BASE:
-                            if (($sockType & SWOOLE_SOCK_TCP) || ($sockType & SWOOLE_SOCK_TCP6)) {
+                            if (($sockType === SWOOLE_SOCK_TCP) || ($sockType === SWOOLE_SOCK_TCP6)) {
                                 return 'TCP';
-                            } else if (($sockType & SWOOLE_SOCK_UDP) || ($sockType & SWOOLE_SOCK_UDP6)) {
+                            } else if (($sockType === SWOOLE_SOCK_UDP) || ($sockType === SWOOLE_SOCK_UDP6)) {
                                 return 'UDP';
                             } else {
                                 return 'UNKNOWN';
