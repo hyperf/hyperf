@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Schema;
 
 use Hyperf\Utils\Fluent;
+use Hyperf\Utils\Str;
 
 /**
  * @method ForeignKeyDefinition references(array|string $columns) Specify the referenced column(s)
@@ -23,4 +24,8 @@ use Hyperf\Utils\Fluent;
  */
 class ForeignKeyDefinition extends Fluent
 {
+    public function constrained($table = null, $column = 'id')
+    {
+        return $this->references($column)->on($table ?: Str::plural(Str::before($this->name, '_' . $column)));
+    }
 }
