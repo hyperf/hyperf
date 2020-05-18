@@ -117,11 +117,11 @@ abstract class Driver implements DriverInterface
         }
 
         $done = false;
-        $maxWaitTime = (int)$this->container->get(ConfigInterface::class)->get('server.settings.max_wait_time', 3);
-        for ($i = 0; $i < $maxWaitTime; $i++) {
+        $maxWaitTime = (int) $this->container->get(ConfigInterface::class)->get('server.settings.max_wait_time', 3);
+        for ($i = 0; $i < $maxWaitTime; ++$i) {
             if ($this->concurrent instanceof Concurrent) {
                 $length = $this->concurrent->getLength();
-                if($length == 0) {
+                if ($length == 0) {
                     $done = true;
                     break;
                 }
@@ -130,7 +130,7 @@ abstract class Driver implements DriverInterface
             sleep(1);
         }
 
-        if(false == $done) {
+        if ($done == false) {
             $channel = $this->config['channel'] ?? 'queue';
             $this->container->get(StdoutLoggerInterface::class)->warning("Async Queue [{$channel}] Force Exit");
         }
