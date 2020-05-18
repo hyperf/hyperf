@@ -6,6 +6,7 @@
 - [#1739](https://github.com/hyperf/hyperf/pull/1739) Fixed the wrong bitwise operator in oss hook.
 - [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
 - [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
 
 # v1.1.31 - 2020-05-14
 
