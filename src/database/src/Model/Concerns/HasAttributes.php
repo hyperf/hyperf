@@ -17,6 +17,7 @@ use DateTimeInterface;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
+use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Arr;
@@ -1404,6 +1405,10 @@ trait HasAttributes
     protected function mergeAttributesFromClassCasts()
     {
         foreach ($this->classCastCache as $key => $value) {
+            if ($value instanceof Synchronized && $value->isSynchronized()) {
+                continue;
+            }
+
             $caster = $this->resolveCasterClass($key);
 
             $this->attributes = array_merge(

@@ -14,7 +14,9 @@ namespace HyperfTest\Database;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
+use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
+use Hyperf\Utils\Arr;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -205,6 +207,24 @@ class DatabaseModelCustomCastingTest extends TestCase
         CastUsing::$castsAttributes = new UppercaseCaster();
         $this->assertSame($method->invokeArgs($model, ['cast_using']), $method->invokeArgs($model, ['cast_using']));
     }
+
+    public function testIsSynchronized()
+    {
+        $model = new TestModelWithCustomCast();
+        $model->user = $user = new UserInfo($model, ['name' => 'Hyperf', 'gender' => 1]);
+        $model->syncOriginal();
+
+        $attributes = $model->getAttributes();
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1], $attributes);
+
+        $user->name = 'Nano';
+        $attributes = $model->getAttributes();
+        $this->assertSame(['name' => 'Nano', 'gender' => 1], $attributes);
+
+        $this->assertSame(['name' => 'Nano'], $model->getDirty());
+        $this->assertSame(2, UserInfoCaster::$setCount);
+        $this->assertSame(0, UserInfoCaster::$getCount);
+    }
 }
 
 class TestModelWithCustomCast extends Model
@@ -223,6 +243,7 @@ class TestModelWithCustomCast extends Model
      */
     protected $casts = [
         'address' => AddressCaster::class,
+        'user' => UserInfoCaster::class,
         'password' => HashCaster::class,
         'other_password' => HashCaster::class . ':md5',
         'uppercase' => UppercaseCaster::class,
@@ -283,6 +304,28 @@ class AddressCaster implements CastsAttributes
     public function set($model, $key, $value, $attributes)
     {
         return ['address_line_one' => $value->lineOne, 'address_line_two' => $value->lineTwo];
+    }
+}
+
+class UserInfoCaster implements CastsAttributes
+{
+    public static $setCount = 0;
+
+    public static $getCount = 0;
+
+    public function get($model, string $key, $value, array $attributes)
+    {
+        ++self::$getCount;
+        return new UserInfo($model, Arr::only($attributes, ['name', 'gender']));
+    }
+
+    public function set($model, string $key, $value, array $attributes)
+    {
+        ++self::$setCount;
+        return [
+            'name' => $value->name,
+            'gender' => $value->gender,
+        ];
     }
 }
 
@@ -368,4 +411,12 @@ class Address
         $this->lineOne = $lineOne;
         $this->lineTwo = $lineTwo;
     }
+}
+
+/**
+ * @property string $name
+ * @property int $gender
+ */
+class UserInfo extends CastsValue
+{
 }
