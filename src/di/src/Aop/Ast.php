@@ -15,6 +15,7 @@ use Hyperf\Utils\Composer;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
@@ -48,12 +49,12 @@ class Ast
         $code = $this->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
+        $visitorMetadata = new VisitorMetadata();
+        $visitorMetadata->className = $className;
         // User could modify or replace the node vistors by Hyperf\Autoload\AstVisitorCollector.
-        foreach (AstVisitorCollector::list() as $string) {
-            $visitor = new $string();
-            if (method_exists($visitor, 'setClassName')) {
-                $visitor->setClassName($className);
-            }
+        $queue = clone AstVisitorRegistry::getQueue();
+        foreach ($queue as $string) {
+            $visitor = new $string($visitorMetadata);
             $traverser->addVisitor($visitor);
         }
         $modifiedStmts = $traverser->traverse($stmts);
