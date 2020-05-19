@@ -12,6 +12,7 @@
 
 ## Added
 
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) Added new `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`.
 - [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
   - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
   - Added `Model\Builder::withCasts`.
