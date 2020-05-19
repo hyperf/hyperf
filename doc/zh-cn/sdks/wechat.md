@@ -78,8 +78,19 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 // Do something...
 
-// 输出响应
-return $response->getBody()->getContent();
+```
+
+3. 服务器配置
+
+如果需要使用微信公众平台的服务器配置功能，可以使用以下代码。
+
+> 以下 `$response` 为 `Symfony\Component\HttpFoundation\Response` 并非 `Hyperf\HttpMessage\Server\Response` 
+> 所以只需将 `Body` 内容直接返回，即可通过微信验证。
+
+```php
+$response = $app->server->serve();
+
+return $response->getBody()->getContents();
 ```
 
 ## 如何替换缓存
