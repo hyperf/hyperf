@@ -1,4 +1,6 @@
-# v1.1.32 - TBD
+# v1.1.33 - TBD
+
+# v1.1.32 - 2020-05-21
 
 ## Fixed
 
@@ -7,6 +9,13 @@
 - [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
 - [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
 - [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
+
+## Added
+
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
+ - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
+ - Added `Model\Builder::withCasts`.
+ - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
 
 # v1.1.31 - 2020-05-14
 
