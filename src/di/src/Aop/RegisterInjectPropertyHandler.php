@@ -12,11 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
-use Hyperf\Di\Definition\PropertyInjection;
-use Hyperf\Di\Definition\Reference;
-use ReflectionClass;
+use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\ApplicationContext;
 
 class RegisterInjectPropertyHandler
 {
@@ -26,12 +24,16 @@ class RegisterInjectPropertyHandler
      */
     public static function register()
     {
-        PropertyHandlerManager::register(Inject::class, function (ObjectDefinition $definition, string $propertyName, $annotationObject, $value, ReflectionClass $reflectionClass) {
-            if (in_array(AroundInterface::class, $reflectionClass->getInterfaceNames())) {
-                /** @var Inject $injectAnnotation */
-                if ($injectAnnotation = $value[Inject::class] ?? null) {
-                    $propertyInjection = new PropertyInjection($propertyName, new Reference($injectAnnotation->value));
-                    $definition->addPropertyInjection($propertyInjection);
+        PropertyHandlerManager::register(Inject::class, function ($object, $currentClassName, $targetClassName, $property, $annotation) {
+            if ($annotation instanceof Inject) {
+                try {
+                    $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
+                    $reflectionProperty->setAccessible(true);
+                    $reflectionProperty->setValue($object, ApplicationContext::getContainer()->get($annotation->value));
+                } catch (\Throwable $throwable) {
+                    if ($annotation->required) {
+                        throw $throwable;
+                    }
                 }
             }
         });

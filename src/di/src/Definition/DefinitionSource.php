@@ -140,24 +140,6 @@ class DefinitionSource implements DefinitionSourceInterface
             $definition->completeConstructorInjection($constructorInjection);
         }
 
-        /**
-         * Properties.
-         */
-        $propertiesMetadata = AnnotationCollector::get($className);
-        $propertyHandlers = PropertyHandlerManager::all();
-        if (isset($propertiesMetadata['_p'])) {
-            foreach ($propertiesMetadata['_p'] as $propertyName => $value) {
-                // Handle PropertyHandler mechanism.
-                foreach ($value as $annotationClassName => $annotationObject) {
-                    if (isset($propertyHandlers[$annotationClassName])) {
-                        foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
-                            call($callback, [$definition, $propertyName, $annotationObject, $value, $class]);
-                        }
-                    }
-                }
-            }
-        }
-
         return $definition;
     }
 

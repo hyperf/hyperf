@@ -58,17 +58,13 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     private $extends;
 
     /**
-     * @var string
+     * @var \Hyperf\Di\Aop\VisitorMetadata
      */
-    private $className;
+    protected $visitorMetadata;
 
-    /**
-     * @return $this
-     */
-    public function setClassName(string $className)
+    public function __construct(VisitorMetadata $visitorMetadata)
     {
-        $this->className = $className;
-        return $this;
+        $this->visitorMetadata = $visitorMetadata;
     }
 
     public function beforeTraverse(array $nodes)
@@ -231,7 +227,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             return false;
         }
 
-        $rewriteCollection = Aspect::parse($this->className);
+        $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
     }
