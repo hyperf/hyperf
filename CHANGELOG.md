@@ -1,10 +1,18 @@
 # v1.1.32 - TBD
 
+## Fixed
+
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) Fixed the bug that the morph association is empty and cannot be queried.
+- [#1739](https://github.com/hyperf/hyperf/pull/1739) Fixed the wrong bitwise operator in oss hook.
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+- [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
+
 # v1.1.31 - 2020-05-14
 
 ## Added
 
-- [#1723](https://github.com/hyperf/hyperf/pull/1730) Added filp/whoops integration in hyperf/exception-handler component.
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) Added filp/whoops integration in hyperf/exception-handler component.
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
 
 ## Fixed

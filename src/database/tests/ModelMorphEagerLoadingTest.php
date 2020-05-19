@@ -98,6 +98,20 @@ class ModelMorphEagerLoadingTest extends TestCase
         }
     }
 
+    public function testMorphAssociationEmpty()
+    {
+        $this->getContainer();
+        $images = Image::query()->whereHasMorph(
+            'imageable',
+            ['*'],
+            function (Builder $query) {
+                $query->where('imageable_id', 1);
+            }
+        )->get();
+
+        $this->assertSame(2, $images->count());
+    }
+
     public function testWhereHasMorph()
     {
         $this->getContainer();
