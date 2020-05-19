@@ -13,9 +13,9 @@
 ## Added
 
 - [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
- - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
- - Added `Model\Builder::withCasts`.
- - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
+  - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
+  - Added `Model\Builder::withCasts`.
+  - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
 
 # v1.1.31 - 2020-05-14
 
