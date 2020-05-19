@@ -49,7 +49,6 @@ AbstractProvider::setGuzzleOptions([
 <?php
 
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-
 ```
 
 ## 如何使用 EasyWeChat
@@ -78,6 +77,9 @@ $xml = $this->request->getBody()->getContents();
 $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 // Do something...
+
+// 输出响应
+return $response->getBody()->getContent();
 ```
 
 ## 如何替换缓存
@@ -92,5 +94,4 @@ use EasyWeChat\Factory;
 
 $app = Factory::miniProgram([]);
 $app['cache'] = ApplicationContext::getContainer()->get(CacheInterface::class);
-
 ```
