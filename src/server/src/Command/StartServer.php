@@ -39,7 +39,7 @@ class StartServer extends Command
 
     protected function configure()
     {
-        $this->addOption('server', 'S', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Which servers you want to start.', []);
+        $this->addOption('server', 's', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Which servers you want to start.', []);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
