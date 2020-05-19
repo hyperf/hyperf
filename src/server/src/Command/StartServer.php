@@ -20,6 +20,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class StartServer extends Command
@@ -36,6 +37,11 @@ class StartServer extends Command
         $this->setDescription('Start hyperf servers.');
     }
 
+    protected function configure()
+    {
+        $this->addOption('server', 'S', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Which servers you want to start.', []);
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->checkEnvironment($output);
@@ -45,7 +51,16 @@ class StartServer extends Command
             ->setLogger($this->container->get(StdoutLoggerInterface::class));
 
         $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
-        if (! $serverConfig) {
+
+        if ($server = $input->getOption('server')) {
+            foreach (($serverConfig['servers'] ?? []) as $i => $item) {
+                if (! in_array($item['name'], $server)) {
+                    unset($serverConfig['servers'][$i]);
+                }
+            }
+        }
+
+        if (! $serverConfig || ! isset($serverConfig['servers']) || ! $serverConfig['servers']) {
             throw new InvalidArgumentException('At least one server should be defined.');
         }
 
