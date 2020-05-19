@@ -52,6 +52,7 @@
   * [模型緩存](zh-hk/db/model-cache.md)
   * [數據庫遷移](zh-hk/db/migration.md)
   * [極簡 DB 組件](zh-hk/db/db.md)
+  * [修改器](zh-hk/db/mutators.md)
   
 * 微服務
 
@@ -83,6 +84,7 @@
   * [ETCD 協程客户端](zh-hk/etcd.md)
   * [WebSocket 服務](zh-hk/websocket-server.md)
   * [WebSocket 協程客户端](zh-hk/websocket-client.md)
+  * [Socket.io 服務](zh-hk/socketio-server.md)
   * [自定義進程](zh-hk/process.md)
   * [開發者工具](zh-hk/devtool.md)
   * [輔助類](zh-hk/utils.md)
