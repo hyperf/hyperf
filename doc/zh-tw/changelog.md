@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#1723](https://github.com/hyperf/hyperf/pull/1730) 異常處理器集成了 filp/whoops 。
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) 異常處理器集成了 filp/whoops 。
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) 為命令 `gen:model` 可選項 `--refresh-fillable` 新增簡寫 `-R`。
 
 ## Fixed
