@@ -26,7 +26,7 @@ class ReflectionManager extends MetadataCollector
     public static function reflectClass(string $className): ReflectionClass
     {
         if (! isset(static::$container['class'][$className])) {
-            if (! class_exists($className) && ! interface_exists($className)) {
+            if (! class_exists($className) && ! interface_exists($className) && ! trait_exists($className)) {
                 throw new InvalidArgumentException("Class {$className} not exist");
             }
             static::$container['class'][$className] = new ReflectionClass($className);
