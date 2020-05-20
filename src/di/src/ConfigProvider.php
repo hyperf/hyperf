@@ -36,9 +36,6 @@ class ConfigProvider
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
                 ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
             ],
-            'listeners' => [
-                BootApplicationListener::class,
-            ],
             'aspects' => [
                 InjectAspect::class,
             ],
