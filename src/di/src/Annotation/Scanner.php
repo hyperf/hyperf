@@ -93,6 +93,9 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
     }
 
+    /**
+     * @return ReflectionClass[]
+     */
     public function scan(): array
     {
         $paths = $this->scanConfig->getPaths();

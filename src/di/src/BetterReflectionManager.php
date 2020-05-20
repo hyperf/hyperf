@@ -91,5 +91,6 @@ class BetterReflectionManager extends MetadataCollector
     public static function clear(): void
     {
         static::$container = [];
+        static::$instance = null;
     }
 }

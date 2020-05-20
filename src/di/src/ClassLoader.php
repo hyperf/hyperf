@@ -37,13 +37,19 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {
         $this->setComposerClassLoader($classLoader);
+        $start = microtime(true);
         // Scan by ScanConfig to generate the reflection class map
         $scanner = new Scanner($this, $config = ScanConfig::instance());
+        echo '[DEBUG] InitScanner: ' . round(microtime(true) - $start, 3) . 's' . PHP_EOL;
         $classLoader->addClassMap($config->getClassMap());
+        $start = microtime(true);
         $reflectionClassMap = $scanner->scan();
+        echo '[DEBUG] Scan: ' . round(microtime(true) - $start, 3) . 's' . PHP_EOL;
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
+        $start = microtime(true);
         $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $configDir);
+        echo '[DEBUG] InitProxyManager: ' . round(microtime(true) - $start, 3) . 's' . PHP_EOL;
         $this->proxies = $proxyManager->getProxies();
     }
 

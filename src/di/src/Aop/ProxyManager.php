@@ -15,7 +15,9 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionProperty;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
@@ -40,6 +42,11 @@ class ProxyManager
      */
     protected $proxyDir;
 
+    /**
+     * @var Filesystem
+     */
+    protected $fileSystem;
+
     public function __construct(
         array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
@@ -47,6 +54,7 @@ class ProxyManager
         string $configDir = ''
     ) {
         $this->proxyDir = $proxyDir;
+        $this->fileSystem = new Filesystem();
         $this->loadAspects($configDir);
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
@@ -85,14 +93,42 @@ class ProxyManager
         // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
-            $code = $ast->proxy($className);
-            $proxyFilePath = $this->getProxyDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
-            if (! file_exists($proxyFilePath)) {
-                file_put_contents($proxyFilePath, $code);
-            }
-            $proxyFiles[$className] = $proxyFilePath;
+            $proxyFiles[$className] = $this->putProxyFile($ast, $className);
         }
         return $proxyFiles;
+    }
+
+    protected function putProxyFile(Ast $ast, $className)
+    {
+        $proxyFilePath = $this->getProxyFilePath($className);
+        $modified = true;
+        if (file_exists($proxyFilePath)) {
+            $modified = $this->isModified($className, $proxyFilePath);
+        }
+
+        if ($modified) {
+            $code = $ast->proxy($className);
+            file_put_contents($proxyFilePath, $code);
+        }
+
+        return $proxyFilePath;
+    }
+
+    protected function isModified(string $className, string $proxyFilePath = null): bool
+    {
+        $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
+        $time = $this->fileSystem->lastModified($proxyFilePath);
+        $origin = BetterReflectionManager::reflectClass($className);
+        if ($time > $this->fileSystem->lastModified($origin->getFileName())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getProxyFilePath($className)
+    {
+        return $this->getProxyDir() . str_replace('\\', '_', $className) . '.proxy.php';
     }
 
     protected function isMatch(string $rule, string $target): bool
@@ -113,6 +149,9 @@ class ProxyManager
         return false;
     }
 
+    /**
+     * @param ReflectionClass[] $reflectionClassMap
+     */
     protected function initProxiesByReflectionClassMap(array $reflectionClassMap = []): array
     {
         // According to the data of AspectCollector to parse all the classes that need proxy.
