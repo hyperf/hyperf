@@ -11,6 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+/**
+ * @property string className
+ * @property bool hasConstructor
+ */
 class VisitorMetadata
 {
     public function __get($name)
