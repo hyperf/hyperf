@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Definition;
 
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
 use function class_exists;

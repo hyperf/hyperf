@@ -31,6 +31,11 @@ use PhpParser\NodeVisitorAbstract;
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
+     * @var \Hyperf\Di\Aop\VisitorMetadata
+     */
+    protected $visitorMetadata;
+
+    /**
      * Determine if the class used proxy trait.
      *
      * @var bool
@@ -56,11 +61,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      * @var null|Name
      */
     private $extends;
-
-    /**
-     * @var \Hyperf\Di\Aop\VisitorMetadata
-     */
-    protected $visitorMetadata;
 
     public function __construct(VisitorMetadata $visitorMetadata)
     {

@@ -104,5 +104,4 @@ class ObjectResolver implements ResolverInterface
         }
         return $object;
     }
-
 }

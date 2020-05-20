@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Di\Aop\VisitorMetadata;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\Inject\InjectTrait;
 use PhpParser\Node;
 use PhpParser\Node\Name;
@@ -91,19 +89,19 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         $left = new Node\Expr\FuncCall(new Name('get_parent_class'), [
             new Node\Arg(new Node\Expr\Variable('this')),
         ]);
-        $right = new Node\Expr\FuncCall(new Name('class_exists'), [
+        $right = new Node\Expr\FuncCall(new Name('method_exists'), [
             new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), new Name('class'))),
             new Node\Arg(new Node\Scalar\String_('__construct')),
-        ], [
+        ]);
+        return new Node\Stmt\If_(new Node\Expr\BinaryOp\BooleanAnd($left, $right), [
             'stmts' => [
-                new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('parent'), '__construct'), [
-                    new Node\Arg(new Node\Expr\FuncCall('func_get_args', [], [
+                new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('parent'), '__construct', [
+                    new Node\Arg(new Node\Expr\FuncCall(new Name('func_get_args'), [], [
                         'unpack' => true,
                     ])),
-                ]),
+                ])),
             ],
         ]);
-        return new Node\Stmt\If_(new Node\Expr\BinaryOp\BooleanAnd($left, $right));
     }
 
     protected function buildStaticCallStatement(): Node\Stmt\Expression

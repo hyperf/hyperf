@@ -13,12 +13,11 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\InjectAspect;
 use Hyperf\Di\Aop\AstVisitorRegistry;
 use Hyperf\Di\Aop\PropertyHandlerVisitor;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
-use Hyperf\Di\Annotation\InjectAspect;
-use Hyperf\Di\Inject\InjectVisitor;
 use Hyperf\Di\Listener\BootApplicationListener;
 
 class ConfigProvider

@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Utils\Traits\Container;
-
 /**
  * @mixin \SplPriorityQueue
  */
@@ -23,6 +21,15 @@ class AstVisitorRegistry
      */
     protected static $queue;
 
+    public static function __callStatic($name, $arguments)
+    {
+        $queue = static::getQueue();
+        if (method_exists($queue, $name)) {
+            return $queue->{$name}(...$arguments);
+        }
+        throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
+    }
+
     public static function getQueue(): \SplPriorityQueue
     {
         if (! static::$queue instanceof \SplPriorityQueue) {
@@ -30,15 +37,4 @@ class AstVisitorRegistry
         }
         return static::$queue;
     }
-
-    public static function __callStatic($name, $arguments)
-    {
-        $queue = static::getQueue();
-        if (method_exists($queue, $name)) {
-            return $queue->$name(...$arguments);
-        }
-        throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
-    }
-
-
 }

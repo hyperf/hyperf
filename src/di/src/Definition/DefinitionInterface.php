@@ -27,5 +27,4 @@ interface DefinitionInterface
      * Set the name of the entry in the container.
      */
     public function setName(string $name);
-
 }
