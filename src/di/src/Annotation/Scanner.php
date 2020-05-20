@@ -47,6 +47,8 @@ class Scanner
 
     public function collect(AnnotationReader $reader, ReflectionClass $reflection)
     {
+        BetterReflectionManager::reflectClass($reflection->getName(), $reflection);
+
         $className = $reflection->getName();
         if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
             if ($reflection->getFileName() !== $path) {
