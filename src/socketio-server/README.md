@@ -115,7 +115,7 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   $socket->emit('hello', 'can you hear me?', 1, 2, 'abc');
 
   // sending to all clients except sender
-  $socket->broadcast->emit('broadcast', 'hello friends!');
+  $socket->broadcast(true)->emit('broadcast', 'hello friends!');
 
   // sending to all clients in 'game' room except sender
   $socket->to('game')->emit('nice game', "let's play a game");
