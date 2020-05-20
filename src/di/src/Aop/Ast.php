@@ -50,7 +50,7 @@ class Ast
         $traverser = new NodeTraverser();
         $visitorMetadata = new VisitorMetadata();
         $visitorMetadata->className = $className;
-        // User could modify or replace the node vistors by Hyperf\Autoload\AstVisitorCollector.
+        // User could modify or replace the node vistors by Hyperf\Di\Aop\AstVisitorRegistry.
         $queue = clone AstVisitorRegistry::getQueue();
         foreach ($queue as $string) {
             $visitor = new $string($visitorMetadata);
@@ -58,23 +58,6 @@ class Ast
         }
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
-    }
-
-    public function parseClassByStmts(array $stmts): string
-    {
-        $namespace = $className = '';
-        foreach ($stmts as $stmt) {
-            if ($stmt instanceof Namespace_ && $stmt->name) {
-                $namespace = $stmt->name->toString();
-                foreach ($stmt->stmts as $node) {
-                    if ($node instanceof Class_ && $node->name) {
-                        $className = $node->name->toString();
-                        break;
-                    }
-                }
-            }
-        }
-        return ($namespace && $className) ? $namespace . '\\' . $className : '';
     }
 
     private function getCodeByClassName(string $className): string
