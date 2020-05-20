@@ -37,6 +37,7 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {
         $this->setComposerClassLoader($classLoader);
+        $start = microtime(true);
         // Scan by ScanConfig to generate the reflection class map
         $scanner = new Scanner($this, $config = ScanConfig::instance());
         $classLoader->addClassMap($config->getClassMap());

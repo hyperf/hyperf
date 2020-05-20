@@ -47,8 +47,6 @@ class Scanner
 
     public function collect(AnnotationReader $reader, ReflectionClass $reflection)
     {
-        BetterReflectionManager::reflectClass($reflection->getName(), $reflection);
-
         $className = $reflection->getName();
         if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
             if ($reflection->getFileName() !== $path) {
@@ -93,6 +91,9 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
     }
 
+    /**
+     * @return ReflectionClass[]
+     */
     public function scan(): array
     {
         $paths = $this->scanConfig->getPaths();
@@ -111,6 +112,8 @@ class Scanner
         $cached = $this->deserializeCachedCollectors($collectors);
         if (! $cached) {
             foreach ($classes as $reflectionClass) {
+                BetterReflectionManager::reflectClass($reflectionClass->getName(), $reflectionClass);
+
                 if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
                     $this->collect($annotationReader, $reflectionClass);
                 }
@@ -129,6 +132,9 @@ class Scanner
         }
 
         foreach ($classes as $reflectionClass) {
+            if ($cached) {
+                BetterReflectionManager::reflectClass($reflectionClass->getName(), $reflectionClass);
+            }
             if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
                 continue;
             }
