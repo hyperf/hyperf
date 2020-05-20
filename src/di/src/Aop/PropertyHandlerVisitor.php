@@ -103,7 +103,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     {
         $constructor = new Node\Stmt\ClassMethod('__construct');
 
-        $reflection = BetterReflectionManager::getClassReflector()->reflect($this->visitorMetadata->className);
+        $reflection = BetterReflectionManager::reflectClass($this->visitorMetadata->className);
         if ($reflection->hasMethod('__construct')) {
             $parameters = $reflection->getMethod('__construct')->getParameters();
             foreach ($parameters as $parameter) {
