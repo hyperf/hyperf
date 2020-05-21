@@ -19,6 +19,13 @@ return [
         'concurrent' => [
             'limit' => 1,
         ],
+        'aliyun_amqp' => [
+            'enable' => (bool) env('ALIYUN_AMQP_ENABLE', false), // if set this key, use aliyun amqp
+            'endpoint' => env('ALIYUN_AMQP_ENDPOINT', ''),
+            'instance_id' => env('ALIYUN_AMQP_INSTANCE_ID', ''),
+            'access_key' => env('ALIYUN_AMQP_ACCESS_KEY', ''),
+            'secret_key' => env('ALIYUN_AMQP_SECRET_KEY', ''),
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
