@@ -219,6 +219,20 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Prepare the object for serialization.
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        $this->mergeAttributesFromClassCasts();
+
+        $this->classCastCache = [];
+
+        return array_keys(get_object_vars($this));
+    }
+
+    /**
      * When a model is being unserialized, check if it needs to be booted.
      */
     public function __wakeup()
@@ -340,6 +354,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $model->setTable($this->getTable());
 
+        $model->mergeCasts($this->casts);
+
         return $model;
     }
 
@@ -429,6 +445,22 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Eager load relationships on the polymorphic relation of a model.
+     *
+     * @param string $relation
+     * @param array $relations
+     * @return $this
+     */
+    public function loadMorph($relation, $relations)
+    {
+        $className = get_class($this->{$relation});
+
+        $this->{$relation}->load($relations[$className] ?? []);
+
+        return $this;
+    }
+
+    /**
      * Eager load relations on the model if they are not already eager loaded.
      *
      * @param array|string $relations
@@ -454,6 +486,22 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $relations = is_string($relations) ? func_get_args() : $relations;
 
         $this->newCollection([$this])->loadCount($relations);
+
+        return $this;
+    }
+
+    /**
+     * Eager load relationship counts on the polymorphic relation of a model.
+     *
+     * @param string $relation
+     * @param array $relations
+     * @return $this
+     */
+    public function loadMorphCount($relation, $relations)
+    {
+        $className = get_class($this->{$relation});
+
+        $this->{$relation}->loadCount($relations[$className] ?? []);
 
         return $this;
     }
@@ -504,6 +552,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function save(array $options = []): bool
     {
+        $this->mergeAttributesFromClassCasts();
+
         $query = $this->newModelQuery();
 
         // If the "saving" event returns false we'll bail out of the save and return
@@ -595,6 +645,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function delete()
     {
+        $this->mergeAttributesFromClassCasts();
+
         if (is_null($this->getKeyName())) {
             throw new Exception('No primary key defined on model.');
         }
@@ -848,7 +900,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             $this->getUpdatedAtColumn(),
         ];
 
-        $attributes = Arr::except($this->attributes, $except ? array_unique(array_merge($except, $defaults)) : $defaults);
+        $attributes = Arr::except($this->getAttributes(), $except ? array_unique(array_merge($except, $defaults)) : $defaults);
 
         return tap(new static(), function ($instance) use ($attributes) {
             // @var \Hyperf\Database\Model\Model $instance
@@ -927,7 +979,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function getTable()
     {
-        return isset($this->table) ? $this->table : Str::snake(Str::pluralStudly(class_basename($this)));
+        return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
     }
 
     /**

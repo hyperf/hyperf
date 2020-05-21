@@ -14,7 +14,7 @@ Session 组件的配置储存于 `config/autoload/session.php` 文件中，如�
 
 ## 配置 Session 中间件
 
-在使用 Session 之前，您需要将 `Hyperf\Session\Middleware\SessionMiddleware` 中间件配置为 HTTP Server 的全局中间件，这样组件才能介入到请求流程进行对应的处理，`config/autoload/middleware.php` 配置文件示例如下：
+在使用 Session 之前，您需要将 `Hyperf\Session\Middleware\SessionMiddleware` 中间件配置为 HTTP Server 的全局中间件，这样组件才能介入到请求流程进行对应的处理，`config/autoload/middlewares.php` 配置文件示例如下：
 
 ```php
 <?php
