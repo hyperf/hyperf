@@ -87,7 +87,7 @@ abstract class Pool implements PoolInterface
                 try {
                     $conn->close();
                 } catch (\Throwable $exception) {
-                    if ($logger = $this->container->get(StdoutLoggerInterface::class)) {
+                    if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }
                 } finally {

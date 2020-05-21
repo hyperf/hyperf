@@ -32,6 +32,7 @@ class PoolTest extends TestCase
     public function testPoolFlush()
     {
         $container = $this->getContainer();
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
             $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('error')->withAnyArgs()->times(4)->andReturn(true);
