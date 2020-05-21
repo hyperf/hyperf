@@ -1,5 +1,9 @@
 # v1.1.32 - TBD
 
+## Optimized
+
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) improve `Hyperf\Command::choice` method.
+
 # v1.1.31 - 2020-05-14
 
 ## Added
