@@ -1,5 +1,10 @@
 # v1.1.32 - TBD
 
+## Fixed
+
+- [#1744](https://github.com/hyperf/hyperf/pull/1744) Fixed async-queue consumer process do not handle `SIGTERM
+` leading to msg loss
+
 # v1.1.31 - 2020-05-14
 
 ## Added
