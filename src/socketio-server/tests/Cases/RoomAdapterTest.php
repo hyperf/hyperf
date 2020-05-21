@@ -101,7 +101,6 @@ class RoomAdapterTest extends AbstractTestCase
         } catch (\Throwable $t) {
             $this->assertTrue(false);
         }
-
     }
 
     private function getRedis($options = [])

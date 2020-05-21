@@ -206,7 +206,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         ];
         $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
         $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
-        
+
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
