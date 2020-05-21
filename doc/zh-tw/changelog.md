@@ -1,5 +1,26 @@
 # 版本更新記錄
 
+# v1.1.32 - 2020-05-21
+
+## 修復
+
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) 修復模型多型查詢，關聯關係為空時，也會查詢 SQL 的問題；
+- [#1739](https://github.com/hyperf/hyperf/pull/1739) 修復 `hyperf/filesystem` 元件 OSS HOOK 位運算錯誤，導致 resource 判斷不準確的問題；
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) 修復 `grafana.json` 中錯誤的`refId` 欄位值；
+- [#1748](https://github.com/hyperf/hyperf/pull/1748) 修復 `hyperf/amqp` 元件在使用其他連線池時，對應的 `concurrent.limit` 配置不生效的問題；
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) 修復連線池元件，在連線關閉失敗時會導致計數有誤的問題；
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) 修復 BASE Server 服務，啟動提示沒有考慮 UDP 服務的情況；
+- [#1764](https://github.com/hyperf/hyperf/pull/1764) 修復當時間值為 null 時，datatime 驗證器執行失敗的 BUG；
+- [#1769](https://github.com/hyperf/hyperf/pull/1769) 修復 `hyperf/socketio-server` 元件中，客戶端初始化斷開連線操作時會報 Notice 的錯誤的問題；
+
+## 新增
+
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) 新增模型方法 `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`；
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) 新增模型 自定義型別轉換器 功能；
+  - 新增 interface `Castable`, `CastsAttributes` 和 `CastsInboundAttributes`；
+  - 新增方法 `Model\Builder::withCasts`；
+  - 新增方法 `Model::loadMorph`, `Model::loadMorphCount` 和 `Model::syncAttributes`；
+  
 # v1.1.31 - 2020-05-14
 
 ## 新增
@@ -7,12 +28,12 @@
 - [#1723](https://github.com/hyperf/hyperf/pull/1723) 異常處理器集成了 filp/whoops 。
 - [#1730](https://github.com/hyperf/hyperf/pull/1730) 為命令 `gen:model` 可選項 `--refresh-fillable` 新增簡寫 `-R`。
 
-## Fixed
+## 修復
 
 - [#1696](https://github.com/hyperf/hyperf/pull/1696) 修復方法 `Context::copy` 傳入欄位 `keys` 後無法正常使用的BUG。
 - [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修復 `hyperf/socketio-server` 元件記憶體溢位等BUG。
 
-## Optimized
+## 優化
 
 - [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系統下不再使用 `cli_set_process_title` 方法設定程序名。
 
