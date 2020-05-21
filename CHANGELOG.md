@@ -16,14 +16,11 @@
 ## Added
 
 - [#1724](https://github.com/hyperf/hyperf/pull/1724) Added `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`.
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) Added `Hyperf\Command::choiceMultiple(): array` method, because the return type of `choice` method is `string`, so the methed cannot handle the multiple selections, even though setted `$multiple` argument.
 - [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
   - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
   - Added `Model\Builder::withCasts`.
   - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
-
-## Optimized
-
-- [#1741](https://github.com/hyperf/hyperf/pull/1741) improve `Hyperf\Command::choice` method.
 
 # v1.1.31 - 2020-05-14
 
