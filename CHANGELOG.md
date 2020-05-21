@@ -1,5 +1,9 @@
 # v1.1.33 - TBD
 
+## Added
+
+- [#1776](https://github.com/hyperf/hyperf/pull/1776) Support aliyun amqp
+
 # v1.1.32 - 2020-05-21
 
 ## Fixed
