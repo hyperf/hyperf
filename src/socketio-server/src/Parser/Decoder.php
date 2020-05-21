@@ -24,7 +24,7 @@ class Decoder
         //TODO: Support attachment
 
         // namespace
-        if ($payload[$i] === '/') {
+        if (isset($payload[$i]) && $payload[$i] === '/') {
             ++$i;
             while ($payload[$i] !== ',') {
                 $nsp .= $payload[$i];

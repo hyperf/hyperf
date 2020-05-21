@@ -212,7 +212,6 @@ return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
 return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
 ```
 
-
 ## 預載入
 
 當以屬性方式訪問 `Hyperf` 關聯時，關聯資料「懶載入」。這著直到第一次訪問屬性時關聯資料才會被真實載入。不過 `Hyperf` 能在查詢父模型時「預先載入」子關聯。預載入可以緩解 N + 1 查詢問題。為了說明 N + 1 查詢問題，考慮 `User` 模型關聯到 `Role` 的情形：
@@ -263,4 +262,250 @@ foreach ($users as $user){
 SELECT * FROM `user`;
 
 SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
+```
+
+## 多型關聯
+
+多型關聯允許目標模型藉助關聯關係，關聯多個模型。
+
+### 一對一（多型）
+
+#### 表結構
+
+一對一多型關聯與簡單的一對一關聯類似；不過，目標模型能夠在一個關聯上從屬於多個模型。
+例如，Book 和 User 可能共享一個關聯到 Image 模型的關係。使用一對一多型關聯允許使用一個唯一圖片列表同時用於 Book 和 User。讓我們先看看錶結構：
+
+```
+book
+  id - integer
+  title - string
+
+user 
+  id - integer
+  name - string
+
+image
+  id - integer
+  url - string
+  imageable_id - integer
+  imageable_type - string
+```
+
+image 表中的 imageable_id 欄位會根據 imageable_type 的不同代表不同含義，預設情況下，imageable_type 直接是相關模型類名。
+
+#### 模型示例
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+```
+
+#### 獲取關聯
+
+按照上述定義模型後，我們就可以通過模型關係獲取對應的模型。
+
+比如，我們獲取某使用者的圖片。
+
+```php
+use App\Model\User;
+
+$user = User::find(1);
+
+$image = $user->image;
+```
+
+或者我們獲取某個圖片對應使用者或書本。`imageable` 會根據 `imageable_type` 獲取對應的 `User` 或者 `Book`。
+
+```php
+use App\Model\Image;
+
+$image = Image::find(1);
+
+$imageable = $image->imageable;
+```
+
+### 一對多（多型）
+
+#### 模型示例
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+```
+
+#### 獲取關聯
+
+獲取使用者所有的圖片
+
+```php
+use App\Model\User;
+
+$user = User::query()->find(1);
+foreach ($user->images as $image) {
+    // ...
+}
+```
+
+### 自定義多型對映
+
+預設情況下，框架要求 `type` 必須儲存對應模型類名，比如上述 `imageable_type` 必須是對應的 `User::class` 和 `Book::class`，但顯然在實際應用中，這是十分不方便的。所以我們可以自定義對映關係，來解耦資料庫與應用內部結構。
+
+```php
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+Relation::morphMap([
+    'user' => Model\User::class,
+    'book' => Model\Book::class,
+]);
+```
+
+因為 `Relation::morphMap` 修改後會常駐記憶體，所以我們可以在專案啟動時，就建立好對應的關係對映。我們可以建立以下監聽器：
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Listener;
+
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener
+ */
+class MorphMapRelationListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Relation::morphMap([
+            'user' => Model\User::class,
+            'book' => Model\Book::class,
+        ]);
+    }
+}
+
+```
+
+### 巢狀預載入 `morphTo` 關聯
+
+如果你希望載入一個 `morphTo` 關係，以及該關係可能返回的各種實體的巢狀關係，可以將 `with` 方法與 `morphTo` 關係的 `morphWith` 方法結合使用。
+
+比如我們打算預載入 image 的 book.user 的關係。
+
+```php
+
+use App\Model\Book;
+use App\Model\Image;
+use Hyperf\Database\Model\Relations\MorphTo;
+
+$images = Image::query()->with([
+    'imageable' => function (MorphTo $morphTo) {
+        $morphTo->morphWith([
+            Book::class => ['user'],
+        ]);
+    },
+])->get();
+```
+
+對應的SQL查詢如下：
+
+```sql
+// 查詢所有圖片
+select * from `images`;
+// 查詢圖片對應的使用者列表
+select * from `user` where `user`.`id` in (1, 2);
+// 查詢圖片對應的書本列表
+select * from `book` where `book`.`id` in (1, 2, 3);
+// 查詢書本列表對應的使用者列表
+select * from `user` where `user`.`id` in (1, 2);
+```
+
+### 多型關聯查詢
+
+要查詢 `MorphTo` 關聯的存在，可以使用 `whereHasMorph` 方法及其相應的方法：
+
+以下示例會查詢，書本或使用者 `ID` 為 1 的圖片列表。
+
+```php
+use App\Model\Book;
+use App\Model\Image;
+use App\Model\User;
+use Hyperf\Database\Model\Builder;
+
+$images = Image::query()->whereHasMorph(
+    'imageable',
+    [
+        User::class,
+        Book::class,
+    ],
+    function (Builder $query) {
+        $query->where('imageable_id', 1);
+    }
+)->get();
 ```

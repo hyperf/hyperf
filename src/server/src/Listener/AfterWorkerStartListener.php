@@ -51,10 +51,17 @@ class AfterWorkerStartListener implements ListenerInterface
             /** @var Port $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
-                $type = value(function () use ($type) {
+                $sockType = $server->type;
+                $type = value(function () use ($type, $sockType) {
                     switch ($type) {
                         case Server::SERVER_BASE:
-                            return 'TCP';
+                            if (($sockType === SWOOLE_SOCK_TCP) || ($sockType === SWOOLE_SOCK_TCP6)) {
+                                return 'TCP';
+                            } else if (($sockType === SWOOLE_SOCK_UDP) || ($sockType === SWOOLE_SOCK_UDP6)) {
+                                return 'UDP';
+                            } else {
+                                return 'UNKNOWN';
+                            }
                             break;
                         case Server::SERVER_WEBSOCKET:
                             return 'WebSocket';

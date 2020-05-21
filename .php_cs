@@ -62,11 +62,13 @@ return PhpCsFixer\Config::create()
         'multiline_whitespace_before_semicolons' => [
             'strategy' => 'no_multi_line',
         ],
+        'constant_case' => [
+            'case' => 'lower',
+        ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,
         'declare_strict_types' => true,
         'linebreak_after_opening_tag' => true,
-        'lowercase_constants' => true,
         'lowercase_static_reference' => true,
         'no_useless_else' => true,
         'no_unused_imports' => true,

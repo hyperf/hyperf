@@ -121,18 +121,14 @@ class RedisAdapter implements AdapterInterface
                     if (isset($pushed[$sid])) {
                         continue;
                     }
-                    if ($this->isLocal($sid)) {
-                        $result[] = $sid;
-                        $pushed[$sid] = true;
-                    }
+                    $result[] = $sid;
+                    $pushed[$sid] = true;
                 }
             }
         } else {
             $sids = $this->redis->sMembers($this->getStatKey());
             foreach ($sids as $sid) {
-                if ($this->isLocal($sid)) {
-                    $result[] = $sid;
-                }
+                $result[] = $sid;
             }
         }
         return $result;
