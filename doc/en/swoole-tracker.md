@@ -112,14 +112,14 @@ ENTRYPOINT ["sh", ".build/entrypoint.sh"]
 composer require hyperf/swoole-dashboard dev-master
 ```
 
-然后将以下 `Middleware` 写到 `middleware.php` 中。
+然后将以下 `Middleware` 写到 `config/autoload/middlewares.php` 配置文件中。
 
 ```php
 <?php
 
 return [
     'http' => [
-        Hyperf\SwooleDashboard\Middleware\HttpServerMiddleware::class
+        Hyperf\SwooleDashboard\Middlewasre\HttpServerMiddleware::class
     ],
 ];
 

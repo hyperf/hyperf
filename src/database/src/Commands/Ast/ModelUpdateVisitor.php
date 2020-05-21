@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Contract\Castable;
+use Hyperf\Contract\CastsAttributes;
+use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
@@ -53,7 +56,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     ];
 
     /**
-     * @var string
+     * @var Model
      */
     protected $class;
 
@@ -91,7 +94,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     public function __construct($class, $columns, ModelOption $option)
     {
-        $this->class = $class;
+        $this->class = new $class();
         $this->columns = $columns;
         $this->option = $option;
         $this->initPropertiesFromMethods();
@@ -129,9 +132,32 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
     {
         $items = [];
+        $keys = [];
+        if ($node->default instanceof Node\Expr\Array_) {
+            $items = $node->default->items;
+        }
+
+        if ($this->option->isForceCasts()) {
+            $items = [];
+            $casts = $this->class->getCasts();
+            foreach ($node->default->items as $item) {
+                $caster = $this->class->getCasts()[$item->key->value] ?? null;
+                if ($caster && $this->isCaster($caster)) {
+                    $items[] = $item;
+                }
+            }
+        }
+
+        foreach ($items as $item) {
+            $keys[] = $item->key->value;
+        }
+
         foreach ($this->columns as $column) {
             $name = $column['column_name'];
             $type = $column['cast'] ?? null;
+            if (in_array($name, $keys)) {
+                continue;
+            }
             if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
                 $items[] = new Node\Expr\ArrayItem(
                     new Node\Scalar\String_($type),
@@ -144,6 +170,16 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             'kind' => Node\Expr\Array_::KIND_SHORT,
         ]);
         return $node;
+    }
+
+    /**
+     * @param object|string $caster
+     */
+    protected function isCaster($caster): bool
+    {
+        return is_subclass_of($caster, CastsAttributes::class) ||
+            is_subclass_of($caster, Castable::class) ||
+            is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
     protected function parseProperty(): string
@@ -174,12 +210,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected function initPropertiesFromMethods()
     {
         /** @var ReflectionClass $reflection */
-        $reflection = self::getReflector()->reflect($this->class);
+        $reflection = self::getReflector()->reflect(get_class($this->class));
         $methods = $reflection->getImmediateMethods();
         $namespace = $reflection->getDeclaringNamespaceAst();
-        if (empty($methods)) {
-            return;
-        }
+        $casts = $this->class->getCasts();
 
         sort($methods);
         /** @var ReflectionMethod $method */
@@ -247,6 +281,26 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                             // Single model is returned
                             $this->setProperty($method->getName(), [$related], true);
                         }
+                    }
+                }
+            }
+        }
+
+        // The custom caster.
+        foreach ($casts as $key => $caster) {
+            if (is_subclass_of($caster, Castable::class)) {
+                $caster = $caster::castUsing();
+            }
+
+            if (is_subclass_of($caster, CastsAttributes::class)) {
+                $ref = self::getReflector()->reflect($caster);
+                $method = $ref->getMethod('get');
+                if ($ast = $method->getReturnStatementsAst()[0]) {
+                    if ($ast instanceof Node\Stmt\Return_
+                        && $ast->expr instanceof Node\Expr\New_
+                        && $ast->expr->class instanceof Node\Name\FullyQualified
+                    ) {
+                        $this->setProperty($key, [$ast->expr->class->toCodeString()], true, true);
                     }
                 }
             }

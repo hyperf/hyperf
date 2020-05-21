@@ -98,4 +98,17 @@ class SocketTest extends AbstractTestCase
         $socket1->to('room')->emit('hello');
         $this->assertTrue(true);
     }
+
+    public function testBroadcast()
+    {
+        $socket1 = make(Socket::class, [
+            'fd' => 1,
+            'nsp' => '/',
+        ]);
+        $reflection = new \ReflectionClass(Socket::class);
+        $prop = $reflection->getProperty('broadcast');
+        $prop->setAccessible(true);
+        $this->assertFalse($prop->getValue($socket1));
+        $this->assertTrue($prop->getValue($socket1->broadcast));
+    }
 }

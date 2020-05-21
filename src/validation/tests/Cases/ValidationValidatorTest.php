@@ -4540,6 +4540,59 @@ class ValidationValidatorTest extends TestCase
         ];
     }
 
+    public function testValidateAfter()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+
+        $v = new Validator(
+            $trans,
+            [
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertFalse($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [
+                'start_time' => '2020-04-09 17:09:05',
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 18:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertFalse($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertTrue($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [
+                'start_time' => '2020-04-09 17:09:05',
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertTrue($v->passes());
+    }
+
     public function getIlluminateArrayTranslator()
     {
         return new Translator(
