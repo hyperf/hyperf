@@ -161,19 +161,12 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Give the user a multiple choice from an array of answers.
-     *
-     * @param string $question
-     * @param array $choices
-     * @param null|mixed $default
-     * @param null|int $attempts
-     *
-     * @return array
      */
     public function choiceMultiple(
         string $question,
         array $choices,
         $default = null,
-        $attempts = null
+        ?int $attempts = null
     ): array {
         $question = new ChoiceQuestion($question, $choices, $default);
 
@@ -185,13 +178,7 @@ abstract class Command extends SymfonyCommand
     /**
      * Give the user a single choice from an array of answers.
      *
-     * @param string $question
-     * @param array $choices
-     * @param null|mixed $default
-     * @param null|int $attempts
-     * @param null|bool $multiple Deprecated: use choiceMultiple method instead
-     * 
-     * @return string
+     * @param null|bool $multiple Deprecated: use choiceMultiple method instead.
      */
     public function choice(
         string $question,
