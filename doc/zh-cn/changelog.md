@@ -16,7 +16,7 @@
 ## 新增
 
 - [#1724](https://github.com/hyperf/hyperf/pull/1724) 新增模型方法 `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`；
-- [#1741](https://github.com/hyperf/hyperf/pull/1741) 新增 `Hyperf\Command::choiceMultiple(): array` 方法，因为 `choice` 方法的返回类型为 `string，所以就算设置了 `$multiple` 参数也无法处理多个选择的情况；
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) 新增 `Hyperf\Command\Command::choiceMultiple(): array` 方法，因为 `choice` 方法的返回类型为 `string，所以就算设置了 `$multiple` 参数也无法处理多个选择的情况；
 - [#1742](https://github.com/hyperf/hyperf/pull/1742) 新增模型 自定义类型转换器 功能；
   - 新增 interface `Castable`, `CastsAttributes` 和 `CastsInboundAttributes`；
   - 新增方法 `Model\Builder::withCasts`；
