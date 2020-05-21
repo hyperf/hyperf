@@ -23,6 +23,7 @@ interface ResponseInterface
      * Format data to JSON and return data with Content-Type:application/json header.
      *
      * @param array|Arrayable|Jsonable $data
+     * @param int $option
      */
     public function json($data, $option = JSON_UNESCAPED_UNICODE): PsrResponseInterface;
 
