@@ -1217,7 +1217,7 @@ trait ValidatesAttributes
      */
     protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
-        if (is_null($value)){
+        if (is_null($value)) {
             return null;
         }
         if ($date = DateTime::createFromFormat('!' . $format, $value)) {
