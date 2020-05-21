@@ -8,6 +8,7 @@
 - [#1739](https://github.com/hyperf/hyperf/pull/1739) Fixed the wrong bitwise operator in oss hook.
 - [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
 - [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) Fixed the incorrent number of current connections when close failed.
 - [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
 - [#1764](https://github.com/hyperf/hyperf/pull/1764) Fixed datetime validate failed when the value is null.
 - [#1769](https://github.com/hyperf/hyperf/pull/1769) Fixed a notice when client initiate disconnects in `socketio-server`.
