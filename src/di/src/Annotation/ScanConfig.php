@@ -23,13 +23,6 @@ final class ScanConfig
     private $paths;
 
     /**
-     * The namespaces should be cached after scaned.
-     *
-     * @var array
-     */
-    private $cache;
-
-    /**
      * @var array
      */
     private $collectors;
@@ -64,7 +57,6 @@ final class ScanConfig
         array $dependencies = [],
         array $ignoreAnnotations = [],
         array $globalImports = [],
-        array $cacheNamespaces = [],
         array $collectors = [],
         array $classMap = []
     ) {
@@ -72,7 +64,6 @@ final class ScanConfig
         $this->dependencies = $dependencies;
         $this->ignoreAnnotations = $ignoreAnnotations;
         $this->globalImports = $globalImports;
-        $this->cacheNamespaces = $cacheNamespaces;
         $this->collectors = $collectors;
         $this->classMap = $classMap;
     }
@@ -80,11 +71,6 @@ final class ScanConfig
     public function getPaths(): array
     {
         return $this->paths;
-    }
-
-    public function getCacheNamespaces(): array
-    {
-        return $this->cacheNamespaces;
     }
 
     public function getCollectors(): array
@@ -125,7 +111,6 @@ final class ScanConfig
             $serverDependencies ?? [],
             $config['ignore_annotations'] ?? [],
             $config['global_imports'] ?? [],
-            $config['cache_namespaces'] ?? [],
             $config['collectors'] ?? [],
             $config['class_map'] ?? []
         );

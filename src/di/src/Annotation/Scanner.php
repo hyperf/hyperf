@@ -103,12 +103,15 @@ class Scanner
     public function scan(): array
     {
         $paths = $this->scanConfig->getPaths();
-        $shouldCache = $this->scanConfig->getCacheNamespaces();
         $collectors = $this->scanConfig->getCollectors();
         $classes = [];
         if (! $paths) {
             return $classes;
         }
+
+        $annotationReader = new AnnotationReader();
+        $lastModified = $this->deserializeCachedCollectors($collectors);
+
         $paths = $this->normalizeDir($paths);
 
         $reflector = BetterReflectionManager::initClassReflector($paths);
@@ -117,9 +120,6 @@ class Scanner
         foreach ($classes as $class) {
             BetterReflectionManager::reflectClass($class->getName(), $class);
         }
-
-        $annotationReader = new AnnotationReader();
-        $lastModified = $this->deserializeCachedCollectors($collectors);
 
         foreach ($classes as $reflectionClass) {
             if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastModified) {
