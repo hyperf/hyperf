@@ -35,6 +35,15 @@ class AnnotationCollector extends MetadataCollector
         static::$container[$class]['_m'][$method][$annotation] = $value;
     }
 
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            static::$container[$key] = [];
+        } else {
+            static::$container = [];
+        }
+    }
+
     /**
      * @deprecated v3.0
      */

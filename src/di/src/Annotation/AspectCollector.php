@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\MetadataCollector;
+use Hyperf\Utils\Arr;
 
 class AspectCollector extends MetadataCollector
 {
@@ -57,6 +58,18 @@ class AspectCollector extends MetadataCollector
                 'classes' => $classes,
                 'annotations' => $annotations,
             ];
+        }
+    }
+
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            Arr::set(static::$container, 'classes.' . $key, null);
+            Arr::set(static::$container, 'annotations.' . $key, null);
+            static::$aspectRules[$key] = null;
+        } else {
+            static::$container = [];
+            static::$aspectRules = [];
         }
     }
 

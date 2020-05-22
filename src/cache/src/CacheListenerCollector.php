@@ -19,4 +19,33 @@ class CacheListenerCollector extends MetadataCollector
      * @var array
      */
     protected static $container = [];
+
+    /**
+     * @param array $value = [
+     *                     'className' => '',
+     *                     'method' => '',
+     *                     ]
+     */
+    public static function setListener(string $listener, array $value)
+    {
+        static::$container[$listener] = $value;
+    }
+
+    public static function getListner(string $listener, $default = null)
+    {
+        return static::$container[$listener] ?? $default;
+    }
+
+    public static function clear(?string $className = null): void
+    {
+        if ($className) {
+            foreach (static::$container as $listener => $value) {
+                if (isset($value['className']) && $value['className'] === $className) {
+                    static::$container[$listener] = null;
+                }
+            }
+        } else {
+            static::$container = [];
+        }
+    }
 }

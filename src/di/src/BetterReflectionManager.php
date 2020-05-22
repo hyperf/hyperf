@@ -88,9 +88,11 @@ class BetterReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
-    public static function clear(): void
+    public static function clear(?string $key = null): void
     {
-        static::$container = [];
-        static::$instance = null;
+        if ($key === null) {
+            static::$container = [];
+            static::$instance = null;
+        }
     }
 }

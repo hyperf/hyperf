@@ -49,6 +49,15 @@ abstract class MetadataCollector implements MetadataCollectorInterface
         return Arr::has(static::$container, $key);
     }
 
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            Arr::set(static::$container, $key, null);
+        } else {
+            static::$container = [];
+        }
+    }
+
     /**
      * Serialize the all metadata to a string.
      */
