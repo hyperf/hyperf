@@ -9,13 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Database\Model\Resource\Json;
+namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
 use Hyperf\Database\Model\JsonEncodingException;
-use Hyperf\Database\Model\Resource\ConditionallyLoadsAttributes;
-use Hyperf\Database\Model\Resource\DelegatesToResource;
 use Hyperf\HttpServer\Contract\Responsable;
+use Hyperf\Resource\ConditionallyLoadsAttributes;
+use Hyperf\Resource\DelegatesToResource;
 use Hyperf\Utils\Contracts\Arrayable;
 use JsonSerializable;
 

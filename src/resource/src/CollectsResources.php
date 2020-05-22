@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Database\Model\Resource;
+namespace Hyperf\Resource;
 
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Utils\Collection;

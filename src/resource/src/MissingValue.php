@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Database\Model\Resource;
+namespace Hyperf\Resource;
 
-interface PotentiallyMissing
+class MissingValue implements PotentiallyMissing
 {
     /**
      * Determine if the object should be considered "missing".
      *
      * @return bool
      */
-    public function isMissing();
+    public function isMissing()
+    {
+        return true;
+    }
 }

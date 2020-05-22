@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Database\Model\Resource\Json;
+namespace Hyperf\Resource\Json;
 
 use Countable;
-use Hyperf\Database\Model\Resource\CollectsResources;
 use Hyperf\Paginator\AbstractPaginator;
+use Hyperf\Resource\CollectsResources;
 use Hyperf\Utils\Collection;
 use IteratorAggregate;
 

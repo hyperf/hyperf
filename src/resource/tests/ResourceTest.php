@@ -9,15 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Database;
+namespace HyperfTest\Resource;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Resource\ConditionallyLoadsAttributes;
-use Hyperf\Database\Model\Resource\Json\JsonResource;
-use Hyperf\Database\Model\Resource\Json\ResourceCollection;
-use Hyperf\Database\Model\Resource\MergeValue;
-use Hyperf\Database\Model\Resource\MissingValue;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
@@ -25,6 +20,11 @@ use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Resource\ConditionallyLoadsAttributes;
+use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Resource\MergeValue;
+use Hyperf\Resource\MissingValue;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
