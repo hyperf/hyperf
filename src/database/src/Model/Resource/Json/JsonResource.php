@@ -1,18 +1,28 @@
 <?php
 
-namespace Hyperf\HttpServer\Resource\Json;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Database\Model\Resource\Json;
 
 use ArrayAccess;
 use Hyperf\Database\Model\JsonEncodingException;
+use Hyperf\Database\Model\Resource\ConditionallyLoadsAttributes;
+use Hyperf\Database\Model\Resource\DelegatesToResource;
 use Hyperf\HttpServer\Contract\Responsable;
-use JsonSerializable;
 use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\HttpServer\Resource\DelegatesToResource;
-use Hyperf\HttpServer\Resource\ConditionallyLoadsAttributes;
+use JsonSerializable;
 
 class JsonResource implements ArrayAccess, JsonSerializable, Responsable
 {
-    use ConditionallyLoadsAttributes, DelegatesToResource;
+    use ConditionallyLoadsAttributes;
+    use DelegatesToResource;
 
     /**
      * The resource instance.
@@ -48,7 +58,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
      * Create a new resource instance.
      *
      * @param mixed $resource
-     * @return void
      */
     public function __construct($resource)
     {
@@ -96,7 +105,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
             $data = $data->jsonSerialize();
         }
 
-        return $this->filter((array)$data);
+        return $this->filter((array) $data);
     }
 
     /**
@@ -119,15 +128,14 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
      * Convert the model instance to JSON.
      *
      * @param int $options
-     * @return string
-     *
      * @throws JsonEncodingException
+     * @return string
      */
     public function toJson($options = 0)
     {
         $json = json_encode($this->jsonSerialize(), $options);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw JsonEncodingException::forResource($this, json_last_error_msg());
         }
 
@@ -147,7 +155,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
     /**
      * Add additional meta data to the resource response.
      *
-     * @param array $data
      * @return $this
      */
     public function additional(array $data)
@@ -161,7 +168,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
      * Set the string that should wrap the outer-most resource array.
      *
      * @param string $value
-     * @return void
      */
     public function wrap($value)
     {
@@ -170,8 +176,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
 
     /**
      * Disable wrapping of the outer-most resource array.
-     *
-     * @return void
      */
     public function withoutWrapping()
     {

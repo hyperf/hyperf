@@ -1,6 +1,15 @@
 <?php
 
-namespace Hyperf\HttpServer\Resource;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Database\Model\Resource;
 
 use Countable;
 use Hyperf\Utils\Arr;
@@ -18,7 +27,7 @@ trait ConditionallyLoadsAttributes
         $index = -1;
 
         foreach ($data as $key => $value) {
-            $index++;
+            ++$index;
 
             if (is_array($value)) {
                 $data[$key] = $this->filter($value);
@@ -28,7 +37,9 @@ trait ConditionallyLoadsAttributes
 
             if (is_numeric($key) && $value instanceof MergeValue) {
                 return $this->mergeData(
-                    $data, $index, $this->filter($value->data),
+                    $data,
+                    $index,
+                    $this->filter($value->data),
                     array_values($value->data) === $value->data
                 );
             }
@@ -106,7 +117,7 @@ trait ConditionallyLoadsAttributes
             return value($value);
         }
 
-        return func_num_args() === 3 ? value($default) : new MissingValue;
+        return func_num_args() === 3 ? value($default) : new MissingValue();
     }
 
     /**
@@ -129,7 +140,7 @@ trait ConditionallyLoadsAttributes
      */
     protected function mergeWhen($condition, $value)
     {
-        return $condition ? new MergeValue(value($value)) : new MissingValue;
+        return $condition ? new MergeValue(value($value)) : new MissingValue();
     }
 
     /**
@@ -156,10 +167,10 @@ trait ConditionallyLoadsAttributes
     protected function whenLoaded($relationship, $value = null, $default = null)
     {
         if (func_num_args() < 3) {
-            $default = new MissingValue;
+            $default = new MissingValue();
         }
 
-        if (!$this->resource->relationLoaded($relationship)) {
+        if (! $this->resource->relationLoaded($relationship)) {
             return value($default);
         }
 
@@ -199,13 +210,13 @@ trait ConditionallyLoadsAttributes
     protected function whenPivotLoadedAs($accessor, $table, $value, $default = null)
     {
         if (func_num_args() === 3) {
-            $default = new MissingValue;
+            $default = new MissingValue();
         }
 
         return $this->when(
-            $this->resource->$accessor &&
-            ($this->resource->$accessor instanceof $table ||
-                $this->resource->$accessor->getTable() === $table),
+            $this->resource->{$accessor} &&
+            ($this->resource->{$accessor} instanceof $table ||
+                $this->resource->{$accessor}->getTable() === $table),
             ...[$value, $default]
         );
     }
@@ -214,13 +225,12 @@ trait ConditionallyLoadsAttributes
      * Transform the given value if it is present.
      *
      * @param mixed $value
-     * @param callable $callback
      * @param mixed $default
      * @return mixed
      */
     protected function transform($value, callable $callback, $default = null)
     {
-        if (!$this->blank($value)) {
+        if (! $this->blank($value)) {
             return $callback($value);
         }
 
@@ -228,7 +238,7 @@ trait ConditionallyLoadsAttributes
             return $default($value);
         }
 
-        return func_num_args() === 3 ? $default : new MissingValue;
+        return func_num_args() === 3 ? $default : new MissingValue();
     }
 
     protected function blank($value)

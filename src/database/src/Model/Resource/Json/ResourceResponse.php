@@ -1,6 +1,15 @@
 <?php
 
-namespace Hyperf\HttpServer\Resource\Json;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Database\Model\Resource\Json;
 
 use Hyperf\HttpServer\Contract\Responsable;
 use Hyperf\Utils\Collection;
@@ -18,11 +27,19 @@ class ResourceResponse implements Responsable
      * Create a new resource response.
      *
      * @param mixed $resource
-     * @return void
      */
     public function __construct($resource)
     {
         $this->resource = $resource;
+    }
+
+    public function toResponse()
+    {
+        return $this->wrap(
+            $this->resource->resolve(),
+            $this->resource->with(),
+            $this->resource->additional
+        );
     }
 
     /**
@@ -56,7 +73,7 @@ class ResourceResponse implements Responsable
      */
     protected function haveDefaultWrapperAndDataIsUnwrapped($data)
     {
-        return $this->wrapper() && !array_key_exists($this->wrapper(), $data);
+        return $this->wrapper() && ! array_key_exists($this->wrapper(), $data);
     }
 
     /**
@@ -69,9 +86,9 @@ class ResourceResponse implements Responsable
      */
     protected function haveAdditionalInformationAndDataIsUnwrapped($data, $with, $additional)
     {
-        return (!empty($with) || !empty($additional)) &&
-            (!$this->wrapper() ||
-                !array_key_exists($this->wrapper(), $data));
+        return (! empty($with) || ! empty($additional)) &&
+            (! $this->wrapper() ||
+                ! array_key_exists($this->wrapper(), $data));
     }
 
     /**
@@ -82,14 +99,5 @@ class ResourceResponse implements Responsable
     protected function wrapper()
     {
         return $this->resource->wrap;
-    }
-
-    public function toResponse()
-    {
-        return $this->wrap(
-            $this->resource->resolve(),
-            $this->resource->with(),
-            $this->resource->additional
-        );
     }
 }

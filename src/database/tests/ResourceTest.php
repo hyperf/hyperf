@@ -1,21 +1,28 @@
 <?php
+
 declare(strict_types=1);
-
-namespace HyperfTest\HttpServer;
-
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\Database;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Resource\ConditionallyLoadsAttributes;
+use Hyperf\Database\Model\Resource\Json\JsonResource;
+use Hyperf\Database\Model\Resource\Json\ResourceCollection;
+use Hyperf\Database\Model\Resource\MergeValue;
+use Hyperf\Database\Model\Resource\MissingValue;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpServer\CoreMiddleware;
-use Hyperf\HttpServer\Resource\ConditionallyLoadsAttributes;
-use Hyperf\HttpServer\Resource\Json\JsonResource;
-use Hyperf\HttpServer\Resource\Json\ResourceCollection;
-use Hyperf\HttpServer\Resource\MergeValue;
-use Hyperf\HttpServer\Resource\MissingValue;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Testing\Client;
@@ -29,47 +36,17 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionMethod;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ResourceTest extends TestCase
 {
     protected $client;
 
-    protected function client(): Client
-    {
-        return $this->client ?: $this->client = make(Client::class);
-    }
-
-    protected function getContainer()
-    {
-        $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
-        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
-            ->andReturn(new MethodDefinitionCollector());
-        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
-            ->andReturn(false);
-        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
-            ->andReturn(new ClosureDefinitionCollector());
-        $container->shouldReceive('get')->with(NormalizerInterface::class)
-            ->andReturn(new SimpleNormalizer());
-        return $container;
-    }
-
-    protected function getResponse($except)
-    {
-        $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
-        $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
-        $reflectionMethod->setAccessible(true);
-        $request = Mockery::mock(ServerRequestInterface::class);
-        return $reflectionMethod->invoke($middleware, $except(), $request);
-    }
-
     protected function tearDown()
     {
         Mockery::close();
-    }
-
-    protected function assertJsonByArray(array $expected, $actual, string $message = '')
-    {
-        $this->assertSame(json_encode($expected), $actual, $message);
     }
 
     public function testResourcesMayBeConvertedToJson()
@@ -105,7 +82,7 @@ class ResourceTest extends TestCase
     {
         $response = $this->getResponse(function () {
             return ObjectResource::make(
-                (object)['first_name' => 'Bob', 'age' => 40]
+                (object) ['first_name' => 'Bob', 'age' => 40]
             );
         });
 
@@ -121,8 +98,8 @@ class ResourceTest extends TestCase
     {
         $response = $this->getResponse(function () {
             $objects = [
-                (object)['first_name' => 'Bob', 'age' => 40],
-                (object)['first_name' => 'Jack', 'age' => 25],
+                (object) ['first_name' => 'Bob', 'age' => 40],
+                (object) ['first_name' => 'Jack', 'age' => 25],
             ];
 
             return ObjectResource::collection($objects);
@@ -136,7 +113,7 @@ class ResourceTest extends TestCase
                 [
                     'name' => 'Jack',
                     'age' => 25,
-                ]
+                ],
             ],
         ], $response->getBody()->getContents());
     }
@@ -267,7 +244,7 @@ class ResourceTest extends TestCase
     {
         $response = $this->getResponse(function () {
             $post = new Post(['id' => 5]);
-            $post->setRelation('pivot', new Subscription);
+            $post->setRelation('pivot', new Subscription());
 
             return new PostResourceWithOptionalPivotRelationship($post);
         });
@@ -285,7 +262,7 @@ class ResourceTest extends TestCase
     {
         $response = $this->getResponse(function () {
             $post = new Post(['id' => 5]);
-            $post->setRelation('accessor', new Subscription);
+            $post->setRelation('accessor', new Subscription());
 
             return new PostResourceWithOptionalPivotRelationship($post);
         });
@@ -375,7 +352,9 @@ class ResourceTest extends TestCase
         $response = $this->getResponse(function () {
             $paginator = new LengthAwarePaginator(
                 collect([new Post(['id' => 5, 'title' => 'Test Title'])]),
-                10, 15, 1
+                10,
+                15,
+                1
             );
 
             return new PostCollectionResource($paginator);
@@ -465,7 +444,6 @@ class ResourceTest extends TestCase
         });
 
         $this->assertJsonByArray(['data' => $data], $response->getBody()->getContents());
-
     }
 
     public function testKeysArePreservedInAnAnonymousCollectionIfTheResourceIsFlaggedToPreserveKeys()
@@ -497,8 +475,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeKeyedValueIsMergedCorrectly()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -518,15 +495,14 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeKeyedValueIsMergedCorrectlyWhenFirstValueIsMissing()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
             {
                 return $this->filter([
                     new MergeValue([
-                        0 => new MissingValue,
+                        0 => new MissingValue(),
                         'name' => 'mohamed',
                         'location' => 'hurghada',
                     ]),
@@ -543,8 +519,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeValueIsMergedCorrectly()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -569,8 +544,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -595,8 +569,7 @@ class ResourceTest extends TestCase
 
     public function testInitialMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -621,8 +594,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeJsonSerializable()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -653,8 +625,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeCollectionOfJsonSerializable()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -680,8 +651,7 @@ class ResourceTest extends TestCase
 
     public function testAllMergeValuesMayBeMissing()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -706,8 +676,7 @@ class ResourceTest extends TestCase
 
     public function testNestedMerges()
     {
-        $filter = new class
-        {
+        $filter = new class() {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -758,17 +727,17 @@ class ResourceTest extends TestCase
         $this->assertJsonResourceResponse([
             1 => 'John',
             2 => 'Hank',
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
         ], ['data' => ['John', 'Hank']]);
 
         $this->assertJsonResourceResponse([
             1 => 'John',
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
             3 => 'Hank',
         ], ['data' => ['John', 'Hank']]);
 
         $this->assertJsonResourceResponse([
-            'foo' => new MissingValue,
+            'foo' => new MissingValue(),
             2 => 'John',
             3 => 'Hank',
         ], ['data' => ['John', 'Hank']]);
@@ -806,6 +775,40 @@ class ResourceTest extends TestCase
             1 => 20,
             'total' => 30,
         ], ['data' => [0 => 10, 1 => 20, 'total' => 30]]);
+    }
+
+    protected function client(): Client
+    {
+        return $this->client ?: $this->client = make(Client::class);
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
+        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
+            ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(new ClosureDefinitionCollector());
+        $container->shouldReceive('get')->with(NormalizerInterface::class)
+            ->andReturn(new SimpleNormalizer());
+        return $container;
+    }
+
+    protected function getResponse($except)
+    {
+        $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
+        $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
+        $reflectionMethod->setAccessible(true);
+        $request = Mockery::mock(ServerRequestInterface::class);
+        return $reflectionMethod->invoke($middleware, $except(), $request);
+    }
+
+    protected function assertJsonByArray(array $expected, $actual, string $message = '')
+    {
+        $this->assertSame(json_encode($expected), $actual, $message);
     }
 
     private function assertJsonResourceResponse($data, $expectedJson)
@@ -865,7 +868,6 @@ class AuthorResourceWithOptionalRelationship extends PostResource
 
 class CommentCollection extends ResourceCollection
 {
-    //
 }
 
 class Post extends Model
@@ -886,7 +888,7 @@ class ObjectResource extends JsonResource
 
 class PostResourceWithoutWrap extends PostResource
 {
-    public $wrap = null;
+    public $wrap;
 }
 
 class PostResourceWithOptionalData extends JsonResource
@@ -947,7 +949,6 @@ class EmptyPostCollectionResource extends ResourceCollection
 
 class ReallyEmptyPostResource extends JsonResource
 {
-    //
 }
 
 class PostResourceWithExtraData extends PostResource
@@ -1000,7 +1001,6 @@ class PostResourceWithOptionalRelationship extends PostResource
 
 class Subscription
 {
-    //
 }
 
 class PostResourceWithOptionalPivotRelationship extends PostResource

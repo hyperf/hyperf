@@ -1,9 +1,18 @@
 <?php
 
-namespace Hyperf\HttpServer\Resource;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Database\Model\Resource;
 
-use JsonSerializable;
 use Hyperf\Utils\Collection;
+use JsonSerializable;
 
 class MergeValue
 {
@@ -17,8 +26,7 @@ class MergeValue
     /**
      * Create new merge value instance.
      *
-     * @param  \Illuminate\Support\Collection|\JsonSerializable|array  $data
-     * @return void
+     * @param array|Collection|JsonSerializable $data
      */
     public function __construct($data)
     {

@@ -1,13 +1,32 @@
 <?php
 
-namespace Hyperf\HttpServer\Resource;
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Database\Model\Resource;
 
+use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
-use Hyperf\Paginator\AbstractPaginator;
 
 trait CollectsResources
 {
+    /**
+     * Get an iterator for the resource collection.
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return $this->collection->getIterator();
+    }
+
     /**
      * Map the given collection resource into its individual resources.
      *
@@ -26,7 +45,7 @@ trait CollectsResources
 
         $collects = $this->collects();
 
-        $this->collection = $collects && !$resource->first() instanceof $collects
+        $this->collection = $collects && ! $resource->first() instanceof $collects
             ? $resource->mapInto($collects)
             : $resource->toBase();
 
@@ -38,7 +57,7 @@ trait CollectsResources
     /**
      * Get the resource that this resource collects.
      *
-     * @return string|null
+     * @return null|string
      */
     protected function collects()
     {
@@ -50,15 +69,5 @@ trait CollectsResources
             class_exists($class = Str::replaceLast('Collection', '', get_class($this)))) {
             return $class;
         }
-    }
-
-    /**
-     * Get an iterator for the resource collection.
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return $this->collection->getIterator();
     }
 }
