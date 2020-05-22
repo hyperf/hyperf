@@ -58,10 +58,10 @@ class BetterReflectionManager extends MetadataCollector
         return static::$instance;
     }
 
-    public static function reflectClass(string $className): ReflectionClass
+    public static function reflectClass(string $className, ?ReflectionClass $reflection = null): ReflectionClass
     {
         if (! isset(static::$container['class'][$className])) {
-            static::$container['class'][$className] = static::getClassReflector()->reflect($className);
+            static::$container['class'][$className] = $reflection ?? static::getClassReflector()->reflect($className);
         }
         return static::$container['class'][$className];
     }
@@ -88,8 +88,11 @@ class BetterReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
-    public static function clear(): void
+    public static function clear(?string $key = null): void
     {
-        static::$container = [];
+        if ($key === null) {
+            static::$container = [];
+            static::$instance = null;
+        }
     }
 }

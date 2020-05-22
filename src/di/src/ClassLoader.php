@@ -13,6 +13,9 @@ namespace Hyperf\Di;
 
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Dotenv\Dotenv;
+use Dotenv\Repository\Adapter;
+use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\ProxyManager;
@@ -37,12 +40,20 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {
         $this->setComposerClassLoader($classLoader);
+        if (file_exists(BASE_PATH . '/.env')) {
+            $this->loadDotenv();
+        }
+
         // Scan by ScanConfig to generate the reflection class map
-        $scanner = new Scanner($this, ScanConfig::instance());
-        $reflectionClassMap = $scanner->scan();
+        $scanner = new Scanner($this, $config = ScanConfig::instance($configDir));
+        $classLoader->addClassMap($config->getClassMap());
+        timepoint();
+        $scanner->scan();
+        timepoint('Scan');
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $configDir);
+        $proxyManager = new ProxyManager($composerLoaderClassMap, $proxyFileDir);
+        timepoint('InitProxyManager');
         $this->proxies = $proxyManager->getProxies();
     }
 
@@ -116,5 +127,20 @@ class ClassLoader
         }
 
         return is_string($file) ? $file : null;
+    }
+
+    private function loadDotenv(): void
+    {
+        $repository = RepositoryBuilder::create()
+            ->withReaders([
+                new Adapter\PutenvAdapter(),
+            ])
+            ->withWriters([
+                new Adapter\PutenvAdapter(),
+            ])
+            ->immutable()
+            ->make();
+
+        Dotenv::create($repository, [BASE_PATH])->load();
     }
 }

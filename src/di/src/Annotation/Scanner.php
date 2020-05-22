@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
+use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\MetadataCollector;
-use Hyperf\Utils\Str;
+use Hyperf\Utils\Filesystem\Filesystem;
+use ReflectionProperty;
 use Roave\BetterReflection\Reflection\Adapter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
@@ -30,12 +32,18 @@ class Scanner
      */
     protected $scanConfig;
 
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
         $this->scanConfig = $scanConfig;
+        $this->filesystem = new Filesystem();
 
         foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
@@ -48,6 +56,12 @@ class Scanner
     public function collect(AnnotationReader $reader, ReflectionClass $reflection)
     {
         $className = $reflection->getName();
+        if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
+            if ($reflection->getFileName() !== $path) {
+                // When the original class is dynamically replaced, the original class should not be collected.
+                return;
+            }
+        }
         // Parse class annotations
         $classAnnotations = $reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
         if (! empty($classAnnotations)) {
@@ -85,47 +99,56 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
     }
 
+    /**
+     * @return ReflectionClass[]
+     */
     public function scan(): array
     {
         $paths = $this->scanConfig->getPaths();
-        $shouldCache = $this->scanConfig->getCacheNamespaces();
         $collectors = $this->scanConfig->getCollectors();
         $classes = [];
         if (! $paths) {
             return $classes;
         }
+
+        $annotationReader = new AnnotationReader();
+        $lastCacheModified = $this->deserializeCachedCollectors($collectors);
+        // TODO: The online mode won't init BetterReflectionManager when has cache.
+        if ($lastCacheModified > 0 && $this->scanConfig->getAppEnv() === 'prod') {
+            return [];
+        }
+
         $paths = $this->normalizeDir($paths);
 
         $reflector = BetterReflectionManager::initClassReflector($paths);
         $classes = $reflector->getAllClasses();
-
-        $annotationReader = new AnnotationReader();
-        $cached = $this->deserializeCachedCollectors($collectors);
-        if (! $cached) {
-            foreach ($classes as $reflectionClass) {
-                if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
-                    $this->collect($annotationReader, $reflectionClass);
-                }
-            }
-
-            $data = [];
-            /** @var MetadataCollector $collector */
-            foreach ($collectors as $collector) {
-                $data[$collector] = $collector::serialize();
-            }
-
-            if ($data) {
-                @mkdir(dirname($this->path), 0777, true);
-                file_put_contents($this->path, serialize($data));
-            }
+        // Initialize cache for BetterReflectionManager.
+        foreach ($classes as $class) {
+            BetterReflectionManager::reflectClass($class->getName(), $class);
         }
 
         foreach ($classes as $reflectionClass) {
-            if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
-                continue;
-            }
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastCacheModified) {
+                /** @var MetadataCollector $collector */
+                foreach ($collectors as $collector) {
+                    $collector::clear($reflectionClass->getName());
+                }
 
-            $this->collect($annotationReader, $reflectionClass);
+                $this->collect($annotationReader, $reflectionClass);
+            }
+        }
+
+        $this->loadAspects($lastCacheModified);
+
+        $data = [];
+        /** @var MetadataCollector $collector */
+        foreach ($collectors as $collector) {
+            $data[$collector] = $collector::serialize();
+        }
+
+        if ($data) {
+            @mkdir(dirname($this->path), 0777, true);
+            file_put_contents($this->path, serialize($data));
         }
 
         unset($annotationReader);
@@ -148,10 +171,10 @@ class Scanner
         return $result;
     }
 
-    protected function deserializeCachedCollectors(array $collectors): bool
+    protected function deserializeCachedCollectors(array $collectors): int
     {
         if (! file_exists($this->path)) {
-            return false;
+            return 0;
         }
 
         $data = unserialize(file_get_contents($this->path));
@@ -162,6 +185,69 @@ class Scanner
             }
         }
 
-        return true;
+        return $this->filesystem->lastModified($this->path);
+    }
+
+    /**
+     * Load aspects to AspectCollector by configuration files and ConfigProvider.
+     */
+    protected function loadAspects(int $lastCacheModified): void
+    {
+        $configDir = $this->scanConfig->getConfigDir();
+        if (! $configDir) {
+            return;
+        }
+        if ($lastCacheModified > $this->filesystem->lastModified($configDir . '/autoload/aspects.php')
+            && $lastCacheModified > $this->filesystem->lastModified($configDir . '/config.php')
+        ) {
+            return;
+        }
+
+        $aspects = require $configDir . '/autoload/aspects.php';
+        $baseConfig = require $configDir . '/config.php';
+        $providerConfig = ProviderConfig::load();
+        if (! isset($aspects) || ! is_array($aspects)) {
+            $aspects = [];
+        }
+        if (! isset($baseConfig['aspects']) || ! is_array($baseConfig['aspects'])) {
+            $baseConfig['aspects'] = [];
+        }
+        if (! isset($providerConfig['aspects']) || ! is_array($providerConfig['aspects'])) {
+            $providerConfig['aspects'] = [];
+        }
+        $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
+
+        foreach ($aspects ?? [] as $key => $value) {
+            if (is_numeric($key)) {
+                $aspect = $value;
+                $priority = null;
+            } else {
+                $aspect = $key;
+                $priority = (int) $value;
+            }
+            // Create the aspect instance without invoking their constructor.
+            $reflectionClass = BetterReflectionManager::reflectClass($aspect);
+            $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
+            $instanceClasses = $instanceAnnotations = [];
+            $instancePriority = null;
+            foreach ($properties as $property) {
+                if ($property->getName() === 'classes') {
+                    $instanceClasses = $property->getDefaultValue();
+                } elseif ($property->getName() === 'annotations') {
+                    $instanceAnnotations = $property->getDefaultValue();
+                } elseif ($property->getName() === 'priority') {
+                    $instancePriority = $property->getDefaultValue();
+                }
+            }
+
+            $classes = $instanceClasses ?: [];
+            // Annotations
+            $annotations = $instanceAnnotations ?: [];
+            // Priority
+            $priority = $priority ?: ($instancePriority ?? null);
+            // Save the metadata to AspectCollector
+            // TODO: When the aspect removed from config, it should removed from AspectCollector.
+            AspectCollector::setAround($aspect, $classes, $annotations, $priority);
+        }
     }
 }

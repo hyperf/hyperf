@@ -41,7 +41,11 @@ before_script:
   - composer config -g process-timeout 900 && composer update
 
 script:
-  - composer analyse src/di src/json-rpc src/tracer src/metric src/redis src/nats src/db src/retry src/grpc-client src/nsq src/filesystem
-  - composer analyse src/load-balancer
+  - composer analyse \
+    src/amqp \
+    src/async-queue \
+    src/cache \
+    src/command \
+    src/config
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine

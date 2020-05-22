@@ -13,20 +13,19 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\Aop\AstVisitorCollector;
+use Hyperf\Di\Annotation\InjectAspect;
+use Hyperf\Di\Aop\AstVisitorRegistry;
+use Hyperf\Di\Aop\PropertyHandlerVisitor;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
-use Hyperf\Di\Inject\InjectAspect;
-use Hyperf\Di\Inject\InjectVisitor;
-use Hyperf\Di\Listener\BootApplicationListener;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         // Register AST visitors to the collector.
-        AstVisitorCollector::set(ProxyCallVisitor::class, ProxyCallVisitor::class);
-        AstVisitorCollector::set(InjectVisitor::class, InjectVisitor::class);
+        AstVisitorRegistry::insert(PropertyHandlerVisitor::class, PHP_INT_MAX / 2);
+        AstVisitorRegistry::insert(ProxyCallVisitor::class, PHP_INT_MAX / 2);
 
         // Register Property Handler.
         RegisterInjectPropertyHandler::register();
@@ -35,9 +34,6 @@ class ConfigProvider
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
                 ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
-            ],
-            'listeners' => [
-                BootApplicationListener::class,
             ],
             'aspects' => [
                 InjectAspect::class,

@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Definition;
 
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
 use function class_exists;
@@ -138,24 +137,6 @@ class DefinitionSource implements DefinitionSourceInterface
         if ($constructor && $constructor->isPublic()) {
             $constructorInjection = new MethodInjection('__construct', $this->getParametersDefinition($constructor));
             $definition->completeConstructorInjection($constructorInjection);
-        }
-
-        /**
-         * Properties.
-         */
-        $propertiesMetadata = AnnotationCollector::get($className);
-        $propertyHandlers = PropertyHandlerManager::all();
-        if (isset($propertiesMetadata['_p'])) {
-            foreach ($propertiesMetadata['_p'] as $propertyName => $value) {
-                // Handle PropertyHandler mechanism.
-                foreach ($value as $annotationClassName => $annotationObject) {
-                    if (isset($propertyHandlers[$annotationClassName])) {
-                        foreach ($propertyHandlers[$annotationClassName] ?? [] as $callback) {
-                            call($callback, [$definition, $propertyName, $annotationObject, $value, $class]);
-                        }
-                    }
-                }
-            }
         }
 
         return $definition;

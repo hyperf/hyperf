@@ -16,18 +16,21 @@ use Hyperf\Config\ProviderConfig;
 final class ScanConfig
 {
     /**
+     * @var string
+     */
+    private $appEnv;
+
+    /**
+     * @var string
+     */
+    private $configDir;
+
+    /**
      * The paths should be scaned everytime.
      *
      * @var array
      */
     private $paths;
-
-    /**
-     * The namespaces should be cached after scaned.
-     *
-     * @var array
-     */
-    private $cache;
 
     /**
      * @var array
@@ -50,34 +53,43 @@ final class ScanConfig
     private $dependencies;
 
     /**
+     * @var array
+     */
+    private $classMap;
+
+    /**
      * @var ScanConfig
      */
     private static $instance;
 
     public function __construct(
+        string $appEnv,
+        string $configDir,
         array $paths = [],
         array $dependencies = [],
         array $ignoreAnnotations = [],
         array $globalImports = [],
-        array $cacheNamespaces = [],
-        array $collectors
+        array $collectors = [],
+        array $classMap = []
     ) {
+        $this->appEnv = $appEnv;
+        $this->configDir = $configDir;
         $this->paths = $paths;
         $this->dependencies = $dependencies;
         $this->ignoreAnnotations = $ignoreAnnotations;
         $this->globalImports = $globalImports;
-        $this->cacheNamespaces = $cacheNamespaces;
         $this->collectors = $collectors;
+        $this->classMap = $classMap;
+    }
+
+    public function getConfigDir(): string
+    {
+        return $this->configDir;
     }
 
     public function getPaths(): array
     {
         return $this->paths;
-    }
-
-    public function getCacheNamespaces(): array
-    {
-        return $this->cacheNamespaces;
     }
 
     public function getCollectors(): array
@@ -100,21 +112,35 @@ final class ScanConfig
         return $this->dependencies;
     }
 
-    public static function instance(): self
+    public function getClassMap(): array
+    {
+        return $this->classMap;
+    }
+
+    public function getAppEnv(): string
+    {
+        return $this->appEnv;
+    }
+
+    public static function instance(string $configDir): self
     {
         if (self::$instance) {
             return self::$instance;
         }
 
-        [$config, $serverDependencies] = static::initConfigByFile(BASE_PATH . '/config');
+        $configDir = rtrim($configDir, '/');
+
+        [$config, $serverDependencies, $appEnv] = static::initConfigByFile($configDir);
 
         return self::$instance = new self(
+            $appEnv,
+            $configDir,
             $config['paths'] ?? [],
             $serverDependencies ?? [],
             $config['ignore_annotations'] ?? [],
             $config['global_imports'] ?? [],
-            $config['cache_namespaces'] ?? [],
-            $config['collectors'] ?? []
+            $config['collectors'] ?? [],
+            $config['class_map'] ?? []
         );
     }
 
@@ -143,11 +169,12 @@ final class ScanConfig
         // Load the config/config.php and merge the config
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
+            $appEnv = $configContent['app_env'] ?? 'dev';
             if (isset($configContent['annotations'])) {
                 $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
         }
-        return [$config, $serverDependencies];
+        return [$config, $serverDependencies, $appEnv];
     }
 
     private static function allocateConfigValue(array $content, array $config): array

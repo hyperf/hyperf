@@ -31,6 +31,11 @@ use PhpParser\NodeVisitorAbstract;
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
+     * @var \Hyperf\Di\Aop\VisitorMetadata
+     */
+    protected $visitorMetadata;
+
+    /**
      * Determine if the class used proxy trait.
      *
      * @var bool
@@ -57,18 +62,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      */
     private $extends;
 
-    /**
-     * @var string
-     */
-    private $className;
-
-    /**
-     * @return $this
-     */
-    public function setClassName(string $className)
+    public function __construct(VisitorMetadata $visitorMetadata)
     {
-        $this->className = $className;
-        return $this;
+        $this->visitorMetadata = $visitorMetadata;
     }
 
     public function beforeTraverse(array $nodes)
@@ -231,7 +227,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             return false;
         }
 
-        $rewriteCollection = Aspect::parse($this->className);
+        $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
     }

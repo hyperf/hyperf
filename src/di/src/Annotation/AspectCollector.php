@@ -37,7 +37,7 @@ class AspectCollector extends MetadataCollector
         }
         $setter = function ($key, $value) {
             if (static::has($key)) {
-                $value = array_merge(static::get($key), $value);
+                $value = array_merge(static::get($key, []), $value);
                 static::set($key, $value);
             } else {
                 static::set($key, $value);
@@ -48,8 +48,8 @@ class AspectCollector extends MetadataCollector
         if (isset(static::$aspectRules[$aspect])) {
             static::$aspectRules[$aspect] = [
                 'priority' => $priority,
-                'classes' => array_merge(static::$aspectRules[$aspect]['classes'], $classes),
-                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'], $annotations),
+                'classes' => array_merge(static::$aspectRules[$aspect]['classes'] ?? [], $classes),
+                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'] ?? [], $annotations),
             ];
         } else {
             static::$aspectRules[$aspect] = [
@@ -57,6 +57,16 @@ class AspectCollector extends MetadataCollector
                 'classes' => $classes,
                 'annotations' => $annotations,
             ];
+        }
+    }
+
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            unset(static::$container['classes'][$key], static::$container['annotations'][$key], static::$aspectRules[$key]);
+        } else {
+            static::$container = [];
+            static::$aspectRules = [];
         }
     }
 

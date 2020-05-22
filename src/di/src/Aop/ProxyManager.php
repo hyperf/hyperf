@@ -11,21 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Doctrine\Instantiator\Instantiator;
-use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\BetterReflectionManager;
-use ReflectionProperty;
+use Hyperf\Utils\Filesystem\Filesystem;
 
 class ProxyManager
 {
     /**
-     * The map to collect the class names which has been handled.
+     * The map to collect the classes whith paths.
      *
      * @var array
      */
-    protected $classNameMap = [];
+    protected $classMap = [];
 
     /**
      * The classes which be rewrited by proxy.
@@ -41,17 +38,19 @@ class ProxyManager
      */
     protected $proxyDir;
 
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
     public function __construct(
-        array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
-        string $proxyDir = '',
-        string $configDir = ''
+        string $proxyDir = ''
     ) {
+        $this->classMap = $composerLoaderClassMap;
         $this->proxyDir = $proxyDir;
-        $this->loadAspects($configDir);
-        $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
-        $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
-        $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
+        $this->filesystem = new Filesystem();
+        $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($composerLoaderClassMap));
     }
 
     public function getProxies(): array
@@ -62,16 +61,6 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
-    }
-
-    public function getClassNameMap(): array
-    {
-        return $this->classNameMap;
-    }
-
-    public function isClassHandled(string $className): bool
-    {
-        return in_array($className, $this->getClassNameMap());
     }
 
     protected function generateProxyFiles(array $proxies = []): array
@@ -86,14 +75,42 @@ class ProxyManager
         // WARNING: Ast class SHOULD NOT use static instance, because it will read  the code from file, then would be caused coroutine switch.
         $ast = new Ast();
         foreach ($proxies as $className => $aspects) {
-            $code = $ast->proxy($className);
-            $proxyFilePath = $this->getProxyDir() . str_replace('\\', '_', $className) . '_' . crc32($code) . '.php';
-            if (! file_exists($proxyFilePath)) {
-                file_put_contents($proxyFilePath, $code);
-            }
-            $proxyFiles[$className] = $proxyFilePath;
+            $proxyFiles[$className] = $this->putProxyFile($ast, $className);
         }
         return $proxyFiles;
+    }
+
+    protected function putProxyFile(Ast $ast, $className)
+    {
+        $proxyFilePath = $this->getProxyFilePath($className);
+        $modified = true;
+        if (file_exists($proxyFilePath)) {
+            $modified = $this->isModified($className, $proxyFilePath);
+        }
+
+        if ($modified) {
+            $code = $ast->proxy($className);
+            file_put_contents($proxyFilePath, $code);
+        }
+
+        return $proxyFilePath;
+    }
+
+    protected function isModified(string $className, string $proxyFilePath = null): bool
+    {
+        $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
+        $time = $this->filesystem->lastModified($proxyFilePath);
+        $origin = $this->classMap[$className];
+        if ($time > $this->filesystem->lastModified($origin)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getProxyFilePath($className)
+    {
+        return $this->getProxyDir() . str_replace('\\', '_', $className) . '.proxy.php';
     }
 
     protected function isMatch(string $rule, string $target): bool
@@ -124,24 +141,23 @@ class ProxyManager
         $classesAspects = AspectCollector::get('classes', []);
         foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                foreach ($reflectionClassMap as $class) {
-                    if (! $this->isMatch($rule, $class->getName())) {
+                foreach ($reflectionClassMap as $class => $path) {
+                    if (! $this->isMatch($rule, $class)) {
                         continue;
                     }
-                    $proxies[$class->getName()][] = $aspect;
+                    $proxies[$class][] = $aspect;
                 }
             }
         }
 
-        foreach ($reflectionClassMap as $class) {
-            $className = $class->getName();
-            $this->classNameMap[] = $className;
+        foreach ($reflectionClassMap as $class => $path) {
+            $className = $class;
             // Aggregate the class annotations
-            $classAnnotations = $this->retriveAnnotations($className . '._c');
+            $classAnnotations = $this->retrieveAnnotations($className . '._c');
             // Aggregate all methods annotations
-            $methodAnnotations = $this->retriveAnnotations($className . '._m');
+            $methodAnnotations = $this->retrieveAnnotations($className . '._m');
             // Aggregate all properties annotations
-            $propertyAnnotations = $this->retriveAnnotations($className . '._p');
+            $propertyAnnotations = $this->retrieveAnnotations($className . '._p');
             $annotations = array_unique(array_merge($classAnnotations, $methodAnnotations, $propertyAnnotations));
             if ($annotations) {
                 $annotationsAspects = AspectCollector::get('annotations', []);
@@ -169,7 +185,6 @@ class ProxyManager
         if ($classAspects) {
             foreach ($classMap as $className => $file) {
                 $match = [];
-                $this->classNameMap[] = $className;
                 foreach ($classAspects as $aspect => $rules) {
                     foreach ($rules as $rule) {
                         if ($this->isMatch($rule, $className)) {
@@ -199,7 +214,7 @@ class ProxyManager
         return $aspects;
     }
 
-    protected function retriveAnnotations(string $annotationCollectorKey): array
+    protected function retrieveAnnotations(string $annotationCollectorKey): array
     {
         $defined = [];
         $annotations = AnnotationCollector::get($annotationCollectorKey, []);
@@ -212,60 +227,5 @@ class ProxyManager
             }
         }
         return $defined;
-    }
-
-    /**
-     * Load aspects to AspectCollector by configuration files and ConfigProvider.
-     */
-    protected function loadAspects(string $configDir): void
-    {
-        if (! $configDir) {
-            return;
-        }
-        $aspects = require $configDir . 'autoload/aspects.php';
-        $baseConfig = require $configDir . 'config.php';
-        $providerConfig = ProviderConfig::load();
-        if (! isset($aspects) || ! is_array($aspects)) {
-            $aspects = [];
-        }
-        if (! isset($baseConfig['aspects']) || ! is_array($baseConfig['aspects'])) {
-            $baseConfig['aspects'] = [];
-        }
-        if (! isset($providerConfig['aspects']) || ! is_array($providerConfig['aspects'])) {
-            $providerConfig['aspects'] = [];
-        }
-        $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
-
-        foreach ($aspects ?? [] as $key => $value) {
-            if (is_numeric($key)) {
-                $aspect = $value;
-                $priority = null;
-            } else {
-                $aspect = $key;
-                $priority = (int) $value;
-            }
-            // Create the aspect instance without invoking their constructor.
-            $reflectionClass = BetterReflectionManager::reflectClass($aspect);
-            $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
-            $instanceClasses = $instanceAnnotations = [];
-            $instancePriority = null;
-            foreach ($properties as $property) {
-                if ($property->getName() === 'classes') {
-                    $instanceClasses = $property->getDefaultValue();
-                } elseif ($property->getName() === 'annotations') {
-                    $instanceAnnotations = $property->getDefaultValue();
-                } elseif ($property->getName() === 'priority') {
-                    $instancePriority = $property->getDefaultValue();
-                }
-            }
-
-            $classes = $instanceClasses ?: [];
-            // Annotations
-            $annotations = $instanceAnnotations ?: [];
-            // Priority
-            $priority = $priority ?: ($instancePriority ?? null);
-            // Save the metadata to AspectCollector
-            AspectCollector::setAround($aspect, $classes, $annotations, $priority);
-        }
     }
 }

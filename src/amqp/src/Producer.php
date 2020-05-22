@@ -60,7 +60,7 @@ class Producer extends Builder
     private function injectMessageProperty(ProducerMessageInterface $producerMessage)
     {
         if (class_exists(AnnotationCollector::class)) {
-            /** @var \Hyperf\Amqp\Annotation\Producer $annotation */
+            /** @var null|\Hyperf\Amqp\Annotation\Producer $annotation */
             $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
             if ($annotation) {
                 $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
