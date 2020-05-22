@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Config\Annotation;
 
-use Hyperf\Config\Annotation\Value;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 

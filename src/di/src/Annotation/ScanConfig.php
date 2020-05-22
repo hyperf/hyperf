@@ -18,6 +18,11 @@ final class ScanConfig
     /**
      * @var string
      */
+    private $appEnv;
+
+    /**
+     * @var string
+     */
     private $configDir;
 
     /**
@@ -58,6 +63,7 @@ final class ScanConfig
     private static $instance;
 
     public function __construct(
+        string $appEnv,
         string $configDir,
         array $paths = [],
         array $dependencies = [],
@@ -66,6 +72,7 @@ final class ScanConfig
         array $collectors = [],
         array $classMap = []
     ) {
+        $this->appEnv = $appEnv;
         $this->configDir = $configDir;
         $this->paths = $paths;
         $this->dependencies = $dependencies;
@@ -110,15 +117,23 @@ final class ScanConfig
         return $this->classMap;
     }
 
-    public static function instance(): self
+    public function getAppEnv(): string
+    {
+        return $this->appEnv;
+    }
+
+    public static function instance(string $configDir): self
     {
         if (self::$instance) {
             return self::$instance;
         }
 
-        [$config, $serverDependencies] = static::initConfigByFile($configDir = BASE_PATH . '/config');
+        $configDir = rtrim($configDir, '/');
+
+        [$config, $serverDependencies, $appEnv] = static::initConfigByFile($configDir);
 
         return self::$instance = new self(
+            $appEnv,
             $configDir,
             $config['paths'] ?? [],
             $serverDependencies ?? [],
@@ -154,11 +169,12 @@ final class ScanConfig
         // Load the config/config.php and merge the config
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
+            $appEnv = $configContent['app_env'] ?? 'dev';
             if (isset($configContent['annotations'])) {
                 $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
         }
-        return [$config, $serverDependencies];
+        return [$config, $serverDependencies, $appEnv];
     }
 
     private static function allocateConfigValue(array $content, array $config): array

@@ -113,6 +113,10 @@ class Scanner
 
         $annotationReader = new AnnotationReader();
         $lastCacheModified = $this->deserializeCachedCollectors($collectors);
+        // TODO: The online mode won't init BetterReflectionManager when has cache.
+        if ($lastCacheModified > 0 && $this->scanConfig->getAppEnv() === 'prod') {
+            return [];
+        }
 
         $paths = $this->normalizeDir($paths);
 

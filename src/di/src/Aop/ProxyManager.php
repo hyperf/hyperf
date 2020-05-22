@@ -13,18 +13,16 @@ namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
     /**
-     * The map to collect the class names which has been handled.
+     * The map to collect the classes whith paths.
      *
      * @var array
      */
-    protected $classNameMap = [];
+    protected $classMap = [];
 
     /**
      * The classes which be rewrited by proxy.
@@ -46,15 +44,13 @@ class ProxyManager
     protected $filesystem;
 
     public function __construct(
-        array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
         string $proxyDir = ''
     ) {
+        $this->classMap = $composerLoaderClassMap;
         $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
-        $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
-        $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
-        $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
+        $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($composerLoaderClassMap));
     }
 
     public function getProxies(): array
@@ -65,16 +61,6 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
-    }
-
-    public function getClassNameMap(): array
-    {
-        return $this->classNameMap;
-    }
-
-    public function isClassHandled(string $className): bool
-    {
-        return in_array($className, $this->getClassNameMap());
     }
 
     protected function generateProxyFiles(array $proxies = []): array
@@ -114,8 +100,8 @@ class ProxyManager
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);
-        $origin = BetterReflectionManager::reflectClass($className);
-        if ($time > $this->filesystem->lastModified($origin->getFileName())) {
+        $origin = $this->classMap[$className];
+        if ($time > $this->filesystem->lastModified($origin)) {
             return false;
         }
 
@@ -145,9 +131,6 @@ class ProxyManager
         return false;
     }
 
-    /**
-     * @param ReflectionClass[] $reflectionClassMap
-     */
     protected function initProxiesByReflectionClassMap(array $reflectionClassMap = []): array
     {
         // According to the data of AspectCollector to parse all the classes that need proxy.
@@ -158,18 +141,17 @@ class ProxyManager
         $classesAspects = AspectCollector::get('classes', []);
         foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
-                foreach ($reflectionClassMap as $class) {
-                    if (! $this->isMatch($rule, $class->getName())) {
+                foreach ($reflectionClassMap as $class => $path) {
+                    if (! $this->isMatch($rule, $class)) {
                         continue;
                     }
-                    $proxies[$class->getName()][] = $aspect;
+                    $proxies[$class][] = $aspect;
                 }
             }
         }
 
-        foreach ($reflectionClassMap as $class) {
-            $className = $class->getName();
-            $this->classNameMap[] = $className;
+        foreach ($reflectionClassMap as $class => $path) {
+            $className = $class;
             // Aggregate the class annotations
             $classAnnotations = $this->retrieveAnnotations($className . '._c');
             // Aggregate all methods annotations
@@ -203,7 +185,6 @@ class ProxyManager
         if ($classAspects) {
             foreach ($classMap as $className => $file) {
                 $match = [];
-                $this->classNameMap[] = $className;
                 foreach ($classAspects as $aspect => $rules) {
                     foreach ($rules as $rule) {
                         if ($this->isMatch($rule, $className)) {
