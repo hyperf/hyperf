@@ -18,6 +18,7 @@ use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\HttpServer\Contract\Responsable;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
@@ -203,6 +204,10 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
+        if ($response instanceof Responsable) {
+            $response = $response->toResponse();
+        }
+
         if (is_string($response)) {
             return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
