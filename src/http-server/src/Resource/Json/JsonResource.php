@@ -4,7 +4,6 @@ namespace Hyperf\HttpServer\Resource\Json;
 
 use ArrayAccess;
 use Hyperf\Database\Model\JsonEncodingException;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\Responsable;
 use JsonSerializable;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -75,16 +74,19 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable
      */
     public static function collection($resource)
     {
-        return new AnonymousResourceCollection($resource, static::class);
+        return tap(new AnonymousResourceCollection($resource, static::class), function ($collection) {
+            if (property_exists(static::class, 'preserveKeys')) {
+                $collection->preserveKeys = (new static([]))->preserveKeys === true;
+            }
+        });
     }
 
     /**
      * Resolve the resource to an array.
      *
-     * @param RequestInterface|null $request
      * @return array
      */
-    public function resolve($request = null)
+    public function resolve()
     {
         $data = $this->toArray();
 
