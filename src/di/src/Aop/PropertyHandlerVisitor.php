@@ -105,9 +105,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
 
     protected function buildCallParentConstructorStatement(): Node\Stmt
     {
-        $left = new Node\Expr\FuncCall(new Name('get_parent_class'), [
-            new Node\Arg(new Node\Expr\Variable('this')),
-        ]);
+        $left = new Node\Expr\FuncCall(new Name('get_parent_class'));
         $right = new Node\Expr\FuncCall(new Name('method_exists'), [
             new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), new Name('class'))),
             new Node\Arg(new Node\Scalar\String_('__construct')),
