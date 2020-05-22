@@ -62,7 +62,7 @@ trait ProxyTrait
         return $map;
     }
 
-    private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
+    protected static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $className = $proceedingJoinPoint->className;
         $methodName = $proceedingJoinPoint->methodName;
@@ -93,7 +93,7 @@ trait ProxyTrait
             });
     }
 
-    private static function makePipeline(): Pipeline
+    protected static function makePipeline(): Pipeline
     {
         $container = ApplicationContext::getContainer();
         if (method_exists($container, 'make')) {
@@ -104,7 +104,7 @@ trait ProxyTrait
         return $pipeline;
     }
 
-    private static function getClassesAspects(string $className, string $method): array
+    protected static function getClassesAspects(string $className, string $method): array
     {
         $aspects = AspectCollector::get('classes', []);
         $matchedAspect = [];
@@ -120,7 +120,7 @@ trait ProxyTrait
         return $matchedAspect;
     }
 
-    private static function getAnnotationAspects(string $className, string $method): array
+    protected static function getAnnotationAspects(string $className, string $method): array
     {
         $matchedAspect = $annotations = $rules = [];
 

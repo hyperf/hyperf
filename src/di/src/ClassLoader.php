@@ -46,7 +46,7 @@ class ClassLoader
         timepoint('Scan');
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir, $configDir);
+        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
         timepoint('InitProxyManager');
         $this->proxies = $proxyManager->getProxies();
     }

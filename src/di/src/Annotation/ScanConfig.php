@@ -16,6 +16,11 @@ use Hyperf\Config\ProviderConfig;
 final class ScanConfig
 {
     /**
+     * @var string
+     */
+    private $configDir;
+
+    /**
      * The paths should be scaned everytime.
      *
      * @var array
@@ -53,6 +58,7 @@ final class ScanConfig
     private static $instance;
 
     public function __construct(
+        string $configDir,
         array $paths = [],
         array $dependencies = [],
         array $ignoreAnnotations = [],
@@ -60,12 +66,18 @@ final class ScanConfig
         array $collectors = [],
         array $classMap = []
     ) {
+        $this->configDir = $configDir;
         $this->paths = $paths;
         $this->dependencies = $dependencies;
         $this->ignoreAnnotations = $ignoreAnnotations;
         $this->globalImports = $globalImports;
         $this->collectors = $collectors;
         $this->classMap = $classMap;
+    }
+
+    public function getConfigDir(): string
+    {
+        return $this->configDir;
     }
 
     public function getPaths(): array
@@ -104,9 +116,10 @@ final class ScanConfig
             return self::$instance;
         }
 
-        [$config, $serverDependencies] = static::initConfigByFile(BASE_PATH . '/config');
+        [$config, $serverDependencies] = static::initConfigByFile($configDir = BASE_PATH . '/config');
 
         return self::$instance = new self(
+            $configDir,
             $config['paths'] ?? [],
             $serverDependencies ?? [],
             $config['ignore_annotations'] ?? [],

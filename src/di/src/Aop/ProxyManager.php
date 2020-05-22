@@ -11,12 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
-use ReflectionProperty;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
@@ -50,12 +48,10 @@ class ProxyManager
     public function __construct(
         array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
-        string $proxyDir = '',
-        string $configDir = ''
+        string $proxyDir = ''
     ) {
         $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
-        $this->loadAspects($configDir);
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
         $this->proxies = array_merge($reflectionClassProxies, $composerLoaderProxies);
@@ -250,60 +246,5 @@ class ProxyManager
             }
         }
         return $defined;
-    }
-
-    /**
-     * Load aspects to AspectCollector by configuration files and ConfigProvider.
-     */
-    protected function loadAspects(string $configDir): void
-    {
-        if (! $configDir) {
-            return;
-        }
-        $aspects = require $configDir . 'autoload/aspects.php';
-        $baseConfig = require $configDir . 'config.php';
-        $providerConfig = ProviderConfig::load();
-        if (! isset($aspects) || ! is_array($aspects)) {
-            $aspects = [];
-        }
-        if (! isset($baseConfig['aspects']) || ! is_array($baseConfig['aspects'])) {
-            $baseConfig['aspects'] = [];
-        }
-        if (! isset($providerConfig['aspects']) || ! is_array($providerConfig['aspects'])) {
-            $providerConfig['aspects'] = [];
-        }
-        $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
-
-        foreach ($aspects ?? [] as $key => $value) {
-            if (is_numeric($key)) {
-                $aspect = $value;
-                $priority = null;
-            } else {
-                $aspect = $key;
-                $priority = (int) $value;
-            }
-            // Create the aspect instance without invoking their constructor.
-            $reflectionClass = BetterReflectionManager::reflectClass($aspect);
-            $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
-            $instanceClasses = $instanceAnnotations = [];
-            $instancePriority = null;
-            foreach ($properties as $property) {
-                if ($property->getName() === 'classes') {
-                    $instanceClasses = $property->getDefaultValue();
-                } elseif ($property->getName() === 'annotations') {
-                    $instanceAnnotations = $property->getDefaultValue();
-                } elseif ($property->getName() === 'priority') {
-                    $instancePriority = $property->getDefaultValue();
-                }
-            }
-
-            $classes = $instanceClasses ?: [];
-            // Annotations
-            $annotations = $instanceAnnotations ?: [];
-            // Priority
-            $priority = $priority ?: ($instancePriority ?? null);
-            // Save the metadata to AspectCollector
-            AspectCollector::setAround($aspect, $classes, $annotations, $priority);
-        }
     }
 }
