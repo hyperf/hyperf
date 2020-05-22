@@ -16,6 +16,7 @@
     
 ## Dependencies Upgrade
 
+- Upgraded `ext-swoole` to `>=4.5`;
 - Upgraded `psr/event-dispatcher` to `^1.0`;
 - Upgraded `monolog/monolog` to `^2.0`;
 - Upgraded `phpstan/phpstan` to `^0.12.18`;

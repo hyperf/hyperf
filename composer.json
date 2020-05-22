@@ -20,7 +20,7 @@
         "ext-bcmath": "*",
         "ext-json": "*",
         "ext-redis": "*",
-        "ext-swoole": ">=4.4",
+        "ext-swoole": ">=4.5",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0",
