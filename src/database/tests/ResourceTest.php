@@ -25,7 +25,6 @@ use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Paginator\LengthAwarePaginator;
-use Hyperf\Testing\Client;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
@@ -42,8 +41,6 @@ use ReflectionMethod;
  */
 class ResourceTest extends TestCase
 {
-    protected $client;
-
     protected function tearDown()
     {
         Mockery::close();
@@ -775,11 +772,6 @@ class ResourceTest extends TestCase
             1 => 20,
             'total' => 30,
         ], ['data' => [0 => 10, 1 => 20, 'total' => 30]]);
-    }
-
-    protected function client(): Client
-    {
-        return $this->client ?: $this->client = make(Client::class);
     }
 
     protected function getContainer()
