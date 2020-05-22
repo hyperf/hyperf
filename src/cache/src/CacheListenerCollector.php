@@ -21,10 +21,10 @@ class CacheListenerCollector extends MetadataCollector
     protected static $container = [];
 
     /**
-     * @param array $value = [
-     *                     'className' => '',
-     *                     'method' => '',
-     *                     ]
+     * @param $value = [
+     *     'className' => '',
+     *     'method' => '',
+     * ]
      */
     public static function setListener(string $listener, array $value)
     {

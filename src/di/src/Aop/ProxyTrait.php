@@ -64,28 +64,29 @@ trait ProxyTrait
 
     private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (static::$aspects === null) {
-            $className = $proceedingJoinPoint->className;
-            $methodName = $proceedingJoinPoint->methodName;
+        $className = $proceedingJoinPoint->className;
+        $methodName = $proceedingJoinPoint->methodName;
+        if (! isset(static::$aspects[$className][$methodName])) {
+            static::$aspects[$className][$methodName] = [];
             $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
             $queue = new \SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
             }
             while ($queue->valid()) {
-                static::$aspects[] = $queue->current();
+                static::$aspects[$className][$methodName][] = $queue->current();
                 $queue->next();
             }
 
-            unset($annotationAspects, $aspects, $className, $methodName, $queue);
+            unset($annotationAspects, $aspects, $queue);
         }
 
-        if (empty(static::$aspects)) {
+        if (empty(static::$aspects[$className][$methodName])) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
         return static::makePipeline()->via('process')
-            ->through(self::$aspects)
+            ->through(static::$aspects[$className][$methodName])
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
