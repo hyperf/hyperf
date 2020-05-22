@@ -14,7 +14,7 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\MetadataCollector;
-use Hyperf\Utils\Str;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Roave\BetterReflection\Reflection\Adapter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
@@ -30,12 +30,18 @@ class Scanner
      */
     protected $scanConfig;
 
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
         $this->scanConfig = $scanConfig;
+        $this->filesystem = new Filesystem();
 
         foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
@@ -107,39 +113,34 @@ class Scanner
 
         $reflector = BetterReflectionManager::initClassReflector($paths);
         $classes = $reflector->getAllClasses();
+        // Initialize cache for BetterReflectionManager.
+        foreach ($classes as $class) {
+            BetterReflectionManager::reflectClass($class->getName(), $class);
+        }
 
         $annotationReader = new AnnotationReader();
-        $cached = $this->deserializeCachedCollectors($collectors);
-        if (! $cached) {
-            foreach ($classes as $reflectionClass) {
-                BetterReflectionManager::reflectClass($reflectionClass->getName(), $reflectionClass);
+        $lastModified = $this->deserializeCachedCollectors($collectors);
 
-                if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
-                    $this->collect($annotationReader, $reflectionClass);
+        foreach ($classes as $reflectionClass) {
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastModified) {
+                /** @var MetadataCollector $collector */
+                foreach ($collectors as $collector) {
+                    $collector::clear($reflectionClass->getName());
                 }
-            }
 
-            $data = [];
-            /** @var MetadataCollector $collector */
-            foreach ($collectors as $collector) {
-                $data[$collector] = $collector::serialize();
-            }
-
-            if ($data) {
-                @mkdir(dirname($this->path), 0777, true);
-                file_put_contents($this->path, serialize($data));
+                $this->collect($annotationReader, $reflectionClass);
             }
         }
 
-        foreach ($classes as $reflectionClass) {
-            if ($cached) {
-                BetterReflectionManager::reflectClass($reflectionClass->getName(), $reflectionClass);
-            }
-            if (Str::startsWith($reflectionClass->getName(), $shouldCache)) {
-                continue;
-            }
+        $data = [];
+        /** @var MetadataCollector $collector */
+        foreach ($collectors as $collector) {
+            $data[$collector] = $collector::serialize();
+        }
 
-            $this->collect($annotationReader, $reflectionClass);
+        if ($data) {
+            @mkdir(dirname($this->path), 0777, true);
+            file_put_contents($this->path, serialize($data));
         }
 
         unset($annotationReader);
@@ -162,10 +163,10 @@ class Scanner
         return $result;
     }
 
-    protected function deserializeCachedCollectors(array $collectors): bool
+    protected function deserializeCachedCollectors(array $collectors): int
     {
         if (! file_exists($this->path)) {
-            return false;
+            return 0;
         }
 
         $data = unserialize(file_get_contents($this->path));
@@ -176,6 +177,6 @@ class Scanner
             }
         }
 
-        return true;
+        return $this->filesystem->lastModified($this->path);
     }
 }

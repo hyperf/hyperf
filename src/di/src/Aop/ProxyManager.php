@@ -45,7 +45,7 @@ class ProxyManager
     /**
      * @var Filesystem
      */
-    protected $fileSystem;
+    protected $filesystem;
 
     public function __construct(
         array $reflectionClassMap = [],
@@ -54,7 +54,7 @@ class ProxyManager
         string $configDir = ''
     ) {
         $this->proxyDir = $proxyDir;
-        $this->fileSystem = new Filesystem();
+        $this->filesystem = new Filesystem();
         $this->loadAspects($configDir);
         $reflectionClassMap && $reflectionClassProxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($reflectionClassMap));
         $composerLoaderClassMap && $composerLoaderProxies = $this->generateProxyFiles($this->initProxiesByComposerClassMap($composerLoaderClassMap));
@@ -117,9 +117,9 @@ class ProxyManager
     protected function isModified(string $className, string $proxyFilePath = null): bool
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
-        $time = $this->fileSystem->lastModified($proxyFilePath);
+        $time = $this->filesystem->lastModified($proxyFilePath);
         $origin = BetterReflectionManager::reflectClass($className);
-        if ($time > $this->fileSystem->lastModified($origin->getFileName())) {
+        if ($time > $this->filesystem->lastModified($origin->getFileName())) {
             return false;
         }
 

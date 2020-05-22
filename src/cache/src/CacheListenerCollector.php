@@ -41,7 +41,7 @@ class CacheListenerCollector extends MetadataCollector
         if ($className) {
             foreach (static::$container as $listener => $value) {
                 if (isset($value['className']) && $value['className'] === $className) {
-                    static::$container[$listener] = null;
+                    unset(static::$container[$listener]);
                 }
             }
         } else {

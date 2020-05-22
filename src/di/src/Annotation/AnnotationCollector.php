@@ -38,7 +38,7 @@ class AnnotationCollector extends MetadataCollector
     public static function clear(?string $key = null): void
     {
         if ($key) {
-            static::$container[$key] = [];
+            unset(static::$container[$key]);
         } else {
             static::$container = [];
         }

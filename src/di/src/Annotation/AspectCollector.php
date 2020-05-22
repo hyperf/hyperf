@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\MetadataCollector;
-use Hyperf\Utils\Arr;
 
 class AspectCollector extends MetadataCollector
 {
@@ -38,7 +37,7 @@ class AspectCollector extends MetadataCollector
         }
         $setter = function ($key, $value) {
             if (static::has($key)) {
-                $value = array_merge(static::get($key), $value);
+                $value = array_merge(static::get($key, []), $value);
                 static::set($key, $value);
             } else {
                 static::set($key, $value);
@@ -49,8 +48,8 @@ class AspectCollector extends MetadataCollector
         if (isset(static::$aspectRules[$aspect])) {
             static::$aspectRules[$aspect] = [
                 'priority' => $priority,
-                'classes' => array_merge(static::$aspectRules[$aspect]['classes'], $classes),
-                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'], $annotations),
+                'classes' => array_merge(static::$aspectRules[$aspect]['classes'] ?? [], $classes),
+                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'] ?? [], $annotations),
             ];
         } else {
             static::$aspectRules[$aspect] = [
@@ -64,9 +63,7 @@ class AspectCollector extends MetadataCollector
     public static function clear(?string $key = null): void
     {
         if ($key) {
-            Arr::set(static::$container, 'classes.' . $key, null);
-            Arr::set(static::$container, 'annotations.' . $key, null);
-            static::$aspectRules[$key] = null;
+            unset(static::$container['classes'][$key], static::$container['annotations'][$key], static::$aspectRules[$key]);
         } else {
             static::$container = [];
             static::$aspectRules = [];

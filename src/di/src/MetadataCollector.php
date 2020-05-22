@@ -52,7 +52,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
     public static function clear(?string $key = null): void
     {
         if ($key) {
-            Arr::set(static::$container, $key, null);
+            Arr::forget(static::$container, [$key]);
         } else {
             static::$container = [];
         }
