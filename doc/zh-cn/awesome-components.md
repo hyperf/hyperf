@@ -122,6 +122,7 @@
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基于 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 开发的适配 Hyperf 的权限组件
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根据 laravel 中的 auth 组件改写的, 适配 hyperf 框架
+- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 参考 laravel 的 auth 组件设计，支持 jwt 和 session驱动，更轻巧更好用
 
 ## 第三方 SDK
 
