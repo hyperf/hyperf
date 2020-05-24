@@ -148,6 +148,7 @@ final class ScanConfig
     {
         $config = [];
         $configFromProviders = [];
+        $appEnv = 'dev';
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
         }
@@ -169,7 +170,7 @@ final class ScanConfig
         // Load the config/config.php and merge the config
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
-            $appEnv = $configContent['app_env'] ?? 'dev';
+            $appEnv = $configContent['app_env'] ?? $appEnv;
             if (isset($configContent['annotations'])) {
                 $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
