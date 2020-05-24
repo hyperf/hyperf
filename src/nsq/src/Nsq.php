@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
 use Closure;
@@ -120,6 +121,12 @@ class Nsq
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
+            // check push success
+            $reader = new Subscriber($socket);
+            $reader->recv();
+            if (! $reader->isOk()) {
+                throw new SocketSendException($reader->getPayload());
+            }
             return true;
         });
     }
@@ -131,6 +138,12 @@ class Nsq
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
+            // check push success
+            $reader = new Subscriber($socket);
+            $reader->recv();
+            if (! $reader->isOk()) {
+                throw new SocketSendException($reader->getPayload());
+            }
             return true;
         });
     }
@@ -141,6 +154,12 @@ class Nsq
         return $this->call(function (Socket $socket) use ($payload) {
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+            }
+            // check push success
+            $reader = new Subscriber($socket);
+            $reader->recv();
+            if (! $reader->isOk()) {
+                throw new SocketSendException($reader->getPayload());
             }
             return true;
         });
