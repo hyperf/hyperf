@@ -14,7 +14,7 @@ Session 元件的配置儲存於 `config/autoload/session.php` 檔案中，如�
 
 ## 配置 Session 中介軟體
 
-在使用 Session 之前，您需要將 `Hyperf\Session\Middleware\SessionMiddleware` 中介軟體配置為 HTTP Server 的全域性中介軟體，這樣元件才能介入到請求流程進行對應的處理，`config/autoload/middleware.php` 配置檔案示例如下：
+在使用 Session 之前，您需要將 `Hyperf\Session\Middleware\SessionMiddleware` 中介軟體配置為 HTTP Server 的全域性中介軟體，這樣元件才能介入到請求流程進行對應的處理，`config/autoload/middlewares.php` 配置檔案示例如下：
 
 ```php
 <?php

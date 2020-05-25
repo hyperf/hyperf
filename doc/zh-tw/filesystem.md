@@ -130,7 +130,7 @@ return [
 
 1. S3 儲存請確認安裝 `hyperf/guzzle` 元件以提供協程化支援。阿里雲、七牛雲端儲存請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的引數支援性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有物件儲存方案均支援 S3 協議，可以使用 S3 介面卡。
-3. 使用Local驅動時，根目錄是配置好的地址，而不是作業系統的根目錄。例如，Local驅動 `root` 設定為 `/var/www`, 則本地磁碟上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
+3. 使用 Local 驅動時，根目錄是配置好的地址，而不是作業系統的根目錄。例如，Local 驅動 `root` 設定為 `/var/www`, 則本地磁碟上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
 4. 以阿里雲 OSS 為例，1 核 1 程序讀操作效能對比：
 
 ```bash
@@ -239,7 +239,7 @@ return [
             'accessKey' => env('QINIU_ACCESS_KEY'),
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
-            'domain' => env('QINBIU_DOMAIN'),
+            'domain' => env('QINIU_DOMAIN'),
         ],
     ],
 ];

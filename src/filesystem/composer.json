@@ -17,7 +17,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\Filesystem\\": "tests"
         }
     },
     "require": {
