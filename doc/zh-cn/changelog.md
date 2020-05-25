@@ -1,5 +1,60 @@
 # 版本更新记录
 
+# v1.1.32 - 2020-05-21
+
+## 修复
+
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) 修复模型多态查询，关联关系为空时，也会查询 SQL 的问题；
+- [#1739](https://github.com/hyperf/hyperf/pull/1739) 修复 `hyperf/filesystem` 组件 OSS HOOK 位运算错误，导致 resource 判断不准确的问题；
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) 修复 `grafana.json` 中错误的`refId` 字段值；
+- [#1748](https://github.com/hyperf/hyperf/pull/1748) 修复 `hyperf/amqp` 组件在使用其他连接池时，对应的 `concurrent.limit` 配置不生效的问题；
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) 修复连接池组件，在连接关闭失败时会导致计数有误的问题；
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) 修复 BASE Server 服务，启动提示没有考虑 UDP 服务的情况；
+- [#1764](https://github.com/hyperf/hyperf/pull/1764) 修复当时间值为 null 时，datatime 验证器执行失败的 BUG；
+- [#1769](https://github.com/hyperf/hyperf/pull/1769) 修复 `hyperf/socketio-server` 组件中，客户端初始化断开连接操作时会报 Notice 的错误的问题；
+
+## 新增
+
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) 新增模型方法 `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`；
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) 新增 `Hyperf\Command\Command::choiceMultiple(): array` 方法，因为 `choice` 方法的返回类型为 `string，所以就算设置了 `$multiple` 参数也无法处理多个选择的情况；
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) 新增模型 自定义类型转换器 功能；
+  - 新增 interface `Castable`, `CastsAttributes` 和 `CastsInboundAttributes`；
+  - 新增方法 `Model\Builder::withCasts`；
+  - 新增方法 `Model::loadMorph`, `Model::loadMorphCount` 和 `Model::syncAttributes`；
+  
+# v1.1.31 - 2020-05-14
+
+## 新增
+
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) 异常处理器集成了 filp/whoops 。
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) 为命令 `gen:model` 可选项 `--refresh-fillable` 添加简写 `-R`。
+
+## 修复
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修复方法 `Context::copy` 传入字段 `keys` 后无法正常使用的BUG。
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修复 `hyperf/socketio-server` 组件内存溢出等BUG。
+
+## 优化
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系统下不再使用 `cli_set_process_title` 方法设置进程名。
+
+# v1.1.30 - 2020-05-07
+
+## 新增
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) 新增 ORM 方法 `morphWith` 和 `whereHasMorph`。
+- [#1651](https://github.com/hyperf/hyperf/pull/1651) 新增 `socket.io-server` 组件。
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) 新增 AMQP RPC 客户端。
+
+## 修复
+
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) 修复 `RpcPoolTransporter` 的连接池配置不生效的 BUG。
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) 修复 `RpcConnection` 连接失败后，相同协程内无法正常重置连接的 BUG。
+
+## 优化 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) 优化掉 `Cache 组件` 一条无意义的删除指令。
+
 # v1.1.28 - 2020-04-30
 
 ## 新增
@@ -26,16 +81,16 @@
 ## 新增
 
 - [#1575](https://github.com/hyperf/hyperf/pull/1575) 为脚本 `gen:model` 生成的模型，自动添加 `relation` `scope` 和 `attributes` 的变量注释。
-- [#1586](https://github.com/hyperf/hyperf/pull/1586) 添加 `symfony/event-dispatcher` 组件小于 `4.3` 时的 `conflict` 配置。用于解决用户使用了 `4.3` 以下版本时，导致 `SymfonyDispatcher` 实现冲突的BUG。
+- [#1586](https://github.com/hyperf/hyperf/pull/1586) 添加 `symfony/event-dispatcher` 组件小于 `4.3` 时的 `conflict` 配置。用于解决用户使用了 `4.3` 以下版本时，导致 `SymfonyDispatcher` 实现冲突的 BUG。
 - [#1597](https://github.com/hyperf/hyperf/pull/1597) 为 `AMQP` 消费者，添加最大消费次数 `maxConsumption`。
 - [#1603](https://github.com/hyperf/hyperf/pull/1603) 为 `WebSocket` 服务添加基于 `fd` 存储的 `Context`。
 
 ## 修复
 
-- [#1553](https://github.com/hyperf/hyperf/pull/1553) 修复 `jsonrpc` 服务，发布了相同名字不同协议到 `consul` 后，客户端无法正常工作的BUG。
-- [#1589](https://github.com/hyperf/hyperf/pull/1589) 修复了文件锁在协程下可能会造成死锁的BUG。
-- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修复了重写后的 `go` 方法，返回值与 `swoole` 原生方法不符的BUG。
-- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修复当路由 `Handler` 是匿名函数时，脚本 `describe:routes` 执行失败的BUG。
+- [#1553](https://github.com/hyperf/hyperf/pull/1553) 修复 `jsonrpc` 服务，发布了相同名字不同协议到 `consul` 后，客户端无法正常工作的 BUG。
+- [#1589](https://github.com/hyperf/hyperf/pull/1589) 修复了文件锁在协程下可能会造成死锁的 BUG。
+- [#1607](https://github.com/hyperf/hyperf/pull/1607) 修复了重写后的 `go` 方法，返回值与 `swoole` 原生方法不符的 BUG。
+- [#1624](https://github.com/hyperf/hyperf/pull/1624) 修复当路由 `Handler` 是匿名函数时，脚本 `describe:routes` 执行失败的 BUG。
 
 # v1.1.26 - 2020-04-16
 
@@ -47,9 +102,9 @@
 
 - [#1563](https://github.com/hyperf/hyperf/pull/1563) 修复服务关停后，定时器的 `onOneServer` 配置不会被重置。
 - [#1565](https://github.com/hyperf/hyperf/pull/1565) 当 `DB` 组件重连 `Mysql` 时，重置事务等级为 0。
-- [#1572](https://github.com/hyperf/hyperf/pull/1572) 修复 `Hyperf\GrpcServer\CoreMiddleware` 中，自定义类的父类找不到时报错的BUG。
-- [#1577](https://github.com/hyperf/hyperf/pull/1577) 修复 `describe:routes` 脚本 `server` 配置不生效的BUG。
-- [#1579](https://github.com/hyperf/hyperf/pull/1579) 修复 `migrate:refresh` 脚本 `step` 参数不为 `int` 时会报错的BUG。
+- [#1572](https://github.com/hyperf/hyperf/pull/1572) 修复 `Hyperf\GrpcServer\CoreMiddleware` 中，自定义类的父类找不到时报错的 BUG。
+- [#1577](https://github.com/hyperf/hyperf/pull/1577) 修复 `describe:routes` 脚本 `server` 配置不生效的 BUG。
+- [#1579](https://github.com/hyperf/hyperf/pull/1579) 修复 `migrate:refresh` 脚本 `step` 参数不为 `int` 时会报错的 BUG。
 
 ## 变更
 

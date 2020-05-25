@@ -66,7 +66,7 @@ return [
 
 ```
 
-框架中使用 `Snowfalke` 十分簡單，只需要從 `DI` 中取出 `IdGeneratorInterface` 物件即可。
+框架中使用 `Snowflake` 十分簡單，只需要從 `DI` 中取出 `IdGeneratorInterface` 物件即可。
 
 ```php
 <?php

@@ -70,7 +70,7 @@ class Context
          */
         $from = SwCoroutine::getContext($fromCoroutineId);
         $current = SwCoroutine::getContext();
-        $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
+        $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
     }
 
     /**
