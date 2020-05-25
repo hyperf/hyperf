@@ -10,12 +10,6 @@ matrix:
       env: SW_VERSION="4.5.1"
     - php: 7.4
       env: SW_VERSION="4.5.1"
-    - php: 7.2
-      env: SW_VERSION="4.4.18"
-    - php: 7.3
-      env: SW_VERSION="4.4.18"
-    - php: 7.4
-      env: SW_VERSION="4.4.18"
 
 services:
   - mysql
@@ -42,10 +36,10 @@ before_script:
 
 script:
   - composer analyse \
-    src/amqp \
-    src/async-queue \
-    src/cache \
-    src/command \
-    src/config
+  src/amqp \
+  src/async-queue \
+  src/cache \
+  src/command \
+  src/config
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
