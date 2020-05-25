@@ -71,6 +71,7 @@ class Connection extends BaseConnection implements ConnectionInterface
         $this->config = $config;
         $this->context = $container->get(Context::class);
         $this->params = new Params(Arr::get($config, 'params', []));
+
         $this->connection = $this->initConnection();
     }
 
@@ -148,6 +149,14 @@ class Connection extends BaseConnection implements ConnectionInterface
         }
 
         $this->lastHeartbeatTime = microtime(true);
+
+        // check aliyun amqp
+        if ($this->enableAliyunAmqp()) {
+            $this->config['host'] = $this->config['aliyun_amqp']['endpoint'];
+            $this->config['user'] = $this->getAliyunAmqpUser();
+            $this->config['password'] = $this->getAliyunAmqpPassword();
+        }
+
         /** @var AbstractConnection $connection */
         $connection = new $class(
             $this->config['host'] ?? 'localhost',
@@ -182,5 +191,41 @@ class Connection extends BaseConnection implements ConnectionInterface
         }
 
         return false;
+    }
+
+    /**
+     * check if enable aliyun amqp.
+     *
+     * @return bool
+     */
+    protected function enableAliyunAmqp()
+    {
+        $enable = $this->config['aliyun_amqp']['enable'] ?? false;
+        return (bool) $enable;
+    }
+
+    /**
+     * get aliyun amqp user.
+     *
+     * @return string
+     */
+    protected function getAliyunAmqpUser()
+    {
+        $tmp = '0:' . $this->config['aliyun_amqp']['instance_id'] . ':' . $this->config['aliyun_amqp']['access_key'];
+        return base64_encode($tmp);
+    }
+
+    /**
+     * get aliyun amqp password.
+     *
+     * @return string
+     */
+    protected function getAliyunAmqpPassword()
+    {
+        $ts = (int) (microtime(true) * 1000);
+        $value = utf8_encode($this->config['aliyun_amqp']['secret_key']);
+        $key = utf8_encode((string) $ts);
+        $sig = strtoupper(hash_hmac('sha1', $value, $key, false));
+        return base64_encode(utf8_encode($sig . ':' . $ts));
     }
 }

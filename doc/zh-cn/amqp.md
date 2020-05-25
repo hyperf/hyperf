@@ -294,3 +294,45 @@ class FooRpcMessage extends RpcMessage
 ```
 
 这样我们进行 RPC 调用时，只需直接传递 `FooRpcMessage` 实例到 `call` 方法即可，无需每次调用时都去定义 Exchange 和 RoutingKey。
+
+## 支持阿里云 AMPQ
+
+新增配置:
+
+```php
+return [
+...
+        'aliyun_amqp' => [
+            'enable' => (bool) env('ALIYUN_AMQP_ENABLE', false), // if set this key, use aliyun amqp
+            'endpoint' => env('ALIYUN_AMQP_ENDPOINT', ''),
+            'instance_id' => env('ALIYUN_AMQP_INSTANCE_ID', ''),
+            'access_key' => env('ALIYUN_AMQP_ACCESS_KEY', ''),
+            'secret_key' => env('ALIYUN_AMQP_SECRET_KEY', ''),
+        ],
+...
+];
+```
+
+- [阿里云 AMQP 高级特性 - 延迟消息](https://help.aliyun.com/document_detail/148083.html)
+
+```php
+<?php
+declare(strict_types=1);
+namespace App\Amqp\Producer;
+use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Amqp\Message\ProducerMessage;
+use PhpAmqpLib\Wire\AMQPTable;
+/**
+ * @Producer(exchange="order", routingKey="order")
+ */
+class ProducerTest extends ProducerMessage
+{
+    public function __construct($data)
+    {
+        // 阿里云 AMQP 高级特性 - 延迟消息
+        // https://help.aliyun.com/document_detail/148083.html
+        $this->properties['application_headers'] = new AMQPTable(["delay"=>"60000"]);
+        $this->payload = $data;
+    }
+}
+```
