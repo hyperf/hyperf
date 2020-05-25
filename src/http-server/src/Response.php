@@ -73,9 +73,9 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
      *
      * @param array|Arrayable|Jsonable $data
      */
-    public function json($data): PsrResponseInterface
+    public function json($data, int $options = JSON_UNESCAPED_UNICODE): PsrResponseInterface
     {
-        $data = $this->toJson($data);
+        $data = $this->toJson($data, $options);
         return $this->getResponse()
             ->withAddedHeader('content-type', 'application/json; charset=utf-8')
             ->withBody(new SwooleStream($data));
@@ -457,10 +457,10 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
      * @param array|Arrayable|Jsonable $data
      * @throws EncodingException when the data encoding error
      */
-    protected function toJson($data): string
+    protected function toJson($data, int $options = JSON_UNESCAPED_UNICODE): string
     {
         try {
-            $result = Json::encode($data);
+            $result = Json::encode($data, $options);
         } catch (\Throwable $exception) {
             throw new EncodingException($exception->getMessage(), $exception->getCode());
         }

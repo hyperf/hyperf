@@ -24,7 +24,7 @@ interface ResponseInterface
      *
      * @param array|Arrayable|Jsonable $data
      */
-    public function json($data): PsrResponseInterface;
+    public function json($data, int $options = JSON_UNESCAPED_UNICODE): PsrResponseInterface;
 
     /**
      * Format data to XML and return data with Content-Type:application/xml header.

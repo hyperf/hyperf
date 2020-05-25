@@ -176,6 +176,14 @@ class ResponseTest extends TestCase
         ]);
 
         $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', $json->getBody()->getContents());
+
+        $jsonDefaultOptions = $response->json(['foo' => '新年快乐', 'bar' => '过年好']);
+
+        $this->assertSame('{"foo":"新年快乐","bar":"过年好"}', $jsonDefaultOptions->getBody()->getContents());
+
+        $jsonCustomOptions = $response->json(['foo' => '新年快乐', 'bar' => '过年好'], 0);
+
+        $this->assertSame('{"foo":"\u65b0\u5e74\u5feb\u4e50","bar":"\u8fc7\u5e74\u597d"}', $jsonCustomOptions->getBody()->getContents());
     }
 
     public function testObjectToJson()
