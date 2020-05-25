@@ -13,7 +13,7 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
 
-final class ScanConfig
+class ScanConfig
 {
     /**
      * @var string
@@ -159,7 +159,7 @@ final class ScanConfig
             $serverDependencies = array_replace($serverDependencies, $definitions ?? []);
         }
 
-        $config = static::allocateConfigValue($configFromProviders['annotations'], $config);
+        $config = static::allocateConfigValue($configFromProviders['annotations'] ?? [], $config);
 
         // Load the config/autoload/annotations.php and merge the config
         if (file_exists($configDir . '/autoload/annotations.php')) {

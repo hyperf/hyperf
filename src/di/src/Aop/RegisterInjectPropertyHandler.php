@@ -13,6 +13,7 @@ namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Definition\PropertyHandlerManager;
+use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 
@@ -29,7 +30,12 @@ class RegisterInjectPropertyHandler
                 try {
                     $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
                     $reflectionProperty->setAccessible(true);
-                    $reflectionProperty->setValue($object, ApplicationContext::getContainer()->get($annotation->value));
+                    $container = ApplicationContext::getContainer();
+                    if ($container->has($annotation->value)) {
+                        $reflectionProperty->setValue($object, $container->get($annotation->value));
+                    } elseif ($annotation->required) {
+                        throw new NotFoundException("No entry or class found for '{$annotation->value}'");
+                    }
                 } catch (\Throwable $throwable) {
                     if ($annotation->required) {
                         throw $throwable;
