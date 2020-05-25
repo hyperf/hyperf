@@ -14,6 +14,7 @@ namespace Hyperf\Di\Aop;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
@@ -44,13 +45,16 @@ class ProxyManager
     protected $filesystem;
 
     public function __construct(
+        array $reflectionClassMap = [],
         array $composerLoaderClassMap = [],
         string $proxyDir = ''
     ) {
-        $this->classMap = $composerLoaderClassMap;
+        $this->classMap = $this->mergeClassMap($reflectionClassMap, $composerLoaderClassMap);
         $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
-        $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap($composerLoaderClassMap));
+        $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap(
+            $this->classMap
+        ));
     }
 
     public function getProxies(): array
@@ -61,6 +65,19 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
+    }
+
+    /**
+     * @param ReflectionClass[] $reflectionClassMap
+     */
+    protected function mergeClassMap(array $reflectionClassMap, array $composerLoaderClassMap): array
+    {
+        $classMap = [];
+        foreach ($reflectionClassMap as $class) {
+            $classMap[$class->getName()] = $class->getFileName();
+        }
+
+        return array_merge($classMap, $composerLoaderClassMap);
     }
 
     protected function generateProxyFiles(array $proxies = []): array

@@ -48,11 +48,11 @@ class ClassLoader
         $scanner = new Scanner($this, $config = ScanConfig::instance($configDir));
         $classLoader->addClassMap($config->getClassMap());
         timepoint();
-        $scanner->scan();
+        $reflectionClassMap = $scanner->scan();
         timepoint('Scan');
         // Get the class map of Composer loader
         $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($composerLoaderClassMap, $proxyFileDir);
+        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
         timepoint('InitProxyManager');
         $this->proxies = $proxyManager->getProxies();
     }
