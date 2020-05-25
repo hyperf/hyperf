@@ -39,6 +39,7 @@ class InjectTest extends TestCase
         AspectCollector::clear();
         AnnotationCollector::clear();
         Mockery::close();
+        BetterReflectionManager::clear();
     }
 
     public function testInject()

@@ -33,6 +33,7 @@ class AopAspectTest extends TestCase
     {
         AspectCollector::clear();
         AnnotationCollector::clear();
+        BetterReflectionManager::clear();
     }
 
     public function testParseMoreThanOneMethods()

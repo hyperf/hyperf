@@ -38,6 +38,7 @@ class AsyncQueueAspectTest extends TestCase
     {
         Mockery::close();
         Context::set(FooProxy::class, null);
+        BetterReflectionManager::clear();
     }
 
     public function testNotAsyncMessage()

@@ -26,6 +26,11 @@ use PHPUnit\Framework\TestCase;
  */
 class AstTest extends TestCase
 {
+    protected function tearDown()
+    {
+        BetterReflectionManager::clear();
+    }
+
     public function testAstProxy()
     {
         BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
@@ -66,7 +71,6 @@ class Foo
 
         $ast = new Ast();
         $code = $ast->proxy(Bar2::class);
-
         $this->assertEquals('<?php
 
 declare (strict_types=1);
@@ -93,7 +97,7 @@ class Bar2 extends Bar
     {
         return parent::$items;
     }
-}"', $code);
+}', $code);
     }
 
     public function testRewriteMethods()
