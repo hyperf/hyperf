@@ -20,6 +20,7 @@ use Hyperf\Dispatcher\HttpRequestHandler;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\HttpServer\Contract\Responsable;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
@@ -105,6 +106,75 @@ class CoreMiddlewareTest extends TestCase
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('This is a string', $response->getBody()->getContents());
+        $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
+    }
+
+    public function testTransferToResponseForResponsable()
+    {
+        $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
+        $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
+        $reflectionMethod->setAccessible(true);
+        $request = Mockery::mock(ServerRequestInterface::class);
+        /** @var ResponseInterface $response */
+
+        // Responsable - array
+        $response = $reflectionMethod->invoke($middleware, new class() implements Responsable
+        {
+            public function toResponse()
+            {
+                return ['foo' => 'bar'];
+            }
+        }, $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame('application/json', $response->getHeaderLine('content-type'));
+
+        // Responsable - Arrayable
+        $response = $reflectionMethod->invoke($middleware, new class() implements Responsable
+        {
+            public function toResponse()
+            {
+                return new class() implements Arrayable
+                {
+                    public function toArray(): array
+                    {
+                        return ['foo' => 'bar'];
+                    }
+                };
+            }
+        }, $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame('application/json', $response->getHeaderLine('content-type'));
+
+        // Responsable - Jsonable
+        $response = $reflectionMethod->invoke($middleware, new class() implements Responsable
+        {
+            public function toResponse()
+            {
+                return new class() implements Jsonable
+                {
+                    public function __toString(): string
+                    {
+                        return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
+                    }
+                };
+            }
+        }, $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame('application/json', $response->getHeaderLine('content-type'));
+
+        // Responsable - String
+        $response = $reflectionMethod->invoke($middleware, new class() implements Responsable
+        {
+            public function toResponse()
+            {
+                return 'foo';
+            }
+        }, $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('foo', $response->getBody()->getContents());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
     }
 
