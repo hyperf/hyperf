@@ -37,6 +37,9 @@ class Scanner
      */
     protected $filesystem;
 
+    /**
+     * @var string
+     */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
@@ -127,6 +130,8 @@ class Scanner
             BetterReflectionManager::reflectClass($class->getName(), $class);
         }
 
+        $this->clearRemovedClasses($collectors, $classes);
+
         foreach ($classes as $reflectionClass) {
             if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastCacheModified) {
                 /** @var MetadataCollector $collector */
@@ -147,8 +152,7 @@ class Scanner
         }
 
         if ($data) {
-            @mkdir(dirname($this->path), 0777, true);
-            file_put_contents($this->path, serialize($data));
+            $this->putCache($this->path, serialize($data));
         }
 
         unset($annotationReader);
@@ -186,6 +190,43 @@ class Scanner
         }
 
         return $this->filesystem->lastModified($this->path);
+    }
+
+    /**
+     * @param ReflectionClass[] $reflections
+     */
+    protected function clearRemovedClasses(array $collectors, array $reflections): void
+    {
+        $path = BASE_PATH . '/runtime/container/classes.cache';
+        $classes = [];
+        foreach ($reflections as $reflection) {
+            $classes[] = $reflection->getName();
+        }
+
+        $data = [];
+        if ($this->filesystem->exists($path)) {
+            $data = unserialize($this->filesystem->get($path));
+        }
+
+        $this->putCache($path, serialize($classes));
+
+        $removed = array_diff($data, $classes);
+
+        foreach ($removed as $class) {
+            /** @var MetadataCollector $collector */
+            foreach ($collectors as $collector) {
+                $collector::clear($class);
+            }
+        }
+    }
+
+    protected function putCache($path, $data)
+    {
+        if (! $this->filesystem->isDirectory($dir = dirname($path))) {
+            $this->filesystem->makeDirectory($dir, 0755, true);
+        }
+
+        $this->filesystem->put($path, $data);
     }
 
     /**
