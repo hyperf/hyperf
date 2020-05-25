@@ -77,14 +77,12 @@ class ConfigFetcherProcess extends AbstractProcess
                 }
             }
         };
-        while (true) {
-            $callbacks = [];
-            $namespaces = $this->config->get('apollo.namespaces', []);
-            foreach ($namespaces as $namespace) {
-                $callbacks[$namespace] = $ipcCallback;
-            }
-            $this->client->pull($namespaces, $callbacks);
-            sleep($this->config->get('apollo.interval', 5));
+        $callbacks = [];
+        $namespaces = $this->config->get('apollo.namespaces', []);
+        foreach ($namespaces as $namespace) {
+            $callbacks[$namespace] = $ipcCallback;
         }
+
+        $this->client->fetch($namespaces, $callbacks);
     }
 }
