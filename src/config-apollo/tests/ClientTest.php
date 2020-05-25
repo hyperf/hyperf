@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\ConfigApollo;
 
 use Hyperf\Config\Config;
-use Hyperf\ConfigApollo\Client;
+use Hyperf\ConfigApollo\AbstractClient;
 use Hyperf\ConfigApollo\Option;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory;
@@ -49,7 +49,7 @@ class ClientTest extends TestCase
                 }
             },
         ];
-        $client = new Client($option, $callbacks, function (array $options = []) use ($container) {
+        $client = new AbstractClient($option, $callbacks, function (array $options = []) use ($container) {
             return (new ClientFactory($container))->create($options);
         });
         $client->pull([

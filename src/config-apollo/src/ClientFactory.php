@@ -39,6 +39,6 @@ class ClientFactory
         $httpClientFactory = function (array $options = []) use ($container) {
             return $container->get(GuzzleClientFactory::class)->create($options);
         };
-        return make(Client::class, compact('option', 'callbacks', 'httpClientFactory', 'config'));
+        return make($config->get('apollo.fetch_model',IntervalFetchClient::class), compact('option', 'callbacks', 'httpClientFactory', 'config'));
     }
 }
