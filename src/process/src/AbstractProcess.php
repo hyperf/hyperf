@@ -20,7 +20,7 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
-use Hyperf\Server\CoServer;
+use Hyperf\Server\CoroutineServer;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -102,7 +102,7 @@ abstract class AbstractProcess implements ProcessInterface
 
     public function bind($server): void
     {
-        if (CoServer::isCoServer($server)) {
+        if (CoroutineServer::isCoroutineServer($server)) {
             $this->bindCoServer($server);
             return;
         }
@@ -149,7 +149,7 @@ abstract class AbstractProcess implements ProcessInterface
         }
     }
 
-    protected function bindCoServer($server): void
+    protected function bindCoroutineServer($server): void
     {
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {

@@ -18,7 +18,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Server\Event\CoServerStart;
+use Hyperf\Server\Event\CoroutineServerStart;
 use Psr\Container\ContainerInterface;
 
 class BootProcessListener implements ListenerInterface
@@ -46,7 +46,7 @@ class BootProcessListener implements ListenerInterface
     {
         return [
             BeforeMainServerStart::class,
-            CoServerStart::class,
+            CoroutineServerStart::class,
         ];
     }
 

@@ -14,7 +14,7 @@ namespace Hyperf\Server\Event;
 use Hyperf\Server\ServerConfig;
 use Swoole\Coroutine\Server;
 
-class CoServerStart
+class CoroutineServerStart
 {
     /**
      * @var object|Server

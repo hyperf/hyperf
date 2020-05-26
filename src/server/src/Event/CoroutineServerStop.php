@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server\Event;
 
-class CoServerStop
+class CoroutineServerStop
 {
 }

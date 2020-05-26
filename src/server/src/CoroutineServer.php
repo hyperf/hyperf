@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
-use Hyperf\Server\Event\CoServerStart;
-use Hyperf\Server\Event\CoServerStop;
+use Hyperf\Server\Event\CoroutineServerStart;
+use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -22,7 +22,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 
-class CoServer implements ServerInterface
+class CoroutineServer implements ServerInterface
 {
     /**
      * @var ContainerInterface
@@ -72,22 +72,25 @@ class CoServer implements ServerInterface
         run(function () {
             $this->initServer($this->config);
 
-            $this->eventDispatcher->dispatch(new CoServerStart($this->server, $this->config->toArray()));
+            $this->eventDispatcher->dispatch(new CoroutineServerStart($this->server, $this->config->toArray()));
 
             CoordinatorManager::until(Constants::WORKER_START)->resume();
 
-            $this->server->start();
+            $this->getServer()->start();
 
-            $this->eventDispatcher->dispatch(new CoServerStop($this->server));
+            $this->eventDispatcher->dispatch(new CoroutineServerStop($this->server));
         });
     }
 
+    /**
+     * @return \Swoole\Coroutine\Server|\Swoole\Coroutine\Http\Server
+     */
     public function getServer()
     {
         return $this->server;
     }
 
-    protected function initServer(ServerConfig $config)
+    protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
         /** @var Port $server */
@@ -111,12 +114,7 @@ class CoServer implements ServerInterface
             $this->server->handle('/', [$handler, $method]);
         }
 
-        ServerManager::add($name, [$type, value(function () use ($host, $port) {
-            $obj = new \stdClass();
-            $obj->host = $host;
-            $obj->port = $port;
-            return $obj;
-        })]);
+        ServerManager::add($name, [$type, $this->server]);
     }
 
     protected function makeServer($type, $host, $port)
@@ -132,7 +130,7 @@ class CoServer implements ServerInterface
         throw new RuntimeException('Server type is invalid.');
     }
 
-    public static function isCoServer($server): bool
+    public static function isCoroutineServer($server): bool
     {
         return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
     }
