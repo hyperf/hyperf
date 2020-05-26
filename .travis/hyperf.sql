@@ -35,7 +35,8 @@ VALUES
 	(2,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',2,'user','2018-01-01 00:00:00','2018-01-01 00:00:00'),
 	(3,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',1,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
 	(4,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',2,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
-	(5,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',3,'book','2018-01-01 00:00:00','2018-01-01 00:00:00');
+	(5,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',3,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(6,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',0,'','2018-01-01 00:00:00','2018-01-01 00:00:00');
 
 DROP TABLE IF EXISTS `role`;
 

@@ -18,6 +18,8 @@ class InitProcessTitleListenerStub extends InitProcessTitleListener
 {
     public function setTitle(string $title)
     {
-        Context::set('test.server.process.title', $title);
+        if ($this->isSupportedOS()) {
+            Context::set('test.server.process.title', $title);
+        }
     }
 }

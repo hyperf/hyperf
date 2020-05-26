@@ -9,7 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Config\Listener\RegisterPropertyHandlerListener;
+use Hyperf\Config\ProviderConfig;
+
 ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
 require_once BASE_PATH . '/vendor/autoload.php';
+
+ProviderConfig::load();
+
+(new RegisterPropertyHandlerListener())->process(new \stdClass());

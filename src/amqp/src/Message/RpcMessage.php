@@ -30,9 +30,9 @@ abstract class RpcMessage extends Message implements RpcMessageInterface
     public function getQueueBuilder(): QueueBuilder
     {
         return (new QueueBuilder())->setQueue($this->queue)
+            ->setExclusive(true)
             ->setPassive(false)
             ->setDurable(false)
-            ->setExclusive(true)
             ->setAutoDelete(false);
     }
 

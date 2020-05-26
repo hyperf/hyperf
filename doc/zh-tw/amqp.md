@@ -209,3 +209,88 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 訊息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使訊息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+## RPC 遠端過程呼叫
+
+除了典型的訊息佇列場景，我們還可以通過 AMQP 來實現 RPC 遠端過程呼叫，本元件也為這個實現提供了對應的支援。
+
+### 建立消費者
+
+RPC 使用的消費者，與典型訊息佇列場景的消費者實現基本無差，唯一的區別是需要通過呼叫 `reply` 方法返回資料給生產者。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumer;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+/**
+ * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
+ */
+class ReplyConsumer extends ConsumerMessage
+{
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        $data['message'] .= 'Reply:' . $data['message'];
+
+        $this->reply($data, $message);
+
+        return Result::ACK;
+    }
+}
+```
+
+### 發起 RPC 呼叫
+
+作為生成者發起一次 RPC 遠端過程呼叫也非常的簡單，只需通過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 物件並呼叫其中的 `call` 方法即可，返回的結果是消費者 reply 的資料，如下所示：
+
+```php
+<?php
+use Hyperf\Amqp\Message\DynamicRpcMessage;
+use Hyperf\Amqp\RpcClient;
+use Hyperf\Utils\ApplicationContext;
+
+$rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
+// 在 DynamicRpcMessage 上設定與 Consumer 一致的 Exchange 和 RoutingKey
+$result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
+
+// $result:
+// array(1) {
+//     ["message"]=>
+//     string(18) "Reply:Hello Hyperf"
+// }
+```
+
+### 抽象 RpcMessage
+
+上面的 RPC 呼叫過程是直接通過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞訊息資料，在生產專案的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
+
+我們可以建立對應的 RpcMessage 類如 `App\Amqp\FooRpcMessage` 如下：
+
+```php
+<?php
+use Hyperf\Amqp\Message\RpcMessage;
+
+class FooRpcMessage extends RpcMessage
+{
+
+    protected $exchange = 'hyperf';
+
+    protected $routingKey = 'hyperf';
+    
+    public function __construct($data)
+    {
+        // 要傳遞資料
+        $this->payload = $data;
+    }
+
+}
+```
+
+這樣我們進行 RPC 呼叫時，只需直接傳遞 `FooRpcMessage` 例項到 `call` 方法即可，無需每次呼叫時都去定義 Exchange 和 RoutingKey。

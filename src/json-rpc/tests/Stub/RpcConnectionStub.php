@@ -39,6 +39,13 @@ class RpcConnectionStub extends RpcConnection
 
     public function reconnect(): bool
     {
+        $this->lastUseTime = microtime(true);
+        return true;
+    }
+
+    public function close(): bool
+    {
+        $this->lastUseTime = 0.0;
         return true;
     }
 }

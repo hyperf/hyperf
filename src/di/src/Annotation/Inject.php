@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\TypesFinderManager;
 use PhpDocReader\AnnotationException;
-use PhpDocReader\PhpDocReader;
+use phpDocumentor\Reflection\Types\Object_;
 
 /**
  * @Annotation
@@ -36,25 +37,29 @@ class Inject extends AbstractAnnotation
      */
     public $lazy = false;
 
-    /**
-     * @var PhpDocReader
-     */
-    private $docReader;
-
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->docReader = make(PhpDocReader::class);
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $this->value = $this->docReader->getPropertyClass(ReflectionManager::reflectClass($className)->getProperty($target));
-            AnnotationCollector::collectProperty($className, $target, static::class, $this);
+            $reflectionClass = BetterReflectionManager::reflectClass($className);
+            $properties = $reflectionClass->getImmediateProperties();
+            $reflectionProperty = $properties[$target] ?? null;
+            if (! $reflectionProperty) {
+                $this->value = '';
+                return;
+            }
+            $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
+            if ($reflectionTypes[0] instanceof Object_) {
+                $this->value = ltrim((string) $reflectionTypes[0], '\\');
+            }
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
+            AnnotationCollector::collectProperty($className, $target, static::class, $this);
         } catch (AnnotationException $e) {
             if ($this->required) {
                 throw $e;
