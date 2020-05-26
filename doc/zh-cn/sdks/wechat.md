@@ -49,7 +49,6 @@ AbstractProvider::setGuzzleOptions([
 <?php
 
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-
 ```
 
 ## 如何使用 EasyWeChat
@@ -78,6 +77,20 @@ $xml = $this->request->getBody()->getContents();
 $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 
 // Do something...
+
+```
+
+3. 服务器配置
+
+如果需要使用微信公众平台的服务器配置功能，可以使用以下代码。
+
+> 以下 `$response` 为 `Symfony\Component\HttpFoundation\Response` 并非 `Hyperf\HttpMessage\Server\Response` 
+> 所以只需将 `Body` 内容直接返回，即可通过微信验证。
+
+```php
+$response = $app->server->serve();
+
+return $response->getBody()->getContents();
 ```
 
 ## 如何替换缓存
@@ -92,5 +105,4 @@ use EasyWeChat\Factory;
 
 $app = Factory::miniProgram([]);
 $app['cache'] = ApplicationContext::getContainer()->get(CacheInterface::class);
-
 ```

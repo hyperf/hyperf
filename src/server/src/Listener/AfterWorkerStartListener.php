@@ -57,19 +57,16 @@ class AfterWorkerStartListener implements ListenerInterface
                         case Server::SERVER_BASE:
                             if (($sockType === SWOOLE_SOCK_TCP) || ($sockType === SWOOLE_SOCK_TCP6)) {
                                 return 'TCP';
-                            } else if (($sockType === SWOOLE_SOCK_UDP) || ($sockType === SWOOLE_SOCK_UDP6)) {
-                                return 'UDP';
-                            } else {
-                                return 'UNKNOWN';
                             }
-                            break;
+                            if (($sockType === SWOOLE_SOCK_UDP) || ($sockType === SWOOLE_SOCK_UDP6)) {
+                                return 'UDP';
+                            }
+                            return 'UNKNOWN';
                         case Server::SERVER_WEBSOCKET:
                             return 'WebSocket';
-                            break;
                         case Server::SERVER_HTTP:
                         default:
                             return 'HTTP';
-                            break;
                     }
                 });
                 $this->logger->info(sprintf('%s Server listening at %s', $type, $listen));

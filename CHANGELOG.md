@@ -1,4 +1,6 @@
-# v1.1.32 - TBD
+# v1.1.33 - TBD
+
+# v1.1.32 - 2020-05-21
 
 ## Fixed
 
@@ -6,7 +8,19 @@
 - [#1739](https://github.com/hyperf/hyperf/pull/1739) Fixed the wrong bitwise operator in oss hook.
 - [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
 - [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) Fixed the incorrent number of current connections when close failed.
 - [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
+- [#1764](https://github.com/hyperf/hyperf/pull/1764) Fixed datetime validate failed when the value is null.
+- [#1769](https://github.com/hyperf/hyperf/pull/1769) Fixed a notice when client initiate disconnects in `socketio-server`.
+
+## Added
+
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) Added `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`.
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) Added `Hyperf\Command\Command::choiceMultiple(): array` method, because the return type of `choice` method is `string`, so the methed cannot handle the multiple selections, even though setted `$multiple` argument.
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
+  - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
+  - Added `Model\Builder::withCasts`.
+  - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
 
 # v1.1.31 - 2020-05-14
 
