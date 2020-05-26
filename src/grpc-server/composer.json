@@ -18,11 +18,11 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/http-server": "~1.1.0",
-        "hyperf/http-message": "~1.1.0",
-        "hyperf/grpc": "~1.1.0"
+        "hyperf/di": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
+        "hyperf/http-server": "~2.0.0",
+        "hyperf/http-message": "~2.0.0",
+        "hyperf/grpc": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
