@@ -39,22 +39,22 @@ class RedisAdapter implements AdapterInterface
     /**
      * @var NamespaceInterface
      */
-    private $nsp;
+    protected $nsp;
 
     /**
      * @var \Hyperf\Redis\Redis|Redis|RedisProxy
      */
-    private $redis;
+    protected $redis;
 
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
