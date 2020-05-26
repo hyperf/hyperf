@@ -320,6 +320,7 @@
                 "Hyperf\\GraphQL\\ConfigProvider",
                 "Hyperf\\GrpcClient\\ConfigProvider",
                 "Hyperf\\GrpcServer\\ConfigProvider",
+                "Hyperf\\Guzzle\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\JsonRpc\\ConfigProvider",
                 "Hyperf\\LoadBalancer\\ConfigProvider",
