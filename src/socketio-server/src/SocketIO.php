@@ -108,22 +108,22 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Encoder
      */
-    private $encoder;
+    protected $encoder;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     /**
      * @var int[]
      */
-    private $clientCallbackTimers;
+    protected $clientCallbackTimers;
 
     public function __construct(StdoutLoggerInterface $stdoutLogger, Sender $sender, Decoder $decoder, Encoder $encoder, SidProviderInterface $sidProvider)
     {
