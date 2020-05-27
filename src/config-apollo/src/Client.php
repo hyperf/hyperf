@@ -4,7 +4,7 @@
 namespace Hyperf\ConfigApollo;
 
 
-class IntervalFetchClient extends AbstractClient
+class Client extends AbstractClient
 {
 
     public function fetch(array $namespaces, array $callbacks = []): void
