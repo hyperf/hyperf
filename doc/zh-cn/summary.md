@@ -52,6 +52,7 @@
   * [模型缓存](zh-cn/db/model-cache.md)
   * [数据库迁移](zh-cn/db/migration.md)
   * [极简 DB 组件](zh-cn/db/db.md)
+  * [修改器](zh-cn/db/mutators.md)
   
 * 微服务
 
@@ -83,6 +84,7 @@
   * [ETCD 协程客户端](zh-cn/etcd.md)
   * [WebSocket 服务](zh-cn/websocket-server.md)
   * [WebSocket 协程客户端](zh-cn/websocket-client.md)
+  * [Socket.io 服务](zh-cn/socketio-server.md)
   * [自定义进程](zh-cn/process.md)
   * [开发者工具](zh-cn/devtool.md)
   * [辅助类](zh-cn/utils.md)

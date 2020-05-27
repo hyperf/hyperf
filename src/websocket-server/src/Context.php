@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context as CoContext;
 
 class Context
@@ -60,7 +61,7 @@ class Context
     {
         $fd = CoContext::get(Context::FD, 0);
         $from = self::$container[$fromFd];
-        self::$container[$fd] = ($keys ? array_fill_keys($keys, $from) : $from);
+        self::$container[$fd] = ($keys ? Arr::only($from, $keys) : $from);
     }
 
     public static function override(string $id, \Closure $closure)
