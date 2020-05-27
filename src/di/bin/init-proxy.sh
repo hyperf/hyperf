@@ -2,7 +2,9 @@
 
 basepath=$(cd `dirname $0`; pwd)
 
-echo ../../
+cd $basepath
+
+cd ../../../..
 
 if [ ! -f "composer.lock" ]; then
   echo "Not found composer.lock, please composer install first."
