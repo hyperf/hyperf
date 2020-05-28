@@ -14,7 +14,6 @@ namespace Hyperf\Database\Connectors;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\MySqlConnection;
-use Hyperf\Database\SQLiteConnection;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 use PDOException;
@@ -73,8 +72,6 @@ class ConnectionFactory
         switch ($config['driver']) {
             case 'mysql':
                 return new MySqlConnector();
-            case 'sqlite':
-                return new SQLiteConnector();
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
@@ -261,8 +258,6 @@ class ConnectionFactory
         switch ($driver) {
             case 'mysql':
                 return new MySqlConnection($connection, $database, $prefix, $config);
-            case 'sqlite':
-                return new SQLiteConnection($connection, $database, $prefix, $config);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$driver}]");

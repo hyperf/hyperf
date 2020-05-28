@@ -411,13 +411,7 @@ class Blueprint
      */
     public function foreign($columns, $name = null)
     {
-        $command = new ForeignKeyDefinition(
-            $this->indexCommand('foreign', $columns, $name)->getAttributes()
-        );
-
-        $this->commands[count($this->commands) - 1] = $command;
-
-        return $command;
+        return $this->indexCommand('foreign', $columns, $name);
     }
 
     /**
