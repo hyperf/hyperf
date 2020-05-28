@@ -35,7 +35,7 @@ before_script:
   - composer config -g process-timeout 900 && composer update
 
 script:
-  -
+  - |
     composer analyse \
     src/amqp \
     src/async-queue \
@@ -48,6 +48,7 @@ script:
     src/constants \
     src/consul \
     src/db \
-    src/db-connection
+    src/db-connection \
+    src/devtool
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
