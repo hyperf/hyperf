@@ -91,6 +91,6 @@ class PoolHandler extends CoroutineHandler
 
     protected function getPoolName(UriInterface $uri)
     {
-        return sprintf('guzzle.handler.%s.%d.%s', $uri->getHost(), $uri->getPort(), $uri->getScheme());
+        return sprintf('guzzle.handler.%s.%s.%d.%s', $uri->getScheme(), $uri->getHost(), $uri->getPort(), $uri->getPath());
     }
 }
