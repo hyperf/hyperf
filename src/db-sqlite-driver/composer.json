@@ -1,0 +1,55 @@
+{
+  "name": "hyperf/db-sqlite-driver",
+  "description": "hyperf sqlite driver",
+  "type": "library",
+  "keywords": [
+    "php",
+    "hyperf",
+    "sqlite"
+  ],
+  "authors": [
+    {
+      "name": "nfangxu",
+      "email": "nfangxu@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "ext-swoole": ">=4.4",
+    "hyperf/framework": "~1.1.0",
+    "hyperf/database": "~1.1.0",
+    "hyperf/utils": "~1.1.0"
+  },
+  "require-dev": {
+    "malukenho/docheader": "^0.1.6",
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^7.0.0",
+    "friendsofphp/php-cs-fixer": "^2.9"
+  },
+  "suggest": {
+    "doctrine/dbal": "Required to rename columns (^2.6)."
+  },
+  "autoload": {
+    "psr-4": {
+      "Hyperf\\DbSQLiteDriver\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HyperfTest\\DbSQLiteDriver\\": "tests/"
+    }
+  },
+  "extra": {
+    "hyperf": {
+      "config": "Hyperf\\DbSQLiteDriver\\ConfigProvider"
+    }
+  },
+  "scripts": {
+    "cs-fix": "php-cs-fixer fix $1",
+    "test": "phpunit --colors=always"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "license": "MIT"
+}
