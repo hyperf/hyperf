@@ -33,7 +33,7 @@ abstract class Client
     private $clientFactory;
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 

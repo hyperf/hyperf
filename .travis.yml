@@ -43,6 +43,7 @@ script:
   src/config-aliyun-acm \
   src/config-apollo \
   src/config-etcd \
-  src/constants
+  src/constants \
+  src/consul
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
