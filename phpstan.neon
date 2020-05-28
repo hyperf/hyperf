@@ -10,6 +10,7 @@ parameters:
   excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
+    - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
