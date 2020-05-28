@@ -66,11 +66,11 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int $times
+     * @param int|float $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */
-    function retry($times, callable $callback, $sleep = 0)
+    function retry($times, callable $callback, int $sleep = 0)
     {
         $backoff = new Backoff($sleep);
         beginning:

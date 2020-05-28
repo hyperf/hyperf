@@ -39,7 +39,7 @@ class ConfigFetcherProcess extends AbstractProcess
     private $config;
 
     /**
-     * @var string
+     * @var array
      */
     private $cacheConfig;
 
