@@ -1,5 +1,9 @@
 # v1.1.33 - TBD
 
+## Added
+
+- [#1829](https://github.com/hyperf/hyperf/pull/1829) Added callback support to logger processor
+
 ## Optimized
 
 - [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io server now only dispatch connect/disconnect events in onOpen and onClose. Also upgrade some class members from private to protected, so users can hack them.
