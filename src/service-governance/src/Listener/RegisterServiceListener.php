@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Consul\Exception\ServerException;
@@ -137,7 +136,7 @@ class RegisterServiceListener implements ListenerInterface
                 'Interval' => '1s',
             ];
         }
-        if ($service['protocol'] === 'jsonrpc') {
+        if (in_array($service['protocol'], ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => '90m',
                 'TCP' => "{$address}:{$port}",

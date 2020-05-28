@@ -218,10 +218,11 @@ return [
     ],
 ];
 ```
+> 本中間件中統計維度包含 `request_status`、`request_path`、`request_method`。如果您的 `request_path` 過多，則建議重寫本中間件，去掉 `request_path` 維度，否則過高的基數會導致內存溢出。
 
 ### 自定義使用
 
-通過 HTTP 中間件遙測僅僅是本組件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務數據。比如：創建的訂單數量、廣吿的點擊數量等。
+通過 HTTP 中間件遙測僅僅是本組件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務數據。比如：創建的訂單數量、廣告的點擊數量等。
 
 ```php
 <?php
@@ -400,10 +401,10 @@ Router::get('/metrics', function(){
 });
 ```
 
-## 在Grafana創建控制枱
+## 在 Grafana 創建控制枱
 
 > 本節只適用於 Prometheus 驅動
 
-如果您啟用了默認指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制枱。下載控制枱 [json 文件](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，導入 Grafana 中即可使用。
+如果您啟用了默認指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制枱。下載控制枱 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，導入 Grafana 中即可使用。
 
 ![grafana](./imgs/grafana.png)

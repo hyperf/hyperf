@@ -218,6 +218,7 @@ return [
     ],
 ];
 ```
+> 本中介軟體中統計維度包含 `request_status`、`request_path`、`request_method`。如果您的 `request_path` 過多，則建議重寫本中介軟體，去掉 `request_path` 維度，否則過高的基數會導致記憶體溢位。
 
 ### 自定義使用
 
@@ -400,10 +401,10 @@ Router::get('/metrics', function(){
 });
 ```
 
-## 在Grafana建立控制檯
+## 在 Grafana 建立控制檯
 
 > 本節只適用於 Prometheus 驅動
 
-如果您啟用了預設指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制檯。下載控制檯 [json 檔案](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，匯入 Grafana 中即可使用。
+如果您啟用了預設指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制檯。下載控制檯 [json 檔案](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，匯入 Grafana 中即可使用。
 
 ![grafana](./imgs/grafana.png)

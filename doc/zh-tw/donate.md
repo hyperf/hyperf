@@ -10,8 +10,8 @@ Hyperf 是採用 MIT 許可的開源專案，使用完全免費。但是隨著�
 
 我們通過以下方式接受贊助：
 
-![alipay](./imgs/alipay.jpg ':size=375')
-![wechat](./imgs/wechatpay.jpg ':size=375')
+![alipay](./imgs/alipay.jpg ':size=375x562')
+![wechat](./imgs/wechatpay.jpg ':size=375x562')
 
 ### 週期性贊助
 

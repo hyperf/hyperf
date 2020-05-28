@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -112,8 +111,11 @@ class JsonRpcPoolTransporter implements TransporterInterface
     public function getConnection(): RpcConnection
     {
         $class = spl_object_hash($this) . '.Connection';
-        if (Context::has($class)) {
-            return Context::get($class);
+        /** @var RpcConnection $connection */
+        if (Context::has($class) && $connection = Context::get($class)) {
+            if ($connection->check()) {
+                return $connection;
+            }
         }
 
         $connection = $this->getPool()->get();
@@ -131,6 +133,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $config = [
             'connect_timeout' => $this->config['connect_timeout'],
             'settings' => $this->config['settings'],
+            'pool' => $this->config['pool'],
             'node' => function () {
                 return $this->getNode();
             },

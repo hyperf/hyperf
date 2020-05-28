@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
@@ -53,7 +52,7 @@ class RefreshCommand extends Command
         // If the "step" option is specified it means we only want to rollback a small
         // number of migrations before migrating again. For example, the user might
         // only rollback and remigrate the latest four migrations instead of all.
-        $step = $this->input->getOption('step') ?: 0;
+        $step = (int) $this->input->getOption('step') ?: 0;
 
         if ($step > 0) {
             $this->runRollback($connection, $path, $step);

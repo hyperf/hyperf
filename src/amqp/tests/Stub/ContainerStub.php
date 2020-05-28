@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\Consumer;
 use Hyperf\Amqp\Pool\PoolFactory;
+use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
@@ -45,6 +46,22 @@ class ContainerStub
         });
         $container->shouldReceive('get')->with(Consumer::class)->andReturnUsing(function () use ($container) {
             return new Consumer($container, $container->get(PoolFactory::class), $container->get(StdoutLoggerInterface::class));
+        });
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
+            return new Config([
+                'amqp' => [
+                    'default' => [
+                        'concurrent' => [
+                            'limit' => 10,
+                        ],
+                    ],
+                    'co' => [
+                        'concurrent' => [
+                            'limit' => 5,
+                        ],
+                    ],
+                ],
+            ]);
         });
 
         return $container;

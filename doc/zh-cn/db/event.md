@@ -1,12 +1,23 @@
 # 事件
-模型事件实现于 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口。
 
-## 自定义监听器
+模型事件实现 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口，默认由 [hyperf/event](https://github.com/hyperf/event) 组件提供功能支持。
 
-得益于 [hyperf/event](https://github.com/hyperf/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
-例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
-接下来我们就实现一个记录 SQL 的监听器，来说一下怎么使用。
-首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：
+## 运行事件
+
+在 ORM 的运行期间，会对应触发以下事件，您可以进行对这些事件进行监听以满足您的需求。
+
+| 事件  | 描述 |
+| :--------: | :----: |
+| Hyperf\Database\Events\QueryExecuted| Query 语句执行后 |
+| Hyperf\Database\Events\StatementPrepared| SQL 语句 prepared 后 |
+| Hyperf\Database\Events\TransactionBeginning| 事务开启后 |
+| Hyperf\Database\Events\TransactionCommitted| 事务提交后 |
+| Hyperf\Database\Events\TransactionRolledBack| 事务回滚后 |
+
+### SQL 执行监听器
+
+根据上述的 ORM 运行事件，接下来我们来实现一个记录 SQL 的监听器，达到在每次执行 SQL 时记录下来并输出到日志上。
+首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会在应用启动时自动把该监听器注册到事件调度器中，并在事件触发时执行监听逻辑，示例代码如下：
 
 ```php
 <?php
@@ -34,9 +45,11 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     private $logger;
 
-    public function __construct(LoggerFactory $loggerFactory)
+    public function __construct(ContainerInterface $container)
     {
-        $this->logger = $loggerFactory->get('sql');
+        // 输出到对应名为 sql 的日志 name，如不存在则需自行添加配置
+        // 这里的 sql 日志 name 不是必须的，只是表达可以将 SQL 执行日志与普通日志区分开
+        $this->logger = $container->get(LoggerFactory::class)->get('sql');
     }
 
     public function listen(): array
@@ -68,7 +81,7 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ## 模型事件
 
-模型事件与 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 监听模型事件。`Hyperf` 直接使用 `钩子函数` 来处理对应的事件。如果你还是喜欢 `Observer` 的方式，可以通过 `事件监听`，自己实现。当然，你也可以在 [issue#2](https://github.com/hyperf/hyperf/issues/2) 下面告诉我们。
+模型事件与 `Eloquent ORM` 不太一致，`Eloquent ORM` 使用 `Observer` 监听模型事件。`Hyperf` 提供 `钩子函数` 和 `事件监听` 两种形式来处理对应的事件。
 
 ### 钩子函数
 
@@ -135,7 +148,7 @@ class User extends Model
 
 ### 事件监听
 
-当你需要监听所有的模型事件时，可以很方便的自定义对应的 `Listener`，比如下方模型缓存的监听器，当模型修改和删除后，会删除对应缓存。
+当您需要监听所有的模型事件时，可以很方便的自定义对应的 `Listener`，比如下方模型缓存的监听器，当模型修改和删除后，会删除对应缓存。
 
 ```php
 <?php

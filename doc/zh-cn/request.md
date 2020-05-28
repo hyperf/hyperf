@@ -76,7 +76,7 @@ class IndexController
 }
 ```
 
-除了可以通过依赖注入获取路由参数，还可以通过`route`方法获取，如下所示：
+除了可以通过依赖注入获取路由参数，还可以通过 `route` 方法获取，如下所示：
 
 ```php
 declare(strict_types=1);

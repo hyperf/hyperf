@@ -9,13 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\PoolOptionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Throwable;
@@ -84,9 +84,16 @@ abstract class Pool implements PoolInterface
         if ($num > 0) {
             /** @var ConnectionInterface $conn */
             while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop($this->option->getWaitTimeout())) {
-                $conn->close();
-                --$this->currentConnections;
-                --$num;
+                try {
+                    $conn->close();
+                } catch (\Throwable $exception) {
+                    if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                        $logger->error((string) $exception);
+                    }
+                } finally {
+                    --$this->currentConnections;
+                    --$num;
+                }
 
                 if ($num <= 0) {
                     // Ignore connections queued during flushing.

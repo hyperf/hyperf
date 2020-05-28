@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\HandlerStack;
@@ -56,13 +55,7 @@ class HandlerStackFactory
         $middlewares = array_merge($this->middlewares, $middlewares);
 
         if (Coroutine::getCid() > 0) {
-            if ($this->usePoolHandler) {
-                $handler = make(PoolHandler::class, [
-                    'option' => $option,
-                ]);
-            } else {
-                $handler = new CoroutineHandler();
-            }
+            $handler = $this->getHandler($option);
         }
 
         $stack = HandlerStack::create($handler);
@@ -79,5 +72,20 @@ class HandlerStackFactory
         }
 
         return $stack;
+    }
+
+    protected function getHandler(array $option)
+    {
+        if ($this->usePoolHandler) {
+            return make(PoolHandler::class, [
+                'option' => $option,
+            ]);
+        }
+
+        if (class_exists(ApplicationContext::class)) {
+            return make(CoroutineHandler::class);
+        }
+
+        return new CoroutineHandler();
     }
 }

@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ModelCache;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
@@ -37,10 +37,17 @@ class Manager
      */
     protected $logger;
 
+    /**
+     * @var TableCollector
+     */
+    protected $collector;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->collector = $container->get(TableCollector::class);
+
         $config = $container->get(ConfigInterface::class);
         if (! $config->has('databases')) {
             throw new \InvalidArgumentException('config databases is not exist!');
@@ -73,7 +80,9 @@ class Manager
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
             if ($data) {
-                return $instance->newFromBuilder($data);
+                return $instance->newFromBuilder(
+                    $this->getAttributes($handler->getConfig(), $instance, $data)
+                );
             }
 
             // Fetch it from database, because it not exist in cache handler.
@@ -143,7 +152,7 @@ class Manager
             }
             $map = [];
             foreach ($items as $item) {
-                $map[$item[$primaryKey]] = $item;
+                $map[$item[$primaryKey]] = $this->getAttributes($handler->getConfig(), $instance, $item);
             }
 
             $result = [];
@@ -224,15 +233,7 @@ class Manager
 
     protected function formatModel(Model $model): array
     {
-        $casts = $model->getCasts();
-        $result = $model->toArray();
-        foreach ($result as $key => $value) {
-            if (isset($casts[$key]) && $casts[$key] === 'json' && ! is_null($value)) {
-                $result[$key] = json_encode($value);
-            }
-        }
-
-        return $result;
+        return $model->getAttributes();
     }
 
     protected function formatModels($models): array
@@ -243,5 +244,17 @@ class Manager
         }
 
         return $result;
+    }
+
+    protected function getAttributes(Config $config, Model $model, array $data)
+    {
+        if (! $config->isUseDefaultValue()) {
+            return $data;
+        }
+        $defaultData = $this->collector->getDefaultValue(
+            $model->getConnectionName(),
+            $model->getTable()
+        );
+        return array_replace($defaultData, $data);
     }
 }

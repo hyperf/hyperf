@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo\Process;
 
 use Hyperf\ConfigApollo\ClientInterface;
@@ -54,7 +53,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('apollo.enable', false);
+        return $this->config->get('apollo.enable', false)
+            && $this->config->get('apollo.use_standalone_process', true);
     }
 
     public function handle(): void

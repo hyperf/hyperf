@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\InfluxDB;
 
 use Hyperf\Contract\ConfigInterface;
@@ -21,6 +20,8 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Str;
 use InfluxDB\Client;
 use InfluxDB\Database;
@@ -29,7 +30,6 @@ use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
-use Swoole\Coroutine;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -116,7 +116,10 @@ class MetricFactory implements MetricFactoryInterface
             $database->create(new RetentionPolicy($dbname, '1d', 1, true));
         }
         while (true) {
-            Coroutine::sleep($interval);
+            $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
+            if ($workerExited) {
+                break;
+            }
             $points = [];
             $metrics = $this->registry->getMetricFamilySamples();
             foreach ($metrics as $metric) {

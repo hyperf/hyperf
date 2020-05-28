@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigAliyunAcm\Process;
 
 use Hyperf\ConfigAliyunAcm\ClientInterface;
@@ -59,7 +58,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('aliyun_acm.enable', false);
+        return $this->config->get('aliyun_acm.enable', false)
+            && $this->config->get('aliyun_acm.use_standalone_process', true);
     }
 
     public function handle(): void

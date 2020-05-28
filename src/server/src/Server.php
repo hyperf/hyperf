@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -220,6 +219,7 @@ class Server implements ServerInterface
                 SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
                 SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
                 SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
+                SwooleEvent::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
             ];
         }
 

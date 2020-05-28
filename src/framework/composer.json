@@ -10,7 +10,12 @@
         "microservice",
         "middleware"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
@@ -32,7 +37,11 @@
     "suggest": {
         "hyperf/di": "Required to use Command annotation.",
         "hyperf/dispatcher": "Required to use BootApplication event.",
-        "hyperf/command": "Required to use Command annotation."
+        "hyperf/command": "Required to use Command annotation.",
+        "symfony/event-dispatcher": "Required to use symfony event dispatcher (^4.3)."
+    },
+    "conflict": {
+        "symfony/event-dispatcher": "<4.3"
     },
     "autoload": {
         "psr-4": {

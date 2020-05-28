@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Listener;
 
 use Hyperf\Cache\Annotation\Cacheable;
@@ -56,7 +55,7 @@ class DeleteListener implements ListenerInterface
         $driver = $this->manager->getDriver($group);
         $driver->delete($key);
 
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable) {
+        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
             $driver->delKey($annotation->prefix . 'MEMBERS', $key);
         }
     }

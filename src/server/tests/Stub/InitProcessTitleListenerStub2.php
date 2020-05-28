@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Server\Stub;
 
 use Hyperf\Server\Listener\InitProcessTitleListener;
@@ -21,6 +20,8 @@ class InitProcessTitleListenerStub2 extends InitProcessTitleListener
 
     public function setTitle(string $title)
     {
-        Context::set('test.server.process.title', $title);
+        if ($this->isSupportedOS()) {
+            Context::set('test.server.process.title', $title);
+        }
     }
 }

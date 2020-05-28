@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
@@ -194,7 +193,7 @@ class Client extends Server
 
     protected function flushContext()
     {
-        $context = SwCoroutine::getContext();
+        $context = SwCoroutine::getContext() ?? [];
 
         foreach ($context as $key => $value) {
             if (Str::startsWith($key, $this->ignoreContextPrefix)) {

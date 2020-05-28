@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool\SimplePool;
 
 use Psr\Container\ContainerInterface;
@@ -59,6 +58,11 @@ class PoolFactory
         }
 
         return $this->pools[$name];
+    }
+
+    public function getPoolNames(): array
+    {
+        return array_keys($this->pools);
     }
 
     protected function hasConfig(string $name): bool

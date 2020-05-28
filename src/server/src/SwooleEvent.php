@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server;
 
 class SwooleEvent
@@ -33,6 +32,11 @@ class SwooleEvent
      * Swoole onWorkerExit event.
      */
     const ON_WORKER_EXIT = 'workerExit';
+
+    /**
+     * Swoole onWorkerError event.
+     */
+    const ON_WORKER_ERROR = 'workerError';
 
     /**
      * Swoole onPipeMessage event.

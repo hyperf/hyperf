@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Di\Container;
@@ -55,6 +54,25 @@ class JsonRpcPoolTransporterTest extends TestCase
         $this->assertSame($settings, $transporter->getConfig()['settings']);
     }
 
+    public function testJsonRpcPoolTransporterGetPool()
+    {
+        $container = $this->getContainer();
+        $factory = new PoolFactory($container);
+        $transporter = new JsonRpcPoolTransporter($factory, [
+            'pool' => ['min_connections' => 8, 'max_connections' => 88],
+            'settings' => $settings = [
+                'open_length_check' => true,
+                'package_length_type' => 'N',
+                'package_length_offset' => 0,
+                'package_body_offset' => 4,
+            ],
+        ]);
+
+        $options = $transporter->getPool()->getOption();
+        $this->assertSame(8, $options->getMinConnections());
+        $this->assertSame(88, $options->getMaxConnections());
+    }
+
     public function testJsonRpcPoolTransporterSendLengthCheck()
     {
         $container = $this->getContainer();
@@ -95,6 +113,28 @@ class JsonRpcPoolTransporterTest extends TestCase
         $string = $transporter->send($packer->pack($data = ['id' => $id = uniqid()]));
 
         $this->assertSame($data, $packer->unpack($string));
+    }
+
+    public function testGetConnection()
+    {
+        $container = $this->getContainer();
+        $factory = $container->get(PoolFactory::class);
+        $transporter = new JsonRpcPoolTransporter($factory, [
+            'pool' => ['min_connections' => 10],
+            'settings' => $settings = [
+                'open_length_check' => true,
+                'package_length_type' => 'N',
+                'package_length_offset' => 0,
+                'package_body_offset' => 4,
+            ],
+        ]);
+
+        $conn = $transporter->getConnection();
+        $conn2 = $transporter->getConnection();
+        $this->assertSame($conn, $conn2);
+        $conn->close();
+        $conn2 = $transporter->getConnection();
+        $this->assertNotEquals($conn, $conn2);
     }
 
     public function testsplObjectHash()

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\GrpcClient;
 
 use Grpc\UserReply;
@@ -56,15 +55,6 @@ class BaseClientTest extends TestCase
         Coroutine::create(function () {
             self::$server->shutdown();
         });
-    }
-
-    public function setUp()
-    {
-        if (in_array(swoole_version(), ['4.4.14', '4.4.15'])) {
-            $this->markTestSkipped(
-                'Swoole v4.4.14 has a bug on their side.'
-            );
-        }
     }
 
     public function tearDown()

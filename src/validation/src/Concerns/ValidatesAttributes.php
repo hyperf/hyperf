@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Concerns;
 
 use Carbon\Carbon;
@@ -1216,8 +1215,11 @@ trait ValidatesAttributes
      *
      * @return null|\DateTime
      */
-    protected function getDateTimeWithOptionalFormat(string $format, string $value)
+    protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
+        if (is_null($value)) {
+            return null;
+        }
         if ($date = DateTime::createFromFormat('!' . $format, $value)) {
             return $date;
         }

@@ -47,7 +47,7 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
-            'read_write_timeout' => 3.0,
+            'read_write_timeout' => 6.0,
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 3,
@@ -195,6 +195,10 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
+### 設置最大消費數
+
+可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啟。
+
 ### 消費結果
 
 框架會根據 `Consumer` 內的 `consume` 方法所返回的結果來決定該消息的響應行為，共有 4 中響應結果，分別為 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每個返回值分別代表如下行為：
@@ -205,3 +209,88 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+## RPC 遠程過程調用
+
+除了典型的消息隊列場景，我們還可以通過 AMQP 來實現 RPC 遠程過程調用，本組件也為這個實現提供了對應的支持。
+
+### 創建消費者
+
+RPC 使用的消費者，與典型消息隊列場景的消費者實現基本無差，唯一的區別是需要通過調用 `reply` 方法返回數據給生產者。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumer;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+/**
+ * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
+ */
+class ReplyConsumer extends ConsumerMessage
+{
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        $data['message'] .= 'Reply:' . $data['message'];
+
+        $this->reply($data, $message);
+
+        return Result::ACK;
+    }
+}
+```
+
+### 發起 RPC 調用
+
+作為生成者發起一次 RPC 遠程過程調用也非常的簡單，只需通過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 對象並調用其中的 `call` 方法即可，返回的結果是消費者 reply 的數據，如下所示：
+
+```php
+<?php
+use Hyperf\Amqp\Message\DynamicRpcMessage;
+use Hyperf\Amqp\RpcClient;
+use Hyperf\Utils\ApplicationContext;
+
+$rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
+// 在 DynamicRpcMessage 上設置與 Consumer 一致的 Exchange 和 RoutingKey
+$result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
+
+// $result:
+// array(1) {
+//     ["message"]=>
+//     string(18) "Reply:Hello Hyperf"
+// }
+```
+
+### 抽象 RpcMessage
+
+上面的 RPC 調用過程是直接通過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞消息數據，在生產項目的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
+
+我們可以創建對應的 RpcMessage 類如 `App\Amqp\FooRpcMessage` 如下：
+
+```php
+<?php
+use Hyperf\Amqp\Message\RpcMessage;
+
+class FooRpcMessage extends RpcMessage
+{
+
+    protected $exchange = 'hyperf';
+
+    protected $routingKey = 'hyperf';
+    
+    public function __construct($data)
+    {
+        // 要傳遞數據
+        $this->payload = $data;
+    }
+
+}
+```
+
+這樣我們進行 RPC 調用時，只需直接傳遞 `FooRpcMessage` 實例到 `call` 方法即可，無需每次調用時都去定義 Exchange 和 RoutingKey。

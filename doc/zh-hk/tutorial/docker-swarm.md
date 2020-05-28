@@ -6,6 +6,7 @@
 
 ```
 curl -sSL https://get.daocloud.io/docker | sh
+# curl -sSL https://get.docker.com/ | sh
 ```
 
 修改文件 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連接 `Docker`

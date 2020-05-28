@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigZookeeper;
 
+use Hyperf\ConfigZookeeper\Listener\BootProcessListener;
 use Hyperf\ConfigZookeeper\Listener\OnPipeMessageListener;
 use Hyperf\ConfigZookeeper\Process\ConfigFetcherProcess;
 
@@ -28,6 +28,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 OnPipeMessageListener::class,
+                BootProcessListener::class,
             ],
             'annotations' => [
                 'scan' => [

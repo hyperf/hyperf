@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\View;
+
+use Psr\Http\Message\ResponseInterface;
 
 interface RenderInterface
 {
-    public function render(string $template, array $data = []);
+    public function render(string $template, array $data = []): ResponseInterface;
+
+    public function getContents(string $template, array $data = []): string;
 }

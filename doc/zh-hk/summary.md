@@ -39,6 +39,7 @@
   * [國際化](zh-hk/translation.md)
   * [驗證器](zh-hk/validation.md)
   * [Session 會話管理](zh-hk/session.md)
+  * [文件系統](zh-hk/filesystem.md)
   
 * 數據庫模型
 
@@ -51,6 +52,7 @@
   * [模型緩存](zh-hk/db/model-cache.md)
   * [數據庫遷移](zh-hk/db/migration.md)
   * [極簡 DB 組件](zh-hk/db/db.md)
+  * [修改器](zh-hk/db/mutators.md)
   
 * 微服務
 
@@ -65,6 +67,13 @@
   * [服務監控](zh-hk/metric.md)
   * [服務重試](zh-hk/retry.md)
   
+* 消息隊列
+
+  * [Redis 異步隊列](zh-hk/async-queue.md)
+  * [AMQP](zh-hk/amqp.md)
+  * [Nats](zh-hk/nats.md)
+  * [Nsq](zh-hk/nsq.md)
+  
 * 其它組件
 
   * [連接池](zh-hk/pool.md)
@@ -73,10 +82,9 @@
   * [Elasticsearch 協程客户端](zh-hk/elasticsearch.md)
   * [Consul 協程客户端](zh-hk/consul.md)
   * [ETCD 協程客户端](zh-hk/etcd.md)
-  * [AMQP](zh-hk/amqp.md)
-  * [異步隊列](zh-hk/async-queue.md)
   * [WebSocket 服務](zh-hk/websocket-server.md)
   * [WebSocket 協程客户端](zh-hk/websocket-client.md)
+  * [Socket.io 服務](zh-hk/socketio-server.md)
   * [自定義進程](zh-hk/process.md)
   * [開發者工具](zh-hk/devtool.md)
   * [輔助類](zh-hk/utils.md)
@@ -86,7 +94,6 @@
   * [Task 機制](zh-hk/task.md)
   * [枚舉類](zh-hk/constants.md)
   * [Snowflake](zh-hk/snowflake.md)
-  * [Nats](zh-hk/nats.md)
   * [重試](zh-hk/retry.md)
 
 * 應用部署

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Dispatcher;
 
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
@@ -43,7 +42,6 @@ abstract class AbstractRequestHandler
     /**
      * @param array $middlewares All middlewares to dispatch by dispatcher
      * @param object $coreHandler The core middleware of dispatcher
-     * @param ContainerInterface $container
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {

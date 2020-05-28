@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
@@ -99,7 +98,8 @@ class ModelCommand extends Command
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
-            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []));
+            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
+            ->setPropertyCase($this->getOption('property-case', 'commands.gen:model.property_case', $pool));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -118,11 +118,12 @@ class ModelCommand extends Command
         $this->addOption('prefix', 'P', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
-        $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
+        $this->addOption('refresh-fillable', 'R', InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
+        $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -182,6 +183,7 @@ class ModelCommand extends Command
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
         $traverser->addVisitor(make(ModelUpdateVisitor::class, [
+            'class' => $class,
             'columns' => $columns,
             'option' => $option,
         ]));

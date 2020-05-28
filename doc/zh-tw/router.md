@@ -169,7 +169,7 @@ class UserController
 > 本框架定義的路由引數必須和控制器引數鍵名、型別保持一致，否則控制器無法接受到相關引數
 
 ```php
-Router::get('/user/{id}', 'App\Controller\UserController::info')
+Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
 
 ```php
@@ -180,7 +180,7 @@ public function info(int $id)
 }
 ```
 
-通過`route`方法獲取
+通過 `route` 方法獲取
 
 ```php
 public function index(RequestInterface $request)
@@ -199,3 +199,8 @@ public function index(RequestInterface $request)
 #### 可選引數
 
 有時候您可能會希望這個引數是可選的，您可以通過 `[]` 來宣告中括號內的引數為一個可選引數，如 `/user/[{id}]`。
+
+#### 獲取路由資訊
+
+如果安裝了 devtool 元件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表資訊，
+並且提供 path 可選項，方便獲取單個路由資訊，對應的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。

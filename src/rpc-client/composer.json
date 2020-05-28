@@ -10,14 +10,20 @@
         "rpc-client",
         "json-rpc"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
         "hyperf/rpc": "~1.1.0",
         "hyperf/load-balancer": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/utils": "~1.1.0",
+        "roave/better-reflection": "^4.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

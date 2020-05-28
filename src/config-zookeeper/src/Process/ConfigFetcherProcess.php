@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigZookeeper\Process;
 
 use Hyperf\ConfigZookeeper\ClientInterface;
@@ -63,7 +62,8 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return $this->config->get('zookeeper.enable', false);
+        return $this->config->get('zookeeper.enable', false)
+            && $this->config->get('zookeeper.use_standalone_process', true);
     }
 
     public function handle(): void

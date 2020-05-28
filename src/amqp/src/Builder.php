@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
@@ -21,6 +20,10 @@ use Psr\Container\ContainerInterface;
 
 class Builder
 {
+    /**
+     * @deprecated v2.0
+     * @var string
+     */
     protected $name = 'default';
 
     /**
@@ -31,7 +34,7 @@ class Builder
     /**
      * @var PoolFactory
      */
-    private $poolFactory;
+    protected $poolFactory;
 
     public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
     {

@@ -2,12 +2,18 @@
 
 NATS 是一個開源、輕量級、高效能的分散式訊息中介軟體，實現了高可伸縮性和優雅的 `Publish` / `Subscribe` 模型，使用 `Golang` 語言開發。NATS 的開發哲學認為高質量的 QoS 應該在客戶端構建，故只建立了 `Request-Reply`，不提供 1. 持久化 2. 事務處理 3. 增強的交付模式 4. 企業級佇列。
 
+## 安裝
+
+```bash
+composer require hyperf/nats
+```
+
 ## 使用
 
 ### 建立消費者
 
 ```
-$ php bin/hyperf.php gen:nats-consumer DemoConsumer
+php bin/hyperf.php gen:nats-consumer DemoConsumer
 ```
 
 如果設定了 `queue`，則相同的 `subject` 只會被一個 `queue` 消費。若不設定 `queue`，則每個消費者都會受到訊息。

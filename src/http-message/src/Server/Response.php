@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\Contract\Sendable;
@@ -116,7 +115,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
                 foreach ($item ?? [] as $name => $cookie) {
                     if ($cookie instanceof Cookie) {
                         $value = $cookie->isRaw() ? $cookie->getValue() : rawurlencode($cookie->getValue());
-                        $swooleResponse->rawcookie($cookie->getName(), $value, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+                        $swooleResponse->rawcookie($cookie->getName(), $value, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly(), (string) $cookie->getSameSite());
                     }
                 }
             }

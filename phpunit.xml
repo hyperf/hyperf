@@ -20,6 +20,7 @@
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
+            <directory suffix="Test.php">./src/devtool/tests</directory>
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
@@ -48,6 +49,7 @@
             <directory suffix="Test.php">./src/session/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
+            <directory suffix="Test.php">./src/socketio-server/tests</directory>
             <directory suffix="Test.php">./src/super-globals/tests</directory>
             <directory suffix="Test.php">./src/task/tests</directory>
             <directory suffix="Test.php">./src/testing/tests</directory>
@@ -56,6 +58,7 @@
             <directory suffix="Test.php">./src/utils/tests</directory>
             <directory suffix="Test.php">./src/validation/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
+            <directory suffix="Test.php">./src/websocket-server/tests</directory>
         </testsuite>
     </testsuites>
     <filter>

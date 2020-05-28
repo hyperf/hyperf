@@ -7,7 +7,12 @@
         "hyperf",
         "database"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
@@ -25,7 +30,7 @@
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^2.6).",
-        "nikic/php-parser": "Required to use ModelCommand (^4.1)."
+        "roave/better-reflection": "Required to use ModelCommand (^4.0)."
     },
     "autoload": {
         "psr-4": {

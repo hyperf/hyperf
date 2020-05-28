@@ -61,7 +61,6 @@ return [
         ...
         // 静态资源
         'document_root' => BASE_PATH . '/public',
-        'static_handler_locations' => ['/'],
         'enable_static_handler' => true,
     ],
 ];
@@ -112,6 +111,8 @@ composer require sy-records/think-template
 declare(strict_types=1);
 
 namespace App\Engine;
+
+use Hyperf\View\Engine\EngineInterface;
 
 class TemplateEngine implements EngineInterface
 {

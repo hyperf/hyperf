@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
 
@@ -40,8 +42,6 @@ abstract class PoolWatcher
             BeforeWorkerStart::class,
         ];
     }
-
-    abstract protected function getPrefix();
 
     /**
      * Periodically scan metrics.
@@ -68,7 +68,7 @@ abstract class PoolWatcher
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use (
+        $timerId = Timer::tick($timerInterval * 1000, function () use (
             $connectionsInUseGauge,
             $connectionsInWaitingGauge,
             $maxConnectionsGauge,
@@ -78,5 +78,11 @@ abstract class PoolWatcher
             $connectionsInWaitingGauge->set((float) $pool->getConnectionsInChannel());
             $connectionsInUseGauge->set((float) $pool->getCurrentConnections());
         });
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+            Timer::clear($timerId);
+        });
     }
+
+    abstract protected function getPrefix();
 }

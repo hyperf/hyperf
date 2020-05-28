@@ -2,12 +2,18 @@
 
 NATS 是一个开源、轻量级、高性能的分布式消息中间件，实现了高可伸缩性和优雅的 `Publish` / `Subscribe` 模型，使用 `Golang` 语言开发。NATS 的开发哲学认为高质量的 QoS 应该在客户端构建，故只建立了 `Request-Reply`，不提供 1. 持久化 2. 事务处理 3. 增强的交付模式 4. 企业级队列。
 
+## 安装
+
+```bash
+composer require hyperf/nats
+```
+
 ## 使用
 
 ### 创建消费者
 
 ```
-$ php bin/hyperf.php gen:nats-consumer DemoConsumer
+php bin/hyperf.php gen:nats-consumer DemoConsumer
 ```
 
 如果设置了 `queue`，则相同的 `subject` 只会被一个 `queue` 消费。若不设置 `queue`，则每个消费者都会受到消息。

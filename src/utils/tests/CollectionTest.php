@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Collection;
@@ -43,5 +42,19 @@ class CollectionTest extends TestCase
 
         $res = $col->random(1);
         $this->assertTrue($res instanceof Collection);
+    }
+
+    public function testFlatten()
+    {
+        $collection = new Collection([
+            'item' => [
+                'name' => 'Hyperf',
+            ],
+            'it' => [
+                'id' => $uuid = uniqid(),
+            ],
+        ]);
+
+        $this->assertSame(['Hyperf', $uuid], $collection->flatten()->toArray());
     }
 }

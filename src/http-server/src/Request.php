@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -59,7 +58,7 @@ class Request implements RequestInterface
         }
         return data_get($this->getQueryParams(), $key, $default);
     }
-    
+
     /**
      * Retrieve the data from route parameters.
      *

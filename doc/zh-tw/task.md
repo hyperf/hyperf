@@ -105,7 +105,7 @@ $result = $task->handle(Coroutine::id());
 
 Swoole 暫時沒有協程化的函式列表
 
-- mysql，底層使用 libmysqlclient, 不推薦使用, 推薦使用已經實現協程化的 pod_mysql/mysqli
+- mysql，底層使用 libmysqlclient, 不推薦使用, 推薦使用已經實現協程化的 pdo_mysql/mysqli
 - curl，底層使用 libcurl，在 Swoole 4.4 後底層進行了協程化(beta)
 - mongo，底層使用 mongo-c-client
 - pdo_pgsql
@@ -191,4 +191,8 @@ $result = $client->query('hyperf.test', [], [
     'limit' => 5,
 ]);
 ```
+
+## 其他方案
+
+如果 Task 機制無法滿足效能要求，可以嘗試一下 Hyperf 組織下的另一個開源專案[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 

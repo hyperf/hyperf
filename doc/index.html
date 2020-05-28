@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <title>Hyperf</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <meta name="description" content="Hyperf框架官方文档">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
   <style>
     .app-name-link img {
@@ -18,9 +18,9 @@
 
 <body>
   <div id="app"></div>
-  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-  <script src="//unpkg.com/prismjs/components/prism-php.min.js"></script>
-  <script src="//unpkg.com/docsify-edit-on-github/index.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github/index.js"></script>
   <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>
     mermaid.initialize({ startOnLoad: false });
@@ -28,6 +28,7 @@
     window.$docsify = {
       name: 'Hyperf',
       repo: 'hyperf/hyperf',
+      homepage: './zh-cn/README.md',
       loadSidebar: 'summary.md',
       loadNavbar: true,
       fallbackLanguages: ['zh-cn', 'en'],
@@ -35,8 +36,8 @@
       themeColor: '#3F51B5',
       logo: '/logo.png',
       auto2top: true,
-      autoHeader: false,
       subMaxLevel: 4,
+      topMargin: 20,
       search: {
         depth: 6,
         noData: {
@@ -61,6 +62,9 @@
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/tree/master/doc/')
       ],
+      plantuml: {
+        skin: 'classic',
+      },
       markdown:{
         renderer: {
           code: function(code, lang) {
@@ -73,8 +77,10 @@
       }
     }
   </script>
-  <script src="//unpkg.com/docsify-copy-code"></script>
-  <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
   <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
 
