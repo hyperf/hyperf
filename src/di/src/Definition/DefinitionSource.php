@@ -27,7 +27,7 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private $source;
 
-    public function __construct(array $source, ScanConfig $scanConfig)
+    public function __construct(array $source)
     {
         $this->source = $this->normalizeSource($source);
     }

@@ -59,9 +59,9 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
             if ($node->name->toString() === '__construct') {
                 $this->visitorMetadata->hasConstructor = true;
                 $this->visitorMetadata->constructorNode = $node;
-                return;
             }
         }
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -80,6 +80,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
                 $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], $node->stmts);
             }
         }
+        return null;
     }
 
     protected function buildConstructor(): Node\Stmt\ClassMethod
@@ -107,7 +108,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     {
         $left = new Node\Expr\FuncCall(new Name('get_parent_class'));
         $right = new Node\Expr\FuncCall(new Name('method_exists'), [
-            new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), new Name('class'))),
+            new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), 'class')),
             new Node\Arg(new Node\Scalar\String_('__construct')),
         ]);
         return new Node\Stmt\If_(new Node\Expr\BinaryOp\BooleanAnd($left, $right), [

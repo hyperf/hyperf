@@ -16,3 +16,5 @@ parameters:
     - '#Argument of an invalid type Hyperf\\AsyncQueue\\Job supplied for foreach, only iterables are supported#'
     - '#Variable .* in isset\(\) always exists and is not nullable#'
     - '#Static call to instance method Hyperf\\DbConnection\\Db.*#'
+    - '#Static call to instance method SplPriorityQueue\:\:insert\(\)#'
+    - '#Call to an undefined method ReflectionType::getName#'

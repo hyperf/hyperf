@@ -49,6 +49,7 @@ script:
     src/consul \
     src/db \
     src/db-connection \
-    src/devtool
+    src/devtool \
+    src/di
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
