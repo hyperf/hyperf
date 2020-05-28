@@ -332,7 +332,7 @@ namespace App\Listener;
 
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Prometheus\CollectorRegistry;
 
 class OnMainServerStart implements ListenerInterface
@@ -347,7 +347,7 @@ class OnMainServerStart implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeMainServerStart::class,
+            OnMetricFactoryReady::class,
         ];
     }
 
@@ -427,3 +427,4 @@ foreach ($metric['samples'] as $key => $value) {
     ];
 }
 ```
+- 如果选择 **自定义 Histogram Bucket**, 一定要注意注册的时机, 避免出现重复注册引发报错, 推荐监听 `OnMetricFactoryReady` 事件
