@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
-use Hyperf\Database\Model\Resource\Json\JsonResource;
 use RuntimeException;
 
 class JsonEncodingException extends RuntimeException
@@ -41,19 +40,5 @@ class JsonEncodingException extends RuntimeException
         $class = get_class($model);
 
         return new static("Unable to encode attribute [{$key}] for model [{$class}] to JSON: {$message}.");
-    }
-
-    /**
-     * Create a new JSON encoding exception for the resource.
-     *
-     * @param JsonResource $resource
-     * @param string $message
-     * @return static
-     */
-    public static function forResource($resource, $message)
-    {
-        $model = $resource->resource;
-
-        return new static('Error encoding resource [' . get_class($resource) . '] with model [' . get_class($model) . '] with ID [' . $model->getKey() . '] to JSON: ' . $message);
     }
 }

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
-use Hyperf\Database\Model\JsonEncodingException;
+use Hyperf\Resource\JsonEncodingException;
 use Hyperf\HttpServer\Contract\Responsable;
 use Hyperf\Resource\ConditionallyLoadsAttributes;
 use Hyperf\Resource\DelegatesToResource;
