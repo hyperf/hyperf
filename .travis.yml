@@ -36,7 +36,8 @@ before_script:
 
 script:
   -
-    composer analyse src/amqp \
+    composer analyse \
+    src/amqp \
     src/async-queue \
     src/cache \
     src/command \
@@ -45,6 +46,8 @@ script:
     src/config-apollo \
     src/config-etcd \
     src/constants \
-    src/consul
+    src/consul \
+    src/db \
+    src/db-connection
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
