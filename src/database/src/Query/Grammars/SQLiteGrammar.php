@@ -13,7 +13,6 @@ namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Database\Query\Builder;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
 
 class SQLiteGrammar extends Grammar
 {
