@@ -43,6 +43,4 @@ class ReflectionTest extends TestCase
             $this->assertTrue($parameter->getType() instanceof \ReflectionNamedType);
         }
     }
-
-    // public function testReturnTypeFor
 }
