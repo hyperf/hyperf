@@ -24,6 +24,16 @@ return [
                 ],
             ],
         ],
-        'processors' => [],
+        // multi processor
+        'processors' => [
+            [
+                'class' => \Monolog\Processor\MemoryPeakUsageProcessor::class,
+            ],
+            function (array $record) {
+                $record['extra']['foo'] = 'bar';
+            }
+        ],
+        // single processor
+        'processor' => []
     ],
 ];

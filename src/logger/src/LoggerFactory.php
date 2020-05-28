@@ -106,9 +106,11 @@ class LoggerFactory
         foreach ($config['processors'] ?? [] as $value) {
             if (is_array($value) && isset($value['class'])) {
                 $value = make($value['class'], $value['constructor'] ?? []);
+                $result[] = $value;
             }
-
-            $result[] = $value;
+            if (is_callable($value)) {
+                $result[] = $value;
+            }
         }
 
         return $result;
