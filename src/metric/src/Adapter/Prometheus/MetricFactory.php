@@ -124,11 +124,17 @@ class MetricFactory implements MetricFactoryInterface
 
     protected function pushHandle()
     {
+        $host = $this->config->get("metric.metric.{$this->name}.push_host");
+        $port = $this->config->get("metric.metric.{$this->name}.push_port");
+        $hostArr = parse_url($host);
+        if (!filter_var($host, FILTER_VALIDATE_IP) && isset($hostArr['path'])) {
+            $putAddr = "{$host}";
+        } else {
+            $putAddr = "{$host}:{$port}";
+        }
         while (true) {
             $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
-            $host = $this->config->get("metric.metric.{$this->name}.push_host");
-            $port = $this->config->get("metric.metric.{$this->name}.push_port");
-            $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
+            $this->doRequest($putAddr, $this->getNamespace(), 'put');
             $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
                 break;
