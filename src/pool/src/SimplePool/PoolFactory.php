@@ -74,9 +74,4 @@ class PoolFactory
     {
         return $this->configs[$name];
     }
-
-    public function getPoolNames(): array
-    {
-        return array_keys($this->pools);
-    }
 }

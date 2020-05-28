@@ -221,10 +221,6 @@
 
 - [#1386](https://github.com/hyperf/hyperf/pull/1386) Fixed variadic arguments do not work in async message annotation.
 
-## Added
-
-- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames()` for `Hyperf\Pool\SimplePool\PoolFactory`.
-
 # v1.1.18 - 2020-02-27
 
 ## Added
@@ -234,7 +230,6 @@
 - [#1331](https://github.com/hyperf/hyperf/pull/1331) Added `Hyperf\LoadBalancer\LoadBalancerInterface::getNodes()`.
 - [#1335](https://github.com/hyperf/hyperf/pull/1335) Added event `AfterExecute` for `command`.
 - [#1361](https://github.com/hyperf/hyperf/pull/1361) Added config of `processors` for logger.
-- [#1362](https://github.com/hyperf/hyperf/pull/1362) Added `getPoolNames` method for PoolFactory class
 
 ## Changed
 
