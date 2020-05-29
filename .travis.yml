@@ -51,6 +51,9 @@ script:
     src/db-connection \
     src/devtool \
     src/di \
-    src/dispatcher
+    src/dispatcher \
+    src/elasticsearch \
+    src/etcd \
+    src/event
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
