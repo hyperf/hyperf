@@ -332,8 +332,10 @@ namespace App\Listener;
 
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Prometheus\CollectorRegistry;
+use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Command\Event\BeforeHandle;
 
 class OnMainServerStart implements ListenerInterface
 {
@@ -347,7 +349,9 @@ class OnMainServerStart implements ListenerInterface
     public function listen(): array
     {
         return [
-            OnMetricFactoryReady::class,
+            BeforeHandle::class,
+            BeforeProcessHandle::class,
+            BeforeMainServerStart::class,
         ];
     }
 
