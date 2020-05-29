@@ -34,3 +34,7 @@
 - Removed `Hyperf\Di\Aop\AstCollector`;
 - Removed `Hyperf\Di\Aop\ProxyClassNameVisitor`;
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
+
+## Fixed
+
+- [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
