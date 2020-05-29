@@ -19,3 +19,4 @@ parameters:
     - '#Static call to instance method Hyperf\\DbConnection\\Db.*#'
     - '#Static call to instance method SplPriorityQueue\:\:insert\(\)#'
     - '#Call to an undefined method ReflectionType::getName#'
+    - '#Call to an undefined method Traversable<mixed, mixed>\:\:getArrayCopy#'

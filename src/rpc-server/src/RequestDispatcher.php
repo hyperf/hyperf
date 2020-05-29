@@ -29,9 +29,6 @@ class RequestDispatcher extends HttpDispatcher
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch(...$params): ResponseInterface
     {
         /** @var ServerRequestInterface $request */
