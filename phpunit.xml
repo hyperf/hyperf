@@ -16,7 +16,7 @@
             <directory suffix="Test.php">./src/config/tests</directory>
             <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
-            <directory suffix="Test.php">./src/consul/tests</directory>
+<!--            <directory suffix="Test.php">./src/consul/tests</directory>-->
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
