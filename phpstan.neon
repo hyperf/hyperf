@@ -9,8 +9,13 @@ parameters:
   reportUnmatchedIgnoredErrors: false
   excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
+    - %currentWorkingDirectory%/src/*/publish/*
+    - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
     - '#Argument of an invalid type Hyperf\\AsyncQueue\\Job supplied for foreach, only iterables are supported#'
     - '#Variable .* in isset\(\) always exists and is not nullable#'
+    - '#Static call to instance method Hyperf\\DbConnection\\Db.*#'
+    - '#Static call to instance method SplPriorityQueue\:\:insert\(\)#'
+    - '#Call to an undefined method ReflectionType::getName#'

@@ -16,6 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\MySqlConnection;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
@@ -81,6 +82,7 @@ class InitTableCollectorListener implements ListenerInterface
 
         /** @var ConnectionResolverInterface $connectionResolver */
         $connectionResolver = $this->container->get(ConnectionResolverInterface::class);
+        /** @var MySqlConnection $connection */
         $connection = $connectionResolver->connection($pool);
 
         /** @var \Hyperf\Database\Schema\Builder $schemaBuilder */

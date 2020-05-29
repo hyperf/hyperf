@@ -58,7 +58,7 @@ class ScanConfig
     private $classMap;
 
     /**
-     * @var ScanConfig
+     * @var null|ScanConfig
      */
     private static $instance;
 

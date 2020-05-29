@@ -120,7 +120,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
-                break;
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -128,8 +127,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 $node->stmts = $stmts;
                 unset($stmts);
                 return $node;
-                break;
         }
+        return null;
     }
 
     /**
@@ -223,9 +222,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
-        if (! $node->name) {
-            return false;
-        }
+        // if (! $node->name) {
+        //     return false;
+        // }
 
         $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 

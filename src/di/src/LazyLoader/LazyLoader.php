@@ -33,7 +33,7 @@ class LazyLoader
     /**
      * The singleton instance of the loader.
      *
-     * @var LazyLoader
+     * @var null|LazyLoader
      */
     protected static $instance;
 
@@ -64,7 +64,7 @@ class LazyLoader
         }
 
         if (is_null(static::$instance)) {
-            static::$instance = new static($config);
+            static::$instance = new LazyLoader($config);
         }
         return static::$instance;
     }
@@ -80,6 +80,7 @@ class LazyLoader
             $this->loadProxy($proxy);
             return true;
         }
+        return null;
     }
 
     /**
