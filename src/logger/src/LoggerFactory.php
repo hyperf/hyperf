@@ -107,8 +107,7 @@ class LoggerFactory
             if (is_array($value) && isset($value['class'])) {
                 $value = make($value['class'], $value['constructor'] ?? []);
                 $result[] = $value;
-            }
-            if (is_callable($value)) {
+            } else if (is_callable($value)) {
                 $result[] = $value;
             }
         }
