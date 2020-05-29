@@ -37,7 +37,7 @@ class AnnotationTest extends TestCase
     {
         BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
 
-        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig('dev', '/'));
+        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
         $reader = new AnnotationReader();
         $scaner->collect($reader, $ref = BetterReflectionManager::reflectClass(Ignore::class));
         $annotations = AnnotationCollector::get(Ignore::class . '._c');
@@ -45,7 +45,7 @@ class AnnotationTest extends TestCase
 
         AnnotationCollector::clear();
 
-        $scaner = new Scanner($loader, new ScanConfig('dev', '/', [], [], ['IgnoreDemoAnnotation']));
+        $scaner = new Scanner($loader, new ScanConfig(false, '/', [], [], ['IgnoreDemoAnnotation']));
         $reader = new AnnotationReader();
         $scaner->collect($reader, $ref);
         $annotations = AnnotationCollector::get(Ignore::class . '._c');

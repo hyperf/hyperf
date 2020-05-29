@@ -83,7 +83,7 @@ class InjectTest extends TestCase
 
         BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
 
-        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig('dev', '/'));
+        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
         $reader = new AnnotationReader();
         $scaner->collect($reader, BetterReflectionManager::reflectClass(DemoInject::class));
         $scaner->collect($reader, BetterReflectionManager::reflectClass(DemoInjectException::class));

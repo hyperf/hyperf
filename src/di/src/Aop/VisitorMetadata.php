@@ -29,4 +29,9 @@ class VisitorMetadata
      * @var null|Node\Stmt\ClassMethod
      */
     public $constructorNode;
+
+    /**
+     * @var bool
+     */
+    public $hasExtends;
 }

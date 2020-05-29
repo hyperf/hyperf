@@ -20,11 +20,19 @@ use Hyperf\Utils\ApplicationContext;
 class RegisterInjectPropertyHandler
 {
     /**
+     * @var bool
+     */
+    public static $registered = false;
+
+    /**
      * Even the Inject has been handled by constructor of proxy class, but the Aspect class does not works,
      * So inject the value one more time here.
      */
     public static function register()
     {
+        if (static::$registered) {
+            return;
+        }
         PropertyHandlerManager::register(Inject::class, function ($object, $currentClassName, $targetClassName, $property, $annotation) {
             if ($annotation instanceof Inject) {
                 try {
@@ -43,5 +51,7 @@ class RegisterInjectPropertyHandler
                 }
             }
         });
+
+        static::$registered = true;
     }
 }

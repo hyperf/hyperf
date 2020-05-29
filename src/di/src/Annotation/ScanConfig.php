@@ -16,9 +16,9 @@ use Hyperf\Config\ProviderConfig;
 class ScanConfig
 {
     /**
-     * @var string
+     * @var bool
      */
-    private $appEnv;
+    private $cacheable;
 
     /**
      * @var string
@@ -63,7 +63,7 @@ class ScanConfig
     private static $instance;
 
     public function __construct(
-        string $appEnv,
+        bool $cacheable,
         string $configDir,
         array $paths = [],
         array $dependencies = [],
@@ -72,7 +72,7 @@ class ScanConfig
         array $collectors = [],
         array $classMap = []
     ) {
-        $this->appEnv = $appEnv;
+        $this->cacheable = $cacheable;
         $this->configDir = $configDir;
         $this->paths = $paths;
         $this->dependencies = $dependencies;
@@ -80,6 +80,11 @@ class ScanConfig
         $this->globalImports = $globalImports;
         $this->collectors = $collectors;
         $this->classMap = $classMap;
+    }
+
+    public function isCacheable(): bool
+    {
+        return $this->cacheable;
     }
 
     public function getConfigDir(): string
@@ -117,11 +122,6 @@ class ScanConfig
         return $this->classMap;
     }
 
-    public function getAppEnv(): string
-    {
-        return $this->appEnv;
-    }
-
     public static function instance(string $configDir): self
     {
         if (self::$instance) {
@@ -130,10 +130,10 @@ class ScanConfig
 
         $configDir = rtrim($configDir, '/');
 
-        [$config, $serverDependencies, $appEnv] = static::initConfigByFile($configDir);
+        [$config, $serverDependencies, $cacheable] = static::initConfigByFile($configDir);
 
         return self::$instance = new self(
-            $appEnv,
+            $cacheable,
             $configDir,
             $config['paths'] ?? [],
             $serverDependencies ?? [],
@@ -148,7 +148,7 @@ class ScanConfig
     {
         $config = [];
         $configFromProviders = [];
-        $appEnv = 'dev';
+        $cacheable = false;
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
         }
@@ -170,12 +170,14 @@ class ScanConfig
         // Load the config/config.php and merge the config
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
-            $appEnv = $configContent['app_env'] ?? $appEnv;
+            $appEnv = $configContent['app_env'] ?? 'dev';
+            $cacheable = value($configContent['scan_cacheable'] ?? $appEnv === 'prod');
             if (isset($configContent['annotations'])) {
                 $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
         }
-        return [$config, $serverDependencies, $appEnv];
+
+        return [$config, $serverDependencies, $cacheable];
     }
 
     private static function allocateConfigValue(array $content, array $config): array
