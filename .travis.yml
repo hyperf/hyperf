@@ -58,6 +58,8 @@ script:
     src/exception-handler \
     src/filesystem \
     src/framework \
-    src/grpc-client
+    src/grpc-client \
+    src/guzzle \
+    src/http-message
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
