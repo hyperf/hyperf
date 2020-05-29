@@ -171,7 +171,7 @@ class ScanConfig
         if (file_exists($configDir . '/config.php')) {
             $configContent = include $configDir . '/config.php';
             $appEnv = $configContent['app_env'] ?? 'dev';
-            $cacheable = value($configContent['cacheable'] ?? $appEnv === 'prod');
+            $cacheable = value($configContent['scan_cacheable'] ?? $appEnv === 'prod');
             if (isset($configContent['annotations'])) {
                 $config = static::allocateConfigValue($configContent['annotations'], $config);
             }
