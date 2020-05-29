@@ -51,7 +51,6 @@ return [
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 3,
-            // Swoole\Error: API must be called in the coroutine
             'close_on_destruct' => false,
         ],
     ],
