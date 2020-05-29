@@ -54,6 +54,10 @@ script:
     src/dispatcher \
     src/elasticsearch \
     src/etcd \
-    src/event
+    src/event \
+    src/exception-handler \
+    src/filesystem \
+    src/framework \
+    src/grpc-client
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
