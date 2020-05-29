@@ -50,6 +50,7 @@ script:
     src/db \
     src/db-connection \
     src/devtool \
-    src/di
+    src/di \
+    src/dispatcher
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
