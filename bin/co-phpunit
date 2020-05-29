@@ -2,12 +2,7 @@
 <?php
 
 $code = 0;
-\Swoole\Coroutine::set(['exit_condition' => function(){
-    if (\Swoole\Coroutine::stats()['coroutine_num'] !== 0) {
-        trigger_error("Reactor exits prematurely. This indicates a coroutine deadlock in test cases", E_USER_ERROR);
-    }
-    return true;
-}]);
+
 \Swoole\Coroutine\Run(function () use (&$code) {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
