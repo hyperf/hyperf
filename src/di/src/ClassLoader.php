@@ -55,6 +55,7 @@ class ClassLoader
         $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
         timepoint('InitProxyManager');
         $this->proxies = $proxyManager->getProxies();
+        var_dump($this->proxies);
     }
 
     public function loadClass(string $class): void

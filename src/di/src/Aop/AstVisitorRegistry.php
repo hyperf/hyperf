@@ -24,7 +24,7 @@ class AstVisitorRegistry
     /**
      * @var array
      */
-    protected static $values;
+    protected static $values = [];
 
     public static function __callStatic($name, $arguments)
     {
