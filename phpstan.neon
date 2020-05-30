@@ -22,3 +22,4 @@ parameters:
     - '#Call to an undefined method Traversable<mixed, mixed>\:\:getArrayCopy#'
     - '#Unsafe usage of new static#'
     - '#Method Hyperf\\Contract\\Sendable::send#'
+    - '#Variable .* in PHPDoc tag @var does not exist#'

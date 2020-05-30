@@ -64,6 +64,8 @@ script:
     src/http-server \
     src/json-rpc \
     src/load-balancer \
-    src/logger
+    src/logger \
+    src/memory \
+    src/metric
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
