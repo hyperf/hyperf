@@ -60,6 +60,10 @@ script:
     src/framework \
     src/grpc-client \
     src/guzzle \
-    src/http-message
+    src/http-message \
+    src/http-server \
+    src/json-rpc \
+    src/load-balancer \
+    src/logger
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
