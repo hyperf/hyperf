@@ -98,6 +98,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
+        $response = null;
         switch ($dispatched->status) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->handleNotFound($request);
@@ -199,7 +200,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|Arrayable|Jsonable|string $response
+     * @param null|array|Arrayable|Jsonable|string $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
