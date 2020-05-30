@@ -20,3 +20,5 @@ parameters:
     - '#Static call to instance method SplPriorityQueue\:\:insert\(\)#'
     - '#Call to an undefined method ReflectionType::getName#'
     - '#Call to an undefined method Traversable<mixed, mixed>\:\:getArrayCopy#'
+    - '#Unsafe usage of new static#'
+    - '#Method Hyperf\\Contract\\Sendable::send#'

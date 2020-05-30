@@ -37,7 +37,7 @@ class DispatcherFactory
     protected $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
-     * @var \FastRoute\RouteCollector[]
+     * @var RouteCollector[]
      */
     protected $routers = [];
 
