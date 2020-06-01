@@ -92,7 +92,7 @@ script:
     src/task \
     src/testing \
     src/tracer \
-    src/traslation \
+    src/translation \
     src/utils \
     src/websocket-client
   - composer test -- --exclude-group NonCoroutine
