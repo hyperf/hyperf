@@ -80,5 +80,5 @@ script:
     src/retry \
     src/rpc \
     src/rpc-client
-  - composer test -- --exclude-group NonCoroutine
+  - composer test -- --exclude-group NonCoroutine --debug
   - vendor/bin/phpunit --group NonCoroutine
