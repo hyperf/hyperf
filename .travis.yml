@@ -81,6 +81,8 @@ script:
     src/rpc \
     src/rpc-client \
     src/rpc-server \
-    src/server
+    src/server \
+    src/service-governance \
+    src/session
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
