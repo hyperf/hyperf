@@ -349,7 +349,6 @@ class OnMainServerStart implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeHandle::class,
             BeforeProcessHandle::class,
             BeforeMainServerStart::class,
         ];
