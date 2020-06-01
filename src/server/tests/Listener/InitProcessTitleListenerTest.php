@@ -63,7 +63,7 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 1));
 
-        if (!$listener->isSupportedOS()) {
+        if (! $listener->isSupportedOS()) {
             $this->assertSame(null, Context::get('test.server.process.title'));
         } else {
             $this->assertSame('test.demo.1', Context::get('test.server.process.title'));
@@ -85,7 +85,7 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        if (!$listener->isSupportedOS()) {
+        if (! $listener->isSupportedOS()) {
             $this->assertSame(null, Context::get('test.server.process.title'));
         } else {
             $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
@@ -107,7 +107,7 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        if (!$listener->isSupportedOS()) {
+        if (! $listener->isSupportedOS()) {
             $this->assertSame(null, Context::get('test.server.process.title'));
         } else {
             $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
