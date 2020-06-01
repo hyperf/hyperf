@@ -24,7 +24,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         return get_class($this) === __CLASS__;
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $class, string $format = null, array $context = [])
     {
         switch ($class) {
             case 'int':

@@ -36,6 +36,10 @@
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
 - Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
 
+## Tip
+
+- SymfonyNormalizer(^5.0) `$serializer->denormalize('1', 'int')` will throw `NotNormalizableValueException: Data expected to be of type "int" ("string" given).`
+
 ## Added
 
 - [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.

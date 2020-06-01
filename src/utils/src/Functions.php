@@ -66,7 +66,7 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int|float $times
+     * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */
@@ -447,7 +447,8 @@ if (! function_exists('swoole_hook_flags')) {
 }
 
 if (! function_exists('timepoint')) {
-    function timepoint(?string $key = null) {
+    function timepoint(?string $key = null)
+    {
         if (! isset($GLOBALS['__timepoint_beginTime__'])) {
             $GLOBALS['__timepoint_beginTime__'] = microtime(true);
             return;

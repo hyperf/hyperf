@@ -27,7 +27,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $class, string $format = null, array $context = [])
     {
         if (is_string($data)) {
             $ex = unserialize($data);
