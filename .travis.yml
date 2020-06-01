@@ -83,6 +83,12 @@ script:
     src/rpc-server \
     src/server \
     src/service-governance \
-    src/session
+    src/session \
+    src/snowflake \
+    src/socket \
+    src/socketio-server \
+    src/super-globals \
+    src/swoole-tracker \
+    src/task
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
