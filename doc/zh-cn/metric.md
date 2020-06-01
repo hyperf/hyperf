@@ -427,3 +427,4 @@ foreach ($metric['samples'] as $key => $value) {
     ];
 }
 ```
+- 如果选择 **自定义 Histogram Bucket**, 一定要注意注册的时机, 请确保 `registerHistogram()` 之前未触发过同一名称的 Histogram。
