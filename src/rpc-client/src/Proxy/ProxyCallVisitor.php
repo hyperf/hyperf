@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Di\BetterReflectionManager;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
@@ -61,7 +60,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     public function generateStmts(Interface_ $node): array
     {
         $betterReflectionInterface = ReflectionClass::createFromName($this->namespace . '\\' . $node->name);
-
         $reflectionMethods = $betterReflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
         $stmts = [];
         foreach ($reflectionMethods as $method) {
