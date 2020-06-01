@@ -34,6 +34,7 @@
 - Removed `Hyperf\Di\Aop\AstCollector`;
 - Removed `Hyperf\Di\Aop\ProxyClassNameVisitor`;
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
+- Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
 
 ## Fixed
 
