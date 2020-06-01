@@ -78,6 +78,7 @@ script:
     src/rate-limit \
     src/redis \
     src/retry \
-    src/rpc
+    src/rpc \
+    src/rpc-client
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
