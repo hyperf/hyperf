@@ -334,8 +334,6 @@ use Hyperf\Config\Annotation\Value;
 use Hyperf\Event\Contract\ListenerInterface;
 use Prometheus\CollectorRegistry;
 use Hyperf\Framework\Event\BeforeMainServerStart;
-use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Command\Event\BeforeHandle;
 
 class OnMainServerStart implements ListenerInterface
 {
@@ -349,7 +347,6 @@ class OnMainServerStart implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeProcessHandle::class,
             BeforeMainServerStart::class,
         ];
     }
@@ -367,6 +364,8 @@ class OnMainServerStart implements ListenerInterface
 }
 ```
 之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的 Histogram 了。
+
+> 请确保 `registerHistogram()` 之前未使用过同名 Histogram。
 
 ### 自定义上报
 
