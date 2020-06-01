@@ -69,6 +69,7 @@ script:
     src/metric \
     src/model-cache \
     src/model-listener \
-    src/nats
+    src/nats \
+    src/nsq
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
