@@ -26,7 +26,7 @@ interface NormalizerInterface
      *
      * @param mixed $data Data to restore
      * @param string $class The expected class to instantiate
-     * @return object
+     * @return mixed|object
      */
     public function denormalize($data, $class);
 }

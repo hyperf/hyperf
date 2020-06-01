@@ -66,7 +66,7 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int|float $times
+     * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */
@@ -126,7 +126,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param array|int|string $key
+     * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
      */
@@ -207,6 +207,7 @@ if (! function_exists('data_set')) {
         } else {
             $target = [];
             if ($segments) {
+                $target[$segment] = [];
                 data_set($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;
@@ -447,7 +448,8 @@ if (! function_exists('swoole_hook_flags')) {
 }
 
 if (! function_exists('timepoint')) {
-    function timepoint(?string $key = null) {
+    function timepoint(?string $key = null)
+    {
         if (! isset($GLOBALS['__timepoint_beginTime__'])) {
             $GLOBALS['__timepoint_beginTime__'] = microtime(true);
             return;

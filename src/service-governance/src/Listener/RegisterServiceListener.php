@@ -247,9 +247,10 @@ class RegisterServiceListener implements ListenerInterface
     protected function getInternalIp(): string
     {
         $ips = swoole_get_local_ip();
-        if (is_array($ips)) {
+        if (is_array($ips) && ! empty($ips)) {
             return current($ips);
         }
+        /** @var mixed|string $ip */
         $ip = gethostbyname(gethostname());
         if (is_string($ip)) {
             return $ip;

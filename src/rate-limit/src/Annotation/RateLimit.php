@@ -35,7 +35,7 @@ class RateLimit extends AbstractAnnotation
     public $capacity;
 
     /**
-     * @var callable
+     * @var null|callable
      */
     public $limitCallback;
 

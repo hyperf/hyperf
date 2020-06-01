@@ -18,12 +18,12 @@ use InvalidArgumentException;
 class Client
 {
     /**
-     * @var PackerInterface
+     * @var null|PackerInterface
      */
     private $packer;
 
     /**
-     * @var TransporterInterface
+     * @var null|TransporterInterface
      */
     private $transporter;
 
