@@ -30,7 +30,7 @@ class RedisStringHandler implements HandlerInterface
     protected $container;
 
     /**
-     * @var Redis
+     * @var RedisProxy
      */
     protected $redis;
 

@@ -23,3 +23,4 @@ parameters:
     - '#Unsafe usage of new static#'
     - '#Method Hyperf\\Contract\\Sendable::send#'
     - '#Variable .* in PHPDoc tag @var does not exist#'
+    - '#Call to an undefined method Hyperf\\DbConnection\\Model\\Model::hydrate#'

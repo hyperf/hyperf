@@ -66,6 +66,7 @@ script:
     src/load-balancer \
     src/logger \
     src/memory \
-    src/metric
+    src/metric \
+    src/model-cache
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine

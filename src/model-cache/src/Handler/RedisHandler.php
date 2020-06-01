@@ -20,7 +20,6 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\InteractsWithTime;
 use Psr\Container\ContainerInterface;
-use Redis;
 
 class RedisHandler implements HandlerInterface
 {
@@ -32,7 +31,7 @@ class RedisHandler implements HandlerInterface
     protected $container;
 
     /**
-     * @var Redis
+     * @var RedisProxy
      */
     protected $redis;
 
