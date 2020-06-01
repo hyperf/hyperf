@@ -36,6 +36,10 @@
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
 - Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
 
+## Added
+
+- [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.
+
 ## Fixed
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.

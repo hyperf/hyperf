@@ -18,11 +18,14 @@ use Hyperf\ModelCache\Redis\HashIncr;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 use Redis;
 
 class RedisHandler implements HandlerInterface
 {
+    use InteractsWithTime;
+
     /**
      * @var ContainerInterface
      */
@@ -87,8 +90,11 @@ class RedisHandler implements HandlerInterface
 
         $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
         $res = $this->redis->hMSet($key, $data);
-        if ($ttl && $ttl > 0) {
-            $this->redis->expire($key, $ttl);
+        if ($ttl) {
+            $seconds = $this->secondsUntil($ttl);
+            if ($seconds > 0) {
+                $this->redis->expire($key, $seconds);
+            }
         }
 
         return $res;
