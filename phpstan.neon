@@ -11,6 +11,17 @@ parameters:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
+    - %currentWorkingDirectory%/src/circuit-breaker/*
+    - %currentWorkingDirectory%/src/config-zookeeper/*
+    - %currentWorkingDirectory%/src/contract/*
+    - %currentWorkingDirectory%/src/crontab/*
+    - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/graphql/*
+    - %currentWorkingDirectory%/src/grpc/*
+    - %currentWorkingDirectory%/src/grpc-server/*
+    - %currentWorkingDirectory%/src/swagger/*
+    - %currentWorkingDirectory%/src/validation/*
+    - %currentWorkingDirectory%/src/view/*
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
