@@ -332,8 +332,8 @@ namespace App\Listener;
 
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Event\Contract\ListenerInterface;
-use Prometheus\CollectorRegistry;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Prometheus\CollectorRegistry;
 
 class OnMainServerStart implements ListenerInterface
 {
@@ -364,8 +364,6 @@ class OnMainServerStart implements ListenerInterface
 }
 ```
 之后您使用 `$metricFactory->makeHistogram('test')` 时返回的就是您提前注册好的 Histogram 了。
-
-> 请确保 `registerHistogram()` 之前未使用过同名 Histogram。
 
 ### 自定义上报
 
@@ -429,4 +427,4 @@ foreach ($metric['samples'] as $key => $value) {
     ];
 }
 ```
-- 如果选择 **自定义 Histogram Bucket**, 一定要注意注册的时机, 避免出现重复注册引发报错, 推荐监听 `OnMetricFactoryReady` 事件
+- 如果选择 **自定义 Histogram Bucket**, 一定要注意注册的时机, 请确保 `registerHistogram()` 之前未触发过同一名称的 Histogram。
