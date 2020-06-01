@@ -20,6 +20,7 @@ use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -139,6 +140,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 $middlewares = array_merge($middlewares, $registedMiddlewares);
             }
 
+            /** @var Response $psr7Response */
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
             $class = $psr7Response->getAttribute('class');
@@ -207,7 +209,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     /**
      * Initialize PSR-7 Request.
      */
-    protected function initRequest(SwooleRequest $request): RequestInterface
+    protected function initRequest(SwooleRequest $request): ServerRequestInterface
     {
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         WsContext::set(ServerRequestInterface::class, $psr7Request);

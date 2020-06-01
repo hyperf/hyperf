@@ -93,6 +93,7 @@ script:
     src/testing \
     src/tracer \
     src/traslation \
-    src/utils
+    src/utils \
+    src/websocket-client
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
@@ -23,8 +24,6 @@ class CoreMiddleware extends HttpCoreMiddleware
 {
     /**
      * Handle the response when found.
-     *
-     * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): ResponseInterface
     {
@@ -33,7 +32,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             throw new WebSocketHandeShakeException('Router not exist.');
         }
 
-        /** @var ResponseInterface $response */
+        /** @var Response $response */
         $response = Context::get(ResponseInterface::class);
 
         $security = $this->container->get(Security::class);
