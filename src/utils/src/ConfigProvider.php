@@ -21,18 +21,17 @@ class ConfigProvider
     public function __invoke()
     {
         return [
-            'dependencies' => value(function () {
-                $dependencies = [];
-                if (class_exists(Serializer::class)) {
-                    $dependencies[Serializer::class] = SerializerFactory::class;
-                }
-                $dependencies[NormalizerInterface::class] = SimpleNormalizer::class;
-                return $dependencies;
-            }),
+            'dependencies' => [
+                Serializer::class => SerializerFactory::class,
+                NormalizerInterface::class => SimpleNormalizer::class,
+            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
                         __DIR__,
+                    ],
+                    'class_map' => [
+                        Serializer::class => __DIR__ . '/../classes/Serializer.php',
                     ],
                 ],
             ],
