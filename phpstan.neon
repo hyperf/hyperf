@@ -24,3 +24,4 @@ parameters:
     - '#Method Hyperf\\Contract\\Sendable::send#'
     - '#Variable .* in PHPDoc tag @var does not exist#'
     - '#Call to an undefined method Hyperf\\DbConnection\\Model\\Model::hydrate#'
+    - '#PHPDoc tag @param has invalid value#'
