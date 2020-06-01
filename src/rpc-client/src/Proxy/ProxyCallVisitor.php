@@ -16,6 +16,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionMethod;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
@@ -59,7 +60,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function generateStmts(Interface_ $node): array
     {
-        $betterReflectionInterface = BetterReflectionManager::reflectClass($this->namespace . '\\' . $node->name);
+        $betterReflectionInterface = ReflectionClass::createFromName($this->namespace . '\\' . $node->name);
+
         $reflectionMethods = $betterReflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
         $stmts = [];
         foreach ($reflectionMethods as $method) {
