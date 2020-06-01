@@ -67,6 +67,8 @@ script:
     src/logger \
     src/memory \
     src/metric \
-    src/model-cache
+    src/model-cache \
+    src/model-listener \
+    src/nats
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
