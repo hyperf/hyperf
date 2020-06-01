@@ -71,6 +71,13 @@ script:
     src/model-listener \
     src/nats \
     src/nsq \
-    src/paginator
+    src/paginator \
+    src/pool \
+    src/process \
+    src/protocol \
+    src/rate-limit \
+    src/redis \
+    src/retry \
+    src/rpc
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
