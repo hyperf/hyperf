@@ -126,7 +126,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param array|int|string $key
+     * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
      */
@@ -207,6 +207,7 @@ if (! function_exists('data_set')) {
         } else {
             $target = [];
             if ($segments) {
+                $target[$segment] = [];
                 data_set($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;

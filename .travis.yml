@@ -89,6 +89,10 @@ script:
     src/socketio-server \
     src/super-globals \
     src/swoole-tracker \
-    src/task
+    src/task \
+    src/testing \
+    src/tracer \
+    src/traslation \
+    src/utils
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
