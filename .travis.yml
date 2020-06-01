@@ -70,6 +70,7 @@ script:
     src/model-cache \
     src/model-listener \
     src/nats \
-    src/nsq
+    src/nsq \
+    src/paginator
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
