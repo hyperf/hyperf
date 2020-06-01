@@ -79,6 +79,8 @@ script:
     src/redis \
     src/retry \
     src/rpc \
-    src/rpc-client
+    src/rpc-client \
+    src/rpc-server \
+    src/server
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
