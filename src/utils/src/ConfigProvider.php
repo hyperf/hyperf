@@ -30,9 +30,6 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
-                    'class_map' => [
-                        Serializer::class => __DIR__ . '/../classes/Serializer.php',
-                    ],
                 ],
             ],
         ];

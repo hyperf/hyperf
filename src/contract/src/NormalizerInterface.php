@@ -17,7 +17,7 @@ interface NormalizerInterface
      * Normalizes an object into a set of arrays/scalars.
      *
      * @param mixed $object
-     * @return array|bool|float|int|string
+     * @return array|string|int|float|bool|\ArrayObject|null
      */
     public function normalize($object);
 

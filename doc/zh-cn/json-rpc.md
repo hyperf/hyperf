@@ -360,8 +360,11 @@ return [
 当框架导入 `symfony/serialize (^5.0)` 和 `symfony/property-access (^5.0)` 后，并在 `dependencies.php` 中配置一下关系
 
 ```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
 return [
-    Hyperf\Contract\NormalizerInterface::class => Hyperf\Utils\Serializer\SymfonyNormalizer::class,
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
 ];
 ```
 

@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Symfony\Component\Serializer;
+namespace Hyperf\Utils\Serializer;
 
+use Hyperf\Contract\NormalizerInterface as Normalizer;
+use Symfony\Component\Serializer\Encoder;
 use Symfony\Component\Serializer\Encoder\ChainDecoder;
 use Symfony\Component\Serializer\Encoder\ChainEncoder;
 use Symfony\Component\Serializer\Encoder\ContextAwareDecoderInterface;
@@ -28,6 +30,8 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerAwareInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Serializer serializes and deserializes data.
@@ -39,7 +43,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  *     $serializer->decode($data, 'xml')
  *     $serializer->denormalize($data, 'Class', 'xml')
  */
-class Serializer implements SerializerInterface, ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface, ContextAwareEncoderInterface, ContextAwareDecoderInterface
+class Serializer implements Normalizer, SerializerInterface, ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface, ContextAwareEncoderInterface, ContextAwareDecoderInterface
 {
     private const SCALAR_TYPES = [
         'int' => true,
@@ -65,8 +69,8 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
     private $normalizerCache = [];
 
     /**
-     * @param (NormalizerInterface|DenormalizerInterface)[] $normalizers
-     * @param (EncoderInterface|DecoderInterface)[] $encoders
+     * @param (NormalizerInterface|DenormalizerInterface|mixed)[] $normalizers
+     * @param (EncoderInterface|DecoderInterface|mixed)[] $encoders
      */
     public function __construct(array $normalizers = [], array $encoders = [])
     {
@@ -252,7 +256,7 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
 
                 if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
                     $this->normalizerCache[$format][$type][$k] = false;
-                } elseif ($normalizer->supportsNormalization($data, $format, $context)) {
+                } elseif ($normalizer->supportsNormalization($data, $format)) {
                     $this->normalizerCache[$format][$type][$k] = true;
                     break;
                 }
@@ -289,7 +293,7 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
 
                 if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
                     $this->denormalizerCache[$format][$class][$k] = false;
-                } elseif ($normalizer->supportsDenormalization(null, $class, $format, $context)) {
+                } elseif ($normalizer->supportsDenormalization(null, $class, $format)) {
                     $this->denormalizerCache[$format][$class][$k] = true;
                     break;
                 }
