@@ -439,11 +439,11 @@ if (! function_exists('run')) {
 
 if (! function_exists('swoole_hook_flags')) {
     /**
-     * Return the currently enabled swoole hook flags.
+     * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
      */
     function swoole_hook_flags(): int
     {
-        return \Swoole\Runtime::getHookFlags();
+        return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
     }
 }
 
