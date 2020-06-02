@@ -14,10 +14,6 @@ namespace Oss\OssClient {
 
     function is_resource($resource)
     {
-        if (! method_exists(Runtime::class, 'getHookFlags')) {
-            return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
-        }
-
         if (Runtime::getHookFlags() & SWOOLE_HOOK_CURL) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
@@ -30,9 +26,6 @@ namespace Oss\Http {
 
     function is_resource($resource)
     {
-        if (! method_exists(Runtime::class, 'getHookFlags')) {
-            return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
-        }
         if (Runtime::getHookFlags() & SWOOLE_HOOK_CURL) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
