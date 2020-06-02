@@ -288,3 +288,46 @@ class WebSocketController extends BaseNamespace
     }
 }
 ```
+
+## auth 鉴权
+
+- 使用ws中间件拦截ws握手
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class WSAuthMiddleware implements MiddlewareInterface
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // 拦截握手, 验证 token
+            return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('auth fail');
+        }
+
+        return $handler->handle($request);
+    }
+}
+```
+
+
+- 在事件回调里通过连接上下文获取ServerRequestInterface 然后自行处理
