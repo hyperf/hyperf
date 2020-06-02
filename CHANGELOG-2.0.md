@@ -35,10 +35,7 @@
 - Removed `Hyperf\Di\Aop\ProxyClassNameVisitor`;
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
 - Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
-
-## Tip
-
-- SymfonyNormalizer(^5.0) `$serializer->denormalize('1', 'int')` will throw `NotNormalizableValueException: Data expected to be of type "int" ("string" given).`
+- Removed mapping for `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` from `ConfigProvider` in utils.
 
 ## Added
 
@@ -47,3 +44,16 @@
 ## Fixed
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
+
+## Changed
+
+- Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
+
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```

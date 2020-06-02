@@ -17,7 +17,7 @@ interface NormalizerInterface
      * Normalizes an object into a set of arrays/scalars.
      *
      * @param mixed $object
-     * @return array|bool|float|int|string
+     * @return null|array|\ArrayObject|bool|float|int|string
      */
     public function normalize($object);
 
@@ -28,5 +28,5 @@ interface NormalizerInterface
      * @param string $class The expected class to instantiate
      * @return mixed|object
      */
-    public function denormalize($data, $class);
+    public function denormalize($data, string $class);
 }
