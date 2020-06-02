@@ -10,12 +10,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Oss\OssClient {
+    use Swoole\Runtime;
+
     function is_resource($resource)
     {
-        if (! function_exists('swoole_hook_flags')) {
+        if (! method_exists(Runtime::class, 'getHookFlags')) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
-        if (swoole_hook_flags() & SWOOLE_HOOK_CURL) {
+
+        if (Runtime::getHookFlags() & SWOOLE_HOOK_CURL) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
         return \is_resource($resource);
@@ -23,12 +26,14 @@ namespace Oss\OssClient {
 }
 
 namespace Oss\Http {
+    use Swoole\Runtime;
+
     function is_resource($resource)
     {
-        if (! function_exists('swoole_hook_flags')) {
+        if (! method_exists(Runtime::class, 'getHookFlags')) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
-        if (swoole_hook_flags() & SWOOLE_HOOK_CURL) {
+        if (Runtime::getHookFlags() & SWOOLE_HOOK_CURL) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
         return \is_resource($resource);
