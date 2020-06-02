@@ -45,8 +45,15 @@
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 
-## Tip
+## Changed
 
-- Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`.
-- SymfonyNormalizer(^5.0) `$serializer->denormalize('1', 'int')` will throw `NotNormalizableValueException: Data expected to be of type "int" ("string" given).`
+- Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
 
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```
