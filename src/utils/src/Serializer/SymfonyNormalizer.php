@@ -31,7 +31,7 @@ class SymfonyNormalizer implements NormalizerInterface
         return $this->serializer->normalize($object);
     }
 
-    public function denormalize($data, $class)
+    public function denormalize($data, string $class)
     {
         return $this->serializer->denormalize($data, $class);
     }
