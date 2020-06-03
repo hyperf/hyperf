@@ -36,9 +36,20 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
      */
     protected $beginTime;
 
+    /**
+     * @var int
+     */
+    protected $lowFrequencyTime;
+
+    /**
+     * @var int
+     */
+    protected $lowFrequencyInterval = 60;
+
     public function __construct()
     {
         $this->beginTime = time();
+        $this->lowFrequencyTime = time();
     }
 
     public function hit(int $number = 1): bool
@@ -68,7 +79,11 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
 
     public function isLowFrequency(): bool
     {
-        return $this->frequency() < $this->lowFrequency;
+        if ($this->lowFrequencyTime + $this->lowFrequencyInterval > time() && $this->frequency() < $this->lowFrequency) {
+            $this->lowFrequencyTime = time();
+            return true;
+        }
+        return false;
     }
 
     protected function flush(): void
