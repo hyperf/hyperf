@@ -106,7 +106,7 @@ abstract class Pool implements PoolInterface
     {
         $num = $this->getConnectionsInChannel();
         if ($num > 0 && $conn = $this->channel->pop(0.001)) {
-            if (! $must && ! $conn->check()) {
+            if ($must || ! $conn->check()) {
                 try {
                     $conn->close();
                 } catch (\Throwable $exception) {
