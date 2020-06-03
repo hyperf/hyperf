@@ -84,7 +84,7 @@ class Frequency extends \Hyperf\Pool\Frequency
     protected $time = 10;
 
     /**
-     * 触发低频的次数
+     * 触发低频的频率
      * @var int
      */
     protected $lowFrequency = 5;
