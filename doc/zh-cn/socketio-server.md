@@ -291,7 +291,7 @@ class WebSocketController extends BaseNamespace
 
 ## auth 鉴权
 
-- 使用ws中间件拦截ws握手
+- 使用 ws 中间件拦截 ws 握手
 
 ```php
 <?php
@@ -320,7 +320,8 @@ class WSAuthMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // 拦截握手, 验证 token
+        // 伪代码, 拦截握手
+        if (check_auth()) {
             return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('auth fail');
         }
 
