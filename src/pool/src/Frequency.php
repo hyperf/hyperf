@@ -46,7 +46,7 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
      */
     protected $lowFrequencyInterval = 60;
 
-    public function __construct()
+    public function __construct(?Pool $pool = null)
     {
         $this->beginTime = time();
         $this->lowFrequencyTime = time();
@@ -79,8 +79,9 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
 
     public function isLowFrequency(): bool
     {
-        if ($this->lowFrequencyTime + $this->lowFrequencyInterval > time() && $this->frequency() < $this->lowFrequency) {
-            $this->lowFrequencyTime = time();
+        $now = time();
+        if ($this->lowFrequencyTime + $this->lowFrequencyInterval > $now && $this->frequency() < $this->lowFrequency) {
+            $this->lowFrequencyTime = $now;
             return true;
         }
         return false;
