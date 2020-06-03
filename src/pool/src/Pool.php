@@ -102,6 +102,26 @@ abstract class Pool implements PoolInterface
         }
     }
 
+    public function flushOne(): void
+    {
+        $num = $this->getConnectionsInChannel();
+        if ($num > 0 && $conn = $this->channel->pop(0.001)) {
+            if (! $conn->check()) {
+                try {
+                    $conn->close();
+                } catch (\Throwable $exception) {
+                    if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                        $logger->error((string) $exception);
+                    }
+                } finally {
+                    --$this->currentConnections;
+                }
+            } else {
+                $this->release($conn);
+            }
+        }
+    }
+
     public function getCurrentConnections(): int
     {
         return $this->currentConnections;
