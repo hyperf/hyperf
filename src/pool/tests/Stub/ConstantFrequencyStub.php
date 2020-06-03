@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Pool;
+namespace HyperfTest\Pool\Stub;
 
-interface LowFrequencyInterface
+use Hyperf\Pool\ConstantFrequency;
+
+class ConstantFrequencyStub extends ConstantFrequency
 {
-    public function __construct(?Pool $pool = null);
-
-    public function isLowFrequency(): bool;
+    protected $interval = 1;
 }

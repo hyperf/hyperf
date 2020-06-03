@@ -37,7 +37,7 @@ class Channel
     }
 
     /**
-     * @return ConnectionInterface
+     * @return ConnectionInterface|false
      */
     public function pop(float $timeout)
     {
