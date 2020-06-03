@@ -60,6 +60,8 @@ $code = 0;
     require PHPUNIT_COMPOSER_INSTALL;
 
     $code = PHPUnit\TextUI\Command::main(false);
+
+    Swoole\Timer::clearAll();
 });
 
 swoole_event_wait();
