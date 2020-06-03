@@ -102,11 +102,11 @@ abstract class Pool implements PoolInterface
         }
     }
 
-    public function flushOne(): void
+    public function flushOne(bool $must = false): void
     {
         $num = $this->getConnectionsInChannel();
         if ($num > 0 && $conn = $this->channel->pop(0.001)) {
-            if (! $conn->check()) {
+            if (! $must && ! $conn->check()) {
                 try {
                     $conn->close();
                 } catch (\Throwable $exception) {
