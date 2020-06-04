@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use SplPriorityQueue;
 use Swoole\Coroutine\System;
 
 class SignalManager
@@ -23,7 +24,7 @@ class SignalManager
     /**
      * @var SignalHandlerInterface[][]
      */
-    protected $handlers;
+    protected $handlers = [];
 
     /**
      * @var ContainerInterface
@@ -57,15 +58,19 @@ class SignalManager
         }
     }
 
-    public function listen()
+    public function listen(?string $process)
     {
+        if ($this->isInvalidProcess($process)) {
+            return;
+        }
+
         foreach ($this->handlers as $signal => $handlers) {
-            Coroutine::create(function () use ($signal, $handlers) {
+            Coroutine::create(function () use ($signal, $handlers, $process) {
                 while (true) {
                     $ret = System::waitSignal($signal, $this->config->get('signal.timeout', 5.0));
                     if ($ret) {
                         foreach ($handlers as $handler) {
-                            $handler->handle($signal);
+                            $handler->handle($signal, $process);
                         }
                     }
 
@@ -88,12 +93,36 @@ class SignalManager
         return $this;
     }
 
-    protected function getHandlers(): array
+    protected function isInvalidProcess(?string $process): bool
+    {
+        return ! in_array($process, [
+            SignalHandlerInterface::PROCESS,
+            SignalHandlerInterface::WORKER,
+        ]);
+    }
+
+    protected function getHandlers(): SplPriorityQueue
     {
         $handlers = $this->config->get('signal.handlers', []);
 
-        $handlers = array_merge($handlers, array_keys(AnnotationCollector::getClassesByAnnotation(Signal::class)));
+        $queue = new SplPriorityQueue();
+        foreach ($handlers as $handler => $priority) {
+            if (! is_numeric($priority)) {
+                $handler = $priority;
+                $priority = 0;
+            }
+            $queue->insert($handler, $priority);
+        }
 
-        return array_unique($handlers);
+        $handlers = AnnotationCollector::getClassesByAnnotation(Signal::class);
+        /**
+         * @var string $handler
+         * @var Signal $annotation
+         */
+        foreach ($handlers as $handler => $annotation) {
+            $queue->insert($handler, $annotation->priority ?? 0);
+        }
+
+        return $queue;
     }
 }

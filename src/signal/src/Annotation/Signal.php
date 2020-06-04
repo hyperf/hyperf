@@ -19,4 +19,8 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Signal extends AbstractAnnotation
 {
+    /**
+     * @var null|int
+     */
+    public $priority;
 }

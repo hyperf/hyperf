@@ -18,7 +18,7 @@ class SignalHandler implements SignalHandlerInterface
         return [];
     }
 
-    public function handle(int $signal): void
+    public function handle(int $signal, string $process): void
     {
     }
 }

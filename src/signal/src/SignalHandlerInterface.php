@@ -13,7 +13,11 @@ namespace Hyperf\Signal;
 
 interface SignalHandlerInterface
 {
+    const WORKER = 'worker';
+
+    const PROCESS = 'process';
+
     public function listen(): array;
 
-    public function handle(int $signal): void;
+    public function handle(int $signal, string $process): void;
 }

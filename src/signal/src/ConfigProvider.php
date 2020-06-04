@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Signal;
 
+use Hyperf\Signal\Listener\SignalDeregisterListener;
+use Hyperf\Signal\Listener\SignalRegisterListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -22,6 +25,10 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+            ],
+            'listeners' => [
+                SignalRegisterListener::class,
+                SignalDeregisterListener::class,
             ],
             'publish' => [
                 [
