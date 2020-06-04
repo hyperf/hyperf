@@ -13,7 +13,6 @@ namespace Hyperf\Signal\Handler;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Signal\SignalHandlerInterface as I;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -38,7 +37,7 @@ class WorkerStopHandler implements SignalHandlerInterface
     public function listen(): array
     {
         return [
-            [I::WORKER, SIGTERM],
+            [self::WORKER, SIGTERM],
         ];
     }
 

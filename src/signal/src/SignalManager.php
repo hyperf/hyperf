@@ -50,7 +50,7 @@ class SignalManager
 
     public function init()
     {
-        foreach ($this->getHandlers() as $class) {
+        foreach ($this->getQueue() as $class) {
             /** @var SignalHandlerInterface $handler */
             $handler = $this->container->get($class);
             foreach ($handler->listen() as [$process, $signal]) {
@@ -61,6 +61,11 @@ class SignalManager
                 }
             }
         }
+    }
+
+    public function getHandlers(): array
+    {
+        return $this->handlers;
     }
 
     public function listen(?int $process)
@@ -106,7 +111,7 @@ class SignalManager
         ]);
     }
 
-    protected function getHandlers(): SplPriorityQueue
+    protected function getQueue(): SplPriorityQueue
     {
         $handlers = $this->config->get('signal.handlers', []);
 

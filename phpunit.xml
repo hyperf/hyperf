@@ -47,6 +47,7 @@
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
+            <directory suffix="Test.php">./src/signal/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
             <directory suffix="Test.php">./src/socketio-server/tests</directory>
