@@ -14,7 +14,7 @@ namespace Hyperf\Signal;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Signal\Annotation\Signal;
-use Hyperf\Signal\SignalHandlerInterface as I;
+use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use SplPriorityQueue;
@@ -54,10 +54,10 @@ class SignalManager
             /** @var SignalHandlerInterface $handler */
             $handler = $this->container->get($class);
             foreach ($handler->listen() as [$process, $signal]) {
-                if ($process & I::WORKER) {
-                    $this->handlers[I::WORKER][$signal][] = $handler;
-                } elseif ($process & I::PROCESS) {
-                    $this->handlers[I::PROCESS][$signal][] = $handler;
+                if ($process & SignalHandler::WORKER) {
+                    $this->handlers[SignalHandler::WORKER][$signal][] = $handler;
+                } elseif ($process & SignalHandler::PROCESS) {
+                    $this->handlers[SignalHandler::PROCESS][$signal][] = $handler;
                 }
             }
         }
@@ -106,8 +106,8 @@ class SignalManager
     protected function isInvalidProcess(?int $process): bool
     {
         return ! in_array($process, [
-            I::PROCESS,
-            I::WORKER,
+            SignalHandler::PROCESS,
+            SignalHandler::WORKER,
         ]);
     }
 
