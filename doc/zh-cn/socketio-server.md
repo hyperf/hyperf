@@ -289,9 +289,9 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-## auth 鉴权
+## Auth 鉴权
 
-- 使用 ws 中间件拦截 ws 握手
+您可以通过使用中间件来拦截 WebSocket 握手，实现鉴权功能，如下：
 
 ```php
 <?php
@@ -306,7 +306,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class WSAuthMiddleware implements MiddlewareInterface
+class WebSocketAuthMiddleware implements MiddlewareInterface
 {
     /**
      * @var ContainerInterface
@@ -320,9 +320,9 @@ class WSAuthMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // 伪代码, 拦截握手
-        if (check_auth()) {
-            return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('auth fail');
+        // 伪代码，通过 isAuth 方法拦截握手请求并实现权限检查
+        if (! $this->isAuth($request)) {
+            return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('Forbidden');
         }
 
         return $handler->handle($request);
@@ -330,5 +330,4 @@ class WSAuthMiddleware implements MiddlewareInterface
 }
 ```
 
-
-- 在事件回调里通过连接上下文获取ServerRequestInterface 然后自行处理
+并将上面的中间件配置到对应的 WebSocket Server 中去即可。
