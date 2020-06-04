@@ -39,6 +39,7 @@
 
 ## Added
 
+- [#1819](https://github.com/hyperf/hyperf/pull/1819) Added `hyperf/signal` component.
 - [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.
 - [#1855](https://github.com/hyperf/hyperf/pull/1855) Added `ConstantFrequency` to flush one connection, when it is idle connection for the interval of time.
 
