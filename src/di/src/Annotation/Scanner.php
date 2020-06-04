@@ -28,7 +28,7 @@ class Scanner
     protected $classloader;
 
     /**
-     * @var \Hyperf\Autoload\ScanConfig
+     * @var ScanConfig
      */
     protected $scanConfig;
 
@@ -99,7 +99,7 @@ class Scanner
             }
         }
 
-        unset($reflection, $classAnnotations, $properties, $methods, $parentClassNames, $traitNames);
+        unset($reflection, $classAnnotations, $properties, $methods);
     }
 
     /**
@@ -117,7 +117,7 @@ class Scanner
         $annotationReader = new AnnotationReader();
         $lastCacheModified = $this->deserializeCachedCollectors($collectors);
         // TODO: The online mode won't init BetterReflectionManager when has cache.
-        if ($lastCacheModified > 0 && $this->scanConfig->getAppEnv() === 'prod') {
+        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
             return [];
         }
 
@@ -146,7 +146,7 @@ class Scanner
         $this->loadAspects($lastCacheModified);
 
         $data = [];
-        /** @var MetadataCollector $collector */
+        /** @var MetadataCollector|string $collector */
         foreach ($collectors as $collector) {
             $data[$collector] = $collector::serialize();
         }

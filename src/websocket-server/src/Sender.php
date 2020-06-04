@@ -55,7 +55,9 @@ class Sender
 
         $result = $this->check($fd);
         if ($result) {
-            $this->getServer()->push(...$arguments);
+            /** @var \Swoole\WebSocket\Server $server */
+            $server = $this->getServer();
+            $server->push(...$arguments);
             $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
         }
 

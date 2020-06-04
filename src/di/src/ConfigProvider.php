@@ -24,8 +24,13 @@ class ConfigProvider
     public function __invoke(): array
     {
         // Register AST visitors to the collector.
-        AstVisitorRegistry::insert(PropertyHandlerVisitor::class, PHP_INT_MAX / 2);
-        AstVisitorRegistry::insert(ProxyCallVisitor::class, PHP_INT_MAX / 2);
+        if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
+            AstVisitorRegistry::insert(PropertyHandlerVisitor::class, PHP_INT_MAX / 2);
+        }
+
+        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
+            AstVisitorRegistry::insert(ProxyCallVisitor::class, PHP_INT_MAX / 2);
+        }
 
         // Register Property Handler.
         RegisterInjectPropertyHandler::register();

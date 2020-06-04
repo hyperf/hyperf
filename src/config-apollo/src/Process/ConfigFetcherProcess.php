@@ -81,7 +81,9 @@ class ConfigFetcherProcess extends AbstractProcess
             $callbacks = [];
             $namespaces = $this->config->get('apollo.namespaces', []);
             foreach ($namespaces as $namespace) {
-                $callbacks[$namespace] = $ipcCallback;
+                if (is_string($namespace)) {
+                    $callbacks[$namespace] = $ipcCallback;
+                }
             }
             $this->client->pull($namespaces, $callbacks);
             sleep($this->config->get('apollo.interval', 5));

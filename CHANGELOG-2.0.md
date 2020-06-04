@@ -34,3 +34,32 @@
 - Removed `Hyperf\Di\Aop\AstCollector`;
 - Removed `Hyperf\Di\Aop\ProxyClassNameVisitor`;
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
+- Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
+- Removed mapping for `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` from `ConfigProvider` in utils.
+
+## Added
+
+- [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.
+- [#1855](https://github.com/hyperf/hyperf/pull/1855) Added `ConstantFrequency` to flush one connection, when it is idle connection for the interval of time.
+
+## Fixed
+
+- [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
+- [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
+
+## Optimized
+
+- [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
+
+## Changed
+
+- [#1846](https://github.com/hyperf/hyperf/pull/1846) Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
+
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```

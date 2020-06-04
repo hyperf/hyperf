@@ -37,10 +37,10 @@ class Cookie
 
     /**
      * @param string $name The name of the cookie
-     * @param null|string $value The value of the cookie
+     * @param string $value The value of the cookie
      * @param \DateTimeInterface|int|string $expire The time the cookie expires
      * @param string $path The path on the server in which the cookie will be available on
-     * @param null|string $domain The domain that the cookie is available to
+     * @param string $domain The domain that the cookie is available to
      * @param bool $secure Whether the cookie should only be transmitted over a secure HTTPS connection from the client
      * @param bool $httpOnly Whether the cookie will be made accessible only through the HTTP protocol
      * @param bool $raw Whether the cookie value should be sent with no url encoding
@@ -51,7 +51,7 @@ class Cookie
     public function __construct(
         string $name,
         string $value = '',
-        int $expire = 0,
+        $expire = 0,
         string $path = '/',
         string $domain = '',
         bool $secure = false,
@@ -80,7 +80,7 @@ class Cookie
         }
 
         $this->name = $name;
-        $this->value = (string) $value;
+        $this->value = $value;
         $this->domain = $domain;
         $this->expire = 0 < $expire ? (int) $expire : 0;
         $this->path = empty($path) ? '/' : $path;
@@ -149,8 +149,6 @@ class Cookie
      *
      * @param string $cookie
      * @param bool $decode
-     *
-     * @return static
      */
     public static function fromString($cookie, $decode = false)
     {
@@ -190,8 +188,17 @@ class Cookie
             }
         }
 
-        return new static($data['name'], $data['value'], $data['expires'], $data['path'], $data['domain'],
-            $data['secure'], $data['httponly'], $data['raw'], $data['samesite']);
+        return new Cookie(
+            $data['name'],
+            $data['value'],
+            $data['expires'],
+            $data['path'],
+            $data['domain'],
+            $data['secure'],
+            $data['httponly'],
+            $data['raw'],
+            $data['samesite']
+        );
     }
 
     /**

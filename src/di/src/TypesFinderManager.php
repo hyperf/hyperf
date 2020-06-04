@@ -16,7 +16,7 @@ use Roave\BetterReflection\TypesFinder\FindPropertyType;
 class TypesFinderManager
 {
     /**
-     * @var FindPropertyType
+     * @var null|FindPropertyType
      */
     protected static $property;
 

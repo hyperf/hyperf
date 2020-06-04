@@ -89,7 +89,7 @@ class ClassLoader
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
                     return (bool) $composerClassLoader->findFile($class);
                 });
-                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
+                $loader[0] = new ClassLoader($composerClassLoader, $proxyFileDirPath, $configDir);
             }
             spl_autoload_unregister($unregisterLoader);
         }

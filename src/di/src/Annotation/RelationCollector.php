@@ -31,7 +31,7 @@ class RelationCollector
         return static::getContainer()[$key] ?? [];
     }
 
-    public function getContainer(): array
+    public static function getContainer(): array
     {
         return static::$container;
     }

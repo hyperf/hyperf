@@ -16,12 +16,12 @@ use Composer\Autoload\ClassLoader;
 class Composer
 {
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $content;
 
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $json;
 
@@ -41,7 +41,7 @@ class Composer
     private static $versions = [];
 
     /**
-     * @var ClassLoaders
+     * @var null|ClassLoader
      */
     private static $classLoader;
 
