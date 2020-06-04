@@ -14,6 +14,7 @@ namespace Hyperf\Signal;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Signal\Annotation\Signal;
+use Hyperf\Signal\SignalHandlerInterface as I;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use SplPriorityQueue;
@@ -22,7 +23,7 @@ use Swoole\Coroutine\System;
 class SignalManager
 {
     /**
-     * @var SignalHandlerInterface[][]
+     * @var SignalHandlerInterface[][][]
      */
     protected $handlers = [];
 
@@ -52,25 +53,29 @@ class SignalManager
         foreach ($this->getHandlers() as $class) {
             /** @var SignalHandlerInterface $handler */
             $handler = $this->container->get($class);
-            foreach ($handler->listen() as $signal) {
-                $this->handlers[$signal][] = $handler;
+            foreach ($handler->listen() as [$process, $signal]) {
+                if ($process & I::WORKER) {
+                    $this->handlers[I::WORKER][$signal][] = $handler;
+                } elseif ($process & I::PROCESS) {
+                    $this->handlers[I::PROCESS][$signal][] = $handler;
+                }
             }
         }
     }
 
-    public function listen(?string $process)
+    public function listen(?int $process)
     {
         if ($this->isInvalidProcess($process)) {
             return;
         }
 
-        foreach ($this->handlers as $signal => $handlers) {
-            Coroutine::create(function () use ($signal, $handlers, $process) {
+        foreach ($this->handlers[$process] ?? [] as $signal => $handlers) {
+            Coroutine::create(function () use ($signal, $handlers) {
                 while (true) {
                     $ret = System::waitSignal($signal, $this->config->get('signal.timeout', 5.0));
                     if ($ret) {
                         foreach ($handlers as $handler) {
-                            $handler->handle($signal, $process);
+                            $handler->handle($signal);
                         }
                     }
 
@@ -93,11 +98,11 @@ class SignalManager
         return $this;
     }
 
-    protected function isInvalidProcess(?string $process): bool
+    protected function isInvalidProcess(?int $process): bool
     {
         return ! in_array($process, [
-            SignalHandlerInterface::PROCESS,
-            SignalHandlerInterface::WORKER,
+            I::PROCESS,
+            I::WORKER,
         ]);
     }
 

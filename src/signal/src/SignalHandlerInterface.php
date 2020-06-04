@@ -13,11 +13,14 @@ namespace Hyperf\Signal;
 
 interface SignalHandlerInterface
 {
-    const WORKER = 'worker';
+    const WORKER = 1;
 
-    const PROCESS = 'process';
+    const PROCESS = 2;
 
+    /**
+     * @return array [[ WOKKER, SIGNAL ]]
+     */
     public function listen(): array;
 
-    public function handle(int $signal, string $process): void;
+    public function handle(int $signal): void;
 }
