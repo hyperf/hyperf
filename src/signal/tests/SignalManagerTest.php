@@ -13,7 +13,7 @@ namespace HyperfTest\Signal;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Signal\SignalHandlerInterface as I;
+use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Signal\SignalManager;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -51,11 +51,11 @@ class SignalManagerTest extends TestCase
         $manager = new SignalManager($container);
         $manager->init();
 
-        $this->assertArrayHasKey(I::WORKER, $manager->getHandlers());
-        $this->assertArrayHasKey(SIGTERM, $manager->getHandlers()[I::WORKER]);
-        $this->assertIsArray($manager->getHandlers()[I::WORKER]);
-        $this->assertInstanceOf(SignalHandler2Stub::class, $manager->getHandlers()[I::WORKER][SIGTERM][0]);
-        $this->assertInstanceOf(SignalHandlerStub::class, $manager->getHandlers()[I::WORKER][SIGTERM][1]);
+        $this->assertArrayHasKey(SignalHandler::WORKER, $manager->getHandlers());
+        $this->assertArrayHasKey(SIGTERM, $manager->getHandlers()[SignalHandler::WORKER]);
+        $this->assertIsArray($manager->getHandlers()[SignalHandler::WORKER]);
+        $this->assertInstanceOf(SignalHandler2Stub::class, $manager->getHandlers()[SignalHandler::WORKER][SIGTERM][0]);
+        $this->assertInstanceOf(SignalHandlerStub::class, $manager->getHandlers()[SignalHandler::WORKER][SIGTERM][1]);
     }
 
     protected function getContainer()

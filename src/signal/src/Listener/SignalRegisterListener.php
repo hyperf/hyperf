@@ -14,7 +14,7 @@ namespace Hyperf\Signal\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Signal\SignalHandlerInterface as I;
+use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Signal\SignalManager;
 use Psr\Container\ContainerInterface;
 
@@ -45,11 +45,11 @@ class SignalRegisterListener implements ListenerInterface
         $manager->init();
         $manager->listen(value(function () use ($event) {
             if ($event instanceof BeforeWorkerStart) {
-                return I::WORKER;
+                return SignalHandler::WORKER;
             }
 
             if ($event instanceof BeforeProcessHandle) {
-                return I::PROCESS;
+                return SignalHandler::PROCESS;
             }
 
             return null;
