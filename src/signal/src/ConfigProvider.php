@@ -27,7 +27,7 @@ class ConfigProvider
                 ],
             ],
             'listeners' => [
-                SignalRegisterListener::class,
+                SignalRegisterListener::class => PHP_INT_MAX,
                 SignalDeregisterListener::class,
             ],
             'publish' => [
