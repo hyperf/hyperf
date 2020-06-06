@@ -311,6 +311,16 @@ class CoroutineHandlerTest extends TestCase
         $this->assertTrue($bool);
     }
 
+    public function testSink()
+    {
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+
+        $handler = new CoroutineHandlerStub();
+        $handler->createSink($body = uniqid(), $sink = $dir . uniqid());
+        $this->assertSame($body, file_get_contents($sink));
+    }
+
     protected function getHandler($options = [])
     {
         return new CoroutineHandler($options);
