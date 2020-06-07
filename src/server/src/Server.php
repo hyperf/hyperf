@@ -79,7 +79,7 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
-    public function getServer(): SwooleServer
+    public function getServer()
     {
         return $this->server;
     }
