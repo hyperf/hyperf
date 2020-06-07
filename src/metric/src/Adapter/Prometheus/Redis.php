@@ -284,6 +284,9 @@ LUA
                 if ($d['b'] == 'sum') {
                     continue;
                 }
+                if (count($d['labelValues']) != count($histogram['labelNames'])) {
+                    continue;
+                }
                 $allLabelValues[] = $d['labelValues'];
             }
             // We need set semantics.
@@ -345,6 +348,9 @@ LUA
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
+                if (count($gauge['labelNames']) != count(json_decode($k, true))) {
+                    continue;
+                }
                 $gauge['samples'][] = [
                     'name' => $gauge['name'],
                     'labelNames' => [],
@@ -371,6 +377,9 @@ LUA
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
+                if (count($counter['labelNames']) != count(json_decode($k, true))) {
+                    continue;
+                }
                 $counter['samples'][] = [
                     'name' => $counter['name'],
                     'labelNames' => [],
