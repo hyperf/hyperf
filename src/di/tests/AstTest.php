@@ -57,9 +57,6 @@ class Foo
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
-        if (get_parent_class() && method_exists(parent::class, \'__construct\')) {
-            parent::__construct(...func_get_args());
-        }
         self::__handlePropertyHandler(__CLASS__);
     }
 }', $code);
@@ -132,7 +129,7 @@ class Bar3 extends Bar
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct(int $id)
     {
-        if (get_parent_class() && method_exists(parent::class, \'__construct\')) {
+        if (method_exists(parent::class, \'__construct\')) {
             parent::__construct(...func_get_args());
         }
         self::__handlePropertyHandler(__CLASS__);

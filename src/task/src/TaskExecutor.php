@@ -67,7 +67,11 @@ class TaskExecutor
 
         if ($result instanceof Exception) {
             $exception = $this->normalizer->denormalize($result->attributes, $result->class);
-            throw $exception;
+            if ($exception instanceof \Throwable) {
+                throw $exception;
+            }
+
+            throw new TaskExecuteException(get_class($exception) . ' is not instance of Throwable.');
         }
 
         return $result;

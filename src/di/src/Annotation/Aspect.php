@@ -31,7 +31,7 @@ class Aspect extends AbstractAnnotation
     public $annotations = [];
 
     /**
-     * @var int
+     * @var null|int
      */
     public $priority;
 

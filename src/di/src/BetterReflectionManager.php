@@ -13,8 +13,6 @@ namespace Hyperf\Di;
 
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
@@ -31,7 +29,7 @@ class BetterReflectionManager extends MetadataCollector
     protected static $container = [];
 
     /**
-     * @var ClassReflector
+     * @var null|ClassReflector
      */
     protected static $instance;
 
@@ -64,28 +62,6 @@ class BetterReflectionManager extends MetadataCollector
             static::$container['class'][$className] = $reflection ?? static::getClassReflector()->reflect($className);
         }
         return static::$container['class'][$className];
-    }
-
-    public static function reflectMethod(string $className, string $method): ReflectionMethod
-    {
-        $key = $className . '::' . $method;
-        if (! isset(static::$container['method'][$key])) {
-            $reflectionClass = static::reflectClass($className);
-            $methods = $reflectionClass->getImmediateMethods();
-            static::$container['method'][$key] = $methods($method);
-        }
-        return static::$container['method'][$key];
-    }
-
-    public static function reflectProperty(string $className, string $property): ReflectionProperty
-    {
-        $key = $className . '::' . $property;
-        if (! isset(static::$container['property'][$key])) {
-            $reflectionClass = static::reflectClass($className);
-            $properties = $reflectionClass->getImmediateProperties();
-            static::$container['property'][$key] = $properties[$property];
-        }
-        return static::$container['property'][$key];
     }
 
     public static function clear(?string $key = null): void

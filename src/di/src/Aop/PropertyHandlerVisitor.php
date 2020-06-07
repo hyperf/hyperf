@@ -22,16 +22,6 @@ use PhpParser\NodeVisitorAbstract;
 class PropertyHandlerVisitor extends NodeVisitorAbstract
 {
     /**
-     * @var bool
-     */
-    protected $hasConstructor = false;
-
-    /**
-     * @var bool
-     */
-    protected $hasReflectConstructor = false;
-
-    /**
      * @var array
      */
     protected $proxyTraits = [
@@ -55,20 +45,27 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
 
     public function enterNode(Node $node)
     {
+        if ($node instanceof Node\Stmt\Class_) {
+            if ($node->extends) {
+                $this->visitorMetadata->hasExtends = true;
+            }
+        }
         if ($node instanceof Node\Stmt\ClassMethod) {
             if ($node->name->toString() === '__construct') {
                 $this->visitorMetadata->hasConstructor = true;
                 $this->visitorMetadata->constructorNode = $node;
-                return;
             }
         }
+        return null;
     }
 
     public function leaveNode(Node $node)
     {
         if (! $this->visitorMetadata->hasConstructor && $node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) {
             $constructor = $this->buildConstructor();
-            $constructor->stmts[] = $this->buildCallParentConstructorStatement();
+            if ($this->visitorMetadata->hasExtends) {
+                $constructor->stmts[] = $this->buildCallParentConstructorStatement();
+            }
             $constructor->stmts[] = $this->buildStaticCallStatement();
             $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], [$constructor], $node->stmts);
             $this->visitorMetadata->hasConstructor = true;
@@ -80,6 +77,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
                 $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], $node->stmts);
             }
         }
+        return null;
     }
 
     protected function buildConstructor(): Node\Stmt\ClassMethod
@@ -105,12 +103,11 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
 
     protected function buildCallParentConstructorStatement(): Node\Stmt
     {
-        $left = new Node\Expr\FuncCall(new Name('get_parent_class'));
-        $right = new Node\Expr\FuncCall(new Name('method_exists'), [
-            new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), new Name('class'))),
+        $hasConstructor = new Node\Expr\FuncCall(new Name('method_exists'), [
+            new Node\Arg(new Node\Expr\ClassConstFetch(new Name('parent'), 'class')),
             new Node\Arg(new Node\Scalar\String_('__construct')),
         ]);
-        return new Node\Stmt\If_(new Node\Expr\BinaryOp\BooleanAnd($left, $right), [
+        return new Node\Stmt\If_($hasConstructor, [
             'stmts' => [
                 new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('parent'), '__construct', [
                     new Node\Arg(new Node\Expr\FuncCall(new Name('func_get_args')), false, true),

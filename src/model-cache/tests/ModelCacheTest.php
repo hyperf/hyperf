@@ -193,6 +193,34 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
     }
 
+    public function testModelCacheExpireTime()
+    {
+        $container = ContainerStub::mockContainer();
+
+        /** @var UserExtModel $model */
+        $model = UserExtModel::query()->find(1);
+        $model->deleteCache();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        UserExtModel::findFromCache(1);
+        $this->assertSame(86400, $redis->ttl('{mc:default:m:user_ext}:id:1'));
+    }
+
+    public function testModelCacheExpireTimeWithDateInterval()
+    {
+        $container = ContainerStub::mockContainer(new \DateInterval('P1DT10S'));
+
+        /** @var UserExtModel $model */
+        $model = UserExtModel::query()->find(1);
+        $model->deleteCache();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        UserExtModel::findFromCache(1);
+        $this->assertSame(86410, $redis->ttl('{mc:default:m:user_ext}:id:1'));
+    }
+
     public function testModelCacheWithHidden()
     {
         ContainerStub::mockContainer();

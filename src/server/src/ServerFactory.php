@@ -25,12 +25,12 @@ class ServerFactory
     protected $container;
 
     /**
-     * @var LoggerInterface
+     * @var null|LoggerInterface
      */
     protected $logger;
 
     /**
-     * @var EventDispatcherInterface
+     * @var null|EventDispatcherInterface
      */
     protected $eventDispatcher;
 

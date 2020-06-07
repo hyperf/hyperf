@@ -440,3 +440,29 @@ use Hyperf\Utils\ApplicationContext;
 $driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
 return $driver->push(new ExampleJob());
 ```
+
+## 安全关闭
+
+异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `DriverStopHandler` ，可以让异步队列进程安全关闭。
+
+安装信号处理器
+
+```
+composer require hyperf/signal
+```
+
+添加配置
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'handlers' => [
+        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+    ],
+    'timeout' => 5.0,
+];
+
+```

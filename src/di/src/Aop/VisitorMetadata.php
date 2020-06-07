@@ -11,29 +11,27 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-/**
- * @property string className
- * @property bool hasConstructor
- */
+use PhpParser\Node;
+
 class VisitorMetadata
 {
-    public function __get($name)
-    {
-        return $this->{$name} ?? null;
-    }
+    /**
+     * @var string
+     */
+    public $className;
 
-    public function __set($name, $value)
-    {
-        $this->{$name} = $value;
-    }
+    /**
+     * @var bool
+     */
+    public $hasConstructor;
 
-    public function __isset($name)
-    {
-        return isset($this->{$name});
-    }
+    /**
+     * @var null|Node\Stmt\ClassMethod
+     */
+    public $constructorNode;
 
-    public function __unset($name)
-    {
-        unset($this->{$name});
-    }
+    /**
+     * @var bool
+     */
+    public $hasExtends;
 }

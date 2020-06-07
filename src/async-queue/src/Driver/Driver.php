@@ -28,6 +28,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 abstract class Driver implements DriverInterface
 {
     /**
+     * @var bool
+     */
+    public static $running = true;
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -79,7 +84,7 @@ abstract class Driver implements DriverInterface
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (true) {
+        while (self::$running) {
             [$data, $message] = $this->pop();
 
             if ($data === false) {

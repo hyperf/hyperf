@@ -357,10 +357,18 @@ return [
 
 ### 返回 PHP 对象
 
-当框架导入 `symfony/serialize (^4.3)` 和 `symfony/property-access (^4.3)` 后，`Hyperf\Contract\NormalizerInterface` 的实现会自动使用 `Hyperf\Utils\Serializer\SymfonyNormalizer` 而非 `Hyperf\Utils\Serializer\SimpleNormalizer`。
-`SymfonyNormalizer` 支持对象的序列化和反序列化。暂时不支持这种 `MathValue[]` 对象数组。
+当框架导入 `symfony/serialize (^5.0)` 和 `symfony/property-access (^5.0)` 后，并在 `dependencies.php` 中配置一下映射关系
 
-> 虽然 SymfonyNormalizer 兼容 SimpleNormalizer 的实现，但真实使用时，最好自己规定好使用 SymfonyNormalizer 还是 SimpleNormalizer，而不是交给框架自己选择，因为线上项目可能意外导入相关包，导致相关项目的实现不一致，使得出现问题。
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```
+
+`NormalizerInterface` 就会支持对象的序列化和反序列化。暂时不支持这种 `MathValue[]` 对象数组。
 
 定义返回对象
 

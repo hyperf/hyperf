@@ -63,7 +63,9 @@ class BootProcessListener extends OnPipeMessageListener
         $callbacks = [];
         $namespaces = $this->config->get('apollo.namespaces', []);
         foreach ($namespaces as $namespace) {
-            $callbacks[$namespace] = $ipcCallback;
+            if (is_string($namespace)) {
+                $callbacks[$namespace] = $ipcCallback;
+            }
         }
         $this->client->pull($namespaces, $callbacks);
 
