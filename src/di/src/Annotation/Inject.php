@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\Exception;
 use Hyperf\Di\TypesFinderManager;
 use PhpDocReader\AnnotationException;
 use phpDocumentor\Reflection\Types\Object_;
@@ -52,10 +53,19 @@ class Inject extends AbstractAnnotation
                 $this->value = '';
                 return;
             }
-            $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
-            if ($reflectionTypes[0] instanceof Object_) {
-                $this->value = ltrim((string) $reflectionTypes[0], '\\');
+            if ($reflectionProperty->hasType()) {
+                $this->value = $reflectionProperty->getType()->getName();
+            } else {
+                $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
+                if (isset($reflectionTypes[0]) && $reflectionTypes[0] instanceof Object_) {
+                    $this->value = ltrim((string) $reflectionTypes[0], '\\');
+                }
             }
+
+            if (empty($this->value)) {
+                throw new Exception\AnnotationException("The @Inject value is invalid for {$className}->{$target}");
+            }
+
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
