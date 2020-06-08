@@ -19,13 +19,6 @@ use Hyperf\Utils\ApplicationContext;
 
 trait ProxyTrait
 {
-    /**
-     * Cache the aspects for the proxy class.
-     *
-     * @var array
-     */
-    protected static $aspects;
-
     protected static function __proxyCall(
         string $className,
         string $method,
@@ -66,27 +59,27 @@ trait ProxyTrait
     {
         $className = $proceedingJoinPoint->className;
         $methodName = $proceedingJoinPoint->methodName;
-        if (! isset(static::$aspects[$className][$methodName])) {
-            static::$aspects[$className][$methodName] = [];
+        if (! AspectCacher::has($className, $methodName)) {
+            AspectCacher::set($className, $methodName, []);
             $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
             $queue = new \SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
             }
             while ($queue->valid()) {
-                static::$aspects[$className][$methodName][] = $queue->current();
+                AspectCacher::insert($className, $methodName, $queue->current());
                 $queue->next();
             }
 
             unset($annotationAspects, $aspects, $queue);
         }
 
-        if (empty(static::$aspects[$className][$methodName])) {
+        if (empty(AspectCacher::get($className, $methodName))) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
         return static::makePipeline()->via('process')
-            ->through(static::$aspects[$className][$methodName])
+            ->through(AspectCacher::get($className, $methodName))
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
