@@ -103,7 +103,7 @@ abstract class AbstractProcess implements ProcessInterface
     public function bind($server): void
     {
         if (CoroutineServer::isCoroutineServer($server)) {
-            $this->bindCoServer($server);
+            $this->bindCoroutineServer($server);
             return;
         }
 

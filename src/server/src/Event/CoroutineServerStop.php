@@ -11,6 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server\Event;
 
+use Swoole\Coroutine\Server;
+
 class CoroutineServerStop
 {
+    /**
+     * @var object|Server
+     */
+    public $server;
+
+    public function __construct($server)
+    {
+        $this->server = $server;
+    }
 }
