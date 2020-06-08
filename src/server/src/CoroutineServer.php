@@ -45,7 +45,7 @@ class CoroutineServer implements ServerInterface
     protected $config;
 
     /**
-     * @var Coroutine\Server
+     * @var Coroutine\Http\Server|Coroutine\Server
      */
     protected $server;
 
