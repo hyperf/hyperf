@@ -49,6 +49,16 @@
   - Process of config-center, crontab, metric must not run in co-server.
   - `Hyperf\AsyncQueue\Environment` only applies to the current coroutine, not process.
   - Coroutine Server not support task.
+  
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) Annotation Inject support typed properties. You can Inject below:
+```
+class Example {
+    /**
+    * @Inject
+    */
+    private ExampleService $exampleService;
+}
+```
 
 ## Fixed
 
