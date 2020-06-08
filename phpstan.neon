@@ -3,8 +3,9 @@
 #
 
 parameters:
-  bootstrapFiles:
-    - "bootstrap.php"
+  bootstrap: "bootstrap.php"
+#  bootstrapFiles:
+#    - "bootstrap.php"
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
