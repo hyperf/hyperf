@@ -43,6 +43,12 @@
 - [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.
 - [#1855](https://github.com/hyperf/hyperf/pull/1855) Added `ConstantFrequency` to flush one connection, when it is idle connection for the interval of time.
 - [#1871](https://github.com/hyperf/hyperf/pull/1871) Added `sink` for guzzle.
+- [#1805](https://github.com/hyperf/hyperf/pull/1805) Added Coroutine Server.
+  - Changed method `bind(Server $server)` to `bind($server)` in `Hyperf\Contract\ProcessInterface`.
+  - Changed method `isEnable()` to `isEnable($server)` in `Hyperf\Contract\ProcessInterface`
+  - Process of config-center, crontab, metric must not run in co-server.
+  - `Hyperf\AsyncQueue\Environment` only applies to the current coroutine, not process.
+  - Coroutine Server not support task.
 
 ## Fixed
 
