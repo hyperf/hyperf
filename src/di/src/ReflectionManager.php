@@ -59,6 +59,25 @@ class ReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
+    public static function reflectPropertyNames(string $className)
+    {
+        $key = $className;
+        if (! isset(static::$container['property_names'][$key])) {
+            if (! class_exists($className) && ! interface_exists($className) && ! trait_exists($className)) {
+                throw new InvalidArgumentException("Class {$className} not exist");
+            }
+            static::$container['property_names'][$key] = value(function () use ($className) {
+                $properties = static::reflectClass($className)->getProperties();
+                $result = [];
+                foreach ($properties as $property) {
+                    $result[] = $property->getName();
+                }
+                return $result;
+            });
+        }
+        return static::$container['property_names'][$key];
+    }
+
     public static function clear(?string $key = null): void
     {
         if ($key === null) {

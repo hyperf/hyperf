@@ -24,23 +24,23 @@ trait PropertyHandlerTrait
             return;
         }
         $reflectionClass = ReflectionManager::reflectClass($className);
-        $properties = $reflectionClass->getDefaultProperties();
+        $properties = ReflectionManager::reflectPropertyNames($className);
 
         // Inject the properties of parent class
         $parentReflectionClass = $reflectionClass;
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
-            $parentClassProperties = ReflectionManager::reflectClass($parentReflectionClass->getName())->getDefaultProperties();
+            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
             $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
-            $properties = array_diff_key($properties, $parentClassProperties);
+            $properties = array_diff($properties, $parentClassProperties);
         }
 
         // Inject the properties of traits
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
             foreach ($traitNames ?? [] as $traitName) {
-                $traitProperties = ReflectionManager::reflectClass($traitName)->getDefaultProperties();
+                $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
                 $this->__handle($className, $traitName, $propertyHandlers, $traitProperties);
-                $properties = array_diff_key($properties, $traitProperties);
+                $properties = array_diff($properties, $traitProperties);
             }
         }
         // Inject the properties of current class
@@ -49,7 +49,7 @@ trait PropertyHandlerTrait
 
     protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
     {
-        foreach ($properties as $propertyName => $propertyDefaultValue) {
+        foreach ($properties as $propertyName) {
             $propertyMetadata = AnnotationCollector::getClassPropertyAnnotation($targetClassName, $propertyName);
             if (! $propertyMetadata) {
                 continue;
