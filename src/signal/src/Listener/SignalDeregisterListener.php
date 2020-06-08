@@ -14,6 +14,7 @@ namespace Hyperf\Signal\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnWorkerExit;
 use Hyperf\Process\Event\AfterProcessHandle;
+use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Signal\SignalManager;
 use Psr\Container\ContainerInterface;
 
@@ -34,6 +35,7 @@ class SignalDeregisterListener implements ListenerInterface
         return [
             OnWorkerExit::class,
             AfterProcessHandle::class,
+            CoroutineServerStop::class,
         ];
     }
 

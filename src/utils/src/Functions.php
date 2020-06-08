@@ -66,7 +66,7 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int|float $times
+     * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */

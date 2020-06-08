@@ -45,7 +45,7 @@ class CoroutineServer implements ServerInterface
     protected $config;
 
     /**
-     * @var Coroutine\Server
+     * @var Coroutine\Http\Server|Coroutine\Server
      */
     protected $server;
 
@@ -83,11 +83,16 @@ class CoroutineServer implements ServerInterface
     }
 
     /**
-     * @return \Swoole\Coroutine\Server|\Swoole\Coroutine\Http\Server
+     * @return \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
      */
     public function getServer()
     {
         return $this->server;
+    }
+
+    public static function isCoroutineServer($server): bool
+    {
+        return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
     }
 
     protected function initServer(ServerConfig $config): void
@@ -128,10 +133,5 @@ class CoroutineServer implements ServerInterface
         }
 
         throw new RuntimeException('Server type is invalid.');
-    }
-
-    public static function isCoroutineServer($server): bool
-    {
-        return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
     }
 }

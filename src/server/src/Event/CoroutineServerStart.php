@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server\Event;
 
-use Hyperf\Server\ServerConfig;
 use Swoole\Coroutine\Server;
 
 class CoroutineServerStart
