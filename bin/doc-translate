@@ -12,51 +12,43 @@ require BASE_PATH . '/vendor/autoload.php';
 
 use Symfony\Component\Finder\Finder;
 
-$versions = [
-    '1.1',
-    '2.0'
-];
-
 $config = [
     'zh-tw' => [
-        'targetDir' => BASE_PATH . '/docs/{{version}}/zh-tw/',
+        'targetDir' => BASE_PATH . '/docs/zh-tw/',
         'rule' => 's2twp.json',
     ],
     'zh-hk' => [
-        'targetDir' => BASE_PATH . '/docs/{{version}}/zh-hk/',
+        'targetDir' => BASE_PATH . '/docs/zh-hk/',
         'rule' => 's2hk.json',
     ],
 ];
 
-foreach ($versions as $version) {
-    $finder = new Finder();
-    $finder->files()->in(sprintf(BASE_PATH . '/docs/%s/zh-cn', $version));
+$finder = new Finder();
+$finder->files()->in(BASE_PATH . '/docs/zh-cn');
 
-    foreach ($config as $key => $item) {
-        $od = opencc_open($item['rule']);
-        foreach ($finder as $fileInfo) {
-            $targetDir = str_replace('{{version}}', $version, $item['targetDir']);
-            $targetPath = $targetDir . $fileInfo->getRelativePath();
-            $isCreateDir = false;
-            if (! is_dir($targetPath)) {
-                mkdir($targetPath, 0777, true);
-                chmod($targetPath, 0777);
-                $isCreateDir = true;
-            }
-            if (! is_writable($targetPath)) {
-                echo sprintf('Target path %s is not writable.' . PHP_EOL, $targetPath);
-            }
-            if ($fileInfo->getExtension() === 'md') {
-                $translated = opencc_convert($fileInfo->getContents(), $od);
-                $translated = str_replace('](zh-cn/', '](' . $key . '/', $translated);
-                $targetTranslatedPath = $targetDir . $fileInfo->getRelativePathname();
-                @file_put_contents($targetTranslatedPath, $translated);
-            } else {
-                $targetTranslatedPath = $targetDir . $fileInfo->getRelativePathname();
-                @copy($fileInfo->getRealPath(), $targetTranslatedPath);
-            }
+foreach ($config as $key => $item) {
+    $od = opencc_open($item['rule']);
+    foreach ($finder as $fileInfo) {
+        $targetDir = $item['targetDir'];
+        $targetPath = $targetDir . $fileInfo->getRelativePath();
+        $isCreateDir = false;
+        if (! is_dir($targetPath)) {
+            mkdir($targetPath, 0777, true);
+            chmod($targetPath, 0777);
+            $isCreateDir = true;
         }
-        opencc_close($od);
+        if (! is_writable($targetPath)) {
+            echo sprintf('Target path %s is not writable.' . PHP_EOL, $targetPath);
+        }
+        if ($fileInfo->getExtension() === 'md') {
+            $translated = opencc_convert($fileInfo->getContents(), $od);
+            $translated = str_replace('](zh-cn/', '](' . $key . '/', $translated);
+            $targetTranslatedPath = $targetDir . $fileInfo->getRelativePathname();
+            @file_put_contents($targetTranslatedPath, $translated);
+        } else {
+            $targetTranslatedPath = $targetDir . $fileInfo->getRelativePathname();
+            @copy($fileInfo->getRealPath(), $targetTranslatedPath);
+        }
     }
+    opencc_close($od);
 }
-

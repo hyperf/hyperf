@@ -11,10 +11,7 @@ foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', 
 }
 
 $files = Finder::create()
-    ->in([
-        __DIR__ . '/../docs/2.0/zh-cn',
-        __DIR__ . '/../docs/1.1/zh-cn'
-    ])
+    ->in(__DIR__ . '/../docs/zh-cn')
     ->name('*.md')
     ->files();
 
