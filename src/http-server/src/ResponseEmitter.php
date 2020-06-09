@@ -75,7 +75,7 @@ class ResponseEmitter
         /**
          * Trailers
          */
-        if (method_exists($response, 'getTrailers')) {
+        if (method_exists($response, 'getTrailers') && method_exists($swooleResponse, 'trailer')) {
             foreach ($response->getTrailers() ?? [] as $key => $value) {
                 $swooleResponse->trailer($key, $value);
             }

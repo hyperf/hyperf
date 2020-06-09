@@ -25,6 +25,7 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
@@ -70,6 +71,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected $exceptionHandlers;
 
     /**
+     * @var ResponseEmitter
+     */
+    protected $responseEmitter;
+
+    /**
      * @var StdoutLoggerInterface
      */
     protected $logger;
@@ -88,11 +94,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ContainerInterface $container,
         HttpDispatcher $dispatcher,
         ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        ResponseEmitter $responseEmitter,
         StdoutLoggerInterface $logger
     ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
+        $this->responseEmitter = $responseEmitter;
         $this->logger = $logger;
     }
 
