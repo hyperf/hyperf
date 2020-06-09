@@ -26,6 +26,8 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     private $logger;
 
+    public static $output = false;
+
     public function __construct(StdoutLoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -48,6 +50,9 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        if (static::$output) {
+            return;
+        }
         /** @var AfterWorkerStart|CoroutineServerStart $event */
         $isCoroutineServer = $event instanceof CoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
@@ -74,6 +79,7 @@ class AfterWorkerStartListener implements ListenerInterface
                 });
                 $serverType = $isCoroutineServer ? ' Coroutine' : '';
                 $this->logger->info(sprintf('%s%s Server listening at %s', $type, $serverType, $listen));
+                static::$output = true;
             }
         }
     }
