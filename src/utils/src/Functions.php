@@ -446,15 +446,3 @@ if (! function_exists('swoole_hook_flags')) {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
     }
 }
-
-if (! function_exists('timepoint')) {
-    function timepoint(?string $key = null)
-    {
-        if (! isset($GLOBALS['__timepoint_beginTime__'])) {
-            $GLOBALS['__timepoint_beginTime__'] = microtime(true);
-            return;
-        }
-        echo '[DEBUG] Timepoint ' . $key . ': ' . round(microtime(true) - $GLOBALS['__timepoint_beginTime__'], 3) . 's' . PHP_EOL;
-        $GLOBALS['__timepoint_beginTime__'] = microtime(true);
-    }
-}
