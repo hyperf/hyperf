@@ -168,7 +168,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         // Initialize PSR-7 Request and Response objects.
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         return [$psr7Request, $psr7Response];
     }
 }

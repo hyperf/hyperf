@@ -32,15 +32,10 @@ class GrpcExceptionHandlerTest extends TestCase
 
         $logger = $container->get(StdoutLoggerInterface::class);
         $formatter = $container->get(FormatterInterface::class);
-        $swooleResponse = Mockery::mock(\Swoole\Http\Response::class);
-        $data = [];
-        $swooleResponse->shouldReceive('trailer')->andReturnUsing(function (...$args) use (&$data) {
-            $data[] = $args;
-        });
-        $response = new Response($swooleResponse);
+        $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(StatusCode::OK, 'OK', $response);
-        $this->assertSame([['grpc-status', '0'], ['grpc-message', 'OK']], $data);
+        $this->assertSame([['grpc-status', '0'], ['grpc-message', 'OK']], $response->getTrailers());
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -51,14 +46,10 @@ class GrpcExceptionHandlerTest extends TestCase
         $logger = $container->get(StdoutLoggerInterface::class);
         $formatter = $container->get(FormatterInterface::class);
         $swooleResponse = Mockery::mock(\Swoole\Http\Response::class);
-        $data = [];
-        $swooleResponse->shouldReceive('trailer')->andReturnUsing(function (...$args) use (&$data) {
-            $data[] = $args;
-        });
-        $response = new Response($swooleResponse);
+        $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(StatusCode::CANCELLED, 'The operation was cancelled', $response);
-        $this->assertSame([['grpc-status', '1'], ['grpc-message', 'The operation was cancelled']], $data);
+        $this->assertSame([['grpc-status', '1'], ['grpc-message', 'The operation was cancelled']], $response->getTrailers());
         $this->assertSame(499, $response->getStatusCode());
     }
 
@@ -68,15 +59,10 @@ class GrpcExceptionHandlerTest extends TestCase
 
         $logger = $container->get(StdoutLoggerInterface::class);
         $formatter = $container->get(FormatterInterface::class);
-        $swooleResponse = Mockery::mock(\Swoole\Http\Response::class);
-        $data = [];
-        $swooleResponse->shouldReceive('trailer')->andReturnUsing(function (...$args) use (&$data) {
-            $data[] = $args;
-        });
-        $response = new Response($swooleResponse);
+        $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(123, 'UNKNOWN', $response);
-        $this->assertSame([['grpc-status', '123'], ['grpc-message', 'UNKNOWN']], $data);
+        $this->assertSame([['grpc-status', '123'], ['grpc-message', 'UNKNOWN']], $response->getTrailers());
         $this->assertSame(500, $response->getStatusCode());
     }
 

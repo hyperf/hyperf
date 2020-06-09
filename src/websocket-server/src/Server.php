@@ -162,7 +162,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
-            $psr7Response->send();
+            $this->responseEmitter->emit($psr7Response, $response, true);
         }
     }
 
@@ -220,7 +220,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function initResponse(SwooleResponse $response): ResponseInterface
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         return $psr7Response;
     }
 }
