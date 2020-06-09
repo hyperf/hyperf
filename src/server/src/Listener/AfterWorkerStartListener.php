@@ -72,8 +72,8 @@ class AfterWorkerStartListener implements ListenerInterface
                             return 'HTTP';
                     }
                 });
-                $serverType = $isCoroutineServer ? 'Coroutine' : '';
-                $this->logger->info(sprintf('%s %s Server listening at %s', $type, $serverType, $listen));
+                $serverType = $isCoroutineServer ? ' Coroutine' : '';
+                $this->logger->info(sprintf('%s%s Server listening at %s', $type, $serverType, $listen));
             }
         }
     }
