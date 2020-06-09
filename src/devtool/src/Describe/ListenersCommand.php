@@ -54,8 +54,8 @@ class ListenersCommand extends HyperfCommand
     protected function configure()
     {
         $this->setDescription('Describe the events and listeners.')
-            ->addOption('events', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path', null)
-            ->addOption('listeners', 'l', InputOption::VALUE_OPTIONAL, 'Which server you want to describe routes.', null);
+            ->addOption('events', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by events.', null)
+            ->addOption('listeners', 'l', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by listeners.', null);
     }
 
     protected function handleData(ListenerProviderInterface $provider, ?array $events, ?array $listeners): array
