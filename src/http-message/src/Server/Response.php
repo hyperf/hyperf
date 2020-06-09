@@ -23,6 +23,11 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     protected $cookies = [];
 
     /**
+     * @var array
+     */
+    protected $trailers = [];
+
+    /**
      * Returns an instance with body content.
      */
     public function withContent(string $content): self
@@ -48,5 +53,17 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     public function getCookies(): array
     {
         return $this->cookies;
+    }
+
+    public function withTrailer(string $key, $value): self
+    {
+        $new = clone $this;
+        $new->trailers[$key] = $value;
+        return $new;
+    }
+
+    public function getTrailers(): array
+    {
+        return $this->trailers;
     }
 }

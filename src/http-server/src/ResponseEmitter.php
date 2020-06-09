@@ -36,7 +36,7 @@ class ResponseEmitter
         if ($content instanceof FileInterface) {
             return $swooleResponse->sendfile($content->getFilename());
         }
-        $withContent = $parameters[2] ?? false;
+        $withContent = $parameters[2] ?? true;
         if ($withContent) {
             $swooleResponse->end($content->getContents());
         } else {
@@ -57,7 +57,7 @@ class ResponseEmitter
          * Cookies
          * This part maybe only supports of hyperf/http-message component.
          */
-        if ($this->isMethodsExists($response, ['getCookies'])) {
+        if (method_exists($response, 'getCookies')) {
             foreach ((array) $response->getCookies() as $domain => $paths) {
                 foreach ($paths ?? [] as $path => $item) {
                     foreach ($item ?? [] as $name => $cookie) {
@@ -69,6 +69,15 @@ class ResponseEmitter
                         }
                     }
                 }
+            }
+        }
+
+        /**
+         * Trailers
+         */
+        if (method_exists($response, 'getTrailers')) {
+            foreach ($response->getTrailers() ?? [] as $key => $value) {
+                $swooleResponse->trailer($key, $value);
             }
         }
 
