@@ -421,8 +421,10 @@ if (! function_exists('make')) {
 if (! function_exists('run')) {
     /**
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param array|callable $callbacks
      */
-    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool
+    function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
@@ -430,7 +432,7 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        $result = \Swoole\Coroutine\Run($callback);
+        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
