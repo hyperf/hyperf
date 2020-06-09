@@ -6,7 +6,7 @@
 - [#1873](https://github.com/hyperf/hyperf/pull/1873) Make prometheus use redis to store data to support cluster mode
 
 ## Fixed
-- [#1873](https://github.com/hyperf/hyperf/pull/1873) Fixed when prometheus using the redis record, an error is reported during the rendering of x data due to the change in the number of label.
+- [#1873](https://github.com/hyperf/hyperf/pull/1873) Fixed when prometheus using the redis record, an error is reported during the rendering of data due to the change in the number of label.
 
 
 # v1.1.32 - 2020-05-21
