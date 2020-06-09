@@ -64,7 +64,7 @@ class ServerFactory
     public function getServer(): ServerInterface
     {
         if (! $this->server instanceof ServerInterface) {
-            $serverName = $this->config->getServer();
+            $serverName = $this->config->getType();
             $this->server = new $serverName(
                 $this->container,
                 $this->getLogger(),
