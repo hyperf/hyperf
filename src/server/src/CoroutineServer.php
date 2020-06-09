@@ -98,6 +98,10 @@ class CoroutineServer implements ServerInterface
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
+        if (count($servers) !== 1) {
+            $this->logger->error('Coroutine Server only support one server.');
+        }
+
         /** @var Port $server */
         $server = array_shift($servers);
 
