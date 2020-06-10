@@ -13,7 +13,7 @@ namespace Hyperf\Server\Event;
 
 use Swoole\Coroutine\Server;
 
-class CoroutineServerStart
+class MainCoroutineServerStart
 {
     /**
      * @var string
