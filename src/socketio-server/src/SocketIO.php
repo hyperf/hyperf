@@ -108,22 +108,22 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Encoder
      */
-    private $encoder;
+    protected $encoder;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     /**
      * @var int[]
      */
-    private $clientCallbackTimers;
+    protected $clientCallbackTimers;
 
     public function __construct(StdoutLoggerInterface $stdoutLogger, Sender $sender, Decoder $decoder, Encoder $encoder, SidProviderInterface $sidProvider)
     {
@@ -157,11 +157,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                     'nsp' => $packet->nsp,
                 ]);
                 $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
-                $this->dispatch($frame->fd, $packet->nsp, 'connect', $packet->data);
                 break;
             case Packet::CLOSE: //client disconnect
                 $server->disconnect($frame->fd);
-                $this->dispatch($frame->fd, $packet->nsp, 'disconnect', $packet->data);
                 break;
             case Packet::EVENT: // client message with ack
                 if ($packet->id !== '') {
