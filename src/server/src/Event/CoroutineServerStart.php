@@ -15,7 +15,6 @@ use Swoole\Coroutine\Server;
 
 class CoroutineServerStart
 {
-
     /**
      * @var string
      */

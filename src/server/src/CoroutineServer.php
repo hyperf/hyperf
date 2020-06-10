@@ -85,8 +85,8 @@ class CoroutineServer implements ServerInterface
             foreach ($servers as $name => [$type, $server]) {
                 Coroutine::create(function () use ($name, $server, $config) {
                     if (! $this->mainServerStarted) {
-                        $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
                         $this->mainServerStarted = true;
+                        $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
                     }
                     $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
