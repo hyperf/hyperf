@@ -17,6 +17,7 @@ use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -231,7 +232,7 @@ class ResponseTest extends TestCase
         });
         $swooleResponse->shouldReceive('end')->once()->andReturn(true);
 
-        Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response($swooleResponse));
+        Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response());
 
         $response = new Response();
         $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
@@ -244,7 +245,8 @@ class ResponseTest extends TestCase
         $this->assertNotInstanceOf(ResponseInterface::class, $response);
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
-        $response->send();
+        $responseEmitter = new ResponseEmitter();
+        $responseEmitter->emit($response, $swooleResponse, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }
