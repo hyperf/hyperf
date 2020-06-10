@@ -14,7 +14,7 @@ namespace Hyperf\Server\Listener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
-use Hyperf\Server\Event\CoroutineServerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Swoole\Server\Port;
@@ -25,8 +25,6 @@ class AfterWorkerStartListener implements ListenerInterface
      * @var StdoutLoggerInterface
      */
     private $logger;
-
-    public static $output = false;
 
     public function __construct(StdoutLoggerInterface $logger)
     {
@@ -40,7 +38,7 @@ class AfterWorkerStartListener implements ListenerInterface
     {
         return [
             AfterWorkerStart::class,
-            CoroutineServerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -50,11 +48,8 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        if (static::$output) {
-            return;
-        }
-        /** @var AfterWorkerStart|CoroutineServerStart $event */
-        $isCoroutineServer = $event instanceof CoroutineServerStart;
+        /** @var AfterWorkerStart|MainCoroutineServerStart $event */
+        $isCoroutineServer = $event instanceof MainCoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
             /** @var Port $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
@@ -79,7 +74,6 @@ class AfterWorkerStartListener implements ListenerInterface
                 });
                 $serverType = $isCoroutineServer ? ' Coroutine' : '';
                 $this->logger->info(sprintf('%s%s Server listening at %s', $type, $serverType, $listen));
-                static::$output = true;
             }
         }
     }
