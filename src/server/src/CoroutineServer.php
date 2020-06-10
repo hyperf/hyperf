@@ -15,6 +15,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
+use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -118,21 +119,49 @@ class CoroutineServer implements ServerInterface
             $type = $server->getType();
             $host = $server->getHost();
             $port = $server->getPort();
-            $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
             $this->server = $this->makeServer($type, $host, $port);
             $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
 
-            if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-                [$class, $method] = $callbacks[SwooleEvent::ON_REQUEST];
-                $handler = $this->container->get($class);
-                if ($handler instanceof MiddlewareInitializerInterface) {
-                    $handler->initCoreMiddleware($name);
-                }
-                $this->server->handle('/', [$handler, $method]);
-            }
+            $this->initHandler($this->server, $server);
 
             ServerManager::add($name, [$type, $this->server]);
+        }
+    }
+
+    /**
+     * @param Coroutine\Http\Server|Coroutine\Server $server
+     */
+    protected function initHandler($server, Port $port)
+    {
+        switch ($port->getType()) {
+            case ServerInterface::SERVER_HTTP:
+                if (! isset($port->getCallbacks()[SwooleEvent::ON_REQUEST])) {
+                    throw new InvalidArgumentException(sprintf('Server %s must has %s callback.', $port->getName(), SwooleEvent::ON_REQUEST));
+                }
+
+                [$class, $method] = $port->getCallbacks()[SwooleEvent::ON_REQUEST];
+                $handler = $this->container->get($class);
+                if ($handler instanceof MiddlewareInitializerInterface) {
+                    $handler->initCoreMiddleware($port->getName());
+                }
+                $server->handle('/', [$handler, $method]);
+                break;
+            case ServerInterface::SERVER_BASE:
+            case ServerInterface::SERVER_WEBSOCKET:
+            default:
+                throw new \RuntimeException('Server type is not support.');
+                // if (!isset($port->getCallbacks()[SwooleEvent::ON_RECEIVE])) {
+                //     throw new InvalidArgumentException(sprintf('Server %s must has %s callback.', $port->getName(), SwooleEvent::ON_RECEIVE));
+                // }
+                //
+                // [$class, $method] = $port->getCallbacks()[SwooleEvent::ON_RECEIVE];
+                // $handler = $this->container->get($class);
+                // if ($handler instanceof MiddlewareInitializerInterface) {
+                //     $handler->initCoreMiddleware($port->getName());
+                // }
+                // $server->handle([$handler, $method]);
+                break;
         }
     }
 
