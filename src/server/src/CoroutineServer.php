@@ -14,6 +14,7 @@ namespace Hyperf\Server;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -54,6 +55,11 @@ class CoroutineServer implements ServerInterface
      */
     protected $handler;
 
+    /**
+     * @var bool
+     */
+    protected $mainServerStarted = false;
+
     public function __construct(
         ContainerInterface $container,
         LoggerInterface $logger,
@@ -75,9 +81,14 @@ class CoroutineServer implements ServerInterface
         run(function () {
             $this->initServer($this->config);
             $servers = ServerManager::list();
+            $config = $this->config->toArray();
             foreach ($servers as $name => [$type, $server]) {
-                Coroutine::create(function () use ($name, $server) {
-                    $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $this->config->toArray()));
+                Coroutine::create(function () use ($name, $server, $config) {
+                    if (! $this->mainServerStarted) {
+                        $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                        $this->mainServerStarted = true;
+                    }
+                    $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
