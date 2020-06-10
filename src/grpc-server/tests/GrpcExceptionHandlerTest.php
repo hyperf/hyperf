@@ -35,7 +35,7 @@ class GrpcExceptionHandlerTest extends TestCase
         $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(StatusCode::OK, 'OK', $response);
-        $this->assertSame([['grpc-status', '0'], ['grpc-message', 'OK']], $response->getTrailers());
+        $this->assertSame(['grpc-status' => '0', 'grpc-message' => 'OK'], $response->getTrailers());
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -49,7 +49,7 @@ class GrpcExceptionHandlerTest extends TestCase
         $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(StatusCode::CANCELLED, 'The operation was cancelled', $response);
-        $this->assertSame([['grpc-status', '1'], ['grpc-message', 'The operation was cancelled']], $response->getTrailers());
+        $this->assertSame(['grpc-status' => '1', 'grpc-message' => 'The operation was cancelled'], $response->getTrailers());
         $this->assertSame(499, $response->getStatusCode());
     }
 
@@ -62,7 +62,7 @@ class GrpcExceptionHandlerTest extends TestCase
         $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(123, 'UNKNOWN', $response);
-        $this->assertSame([['grpc-status', '123'], ['grpc-message', 'UNKNOWN']], $response->getTrailers());
+        $this->assertSame(['grpc-status' => '123', 'grpc-message' => 'UNKNOWN'], $response->getTrailers());
         $this->assertSame(500, $response->getStatusCode());
     }
 
