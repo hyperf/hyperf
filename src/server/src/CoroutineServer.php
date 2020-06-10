@@ -161,7 +161,6 @@ class CoroutineServer implements ServerInterface
                 //     $handler->initCoreMiddleware($port->getName());
                 // }
                 // $server->handle([$handler, $method]);
-                break;
         }
     }
 
