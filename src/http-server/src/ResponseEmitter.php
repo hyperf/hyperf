@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
+use Hyperf\Contract\ResponseEmitterInterface;
 use Hyperf\HttpMessage\Stream\FileInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Response;
 
-class ResponseEmitter
+class ResponseEmitter implements ResponseEmitterInterface
 {
     public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
     {
