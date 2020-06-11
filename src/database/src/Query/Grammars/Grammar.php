@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Database\Grammar as BaseGrammar;
@@ -102,6 +101,14 @@ class Grammar extends BaseGrammar
     public function compileRandom($seed)
     {
         return 'RANDOM()';
+    }
+
+    /**
+     * Compile an insert ignore statement into SQL.
+     */
+    public function compileInsertOrIgnore(Builder $query, array $values)
+    {
+        throw new RuntimeException('This database engine does not support insert or ignore.');
     }
 
     /**

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\FailCache;
@@ -19,7 +18,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Psr\Container\ContainerInterface;
 
 /**
  * @Aspect
@@ -33,7 +31,7 @@ class FailCacheAspect extends AbstractAspect
     ];
 
     /**
-     * @var ContainerInterface
+     * @var CacheManager
      */
     protected $manager;
 

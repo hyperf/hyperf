@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Query\Processors;
 
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Schema\Column;
 
 class Processor
 {
@@ -46,12 +46,22 @@ class Processor
 
     /**
      * Process the results of a column listing query.
-     *
-     * @param array $results
-     * @return array
      */
-    public function processColumnListing($results)
+    public function processColumnListing(array $results): array
     {
         return $results;
+    }
+
+    /**
+     * @return Column[]
+     */
+    public function processColumns(array $results): array
+    {
+        $columns = [];
+        foreach ($results as $item) {
+            $columns[] = new Column(...array_values($item));
+        }
+
+        return $columns;
     }
 }

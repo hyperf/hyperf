@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
@@ -134,7 +133,7 @@ class StdoutLogger implements StdoutLoggerInterface
         $search = array_map(function ($key) {
             return sprintf('{%s}', $key);
         }, $keys);
-        $message = str_replace($search, $context, $this->getMessage($message, $level, $tags));
+        $message = str_replace($search, $context, $this->getMessage((string) $message, $level, $tags));
 
         $this->output->writeln($message);
     }

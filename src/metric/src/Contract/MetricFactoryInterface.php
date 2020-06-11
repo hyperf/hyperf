@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Contract;
 
 interface MetricFactoryInterface
@@ -18,7 +17,6 @@ interface MetricFactoryInterface
      * Create a Counter.
      * @param string $name name of the metric
      * @param string[] $labelNames key of your label kvs
-     * @return CounterInterface
      */
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface;
 
@@ -26,7 +24,6 @@ interface MetricFactoryInterface
      * Create a Gauge.
      * @param string $name name of the metric
      * @param string[] $labelNames key of your label kvs
-     * @return GaugeInterface
      */
     public function makeGauge(string $name, ?array $labelNames = []): GaugeInterface;
 
@@ -34,7 +31,6 @@ interface MetricFactoryInterface
      * Create a HistogramInterface.
      * @param string $name name of the metric
      * @param string[] $labelNames key of your label kvs
-     * @return HistogramInterface
      */
     public function makeHistogram(string $name, ?array $labelNames = []): HistogramInterface;
 

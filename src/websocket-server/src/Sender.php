@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -56,7 +55,9 @@ class Sender
 
         $result = $this->check($fd);
         if ($result) {
-            $this->getServer()->push(...$arguments);
+            /** @var \Swoole\WebSocket\Server $server */
+            $server = $this->getServer();
+            $server->push(...$arguments);
             $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
         }
 

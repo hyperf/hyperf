@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 use Zipkin\Samplers\BinarySampler;
 
 return [
@@ -55,6 +54,22 @@ return [
                     'reporting_port' => env('JAEGER_REPORTING_PORT', 5775),
                 ],
             ],
+        ],
+    ],
+    'tags' => [
+        'http_client' => [
+            'http.url' => 'http.url',
+            'http.method' => 'http.method',
+            'http.status_code' => 'http.status_code',
+        ],
+        'redis' => [
+            'arguments' => 'arguments',
+            'result' => 'result',
+        ],
+        'db' => [
+            'db.query' => 'db.query',
+            'db.statement' => 'db.statement',
+            'db.query_time' => 'db.query_time',
         ],
     ],
 ];

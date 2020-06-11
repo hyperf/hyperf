@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\PoolOptionInterface;
@@ -129,17 +128,11 @@ class PoolOption implements PoolOptionInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getMaxIdleTime(): float
     {
         return $this->maxIdleTime;
     }
 
-    /**
-     * @param float $maxIdleTime
-     */
     public function setMaxIdleTime(float $maxIdleTime): self
     {
         $this->maxIdleTime = $maxIdleTime;

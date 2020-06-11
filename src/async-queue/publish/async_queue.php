@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     'default' => [
         'driver' => \Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default',
+        ],
         'channel' => 'queue',
         'timeout' => 2,
         'retry_seconds' => 5,

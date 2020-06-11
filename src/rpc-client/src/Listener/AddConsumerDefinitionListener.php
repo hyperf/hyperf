@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -59,11 +58,12 @@ class AddConsumerDefinitionListener implements ListenerInterface
                 if (! interface_exists($serviceClass)) {
                     continue;
                 }
+
+                $proxyClass = $serviceFactory->createProxy($serviceClass);
+
                 $definitions->addDefinition(
                     $consumer['id'] ?? $serviceClass,
-                    function (ContainerInterface $container) use ($serviceFactory, $consumer, $serviceClass) {
-                        $proxyClass = $serviceFactory->createProxy($serviceClass);
-
+                    function (ContainerInterface $container) use ($consumer, $serviceClass, $proxyClass) {
                         return new $proxyClass(
                             $container,
                             $consumer['name'],

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Grpc\Parser;
@@ -83,7 +82,7 @@ class StreamingCall
         return $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
     }
 
-    public function recv(float $timeout = -1)
+    public function recv(float $timeout = -1.0)
     {
         if ($this->getStreamId() <= 0) {
             $recv = false;

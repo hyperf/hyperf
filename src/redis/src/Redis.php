@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
+/**
+ * @mixin \Redis
+ */
 class Redis
 {
     use ScanCaller;

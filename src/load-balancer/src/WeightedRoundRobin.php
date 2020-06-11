@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\LoadBalancer;
 
 use MathPHP\Algebra;
@@ -50,7 +49,7 @@ class WeightedRoundRobin extends AbstractLoadBalancer
                     $this->currentWeight = $this->maxWeight;
                     if ($this->currentWeight == 0) {
                         // Degrade to random algorithm.
-                        return array_rand($this->nodes);
+                        return $this->nodes[array_rand($this->nodes)];
                     }
                 }
             }

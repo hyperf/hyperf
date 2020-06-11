@@ -5,16 +5,11 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.4.12"
+      env: SW_VERSION="4.5.2"
     - php: 7.3
-      env: SW_VERSION="4.4.12"
+      env: SW_VERSION="4.5.2"
     - php: 7.4
-      env: SW_VERSION="4.4.12"
-    - php: master
-      env: SW_VERSION="4.4.12"
-
-  allow_failures:
-    - php: master
+      env: SW_VERSION="4.5.2"
 
 services:
   - mysql
@@ -38,8 +33,8 @@ install:
 before_script:
   - cd $TRAVIS_BUILD_DIR
   - composer config -g process-timeout 900 && composer update
-  
+
 script:
-  - composer analyse src/di src/json-rpc src/tracer src/metric src/redis src/nats src/db src/retry src/reactive-x
+  - composer analyse src
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine

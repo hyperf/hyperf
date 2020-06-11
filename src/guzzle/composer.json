@@ -16,7 +16,6 @@
         "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "dev-master",
         "phpunit/phpunit": "^5.7",
         "guzzlehttp/ringphp": "~1.0"
     },
@@ -39,6 +38,9 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Guzzle\\ConfigProvider"
         }
     },
     "scripts": {

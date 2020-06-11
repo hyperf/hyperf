@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Constants\Stub;
 
 use Hyperf\Constants\AbstractConstants;
@@ -33,4 +32,14 @@ class ErrorCodeStub extends AbstractConstants
      * @Message("Params[%s] is invalid.")
      */
     const PARAMS_INVALID = 503;
+
+    /**
+     * @Message("error.message")
+     */
+    const TRANSLATOR_ERROR_MESSAGE = 504;
+
+    /**
+     * @Message("error.not_exist")
+     */
+    const TRANSLATOR_NOT_EXIST = 505;
 }

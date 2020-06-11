@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
 use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
@@ -31,8 +30,6 @@ class Container implements HyperfContainerInterface
 
     /**
      * Map of definitions that are already fetched (local cache).
-     *
-     * @var (DefinitionInterface|null)[]
      */
     private $fetchedDefinitions = [];
 
@@ -47,25 +44,17 @@ class Container implements HyperfContainerInterface
     private $definitionResolver;
 
     /**
-     * @TODO Extract ProxyFactory to a Interface.
-     * @var ProxyFactory
-     */
-    private $proxyFactory;
-
-    /**
      * Container constructor.
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
-        $this->proxyFactory = new ProxyFactory();
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
             PsrContainerInterface::class => $this,
             HyperfContainerInterface::class => $this,
-            ProxyFactory::class => $this->proxyFactory,
         ];
     }
 
@@ -135,7 +124,7 @@ class Container implements HyperfContainerInterface
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $name identifier of the entry to look for
+     * @param mixed|string $name identifier of the entry to look for
      */
     public function has($name): bool
     {
@@ -157,11 +146,6 @@ class Container implements HyperfContainerInterface
         }
 
         return true;
-    }
-
-    public function getProxyFactory(): ProxyFactory
-    {
-        return $this->proxyFactory;
     }
 
     public function getDefinitionSource(): Definition\DefinitionSourceInterface

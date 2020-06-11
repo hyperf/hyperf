@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Config;
 
 use Hyperf\Utils\Composer;
@@ -60,6 +59,9 @@ class ProviderConfig
 
     protected static function merge(...$arrays): array
     {
+        if (empty($arrays)) {
+            return [];
+        }
         $result = array_merge_recursive(...$arrays);
         if (isset($result['dependencies'])) {
             $dependencies = array_column($arrays, 'dependencies');

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Command\ConfirmableTrait;
@@ -43,8 +42,6 @@ class SeedCommand extends BaseCommand
 
     /**
      * Create a new seed command instance.
-     *
-     * @param \Hyperf\Database\Seeders\Seed $seed
      */
     public function __construct(Seed $seed)
     {

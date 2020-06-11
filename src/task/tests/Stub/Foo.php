@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Task\Stub;
 
 class Foo
@@ -22,5 +21,15 @@ class Foo
     public function exception()
     {
         throw new \RuntimeException('Foo::exception failed.');
+    }
+
+    public function getIdAndName($id, $name)
+    {
+        return ['id' => $id, 'name' => $name];
+    }
+
+    public function dump($id, ...$arguments)
+    {
+        return ['id' => $id, 'arguments' => $arguments];
     }
 }

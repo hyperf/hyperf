@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Collector;
 
 class FileStorage
@@ -21,7 +20,7 @@ class FileStorage
     public function __construct($data, $ttl)
     {
         $this->data = $data;
-        if (is_numeric($ttl)) {
+        if (is_numeric($ttl) && $ttl > 0) {
             $this->expiredTime = time() + $ttl;
         }
     }

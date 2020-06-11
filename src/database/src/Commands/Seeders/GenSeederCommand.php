@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Database\Seeders\SeederCreator;
@@ -28,8 +27,6 @@ class GenSeederCommand extends BaseCommand
 
     /**
      * Create a new seeder generator command instance.
-     *
-     * @param \Hyperf\Database\Seeders\SeederCreator $creator
      */
     public function __construct(SeederCreator $creator)
     {
@@ -51,8 +48,6 @@ class GenSeederCommand extends BaseCommand
 
     /**
      * Write the seeder file to disk.
-     *
-     * @param string $name
      */
     protected function writeMigration(string $name)
     {

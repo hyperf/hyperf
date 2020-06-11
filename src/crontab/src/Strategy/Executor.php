@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
 use Closure;
+use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\LoggerInterface;
@@ -24,6 +24,8 @@ use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class Executor
 {
@@ -82,33 +84,33 @@ class Executor
                             } catch (\Throwable $throwable) {
                                 $result = false;
                             } finally {
-                                if ($this->logger) {
-                                    if ($result) {
-                                        $this->logger->info(sprintf('Crontab task [%s] execute success at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-                                    } else {
-                                        $this->logger->error(sprintf('Crontab task [%s] execute failure at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-                                    }
-                                }
+                                $this->logResult($crontab, $result);
                             }
                         };
 
-                        if ($crontab->isSingleton()) {
-                            $runnable = $this->runInSingleton($crontab, $runnable);
-                        }
-
-                        if ($crontab->isOnOneServer()) {
-                            $runnable = $this->runOnOneServer($crontab, $runnable);
-                        }
-
-                        Coroutine::create($runnable);
+                        Coroutine::create($this->decorateRunnable($crontab, $runnable));
                     };
                 }
                 break;
             case 'command':
+                $input = make(ArrayInput::class, [$crontab->getCallback()]);
+                $output = make(NullOutput::class);
+                $application = $this->container->get(ApplicationInterface::class);
+                $application->setAutoExit(false);
+                $callback = function () use ($application, $input, $output, $crontab) {
+                    $runnable = function () use ($application, $input, $output, $crontab) {
+                        $result = $application->run($input, $output);
+                        $this->logResult($crontab, $result === 0);
+                    };
+                    $this->decorateRunnable($crontab, $runnable)();
+                };
                 break;
             case 'eval':
                 $callback = function () use ($crontab) {
-                    eval($crontab->getCallback());
+                    $runnable = function () use ($crontab) {
+                        eval($crontab->getCallback());
+                    };
+                    $this->decorateRunnable($crontab, $runnable)();
                 };
                 break;
         }
@@ -121,7 +123,7 @@ class Executor
             $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
-                $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -148,8 +150,8 @@ class Executor
         return function () use ($crontab, $runnable) {
             $taskMutex = $this->getServerMutex();
 
-            if (!$taskMutex->attempt($crontab)) {
-                $this->logger->info(sprintf('Crontab task [%s] skip to execute at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+            if (! $taskMutex->attempt($crontab)) {
+                $this->logger->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -165,5 +167,29 @@ class Executor
             : $this->container->get(RedisServerMutex::class);
         }
         return $this->serverMutex;
+    }
+
+    protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
+    {
+        if ($crontab->isSingleton()) {
+            $runnable = $this->runInSingleton($crontab, $runnable);
+        }
+
+        if ($crontab->isOnOneServer()) {
+            $runnable = $this->runOnOneServer($crontab, $runnable);
+        }
+
+        return $runnable;
+    }
+
+    protected function logResult(Crontab $crontab, bool $isSuccess)
+    {
+        if ($this->logger) {
+            if ($isSuccess) {
+                $this->logger->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+            } else {
+                $this->logger->error(sprintf('Crontab task [%s] failed execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+            }
+        }
     }
 }

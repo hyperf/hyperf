@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -115,10 +114,16 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function release(): void
     {
+        if ($this->connection instanceof \Hyperf\Database\Connection) {
+            // Reset $recordsModified property of connection to false before the connection release into the pool.
+            $this->connection->resetRecordsModified();
+        }
+
         if ($this->isTransaction()) {
             $this->rollBack(0);
             $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
         }
+
         parent::release();
     }
 

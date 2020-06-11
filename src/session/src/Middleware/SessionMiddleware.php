@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Session\Middleware;
 
 use Carbon\Carbon;
@@ -77,7 +76,7 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function url(RequestInterface $request): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $request->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $request->getUri()));
     }
 
     /**

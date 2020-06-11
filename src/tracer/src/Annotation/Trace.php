@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
@@ -25,4 +24,9 @@ class Trace extends AbstractAnnotation
      * @var string
      */
     public $name = '';
+
+    /**
+     * @var array|string
+     */
+    public $tag = 'source';
 }

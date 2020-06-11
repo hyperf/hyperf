@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
+use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -116,7 +116,59 @@ class ParallelTest extends TestCase
         $this->assertEquals(count($res), 4);
     }
 
+    public function testParallelKeys()
+    {
+        $parallel = new Parallel();
+        $callback = function () {
+            return 1;
+        };
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([1, 1, 1, 1], $res);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback, 'id_' . $i);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame(['id_0' => 1, 'id_1' => 1, 'id_2' => 1, 'id_3' => 1], $res);
+
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($callback, $i - 1);
+        }
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([-1 => 1, 0 => 1, 1 => 1, 2 => 1], $res);
+
+        $parallel->add($callback, 1.0);
+        $res = $parallel->wait();
+        $parallel->clear();
+        $this->assertSame([1.0 => 1], $res);
+    }
+
     public function testParallelThrows()
+    {
+        $parallel = new Parallel();
+        $err = function () {
+            Coroutine::sleep(0.001);
+            throw new \RuntimeException('something bad happened');
+        };
+        $ok = function () {
+            Coroutine::sleep(0.001);
+            return 1;
+        };
+        $parallel->add($err);
+        for ($i = 0; $i < 4; ++$i) {
+            $parallel->add($ok);
+        }
+        $this->expectException(ParallelExecutionException::class);
+        $res = $parallel->wait();
+    }
+
+    public function testParallelResultsAndThrows()
     {
         $parallel = new Parallel();
 
@@ -124,18 +176,31 @@ class ParallelTest extends TestCase
             Coroutine::sleep(0.001);
             throw new \RuntimeException('something bad happened');
         };
-
-        $ok = function () {
-            Coroutine::sleep(0.001);
-            return 1;
-        };
-
         $parallel->add($err);
-        for ($i = 0; $i < 4; ++$i) {
-            $parallel->add($ok);
+
+        $ids = [1 => uniqid(), 2 => uniqid(), 3 => uniqid(), 4 => uniqid()];
+        foreach ($ids as $id) {
+            $parallel->add(function () use ($id) {
+                Coroutine::sleep(0.001);
+                return $id;
+            });
         }
-        $this->expectException(ParallelExecutionException::class);
-        $res = $parallel->wait();
+
+        try {
+            $parallel->wait();
+            throw new \RuntimeException();
+        } catch (ParallelExecutionException $exception) {
+            foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
+                $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
+            }
+
+            $result = $exception->getResults();
+            $this->assertEquals($ids, $result);
+
+            $throwables = $exception->getThrowables();
+            $this->assertTrue(count($throwables) === 1);
+            $this->assertSame('something bad happened', $throwables[0]->getMessage());
+        }
     }
 
     public function returnCoId()

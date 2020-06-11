@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Aop;
 
 abstract class AbstractAspect implements AroundInterface
@@ -27,4 +26,9 @@ abstract class AbstractAspect implements AroundInterface
      * @var array
      */
     public $annotations = [];
+
+    /**
+     * @var null|int
+     */
+    public $priority;
 }

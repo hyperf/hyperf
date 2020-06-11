@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Retry\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
@@ -36,6 +35,7 @@ class RetryAnnotationAspect implements AroundInterface
         $policy = $this->makePolicy($annotation);
         $context = $policy->start();
         $context['proceedingJoinPoint'] = $proceedingJoinPoint;
+        $context['pipe'] = $proceedingJoinPoint->pipe;
         if (! $policy->canRetry($context)) {
             goto end;
         }
@@ -50,6 +50,7 @@ class RetryAnnotationAspect implements AroundInterface
         }
         if ($policy->canRetry($context)) {
             $policy->beforeRetry($context);
+            $proceedingJoinPoint->pipe = $context['pipe'];
             goto attempt;
         }
 

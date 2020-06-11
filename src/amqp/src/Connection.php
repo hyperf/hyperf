@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
+use Hyperf\Amqp\Connection\KeepaliveIO;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Connection as BaseConnection;
@@ -31,7 +31,7 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $pool;
 
     /**
-     * @var AbstractConnection
+     * @var null|AbstractConnection
      */
     protected $connection;
 
@@ -56,14 +56,14 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $lastHeartbeatTime = 0.0;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
-    private $channel;
+    protected $channel;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
-    private $confirmChannel;
+    protected $confirmChannel;
 
     public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {
@@ -113,6 +113,10 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
+        if ($this->connection && $this->connection->getIO() instanceof KeepaliveIO) {
+            $this->connection->getIO()->close();
+        }
+
         $this->connection = $this->initConnection();
         $this->channel = null;
         $this->confirmChannel = null;
@@ -127,6 +131,10 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         $this->connection->close();
+        if ($this->connection->getIO() instanceof KeepaliveIO) {
+            $this->connection->getIO()->close();
+        }
+
         $this->channel = null;
         $this->confirmChannel = null;
         return true;

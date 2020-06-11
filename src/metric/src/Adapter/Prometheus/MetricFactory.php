@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,9 +19,11 @@ use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
+use Hyperf\Utils\Coordinator\Constants as Coord;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Server;
 
 class MetricFactory implements MetricFactoryInterface
@@ -103,7 +104,6 @@ class MetricFactory implements MetricFactoryInterface
                 break;
             default:
                 throw new InvalidArgumentException('Unsupported Prometheus mode encountered');
-                break;
         }
     }
 
@@ -128,18 +128,22 @@ class MetricFactory implements MetricFactoryInterface
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
             $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
-            Coroutine::sleep($interval);
+            $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
+            if ($workerExited) {
+                break;
+            }
         }
     }
 
     protected function customHandle()
     {
-        Coroutine::yield(); // Yield forever
+        CoordinatorManager::until(Coord::WORKER_EXIT)->yield(); // Yield forever
     }
 
     private function getNamespace(): string
     {
-        return $this->config->get("metric.metric.{$this->name}.namespace");
+        $name = $this->config->get("metric.metric.{$this->name}.namespace");
+        return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
     }
 
     private function guardConfig()

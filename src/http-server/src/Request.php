@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
@@ -60,6 +60,20 @@ class Request implements RequestInterface
     }
 
     /**
+     * Retrieve the data from route parameters.
+     *
+     * @param mixed $default
+     */
+    public function route(string $key, $default = null)
+    {
+        $route = $this->getAttribute(Dispatched::class);
+        if (is_null($route)) {
+            return $default;
+        }
+        return array_key_exists($key, $route->params) ? $route->params[$key] : $default;
+    }
+
+    /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
      *
      * @param mixed $default
@@ -93,7 +107,7 @@ class Request implements RequestInterface
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
-
+        $result = [];
         foreach ($keys as $key) {
             $result[$key] = data_get($data, $key, $default[$key] ?? null);
         }
@@ -113,7 +127,7 @@ class Request implements RequestInterface
     /**
      * Determine if the $keys is exist in parameters.
      *
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array
     {
@@ -230,7 +244,7 @@ class Request implements RequestInterface
      */
     public function url(): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
 
     /**
@@ -503,9 +517,7 @@ class Request implements RequestInterface
      */
     protected function preparePathInfo(): string
     {
-        if (($requestUri = $this->getRequestUri()) === null) {
-            return '/';
-        }
+        $requestUri = $this->getRequestUri();
 
         // Remove the query string from REQUEST_URI
         if (false !== $pos = strpos($requestUri, '?')) {

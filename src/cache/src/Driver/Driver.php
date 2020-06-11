@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 
 abstract class Driver implements DriverInterface
 {
+    use InteractsWithTime;
+
     /**
      * @var ContainerInterface
      */
