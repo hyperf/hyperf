@@ -66,6 +66,7 @@ class Example {
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 - [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal does not work.
 
 ## Optimized
 
