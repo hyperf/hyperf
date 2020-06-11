@@ -405,6 +405,26 @@ Router::get('/metrics', function(){
 
 > 本节只适用于 Prometheus 驱动
 
-如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，导入 Grafana 中即可使用。
+如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，导入 Grafana 中即可使用。
 
 ![grafana](./imgs/grafana.png)
+
+## 注意事项
+
+### Prometheus 驱动
+- 如果使用 redis 等持久化存储, 需要保持同一个 metric 的 label 前后一致, 否则会报错
+- 如果使用 `in-memory` 存储, `metric name` 推荐使用 **下划线风格**, 如果包含 `:` 会导致失败报错
+```
+// vendor/endclothing/prometheus_client_php/src/Prometheus/Storage/InMemory.php:118
+foreach ($metric['samples'] as $key => $value) {
+    $parts = explode(':', $key); // 这里
+    $labelValues = $parts[2];
+    $data['samples'][] = [
+        'name' => $metaData['name'],
+        'labelNames' => [],
+        'labelValues' => json_decode($labelValues),
+        'value' => $value
+    ];
+}
+```
+- 如果选择 **自定义 Histogram Bucket**, 一定要注意注册的时机, 请确保 `registerHistogram()` 之前未触发过同一名称的 Histogram。
