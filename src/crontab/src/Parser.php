@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -30,21 +31,21 @@ class Parser
      *                              |    +----------- min (0 - 59)
      *                              +------------- sec (0-59)
      * @param null|Carbon|int $startTime
-     * @throws \InvalidArgumentException
      * @return Carbon[]
+     * @throws \InvalidArgumentException
      */
     public function parse(string $crontabString, $startTime = null)
     {
-        if (! $this->isValid($crontabString)) {
+        if (!$this->isValid($crontabString)) {
             throw new \InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
-        if (in_array((int) date('i', $startTime), $date['minutes'])
-            && in_array((int) date('G', $startTime), $date['hours'])
-            && in_array((int) date('j', $startTime), $date['day'])
-            && in_array((int) date('w', $startTime), $date['week'])
-            && in_array((int) date('n', $startTime), $date['month'])
+        if (in_array((int)date('i', $startTime), $date['minutes'])
+            && in_array((int)date('G', $startTime), $date['hours'])
+            && in_array((int)date('j', $startTime), $date['day'])
+            && in_array((int)date('w', $startTime), $date['week'])
+            && in_array((int)date('n', $startTime), $date['month'])
         ) {
             $result = [];
             foreach ($date['second'] as $second) {
@@ -57,8 +58,8 @@ class Parser
 
     public function isValid(string $crontabString): bool
     {
-        if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
-            if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
+        if (!preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
+            if (!preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
                 return false;
             }
         }
@@ -81,10 +82,10 @@ class Parser
         } elseif (strpos($string, ',') !== false) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
-                if (! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
+                if (!$this->between((int)$value, (int)($min > $start ? $min : $start), (int)$max)) {
                     continue;
                 }
-                $result[] = (int) $value;
+                $result[] = (int)$value;
             }
         } elseif (strpos($string, '/') !== false) {
             $exploded = explode('/', $string);
@@ -94,12 +95,12 @@ class Parser
                 $nMax < $max && $max = $nMax;
             }
             $start > $min && $min = $start;
-            for ($i = $start; $i <= $max;) {
+            for ($i = $min; $i <= $max;) {
                 $result[] = $i;
                 $i += $exploded[1];
             }
-        } elseif ($this->between((int) $string, $min > $start ? $min : $start, $max)) {
-            $result[] = (int) $string;
+        } elseif ($this->between((int)$string, $min > $start ? $min : $start, $max)) {
+            $result[] = (int)$string;
         }
         return $result;
     }
@@ -119,13 +120,10 @@ class Parser
     {
         if ($startTime instanceof Carbon) {
             $startTime = $startTime->getTimestamp();
-        } else {
+        } elseif ($startTime === null) {
             $startTime = time();
         }
-        if (! is_numeric($startTime)) {
-            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
-        }
-        return (int) $startTime;
+        return (int)$startTime;
     }
 
     private function parseDate(string $crontabString): array
