@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Devtool\Describe;
+
 class ConfigProvider
 {
     public function __invoke()
@@ -22,6 +24,9 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+            ],
+            'commands' => [
+                Describe\RoutesCommand::class,
             ],
             'publish' => [
                 [
