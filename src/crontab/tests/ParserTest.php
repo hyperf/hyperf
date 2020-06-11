@@ -159,10 +159,9 @@ class ParserTest extends TestCase
     {
         $dates = [];
         foreach ($result as $date) {
-            if (!$date instanceof Carbon) {
+            if (! $date instanceof Carbon) {
                 continue;
             }
-
             $dates[] = $date->toDateTimeString();
         }
         return $dates;
