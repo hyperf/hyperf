@@ -38,7 +38,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     }
 
     /**
-     * Return an instance with specified cookies.
+     * Returns an instance with specified cookies.
      */
     public function withCookie(Cookie $cookie): self
     {
@@ -48,13 +48,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     }
 
     /**
-     * Return all cookies.
+     * Retrieves all cookies.
      */
     public function getCookies(): array
     {
         return $this->cookies;
     }
 
+    /**
+     * Returns an instance with specified trailer.
+     */
     public function withTrailer(string $key, $value): self
     {
         $new = clone $this;
@@ -62,6 +65,17 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         return $new;
     }
 
+    /**
+     * Retrieves a specified trailer value, returns null if the value does not exists.
+     */
+    public function getTrailer(string $key)
+    {
+        return $this->trailers[$key] ?? null;
+    }
+
+    /**
+     * Retrieves all trailers values.
+     */
     public function getTrailers(): array
     {
         return $this->trailers;
