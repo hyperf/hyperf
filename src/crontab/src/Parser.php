@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -40,11 +41,11 @@ class Parser
         }
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
-        if (in_array((int)date('i', $startTime), $date['minutes'])
-            && in_array((int)date('G', $startTime), $date['hours'])
-            && in_array((int)date('j', $startTime), $date['day'])
-            && in_array((int)date('w', $startTime), $date['week'])
-            && in_array((int)date('n', $startTime), $date['month'])
+        if (in_array((int) date('i', $startTime), $date['minutes'])
+            && in_array((int) date('G', $startTime), $date['hours'])
+            && in_array((int) date('j', $startTime), $date['day'])
+            && in_array((int) date('w', $startTime), $date['week'])
+            && in_array((int) date('n', $startTime), $date['month'])
         ) {
             $result = [];
             foreach ($date['second'] as $second) {
@@ -81,10 +82,10 @@ class Parser
         } elseif (strpos($string, ',') !== false) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
-                if ( !$this->between((int)$value, (int)($min > $start ? $min : $start), (int)$max)) {
+                if ( !$this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
                     continue;
                 }
-                $result[] = (int)$value;
+                $result[] = (int) $value;
             }
         } elseif (strpos($string, '/') !== false) {
             $exploded = explode('/', $string);
@@ -98,8 +99,8 @@ class Parser
                 $result[] = $i;
                 $i += $exploded[1];
             }
-        } elseif ($this->between((int)$string, $min > $start ? $min : $start, $max)) {
-            $result[] = (int)$string;
+        } elseif ($this->between((int) $string, $min > $start ? $min : $start, $max)) {
+            $result[] = (int) $string;
         }
         return $result;
     }
@@ -122,7 +123,7 @@ class Parser
         } elseif ($startTime === null) {
             $startTime = time();
         }
-        return (int)$startTime;
+        return (int) $startTime;
     }
 
     private function parseDate(string $crontabString): array
