@@ -13,30 +13,17 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\HttpMessage\Stream\FileInterface;
 use Psr\Http\Message\ResponseInterface;
+use Swoole\Http\Response;
 
 class ResponseEmitter
 {
-    public function emit(...$parameters)
+    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
     {
-        if (count($parameters) < 3) {
-            throw new \InvalidArgumentException('Nothing to emit.');
-        }
-        $response = current($parameters);
-        if (! $response instanceof ResponseInterface) {
-            throw new \InvalidArgumentException(sprintf('The first parameter of %s should instead of %s', static::class, ResponseInterface::class));
-        }
-
-        $swooleResponse = $parameters[1] ?? null;
-        if (! $swooleResponse instanceof \Swoole\Http\Response) {
-            return;
-        }
-
         $this->buildSwooleResponse($swooleResponse, $response);
         $content = $response->getBody();
         if ($content instanceof FileInterface) {
             return $swooleResponse->sendfile($content->getFilename());
         }
-        $withContent = $parameters[2] ?? true;
         if ($withContent) {
             $swooleResponse->end($content->getContents());
         } else {
@@ -44,7 +31,7 @@ class ResponseEmitter
         }
     }
 
-    protected function buildSwooleResponse(\Swoole\Http\Response $swooleResponse, ResponseInterface $response): void
+    protected function buildSwooleResponse(Response $swooleResponse, ResponseInterface $response): void
     {
         /*
          * Headers
@@ -72,7 +59,7 @@ class ResponseEmitter
             }
         }
 
-        /**
+        /*
          * Trailers
          */
         if (method_exists($response, 'getTrailers') && method_exists($swooleResponse, 'trailer')) {
