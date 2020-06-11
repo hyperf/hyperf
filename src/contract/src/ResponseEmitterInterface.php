@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
-interface Sendable
+use Psr\Http\Message\ResponseInterface;
+use Swoole\Http\Response;
+
+interface ResponseEmitterInterface
 {
-    /**
-     * Send the response.
-     */
-    public function send();
+    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true);
 }
