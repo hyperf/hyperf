@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -31,8 +30,8 @@ class Parser
      *                              |    +----------- min (0 - 59)
      *                              +------------- sec (0-59)
      * @param null|Carbon|int $startTime
-     * @return Carbon[]
      * @throws \InvalidArgumentException
+     * @return Carbon[]
      */
     public function parse(string $crontabString, $startTime = null)
     {
