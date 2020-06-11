@@ -120,3 +120,27 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface
     }
 }
 ```
+
+## 多 server 配置
+
+```
+# /etc/nginx/conf.d/ng_socketio.conf
+# 多个 ws server
+upstream io_nodes {
+    server ws1:9502;
+    server ws2:9502;
+}
+server {
+  listen 9502;
+  # server_name your.socket.io;
+  location / {
+    proxy_set_header Upgrade "websocket";
+    proxy_set_header Connection "upgrade";
+    # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    # proxy_set_header Host $host;
+    # proxy_http_version 1.1;
+    # 转发到多个 ws server
+    proxy_pass http://io_nodes;
+  }
+}
+```
