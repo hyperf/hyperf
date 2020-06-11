@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ReactiveX;
 
 use Hyperf\Utils\Coroutine;
@@ -46,7 +45,7 @@ class RxSwoole
             return;
         }
 
-        //You only need to set the default scheduler once
+        // You only need to set the default scheduler once
         Scheduler::setDefaultFactory(function () {
             return make(SchedulerInterface::class, ['timerCallableOrLoop' => self::getLoop()]);
         });

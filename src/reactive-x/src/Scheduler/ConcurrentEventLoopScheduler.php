@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ReactiveX\Scheduler;
 
 use Hyperf\Utils\Coroutine;
@@ -17,7 +16,6 @@ use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\CompositeDisposable;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
-use Rx\Scheduler\EventLoopScheduler;
 use Rx\Scheduler\VirtualTimeScheduler;
 
 /**
@@ -26,12 +24,24 @@ use Rx\Scheduler\VirtualTimeScheduler;
  */
 final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
 {
+    /**
+     * @var int
+     */
     private $nextTimer = PHP_INT_MAX;
 
+    /**
+     * @var bool
+     */
     private $insideInvoke = false;
 
+    /**
+     * @var callable
+     */
     private $delayCallback;
 
+    /**
+     * @var DisposableInterface
+     */
     private $currentTimer;
 
     /**

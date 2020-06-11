@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ReactiveX\Observable;
 
 use Rx\DisposableInterface;
@@ -21,8 +20,14 @@ use Swoole\Coroutine\Channel;
 
 class ChannelObservable extends Observable
 {
+    /**
+     * @var Channel
+     */
     private $channel;
 
+    /**
+     * @var null|SchedulerInterface
+     */
     private $scheduler;
 
     public function __construct(Channel $channel, ?SchedulerInterface $scheduler = null)

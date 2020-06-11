@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ReactiveX\Observable;
 
 use Rx\Disposable\EmptyDisposable;
@@ -24,7 +23,7 @@ use Swoole\Coroutine\WaitGroup;
 class CoroutineObservable extends Observable
 {
     /**
-     * @var array<Callable>
+     * @var callable[]
      */
     private $callables;
 

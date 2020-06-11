@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ReactiveX\Observable;
 
 use Hyperf\Utils\ApplicationContext;
@@ -23,8 +22,14 @@ use Rx\SchedulerInterface;
 
 class EventObservable extends Observable
 {
+    /**
+     * @var string
+     */
     private $eventName;
 
+    /**
+     * @var null|SchedulerInterface
+     */
     private $scheduler;
 
     public function __construct(string $eventName, ?SchedulerInterface $scheduler = null)
