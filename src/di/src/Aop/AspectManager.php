@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-class AspectCacher
+class AspectManager
 {
     protected static $container;
 
