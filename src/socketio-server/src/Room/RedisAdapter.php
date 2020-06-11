@@ -25,6 +25,7 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscribe\Subscriber;
 use Redis;
+use Swoole\Server;
 
 class RedisAdapter implements AdapterInterface
 {
@@ -39,22 +40,22 @@ class RedisAdapter implements AdapterInterface
     /**
      * @var NamespaceInterface
      */
-    private $nsp;
+    protected $nsp;
 
     /**
      * @var \Hyperf\Redis\Redis|Redis|RedisProxy
      */
-    private $redis;
+    protected $redis;
 
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
@@ -185,47 +186,18 @@ class RedisAdapter implements AdapterInterface
     protected function doBroadcast($packet, $opts)
     {
         $rooms = data_get($opts, 'rooms', []);
-        $except = data_get($opts, 'except', []);
-        $volatile = data_get($opts, 'flag.volatile', false);
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
-
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
                 $sids = $this->redis->sMembers($this->getRoomKey($room));
                 foreach ($sids as $sid) {
-                    $fd = $this->getFd($sid);
-                    if (in_array($sid, $except)) {
-                        continue;
-                    }
-                    if ($this->isLocal($sid)) {
-                        $this->sender->push(
-                            $fd,
-                            $packet,
-                            SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                            $wsFlag
-                        );
-                        $pushed[$fd] = true;
-                    }
+                    $this->tryPush($sid, $packet, $pushed, $opts);
                 }
             }
         } else {
             $sids = $this->redis->sMembers($this->getStatKey());
-
             foreach ($sids as $sid) {
-                $fd = $this->getFd($sid);
-                if (in_array($sid, $except)) {
-                    continue;
-                }
-                if ($this->isLocal($sid)) {
-                    $this->sender->push(
-                        $fd,
-                        $packet,
-                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                        $wsFlag
-                    );
-                }
+                $this->tryPush($sid, $packet, $pushed, $opts);
             }
         }
     }
@@ -278,6 +250,27 @@ class RedisAdapter implements AdapterInterface
         return $this->sidProvider->getFd($sid);
     }
 
+    private function tryPush(string $sid, string $packet, array &$pushed, array $opts): void
+    {
+        $compress = data_get($opts, 'flag.compress', false);
+        $wsFlag = $this->guessFlags((bool) $compress);
+        $except = data_get($opts, 'except', []);
+        $fd = $this->getFd($sid);
+        if (in_array($sid, $except)) {
+            return;
+        }
+        if ($this->isLocal($sid) && ! isset($pushed[$fd])) {
+            $this->sender->push(
+                $fd,
+                $packet,
+                SWOOLE_WEBSOCKET_OPCODE_TEXT,
+                $wsFlag
+            );
+            $pushed[$fd] = true;
+            $this->shouldClose($opts) && $this->close($fd);
+        }
+    }
+
     private function formatThrowable(\Throwable $throwable): string
     {
         return (string) $throwable;
@@ -302,7 +295,7 @@ class RedisAdapter implements AdapterInterface
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
         Coroutine::create(function () use ($sub) {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $sub->close();
         });
         while (true) {
@@ -319,5 +312,16 @@ class RedisAdapter implements AdapterInterface
                 $this->doBroadcast($packet, $opts);
             });
         }
+    }
+
+    private function shouldClose(array $opts)
+    {
+        return data_get($opts, 'flag.close', false);
+    }
+
+    private function close(int $fd)
+    {
+        // Sender should be able to disconnect fd in the future. For now we have to use server.
+        ApplicationContext::getContainer()->get(Server::class)->disconnect($fd);
     }
 }

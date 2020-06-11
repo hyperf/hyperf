@@ -421,8 +421,10 @@ if (! function_exists('make')) {
 if (! function_exists('run')) {
     /**
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param array|callable $callbacks
      */
-    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool
+    function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
@@ -430,7 +432,7 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        $result = \Swoole\Coroutine\Run($callback);
+        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
@@ -444,17 +446,5 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
-    }
-}
-
-if (! function_exists('timepoint')) {
-    function timepoint(?string $key = null)
-    {
-        if (! isset($GLOBALS['__timepoint_beginTime__'])) {
-            $GLOBALS['__timepoint_beginTime__'] = microtime(true);
-            return;
-        }
-        echo '[DEBUG] Timepoint ' . $key . ': ' . round(microtime(true) - $GLOBALS['__timepoint_beginTime__'], 3) . 's' . PHP_EOL;
-        $GLOBALS['__timepoint_beginTime__'] = microtime(true);
     }
 }

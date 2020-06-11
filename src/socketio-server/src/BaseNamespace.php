@@ -13,8 +13,12 @@ namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Emitter\Emitter;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\Parser\Engine;
+use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 
 class BaseNamespace implements NamespaceInterface
@@ -63,6 +67,22 @@ class BaseNamespace implements NamespaceInterface
      */
     public function getNamespace(): string
     {
-        return SocketIORouter::getNamespace(static::class);
+        return (string) SocketIORouter::getNamespace(static::class);
+    }
+
+    /**
+     * Kick off a client from room, possibly remotely.
+     */
+    public function dismiss(string $roomId)
+    {
+        $closePacket = Packet::create([
+            'type' => Packet::CLOSE,
+            'nsp' => $this->getNamespace(),
+        ]);
+        $encoder = ApplicationContext::getContainer()->get(Encoder::class);
+        $this->adapter->broadcast(
+            Engine::MESSAGE . $encoder->encode($closePacket),
+            ['room' => $roomId, 'flag' => ['close' => true]]
+        );
     }
 }

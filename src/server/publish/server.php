@@ -14,7 +14,7 @@ use Hyperf\Server\ServerInterface;
 use Hyperf\Server\SwooleEvent;
 
 return [
-    'server' => Server::class,
+    'type' => Server::class,
     'mode' => SWOOLE_BASE,
     'servers' => [
         [
