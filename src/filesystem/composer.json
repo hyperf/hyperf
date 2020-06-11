@@ -34,7 +34,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-memory": "^1.0",
         "overtrue/flysystem-qiniu": "^1.0",
-        "swoft/swoole-ide-helper": "dev-master",
+        "phpstan/phpstan": "^0.10.5",
         "xxtime/flysystem-aliyun-oss": "^1.5"
     },
     "suggest": {

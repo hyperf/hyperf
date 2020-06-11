@@ -14,6 +14,7 @@ namespace Hyperf\Server;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -54,8 +55,16 @@ class CoroutineServer implements ServerInterface
      */
     protected $handler;
 
-    public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
-    {
+    /**
+     * @var bool
+     */
+    protected $mainServerStarted = false;
+
+    public function __construct(
+        ContainerInterface $container,
+        LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->container = $container;
         $this->logger = $logger;
         $this->eventDispatcher = $dispatcher;
@@ -71,14 +80,20 @@ class CoroutineServer implements ServerInterface
     {
         run(function () {
             $this->initServer($this->config);
-
-            $this->eventDispatcher->dispatch(new CoroutineServerStart($this->server, $this->config->toArray()));
-
-            CoordinatorManager::until(Constants::WORKER_START)->resume();
-
-            $this->getServer()->start();
-
-            $this->eventDispatcher->dispatch(new CoroutineServerStop($this->server));
+            $servers = ServerManager::list();
+            $config = $this->config->toArray();
+            foreach ($servers as $name => [$type, $server]) {
+                Coroutine::create(function () use ($name, $server, $config) {
+                    if (! $this->mainServerStarted) {
+                        $this->mainServerStarted = true;
+                        $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                    }
+                    $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
+                    CoordinatorManager::until(Constants::WORKER_START)->resume();
+                    $server->start();
+                    $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
+                });
+            }
         });
     }
 
@@ -98,32 +113,27 @@ class CoroutineServer implements ServerInterface
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
-        if (count($servers) !== 1) {
-            $this->logger->error('Coroutine Server only support one server.');
-        }
+        foreach ($servers as $server) {
+            $name = $server->getName();
+            $type = $server->getType();
+            $host = $server->getHost();
+            $port = $server->getPort();
+            $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
-        /** @var Port $server */
-        $server = array_shift($servers);
+            $this->server = $this->makeServer($type, $host, $port);
+            $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
 
-        $name = $server->getName();
-        $type = $server->getType();
-        $host = $server->getHost();
-        $port = $server->getPort();
-        $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
-
-        $this->server = $this->makeServer($type, $host, $port);
-        $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
-
-        if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-            [$class, $method] = $callbacks[SwooleEvent::ON_REQUEST];
-            $handler = $this->container->get($class);
-            if ($handler instanceof MiddlewareInitializerInterface) {
-                $handler->initCoreMiddleware($name);
+            if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
+                [$class, $method] = $callbacks[SwooleEvent::ON_REQUEST];
+                $handler = $this->container->get($class);
+                if ($handler instanceof MiddlewareInitializerInterface) {
+                    $handler->initCoreMiddleware($name);
+                }
+                $this->server->handle('/', [$handler, $method]);
             }
-            $this->server->handle('/', [$handler, $method]);
-        }
 
-        ServerManager::add($name, [$type, $this->server]);
+            ServerManager::add($name, [$type, $this->server]);
+        }
     }
 
     protected function makeServer($type, $host, $port)

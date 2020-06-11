@@ -87,14 +87,12 @@ class CoreMiddleware extends HttpCoreMiddleware
     {
         if ($response instanceof Message) {
             $body = Parser::serializeMessage($response);
-            $response = $this->response()
+            return $this->response()
                 ->withAddedHeader('Content-Type', 'application/grpc')
                 ->withAddedHeader('trailer', 'grpc-status, grpc-message')
                 ->withBody(new SwooleStream($body))
                 ->withTrailer('grpc-status', '0')
                 ->withTrailer('grpc-message', '');
-
-            return $response;
         }
 
         if (is_string($response)) {
@@ -163,14 +161,12 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleResponse(?Message $message, $httpStatus = 200, string $grpcStatus = '0', string $grpcMessage = ''): ResponseInterface
     {
-        $response = $this->response()->withStatus($httpStatus)
+        return $this->response()->withStatus($httpStatus)
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
             ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
             ->withTrailer('grpc-status', $grpcStatus)
             ->withTrailer('grpc-message', $grpcMessage);
-
-        return $response;
     }
 }

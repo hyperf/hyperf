@@ -69,10 +69,15 @@ class Example {
 
 - [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
 - [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `Hyperf\HttpServer\ResponseEmitter` class to emit any `PSR-7` response object with Swoole server.
 
 ## Changed
 
 - [#1846](https://github.com/hyperf/hyperf/pull/1846) Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
+
+## Removed
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
 
 ```php
 use Hyperf\Utils\Serializer\SerializerFactory;
