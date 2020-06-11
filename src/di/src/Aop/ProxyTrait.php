@@ -59,27 +59,27 @@ trait ProxyTrait
     {
         $className = $proceedingJoinPoint->className;
         $methodName = $proceedingJoinPoint->methodName;
-        if (! AspectCacher::has($className, $methodName)) {
-            AspectCacher::set($className, $methodName, []);
+        if (! AspectManager::has($className, $methodName)) {
+            AspectManager::set($className, $methodName, []);
             $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
             $queue = new \SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
             }
             while ($queue->valid()) {
-                AspectCacher::insert($className, $methodName, $queue->current());
+                AspectManager::insert($className, $methodName, $queue->current());
                 $queue->next();
             }
 
             unset($annotationAspects, $aspects, $queue);
         }
 
-        if (empty(AspectCacher::get($className, $methodName))) {
+        if (empty(AspectManager::get($className, $methodName))) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
         return static::makePipeline()->via('process')
-            ->through(AspectCacher::get($className, $methodName))
+            ->through(AspectManager::get($className, $methodName))
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
