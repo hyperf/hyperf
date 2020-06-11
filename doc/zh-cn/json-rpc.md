@@ -393,7 +393,7 @@ namespace App\JsonRpc;
 
 interface CalculatorServiceInterface
 {
-    public function sum(MathValue $v1, MathValue $v2): MathValue;
+    public function add(int $v1, int $v2): int;
 }
 ```
 
@@ -404,12 +404,11 @@ interface CalculatorServiceInterface
 
 use Hyperf\Utils\ApplicationContext;
 use App\JsonRpc\CalculatorServiceInterface;
-use App\JsonRpc\MathValue;
 
 $client = ApplicationContext::getContainer()->get(CalculatorServiceInterface::class);
 
 /** @var MathValue $result */
-$result = $client->sum(new MathValue(1), new MathValue(2));
+$result = $client->add(1, 2);
 
 var_dump($result->value);
 ```
