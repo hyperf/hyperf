@@ -26,6 +26,8 @@ class ConfigProvider
                 ],
             ],
             'commands' => [
+                Describe\AspectsCommand::class,
+                Describe\ListenersCommand::class,
                 Describe\RoutesCommand::class,
             ],
             'publish' => [
