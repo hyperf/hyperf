@@ -107,8 +107,6 @@ class ParserTest extends TestCase
             '2020-06-10 10:12:14',
             '2020-06-10 10:12:15',
         ], $this->toDatatime($result));
-
-
     }
 
     public function testParseSecondLevelWithCarbonStartTime()
