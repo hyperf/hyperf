@@ -40,46 +40,38 @@ class Timer
      */
     protected static $round = 0;
 
-    /**
-     * @param int $ms millisecond
-     */
-    public static function tick(int $ms, callable $callback, ...$params): int
+    public static function tick(int $millisecond, callable $callback, ...$params): int
     {
         $timerId = static::generateTimerId();
-        Coroutine::create(function () use ($ms, $callback, $timerId, $params) {
-            static::initInfoData($timerId, $ms);
-            retry(INF, function () use ($ms, $callback, $timerId, $params) {
+        Coroutine::create(function () use ($millisecond, $callback, $timerId, $params) {
+            static::initInfoData($timerId, $millisecond);
+            retry(INF, function () use ($millisecond, $callback, $timerId, $params) {
                 while (true) {
-                    static::handleRemove($timerId);
-                    static::incrRound();
-                    static::incrInfoData($timerId);
+                    static::handleData($timerId);
 
-                    // handler worker exit
-                    $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($ms / 1000);
+                    $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($millisecond / 1000);
                     if ($workerExited || ! static::exists($timerId)) {
                         break;
                     }
 
                     $callback($timerId, ...$params);
                 }
-            }, $ms);
+            }, $millisecond);
         });
 
         return $timerId;
     }
 
-    public static function after(int $ms, callable $callback, ...$params): int
+    public static function after(int $millisecond, callable $callback, ...$params): int
     {
         $timerId = static::generateTimerId();
-        Coroutine::create(function () use ($ms, $callback, $timerId, $params) {
-            static::initInfoData($timerId, $ms);
-            retry(INF, function () use ($ms, $callback, $timerId, $params) {
-                static::handleRemove($timerId);
-                static::incrRound();
-                static::incrInfoData($timerId);
+        Coroutine::create(function () use ($millisecond, $callback, $timerId, $params) {
+            static::initInfoData($timerId, $millisecond);
+            retry(INF, function () use ($millisecond, $callback, $timerId, $params) {
+                static::handleData($timerId);
 
                 $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                $workerExited = $coordinator->yield($ms / 1000);
+                $workerExited = $coordinator->yield($millisecond / 1000);
                 if ($workerExited || ! static::exists($timerId)) {
                     return;
                 }
@@ -88,7 +80,7 @@ class Timer
                  * Incompatible: Swoole\Timer::after() will not pass the timer id as the first parameter to the callback.
                  */
                 $callback($timerId, ...$params);
-            }, $ms);
+            }, $millisecond);
         });
         return $timerId;
     }
@@ -137,21 +129,28 @@ class Timer
         return true;
     }
 
-    protected static function initInfoData(int $timeId, int $interval): void
+    protected function handleData(int $timerId): void
     {
-        if (! isset(static::$infos[$timeId])) {
-            return;
-        }
-        static::$infos[$timeId]['interval'] = $interval;
+        static::handleRemove($timerId);
+        static::incrRound();
+        static::incrInfoData($timerId);
     }
 
-    protected static function incrInfoData(int $timeId): void
+    protected static function initInfoData(int $timerId, int $interval): void
     {
-        if (! isset(static::$infos[$timeId])) {
+        if (! isset(static::$infos[$timerId])) {
             return;
         }
-        static::$infos[$timeId]['exec_msec'] += static::$infos[$timeId]['interval'];
-        static::$infos[$timeId]['round'] += 1;
+        static::$infos[$timerId]['interval'] = $interval;
+    }
+
+    protected static function incrInfoData(int $timerId): void
+    {
+        if (! isset(static::$infos[$timerId])) {
+            return;
+        }
+        static::$infos[$timerId]['exec_msec'] += static::$infos[$timerId]['interval'];
+        static::$infos[$timerId]['round'] += 1;
     }
 
     protected static function incrRound(): void
