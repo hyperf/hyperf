@@ -59,6 +59,8 @@ class Example {
     private ExampleService $exampleService;
 }
 ```
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `Hyperf\HttpServer\ResponseEmitter` class to emit any PSR-7 response object with Swoole server, and extracted `Hyperf\Contract\ResponseEmitterInterface`.
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `getTrailers()` and `getTrailer(string $key)` and `withTrailer(string $key, $value)` methods for `Hyperf\HttpMessage\Server\Response`.
 
 ## Fixed
 
@@ -69,7 +71,6 @@ class Example {
 
 - [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
 - [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
-- [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `Hyperf\HttpServer\ResponseEmitter` class to emit any `PSR-7` response object with Swoole server.
 
 ## Changed
 
