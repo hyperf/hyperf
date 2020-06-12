@@ -72,6 +72,7 @@ class Example {
 
 - [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
 - [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.
 
 ## Changed
 
