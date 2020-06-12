@@ -224,7 +224,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
     /**
      * Send close protocol.
-     * @param $connection
+     * @param mixed $connection
      */
     protected function sendClose($connection): void
     {

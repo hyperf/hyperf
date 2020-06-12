@@ -273,15 +273,7 @@ class RedisAdapter implements AdapterInterface
 
     private function formatThrowable(\Throwable $throwable): string
     {
-        sprintf(
-            "%s:%s(%s) in %s:%s\nStack trace:\n%s",
-            get_class($throwable),
-            $throwable->getMessage(),
-            $throwable->getCode(),
-            $throwable->getFile(),
-            $throwable->getLine(),
-            $throwable->getTraceAsString()
-        );
+        return (string) $throwable;
     }
 
     private function phpRedisSubscribe()
@@ -302,9 +294,6 @@ class RedisAdapter implements AdapterInterface
     {
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
-        if (! $chan) {
-            return;
-        }
         Coroutine::create(function () use ($sub) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $sub->close();

@@ -18,6 +18,7 @@ use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Server;
 
 /**
  * Metric Process.
@@ -33,10 +34,10 @@ class MetricProcess extends AbstractProcess
      */
     protected $factory;
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $config->get('metric.use_standalone_process') ?? false;
+        return $server instanceof Server && $config->get('metric.use_standalone_process') ?? false;
     }
 
     public function handle(): void
