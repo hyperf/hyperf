@@ -20,6 +20,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class StartServer extends Command
@@ -28,6 +29,17 @@ class StartServer extends Command
      * @var ContainerInterface
      */
     private $container;
+    private $serverFactory;
+    private $serverConfig;
+
+    protected function configure()
+    {
+        parent::configure();
+        $this->addOption('port', 'p', InputOption::VALUE_OPTIONAL, 'Mapping mainline server port. (priority)');
+        $this->addOption('servers', 's', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Mapping servers port. "name:port"');
+        $this->addUsage('--port 9503');
+        $this->addUsage('--servers http:9504');
+    }
 
     public function __construct(ContainerInterface $container)
     {
@@ -40,20 +52,43 @@ class StartServer extends Command
     {
         $this->checkEnvironment($output);
 
-        $serverFactory = $this->container->get(ServerFactory::class)
+        $this->serverFactory = $this->container->get(ServerFactory::class)
             ->setEventDispatcher($this->container->get(EventDispatcherInterface::class))
             ->setLogger($this->container->get(StdoutLoggerInterface::class));
 
-        $serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
-        if (! $serverConfig) {
+        $this->serverConfig = $this->container->get(ConfigInterface::class)->get('server', []);
+        if (! $this->serverConfig) {
             throw new InvalidArgumentException('At least one server should be defined.');
         }
 
-        $serverFactory->configure($serverConfig);
+        if ($input->hasOption('servers') && !empty($input->getOption('servers'))) {
+            $serversOption = $input->getOption('servers');
+            foreach ($serversOption as $item) {
+                if (preg_match('#(\w+)\:(\d+)#', $item, $match)) {
+                    [, $name, $port] = $match;
+                    $this->mappingPort($name, (int)$port);
+                }
+            }
+        }
+
+        if ($input->hasOption('port') && is_numeric($input->getOption('port'))) {
+            $this->mappingPort('http', (int)$input->getOption('port'));
+        }
+
+        $this->serverFactory->configure($this->serverConfig);
 
         Runtime::enableCoroutine(true, swoole_hook_flags());
 
-        $serverFactory->start();
+        $this->serverFactory->start();
+    }
+
+    private function mappingPort(string $name, int $port)
+    {
+        $key = array_search($name, array_column($this->serverConfig['servers'], 'name'));
+        if (isset($this->serverConfig['servers'][$key])) {
+            $this->serverFactory->getLogger()->warning(sprintf('The "%s" server port: %d, then env port: %d', $name, $port, $this->serverConfig['servers'][$key]['port']));
+            $this->serverConfig['servers'][$key]['port'] = $port;
+        }
     }
 
     private function checkEnvironment(OutputInterface $output)
