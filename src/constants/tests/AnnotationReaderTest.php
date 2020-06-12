@@ -105,7 +105,6 @@ class AnnotationReaderTest extends TestCase
 
         $this->assertSame('Type enabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_ENABLE));
         $this->assertSame('Type disabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_DISABLE));
-
     }
 
     protected function getContainer($has = false)
