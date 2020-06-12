@@ -112,6 +112,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                 break;
             default:
                 $redis = $this->createRedis($host, $port, $timeout);
+                break;
         }
 
         $options = $this->config['options'] ?? [];
