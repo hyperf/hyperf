@@ -75,7 +75,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         $uri = self::getUriFromGlobals($swooleRequest);
         $body = new SwooleStream((string) $swooleRequest->rawContent());
         $protocol = isset($server['server_protocol']) ? str_replace('HTTP/', '', $server['server_protocol']) : '1.1';
-        $request = new static($method, $uri, $headers, $body, $protocol);
+        $request = new Request($method, $uri, $headers, $body, $protocol);
         $request->cookieParams = ($swooleRequest->cookie ?? []);
         $request->queryParams = ($swooleRequest->get ?? []);
         $request->serverParams = ($server ?? []);
@@ -404,7 +404,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     public function url()
     {
-        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
 
     /**

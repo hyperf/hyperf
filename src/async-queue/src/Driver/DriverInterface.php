@@ -33,14 +33,14 @@ interface DriverInterface
     /**
      * Ack a job.
      *
-     * @param $data
+     * @param mixed $data
      */
     public function ack($data): bool;
 
     /**
      * Push a job to failed queue.
      *
-     * @param $data
+     * @param mixed $data
      */
     public function fail($data): bool;
 

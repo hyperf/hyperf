@@ -29,18 +29,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch(...$params)
-    {
-        return parent::dispatch(...$params);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(...$params)
     {
         /**
          * @var Throwable

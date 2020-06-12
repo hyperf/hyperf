@@ -1224,7 +1224,7 @@ trait HasAttributes
      */
     protected function asDecimal($value, $decimals)
     {
-        return number_format($value, $decimals, '.', '');
+        return number_format((float) $value, (int) $decimals, '.', '');
     }
 
     /**

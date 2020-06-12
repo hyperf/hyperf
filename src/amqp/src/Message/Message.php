@@ -38,9 +38,6 @@ abstract class Message implements MessageInterface
 
     public function setType(string $type): self
     {
-        if (! in_array($type, Type::all())) {
-            throw new \InvalidArgumentException(sprintf('Invalid type %s, available valus [%s]', $type, implode(',', Type::all())));
-        }
         $this->type = $type;
         return $this;
     }

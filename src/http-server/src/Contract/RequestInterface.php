@@ -47,7 +47,7 @@ interface RequestInterface extends ServerRequestInterface
 
     /**
      * Determine if the $keys is exist in parameters.
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array;
 

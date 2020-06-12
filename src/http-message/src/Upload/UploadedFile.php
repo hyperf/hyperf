@@ -62,7 +62,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     private $size;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $mimeType;
 

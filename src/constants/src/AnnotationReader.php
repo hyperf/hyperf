@@ -24,14 +24,14 @@ class AnnotationReader
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
             if ($docComment) {
-                $result[$code] = $this->parse($docComment);
+                $result[$code] = $this->parse($docComment, $result[$code] ?? []);
             }
         }
 
         return $result;
     }
 
-    protected function parse(string $doc)
+    protected function parse(string $doc, array $previous = [])
     {
         $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
         if (preg_match_all($pattern, $doc, $result)) {
@@ -39,16 +39,14 @@ class AnnotationReader
                 $keys = $result[1];
                 $values = $result[2];
 
-                $result = [];
                 foreach ($keys as $i => $key) {
                     if (isset($values[$i])) {
-                        $result[Str::lower($key)] = $values[$i];
+                        $previous[Str::lower($key)] = $values[$i];
                     }
                 }
-                return $result;
             }
         }
 
-        return [];
+        return $previous;
     }
 }

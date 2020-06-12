@@ -14,6 +14,8 @@ namespace Hyperf\Server;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Swoole\Coroutine\Server as SwooleCoServer;
+use Swoole\Server as SwooleServer;
 
 interface ServerInterface
 {
@@ -29,5 +31,8 @@ interface ServerInterface
 
     public function start();
 
-    public function getServer(): \Swoole\Server;
+    /**
+     * @return SwooleCoServer|SwooleServer
+     */
+    public function getServer();
 }
