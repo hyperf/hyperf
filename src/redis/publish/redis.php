@@ -24,7 +24,7 @@ return [
             'seeds' => [],
         ],
         'sentinel' => [
-            'enable' => (bool)env('REDIS_SENTINEL_ENABLE', false),
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
             'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
             'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
             'persistent' => '',
