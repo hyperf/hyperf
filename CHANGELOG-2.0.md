@@ -77,11 +77,6 @@ class Example {
 ## Changed
 
 - [#1846](https://github.com/hyperf/hyperf/pull/1846) Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
-
-## Removed
-
-- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
-
 ```php
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\Serializer;
@@ -90,3 +85,8 @@ return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
 ];
 ```
+
+## Removed
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
+- [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.
