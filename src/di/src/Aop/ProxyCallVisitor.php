@@ -22,10 +22,8 @@ use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
@@ -52,32 +50,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
-        foreach ($nodes as $namespace) {
-            if ($namespace instanceof Node\Stmt\Declare_) {
-                continue;
-            }
-            if (! $namespace instanceof Namespace_) {
-                break;
-            }
-            // Add current class namespace.
-            $usedNamespace = [
-                $namespace->name->toCodeString(),
-            ];
-            foreach ($namespace->stmts as $class) {
-                switch ($class) {
-                    case $class instanceof Use_:
-                        // Collect the namespace which the current class imported.
-                        foreach ($class->uses as $classUse) {
-                            $usedNamespace[] = $classUse->name->toCodeString();
-                        }
-                        break;
-                    case $class instanceof Class_ && ! $class->isAnonymous():
-                        $this->removeUsedProxyTraits($usedNamespace, $class);
-                        break;
-                }
-            }
-        }
-
         return null;
     }
 
@@ -101,42 +73,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 return $node;
         }
         return null;
-    }
-
-    private function removeUsedProxyTraits(array $namespaces, Class_ $class): void
-    {
-        // Determine if the current class has used the proxy trait.
-        foreach ($class->stmts as $subNode) {
-            if ($subNode instanceof TraitUse) {
-                /** @var Name $trait */
-                foreach ($subNode->traits as $trait) {
-                    $usedTraits = $this->guessUsedTraits($namespaces, $trait->toCodeString());
-                    foreach ($this->proxyTraits as $i => $proxyTrait) {
-                        if (in_array($proxyTrait, $usedTraits)) {
-                            unset($this->proxyTraits[$i]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private function guessUsedTraits(array $namespaces, string $trait): array
-    {
-        $traits = [
-            ltrim($trait, '\\'),
-        ];
-        foreach ($namespaces as $namespace) {
-            $namespace = ltrim($namespace, '\\');
-            if ($array = explode('\\', $namespace)) {
-                if (array_pop($array) === $trait) {
-                    $traits[] = $namespace;
-                }
-            }
-            $traits[] = $namespace . '\\' . $trait;
-        }
-
-        return array_unique($traits);
     }
 
     /**
