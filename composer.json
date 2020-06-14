@@ -123,6 +123,7 @@
         "hyperf/pool": "self.version",
         "hyperf/process": "self.version",
         "hyperf/rate-limit": "self.version",
+        "hyperf/reactive-x": "self.version",
         "hyperf/redis": "self.version",
         "hyperf/retry": "self.version",
         "hyperf/server": "self.version",
@@ -272,8 +273,8 @@
             "HyperfTest\\Pool\\": "src/pool/tests/",
             "HyperfTest\\Process\\": "src/process/tests/",
             "HyperfTest\\Protocol\\": "src/protocol/tests/",
-            "HyperfTest\\ReactiveX\\": "src/reactive-x/tests/",
             "HyperfTest\\RateLimit\\": "src/rate-limit/tests/",
+            "HyperfTest\\ReactiveX\\": "src/reactive-x/tests/",
             "HyperfTest\\Redis\\": "src/redis/tests/",
             "HyperfTest\\Retry\\": "src/retry/tests/",
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
@@ -375,7 +376,7 @@
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1",
         "json-fix": "./bin/composer-json-fixer",
-        "analyse": "phpstan analyse --memory-limit 1024M -l 5 -c phpstan.neon"
+        "analyse": "phpstan analyse --memory-limit 4096M -l 5 -c phpstan.neon"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
