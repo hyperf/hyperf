@@ -15,5 +15,5 @@ use Swoole\Server;
 
 interface OnCloseInterface
 {
-    public function onClose(Server $server, int $fd, int $reactorId): void;
+    public function onClose($server, int $fd, int $reactorId): void;
 }

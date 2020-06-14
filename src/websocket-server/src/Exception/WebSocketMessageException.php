@@ -9,12 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Contract;
+namespace Hyperf\WebSocketServer\Exception;
 
-use Swoole\Websocket\Frame;
-use Swoole\WebSocket\Server;
+use Hyperf\Server\Exception\ServerException;
 
-interface OnMessageInterface
+class WebSocketMessageException extends ServerException
 {
-    public function onMessage($server, Frame $frame): void;
 }

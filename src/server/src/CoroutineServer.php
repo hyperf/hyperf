@@ -130,9 +130,16 @@ class CoroutineServer implements ServerInterface
                     $handler->initCoreMiddleware($name);
                 }
                 $this->server->handle('/', [$handler, $method]);
+            } elseif (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
+                [$class, $method] = $callbacks[SwooleEvent::ON_HAND_SHAKE];
+                $handler = $this->container->get($class);
+                if ($handler instanceof MiddlewareInitializerInterface) {
+                    $handler->initCoreMiddleware($name);
+                }
+                $this->server->handle('/', [$handler, $method]);
             }
 
-            ServerManager::add($name, [$type, $this->server]);
+            ServerManager::add($name, [$type, $this->server, $callbacks]);
         }
     }
 
