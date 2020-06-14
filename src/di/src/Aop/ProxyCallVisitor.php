@@ -36,13 +36,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     protected $visitorMetadata;
 
     /**
-     * Determine if the class used proxy trait.
-     *
-     * @var bool
-     */
-    private $useProxyTrait = false;
-
-    /**
      * Define the proxy handler trait here.
      *
      * @var array
@@ -51,16 +44,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         = [
             ProxyTrait::class,
         ];
-
-    /**
-     * @var null|Identifier
-     */
-    private $class;
-
-    /**
-     * @var null|Name
-     */
-    private $extends;
 
     public function __construct(VisitorMetadata $visitorMetadata)
     {
@@ -88,21 +71,12 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                             $usedNamespace[] = $classUse->name->toCodeString();
                         }
                         break;
+                    case $class instanceof Node\Stmt\Trait_:
+                        $this->visitorMetadata->isTrait = true;
+                        $this->removeUsedProxyTraits($usedNamespace, $class);
+                        break;
                     case $class instanceof Class_ && ! $class->isAnonymous():
-                        if ($class->extends) {
-                            $this->extends = $class->extends;
-                        }
-                        // Determine if the current class has used the proxy trait.
-                        foreach ($class->stmts as $subNode) {
-                            if ($subNode instanceof TraitUse) {
-                                /** @var Name $trait */
-                                foreach ($subNode->traits as $trait) {
-                                    if ($this->isMatchUseTrait($usedNamespace, $trait->toCodeString())) {
-                                        $this->useProxyTrait = true;
-                                    }
-                                }
-                            }
-                        }
+                        $this->removeUsedProxyTraits($usedNamespace, $class);
                         break;
                 }
             }
@@ -120,10 +94,12 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
-            case $node instanceof Class_ && ! $node->isAnonymous():
+            case ($node instanceof Class_ && ! $node->isAnonymous()) || $node instanceof Node\Stmt\Trait_:
                 // Add use proxy traits.
                 $stmts = $node->stmts;
-                array_unshift($stmts, $this->buildProxyCallTraitUseStatement());
+                if ($stmt = $this->buildProxyCallTraitUseStatement()) {
+                    array_unshift($stmts, $stmt);
+                }
                 $node->stmts = $stmts;
                 unset($stmts);
                 return $node;
@@ -132,29 +108,48 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     }
 
     /**
-     * @param array $namespaces the namespaces that the current class imported
-     * @param string $trait the full namespace of trait or the trait name
+     * @param Class_|Node\Stmt\Trait_ $class
+     * @return bool
      */
-    private function isMatchUseTrait(array $namespaces, string $trait): bool
+    private function removeUsedProxyTraits(array $namespaces, $class): void
     {
-        // @TODO use $this->proxyTraits.
-        $proxyTrait = ProxyTrait::class;
-        $trait = ltrim($trait, '\\');
-        if ($trait === $proxyTrait) {
-            return true;
-        }
-        foreach ($namespaces as $namespace) {
-            if (ltrim($namespace, '\\') . '\\' . $trait === $proxyTrait) {
-                return true;
+        // Determine if the current class has used the proxy trait.
+        foreach ($class->stmts as $subNode) {
+            if ($subNode instanceof TraitUse) {
+                /** @var Name $trait */
+                foreach ($subNode->traits as $trait) {
+                    foreach ($this->proxyTraits as $i => $proxyTrait) {
+                        if (in_array($proxyTrait, $this->guessTraits($namespaces, $trait->toCodeString()))) {
+                            unset($this->proxyTraits[$i]);
+                        }
+                    }
+                }
             }
         }
-        return false;
+    }
+
+    private function guessTraits(array $namespaces, string $trait): array
+    {
+        $traits = [
+            ltrim($trait, '\\'),
+        ];
+        foreach ($namespaces as $namespace) {
+            $namespace = ltrim($namespace, '\\');
+            if ($array = explode('\\', $namespace)) {
+                if (array_pop($array) === $trait) {
+                    $traits[] = $namespace;
+                }
+            }
+            $traits[] = $namespace . '\\' . $trait;
+        }
+
+        return array_unique($traits);
     }
 
     /**
      * Build `use ProxyTrait;`.
      */
-    private function buildProxyCallTraitUseStatement(): TraitUse
+    private function buildProxyCallTraitUseStatement(): ?TraitUse
     {
         $traits = [];
         foreach ($this->proxyTraits as $proxyTrait) {
@@ -164,6 +159,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             // Add backslash prefix if the proxy trait does not start with backslash.
             $proxyTrait[0] !== '\\' && $proxyTrait = '\\' . $proxyTrait;
             $traits[] = new Name($proxyTrait);
+        }
+
+        if (empty($traits)) {
+            return null;
         }
         return new TraitUse($traits);
     }
@@ -182,7 +181,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // __CLASS__
-            new Node\Arg(new Node\Scalar\MagicConst\Class_()),
+            new Node\Arg($this->invokeMagicConst()),
             // __FUNCTION__
             new Node\Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
@@ -220,12 +219,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $node;
     }
 
+    private function invokeMagicConst(): Node\Scalar\MagicConst
+    {
+        if ($this->visitorMetadata->isTrait) {
+            return new Node\Scalar\MagicConst\Trait_();
+        }
+
+        return new Node\Scalar\MagicConst\Class_();
+    }
+
     private function shouldRewrite(ClassMethod $node)
     {
-        // if (! $node->name) {
-        //     return false;
-        // }
-
         $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
