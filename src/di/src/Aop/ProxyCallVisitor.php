@@ -71,10 +71,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                             $usedNamespace[] = $classUse->name->toCodeString();
                         }
                         break;
-                    case $class instanceof Node\Stmt\Trait_:
-                        $this->visitorMetadata->isTrait = true;
-                        $this->removeUsedProxyTraits($usedNamespace, $class);
-                        break;
                     case $class instanceof Class_ && ! $class->isAnonymous():
                         $this->removeUsedProxyTraits($usedNamespace, $class);
                         break;
@@ -94,7 +90,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
-            case ($node instanceof Class_ && ! $node->isAnonymous()) || $node instanceof Node\Stmt\Trait_:
+            case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
                 if ($stmt = $this->buildProxyCallTraitUseStatement()) {
@@ -107,11 +103,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    /**
-     * @param Class_|Node\Stmt\Trait_ $class
-     * @return bool
-     */
-    private function removeUsedProxyTraits(array $namespaces, $class): void
+    private function removeUsedProxyTraits(array $namespaces, Class_ $class): void
     {
         // Determine if the current class has used the proxy trait.
         foreach ($class->stmts as $subNode) {
@@ -181,7 +173,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // __CLASS__
-            new Node\Arg($this->invokeMagicConst()),
+            new Node\Arg(new Node\Scalar\MagicConst\Class_()),
             // __FUNCTION__
             new Node\Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
@@ -217,15 +209,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             ];
         }
         return $node;
-    }
-
-    private function invokeMagicConst(): Node\Scalar\MagicConst
-    {
-        if ($this->visitorMetadata->isTrait) {
-            return new Node\Scalar\MagicConst\Trait_();
-        }
-
-        return new Node\Scalar\MagicConst\Class_();
     }
 
     private function shouldRewrite(ClassMethod $node)
