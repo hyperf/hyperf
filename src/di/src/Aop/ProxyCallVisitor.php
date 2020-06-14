@@ -110,8 +110,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             if ($subNode instanceof TraitUse) {
                 /** @var Name $trait */
                 foreach ($subNode->traits as $trait) {
+                    $usedTraits = $this->guessUsedTraits($namespaces, $trait->toCodeString());
                     foreach ($this->proxyTraits as $i => $proxyTrait) {
-                        if (in_array($proxyTrait, $this->guessTraits($namespaces, $trait->toCodeString()))) {
+                        if (in_array($proxyTrait, $usedTraits)) {
                             unset($this->proxyTraits[$i]);
                         }
                     }
@@ -120,7 +121,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
     }
 
-    private function guessTraits(array $namespaces, string $trait): array
+    private function guessUsedTraits(array $namespaces, string $trait): array
     {
         $traits = [
             ltrim($trait, '\\'),
