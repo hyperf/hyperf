@@ -3,6 +3,12 @@
   * [專案介紹](zh-tw/README.md)
   * [線上交流](zh-tw/communication.md)
   * [捐獻及贊助](zh-tw/donate.md)
+  * [參與開發](zh-tw/contribute.md)
+  
+* 版本管理
+
+  * [版本計劃](zh-tw/release-planning.md)
+  * [版本說明](zh-tw/versions.md)
   * [版本更新記錄](zh-tw/changelog.md)
 
 * 快速入門
