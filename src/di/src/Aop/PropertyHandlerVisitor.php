@@ -38,11 +38,6 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         $this->visitorMetadata = $visitorMetadata;
     }
 
-    public function setClassName(string $classname)
-    {
-        $this->visitorMetadata->className = $classname;
-    }
-
     public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
