@@ -702,9 +702,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        json_decode($value);
-
-        return json_last_error() === JSON_ERROR_NONE;
+        return is_array(json_decode($value, true)) && json_last_error() === JSON_ERROR_NONE;
     }
 
     /**
