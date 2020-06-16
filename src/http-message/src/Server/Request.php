@@ -439,7 +439,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     public function isXmlHttpRequest()
     {
-        return $this->getHeader('X-Requested-With') == 'XMLHttpRequest';
+        return $this->getHeaderLine('X-Requested-With') == 'XMLHttpRequest';
     }
 
     public function getSwooleRequest(): \Swoole\Http\Request
