@@ -14,6 +14,7 @@ namespace Hyperf\Server\Listener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Swoole\Server\Port;
@@ -37,6 +38,7 @@ class AfterWorkerStartListener implements ListenerInterface
     {
         return [
             AfterWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -46,15 +48,16 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        /** @var AfterWorkerStart $event */
-        if ($event->workerId === 0) {
+        /** @var AfterWorkerStart|MainCoroutineServerStart $event */
+        $isCoroutineServer = $event instanceof MainCoroutineServerStart;
+        if ($isCoroutineServer || $event->workerId === 0) {
             /** @var Port $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
-                $sockType = $server->type;
-                $type = value(function () use ($type, $sockType) {
+                $type = value(function () use ($type, $server) {
                     switch ($type) {
                         case Server::SERVER_BASE:
+                            $sockType = $server->type;
                             if (($sockType === SWOOLE_SOCK_TCP) || ($sockType === SWOOLE_SOCK_TCP6)) {
                                 return 'TCP';
                             }
@@ -69,7 +72,8 @@ class AfterWorkerStartListener implements ListenerInterface
                             return 'HTTP';
                     }
                 });
-                $this->logger->info(sprintf('%s Server listening at %s', $type, $listen));
+                $serverType = $isCoroutineServer ? ' Coroutine' : '';
+                $this->logger->info(sprintf('%s%s Server listening at %s', $type, $serverType, $listen));
             }
         }
     }

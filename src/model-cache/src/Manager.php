@@ -217,7 +217,7 @@ class Manager
     }
 
     /**
-     * @param $id
+     * @param int|string $id
      */
     protected function getCacheKey($id, Model $model, Config $config): string
     {

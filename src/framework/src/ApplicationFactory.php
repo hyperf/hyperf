@@ -33,7 +33,7 @@ class ApplicationFactory
         // Append commands that defined by annotation.
         $annotationCommands = [];
         if (class_exists(AnnotationCollector::class) && class_exists(Command::class)) {
-            $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
+            $annotationCommands = AnnotationCollector::getClassesByAnnotation(Command::class);
             $annotationCommands = array_keys($annotationCommands);
         }
 
