@@ -698,11 +698,13 @@ trait ValidatesAttributes
      */
     public function validateJson(string $attribute, $value): bool
     {
+        $value = is_array($value) ? json_encode($value) : $value;
+
         if (! is_scalar($value) && ! method_exists($value, '__toString')) {
             return false;
         }
 
-        return is_array(json_decode($value, true)) && json_last_error() === JSON_ERROR_NONE;
+        return is_array(json_decode((string) $value, true)) && json_last_error() === JSON_ERROR_NONE;
     }
 
     /**
