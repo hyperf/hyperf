@@ -36,7 +36,6 @@ use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
-use Hyperf\WebSocketServer\Exception\WebSocketMessageException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -121,7 +120,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     }
 
     /**
-     * @return WebSocketServer|\Swoole\Coroutine\Http\Server
+     * @return \Swoole\Coroutine\Http\Server|WebSocketServer
      */
     public function getServer()
     {
@@ -177,23 +176,22 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                         if ($frame === false) {
                             // When close the connection by server-side, the $frame is false.
                             break;
-                        } elseif ($frame instanceof CloseFrame || $frame === '') {
-                            // The connection is closed.
-                            $onMessageCallbackInstance->$onCloseCallbackMethod($response, $fd, 0);
-                            break;
-                        } else {
-                            $onMessageCallbackInstance->$onMessageCallbackMethod($response, $frame);
                         }
+                        if ($frame instanceof CloseFrame || $frame === '') {
+                            // The connection is closed.
+                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                            break;
+                        }
+                        $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
                     }
                 } else {
-                    defer(function () use ($request, $class) {
+                    defer(function () use ($request, $class, $server) {
                         $instance = $this->container->get($class);
                         if ($instance instanceof OnOpenInterface) {
                             $instance->onOpen($server, $request);
                         }
                     });
                 }
-
             }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.

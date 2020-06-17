@@ -16,5 +16,8 @@ use Swoole\WebSocket\Server;
 
 interface OnOpenInterface
 {
+    /**
+     * @param Server $server
+     */
     public function onOpen($server, Request $request): void;
 }
