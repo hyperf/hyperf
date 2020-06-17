@@ -3,10 +3,9 @@
   * [项目介绍](zh-cn/README.md)
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
-  * [参与开发](zh-cn/contribute.md)
+  * [参与开发](zh/contribute.md)
   
 * 版本管理
-
   * [版本计划](zh-cn/release-planning.md)
   * [版本说明](zh-cn/versions.md)
   * [版本更新记录](zh-cn/changelog.md)
@@ -101,6 +100,7 @@
   * [枚举类](zh-cn/constants.md)
   * [Snowflake](zh-cn/snowflake.md)
   * [重试](zh-cn/retry.md)
+  * [信号处理器](zh-cn/signal.md)
 
 * 应用部署
 
