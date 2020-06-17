@@ -127,6 +127,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         return $this->container->get(SwooleServer::class);
     }
 
+    public function getSender(): Sender
+    {
+        return $this->container->get(Sender::class);
+    }
+
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
@@ -164,7 +169,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 $server = $this->getServer();
                 if ($server instanceof \Swoole\Coroutine\Http\Server) {
                     $response->upgrade();
-                    [,,$callbacks] = ServerManager::get($this->serverName);
+                    $this->getSender()->setResponse($fd, $response);
+
+                    [, , $callbacks] = ServerManager::get($this->serverName);
 
                     [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[SwooleEvent::ON_MESSAGE];
                     $onMessageCallbackInstance = $this->container->get($onMessageCallbackClass);
