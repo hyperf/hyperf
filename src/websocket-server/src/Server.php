@@ -204,6 +204,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
+            isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
                 return;
