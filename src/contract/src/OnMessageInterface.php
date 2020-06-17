@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Contract;
 
 use Swoole\Http\Response;
-use Swoole\Websocket\Frame;
+use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
 interface OnMessageInterface
