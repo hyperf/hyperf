@@ -114,7 +114,7 @@ class Sender
         }
     }
 
-    protected function getFdFromProxyMethod(string $method, array $arguments): int
+    public function getFdFromProxyMethod(string $method, array $arguments): int
     {
         if (! in_array($method, ['push', 'send', 'sendto'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
