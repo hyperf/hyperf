@@ -43,7 +43,7 @@ use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\CloseFrame;
-use Swoole\Websocket\Frame;
+use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
