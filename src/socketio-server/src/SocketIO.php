@@ -30,7 +30,6 @@ use Swoole\Http\Request;
 use Swoole\Server;
 use Swoole\Timer;
 use Swoole\WebSocket\Frame;
-use Swoole\WebSocket\Server as WebSocketServer;
 
 /**
  *  packet types
@@ -139,7 +138,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $server->push($frame->fd, Engine::PONG); //sever pong
@@ -194,7 +193,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    public function onOpen($server, Request $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
@@ -208,7 +207,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
-    public function onClose(Server $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }

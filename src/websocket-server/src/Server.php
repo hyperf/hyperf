@@ -27,6 +27,8 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Server\ServerManager;
+use Hyperf\Server\SwooleEvent;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -40,6 +42,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
+use Swoole\WebSocket\CloseFrame;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -116,7 +119,10 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function getServer(): WebSocketServer
+    /**
+     * @return \Swoole\Coroutine\Http\Server|WebSocketServer
+     */
+    public function getServer()
     {
         return $this->container->get(SwooleServer::class);
     }
@@ -125,13 +131,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     {
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
-            Context::set(WsContext::FD, $request->fd);
+            $fd = $request->fd;
+            Context::set(WsContext::FD, $fd);
             $security = $this->container->get(Security::class);
 
             $psr7Request = $this->initRequest($request);
             $psr7Response = $this->initResponse($response);
 
-            $this->logger->debug(sprintf('WebSocket: fd[%d] start a handshake request.', $request->fd));
+            $this->logger->debug(sprintf('WebSocket: fd[%d] start a handshake request.', $fd));
 
             $key = $psr7Request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
             if ($security->isInvalidSecurityKey($key)) {
@@ -153,14 +160,38 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $class = $psr7Response->getAttribute('class');
 
             if (! empty($class)) {
-                FdCollector::set($request->fd, $class);
+                FdCollector::set($fd, $class);
+                $server = $this->getServer();
+                if ($server instanceof \Swoole\Coroutine\Http\Server) {
+                    $response->upgrade();
+                    [,,$callbacks] = ServerManager::get($this->serverName);
 
-                defer(function () use ($request, $class) {
-                    $instance = $this->container->get($class);
-                    if ($instance instanceof OnOpenInterface) {
-                        $instance->onOpen($this->getServer(), $request);
+                    [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[SwooleEvent::ON_MESSAGE];
+                    $onMessageCallbackInstance = $this->container->get($onMessageCallbackClass);
+
+                    [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
+                    $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
+                    while (true) {
+                        $frame = $response->recv();
+                        if ($frame === false) {
+                            // When close the connection by server-side, the $frame is false.
+                            break;
+                        }
+                        if ($frame instanceof CloseFrame || $frame === '') {
+                            // The connection is closed.
+                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                            break;
+                        }
+                        $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
                     }
-                });
+                } else {
+                    defer(function () use ($request, $class, $server) {
+                        $instance = $this->container->get($class);
+                        if ($instance instanceof OnOpenInterface) {
+                            $instance->onOpen($server, $request);
+                        }
+                    });
+                }
             }
         } catch (\Throwable $throwable) {
             // Delegate the exception to exception handler.
@@ -174,12 +205,17 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
-        Context::set(WsContext::FD, $frame->fd);
-        $fdObj = FdCollector::get($frame->fd);
+        if ($server instanceof SwooleResponse) {
+            $fd = $server->fd;
+        } else {
+            $fd = $frame->fd;
+        }
+        Context::set(WsContext::FD, $fd);
+        $fdObj = FdCollector::get($fd);
         if (! $fdObj) {
-            $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $frame->fd));
+            $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $fd));
             return;
         }
 
@@ -193,7 +229,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance->onMessage($server, $frame);
     }
 
-    public function onClose(SwooleServer $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 
