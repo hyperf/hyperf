@@ -27,6 +27,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
+use Swoole\Http\Response;
 use Swoole\Server;
 use Swoole\Timer;
 use Swoole\WebSocket\Frame;
@@ -193,6 +194,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
+    /**
+     * @param Response|\Swoole\WebSocket\Server $server
+     */
     public function onOpen($server, Request $request): void
     {
         $data = [
@@ -201,8 +205,13 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'pingInterval' => $this->pingInterval,
             'pingTimeout' => $this->pingTimeout,
         ];
-        $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
-        $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        if ($server instanceof Response) {
+            $server->push(Engine::OPEN . json_encode($data)); //socket is open
+            $server->push(Engine::MESSAGE . Packet::OPEN); //server open
+        } else {
+            $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
+            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        }
 
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }

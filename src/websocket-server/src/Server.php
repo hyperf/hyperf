@@ -170,6 +170,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 if ($server instanceof \Swoole\Coroutine\Http\Server) {
                     $response->upgrade();
                     $this->getSender()->setResponse($fd, $response);
+                    $this->deferOnOpen($request, $class, $response);
 
                     [, , $callbacks] = ServerManager::get($this->serverName);
 
@@ -192,12 +193,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                         $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
                     }
                 } else {
-                    defer(function () use ($request, $class, $server) {
-                        $instance = $this->container->get($class);
-                        if ($instance instanceof OnOpenInterface) {
-                            $instance->onOpen($server, $request);
-                        }
-                    });
+                    $this->deferOnOpen($request, $class, $server);
                 }
             }
         } catch (\Throwable $throwable) {
@@ -255,6 +251,19 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         if ($instance instanceof OnCloseInterface) {
             $instance->onClose($server, $fd, $reactorId);
         }
+    }
+
+    /**
+     * @param SwooleResponse|WebSocketServer $server
+     */
+    protected function deferOnOpen(SwooleRequest $request, string $class, $server)
+    {
+        defer(function () use ($request, $class, $server) {
+            $instance = $this->container->get($class);
+            if ($instance instanceof OnOpenInterface) {
+                $instance->onOpen($server, $request);
+            }
+        });
     }
 
     /**

@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Contract;
 
 use Swoole\Http\Request;
+use Swoole\Http\Response;
 use Swoole\WebSocket\Server;
 
 interface OnOpenInterface
 {
     /**
-     * @param Server $server
+     * @param Response|Server $server
      */
     public function onOpen($server, Request $request): void;
 }

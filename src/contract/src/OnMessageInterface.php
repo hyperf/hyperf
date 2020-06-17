@@ -11,14 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use Swoole\Http\Response;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server;
-use Swoole\Http\Response;
 
 interface OnMessageInterface
 {
     /**
-     * @param Server|Response $server
+     * @param Response|Server $server
      */
     public function onMessage($server, Frame $frame): void;
 }
