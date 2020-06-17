@@ -21,6 +21,7 @@ use Swoole\Server;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
+ * @method close(int $fd, bool $reset = null)
  */
 class Sender
 {
@@ -60,29 +61,29 @@ class Sender
 
     public function __call($name, $arguments)
     {
-        $fd = $this->getFdFromProxyMethod($name, $arguments);
+        [$fd, $method] = $this->getFdAndMethodFromProxyMethod($name, $arguments);
 
         if ($this->isCoroutineServer) {
             if (isset($this->responses[$fd])) {
                 array_shift($arguments);
-                $this->responses[$fd]->push(...$arguments);
+                $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }
             return;
         }
 
-        if (! $this->proxy($fd, $arguments)) {
+        if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
     }
 
-    public function proxy(int $fd, array $arguments): bool
+    public function proxy(int $fd, string $method, array $arguments): bool
     {
         $result = $this->check($fd);
         if ($result) {
             /** @var \Swoole\WebSocket\Server $server */
             $server = $this->getServer();
-            $server->push(...$arguments);
+            $server->{$method}(...$arguments);
             $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
         }
 
@@ -114,13 +115,16 @@ class Sender
         }
     }
 
-    public function getFdFromProxyMethod(string $method, array $arguments): int
+    public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array
     {
-        if (! in_array($method, ['push', 'send', 'sendto'])) {
+        if (! in_array($method, ['push', 'send', 'sendto', 'close'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
         }
 
-        return (int) $arguments[0];
+        if ($method !== 'close') {
+            $method = 'push';
+        }
+        return [(int) $arguments[0], $method];
     }
 
     protected function getServer(): Server

@@ -64,8 +64,8 @@ class OnPipeMessageListener implements ListenerInterface
             $message = $event->data;
 
             try {
-                $fd = $this->sender->getFdFromProxyMethod($message->name, $message->arguments);
-                $this->sender->proxy($fd, $message->arguments);
+                [$fd, $method] = $this->sender->getFdAndMethodFromProxyMethod($message->name, $message->arguments);
+                $this->sender->proxy($fd, $method, $message->arguments);
             } catch (\Throwable $exception) {
                 $formatter = $this->container->get(FormatterInterface::class);
                 $this->logger->warning($formatter->format($exception));
