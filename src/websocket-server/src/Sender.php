@@ -11,9 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
+use Swoole\Http\Response;
 use Swoole\Server;
 
 /**
@@ -36,23 +39,45 @@ class Sender
      */
     protected $workerId;
 
+    /**
+     * @var Response[]
+     */
+    protected $responses = [];
+
+    /**
+     * @var bool
+     */
+    protected $isCoroutineServer = false;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        if ($config = $container->get(ConfigInterface::class)) {
+            $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;
+        }
     }
 
     public function __call($name, $arguments)
     {
-        if (! $this->proxy($name, $arguments)) {
+        $fd = $this->getFdFromProxyMethod($name, $arguments);
+
+        if ($this->isCoroutineServer) {
+            if (isset($this->responses[$fd])) {
+                array_shift($arguments);
+                $this->responses[$fd]->push(...$arguments);
+                $this->logger->debug("[WebSocket] Worker send to #{$fd}");
+            }
+            return;
+        }
+
+        if (! $this->proxy($fd, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
     }
 
-    public function proxy(string $name, array $arguments): bool
+    public function proxy(int $fd, array $arguments): bool
     {
-        $fd = $this->getFdFromProxyMethod($name, $arguments);
-
         $result = $this->check($fd);
         if ($result) {
             /** @var \Swoole\WebSocket\Server $server */
@@ -80,7 +105,16 @@ class Sender
         return false;
     }
 
-    protected function getFdFromProxyMethod(string $method, array $arguments): int
+    public function setResponse(int $fd, ?Response $response): void
+    {
+        if ($response === null) {
+            unset($this->responses[$fd]);
+        } else {
+            $this->responses[$fd] = $response;
+        }
+    }
+
+    public function getFdFromProxyMethod(string $method, array $arguments): int
     {
         if (! in_array($method, ['push', 'send', 'sendto'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
