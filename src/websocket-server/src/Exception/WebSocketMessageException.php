@@ -9,15 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Contract;
+namespace Hyperf\WebSocketServer\Exception;
 
-use Swoole\Http\Response;
-use Swoole\Server;
+use Hyperf\Server\Exception\ServerException;
 
-interface OnCloseInterface
+class WebSocketMessageException extends ServerException
 {
-    /**
-     * @param Response|Server $server
-     */
-    public function onClose($server, int $fd, int $reactorId): void;
 }
