@@ -114,6 +114,9 @@ class CoroutineServer implements ServerInterface
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
+            if (! $server instanceof \Hyperf\Server\Port) {
+                continue;
+            }
             $name = $server->getName();
             $type = $server->getType();
             $host = $server->getHost();
@@ -121,26 +124,75 @@ class CoroutineServer implements ServerInterface
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
             $this->server = $this->makeServer($type, $host, $port);
-            $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
+            $settings = array_replace($config->getSettings(), $server->getSettings());
+            $this->server->set($settings);
 
-            if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-                [$class, $method] = $callbacks[SwooleEvent::ON_REQUEST];
-                $handler = $this->container->get($class);
-                if ($handler instanceof MiddlewareInitializerInterface) {
-                    $handler->initCoreMiddleware($name);
-                }
-                $this->server->handle('/', [$handler, $method]);
-            } elseif (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
-                [$class, $method] = $callbacks[SwooleEvent::ON_HAND_SHAKE];
-                $handler = $this->container->get($class);
-                if ($handler instanceof MiddlewareInitializerInterface) {
-                    $handler->initCoreMiddleware($name);
-                }
-                $this->server->handle('/', [$handler, $method]);
-            }
+            $this->bindServerCallbacks($type, $name, $callbacks);
 
             ServerManager::add($name, [$type, $this->server, $callbacks]);
         }
+    }
+
+    protected function bindServerCallbacks(int $type, string $name, array $callbacks)
+    {
+        switch ($type) {
+            case ServerInterface::SERVER_HTTP:
+                if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
+                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_REQUEST, $callbacks);
+                    if ($handler instanceof MiddlewareInitializerInterface) {
+                        $handler->initCoreMiddleware($name);
+                    }
+                    $this->server->handle('/', [$handler, $method]);
+                }
+                return;
+            case ServerInterface::SERVER_WEBSOCKET:
+                if (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
+                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_HAND_SHAKE, $callbacks);
+                    if ($handler instanceof MiddlewareInitializerInterface) {
+                        $handler->initCoreMiddleware($name);
+                    }
+                    $this->server->handle('/', [$handler, $method]);
+                }
+                return;
+            case ServerInterface::SERVER_BASE:
+                if (isset($callbacks[SwooleEvent::ON_RECEIVE])) {
+                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
+                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
+                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
+                    $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                        if ($connectHandler && $connectMethod) {
+                            $connectHandler->$connectMethod($connection, $connection->exportSocket()->fd);
+                        }
+                        if ($receiveHandler instanceof MiddlewareInitializerInterface) {
+                            $receiveHandler->initCoreMiddleware($name);
+                        }
+                        while (true) {
+                            $data = $connection->recv();
+                            if (empty($data)) {
+                                if ($closeHandler && $closeMethod) {
+                                    $closeHandler->$closeMethod($connection, $connection->exportSocket()->fd);
+                                }
+                                $connection->close();
+                                break;
+                            }
+                            $receiveHandler->$receiveMethod($connection, $connection->exportSocket()->fd, 0, $data);
+                        }
+                    });
+                }
+                return;
+        }
+
+        throw new RuntimeException('Server type is invalid or the server callback does not exists.');
+    }
+
+    protected function getCallbackMethod(string $callack, array $callbacks): array
+    {
+        $handler = $method = null;
+        if (isset($callbacks[$callack])) {
+            [$class, $method] = $callbacks[$callack];
+            $handler = $this->container->get($class);
+        }
+        return [$handler, $method];
     }
 
     protected function makeServer($type, $host, $port)
@@ -148,9 +200,9 @@ class CoroutineServer implements ServerInterface
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
-                return new Coroutine\Http\Server($host, $port);
+                return new Coroutine\Http\Server($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
-                return new Coroutine\Server($host, $port);
+                return new Coroutine\Server($host, $port, false, true);
         }
 
         throw new RuntimeException('Server type is invalid.');
