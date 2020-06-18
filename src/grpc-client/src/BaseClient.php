@@ -64,7 +64,7 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
-        return $this->getGrpcClient()->{$name};
+        return $this->_getGrpcClient()->{$name};
     }
 
     public function __call($name, $arguments)
@@ -72,7 +72,7 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
-        return $this->getGrpcClient()->{$name}(...$arguments);
+        return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
     private function start()
@@ -81,7 +81,7 @@ class BaseClient
         return $client->isRunning() || $client->start();
     }
 
-    private function getGrpcClient(): GrpcClient
+    protected function _getGrpcClient(): GrpcClient
     {
         if (! $this->initialized) {
             $this->init();
