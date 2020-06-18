@@ -2,7 +2,7 @@
 
 ## About
 
-[hyperf/validation](https://github.com/hyperf-cloud/validation) 组件衍生于 `Laravel Validation` 组件的，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 Validation 组件。
+[hyperf/validation](https://github.com/hyperf/validation) 组件衍生于 `Laravel Validation` 组件的，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 Validation 组件。
 
 ## Installation
 

@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Process;
 
 use Hyperf\Contract\ConfigInterface;
@@ -62,15 +61,15 @@ class CrontabDispatcherProcess extends AbstractProcess
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
-        return $this->config->get('crontab.enable', false);
+        return $server instanceof Server && $this->config->get('crontab.enable', false);
     }
 
     public function handle(): void

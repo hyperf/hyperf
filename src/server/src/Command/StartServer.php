@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
@@ -39,8 +38,6 @@ class StartServer extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
-
         $this->checkEnvironment($output);
 
         $serverFactory = $this->container->get(ServerFactory::class)
@@ -53,7 +50,12 @@ class StartServer extends Command
         }
 
         $serverFactory->configure($serverConfig);
+
+        Runtime::enableCoroutine(true, swoole_hook_flags());
+
         $serverFactory->start();
+
+        return 0;
     }
 
     private function checkEnvironment(OutputInterface $output)
@@ -79,7 +81,7 @@ class StartServer extends Command
          * swoole.use_shortname = 00         => string(2) "00"    => disabled
          * swoole.use_shortname = "00"       => string(2) "00"    => disabled
          * swoole.use_shortname = ""         => string(0) ""      => disabled
-         * swoole.use_shortname = " "        => string(1) " "     => disabled
+         * swoole.use_shortname = " "        => string(1) " "     => disabled.
          */
         $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));

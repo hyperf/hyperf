@@ -7,13 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     'default' => [
         'host' => env('AMQP_HOST', 'localhost'),
-        'port' => env('AMQP_PORT', 5672),
+        'port' => (int) env('AMQP_PORT', 5672),
         'user' => env('AMQP_USER', 'guest'),
         'password' => env('AMQP_PASSWORD', 'guest'),
         'vhost' => env('AMQP_VHOST', '/'),
@@ -35,8 +34,9 @@ return [
             'connection_timeout' => 3.0,
             'read_write_timeout' => 6.0,
             'context' => null,
-            'keepalive' => false,
+            'keepalive' => true,
             'heartbeat' => 3,
+            'close_on_destruct' => false,
         ],
     ],
 ];

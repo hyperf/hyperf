@@ -7,15 +7,15 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -27,9 +27,11 @@ use Hyperf\JsonRpc\CoreMiddleware;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\Exception\Handler\HttpExceptionHandler;
 use Hyperf\JsonRpc\JsonRpcTransporter;
+use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
@@ -58,7 +60,11 @@ class CoreMiddlewareTest extends TestCase
             CalculatorService::class, 'add',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
-        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $builder = $container->make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+        $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
         $handler = \Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/add')))
             ->withParsedBody([1, 2]);
@@ -68,9 +74,34 @@ class CoreMiddlewareTest extends TestCase
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
         $ret = json_decode((string) $response->getBody(), true);
-        // var_export($ret);
         $this->assertArrayHasKey('result', $ret);
         $this->assertEquals(3, $ret['result']);
+    }
+
+    public function testArray()
+    {
+        $container = $this->createContainer();
+        $router = $container->make(DispatcherFactory::class, [])->getRouter('jsonrpc');
+        $router->addRoute('/CalculatorService/array', [
+            CalculatorService::class, 'array',
+        ]);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
+        $builder = $container->make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+        $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
+        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $request = (new Request('POST', new Uri('/CalculatorService/array')))
+            ->withParsedBody([1, 2]);
+        Context::set(ResponseInterface::class, new Response());
+
+        $request = $middleware->dispatch($request);
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(200, $response->getStatusCode());
+        $ret = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('result', $ret);
+        $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret['result']);
     }
 
     public function testException()
@@ -81,7 +112,11 @@ class CoreMiddlewareTest extends TestCase
             CalculatorService::class, 'divide',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
-        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $builder = $container->make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+        $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
         $handler = \Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
@@ -112,7 +147,11 @@ class CoreMiddlewareTest extends TestCase
             CalculatorService::class, 'divide',
         ]);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), 'jsonrpc');
-        $middleware = new CoreMiddleware($container, $protocol, 'jsonrpc');
+        $builder = $container->make(ResponseBuilder::class, [
+            'dataFormatter' => $protocol->getDataFormatter(),
+            'packer' => $protocol->getPacker(),
+        ]);
+        $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
         $handler = \Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
@@ -161,6 +200,10 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
             ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(null);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)
             ->andReturn(new Logger('App', [new StreamHandler('php://stderr')]));
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)
@@ -168,7 +211,7 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(PathGenerator::class)
             ->andReturn(new PathGenerator());
         $container->shouldReceive('get')->with(DataFormatter::class)
-            ->andReturn(new DataFormatter());
+            ->andReturn(new DataFormatter(new RpcContext()));
         $container->shouldReceive('get')->with(JsonPacker::class)
             ->andReturn(new JsonPacker());
         $container->shouldReceive('get')->with(CalculatorService::class)
@@ -179,7 +222,10 @@ class CoreMiddlewareTest extends TestCase
             ->andReturnUsing(function ($class, $args) {
                 return new ResponseBuilder(...array_values($args));
             });
-
+        $container->shouldReceive('make')->with(JsonPacker::class, \Mockery::any())->andReturn(new JsonPacker());
+        $container->shouldReceive('make')->with(JsonEofPacker::class, \Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new JsonEofPacker(...array_values($args));
+        });
         ApplicationContext::setContainer($container);
         return $container;
     }

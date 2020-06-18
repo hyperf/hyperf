@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection;
 
 use Hyperf\Database\Commands\Migrations\FreshCommand;
@@ -27,6 +26,7 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
+use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -53,6 +53,9 @@ class ConfigProvider
                 StatusCommand::class,
                 GenSeederCommand::class,
                 SeedCommand::class,
+            ],
+            'listeners' => [
+                RegisterConnectionResolverListener::class,
             ],
             'annotations' => [
                 'scan' => [

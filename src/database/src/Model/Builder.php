@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
@@ -974,6 +973,19 @@ class Builder
         return $this->model->newInstance($attributes)->setConnection(
             $this->query->getConnection()->getName()
         );
+    }
+
+    /**
+     * Apply query-time casts to the model instance.
+     *
+     * @param array $casts
+     * @return $this
+     */
+    public function withCasts($casts)
+    {
+        $this->model->mergeCasts($casts);
+
+        return $this;
     }
 
     /**

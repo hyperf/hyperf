@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Aspect;
 
 use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
@@ -50,9 +49,20 @@ class AsyncQueueAspect extends AbstractAspect
 
         $class = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->getArguments();
+        $arguments = [];
+        $parameters = $proceedingJoinPoint->getReflectMethod()->getParameters();
+        foreach ($parameters as $parameter) {
+            $arg = $proceedingJoinPoint->arguments['keys'][$parameter->getName()];
+            if ($parameter->isVariadic()) {
+                $arguments = array_merge($arguments, $arg);
+            } else {
+                $arguments[] = $arg;
+            }
+        }
+
         $pool = 'default';
         $delay = 0;
+        $maxAttempts = 0;
 
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         /** @var AsyncQueueMessage $annotation */
@@ -60,11 +70,13 @@ class AsyncQueueAspect extends AbstractAspect
         if ($annotation instanceof AsyncQueueMessage) {
             $pool = $annotation->pool;
             $delay = $annotation->delay;
+            $maxAttempts = $annotation->maxAttempts;
         }
 
         $factory = $this->container->get(DriverFactory::class);
         $driver = $factory->get($pool);
 
-        $driver->push(new AnnotationJob($class, $method, $arguments), $delay);
+        $job = make(AnnotationJob::class, [$class, $method, $arguments, $maxAttempts]);
+        $driver->push($job, $delay);
     }
 }

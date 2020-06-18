@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Command;
 
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
@@ -40,7 +40,7 @@ abstract class Command extends SymfonyCommand
     protected $input;
 
     /**
-     * @var OutputInterface|SymfonyStyle
+     * @var SymfonyStyle
      */
     protected $output;
 
@@ -57,6 +57,11 @@ abstract class Command extends SymfonyCommand
      * @var bool
      */
     protected $coroutine = true;
+
+    /**
+     * @var null|EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var int
@@ -155,24 +160,34 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
+     * Give the user a multiple choice from an array of answers.
+     * @param null|mixed $default
+     */
+    public function choiceMultiple(
+        string $question,
+        array $choices,
+        $default = null,
+        ?int $attempts = null
+    ): array {
+        $question = new ChoiceQuestion($question, $choices, $default);
+
+        $question->setMaxAttempts($attempts)->setMultiselect(true);
+
+        return $this->output->askQuestion($question);
+    }
+
+    /**
      * Give the user a single choice from an array of answers.
      *
      * @param null|mixed $default
-     * @param null|mixed $attempts
-     * @param null|mixed $multiple
      */
     public function choice(
         string $question,
         array $choices,
         $default = null,
-        $attempts = null,
-        $multiple = null
+        ?int $attempts = null
     ): string {
-        $question = new ChoiceQuestion($question, $choices, $default);
-
-        $question->setMaxAttempts($attempts)->setMultiselect($multiple);
-
-        return $this->output->askQuestion($question);
+        return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 
     /**
@@ -381,13 +396,30 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->coroutine && ! Coroutine::inCoroutine()) {
-            run(function () {
+        $callback = function () {
+            try {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
                 call([$this, 'handle']);
-            }, $this->hookFlags);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
+            } catch (\Throwable $exception) {
+                if (! $this->eventDispatcher) {
+                    throw $exception;
+                }
+
+                $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
+                return $exception->getCode();
+            } finally {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
+            }
 
             return 0;
+        };
+
+        if ($this->coroutine && ! Coroutine::inCoroutine()) {
+            run($callback, $this->hookFlags);
+            return 0;
         }
-        return call([$this, 'handle']);
+
+        return $callback();
     }
 }

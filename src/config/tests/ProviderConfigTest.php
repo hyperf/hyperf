@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Config;
 
 use Hyperf\Utils\Arr;
@@ -103,11 +102,13 @@ class ProviderConfigTest extends TestCase
         $scanPaths = $res['annotations']['scan']['paths'];
         $publish = $res['publish'];
         $listeners = $res['listeners'];
+        $processes = $res['processes'];
 
         $this->assertFalse(Arr::isAssoc($commands));
         $this->assertFalse(Arr::isAssoc($scanPaths));
-        $this->assertFalse(Arr::isAssoc($listeners));
+        $this->assertTrue(Arr::isAssoc($listeners));
         $this->assertFalse(Arr::isAssoc($publish));
+        $this->assertFalse(Arr::isAssoc($processes));
         $this->assertTrue(Arr::isAssoc($dependencies));
     }
 

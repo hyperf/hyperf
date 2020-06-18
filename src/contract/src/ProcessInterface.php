@@ -7,24 +7,26 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Contract;
 
+use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
 
 interface ProcessInterface
 {
     /**
      * Create the process object according to process number and bind to server.
+     * @param CoServer|Server $server
      */
-    public function bind(Server $server): void;
+    public function bind($server): void;
 
     /**
      * Determine if the process should start ?
+     * @param CoServer|Server $server
      */
-    public function isEnable(): bool;
+    public function isEnable($server): bool;
 
     /**
      * The logical of process will place in here.

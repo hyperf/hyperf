@@ -7,13 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer\Router;
 
 /**
- * @method static addRoute($httpMethod, string $route, $handler, array $options = [])
+ * @method static addRoute(string $route, $handler, array $options = [])
  * @method static addGroup($prefix, callable $callback)
  */
 class Router
@@ -50,6 +49,6 @@ class Router
 
     public static function add(string $route, $handler, array $options = [])
     {
-        return self::addRoute('POST', $route, $handler, $options);
+        return self::addRoute($route, $handler, $options);
     }
 }

@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DbConnection\Stubs;
 
 class PDOStub extends \PDO
@@ -32,7 +31,7 @@ class PDOStub extends \PDO
 
     public function prepare($statement, $driver_options = null)
     {
-        return new PDOStatementStub();
+        return new PDOStatementStub($statement);
     }
 
     public function exec($statement)

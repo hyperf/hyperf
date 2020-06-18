@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Nats\AbstractConsumer;
+use Hyperf\Nats\Annotation\Consumer;
+use Hyperf\Nats\Message;
+
+/**
+ * @Consumer(subject="hyperf", queue="hyperf", name ="%CLASS%", nums=1)
+ */
+class %CLASS% extends AbstractConsumer
+{
+    public function consume(Message $payload)
+    {
+        var_dump($payload->getBody());
+    }
+}

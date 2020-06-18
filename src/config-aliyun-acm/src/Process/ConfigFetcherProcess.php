@@ -7,24 +7,22 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigAliyunAcm\Process;
 
 use Hyperf\ConfigAliyunAcm\ClientInterface;
 use Hyperf\ConfigAliyunAcm\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="aliyun-acm-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'aliyun-acm-config-fetcher';
+
     /**
      * @var Server
      */
@@ -41,7 +39,7 @@ class ConfigFetcherProcess extends AbstractProcess
     private $config;
 
     /**
-     * @var string
+     * @var array
      */
     private $cacheConfig;
 
@@ -52,15 +50,17 @@ class ConfigFetcherProcess extends AbstractProcess
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
-        return $this->config->get('aliyun_acm.enable', false);
+        return $server instanceof Server
+            && $this->config->get('aliyun_acm.enable', false)
+            && $this->config->get('aliyun_acm.use_standalone_process', true);
     }
 
     public function handle(): void
@@ -70,10 +70,21 @@ class ConfigFetcherProcess extends AbstractProcess
             if ($config !== $this->cacheConfig) {
                 $this->cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
+                $pipeMessage = new PipeMessage($config);
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage(new PipeMessage($config), $workerId);
+                    $this->server->sendMessage($pipeMessage, $workerId);
+                }
+
+                $processes = ProcessCollector::all();
+                if ($processes) {
+                    $string = serialize($pipeMessage);
+                    /** @var \Swoole\Process $process */
+                    foreach ($processes as $process) {
+                        $process->exportSocket()->send($string);
+                    }
                 }
             }
+
             sleep($this->config->get('aliyun_acm.interval', 5));
         }
     }

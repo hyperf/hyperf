@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Translation;
 
 use Countable;
@@ -17,6 +16,7 @@ use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
+use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 
@@ -111,7 +111,7 @@ class Translator implements TranslatorInterface
         // was not passed, we will use the default locales which was given to us when
         // the translator was instantiated. Then, we can load the lines and return.
         $locales = $fallback ? $this->localeArray($locale)
-            : [$locale ?: $this->locale];
+            : [$locale ?: $this->locale()];
 
         foreach ($locales as $locale) {
             if (! is_null($line = $this->getLine(
@@ -138,7 +138,7 @@ class Translator implements TranslatorInterface
      */
     public function getFromJson(string $key, array $replace = [], ?string $locale = null)
     {
-        $locale = $locale ?: $this->locale;
+        $locale = $locale ?: $this->locale();
 
         // For JSON translations, there is only one file per locale, so we will simply load
         // that file and then we will be ready to check the array for the key. These are
@@ -316,11 +316,21 @@ class Translator implements TranslatorInterface
     }
 
     /**
+     * Get the context locale key.
+     */
+    public function getLocaleContextKey(): string
+    {
+        return sprintf('%s::%s', TranslatorInterface::class, 'locale');
+    }
+
+    /**
      * Get the default locale being used.
      */
     public function getLocale(): string
     {
-        return $this->locale;
+        $locale = Context::get($this->getLocaleContextKey());
+
+        return (string) ($locale ?? $this->locale);
     }
 
     /**
@@ -328,7 +338,7 @@ class Translator implements TranslatorInterface
      */
     public function setLocale(string $locale)
     {
-        $this->locale = $locale;
+        Context::set($this->getLocaleContextKey(), $locale);
     }
 
     /**
@@ -357,9 +367,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Set the parsed value of a key.
-     *
-     * @param string $key
-     * @param array $parsed
      */
     public function setParsedKey(string $key, array $parsed)
     {
@@ -371,7 +378,7 @@ class Translator implements TranslatorInterface
      */
     protected function localeForChoice(?string $locale): string
     {
-        return $locale ?: $this->locale ?: $this->fallback;
+        return $locale ?: $this->locale() ?: $this->fallback;
     }
 
     /**
@@ -401,6 +408,8 @@ class Translator implements TranslatorInterface
 
             return $line;
         }
+
+        return null;
     }
 
     /**
@@ -453,16 +462,13 @@ class Translator implements TranslatorInterface
      */
     protected function localeArray(?string $locale): array
     {
-        return array_filter([$locale ?: $this->locale, $this->fallback]);
+        return array_filter([$locale ?: $this->locale(), $this->fallback]);
     }
 
     /**
      * Parse an array of basic segments.
-     *
-     * @param array $segments
-     * @return array
      */
-    protected function parseBasicSegments(array $segments)
+    protected function parseBasicSegments(array $segments): array
     {
         // The first segment in a basic array will always be the group, so we can go
         // ahead and grab that segment. If there is only one total segment we are
@@ -481,9 +487,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Parse an array of namespaced segments.
-     *
-     * @param string $key
-     * @return array
      */
     protected function parseNamespacedSegments(string $key): array
     {

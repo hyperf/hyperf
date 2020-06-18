@@ -7,11 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
@@ -66,12 +66,13 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int $times
-     * @param int $sleep
+     * @param float|int $times
+     * @param int $sleep millisecond
      * @throws \Throwable
      */
-    function retry($times, callable $callback, $sleep = 0)
+    function retry($times, callable $callback, int $sleep = 0)
     {
+        $backoff = new Backoff($sleep);
         beginning:
         try {
             return $callback();
@@ -79,9 +80,7 @@ if (! function_exists('retry')) {
             if (--$times < 0) {
                 throw $e;
             }
-            if ($sleep) {
-                usleep($sleep * 1000);
-            }
+            $backoff->sleep();
             goto beginning;
         }
     }
@@ -127,7 +126,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param array|int|string $key
+     * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
      */
@@ -208,6 +207,7 @@ if (! function_exists('data_set')) {
         } else {
             $target = [];
             if ($segments) {
+                $target[$segment] = [];
                 data_set($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;
@@ -280,16 +280,24 @@ if (! function_exists('call')) {
 }
 
 if (! function_exists('go')) {
+    /**
+     * @return bool|int
+     */
     function go(callable $callable)
     {
-        Coroutine::create($callable);
+        $id = Coroutine::create($callable);
+        return $id > 0 ? $id : false;
     }
 }
 
 if (! function_exists('co')) {
+    /**
+     * @return bool|int
+     */
     function co(callable $callable)
     {
-        Coroutine::create($callable);
+        $id = Coroutine::create($callable);
+        return $id > 0 ? $id : false;
     }
 }
 
@@ -413,8 +421,10 @@ if (! function_exists('make')) {
 if (! function_exists('run')) {
     /**
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param array|callable $callbacks
      */
-    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool
+    function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
@@ -422,7 +432,7 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        $result = \Swoole\Coroutine\Run($callback);
+        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;

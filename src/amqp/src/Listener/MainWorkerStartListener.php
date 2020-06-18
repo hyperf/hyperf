@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Listener;
 
 use Doctrine\Instantiator\Instantiator;
@@ -17,16 +16,12 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
 class MainWorkerStartListener implements ListenerInterface
 {
     /**
@@ -67,7 +62,7 @@ class MainWorkerStartListener implements ListenerInterface
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
             $instantiator = $this->container->get(Instantiator::class);
             /**
-             * @var string
+             * @var string $producerMessageClass
              * @var Producer $annotation
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {
@@ -78,7 +73,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
-                    $producer->declare($instance);
+                    $producer->declare($instance, null, true);
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
                         $routingKey = implode(',', $routingKey);

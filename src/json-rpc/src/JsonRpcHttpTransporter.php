@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use GuzzleHttp\Client;
@@ -82,6 +81,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
         $this->loadBalancer->removeNode($node);
 
         return '';
+    }
+
+    public function recv()
+    {
+        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
     }
 
     public function getClient(): Client

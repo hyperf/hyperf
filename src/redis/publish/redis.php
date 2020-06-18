@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -19,6 +18,11 @@ return [
         'timeout' => 0.0,
         'reserved' => null,
         'retry_interval' => 0,
+        'cluster' => [
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GraphQL;
 
 use GraphQL\Type\Definition\NonNull;
@@ -223,7 +222,6 @@ class FieldsBuilder
 
     /**
      * @param object $controller
-     * @param string $annotationName
      * @param bool $injectSource whether to inject the source object or not as the first argument
      * @throws CannotMapTypeExceptionInterface
      * @throws \ReflectionException
@@ -464,9 +462,6 @@ class FieldsBuilder
 
     /**
      * Checks the Logged and Right annotations.
-     *
-     * @param \ReflectionMethod $reflectionMethod
-     * @return bool
      */
     private function isAuthorized(ReflectionMethod $reflectionMethod): bool
     {
@@ -686,9 +681,6 @@ class FieldsBuilder
      * Casts a Type to a GraphQL type.
      * Does not deal with nullable.
      *
-     * @param Type $type
-     * @param null|GraphQLType $subType
-     * @param bool $mapToInputType
      * @throws CannotMapTypeExceptionInterface
      * @return GraphQLType (InputType&GraphQLType)|(OutputType&GraphQLType)
      */
@@ -734,9 +726,6 @@ class FieldsBuilder
 
     /**
      * Removes "null" from the type (if it is compound). Return an array of types (not a Compound type).
-     *
-     * @param Type $docBlockTypeHint
-     * @return array
      */
     private function typesWithoutNullable(Type $docBlockTypeHint): array
     {
@@ -752,9 +741,6 @@ class FieldsBuilder
 
     /**
      * Drops "Nullable" types and return the core type.
-     *
-     * @param Type $typeHint
-     * @return Type
      */
     private function dropNullableType(Type $typeHint): Type
     {
@@ -766,9 +752,6 @@ class FieldsBuilder
 
     /**
      * Resolves a list type.
-     *
-     * @param Type $typeHint
-     * @return null|Type
      */
     private function getTypeInArray(Type $typeHint): ?Type
     {
@@ -781,10 +764,6 @@ class FieldsBuilder
         return $this->dropNullableType($typeHint->getValueType());
     }
 
-    /**
-     * @param Type $docBlockTypeHint
-     * @return bool
-     */
     private function isNullable(Type $docBlockTypeHint): bool
     {
         if ($docBlockTypeHint instanceof Null_) {
@@ -803,9 +782,6 @@ class FieldsBuilder
 
     /**
      * Resolves "self" types into the class type.
-     *
-     * @param Type $type
-     * @return Type
      */
     private function resolveSelf(Type $type, ReflectionClass $reflectionClass): Type
     {

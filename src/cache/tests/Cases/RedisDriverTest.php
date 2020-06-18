@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\CacheManager;
@@ -83,6 +82,10 @@ class RedisDriverTest extends TestCase
 
         $redis = $container->get(\Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
+
+        $dv = new \DateInterval('PT5S');
+        $driver->set('xxx', 'yyy', $dv);
+        $this->assertSame(5, $redis->ttl('c:xxx'));
     }
 
     public function testDelete()
@@ -114,7 +117,7 @@ class RedisDriverTest extends TestCase
             'redis' => [
                 'default' => [
                     'host' => 'localhost',
-                    'auth' => '910123',
+                    'auth' => null,
                     'port' => 6379,
                     'db' => 0,
                     'timeout' => 0.0,

@@ -7,14 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
@@ -57,6 +57,11 @@ class CoreMiddleware implements CoreMiddlewareInterface
     private $methodDefinitionCollector;
 
     /**
+     * @var ClosureDefinitionCollectorInterface | null
+     */
+    private $closureDefinitionCollector;
+
+    /**
      * @var NormalizerInterface
      */
     private $normalizer;
@@ -67,6 +72,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
+        if ($this->container->has(ClosureDefinitionCollectorInterface::class)) {
+            $this->closureDefinitionCollector = $this->container->get(ClosureDefinitionCollectorInterface::class);
+        }
     }
 
     public function dispatch(ServerRequestInterface $request): ServerRequestInterface
@@ -84,6 +92,8 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $request = Context::set(ServerRequestInterface::class, $request);
+
         /** @var Dispatched $dispatched */
         $dispatched = $request->getAttribute(Dispatched::class);
 
@@ -91,6 +101,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
+        $response = null;
         switch ($dispatched->status) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->handleNotFound($request);
@@ -113,6 +124,11 @@ class CoreMiddleware implements CoreMiddlewareInterface
         return $this->methodDefinitionCollector;
     }
 
+    public function getClosureDefinitionCollector(): ClosureDefinitionCollectorInterface
+    {
+        return $this->closureDefinitionCollector;
+    }
+
     public function getNormalizer(): NormalizerInterface
     {
         return $this->normalizer;
@@ -132,7 +148,8 @@ class CoreMiddleware implements CoreMiddlewareInterface
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
     {
         if ($dispatched->handler->callback instanceof Closure) {
-            $response = call($dispatched->handler->callback);
+            $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
+            $response = call($dispatched->handler->callback, $parameters);
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
@@ -140,7 +157,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
                 // Route found, but the handler does not exist.
                 throw new ServerErrorHttpException('Method of class does not exist.');
             }
-            $parameters = $this->parseParameters($controller, $action, $dispatched->params);
+            $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
             $response = $controllerInstance->{$action}(...$parameters);
         }
         return $response;
@@ -186,7 +203,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|Arrayable|Jsonable|string $response
+     * @param null|array|Arrayable|Jsonable|string $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {
@@ -221,14 +238,42 @@ class CoreMiddleware implements CoreMiddlewareInterface
     }
 
     /**
+     * Keep it to maintain backward compatibility. Users may have extended core middleware.
+     * @deprecated
+     */
+    protected function parseParameters(string $controller, string $action, array $arguments): array
+    {
+        return $this->parseMethodParameters($controller, $action, $arguments);
+    }
+
+    /**
      * Parse the parameters of method definitions, and then bind the specified arguments or
      * get the value from DI container, combine to a argument array that should be injected
      * and return the array.
      */
-    protected function parseParameters(string $controller, string $action, array $arguments): array
+    protected function parseMethodParameters(string $controller, string $action, array $arguments): array
+    {
+        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
+        return $this->getInjections($definitions, "{$controller}::{$action}", $arguments);
+    }
+
+    /**
+     * Parse the parameters of closure definitions, and then bind the specified arguments or
+     * get the value from DI container, combine to a argument array that should be injected
+     * and return the array.
+     */
+    protected function parseClosureParameters(Closure $closure, array $arguments): array
+    {
+        if (! $this->container->has(ClosureDefinitionCollectorInterface::class)) {
+            return [];
+        }
+        $definitions = $this->getClosureDefinitionCollector()->getParameters($closure);
+        return $this->getInjections($definitions, 'Closure', $arguments);
+    }
+
+    private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];
-        $definitions = $this->getMethodDefinitionCollector()->getParameters($controller, $action);
         foreach ($definitions ?? [] as $pos => $definition) {
             $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
             if ($value === null) {
@@ -239,14 +284,13 @@ class CoreMiddleware implements CoreMiddlewareInterface
                 } elseif ($this->container->has($definition->getName())) {
                     $injections[] = $this->container->get($definition->getName());
                 } else {
-                    throw new BadRequestHttpException("Parameter '{$definition->getMeta('name')}' "
-                        . "of {$controller}::{$action} should not be null");
+                    throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
+                        . "of {$callableName} should not be null");
                 }
             } else {
                 $injections[] = $this->getNormalizer()->denormalize($value, $definition->getName());
             }
         }
-
         return $injections;
     }
 }

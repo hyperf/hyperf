@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Request;
 
 use Hyperf\Contract\ValidatorInterface;
@@ -105,19 +104,21 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getValidatorInstance(): ValidatorInterface
     {
-        $factory = $this->container->get(ValidationFactory::class);
+        return Context::getOrSet($this->getContextValidatorKey(), function () {
+            $factory = $this->container->get(ValidationFactory::class);
 
-        if (method_exists($this, 'validator')) {
-            $validator = call_user_func_array([$this, 'validator'], compact('factory'));
-        } else {
-            $validator = $this->createDefaultValidator($factory);
-        }
+            if (method_exists($this, 'validator')) {
+                $validator = call_user_func_array([$this, 'validator'], compact('factory'));
+            } else {
+                $validator = $this->createDefaultValidator($factory);
+            }
 
-        if (method_exists($this, 'withValidator')) {
-            $this->withValidator($validator);
-        }
+            if (method_exists($this, 'withValidator')) {
+                $this->withValidator($validator);
+            }
 
-        return $validator;
+            return $validator;
+        });
     }
 
     /**
@@ -177,5 +178,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function failedAuthorization()
     {
         throw new UnauthorizedException('This action is unauthorized.');
+    }
+
+    /**
+     * Get context validator key.
+     */
+    protected function getContextValidatorKey(): string
+    {
+        return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
     }
 }

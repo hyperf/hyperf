@@ -7,12 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,5 +30,61 @@ class ContextTest extends TestCase
         }));
 
         $this->assertSame(2, Context::get('override.id'));
+    }
+
+    public function testGetOrSet()
+    {
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::getOrSet('test.store.id', function () {
+            return 1;
+        }));
+        $this->assertSame(1, Context::getOrSet('test.store.id', function () {
+            return 2;
+        }));
+
+        Context::set('test.store.id', null);
+        $this->assertSame(1, Context::getOrSet('test.store.id', 1));
+    }
+
+    public function testCopy()
+    {
+        Context::set('test.store.id', $uid = uniqid());
+        $id = Coroutine::id();
+        parallel([function () use ($id, $uid) {
+            Context::copy($id, ['test.store.id']);
+            $this->assertSame($uid, Context::get('test.store.id'));
+        }]);
+    }
+
+    public function testCopyAfterSet()
+    {
+        Context::set('test.store.id', $uid = uniqid());
+        $id = Coroutine::id();
+        parallel([function () use ($id, $uid) {
+            Context::set('test.store.name', 'Hyperf');
+            Context::copy($id, ['test.store.id']);
+            $this->assertSame($uid, Context::get('test.store.id'));
+
+            // TODO: Context::copy will delete origin values.
+            $this->assertNull(Context::get('test.store.name'));
+        }]);
+    }
+
+    public function testContextChangeAfterCopy()
+    {
+        $obj = new \stdClass();
+        $obj->id = $uid = uniqid();
+
+        Context::set('test.store.id', $obj);
+        $id = Coroutine::id();
+        $tid = uniqid();
+        parallel([function () use ($id, $uid, $tid) {
+            Context::copy($id, ['test.store.id']);
+            $obj = Context::get('test.store.id');
+            $this->assertSame($uid, $obj->id);
+            $obj->id = $tid;
+        }]);
+
+        $this->assertSame($tid, Context::get('test.store.id')->id);
     }
 }

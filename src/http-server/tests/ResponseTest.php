@@ -7,18 +7,17 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\HttpServer;
 
-use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -179,6 +178,20 @@ class ResponseTest extends TestCase
         $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', $json->getBody()->getContents());
     }
 
+    public function testObjectToJson()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $json = $response->json((object) ['id' => 1, 'name' => 'Hyperf']);
+
+        $this->assertSame('{"id":1,"name":"Hyperf"}', $json->getBody()->getContents());
+    }
+
     public function testPsrResponse()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -192,7 +205,6 @@ class ResponseTest extends TestCase
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertInstanceOf(Sendable::class, $response);
     }
 
     public function testCookiesAndHeaders()
@@ -220,7 +232,7 @@ class ResponseTest extends TestCase
         });
         $swooleResponse->shouldReceive('end')->once()->andReturn(true);
 
-        Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response($swooleResponse));
+        Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response());
 
         $response = new Response();
         $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
@@ -233,7 +245,8 @@ class ResponseTest extends TestCase
         $this->assertNotInstanceOf(ResponseInterface::class, $response);
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
-        $response->send();
+        $responseEmitter = new ResponseEmitter();
+        $responseEmitter->emit($response, $swooleResponse, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }

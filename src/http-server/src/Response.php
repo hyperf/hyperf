@@ -7,13 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -23,6 +21,7 @@ use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -36,7 +35,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use function get_class;
 
-class Response implements PsrResponseInterface, ResponseInterface, Sendable
+class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
@@ -413,11 +412,6 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
         return $this->getResponse()->getReasonPhrase();
     }
 
-    public function send()
-    {
-        return $this->getResponse()->send();
-    }
-
     protected function call($name, $arguments)
     {
         $response = $this->getResponse();
@@ -459,19 +453,13 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
      */
     protected function toJson($data): string
     {
-        if (is_array($data)) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE);
+        try {
+            $result = Json::encode($data);
+        } catch (\Throwable $exception) {
+            throw new EncodingException($exception->getMessage(), $exception->getCode());
         }
 
-        if ($data instanceof Jsonable) {
-            return (string) $data;
-        }
-
-        if ($data instanceof Arrayable) {
-            return json_encode($data->toArray(), JSON_UNESCAPED_UNICODE);
-        }
-
-        throw new EncodingException('Error encoding response data to JSON.');
+        return $result;
     }
 
     /**

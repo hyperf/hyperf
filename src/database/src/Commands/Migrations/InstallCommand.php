@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
@@ -40,8 +39,6 @@ class InstallCommand extends BaseCommand
 
     /**
      * Create a new migration install command instance.
-     *
-     * @param MigrationRepositoryInterface $repository
      */
     public function __construct(MigrationRepositoryInterface $repository)
     {

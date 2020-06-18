@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RateLimit;
 
 class ConfigProvider
@@ -22,6 +21,14 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for rate-limit.',
+                    'source' => __DIR__ . '/../publish/rate_limit.php',
+                    'destination' => BASE_PATH . '/config/autoload/rate_limit.php',
                 ],
             ],
         ];

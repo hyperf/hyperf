@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Validation\Cases;
 
 use Carbon\Carbon;
@@ -1503,6 +1502,12 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '3'], ['foo' => 'Numeric|Size:3']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 123], ['foo' => 'Size:123']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => 3], ['foo' => 'Size:1']);
         $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['foo' => [1, 2, 3]], ['foo' => 'Array|Size:3']);
@@ -4533,6 +4538,59 @@ class ValidationValidatorTest extends TestCase
             ['af6f8cb0c57d11e19b210800200c9a66'],
             ['ff6f8cb0-c57da-51e1-9b21-0800200c9a66'],
         ];
+    }
+
+    public function testValidateAfter()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+
+        $v = new Validator(
+            $trans,
+            [
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertFalse($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [
+                'start_time' => '2020-04-09 17:09:05',
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 18:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertFalse($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertTrue($v->passes());
+
+        $v = new Validator(
+            $trans,
+            [
+                'start_time' => '2020-04-09 17:09:05',
+                'end_time' => '2020-04-09 19:09:05',
+            ],
+            [
+                'start_time' => 'date_format:Y-m-d H:i:s|after:2020-04-09 16:09:05',
+                'end_time' => 'date_format:Y-m-d H:i:s|after:start_time',
+            ]
+        );
+        $this->assertTrue($v->passes());
     }
 
     public function getIlluminateArrayTranslator()

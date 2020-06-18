@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Concerns;
 
 use Carbon\Carbon;
@@ -161,7 +160,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -609,7 +608,7 @@ trait ValidatesAttributes
      */
     public function validateImage(string $attribute, $value): bool
     {
-        return $this->validateMimes($attribute, $value, ['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']);
+        return $this->validateMimes($attribute, $value, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']);
     }
 
     /**
@@ -743,7 +742,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        if (in_array($value->getExtension(), $parameters)) {
+        if (in_array(strtolower($value->getExtension()), $parameters)) {
             return true;
         }
 
@@ -1216,8 +1215,11 @@ trait ValidatesAttributes
      *
      * @return null|\DateTime
      */
-    protected function getDateTimeWithOptionalFormat(string $format, string $value)
+    protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
+        if (is_null($value)) {
+            return null;
+        }
         if ($date = DateTime::createFromFormat('!' . $format, $value)) {
             return $date;
         }
@@ -1492,7 +1494,7 @@ trait ValidatesAttributes
             return $value->getSize() / 1024;
         }
 
-        return mb_strlen($value);
+        return mb_strlen((string) $value);
     }
 
     /**
@@ -1501,7 +1503,6 @@ trait ValidatesAttributes
      * @param mixed $first
      * @param mixed $second
      * @throws \InvalidArgumentException
-     * @return bool
      */
     protected function compare($first, $second, string $operator): bool
     {

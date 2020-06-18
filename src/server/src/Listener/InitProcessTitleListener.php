@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -82,6 +81,15 @@ class InitProcessTitleListener implements ListenerInterface
 
     protected function setTitle(string $title)
     {
-        @cli_set_process_title($title);
+        if ($this->isSupportedOS()) {
+            @cli_set_process_title($title);
+        }
+    }
+
+    protected function isSupportedOS(): bool
+    {
+        return ! in_array(PHP_OS, [
+            'Darwin',
+        ]);
     }
 }

@@ -7,11 +7,14 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Event\AfterConsume;
+use Hyperf\Amqp\Event\BeforeConsume;
+use Hyperf\Amqp\Event\FailToConsume;
+use Hyperf\Amqp\Exception\MaxConsumptionException;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
@@ -22,6 +25,7 @@ use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -31,6 +35,11 @@ class Consumer extends Builder
      * @var bool
      */
     protected $status = true;
+
+    /**
+     * @var null|EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var LoggerInterface
@@ -44,6 +53,9 @@ class Consumer extends Builder
     ) {
         parent::__construct($container, $poolFactory);
         $this->logger = $logger;
+        if ($container->has(EventDispatcherInterface::class)) {
+            $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function consume(ConsumerMessageInterface $consumerMessage): void
@@ -54,7 +66,10 @@ class Consumer extends Builder
         $channel = $connection->getConfirmChannel();
 
         $this->declare($consumerMessage, $channel);
-        $concurrent = $this->getConcurrent();
+        $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+
+        $maxConsumption = $consumerMessage->getMaxConsumption();
+        $currentConsumption = 0;
 
         $channel->basic_consume(
             $consumerMessage->getQueue(),
@@ -63,24 +78,30 @@ class Consumer extends Builder
             false,
             false,
             false,
-            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+            function (AMQPMessage $message) use ($consumerMessage, $concurrent, $maxConsumption, &$currentConsumption) {
+                if ($maxConsumption > 0 && $currentConsumption++ >= $maxConsumption) {
+                    throw new MaxConsumptionException();
+                }
                 $callback = $this->getCallback($consumerMessage, $message);
                 if (! $concurrent instanceof Concurrent) {
                     return parallel([$callback]);
                 }
 
-                return $concurrent->create($callback);
+                $concurrent->create($callback);
             }
         );
 
-        while (count($channel->callbacks) > 0) {
-            $channel->wait();
+        try {
+            while ($channel->is_consuming()) {
+                $channel->wait();
+            }
+        } catch (MaxConsumptionException $ex) {
         }
 
         $pool->release($connection);
     }
 
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
     {
         if (! $message instanceof ConsumerMessageInterface) {
             throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
@@ -103,12 +124,23 @@ class Consumer extends Builder
         foreach ($routineKeys as $routingKey) {
             $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
         }
+
+        if (is_array($qos = $message->getQos())) {
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
+            $channel->basic_qos($size, $count, $global);
+        }
+
+        if (isset($connection) && $release) {
+            $connection->release();
+        }
     }
 
-    protected function getConcurrent(): ?Concurrent
+    protected function getConcurrent(string $pool): ?Concurrent
     {
         $config = $this->container->get(ConfigInterface::class);
-        $concurrent = (int) $config->get('amqp.' . $this->name . '.concurrent.limit', 0);
+        $concurrent = (int) $config->get('amqp.' . $pool . '.concurrent.limit', 0);
         if ($concurrent > 1) {
             return new Concurrent($concurrent);
         }
@@ -125,8 +157,11 @@ class Consumer extends Builder
             $deliveryTag = $message->delivery_info['delivery_tag'];
 
             try {
-                $result = $consumerMessage->consume($data);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
+                $result = $consumerMessage->consumeMessage($data, $message);
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
                 if ($this->container->has(FormatterInterface::class)) {
                     $formatter = $this->container->get(FormatterInterface::class);
                     $this->logger->error($formatter->format($exception));

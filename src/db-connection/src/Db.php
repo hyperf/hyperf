@@ -7,13 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection;
 
 use Generator;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Utils\ApplicationContext;
@@ -72,7 +72,7 @@ class Db
 
     private function __connection($pool = 'default'): ConnectionInterface
     {
-        $resolver = $this->container->get(ConnectionResolver::class);
+        $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($pool);
     }
 }

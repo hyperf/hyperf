@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +33,7 @@ return [
     'before_or_equal' => ':attribute 必须是 :date 之前或相同的一个日期',
     'between' => [
         'numeric' => ':attribute 必须在 :min 到 :max 之间',
-        'file' => ':attribute 必须在 :min 到 :max KB 之间',
+        'file' => ':attribute 必须在 :min 到 :max kb 之间',
         'string' => ':attribute 必须在 :min 到 :max 个字符之间',
         'array' => ':attribute 必须在 :min 到 :max 项之间',
     ],
@@ -51,26 +50,54 @@ return [
     'exists' => '选定的 :attribute 是无效的',
     'file' => ':attribute 必须是一个文件',
     'filled' => ':attribute 的字段是必填的',
-    'image' => ':attribute 必须是 jpeg, png, bmp 或者 gif 格式的图片',
+    'gt' => [
+        'numeric' => ':attribute 必须大于 :value',
+        'file' => ':attribute 必须大于 :value kb',
+        'string' => ':attribute 必须大于 :value 个字符',
+        'array' => ':attribute 必须大于 :value 项',
+    ],
+    'gte' => [
+        'numeric' => ':attribute 必须大于等于 :value',
+        'file' => ':attribute 必须大于等于 :value kb',
+        'string' => ':attribute 必须大于等于 :value 个字符',
+        'array' => ':attribute 必须大于等于 :value 项',
+    ],
+    'image' => ':attribute 必须是 jpg, jpeg, png, bmp 或者 gif 格式的图片',
     'in' => '选定的 :attribute 是无效的',
     'in_array' => ':attribute 字段不存在于 :other',
     'integer' => ':attribute 必须是个整数',
     'ip' => ':attribute 必须是一个合法的 IP 地址',
+    'ipv4' => ':attribute 必须是一个合法的 IPv4 地址',
+    'ipv6' => ':attribute 必须是一个合法的 IPv6 地址',
     'json' => ':attribute 必须是一个合法的 JSON 字符串',
+    'lt' => [
+        'numeric' => ':attribute 必须小于 :value',
+        'file' => ':attribute 必须小于 :value kb',
+        'string' => ':attribute 必须小于 :value 个字符',
+        'array' => ':attribute 必须小于 :value 项',
+    ],
+    'lte' => [
+        'numeric' => ':attribute 必须小于等于 :value',
+        'file' => ':attribute 必须小于等于 :value kb',
+        'string' => ':attribute 必须小于等于 :value 个字符',
+        'array' => ':attribute 必须小于等于 :value 项',
+    ],
     'max' => [
-        'numeric' => ':attribute 的最大长度为 :max 位',
-        'file' => ':attribute 的最大为 :max',
+        'numeric' => ':attribute 的最大值为 :max',
+        'file' => ':attribute 的最大为 :max kb',
         'string' => ':attribute 的最大长度为 :max 字符',
-        'array' => ':attribute 的最大个数为 :max 个',
+        'array' => ':attribute 至多有 :max 项',
     ],
     'mimes' => ':attribute 的文件类型必须是 :values',
+    'mimetypes' => ':attribute 的文件MIME必须是 :values',
     'min' => [
-        'numeric' => ':attribute 的最小长度为 :min 位',
-        'file' => ':attribute 大小至少为 :min KB',
+        'numeric' => ':attribute 的最小值为 :min',
+        'file' => ':attribute 大小至少为 :min kb',
         'string' => ':attribute 的最小长度为 :min 字符',
         'array' => ':attribute 至少有 :min 项',
     ],
     'not_in' => '选定的 :attribute 是无效的',
+    'not_regex' => ':attribute 不能匹配给定的正则',
     'numeric' => ':attribute 必须是数字',
     'present' => ':attribute 字段必须存在',
     'regex' => ':attribute 格式是无效的',
@@ -83,16 +110,18 @@ return [
     'required_without_all' => ':attribute 字段是必须的当 没有一个 :values 是存在的',
     'same' => ':attribute 和 :other 必须匹配',
     'size' => [
-        'numeric' => ':attribute 必须是 :size 位',
-        'file' => ':attribute 必须是 :size KB',
+        'numeric' => ':attribute 必须是 :size',
+        'file' => ':attribute 必须是 :size kb',
         'string' => ':attribute 必须是 :size 个字符',
         'array' => ':attribute 必须包括 :size 项',
     ],
+    'starts_with' => ':attribute 必须以 :values 为开头',
     'string' => ':attribute 必须是一个字符串',
     'timezone' => ':attribute 必须是个有效的时区',
     'unique' => ':attribute 已存在',
     'uploaded' => ':attribute 上传失败',
     'url' => ':attribute 无效的格式',
+    'uuid' => ':attribute 无效的UUID格式',
     'max_if' => [
         'numeric' => '当 :other 为 :value 时 :attribute 不能大于 :max',
         'file' => '当 :other 为 :value 时 :attribute 不能大于 :max kb',

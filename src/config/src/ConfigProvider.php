@@ -7,11 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Config;
 
+use Hyperf\Config\Annotation\ValueAspect;
+use Hyperf\Config\Listener\RegisterPropertyHandlerListener;
 use Hyperf\Contract\ConfigInterface;
 
 class ConfigProvider
@@ -21,6 +22,12 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ConfigInterface::class => ConfigFactory::class,
+            ],
+            'aspects' => [
+                ValueAspect::class,
+            ],
+            'listeners' => [
+                RegisterPropertyHandlerListener::class,
             ],
             'annotations' => [
                 'scan' => [

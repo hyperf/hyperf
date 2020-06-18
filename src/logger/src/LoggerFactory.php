@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Logger;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,6 +16,7 @@ use Hyperf\Logger\Exception\InvalidConfigException;
 use Hyperf\Utils\Arr;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\FormattableHandlerInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerInterface;
@@ -54,20 +54,22 @@ class LoggerFactory
 
         $config = $config[$group];
         $handlers = $this->handlers($config);
+        $processors = $this->processors($config);
 
         return make(Logger::class, [
             'name' => $name,
             'handlers' => $handlers,
+            'processors' => $processors,
         ]);
     }
 
     public function get($name = 'hyperf', $group = 'default'): LoggerInterface
     {
-        if (isset($this->loggers[$name]) && $this->loggers[$name] instanceof Logger) {
-            return $this->loggers[$name];
+        if (isset($this->loggers[$group][$name]) && $this->loggers[$group][$name] instanceof Logger) {
+            return $this->loggers[$group][$name];
         }
 
-        return $this->loggers[$name] = $this->make($name, $group);
+        return $this->loggers[$group][$name] = $this->make($name, $group);
     }
 
     protected function getDefaultFormatterConfig($config)
@@ -95,6 +97,24 @@ class LoggerFactory
         ];
     }
 
+    protected function processors(array $config): array
+    {
+        $result = [];
+        if (! isset($config['processors']) && isset($config['processor'])) {
+            $config['processors'] = [$config['processor']];
+        }
+
+        foreach ($config['processors'] ?? [] as $value) {
+            if (is_array($value) && isset($value['class'])) {
+                $value = make($value['class'], $value['constructor'] ?? []);
+            }
+
+            $result[] = $value;
+        }
+
+        return $result;
+    }
+
     protected function handlers(array $config): array
     {
         $handlerConfigs = $config['handlers'] ?? [[]];
@@ -104,6 +124,11 @@ class LoggerFactory
         foreach ($handlerConfigs as $value) {
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
+            if (isset($value['formatter'])) {
+                if (! isset($value['formatter']['constructor'])) {
+                    $value['formatter']['constructor'] = $defaultFormatterConfig['constructor'];
+                }
+            }
             $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
 
             $handlers[] = $this->handler($class, $constructor, $formatterConfig);
@@ -117,13 +142,15 @@ class LoggerFactory
         /** @var HandlerInterface $handler */
         $handler = make($class, $constructor);
 
-        $formatterClass = $formatterConfig['class'];
-        $formatterConstructor = $formatterConfig['constructor'];
+        if ($handler instanceof FormattableHandlerInterface) {
+            $formatterClass = $formatterConfig['class'];
+            $formatterConstructor = $formatterConfig['constructor'];
 
-        /** @var FormatterInterface $formatter */
-        $formatter = make($formatterClass, $formatterConstructor);
+            /** @var FormatterInterface $formatter */
+            $formatter = make($formatterClass, $formatterConstructor);
 
-        $handler->setFormatter($formatter);
+            $handler->setFormatter($formatter);
+        }
 
         return $handler;
     }

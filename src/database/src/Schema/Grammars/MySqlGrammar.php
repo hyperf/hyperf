@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
@@ -47,12 +46,18 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the query to determine the list of columns.
-     *
-     * @return string
      */
-    public function compileColumnListing()
+    public function compileColumnListing(): string
     {
-        return 'select `column_name`, `data_type` from information_schema.columns where `table_schema` = ? and `table_name` = ?';
+        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the list of columns.
+     */
+    public function compileColumns(): string
+    {
+        return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
     }
 
     /**

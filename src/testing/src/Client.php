@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
@@ -21,6 +20,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\Arr;
@@ -50,7 +50,7 @@ class Client extends Server
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class));
+        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
@@ -71,6 +71,26 @@ class Client extends Server
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
             'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
+    public function put($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('PUT', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack($response->getBody()->getContents());
+    }
+
+    public function delete($uri, $data = [], $headers = [])
+    {
+        $response = $this->request('DELETE', $uri, [
+            'headers' => $headers,
+            'query' => $data,
         ]);
 
         return $this->packer->unpack($response->getBody()->getContents());
@@ -174,7 +194,7 @@ class Client extends Server
 
     protected function flushContext()
     {
-        $context = SwCoroutine::getContext();
+        $context = SwCoroutine::getContext() ?? [];
 
         foreach ($context as $key => $value) {
             if (Str::startsWith($key, $this->ignoreContextPrefix)) {

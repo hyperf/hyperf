@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Seeders;
 
 use Hyperf\Database\Connection;
@@ -60,9 +59,6 @@ class Seed
 
     /**
      * Create a new seed instance.
-     *
-     * @param \Hyperf\Database\ConnectionResolverInterface $resolver
-     * @param \Hyperf\Utils\Filesystem\Filesystem $files
      */
     public function __construct(Resolver $resolver, Filesystem $files)
     {
@@ -74,7 +70,6 @@ class Seed
      * Run the pending seeders at a given path.
      *
      * @param array|string $paths
-     * @param array $options
      * @return array
      */
     public function run($paths = [], array $options = [])
@@ -90,8 +85,6 @@ class Seed
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
     public function setConnection(string $name): void
     {
@@ -104,9 +97,6 @@ class Seed
 
     /**
      * Run an array of seeders.
-     *
-     * @param array $seeders
-     * @param array $options
      */
     public function runSeeders(array $seeders, array $options = [])
     {
@@ -155,22 +145,16 @@ class Seed
 
     /**
      * Resolve a seeder instance from a file.
-     *
-     * @param string $file
-     *
-     * @return object
      */
     public function resolve(string $file): object
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+        $class = Str::studly($file);
 
         return new $class();
     }
 
     /**
      * Resolve the database connection instance.
-     *
-     * @param string $connection
      *
      * @return Connection
      */
@@ -209,8 +193,6 @@ class Seed
 
     /**
      * Require in all the seeder files in a given path.
-     *
-     * @param array $files
      */
     public function requireFiles(array $files)
     {
@@ -222,7 +204,6 @@ class Seed
     /**
      * Set the output implementation that should be used by the console.
      *
-     * @param OutputInterface $output
      * @return $this
      */
     public function setOutput(OutputInterface $output)
@@ -236,8 +217,6 @@ class Seed
      * Get the schema grammar out of a migration connection.
      *
      * @param Connection $connection
-     *
-     * @return \Hyperf\Database\Schema\Grammars\Grammar
      */
     protected function getSchemaGrammar($connection): Grammar
     {

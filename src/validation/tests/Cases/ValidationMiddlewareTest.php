@@ -7,12 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Contract\ValidatorInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -45,6 +46,14 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ValidationMiddlewareTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+        Context::set(DemoRequest::class . ':' . ValidatorInterface::class, null);
+        Context::set('test.validation.DemoRequest.number', 0);
+        Context::set('http.request.parsedData', null);
+    }
+
     public function testProcess()
     {
         $container = $this->createContainer();
@@ -92,6 +101,19 @@ class ValidationMiddlewareTest extends TestCase
         $this->assertEquals('{"id":1,"request":{"username":"Hyperf","password":"Hyperf"}}', $response->getBody()->getContents());
     }
 
+    public function testGetValidatorInstance()
+    {
+        $container = $this->createContainer();
+        Context::set(ServerRequestInterface::class, new Request('POST', new Uri('/')));
+        $request = $container->get(DemoRequest::class);
+
+        $request->validated();
+        $this->assertSame(1, Context::get('test.validation.DemoRequest.number'));
+
+        $request->validated();
+        $this->assertSame(1, Context::get('test.validation.DemoRequest.number'));
+    }
+
     public function createContainer()
     {
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -113,7 +135,8 @@ class ValidationMiddlewareTest extends TestCase
             ->andReturn(new DemoRequest($container));
         $container->shouldReceive('has')->with(DemoRequest::class)
             ->andReturn(true);
-
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
         ApplicationContext::setContainer($container);
 
         return $container;

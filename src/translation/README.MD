@@ -1,6 +1,6 @@
 # Hyperf Translation
 
-[hyperf/translation](https://github.com/hyperf-cloud/translation) 组件衍生于 `Laravel Translation` 组件的，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 Translation 组件。
+[hyperf/translation](https://github.com/hyperf/translation) 组件衍生于 `Laravel Translation` 组件的，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 Translation 组件。
 
 ## Installation
 

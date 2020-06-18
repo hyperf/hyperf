@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Query;
 
 use Closure;
@@ -1934,7 +1933,8 @@ class Builder
                 return false;
             }
 
-            $lastId = $results->last()->{$alias};
+            $lastResult = $results->last();
+            $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
 
             unset($results);
         } while ($countResults == $count);
@@ -2185,6 +2185,28 @@ class Builder
         [$sql, $bindings] = $this->createSub($query);
 
         return $this->connection->insert($this->grammar->compileInsertUsing($this, $columns, $sql), $this->cleanBindings($bindings));
+    }
+
+    /**
+     * Insert ignore a new record into the database.
+     */
+    public function insertOrIgnore(array $values): int
+    {
+        if (empty($values)) {
+            return 0;
+        }
+        if (! is_array(reset($values))) {
+            $values = [$values];
+        } else {
+            foreach ($values as $key => $value) {
+                ksort($value);
+                $values[$key] = $value;
+            }
+        }
+        return $this->connection->affectingStatement(
+            $this->grammar->compileInsertOrIgnore($this, $values),
+            $this->cleanBindings(Arr::flatten($values, 1))
+        );
     }
 
     /**

@@ -7,12 +7,12 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
+use Hyperf\Tracer\Listener\DbQueryExecutedListener;
 use OpenTracing\Tracer;
 
 class ConfigProvider
@@ -23,7 +23,11 @@ class ConfigProvider
             'dependencies' => [
                 Tracer::class => TracerFactory::class,
                 SwitchManager::class => SwitchManagerFactory::class,
+                SpanTagManager::class => SpanTagManagerFactory::class,
                 Client::class => Client::class,
+            ],
+            'listeners' => [
+                DbQueryExecutedListener::class,
             ],
             'annotations' => [
                 'scan' => [

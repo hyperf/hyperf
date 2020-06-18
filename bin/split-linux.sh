@@ -3,7 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH="master"
+CURRENT_BRANCH="2.0"
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 REPOS=$@
 
@@ -25,7 +25,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 for REPO in $REPOS ; do
-    remote $REPO git@github.com:hyperf-cloud/$REPO.git
+    remote $REPO git@github.com:hyperf/$REPO.git
 
     split "src/$REPO" $REPO
 done

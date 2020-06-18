@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database;
 
 use Hyperf\Database\ConnectionInterface;
@@ -28,6 +27,7 @@ use Hyperf\Utils\Context;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @internal
@@ -516,6 +516,22 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->where('id', '=', 1)->orWhereIn('id', [new Raw(1)]);
         $this->assertEquals('select * from "users" where "id" = ? or "id" in (1)', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+    }
+
+    public function testInsertOrIgnoreMethod()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This database engine does not support insert or ignore.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->insertOrIgnore(['email' => 'foo']);
+    }
+
+    public function testMySqlInsertOrIgnoreMethod()
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('affectingStatement')->once()->with('insert ignore into `users` (`email`) values (?)', ['foo'])->andReturn(1);
+        $result = $builder->from('users')->insertOrIgnore(['email' => 'foo']);
+        $this->assertEquals(1, $result);
     }
 
     public function testEmptyWhereIns()
@@ -2493,6 +2509,29 @@ class QueryBuilderTest extends TestCase
         $callbackAssertor->shouldReceive('doSomething')->once()->with($chunk1);
         $callbackAssertor->shouldReceive('doSomething')->once()->with($chunk2);
         $callbackAssertor->shouldReceive('doSomething')->never()->with($chunk3);
+
+        $builder->chunkById(2, function ($results) use ($callbackAssertor) {
+            $callbackAssertor->doSomething($results);
+        }, 'someIdField');
+
+        // Avoid 'This test did not perform any assertions' notice
+        $this->assertTrue(true);
+    }
+
+    public function testChunkPaginatesUsingIdWithArray()
+    {
+        $builder = $this->getMockQueryBuilder();
+        $builder->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $chunk1 = collect([['someIdField' => 1], ['someIdField' => 2]]);
+        $chunk2 = collect([['someIdField' => 10]]);
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('get')->times(2)->andReturn($chunk1, $chunk2);
+
+        $callbackAssertor = Mockery::mock(stdClass::class);
+        $callbackAssertor->shouldReceive('doSomething')->once()->with($chunk1);
+        $callbackAssertor->shouldReceive('doSomething')->once()->with($chunk2);
 
         $builder->chunkById(2, function ($results) use ($callbackAssertor) {
             $callbackAssertor->doSomething($results);

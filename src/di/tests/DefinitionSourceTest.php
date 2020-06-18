@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
@@ -27,7 +26,7 @@ class DefinitionSourceTest extends TestCase
 {
     public function testAddDefinition()
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         $container->getDefinitionSource()->addDefinition('Foo', function () {
             return 'bar';
         });

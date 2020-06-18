@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\PackerInterface;
@@ -49,7 +48,7 @@ class ResponseBuilder
         $this->packer = $packer;
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, \Exception $error = null): ResponseInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
         return $this->response()->withAddedHeader('content-type', 'application/json')->withBody($body);
@@ -70,14 +69,14 @@ class ResponseBuilder
 
     protected function formatResponse($response, ServerRequestInterface $request): string
     {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id') ?? '', $response]);
+        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id'), $response]);
         return $this->packer->pack($response);
     }
 
-    protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Exception $error = null): string
+    protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
     {
         [$code, $message] = $this->error($code, $error ? $error->getMessage() : null);
-        $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id') ?? '', $code, $message, $error]);
+        $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id'), $code, $message, $error]);
         return $this->packer->pack($response);
     }
 

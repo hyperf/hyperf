@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Countable;
@@ -95,7 +94,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     /**
      * Determine if messages exist for all of the given keys.
      *
-     * @param array|string $key
+     * @param null|array|string $key
      */
     public function has($key): bool
     {

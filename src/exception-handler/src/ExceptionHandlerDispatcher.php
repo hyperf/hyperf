@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ExceptionHandler;
 
 use Hyperf\Dispatcher\AbstractDispatcher;
@@ -30,18 +29,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch(...$params)
-    {
-        return parent::dispatch(...$params);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(...$params)
     {
         /**
          * @var Throwable

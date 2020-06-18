@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Contract\ConfigInterface;
@@ -33,7 +32,7 @@ class ClientFactory
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
             // If does not exist a user-defined callback, then delegate to the dafault callback.
-            if (! is_numeric($namespace) && is_callable($callbacks)) {
+            if (! is_numeric($namespace) && is_callable($callable)) {
                 $callbacks[$namespace] = $callable;
             }
         }

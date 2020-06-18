@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Database\Connection;
@@ -19,7 +18,6 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Builder;
-use Hyperf\DbConnection\ConnectionResolver as DBConnectionResolver;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
@@ -60,7 +58,7 @@ class ValidationExistsRuleTest extends TestCase
         ];
         $connection = $connector->make($dbConfig);
         $resolver = new ConnectionResolver(['default' => $connection]);
-        $container->shouldReceive('get')->with(DBConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
         ApplicationContext::setContainer($container);
         Register::setConnectionResolver($resolver);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new EventDispatcher());

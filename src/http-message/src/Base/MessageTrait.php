@@ -7,14 +7,13 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Laminas\Mime\Decode;
 use Psr\Http\Message\StreamInterface;
-use Zend\Mime\Decode;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -37,7 +36,7 @@ trait MessageTrait
     protected $protocol = '1.1';
 
     /**
-     * @var StreamInterface
+     * @var null|StreamInterface
      */
     protected $stream;
 
@@ -192,7 +191,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     public function withHeaders(array $headers)
@@ -341,7 +339,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
      * @return static
      */
     private function setHeaders(array $headers)

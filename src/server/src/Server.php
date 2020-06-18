@@ -7,13 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Bootstrap;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
@@ -48,7 +46,7 @@ class Server implements ServerInterface
     protected $onRequestCallbacks = [];
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -81,7 +79,7 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
-    public function getServer(): SwooleServer
+    public function getServer()
     {
         return $this->server;
     }
@@ -106,16 +104,16 @@ class Server implements ServerInterface
                 ServerManager::add($name, [$type, current($this->server->ports)]);
 
                 if (class_exists(BeforeMainServerStart::class)) {
-                    // Trigger BeforeMainEventStart event, this event only trigger once before main server start.
+                    // Trigger BeforeMainServerStart event, this event only trigger once before main server start.
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {
-                /** @var \Swoole\Server\Port $slaveServer */
+                /** @var bool|\Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
                 }
-                $server->getSettings() && $slaveServer->set($server->getSettings());
+                $server->getSettings() && $slaveServer->set(array_replace($config->getSettings(), $server->getSettings()));
                 $this->registerSwooleEvents($slaveServer, $callbacks, $name);
                 ServerManager::add($name, [$type, $slaveServer]);
             }
@@ -129,7 +127,7 @@ class Server implements ServerInterface
             }
 
             if (class_exists(BeforeServerStart::class)) {
-                // Trigger BeforeEventStart event.
+                // Trigger BeforeServerStart event.
                 $this->eventDispatcher->dispatch(new BeforeServerStart($name));
             }
         }
@@ -191,7 +189,7 @@ class Server implements ServerInterface
             if (is_array($callback)) {
                 [$className, $method] = $callback;
                 if (array_key_exists($className . $method, $this->onRequestCallbacks)) {
-                    $this->logger->warning(sprintf('%s will be replaced by %s, each server should has own onRequest callback, please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
+                    $this->logger->warning(sprintf('%s will be replaced by %s. Each server should have its own onRequest callback. Please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
                 }
 
                 $this->onRequestCallbacks[$className . $method] = $serverName;
@@ -220,6 +218,7 @@ class Server implements ServerInterface
                 SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
                 SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
                 SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
+                SwooleEvent::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
             ];
         }
 

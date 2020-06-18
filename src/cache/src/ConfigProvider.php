@@ -7,11 +7,11 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache;
 
+use Hyperf\Cache\Listener\DeleteListener;
 use Psr\SimpleCache\CacheInterface;
 
 class ConfigProvider
@@ -21,6 +21,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 CacheInterface::class => Cache::class,
+            ],
+            'listeners' => [
+                DeleteListener::class,
             ],
             'annotations' => [
                 'scan' => [

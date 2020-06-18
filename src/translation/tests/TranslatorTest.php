@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
@@ -21,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ * @coversNothing
  */
 class TranslatorTest extends TestCase
 {
@@ -283,6 +283,25 @@ class TranslatorTest extends TestCase
         $t->getLoader()->shouldReceive('load')->once()->with('en', '*', '*')->andReturn([]);
         $t->getLoader()->shouldReceive('load')->once()->with('en', 'foo :message', '*')->andReturn([]);
         $this->assertEquals('foo baz', $t->getFromJson('foo :message', ['message' => 'baz']));
+    }
+
+    public function testSetLocale()
+    {
+        $t = new Translator($this->getLoader(), 'en');
+        $this->assertEquals('en', $t->getLocale());
+        parallel([
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_CN');
+                $this->assertEquals('zh_CN', $t->getLocale());
+            },
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_HK');
+                $this->assertEquals('zh_HK', $t->getLocale());
+            },
+        ]);
+        $this->assertEquals('en', $t->getLocale());
     }
 
     protected function getLoader()

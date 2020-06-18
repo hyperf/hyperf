@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigEtcd\Process;
 
 use Hyperf\ConfigEtcd\ClientInterface;
@@ -17,16 +16,14 @@ use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="etcd-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'etcd-config-fetcher';
+
     /**
      * @var Server
      */
@@ -54,15 +51,17 @@ class ConfigFetcherProcess extends AbstractProcess
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
-        return $this->config->get('config_etcd.enable', false);
+        return $server instanceof Server
+            && $this->config->get('config_etcd.enable', false)
+            && $this->config->get('config_etcd.use_standalone_process', true);
     }
 
     public function handle(): void

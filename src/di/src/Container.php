@@ -7,20 +7,19 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
+use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-class Container implements ContainerInterface
+class Container implements HyperfContainerInterface
 {
     /**
      * Map of entries that are already resolved.
@@ -31,8 +30,6 @@ class Container implements ContainerInterface
 
     /**
      * Map of definitions that are already fetched (local cache).
-     *
-     * @var (DefinitionInterface|null)[]
      */
     private $fetchedDefinitions = [];
 
@@ -47,25 +44,17 @@ class Container implements ContainerInterface
     private $definitionResolver;
 
     /**
-     * @TODO Extract ProxyFactory to a Interface.
-     * @var ProxyFactory
-     */
-    private $proxyFactory;
-
-    /**
      * Container constructor.
-     * @param Definition\DefinitionSourceInterface $definitionSource
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
-        $this->proxyFactory = new ProxyFactory();
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
-            ContainerInterface::class => $this,
-            ProxyFactory::class => $this->proxyFactory,
+            PsrContainerInterface::class => $this,
+            HyperfContainerInterface::class => $this,
         ];
     }
 
@@ -79,8 +68,8 @@ class Container implements ContainerInterface
      * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
      *                          to specific values. Parameters not defined in this array will be resolved using
      *                          the container.
-     * @throws InvalidArgumentException the name parameter must be of type string
      * @throws NotFoundException no entry found for the given name
+     * @throws InvalidArgumentException the name parameter must be of type string
      */
     public function make(string $name, array $parameters = [])
     {
@@ -94,10 +83,30 @@ class Container implements ContainerInterface
     }
 
     /**
+     * Bind an arbitrary resolved entry to an identifier.
+     * Useful for testing 'get'.
+     * @param mixed $entry
+     */
+    public function set(string $name, $entry)
+    {
+        $this->resolvedEntries[$name] = $entry;
+    }
+
+    /**
+     * Bind an arbitrary definition to an identifier.
+     * Useful for testing 'make'.
+     *
+     * @param array|callable|string $definition
+     */
+    public function define(string $name, $definition)
+    {
+        $this->definitionSource->addDefinition($name, $definition);
+    }
+
+    /**
      * Finds an entry of the container by its identifier and returns it.
      *
      * @param string $name identifier of the entry to look for
-     * @return mixed entry
      */
     public function get($name)
     {
@@ -115,7 +124,7 @@ class Container implements ContainerInterface
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $name identifier of the entry to look for
+     * @param mixed|string $name identifier of the entry to look for
      */
     public function has($name): bool
     {
@@ -137,11 +146,6 @@ class Container implements ContainerInterface
         }
 
         return true;
-    }
-
-    public function getProxyFactory(): ProxyFactory
-    {
-        return $this->proxyFactory;
     }
 
     public function getDefinitionSource(): Definition\DefinitionSourceInterface
