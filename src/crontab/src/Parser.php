@@ -90,8 +90,8 @@ class Parser
             $exploded = explode('/', $string);
             if (strpos($exploded[0], '-') !== false) {
                 [$nMin, $nMax] = explode('-', $exploded[0]);
-                $nMin > $min && $min = $nMin;
-                $nMax < $max && $max = $nMax;
+                $nMin > $min && $min = (int) $nMin;
+                $nMax < $max && $max = (int) $nMax;
             }
             $start > $min && $min = $start;
             for ($i = $min; $i <= $max;) {
