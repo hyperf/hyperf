@@ -81,7 +81,7 @@ class BaseClient
         return $client->isRunning() || $client->start();
     }
 
-    protected function _getGrpcClient(): GrpcClient
+    public function _getGrpcClient(): GrpcClient
     {
         if (! $this->initialized) {
             $this->init();
