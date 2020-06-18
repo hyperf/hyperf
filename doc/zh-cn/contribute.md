@@ -11,7 +11,7 @@ Hyperf 是一个开源项目，一个开源项目的发展离不开开源社区�
 
 ## 加入 Hyperf 团队
 
-Hyperf 团队是对 Hyperf 项目及其周边项目进行持续维护和迭代的团队，如果您希望加入其中，首先需要您对 Hyperf 和开源拥有足够且持续的热情和动力，因为需要您付出大量的时间和精力到 Hyperf 项目及其周边项目的维护和迭代工作上，同时也需要您对 Hyperf 项目有足够的深入了解，以便维护工作的进行。因此我们对加入 Hyperf 团队也设有一定的门槛，_您需要在 [hyperf/hyperf](https://github.com/hyperf/hyperf) 仓库拥有最少 100 commits，或向 Hyperf 提交了多个优秀的组件，同时由任一现有的 Hyperf 团队成员提名，并获得团队内超半数成员的同意_。   
+Hyperf 团队是对 Hyperf 项目及其周边项目进行持续维护和迭代的团队，如果您希望加入其中，首先需要您对 Hyperf 和开源拥有足够且持续的热情和动力，因为需要您付出大量的时间和精力到 Hyperf 项目及其周边项目的维护和迭代工作上，同时也需要您对 Hyperf 项目有足够的深入了解，以便维护工作的进行。因此我们对加入 Hyperf 团队也设有一定的门槛，**您需要在 [hyperf/hyperf](https://github.com/hyperf/hyperf) 仓库拥有最少 100 commits，或向 Hyperf 提交了多个优秀的组件，同时由任一现有的 Hyperf 团队成员提名，并获得团队内超半数成员的同意**。   
 
 加入到 Hyperf 团队，您会得到包括但不限于以下的收获：
 1. @hyperf.io E-mail
