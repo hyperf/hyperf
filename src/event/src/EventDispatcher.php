@@ -46,10 +46,32 @@ class EventDispatcher implements EventDispatcherInterface
     {
         foreach ($this->listeners->getListenersForEvent($event) as $listener) {
             $listener($event);
+            $this->dump($listener, $event);
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
                 break;
             }
         }
         return $event;
+    }
+
+    /**
+     * Dump the debug message if $logger property is provided.
+     * @param mixed $listener
+     */
+    private function dump($listener, object $event)
+    {
+        if (! $this->logger instanceof StdoutLoggerInterface) {
+            return;
+        }
+        $eventName = get_class($event);
+        $listenerName = '[ERROR TYPE]';
+        if (is_array($listener)) {
+            $listenerName = is_string($listener[0]) ? $listener[0] : get_class($listener[0]);
+        } elseif (is_string($listener)) {
+            $listenerName = $listener;
+        } elseif (is_object($listener)) {
+            $listenerName = get_class($listener);
+        }
+        $this->logger->debug(sprintf('Event %s handled by %s listener.', $eventName, $listenerName));
     }
 }
