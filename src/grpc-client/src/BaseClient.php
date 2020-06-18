@@ -75,13 +75,13 @@ class BaseClient
         return $this->getGrpcClient()->{$name}(...$arguments);
     }
 
-    public function start()
+    private function start()
     {
         $client = $this->grpcClient;
         return $client->isRunning() || $client->start();
     }
 
-    public function getGrpcClient(): GrpcClient
+    private function getGrpcClient(): GrpcClient
     {
         if (! $this->initialized) {
             $this->init();
@@ -89,7 +89,7 @@ class BaseClient
         return $this->grpcClient;
     }
 
-    protected function init()
+    private function init()
     {
         if (! empty($this->options['client'])) {
             if (! ($this->options['client'] instanceof GrpcClient)) {
@@ -121,7 +121,7 @@ class BaseClient
      * @throws GrpcClientException
      * @return array|\Google\Protobuf\Internal\Message[]|\swoole_http2_response[]
      */
-    protected function simpleRequest(
+    protected function _simpleRequest(
         string $method,
         Message $argument,
         $deserialize
@@ -147,7 +147,7 @@ class BaseClient
      *
      * @return ClientStreamingCall The active call object
      */
-    protected function clientStreamRequest(
+    protected function _clientStreamRequest(
         string $method,
         $deserialize
     ): ClientStreamingCall {
@@ -177,7 +177,7 @@ class BaseClient
         return $call;
     }
 
-    protected function buildRequest(string $method, Message $argument): Request
+    private function buildRequest(string $method, Message $argument): Request
     {
         return new Request($method, $argument);
     }
