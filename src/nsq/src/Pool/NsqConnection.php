@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Nsq\MessageBuilder;
@@ -77,10 +78,23 @@ class NsqConnection extends KeepaliveConnection
         return $socket;
     }
 
+    protected function heartbeat(): void
+    {
+        if ($this->pool->getOption()->getHeartbeat() <= 0) {
+            return;
+        }
+        // When the connection is idle and heartbeat time exceeded since last execution
+        if ($this->channel->length() > 0 && $this->lastExecutionTime <= microtime(true) - $this->pool->getOption()->getHeartbeat()) {
+            $this->call(function ($connect) {
+                $connect->send($this->builder->buildNop());
+            }, false);
+        }
+    }
+
     protected function sendClose($connection): void
     {
         try {
-            $connection->send($this->builder->buildCls());
+            $connection->close();
         } catch (\Throwable $throwable) {
             // Do nothing
         }

@@ -41,6 +41,7 @@
 
 - [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
 - [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) Fixed a series of issues for `hyperf/socketio-server`.
+- [#1729](https://github.com/hyperf/hyperf/pull/1729) Fixed nsq heartbeat
 
 ## Optimized
 

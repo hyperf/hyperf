@@ -44,6 +44,12 @@ abstract class KeepaliveConnection implements ConnectionInterface
     protected $lastUseTime = 0.0;
 
     /**
+     * @var float
+     */
+    protected $lastExecutionTime = 0.0;
+
+
+    /**
      * @var null|int
      */
     protected $timerId;
@@ -120,6 +126,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
             if ($refresh) {
                 $this->lastUseTime = microtime(true);
             }
+            $this->lastExecutionTime = microtime(true);
         } finally {
             if ($this->isConnected()) {
                 $this->channel->push($connection, 0.001);
