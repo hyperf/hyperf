@@ -976,6 +976,19 @@ class Builder
     }
 
     /**
+     * Apply query-time casts to the model instance.
+     *
+     * @param array $casts
+     * @return $this
+     */
+    public function withCasts($casts)
+    {
+        $this->model->mergeCasts($casts);
+
+        return $this;
+    }
+
+    /**
      * Get the underlying query builder instance.
      *
      * @return \Hyperf\Database\Query\Builder

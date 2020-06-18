@@ -108,22 +108,22 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Encoder
      */
-    private $encoder;
+    protected $encoder;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     /**
      * @var int[]
      */
-    private $clientCallbackTimers;
+    protected $clientCallbackTimers;
 
     public function __construct(StdoutLoggerInterface $stdoutLogger, Sender $sender, Decoder $decoder, Encoder $encoder, SidProviderInterface $sidProvider)
     {
@@ -157,11 +157,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                     'nsp' => $packet->nsp,
                 ]);
                 $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
-                $this->dispatch($frame->fd, $packet->nsp, 'connect', $packet->data);
                 break;
             case Packet::CLOSE: //client disconnect
                 $server->disconnect($frame->fd);
-                $this->dispatch($frame->fd, $packet->nsp, 'disconnect', $packet->data);
                 break;
             case Packet::EVENT: // client message with ack
                 if ($packet->id !== '') {
@@ -206,17 +204,13 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         ];
         $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
         $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+
+        $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
     public function onClose(Server $server, int $fd, int $reactorId): void
     {
-        $all = SocketIORouter::list();
-        if (! array_key_exists('forward', $all)) {
-            return;
-        }
-        foreach (array_keys($all['forward']) as $nsp) {
-            $this->dispatch($fd, $nsp, 'disconnect', null);
-        }
+        $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }
 
     /**
@@ -300,5 +294,16 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                 $this->addCallback($ackId, $channel, $timeout);
             }, ]);
+    }
+
+    private function dispatchEventInAllNamespaces(int $fd, string $event)
+    {
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        foreach (array_keys($all['forward']) as $nsp) {
+            $this->dispatch($fd, $nsp, $event, null);
+        }
     }
 }

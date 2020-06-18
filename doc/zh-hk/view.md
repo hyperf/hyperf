@@ -112,6 +112,8 @@ declare(strict_types=1);
 
 namespace App\Engine;
 
+use Hyperf\View\Engine\EngineInterface;
+
 class TemplateEngine implements EngineInterface
 {
     public function render($template, $data, $config): string

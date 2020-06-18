@@ -27,6 +27,8 @@ use Hyperf\WebSocketServer\Sender;
  */
 trait Emitter
 {
+    use Flagger;
+
     /**
      * @var AdapterInterface
      */
@@ -137,18 +139,14 @@ trait Emitter
                     'except' => [$this->sidProvider->getSid($this->fd)],
                     'rooms' => $this->to,
                     'flag' => [
-                        'compress' => $this->realGet('compress'),
-                        'volatile' => $this->realGet('volatile'),
-                        'local' => $this->realGet('local'),
+                        'compress' => $this->compress,
+                        'volatile' => $this->volatile,
+                        'local' => $this->local,
                     ],
                 ]
             );
         }
-        if ($this->realGet('compress')) {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN | SWOOLE_WEBSOCKET_FLAG_COMPRESS;
-        } else {
-            $wsFlag = SWOOLE_WEBSOCKET_FLAG_FIN;
-        }
+
         return make(Future::class, [
             'fd' => $this->fd,
             'event' => $event,
@@ -157,7 +155,7 @@ trait Emitter
                 return $this->encode($i, $event, $data);
             },
             'opcode' => SWOOLE_WEBSOCKET_OPCODE_TEXT,
-            'flag' => $wsFlag,
+            'flag' => $this->guessFlags($this->compress),
         ]);
     }
 
@@ -176,10 +174,5 @@ trait Emitter
             'data' => array_merge([$event], $data),
         ]);
         return Engine::MESSAGE . $encoder->encode($packet);
-    }
-
-    private function realGet($flag)
-    {
-        return $this->{$flag};
     }
 }

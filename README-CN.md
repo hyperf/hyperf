@@ -3,8 +3,10 @@
 <p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
 
 <p align="center">
+  <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
   <a href="https://travis-ci.org/hyperf/hyperf"><img src="https://travis-ci.org/hyperf/hyperf.svg?branch=master" alt="Build Status"></a>
-  <a href="https://opencollective.com/hyperf"><img src="https://opencollective.com/hyperf/all/badge.svg?label=financial+contributors" alt="Financial Contributors on Open Collective"></a>
+  <a href="packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/downloads" alt="Total Downloads"></a>
+  <a href="packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/d/monthly" alt="Monthly Downloads"></a>
   <a href="https://secure.php.net/"><img src="https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
   <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
   <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
@@ -85,6 +87,7 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 # 性能
 
 ### 阿里云 8 核 16G
+
 命令: `wrk -c 1024 -t 8 http://127.0.0.1:9501/`
 ```bash
 Running 10s test @ http://127.0.0.1:9501/
@@ -96,6 +99,10 @@ Running 10s test @ http://127.0.0.1:9501/
 Requests/sec: 103921.49
 Transfer/sec:     18.83MB
 ```
+
+# Hyperf 生态
+
+- 🧬 [Nano](https://github.com/hyperf/nano) 是一款零配置、无骨架、极小化的 Hyperf 发行版，通过 Nano 可以让您仅仅通过 1 个 PHP 文件即可快速搭建一个 Hyperf 应用。
 
 # 开源协议
 

@@ -17,7 +17,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\Filesystem\\": "tests"
         }
     },
     "require": {
@@ -35,7 +35,6 @@
         "league/flysystem-memory": "^1.0",
         "overtrue/flysystem-qiniu": "^1.0",
         "phpstan/phpstan": "^0.10.5",
-        "swoft/swoole-ide-helper": "dev-master",
         "xxtime/flysystem-aliyun-oss": "^1.5"
     },
     "suggest": {

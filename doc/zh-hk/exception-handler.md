@@ -106,6 +106,33 @@ class IndexController extends Controller
 ```
 在上面這個例子，我們先假設 `FooException` 是存在的一個異常，以及假設已經完成了該處理器的配置，那麼當業務拋出一個沒有被捕獲處理的異常時，就會根據配置的順序依次傳遞，整一個處理流程可以理解為一個管道，若前一個異常處理器調用 `$this->stopPropagation()` 則不再往後傳遞，若最後一個配置的異常處理器仍不對該異常進行捕獲處理，那麼就會交由 Hyperf 的默認異常處理器處理了。
 
+## 集成 Whoops
+
+框架提供了 Whoops 集成。
+
+首先安裝 Whoops
+```php
+composer require --dev filp/whoops
+```
+
+然後配置 Whoops 專用異常處理器。
+
+```php
+// config/autoload/exceptions.php
+return [
+    'handler' => [
+        'http' => [
+            \Hyperf\ExceptionHandler\Handler\WhoopsExceptionHandler::class,
+        ],    
+    ],
+];
+```
+
+效果如圖：
+
+![whoops](/imgs/whoops.png)
+
+
 ## Error 監聽器
 
 框架提供了 `error_reporting()` 錯誤級別的監聽器 `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`。

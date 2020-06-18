@@ -1,5 +1,43 @@
 # 版本更新记录
 
+# v1.1.32 - 2020-05-21
+
+## 修复
+
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) 修复模型多态查询，关联关系为空时，也会查询 SQL 的问题；
+- [#1739](https://github.com/hyperf/hyperf/pull/1739) 修复 `hyperf/filesystem` 组件 OSS HOOK 位运算错误，导致 resource 判断不准确的问题；
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) 修复 `grafana.json` 中错误的`refId` 字段值；
+- [#1748](https://github.com/hyperf/hyperf/pull/1748) 修复 `hyperf/amqp` 组件在使用其他连接池时，对应的 `concurrent.limit` 配置不生效的问题；
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) 修复连接池组件，在连接关闭失败时会导致计数有误的问题；
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) 修复 BASE Server 服务，启动提示没有考虑 UDP 服务的情况；
+- [#1764](https://github.com/hyperf/hyperf/pull/1764) 修复当时间值为 null 时，datatime 验证器执行失败的 BUG；
+- [#1769](https://github.com/hyperf/hyperf/pull/1769) 修复 `hyperf/socketio-server` 组件中，客户端初始化断开连接操作时会报 Notice 的错误的问题；
+
+## 新增
+
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) 新增模型方法 `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`；
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) 新增 `Hyperf\Command\Command::choiceMultiple(): array` 方法，因为 `choice` 方法的返回类型为 `string，所以就算设置了 `$multiple` 参数也无法处理多个选择的情况；
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) 新增模型 自定义类型转换器 功能；
+  - 新增 interface `Castable`, `CastsAttributes` 和 `CastsInboundAttributes`；
+  - 新增方法 `Model\Builder::withCasts`；
+  - 新增方法 `Model::loadMorph`, `Model::loadMorphCount` 和 `Model::syncAttributes`；
+  
+# v1.1.31 - 2020-05-14
+
+## 新增
+
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) 异常处理器集成了 filp/whoops 。
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) 为命令 `gen:model` 可选项 `--refresh-fillable` 添加简写 `-R`。
+
+## 修复
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修复方法 `Context::copy` 传入字段 `keys` 后无法正常使用的BUG。
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修复 `hyperf/socketio-server` 组件内存溢出等BUG。
+
+## 优化
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系统下不再使用 `cli_set_process_title` 方法设置进程名。
+
 # v1.1.30 - 2020-05-07
 
 ## 新增
