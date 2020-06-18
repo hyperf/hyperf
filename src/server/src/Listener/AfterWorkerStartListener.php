@@ -51,7 +51,7 @@ class AfterWorkerStartListener implements ListenerInterface
         /** @var AfterWorkerStart|MainCoroutineServerStart $event */
         $isCoroutineServer = $event instanceof MainCoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
-            /** @var Port $server */
+            /** @var Port|\Swoole\Coroutine\Server $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type, $server) {

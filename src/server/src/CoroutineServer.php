@@ -46,7 +46,7 @@ class CoroutineServer implements ServerInterface
     protected $config;
 
     /**
-     * @var Coroutine\Http\Server|Coroutine\Server
+     * @var \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
      */
     protected $server;
 
@@ -142,7 +142,9 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    $this->server->handle('/', [$handler, $method]);
+                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                        $this->server->handle('/', [$handler, $method]);
+                    }
                 }
                 return;
             case ServerInterface::SERVER_WEBSOCKET:
@@ -151,7 +153,9 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    $this->server->handle('/', [$handler, $method]);
+                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                        $this->server->handle('/', [$handler, $method]);
+                    }
                 }
                 return;
             case ServerInterface::SERVER_BASE:
@@ -159,25 +163,27 @@ class CoroutineServer implements ServerInterface
                     [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
                     [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
                     [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
-                    $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
-                        if ($connectHandler && $connectMethod) {
-                            $connectHandler->$connectMethod($connection, $connection->exportSocket()->fd);
-                        }
-                        if ($receiveHandler instanceof MiddlewareInitializerInterface) {
-                            $receiveHandler->initCoreMiddleware($name);
-                        }
-                        while (true) {
-                            $data = $connection->recv();
-                            if (empty($data)) {
-                                if ($closeHandler && $closeMethod) {
-                                    $closeHandler->$closeMethod($connection, $connection->exportSocket()->fd);
-                                }
-                                $connection->close();
-                                break;
+                    if ($this->server instanceof \Swoole\Coroutine\Server) {
+                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                            if ($connectHandler && $connectMethod) {
+                                $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
                             }
-                            $receiveHandler->$receiveMethod($connection, $connection->exportSocket()->fd, 0, $data);
-                        }
-                    });
+                            if ($receiveHandler instanceof MiddlewareInitializerInterface) {
+                                $receiveHandler->initCoreMiddleware($name);
+                            }
+                            while (true) {
+                                $data = $connection->recv();
+                                if (empty($data)) {
+                                    if ($closeHandler && $closeMethod) {
+                                        $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                    }
+                                    $connection->close();
+                                    break;
+                                }
+                                $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                            }
+                        });
+                    }
                 }
                 return;
         }
