@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~1.1.0",
+        "hyperf/command": "~2.0.0",
         "zircote/swagger-php": "^3.0"
     },
     "require-dev": {

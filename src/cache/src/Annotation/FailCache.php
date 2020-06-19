@@ -34,7 +34,7 @@ class FailCache extends AbstractAnnotation
     public function collectMethod(string $className, ?string $target): void
     {
         if (isset($this->listener)) {
-            CacheListenerCollector::set($this->listener, [
+            CacheListenerCollector::setListener($this->listener, [
                 'className' => $className,
                 'method' => $target,
             ]);

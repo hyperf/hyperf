@@ -55,7 +55,7 @@ class ClearStatCache
         return self::$interval;
     }
 
-    public static function setInterval(int $interval): self
+    public static function setInterval(int $interval)
     {
         self::$interval = $interval;
     }

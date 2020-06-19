@@ -53,7 +53,6 @@ class RouteCollector
      *
      * The syntax used in the $route string depends on the used route parser.
      *
-     * @param string|string[] $httpMethod
      * @param mixed $handler
      */
     public function addRoute(string $route, $handler, array $options = [])

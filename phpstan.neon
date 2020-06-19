@@ -1,93 +1,43 @@
 # Magic behaviour with __get, __set, __call and __callStatic is not exactly static analyser-friendly :)
 # Fortunately, You can ingore it by the following config.
 #
-rules:
-  - PHPStan\Rules\Arrays\DeadForeachRule
-  - PHPStan\Rules\Comparison\BooleanOrConstantConditionRule
-  - PHPStan\Rules\Comparison\ElseIfConstantConditionRule
-  - PHPStan\Rules\Comparison\IfConstantConditionRule
-  - PHPStan\Rules\Comparison\TernaryOperatorConstantConditionRule
 
 parameters:
-  bootstrap: "bootstrap.php"
-  checkFunctionArgumentTypes: true
-  checkArgumentsPassedByReference: true
+  bootstrapFiles:
+    - "bootstrap.php"
+  inferPrivatePropertyTypeFromConstructor: true
+  treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
-  featureToggles:
-    deadCatchesRule: false
-    noopRule: false
-    tooWideTypehints: false
-    unreachableStatement: false
-  ignoreErrors:
-    - "#will always evaluate to false#"
   excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
-
-conditionalTags:
-  PHPStan\Rules\Exceptions\DeadCatchRule:
-    phpstan.rules.rule: %featureToggles.deadCatchesRule%
-  PHPStan\Rules\DeadCode\NoopRule:
-    phpstan.rules.rule: %featureToggles.noopRule%
-  PHPStan\Rules\DeadCode\UnreachableStatementRule:
-    phpstan.rules.rule: %featureToggles.unreachableStatement%
-  PHPStan\Rules\TooWideTypehints\TooWideClosureReturnTypehintRule:
-    phpstan.rules.rule: %featureToggles.tooWideTypehints%
-  PHPStan\Rules\TooWideTypehints\TooWideFunctionReturnTypehintRule:
-    phpstan.rules.rule: %featureToggles.tooWideTypehints%
-  PHPStan\Rules\TooWideTypehints\TooWidePrivateMethodReturnTypehintRule:
-    phpstan.rules.rule: %featureToggles.tooWideTypehints%
-
-services:
-  -
-    class: PHPStan\Rules\Classes\ImpossibleInstanceOfRule
-    arguments:
-      checkAlwaysTrueInstanceof: %checkAlwaysTrueInstanceof%
-    tags:
-      - phpstan.rules.rule
-
-  -
-    class: PHPStan\Rules\Comparison\ImpossibleCheckTypeFunctionCallRule
-    arguments:
-      checkAlwaysTrueCheckTypeFunctionCall: %checkAlwaysTrueCheckTypeFunctionCall%
-    tags:
-      - phpstan.rules.rule
-
-  -
-    class: PHPStan\Rules\Comparison\ImpossibleCheckTypeMethodCallRule
-    arguments:
-      checkAlwaysTrueCheckTypeFunctionCall: %checkAlwaysTrueCheckTypeFunctionCall%
-    tags:
-      - phpstan.rules.rule
-
-  -
-    class: PHPStan\Rules\Comparison\ImpossibleCheckTypeStaticMethodCallRule
-    arguments:
-      checkAlwaysTrueCheckTypeFunctionCall: %checkAlwaysTrueCheckTypeFunctionCall%
-    tags:
-      - phpstan.rules.rule
-
-  -
-    class: PHPStan\Rules\Comparison\StrictComparisonOfDifferentTypesRule
-    arguments:
-      checkAlwaysTrueStrictComparison: %checkAlwaysTrueStrictComparison%
-    tags:
-      - phpstan.rules.rule
-
-  -
-    class: PHPStan\Rules\Exceptions\DeadCatchRule
-
-  -
-    class: PHPStan\Rules\DeadCode\NoopRule
-
-  -
-    class: PHPStan\Rules\DeadCode\UnreachableStatementRule
-
-  -
-    class: PHPStan\Rules\TooWideTypehints\TooWideClosureReturnTypehintRule
-
-  -
-    class: PHPStan\Rules\TooWideTypehints\TooWideFunctionReturnTypehintRule
-
-  -
-    class: PHPStan\Rules\TooWideTypehints\TooWidePrivateMethodReturnTypehintRule
-
+    - %currentWorkingDirectory%/src/*/publish/*
+    - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
+    - %currentWorkingDirectory%/src/circuit-breaker/*
+    - %currentWorkingDirectory%/src/config-zookeeper/*
+    - %currentWorkingDirectory%/src/contract/*
+    - %currentWorkingDirectory%/src/crontab/*
+    - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/graphql/*
+    - %currentWorkingDirectory%/src/grpc/*
+    - %currentWorkingDirectory%/src/grpc-server/*
+    - %currentWorkingDirectory%/src/swagger/*
+    - %currentWorkingDirectory%/src/validation/*
+    - %currentWorkingDirectory%/src/view/*
+  ignoreErrors:
+    - '#side of && is always#'
+    - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
+    - '#Argument of an invalid type Hyperf\\AsyncQueue\\Job supplied for foreach, only iterables are supported#'
+    - '#Variable .* in isset\(\) always exists and is not nullable#'
+    - '#Static call to instance method Hyperf\\DbConnection\\Db.*#'
+    - '#Static call to instance method SplPriorityQueue\:\:insert\(\)#'
+    - '#Call to an undefined method ReflectionType::getName#'
+    - '#Call to an undefined method Traversable<mixed, mixed>\:\:getArrayCopy#'
+    - '#Unsafe usage of new static#'
+    - '#Method Hyperf\\Contract\\Sendable::send#'
+    - '#Variable .* in PHPDoc tag @var does not exist#'
+    - '#Call to an undefined method Hyperf\\DbConnection\\Model\\Model::hydrate#'
+    - '#PHPDoc tag @param has invalid value#'
+    - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
+    - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
+    - '#Function get_debug_type invoked with 1 parameter, 0 required#'
+    - '#gc_status not found#'
