@@ -39,6 +39,7 @@
 
 ## Added
 
+- [#992](https://github.com/hyperf/hyperf/pull/992) Added ReactiveX component.
 - [#1245](https://github.com/hyperf/hyperf/pull/1245) Added Annotation `ExceptionHandler`.
 - [#1245](https://github.com/hyperf/hyperf/pull/1245) Exception handler's config and annotation support priority.
 - [#1819](https://github.com/hyperf/hyperf/pull/1819) Added `hyperf/signal` component.
