@@ -42,14 +42,21 @@ class ExceptionHandlerListener implements ListenerInterface
     public function process(object $event)
     {
         $queue = new SplPriorityQueue();
-        $handlers = $this->config->get(self::HANDLER_KEY);
-        $annotations = AnnotationCollector::getClassesByAnnotation(ExceptionHandler::class);
+        $handlers = $this->config->get(self::HANDLER_KEY, []);
         foreach ($handlers as $server => $items) {
-            foreach ($items as $handler) {
-                $queue->insert([$server, $handler], 0);
+            $count = count($items);
+            $len = strlen((string) $count);
+            foreach ($items as $handler => $priority) {
+                if (! is_numeric($priority)) {
+                    $handler = $priority;
+                    --$count;
+                    $priority = sprintf('0.%d', str_pad((string) $count, $len, '0', STR_PAD_LEFT));
+                }
+                $queue->insert([$server, $handler], $priority);
             }
         }
 
+        $annotations = AnnotationCollector::getClassesByAnnotation(ExceptionHandler::class);
         /**
          * @var string $handler
          * @var ExceptionHandler $annotation
@@ -67,6 +74,7 @@ class ExceptionHandlerListener implements ListenerInterface
         foreach ($queue as $item) {
             [$server, $handler] = $item;
             $result[$server][] = $handler;
+            $result[$server] = array_values(array_unique($result[$server]));
         }
         return $result;
     }
