@@ -16,6 +16,12 @@ use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 
+/**
+ * Class AbstractConstants
+ * @package Hyperf\Constants
+ *
+ * @method static getMessage(...$arguments)
+ */
 abstract class AbstractConstants
 {
     public static function __callStatic($name, $arguments)
