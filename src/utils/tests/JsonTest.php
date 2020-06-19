@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Codec\Json;
@@ -38,18 +37,6 @@ class JsonTest extends TestCase
         ];
         $json = '{"name":"Hyperf"}';
 
-        $this->assertSame($data, Json::decode($json));
-    }
-
-    /**
-     * @expectedException \Hyperf\Utils\Exception\InvalidArgumentException
-     */
-    public function testDecodeException()
-    {
-        $data = [
-            'name' => 'Hyperf',
-        ];
-        $json = '{"name":"Hyperf}';
         $this->assertSame($data, Json::decode($json));
     }
 

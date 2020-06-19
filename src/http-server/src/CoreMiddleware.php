@@ -16,7 +16,6 @@ use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
-use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Exception\ServerErrorHttpException;

@@ -7,9 +7,8 @@ declare(strict_types=1);
  * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Exception;
 
 use Hyperf\HttpMessage\Server\Response;
@@ -24,7 +23,7 @@ class HttpException extends RuntimeException
 
     /**
      * @param int $status HTTP status
-     * @param string $message error message
+     * @param null|string $message error message
      * @param int $code error code
      */
     public function __construct($status, $message = '', $code = 0, \Exception $previous = null)

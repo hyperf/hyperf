@@ -16,7 +16,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 
 class Response extends \Hyperf\HttpMessage\Base\Response
 {
-
     /**
      * @var array
      */

@@ -29,7 +29,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     protected $swooleRequest;
 
     /**
-     * @var RequestParserInterface
+     * @var null|RequestParserInterface
      */
     protected static $parser;
 

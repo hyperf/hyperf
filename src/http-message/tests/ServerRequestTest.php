@@ -11,16 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;
-use Hyperf\HttpMessage\Server\Request;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -121,21 +121,6 @@ class ServerRequestTest extends TestCase
         $this->assertSame(ParserStub::class, get_class(RequestStub::getParser()));
     }
 
-    protected function getContainer()
-    {
-        $container = Mockery::mock(ContainerInterface::class);
-
-        $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('make')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
-        $container->shouldReceive('make')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
-
-        ApplicationContext::setContainer($container);
-
-        $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
-
-        return $container;
-    }
-
     public function testGetUriFromGlobals()
     {
         $swooleRequest = Mockery::mock(SwooleRequest::class);
@@ -154,5 +139,20 @@ class ServerRequestTest extends TestCase
         $request = Request::loadFromSwooleRequest($swooleRequest);
         $uri = $request->getUri();
         $this->assertSame(null, $uri->getPort());
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('make')->with(JsonParser::class, Mockery::any())->andReturn(new JsonParser());
+        $container->shouldReceive('make')->with(XmlParser::class, Mockery::any())->andReturn(new XmlParser());
+
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('get')->with(RequestParserInterface::class)->andReturn(new Parser());
+
+        return $container;
     }
 }
