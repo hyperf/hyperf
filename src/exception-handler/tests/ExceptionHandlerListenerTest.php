@@ -34,20 +34,20 @@ class ExceptionHandlerListenerTest extends TestCase
     {
         $config = new Config([
             'exceptions' => [
-                'handler' => $handler = [
-                    'http' => [
+                'handler' => [
+                    'http' => $http = [
                         'Foo', 'Bar',
                     ],
-                    'ws' => [
+                    'ws' => $ws = [
                         'Foo', 'Tar', 'Bar',
                     ],
                 ],
             ],
         ]);
-        // AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler(['server'=>'http', 'priority' => 0]));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
-        $this->assertEquals($handler, $config->get('exceptions.handler', []));
+        $this->assertSame($http, $config->get('exceptions.handler', [])['http']);
+        $this->assertSame($ws, $config->get('exceptions.handler', [])['ws']);
     }
 
     public function testAnnotation()
@@ -64,7 +64,7 @@ class ExceptionHandlerListenerTest extends TestCase
         AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 1]));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
-        $this->assertEquals([
+        $this->assertSame([
             'http' => [
                 'Bar1', 'Foo', 'Bar',
             ],
@@ -89,12 +89,27 @@ class ExceptionHandlerListenerTest extends TestCase
         AnnotationCollector::collectClass('Bar', ExceptionHandler::class, new ExceptionHandler(['server' => 'ws', 'priority' => 1]));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
-        $this->assertEquals([
-            'http' => [
-                'Foo', 'Bar', 'Bar1',
+        $this->assertEquals(['Foo', 'Bar', 'Bar1'], $config->get('exceptions.handler', [])['http']);
+        $this->assertEquals(['Bar', 'Foo'], $config->get('exceptions.handler', [])['ws']);
+    }
+
+    public function testTheSameHandler()
+    {
+        $config = new Config([
+            'exceptions' => [
+                'handler' => [
+                    'http' => [
+                        'Foo', 'Bar', 'Bar', 'Tar',
+                    ],
+                ],
             ],
-            'ws' => [
-                'Bar', 'Foo',
+        ]);
+        AnnotationCollector::collectClass('Tar', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 1]));
+        $listener = new ExceptionHandlerListener($config);
+        $listener->process(new \stdClass());
+        $this->assertSame([
+            'http' => [
+                'Tar', 'Foo', 'Bar',
             ],
         ], $config->get('exceptions.handler', []));
     }
