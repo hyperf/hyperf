@@ -39,6 +39,8 @@
 
 ## Added
 
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) Added Annotation `ExceptionHandler`.
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) Exception handler's config and annotation support priority.
 - [#1819](https://github.com/hyperf/hyperf/pull/1819) Added `hyperf/signal` component.
 - [#1844](https://github.com/hyperf/hyperf/pull/1844) Support type `\DateInterval` for `ttl` in `model-cache`.
 - [#1855](https://github.com/hyperf/hyperf/pull/1855) Added `ConstantFrequency` to flush one connection, when it is idle connection for the interval of time.
@@ -61,25 +63,23 @@ class Example {
 ```
 - [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `Hyperf\HttpServer\ResponseEmitter` class to emit any PSR-7 response object with Swoole server, and extracted `Hyperf\Contract\ResponseEmitterInterface`.
 - [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `getTrailers()` and `getTrailer(string $key)` and `withTrailer(string $key, $value)` methods for `Hyperf\HttpMessage\Server\Response`.
+- [#1920](https://github.com/hyperf/hyperf/pull/1920) Added method `Hyperf\WebSocketServer\Sender::close(int $fd, bool $reset = null)`.
 
 ## Fixed
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 - [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal does not work.
 
 ## Optimized
 
 - [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
 - [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.
 
 ## Changed
 
 - [#1846](https://github.com/hyperf/hyperf/pull/1846) Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
-
-## Removed
-
-- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
-
 ```php
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\Serializer;
@@ -88,3 +88,8 @@ return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
 ];
 ```
+
+## Removed
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
+- [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.

@@ -37,6 +37,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          */
         [$throwable, $handlers] = $params;
         $response = Context::get(ResponseInterface::class);
+
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
                 throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));

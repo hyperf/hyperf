@@ -22,10 +22,8 @@ use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
@@ -34,13 +32,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      * @var \Hyperf\Di\Aop\VisitorMetadata
      */
     protected $visitorMetadata;
-
-    /**
-     * Determine if the class used proxy trait.
-     *
-     * @var bool
-     */
-    private $useProxyTrait = false;
 
     /**
      * Define the proxy handler trait here.
@@ -52,16 +43,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             ProxyTrait::class,
         ];
 
-    /**
-     * @var null|Identifier
-     */
-    private $class;
-
-    /**
-     * @var null|Name
-     */
-    private $extends;
-
     public function __construct(VisitorMetadata $visitorMetadata)
     {
         $this->visitorMetadata = $visitorMetadata;
@@ -69,45 +50,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
-        foreach ($nodes as $namespace) {
-            if ($namespace instanceof Node\Stmt\Declare_) {
-                continue;
-            }
-            if (! $namespace instanceof Namespace_) {
-                break;
-            }
-            // Add current class namespace.
-            $usedNamespace = [
-                $namespace->name->toCodeString(),
-            ];
-            foreach ($namespace->stmts as $class) {
-                switch ($class) {
-                    case $class instanceof Use_:
-                        // Collect the namespace which the current class imported.
-                        foreach ($class->uses as $classUse) {
-                            $usedNamespace[] = $classUse->name->toCodeString();
-                        }
-                        break;
-                    case $class instanceof Class_ && ! $class->isAnonymous():
-                        if ($class->extends) {
-                            $this->extends = $class->extends;
-                        }
-                        // Determine if the current class has used the proxy trait.
-                        foreach ($class->stmts as $subNode) {
-                            if ($subNode instanceof TraitUse) {
-                                /** @var Name $trait */
-                                foreach ($subNode->traits as $trait) {
-                                    if ($this->isMatchUseTrait($usedNamespace, $trait->toCodeString())) {
-                                        $this->useProxyTrait = true;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-
         return null;
     }
 
@@ -123,7 +65,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
-                array_unshift($stmts, $this->buildProxyCallTraitUseStatement());
+                if ($stmt = $this->buildProxyCallTraitUseStatement()) {
+                    array_unshift($stmts, $stmt);
+                }
                 $node->stmts = $stmts;
                 unset($stmts);
                 return $node;
@@ -132,29 +76,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     }
 
     /**
-     * @param array $namespaces the namespaces that the current class imported
-     * @param string $trait the full namespace of trait or the trait name
-     */
-    private function isMatchUseTrait(array $namespaces, string $trait): bool
-    {
-        // @TODO use $this->proxyTraits.
-        $proxyTrait = ProxyTrait::class;
-        $trait = ltrim($trait, '\\');
-        if ($trait === $proxyTrait) {
-            return true;
-        }
-        foreach ($namespaces as $namespace) {
-            if (ltrim($namespace, '\\') . '\\' . $trait === $proxyTrait) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Build `use ProxyTrait;`.
      */
-    private function buildProxyCallTraitUseStatement(): TraitUse
+    private function buildProxyCallTraitUseStatement(): ?TraitUse
     {
         $traits = [];
         foreach ($this->proxyTraits as $proxyTrait) {
@@ -164,6 +88,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             // Add backslash prefix if the proxy trait does not start with backslash.
             $proxyTrait[0] !== '\\' && $proxyTrait = '\\' . $proxyTrait;
             $traits[] = new Name($proxyTrait);
+        }
+
+        if (empty($traits)) {
+            return null;
         }
         return new TraitUse($traits);
     }
@@ -222,10 +150,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
-        // if (! $node->name) {
-        //     return false;
-        // }
-
         $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());

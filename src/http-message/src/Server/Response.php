@@ -56,6 +56,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
 
     /**
      * Returns an instance with specified trailer.
+     * @param string $value
      */
     public function withTrailer(string $key, $value): self
     {

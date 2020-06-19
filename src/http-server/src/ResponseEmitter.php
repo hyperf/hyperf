@@ -20,6 +20,9 @@ class ResponseEmitter implements ResponseEmitterInterface
 {
     public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
     {
+        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+            return;
+        }
         $this->buildSwooleResponse($swooleResponse, $response);
         $content = $response->getBody();
         if ($content instanceof FileInterface) {
