@@ -20,7 +20,7 @@ use Hyperf\Utils\Str;
  * Class AbstractConstants
  * @package Hyperf\Constants
  *
- * @method static getMessage(...$arguments)
+ * @method static getMessage($code, ...$arguments)
  */
 abstract class AbstractConstants
 {
