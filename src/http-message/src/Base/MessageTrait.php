@@ -36,7 +36,7 @@ trait MessageTrait
     protected $protocol = '1.1';
 
     /**
-     * @var StreamInterface
+     * @var null|StreamInterface
      */
     protected $stream;
 

@@ -13,9 +13,4 @@ namespace HyperfTest\Di\Stub;
 
 class AspectCollector extends \Hyperf\Di\Annotation\AspectCollector
 {
-    public static function clear()
-    {
-        self::$container = [];
-        self::$aspectRules = [];
-    }
 }

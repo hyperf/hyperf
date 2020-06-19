@@ -3,9 +3,10 @@
   * [项目介绍](zh-cn/README.md)
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
-  * [参与开发](zh/contribute.md)
+  * [参与开发](zh-cn/contribute.md)
   
 * 版本管理
+
   * [版本计划](zh-cn/release-planning.md)
   * [版本说明](zh-cn/versions.md)
   * [版本更新记录](zh-cn/changelog.md)

@@ -18,7 +18,7 @@ use Serializable;
 class Message implements MessageInterface, Serializable
 {
     /**
-     * @var JobInterface
+     * @var CompressInterface|JobInterface|UnCompressInterface
      */
     protected $job;
 

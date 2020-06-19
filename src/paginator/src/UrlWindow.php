@@ -18,7 +18,7 @@ class UrlWindow
     /**
      * The paginator implementation.
      *
-     * @var LengthAwarePaginatorInterface
+     * @var AbstractPaginator|LengthAwarePaginatorInterface
      */
     protected $paginator;
 

@@ -202,7 +202,6 @@ abstract class AbstractServiceClient
                     break;
                 default:
                     throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
-                    break;
             }
             return [$nodes, $refreshCallback];
         }
