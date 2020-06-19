@@ -22,6 +22,7 @@ use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Codec\Xml;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -32,7 +33,6 @@ use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use SimpleXMLElement;
 use function get_class;
 
 class Response implements PsrResponseInterface, ResponseInterface
@@ -468,33 +468,9 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param mixed $root
      * @throws EncodingException when the data encoding error
      */
-    protected function toXml($data, $parentNode = null, $root = 'root')
+    protected function toXml($data, $parentNode = null, $root = 'root'): string
     {
-        if ($data instanceof Xmlable) {
-            return (string) $data;
-        }
-        if ($data instanceof Arrayable) {
-            $data = $data->toArray();
-        } else {
-            $data = (array) $data;
-        }
-        if ($parentNode === null) {
-            $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?>' . "<{$root}></{$root}>");
-        } else {
-            $xml = $parentNode;
-        }
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $this->toXml($value, $xml->addChild($key));
-            } else {
-                if (is_numeric($key)) {
-                    $xml->addChild('item' . $key, (string) $value);
-                } else {
-                    $xml->addChild($key, (string) $value);
-                }
-            }
-        }
-        return trim($xml->asXML());
+        return Xml::toXml($data, $parentNode = null, $root = 'root');
     }
 
     /**
