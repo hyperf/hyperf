@@ -20,7 +20,7 @@ $message = ErrorCode::messages[ErrorCode::SERVER_ERROR] ?? '未知错误';
 
 ```
 
-但这种实现方式并不友好，每当要查询错误码与对应错误信息时，都要在当前 `Class` 中搜索两次。所以框架提供了基于注解的枚举类。
+但这种实现方式并不友好，每当要查询错误码与对应错误信息时，都要在当前 `Class` 中搜索两次，所以框架提供了基于注解的枚举类。
 
 ## 安装
 
@@ -31,6 +31,12 @@ composer require hyperf/constants
 ## 使用
 
 ### 定义枚举类
+
+通过 `gen:constants` 命令可以快速的生成一个枚举类。
+
+```bash
+php bin/hyperf.php gen:constants ErrorCode
+```
 
 ```php
 <?php
@@ -57,7 +63,6 @@ class ErrorCode extends AbstractConstants
      */
     const SYSTEM_INVALID = 700;
 }
-
 ```
 
 用户可以使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 来获取对应错误信息。
@@ -88,7 +93,6 @@ class BusinessException extends ServerException
         parent::__construct($message, $code, $previous);
     }
 }
-
 ```
 
 ### 抛出异常
@@ -112,7 +116,6 @@ class IndexController extends Controller
         throw new BusinessException(ErrorCode::SERVER_ERROR);
     }
 }
-
 ```
 
 ### 可变参数
@@ -139,7 +142,6 @@ class ErrorCode extends AbstractConstants
 $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
 
 // 1.2 版本以下 可以使用以下方式，但会在 1.2 版本移除
-
 $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
 ```
 
@@ -180,4 +182,3 @@ class ErrorCode extends AbstractConstants
 
 $message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
 ```
-
