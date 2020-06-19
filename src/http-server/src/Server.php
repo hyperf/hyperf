@@ -15,7 +15,6 @@ use FastRoute\Dispatcher;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
-use Hyperf\Contract\Sendable;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
@@ -72,15 +71,21 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $routerDispatcher;
 
     /**
+     * @var \Hyperf\HttpServer\ResponseEmitter
+     */
+    protected $responseEmitter;
+
+    /**
      * @var string
      */
     protected $serverName;
 
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher)
+    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher, ResponseEmitter $responseEmitter)
     {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
+        $this->responseEmitter = $responseEmitter;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -116,13 +121,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! isset($psr7Response) || ! $psr7Response instanceof Sendable) {
+            if (! isset($psr7Request) || ! isset($psr7Response)) {
                 return;
             }
             if ($psr7Request->getMethod() === 'HEAD') {
-                $psr7Response->send(false);
+                $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
-                $psr7Response->send(true);
+                $this->responseEmitter->emit($psr7Response, $response, true);
             }
         }
     }
@@ -162,8 +167,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
     {
         // Initialize PSR-7 Request and Response objects.
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
     }
 }

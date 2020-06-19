@@ -36,7 +36,6 @@ trait MetricSetter
     /**
      * Create an array of gauges.
      * @param array<string, string> $labels
-     * @param array<int, string> $names
      * @return GaugeInterface[]
      */
     private function factoryMetrics(array $labels, string ...$names): array

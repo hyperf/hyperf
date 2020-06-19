@@ -11,9 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\HttpMessage\Exception\BadRequestHttpException;
+use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -24,6 +27,11 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @var \Swoole\Http\Request
      */
     protected $swooleRequest;
+
+    /**
+     * @var null|RequestParserInterface
+     */
+    protected static $parser;
 
     /**
      * @var array
@@ -75,7 +83,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         $uri = self::getUriFromGlobals($swooleRequest);
         $body = new SwooleStream((string) $swooleRequest->rawContent());
         $protocol = isset($server['server_protocol']) ? str_replace('HTTP/', '', $server['server_protocol']) : '1.1';
-        $request = new static($method, $uri, $headers, $body, $protocol);
+        $request = new Request($method, $uri, $headers, $body, $protocol);
         $request->cookieParams = ($swooleRequest->cookie ?? []);
         $request->queryParams = ($swooleRequest->get ?? []);
         $request->serverParams = ($server ?? []);
@@ -404,7 +412,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     public function url()
     {
-        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
 
     /**
@@ -439,7 +447,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     public function isXmlHttpRequest()
     {
-        return $this->hasHeader('X-Requested-With') == 'XMLHttpRequest';
+        return $this->getHeaderLine('X-Requested-With') == 'XMLHttpRequest';
     }
 
     public function getSwooleRequest(): \Swoole\Http\Request
@@ -462,12 +470,39 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             return $data;
         }
 
-        $contentType = strtolower($request->getHeaderLine('Content-Type'));
-        if (strpos($contentType, 'application/json') === 0) {
-            $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $rawContentType = $request->getHeaderLine('content-type');
+        if (($pos = strpos($rawContentType, ';')) !== false) {
+            // e.g. text/html; charset=UTF-8
+            $contentType = strtolower(substr($rawContentType, 0, $pos));
+        } else {
+            $contentType = strtolower($rawContentType);
+        }
+
+        try {
+            $parser = static::getParser();
+            if ($parser->has($contentType)) {
+                $data = $parser->parse($request->getBody()->getContents(), $contentType);
+            }
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
         }
 
         return $data;
+    }
+
+    protected static function getParser(): RequestParserInterface
+    {
+        if (static::$parser instanceof RequestParserInterface) {
+            return static::$parser;
+        }
+
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(RequestParserInterface::class)) {
+            $parser = ApplicationContext::getContainer()->get(RequestParserInterface::class);
+        } else {
+            $parser = new Parser();
+        }
+
+        return static::$parser = $parser;
     }
 
     /**
@@ -490,7 +525,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $normalized[$key] = self::normalizeFiles($value);
                 continue;
             } else {
-                throw new \InvalidArgumentException('Invalid value in files specification');
+                throw new BadRequestHttpException('Invalid value in files specification');
             }
         }
 

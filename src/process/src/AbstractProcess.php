@@ -15,9 +15,12 @@ use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\Event\AfterProcessHandle;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
+use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
+use Hyperf\Server\CoroutineServer;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -65,7 +68,7 @@ abstract class AbstractProcess implements ProcessInterface
     protected $event;
 
     /**
-     * @var SwooleProcess
+     * @var null|SwooleProcess
      */
     protected $process;
 
@@ -92,12 +95,27 @@ abstract class AbstractProcess implements ProcessInterface
         }
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         return true;
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
+    {
+        if (CoroutineServer::isCoroutineServer($server)) {
+            $this->bindCoroutineServer($server);
+            return;
+        }
+
+        if ($server instanceof Server) {
+            $this->bindServer($server);
+            return;
+        }
+
+        throw new ServerInvalidException(sprintf('Server %s is invalid.', get_class($server)));
+    }
+
+    protected function bindServer(Server $server): void
     {
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
@@ -128,6 +146,27 @@ abstract class AbstractProcess implements ProcessInterface
             if ($this->enableCoroutine) {
                 ProcessCollector::add($this->name, $process);
             }
+        }
+    }
+
+    protected function bindCoroutineServer($server): void
+    {
+        $num = $this->nums;
+        for ($i = 0; $i < $num; ++$i) {
+            $handler = function () use ($i) {
+                $this->event && $this->event->dispatch(new BeforeCoroutineHandle($this, $i));
+                while (true) {
+                    try {
+                        $this->handle();
+                    } catch (\Throwable $throwable) {
+                        $this->logThrowable($throwable);
+                    } finally {
+                        sleep($this->restartInterval);
+                    }
+                }
+            };
+
+            go($handler);
         }
     }
 

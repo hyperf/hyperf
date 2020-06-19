@@ -68,7 +68,7 @@ class BaseClientTest extends TestCase
         $this->getContainer();
         $client = new BaseClient('127.0.0.1:1111');
         $this->expectException(GrpcClientException::class);
-        $client->getGrpcClient();
+        $client->_getGrpcClient();
     }
 
     public function testGrpcClientLaziness()
@@ -76,7 +76,7 @@ class BaseClientTest extends TestCase
         $this->getContainer();
         $client = new BaseClient('127.0.0.1:2222');
         $this->assertTrue(true); // No Exception Occurs
-        $this->assertNotNull($client->getGrpcClient());
+        $this->assertNotNull($client->_getGrpcClient());
     }
 
     public function testGrpcClientAutoClose()
@@ -84,7 +84,7 @@ class BaseClientTest extends TestCase
         $this->getContainer();
         $client = new BaseClient('127.0.0.1:2222');
         $this->assertTrue($client->isConnected());
-        $grpcClient = $client->getGrpcClient();
+        $grpcClient = $client->_getGrpcClient();
         unset($client);
         $this->assertFalse($grpcClient->isConnected());
     }

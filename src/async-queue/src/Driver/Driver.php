@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue\Driver;
 
-use Hyperf\AsyncQueue\Environment;
 use Hyperf\AsyncQueue\Event\AfterHandle;
 use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
@@ -28,6 +27,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Driver implements DriverInterface
 {
+    /**
+     * @var bool
+     */
+    public static $running = true;
+
     /**
      * @var ContainerInterface
      */
@@ -77,12 +81,10 @@ abstract class Driver implements DriverInterface
 
     public function consume(): void
     {
-        $this->container->get(Environment::class)->setAsyncQueue(true);
-
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (true) {
+        while (self::$running) {
             [$data, $message] = $this->pop();
 
             if ($data === false) {
