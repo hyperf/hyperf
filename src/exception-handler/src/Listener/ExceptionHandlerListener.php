@@ -19,7 +19,7 @@ use Hyperf\ExceptionHandler\Exception\ServerNotFoundException;
 use Hyperf\Framework\Event\BootApplication;
 use SplPriorityQueue;
 
-class ExceptionHandlerAnnotationListener implements ListenerInterface
+class ExceptionHandlerListener implements ListenerInterface
 {
     const HANDLER_KEY = 'exceptions.handler';
 
