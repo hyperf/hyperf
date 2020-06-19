@@ -9,13 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ExceptionHandler\Exception;
 
-class ServerNotFoundException extends \Exception
+class ServerNotFoundException extends \InvalidArgumentException
 {
-    public function __construct($message = '')
-    {
-        parent::__construct($message);
-    }
 }
