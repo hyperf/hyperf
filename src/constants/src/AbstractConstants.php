@@ -55,7 +55,7 @@ abstract class AbstractConstants
         return $message;
     }
 
-    public static function toSelectArray()
+    public static function toArray()
     {
         $class = get_called_class();
 
