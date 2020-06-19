@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
+use Hyperf\Constants\UnFormat;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use HyperfTest\Constants\Stub\CustomFormat;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -94,6 +97,42 @@ class AnnotationReaderTest extends TestCase
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), 'zh_CN');
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_ERROR_MESSAGE);
         $this->assertSame('错误信息', $res);
+    }
+
+    public function testGetMessageToArray()
+    {
+        $expect = [
+            500 => 'Server Error!',
+            501 => 'SHOW ECHO',
+            503 => 'Params[%s] is invalid.',
+            504 => 'error.message',
+            505 => 'error.not_exist',
+        ];
+
+        $data = ErrorCodeStub::getMessageToArray();
+
+        $unFormatData = ErrorCodeStub::getMessageToArray(new UnFormat());
+
+        $collectorData = ConstantsCollector::getMessageToArray(ErrorCodeStub::class);
+
+        $this->assertSame($expect, $data);
+        $this->assertSame($expect, $unFormatData);
+        $this->assertSame($expect, $collectorData);
+    }
+
+    public function testGetMessageToArrayUseFormat()
+    {
+        $expect = [
+            ['code' => 500, 'msg' => 'Server Error!'],
+            ['code' => 501, 'msg' => 'SHOW ECHO'],
+            ['code' => 503, 'msg' => 'Params[%s] is invalid.'],
+            ['code' => 504, 'msg' => 'error.message'],
+            ['code' => 505, 'msg' => 'error.not_exist'],
+        ];
+
+        $data = ErrorCodeStub::getMessageToArray(new CustomFormat());
+
+        $this->assertSame($expect, $data);
     }
 
     protected function getContainer($has = false)

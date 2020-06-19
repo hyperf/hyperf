@@ -24,4 +24,20 @@ class ConstantsCollector extends MetadataCollector
     {
         return static::$container[$className][$code][$key] ?? '';
     }
+
+    public static function getMessageToArray($className, ?Format $format = null)
+    {
+        $format = $format ?: new UnFormat();
+
+        $constants = [];
+        foreach (static::get($className, []) as $code => $value) {
+            $tmp = $format->parse($code, self::getValue($className, $code, 'message'));
+            if ($format instanceof UnFormat) {
+                $constants += $tmp;
+            } else {
+                $constants = array_merge($constants, $tmp);
+            }
+        }
+        return $constants;
+    }
 }

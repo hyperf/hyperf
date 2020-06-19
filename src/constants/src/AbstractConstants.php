@@ -24,6 +24,11 @@ use Hyperf\Utils\Str;
  */
 abstract class AbstractConstants
 {
+    public static function getMessageToArray(?Format $format = null)
+    {
+        return ConstantsCollector::getMessageToArray(static::class, $format);
+    }
+
     public static function __callStatic($name, $arguments)
     {
         if (! Str::startsWith($name, 'get')) {
