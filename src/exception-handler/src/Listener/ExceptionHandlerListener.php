@@ -15,7 +15,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
-use Hyperf\ExceptionHandler\Exception\ServerNotFoundException;
 use Hyperf\Framework\Event\BootApplication;
 use SplPriorityQueue;
 
@@ -40,9 +39,6 @@ class ExceptionHandlerListener implements ListenerInterface
         ];
     }
 
-    /**
-     * @throws ServerNotFoundException
-     */
     public function process(object $event)
     {
         $queue = new SplPriorityQueue();
