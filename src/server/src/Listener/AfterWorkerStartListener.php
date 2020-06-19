@@ -51,17 +51,18 @@ class AfterWorkerStartListener implements ListenerInterface
         /** @var AfterWorkerStart|MainCoroutineServerStart $event */
         $isCoroutineServer = $event instanceof MainCoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
-            /** @var Port $server */
+            /** @var Port|\Swoole\Coroutine\Server $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type, $server) {
                     switch ($type) {
                         case Server::SERVER_BASE:
                             $sockType = $server->type;
-                            if (($sockType === SWOOLE_SOCK_TCP) || ($sockType === SWOOLE_SOCK_TCP6)) {
+                            // type of Swoole\Coroutine\Server is equal to SWOOLE_SOCK_UDP
+                            if ($server instanceof \Swoole\Coroutine\Server || in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
                                 return 'TCP';
                             }
-                            if (($sockType === SWOOLE_SOCK_UDP) || ($sockType === SWOOLE_SOCK_UDP6)) {
+                            if (in_array($sockType, [SWOOLE_SOCK_UDP, SWOOLE_SOCK_UDP6])) {
                                 return 'UDP';
                             }
                             return 'UNKNOWN';
