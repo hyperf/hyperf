@@ -55,6 +55,13 @@ abstract class AbstractConstants
         return $message;
     }
 
+    public static function toSelectArray()
+    {
+        $class = get_called_class();
+
+        return ConstantsCollector::getArray($class);
+    }
+
     protected static function translate($key, $arguments): ?string
     {
         if (! ApplicationContext::hasContainer() || ! ApplicationContext::getContainer()->has(TranslatorInterface::class)) {
