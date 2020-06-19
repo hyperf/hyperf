@@ -57,7 +57,7 @@ abstract class AbstractConstants
 
     public static function toArray()
     {
-        $class = get_called_class();
+        $class = static::class;
 
         return ConstantsCollector::getArray($class);
     }
