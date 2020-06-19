@@ -27,6 +27,11 @@ class ExceptionHandlerListener implements ListenerInterface
      */
     private $config;
 
+    /**
+     * @var int
+     */
+    private $serial = PHP_INT_MAX;
+
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
@@ -44,15 +49,12 @@ class ExceptionHandlerListener implements ListenerInterface
         $queue = new SplPriorityQueue();
         $handlers = $this->config->get(self::HANDLER_KEY, []);
         foreach ($handlers as $server => $items) {
-            $count = count($items);
-            $len = strlen((string) $count);
             foreach ($items as $handler => $priority) {
                 if (! is_numeric($priority)) {
                     $handler = $priority;
-                    --$count;
-                    $priority = sprintf('0.%d', str_pad((string) $count, $len, '0', STR_PAD_LEFT));
+                    $priority = 0;
                 }
-                $queue->insert([$server, $handler], $priority);
+                $queue->insert([$server, $handler], [$priority, $this->serial--]);
             }
         }
 
@@ -62,7 +64,7 @@ class ExceptionHandlerListener implements ListenerInterface
          * @var ExceptionHandler $annotation
          */
         foreach ($annotations as $handler => $annotation) {
-            $queue->insert([$annotation->server, $handler], $annotation->priority);
+            $queue->insert([$annotation->server, $handler], [$annotation->priority, $this->serial--]);
         }
 
         $this->config->set(self::HANDLER_KEY, $this->formatExceptionHandlers($queue));
