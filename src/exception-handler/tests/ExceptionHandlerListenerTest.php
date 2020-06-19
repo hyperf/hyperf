@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\ExceptionHandler;
 
 use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
 use Hyperf\ExceptionHandler\Listener\ExceptionHandlerListener;
@@ -72,8 +71,31 @@ class ExceptionHandlerListenerTest extends TestCase
         ], $config->get('exceptions.handler', []));
     }
 
-    protected function mockConfig()
+    public function testAnnotationWithSamePriotity()
     {
-        return Mockery::mock(ConfigInterface::class);
+        $config = new Config([
+            'exceptions' => [
+                'handler' => [
+                    'http' => [
+                        'Foo', 'Bar',
+                    ],
+                    'ws' => [
+                        'Foo',
+                    ],
+                ],
+            ],
+        ]);
+        AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 0]));
+        AnnotationCollector::collectClass('Bar', ExceptionHandler::class, new ExceptionHandler(['server' => 'ws', 'priority' => 1]));
+        $listener = new ExceptionHandlerListener($config);
+        $listener->process(new \stdClass());
+        $this->assertEquals([
+            'http' => [
+                'Foo', 'Bar', 'Bar1',
+            ],
+            'ws' => [
+                'Bar', 'Foo',
+            ],
+        ], $config->get('exceptions.handler', []));
     }
 }
