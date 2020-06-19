@@ -15,7 +15,7 @@ namespace Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\Utils\Exception\InvalidArgumentException;
-use Hyperf\Utils\Xml;
+use Hyperf\Utils\Codec\Xml;
 
 class XmlParser implements RequestParserInterface
 {

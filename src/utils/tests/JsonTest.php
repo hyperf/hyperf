@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Json;
+use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
 
 /**

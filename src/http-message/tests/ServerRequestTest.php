@@ -17,7 +17,7 @@ use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Xml;
+use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Utils\Codec\Json;

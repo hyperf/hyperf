@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Xml;
+use Hyperf\Utils\Codec\Xml;
 use PHPUnit\Framework\TestCase;
 
 /**

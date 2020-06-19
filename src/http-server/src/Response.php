@@ -29,7 +29,7 @@ use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
-use Hyperf\Utils\Xml;
+use Hyperf\Utils\Codec\Xml;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;

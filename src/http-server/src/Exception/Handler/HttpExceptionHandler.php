@@ -21,8 +21,14 @@ use Throwable;
 
 class HttpExceptionHandler extends ExceptionHandler
 {
+    /**
+     * @var StdoutLoggerInterface
+     */
     protected $logger;
 
+    /**
+     * @var FormatterInterface
+     */
     protected $formatter;
 
     public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
@@ -36,14 +42,11 @@ class HttpExceptionHandler extends ExceptionHandler
      */
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        $this->logger->warning($this->formatter->format($throwable));
+        $this->logger->debug($this->formatter->format($throwable));
 
-        $code = $throwable->getCode();
-        if ($throwable instanceof HttpException) {
-            $code = $throwable->getStatusCode();
-        }
+        $this->stopPropagation();
 
-        return $response->withStatus($code)->withBody(new SwooleStream($throwable->getMessage()));
+        return $response->withStatus($throwable->getStatusCode())->withBody(new SwooleStream($throwable->getMessage()));
     }
 
     /**
@@ -55,6 +58,6 @@ class HttpExceptionHandler extends ExceptionHandler
      */
     public function isValid(Throwable $throwable): bool
     {
-        return true;
+        return $throwable instanceof HttpException;
     }
 }

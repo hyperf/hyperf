@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Utils;
+namespace Hyperf\Utils\Codec;
 
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Xmlable;

@@ -31,7 +31,7 @@ class HttpException extends RuntimeException
     {
         $this->statusCode = $status;
         if (is_null($message)) {
-            $message = Response::$httpStatuses[$status] ?? '';
+            $message = Response::getReasonPhraseByCode($status);
         }
 
         parent::__construct($message, $code, $previous);
@@ -47,10 +47,10 @@ class HttpException extends RuntimeException
      */
     public function getName(): string
     {
-        if (isset(Response::$httpStatuses[$this->statusCode])) {
-            return Response::$httpStatuses[$this->statusCode];
+        $message = Response::getReasonPhraseByCode($this->statusCode);
+        if (! $message) {
+            $message = 'Error';
         }
-
-        return 'Error';
+        return $message;
     }
 }
