@@ -98,11 +98,11 @@ return [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
             PDO::ATTR_STRINGIFY_FETCHES => false,
+            // 如果使用的為非原生 MySQL 或雲廠商提供的 DB 如從庫/分析型實例等不支持 MySQL prepare 協議的, 將此項設置為 true
             PDO::ATTR_EMULATE_PREPARES => false,
         ],
     ],
 ];
-
 ```
 
 ### 讀寫分離

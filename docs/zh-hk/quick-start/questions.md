@@ -96,4 +96,7 @@ composer require "symfony/event-dispatcher:^4.3"
     },
 ```
 
+## 使用 AMQP 組件報 `Swoole\Error: API must be called in the coroutine` 錯誤
+
+可以在 `config/autoload/amqp.php` 配置文件中將 `close_on_destruct` 改為 `false` 即可。
 
