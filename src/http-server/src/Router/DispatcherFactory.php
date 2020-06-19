@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -38,7 +37,7 @@ class DispatcherFactory
     protected $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
-     * @var \FastRoute\RouteCollector[]
+     * @var RouteCollector[]
      */
     protected $routers = [];
 

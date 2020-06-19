@@ -9,12 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Psr\Http\Message\StreamInterface;
 use Laminas\Mime\Decode;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -37,7 +36,7 @@ trait MessageTrait
     protected $protocol = '1.1';
 
     /**
-     * @var StreamInterface
+     * @var null|StreamInterface
      */
     protected $stream;
 

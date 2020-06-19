@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Hyperf\Utils\Exception\ParallelExecutionException;
@@ -39,10 +38,10 @@ class Parallel
 
     public function add(callable $callable, $key = null)
     {
-        if (is_string($key)) {
-            $this->callbacks[$key] = $callable;
-        } else {
+        if (is_null($key)) {
             $this->callbacks[] = $callable;
+        } else {
+            $this->callbacks[$key] = $callable;
         }
     }
 

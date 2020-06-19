@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SuperGlobals\Proxy;
 
 use Hyperf\SuperGlobals\Exception\InvalidOperationException;
@@ -35,8 +34,16 @@ class Server extends Proxy
         foreach ($this->getRequest()->getHeaders() as $key => $value) {
             $headers['HTTP_' . str_replace('-', '_', Str::upper($key))] = $value;
         }
-
-        return array_merge($this->default, $this->getRequest()->getServerParams(), $headers);
+        $result = [];
+        foreach (array_merge($this->default, $this->getRequest()->getServerParams(), $headers) as $key => $value) {
+            $key = Str::upper($key);
+            if (is_array($value) && count($value) == 1) {
+                $result[$key] = $value[0];
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
     protected function override(ServerRequestInterface $request, array $data): ServerRequestInterface

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Rpc\Contract;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
@@ -17,6 +16,8 @@ use Hyperf\LoadBalancer\LoadBalancerInterface;
 interface TransporterInterface
 {
     public function send(string $data);
+
+    public function recv();
 
     public function getLoadBalancer(): ?LoadBalancerInterface;
 

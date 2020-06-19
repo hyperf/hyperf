@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
 class ConfigProvider
@@ -25,6 +24,9 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                ],
+                'ignore_annotations' => [
+                    'mixin',
                 ],
             ],
             'publish' => [

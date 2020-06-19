@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Logger;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
+use Monolog\Handler\TestHandler;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -36,5 +36,16 @@ class LoggerTest extends TestCase
 
         $this->assertInstanceOf(StdoutLoggerInterface::class, $logger);
         $this->assertInstanceOf(LoggerInterface::class, $logger);
+    }
+
+    public function testLogThrowable()
+    {
+        $logger = new Logger('test', [
+            $handler = new TestHandler(),
+        ]);
+
+        $logger->error(new \RuntimeException('Invalid Arguments'));
+
+        $this->assertRegExp('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
     }
 }

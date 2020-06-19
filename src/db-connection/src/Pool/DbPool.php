@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Contract\ConfigInterface;
@@ -40,7 +39,7 @@ class DbPool extends Pool
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
 
-        $this->frequency = make(Frequency::class);
+        $this->frequency = make(Frequency::class, [$this]);
         parent::__construct($container, $options);
     }
 

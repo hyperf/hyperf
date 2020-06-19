@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Utils\Str;
@@ -96,7 +95,7 @@ class Option
         return $this->namespaces;
     }
 
-    public function setNamespaces(string $namespaces): self
+    public function setNamespaces(array $namespaces): self
     {
         $this->namespaces = $namespaces;
         return $this;

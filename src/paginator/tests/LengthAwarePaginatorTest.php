@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Paginator;
 
 use Hyperf\Paginator\LengthAwarePaginator;
@@ -38,5 +37,12 @@ class LengthAwarePaginatorTest extends TestCase
 
         $this->assertSame(3, $paginator->firstItem());
         $this->assertSame(4, $paginator->lastItem());
+    }
+
+    public function testAppends()
+    {
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2, 2);
+        $paginator = $paginator->appends('keyword', 'Hyperf');
+        $this->assertSame('/?keyword=Hyperf&page=1', $paginator->url(1));
     }
 }

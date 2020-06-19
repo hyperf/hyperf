@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
@@ -1157,6 +1156,16 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals(1, $result);
 
         Carbon::setTestNow(null);
+    }
+
+    public function testWithCastsMethod()
+    {
+        $builder = new Builder($this->getMockQueryBuilder());
+        $model = $this->getMockModel();
+        $builder->setModel($model);
+
+        $model->shouldReceive('mergeCasts')->with(['foo' => 'bar'])->once();
+        $builder->withCasts(['foo' => 'bar']);
     }
 
     protected function mockConnectionForModel($model, $database)

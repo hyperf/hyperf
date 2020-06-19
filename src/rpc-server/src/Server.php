@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,9 +19,12 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -96,15 +98,15 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
-            HttpExceptionHandler::class,
-        ]);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void
     {
         $request = $response = null;
         try {
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
@@ -137,6 +139,13 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
     }
 
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
+    }
+
     protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
     {
         $server->send($fd, (string) $response->getBody());
@@ -155,5 +164,10 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             return $psr7Response->withBody(new SwooleStream($response));
         }
         return null;
+    }
+
+    protected function getContext()
+    {
+        return $this->container->get(RpcContext::class);
     }
 }

@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigAliyunAcm;
 
+use Hyperf\ConfigAliyunAcm\Listener\BootProcessListener;
 use Hyperf\ConfigAliyunAcm\Listener\OnPipeMessageListener;
 use Hyperf\ConfigAliyunAcm\Process\ConfigFetcherProcess;
 
@@ -27,6 +27,7 @@ class ConfigProvider
                 ConfigFetcherProcess::class,
             ],
             'listeners' => [
+                BootProcessListener::class,
                 OnPipeMessageListener::class,
             ],
             'annotations' => [

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Listener;
 
 use Doctrine\Instantiator\Instantiator;
@@ -63,7 +62,7 @@ class MainWorkerStartListener implements ListenerInterface
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
             $instantiator = $this->container->get(Instantiator::class);
             /**
-             * @var string
+             * @var string $producerMessageClass
              * @var Producer $annotation
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {

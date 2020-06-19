@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Constants\Stub;
 
 use Hyperf\Constants\AbstractConstants;
@@ -43,4 +42,24 @@ class ErrorCodeStub extends AbstractConstants
      * @Message("error.not_exist")
      */
     const TRANSLATOR_NOT_EXIST = 505;
+
+    /**
+     * @Status("Status enabled")
+     */
+    const STATUS_ENABLE = 1;
+
+    /**
+     * @Status("Status disabled")
+     */
+    const STATUS_DISABLE = 0;
+
+    /**
+     * @Type("Type enabled")
+     */
+    const TYPE_ENABLE = 1;
+
+    /**
+     * @Type("Type disabled")
+     */
+    const TYPE_DISABLE = 0;
 }

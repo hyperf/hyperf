@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -47,9 +46,13 @@ class Coroutine
      *
      * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
      */
-    public static function parentId(): ?int
+    public static function parentId(?int $coroutineId = null): ?int
     {
-        $cid = SwooleCoroutine::getPcid();
+        if ($coroutineId) {
+            $cid = SwooleCoroutine::getPcid($coroutineId);
+        } else {
+            $cid = SwooleCoroutine::getPcid();
+        }
         if ($cid === false) {
             return null;
         }

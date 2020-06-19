@@ -9,13 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Driver;
 
-use Hyperf\AsyncQueue\Environment;
 use Hyperf\AsyncQueue\Event\AfterHandle;
 use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
+use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
@@ -28,6 +27,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Driver implements DriverInterface
 {
+    /**
+     * @var bool
+     */
+    public static $running = true;
+
     /**
      * @var ContainerInterface
      */
@@ -53,6 +57,11 @@ abstract class Driver implements DriverInterface
      */
     protected $config;
 
+    /**
+     * @var int
+     */
+    protected $lengthCheckCount = 500;
+
     public function __construct(ContainerInterface $container, $config)
     {
         $this->container = $container;
@@ -72,12 +81,10 @@ abstract class Driver implements DriverInterface
 
     public function consume(): void
     {
-        $this->container->get(Environment::class)->setAsyncQueue(true);
-
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (true) {
+        while (self::$running) {
             [$data, $message] = $this->pop();
 
             if ($data === false) {
@@ -92,9 +99,23 @@ abstract class Driver implements DriverInterface
                 parallel([$callback]);
             }
 
-            if ($maxMessages > 0 && ++$messageCount >= $maxMessages) {
+            if ($messageCount % $this->lengthCheckCount === 0) {
+                $this->checkQueueLength();
+            }
+
+            if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                 break;
             }
+
+            ++$messageCount;
+        }
+    }
+
+    protected function checkQueueLength()
+    {
+        $info = $this->info();
+        foreach ($info as $key => $value) {
+            $this->event && $this->event->dispatch(new QueueLength($this, $key, $value));
         }
     }
 

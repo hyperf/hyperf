@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema;
 
 use Closure;
@@ -145,6 +144,20 @@ class Builder
         ));
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
+    }
+
+    /**
+     * Get the columns.
+     */
+    public function getColumns(): array
+    {
+        $results = $this->connection->selectFromWriteConnection(
+            $this->grammar->compileColumns(),
+            [
+                $this->connection->getDatabaseName(),
+            ]
+        );
+        return $this->connection->getPostProcessor()->processColumns($results);
     }
 
     /**

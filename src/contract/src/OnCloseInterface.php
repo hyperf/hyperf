@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Contract;
 
+use Swoole\Http\Response;
 use Swoole\Server;
 
 interface OnCloseInterface
 {
-    public function onClose(Server $server, int $fd, int $reactorId): void;
+    /**
+     * @param Response|Server $server
+     */
+    public function onClose($server, int $fd, int $reactorId): void;
 }

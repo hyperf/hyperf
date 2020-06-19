@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 class ClearStatCache
@@ -56,7 +55,7 @@ class ClearStatCache
         return self::$interval;
     }
 
-    public static function setInterval(int $interval): self
+    public static function setInterval(int $interval)
     {
         self::$interval = $interval;
     }

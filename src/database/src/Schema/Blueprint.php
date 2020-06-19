@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema;
 
 use BadMethodCallException;
@@ -408,7 +407,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
      */
     public function foreign($columns, $name = null)
     {

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -23,7 +22,10 @@ use Hyperf\Event\Contract\ListenerInterface;
  */
 class DBPoolWatcher extends PoolWatcher implements ListenerInterface
 {
-    public $prefix = 'mysql';
+    public function getPrefix()
+    {
+        return 'mysql';
+    }
 
     /**
      * Periodically scan metrics.

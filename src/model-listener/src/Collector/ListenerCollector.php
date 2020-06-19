@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ModelListener\Collector;
 
 use Hyperf\Di\MetadataCollector;
@@ -53,6 +52,20 @@ class ListenerCollector extends MetadataCollector
      */
     public static function clearListeners(): void
     {
-        static::$container = [];
+        static::clear();
+    }
+
+    public static function clear(?string $listener = null): void
+    {
+        if ($listener) {
+            foreach (static::$container as $model => $listeners) {
+                if ($id = array_search($listener, $listeners)) {
+                    unset($listeners[$id]);
+                    static::$container[$model] = array_values($listeners);
+                }
+            }
+        } else {
+            static::$container = [];
+        }
     }
 }

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,6 +19,7 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\JsonRpc\Exception\Handler\TcpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
@@ -139,9 +139,19 @@ class TcpServer extends Server
             ->withAttribute('data', $data)
             ->withAttribute('request_id', $data['id'] ?? null)
             ->withParsedBody($data['params'] ?? '');
+
+        $this->getContext()->setData($data['context'] ?? []);
+
         if (! isset($data['jsonrpc'])) {
             return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_REQUEST);
         }
         return $request;
+    }
+
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            TcpExceptionHandler::class,
+        ];
     }
 }

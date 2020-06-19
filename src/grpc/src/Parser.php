@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\Internal\Message;
@@ -69,7 +68,7 @@ class Parser
 
     /**
      * @param null|\swoole_http2_response $response
-     * @param $deserialize
+     * @param mixed $deserialize
      * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
      */
     public static function parseResponse($response, $deserialize): array

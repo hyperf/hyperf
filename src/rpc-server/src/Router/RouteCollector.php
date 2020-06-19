@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator;
@@ -54,7 +53,6 @@ class RouteCollector
      *
      * The syntax used in the $route string depends on the used route parser.
      *
-     * @param string|string[] $httpMethod
      * @param mixed $handler
      */
     public function addRoute(string $route, $handler, array $options = [])

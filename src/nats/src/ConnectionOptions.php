@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nats;
 
 use Traversable;
@@ -423,7 +422,7 @@ class ConnectionOptions
     /**
      * Initialize the parameters.
      *
-     * @param array|Traversable $options the connection options
+     * @param array|mixed|Traversable $options the connection options
      *
      * @throws Exception when $options are an invalid type
      */

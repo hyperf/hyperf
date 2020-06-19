@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
@@ -86,9 +85,26 @@ class AnnotationReaderTest extends TestCase
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_NOT_EXIST, ['name' => 'Hyperf']);
         $this->assertSame('Hyperf is not exist.', $res);
 
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, 'user_id');
+        $this->assertSame('Params[user_id] is invalid.', $res);
+
+        $res = ErrorCodeStub::getMessage(ErrorCodeStub::PARAMS_INVALID, ['order_id']);
+        $this->assertSame('Params[order_id] is invalid.', $res);
+
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), 'zh_CN');
         $res = ErrorCodeStub::getMessage(ErrorCodeStub::TRANSLATOR_ERROR_MESSAGE);
         $this->assertSame('错误信息', $res);
+    }
+
+    public function testSameValueDifferentKey()
+    {
+        $container = $this->getContainer(true);
+
+        $this->assertSame('Status enabled', ErrorCodeStub::getStatus(ErrorCodeStub::STATUS_ENABLE));
+        $this->assertSame('Status disabled', ErrorCodeStub::getStatus(ErrorCodeStub::STATUS_DISABLE));
+
+        $this->assertSame('Type enabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_ENABLE));
+        $this->assertSame('Type disabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_DISABLE));
     }
 
     protected function getContainer($has = false)

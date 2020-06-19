@@ -9,17 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 class JsonRpcTransporter implements TransporterInterface
 {
+    use RecvTrait;
+
     /**
      * @var null|LoadBalancerInterface
      */
@@ -67,15 +69,27 @@ class JsonRpcTransporter implements TransporterInterface
             }
             return $client;
         });
-        return $client->recv($this->recvTimeout);
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    public function recv()
+    {
+        $client = $this->getClient();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function getClient(): SwooleClient
     {
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['settings'] ?? []);
+        $class = spl_object_hash($this) . '.Connection';
+        if (Context::has($class)) {
+            return Context::get($class);
+        }
 
-        return retry(2, function () use ($client) {
+        return Context::set($class, retry(2, function () {
+            $client = new SwooleClient(SWOOLE_SOCK_TCP);
+            $client->set($this->config['settings'] ?? []);
             $node = $this->getNode();
             $result = $client->connect($node->host, $node->port, $this->connectTimeout);
             if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
@@ -84,7 +98,7 @@ class JsonRpcTransporter implements TransporterInterface
                 throw new RuntimeException('Connect to server failed.');
             }
             return $client;
-        });
+        }));
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface

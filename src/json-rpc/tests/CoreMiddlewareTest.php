@@ -9,13 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
@@ -31,6 +31,7 @@ use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\JsonRpc\ResponseBuilder;
 use Hyperf\Logger\Logger;
+use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
@@ -199,6 +200,10 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
             ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(null);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)
             ->andReturn(new Logger('App', [new StreamHandler('php://stderr')]));
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)
@@ -206,7 +211,7 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(PathGenerator::class)
             ->andReturn(new PathGenerator());
         $container->shouldReceive('get')->with(DataFormatter::class)
-            ->andReturn(new DataFormatter());
+            ->andReturn(new DataFormatter(new RpcContext()));
         $container->shouldReceive('get')->with(JsonPacker::class)
             ->andReturn(new JsonPacker());
         $container->shouldReceive('get')->with(CalculatorService::class)

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Definition;
 
 interface DefinitionInterface
@@ -28,9 +27,4 @@ interface DefinitionInterface
      * Set the name of the entry in the container.
      */
     public function setName(string $name);
-
-    /**
-     * Determine if the definition need to transfer to a proxy class.
-     */
-    public function isNeedProxy(): bool;
 }

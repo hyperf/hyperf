@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -23,7 +22,10 @@ use Hyperf\Redis\Pool\PoolFactory;
  */
 class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
 {
-    public $prefix = 'redis';
+    public function getPrefix()
+    {
+        return 'redis';
+    }
 
     /**
      * Periodically scan metrics.

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\LoadBalancer;
 
 use Hyperf\LoadBalancer\Node;
@@ -32,5 +31,6 @@ class RandomTest extends TestCase
         $random = new Random($nodes);
         $node = $random->select();
         $this->assertTrue(in_array($node, $nodes));
+        $this->assertSame($nodes, $random->getNodes());
     }
 }

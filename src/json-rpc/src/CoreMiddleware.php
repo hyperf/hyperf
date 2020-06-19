@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Closure;
@@ -46,7 +45,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
             $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 $response = $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $exception);
                 $this->responseBuilder->persistToContext($response);
 

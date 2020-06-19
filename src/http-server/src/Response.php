@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
-use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -37,7 +35,7 @@ use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 use function get_class;
 
-class Response implements PsrResponseInterface, ResponseInterface, Sendable
+class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
@@ -412,11 +410,6 @@ class Response implements PsrResponseInterface, ResponseInterface, Sendable
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
-    }
-
-    public function send()
-    {
-        return $this->getResponse()->send();
     }
 
     protected function call($name, $arguments)

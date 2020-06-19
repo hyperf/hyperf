@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Connection;
 
 use InvalidArgumentException;
@@ -102,7 +101,12 @@ class KeepaliveIO extends AbstractIO
      */
     public function connect()
     {
-        $this->sock = make(Socket::class, [$this->host, $this->port, $this->connectionTimeout, $this->heartbeat]);
+        $this->sock = make(Socket::class, [
+            'host' => $this->host,
+            'port' => $this->port,
+            'timeout' => $this->connectionTimeout,
+            'heartbeat' => $this->heartbeat,
+        ]);
     }
 
     /**
@@ -168,7 +172,6 @@ class KeepaliveIO extends AbstractIO
      */
     public function check_heartbeat()
     {
-        return true;
     }
 
     public function close()

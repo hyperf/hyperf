@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DB;
 
 use Hyperf\DB\Pool\PoolFactory;
@@ -77,6 +76,16 @@ class DB
         $container = ApplicationContext::getContainer();
         $db = $container->get(static::class);
         return $db->{$name}(...$arguments);
+    }
+
+    /**
+     * Make a new connection with the pool name.
+     */
+    public static function connection(string $poolName): self
+    {
+        return make(static::class, [
+            'poolName' => $poolName,
+        ]);
     }
 
     /**

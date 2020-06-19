@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -59,7 +58,7 @@ class Request implements RequestInterface
         }
         return data_get($this->getQueryParams(), $key, $default);
     }
-    
+
     /**
      * Retrieve the data from route parameters.
      *
@@ -108,7 +107,7 @@ class Request implements RequestInterface
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
-
+        $result = [];
         foreach ($keys as $key) {
             $result[$key] = data_get($data, $key, $default[$key] ?? null);
         }
@@ -128,7 +127,7 @@ class Request implements RequestInterface
     /**
      * Determine if the $keys is exist in parameters.
      *
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array
     {
@@ -245,7 +244,7 @@ class Request implements RequestInterface
      */
     public function url(): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
 
     /**
@@ -518,9 +517,7 @@ class Request implements RequestInterface
      */
     protected function preparePathInfo(): string
     {
-        if (($requestUri = $this->getRequestUri()) === null) {
-            return '/';
-        }
+        $requestUri = $this->getRequestUri();
 
         // Remove the query string from REQUEST_URI
         if (false !== $pos = strpos($requestUri, '?')) {

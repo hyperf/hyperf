@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ServiceGovernance;
 
 class ServiceManager
@@ -24,7 +23,11 @@ class ServiceManager
      */
     public function register(string $name, string $path, array $metadata): void
     {
-        $this->services[$name][$path] = $metadata;
+        if (isset($metadata['protocol'])) {
+            $this->services[$name][$path][$metadata['protocol']] = $metadata;
+        } else {
+            $this->services[$name][$path]['default'] = $metadata;
+        }
     }
 
     /**
