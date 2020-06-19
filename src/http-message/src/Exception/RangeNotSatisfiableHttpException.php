@@ -13,7 +13,7 @@ namespace Hyperf\HttpMessage\Exception;
 
 class RangeNotSatisfiableHttpException extends HttpException
 {
-    public function __construct($message = null, $code = 0, \Exception $previous = null)
+    public function __construct($message = null, $code = 0, \Throwable $previous = null)
     {
         parent::__construct(416, $message, $code, $previous);
     }

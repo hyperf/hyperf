@@ -39,6 +39,7 @@ class HttpExceptionHandler extends ExceptionHandler
 
     /**
      * Handle the exception, and return the specified result.
+     * @param HttpException $throwable
      */
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
