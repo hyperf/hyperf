@@ -6,27 +6,29 @@ Socket.io是一款非常流行的应用层实时通讯协议和框架，可以�
 composer require hyperf/socketio-server
 ```
 
-hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添加了WebSocket服务配置。
+hyperf/socketio-server 组件是基于 WebSocket 实现的，请确保服务端已经添加了 `WebSocket 服务` 的配置。
 
 ```php
-        [
-            'name' => 'socket-io',
-            'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9502,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-                SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-                SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
-            ],
-        ],
+// config/autoload/server.php
+[
+    'name' => 'socket-io',
+    'type' => Server::SERVER_WEBSOCKET,
+    'host' => '0.0.0.0',
+    'port' => 9502,
+    'sock_type' => SWOOLE_SOCK_TCP,
+    'callbacks' => [
+        SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+        SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+        SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+    ],
+],
 ```
 
 
 ## 快速开始
 
 ### 服务端
+
 ```php
 <?php
 
@@ -88,7 +90,7 @@ class WebSocketController extends BaseNamespace
 
 ### 客户端
 
-由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
+由于服务端只实现了 WebSocket 通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
@@ -109,7 +111,7 @@ class WebSocketController extends BaseNamespace
 
 ### Socket API
 
-通过SocketAPI对目标Socket进行推送，或以目标Socket的身份在房间内发言。需要在事件回调中使用。
+通过 SocketAPI 对目标 Socket 进行推送，或以目标 Socket 的身份在房间内发言。需要在事件回调中使用。
 
 ```php
 <?php
@@ -231,13 +233,14 @@ return [
 ];
 ```
 
-> swoole 4.4.17 及以下版本只能读取 http 创建好的Cookie，4.4.18 及以上版本可以在WebSocket握手时创建Cookie
+> Swoole 4.4.17 及以下版本只能读取 HTTP 创建好的 Cookie，Swoole 4.4.18 及以上版本可以在 WebSocket 握手时创建 Cookie
 
 ### 调整房间适配器
 
 默认的房间功能通过 Redis 适配器实现，可以适应多进程乃至分布式场景。
 
 1. 可以替换为内存适配器，只适用于单 worker 场景。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -247,6 +250,7 @@ return [
 ```
 
 2. 可以替换为空适配器，不需要房间功能时可以降低消耗。
+
 ```php
 <?php
 // config/autoload/dependencies.php
