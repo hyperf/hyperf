@@ -107,52 +107,76 @@ class WebSocketController extends BaseNamespace
 
 ## API 清单
 
+### Socket API
+
+通过SocketAPI对目标Socket进行推送，或以目标Socket的身份在房间内发言。需要在事件回调中使用。
+
 ```php
 <?php
-function onConnect(\Hyperf\SocketIOServer\Socket $socket){
+/**
+ * @Event("SomeEvent")
+ */
+function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
+  // 向连接推送 hello 事件
   $socket->emit('hello', 'can you hear me?', 1, 2, 'abc');
 
   // sending to all clients except sender
+  // 向所有连接推送 broadcast 事件，但是不包括当前连接。
   $socket->broadcast->emit('broadcast', 'hello friends!');
 
   // sending to all clients in 'game' room except sender
+  // 向 game 房间内所有连接推送 nice game 事件，但是不包括当前连接。
   $socket->to('game')->emit('nice game', "let's play a game");
 
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
+  // 向 game1 房间 和 game2 房间内所有连接取并集推送 nice game 事件，但是不包括当前连接。
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
   // WARNING: `$socket->to($socket->getSid())->emit()` will NOT work, as it will send to everyone in the room
   // named `$socket->getSid()` but the sender. Please use the classic `$socket->emit()` instead.
+  // 注意：自己给自己推送的时候不要加to，因为$socket->to()总是排除自己。直接$socket->emit()就好了。
 
   // sending with acknowledgement
+  // 发送信息，并且等待并接收客户端响应。
   $reply = $socket->emit('question', 'do you think so?')->reply();
 
   // sending without compression
+  // 无压缩推送
   $socket->compress(false)->emit('uncompressed', "that's rough");
+};
+```
+### 全局API
 
+从容器中获取SocketIO单例，这个单例可向全局广播或指定房间广播。未指定命名空间时，默认使用'/'空间。
+
+```php
   $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
   // sending to all clients in 'game' room, including sender
+  // 向 game 房间内的所有连接推送 bigger-announcement 事件。
   $io->in('game')->emit('big-announcement', 'the game will start soon');
 
   // sending to all clients in namespace 'myNamespace', including sender
+  // 向 /myNamespace 命名空间下的所有连接推送 bigger-announcement 事件
   $io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
 
   // sending to a specific room in a specific namespace, including sender
+  // 向 /myNamespace 命名空间下的 room 房间所有连接推送 event 事件
   $io->of('/myNamespace')->to('room')->emit('event', 'message');
 
   // sending to individual socketid (private message)
+  // 向 socketId 单点推送
   $io->to('socketId')->emit('hey', 'I just met you');
 
   // sending to all clients on this node (when using multiple nodes)
+  // 向本机所有连接推送
   $io->local->emit('hi', 'my lovely babies');
 
   // sending to all connected clients
+  // 向所有连接推送
   $io->emit('an event sent to all connected clients');
-
-};
 ```
 
 ## 进阶教程
