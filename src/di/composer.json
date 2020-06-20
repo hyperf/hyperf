@@ -21,11 +21,11 @@
         "psr/container": "^1.0",
         "nikic/php-parser": "^4.1",
         "doctrine/annotations": "^1.6",
-        "symfony/finder": "^4.1",
+        "symfony/finder": "^5.0",
         "php-di/phpdoc-reader": "^2.0.1",
         "doctrine/instantiator": "^1.0",
-        "hyperf/event": "~1.1.0",
-        "hyperf/framework": "~1.1.0",
+        "hyperf/event": "~2.0.0",
+        "hyperf/framework": "~2.0.0",
         "roave/better-reflection": "^4.0"
     },
     "require-dev": {
@@ -55,15 +55,13 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Di\\ConfigProvider"
         }
     },
-    "bin": [
-        "bin/init-proxy.sh"
-    ],
+    "bin": [],
     "scripts": {
         "cs-fix": "php-cs-fixer fix $1",
         "test": "phpunit --colors=always"

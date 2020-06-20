@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
-use Hyperf\Validation\Contracts\Support\MessageProvider;
-
 interface MessageBag
 {
     /**

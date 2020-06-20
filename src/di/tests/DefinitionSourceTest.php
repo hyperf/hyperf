@@ -26,7 +26,7 @@ class DefinitionSourceTest extends TestCase
 {
     public function testAddDefinition()
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         $container->getDefinitionSource()->addDefinition('Foo', function () {
             return 'bar';
         });

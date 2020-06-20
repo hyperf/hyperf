@@ -62,8 +62,9 @@ class GrpcExceptionHandler extends ExceptionHandler
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
             ->withStatus(StatusCode::HTTP_CODE_MAPPING[$code] ?? 500);
 
-        $response->getSwooleResponse()->trailer('grpc-status', (string) $code);
-        $response->getSwooleResponse()->trailer('grpc-message', (string) $message);
+        if (method_exists($response, 'withTrailer')) {
+            $response = $response->withTrailer('grpc-status', (string) $code)->withTrailer('grpc-message', (string) $message);
+        }
 
         return $response;
     }

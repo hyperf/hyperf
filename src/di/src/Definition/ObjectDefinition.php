@@ -21,11 +21,6 @@ class ObjectDefinition implements DefinitionInterface
     protected $constructorInjection;
 
     /**
-     * @var PropertyInjection[]
-     */
-    protected $propertyInjections = [];
-
-    /**
      * @var string
      */
     private $name;
@@ -44,16 +39,6 @@ class ObjectDefinition implements DefinitionInterface
      * @var bool
      */
     private $instantiable = false;
-
-    /**
-     * @var bool
-     */
-    private $needProxy = false;
-
-    /**
-     * @var string
-     */
-    private $proxyClassName;
 
     public function __construct(string $name, string $className = null)
     {
@@ -126,44 +111,6 @@ class ObjectDefinition implements DefinitionInterface
             // Set
             $this->constructorInjection = $injection;
         }
-    }
-
-    /**
-     * @return PropertyInjection[]
-     */
-    public function getPropertyInjections(): array
-    {
-        return $this->propertyInjections;
-    }
-
-    public function addPropertyInjection(PropertyInjection $propertyInjection): void
-    {
-        $this->propertyInjections[$propertyInjection->getPropertyName()] = $propertyInjection;
-    }
-
-    public function getProxyClassName(): string
-    {
-        return $this->proxyClassName;
-    }
-
-    public function setProxyClassName(string $proxyClassName): self
-    {
-        $this->proxyClassName = $proxyClassName;
-        return $this;
-    }
-
-    /**
-     * Determine if the definition need to transfer to a proxy class.
-     */
-    public function isNeedProxy(): bool
-    {
-        return $this->needProxy;
-    }
-
-    public function setNeedProxy(bool $needProxy): self
-    {
-        $this->needProxy = $needProxy;
-        return $this;
     }
 
     private function updateStatusCache(): void
