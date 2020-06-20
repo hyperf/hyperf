@@ -145,38 +145,39 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
   // sending without compression
   // 无压缩推送
   $socket->compress(false)->emit('uncompressed', "that's rough");
-};
+}
 ```
 ### 全局API
 
-从容器中获取SocketIO单例，这个单例可向全局广播或指定房间广播。未指定命名空间时，默认使用'/'空间。
+直接从容器中获取SocketIO单例。这个单例可向全局广播或指定房间、个人通讯。未指定命名空间时，默认使用'/'空间。
 
 ```php
-  $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+<?php
+$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
-  // sending to all clients in 'game' room, including sender
-  // 向 game 房间内的所有连接推送 bigger-announcement 事件。
-  $io->in('game')->emit('big-announcement', 'the game will start soon');
+// sending to all clients in 'game' room, including sender
+// 向 game 房间内的所有连接推送 bigger-announcement 事件。
+$io->in('game')->emit('big-announcement', 'the game will start soon');
 
-  // sending to all clients in namespace 'myNamespace', including sender
-  // 向 /myNamespace 命名空间下的所有连接推送 bigger-announcement 事件
-  $io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
+// sending to all clients in namespace 'myNamespace', including sender
+// 向 /myNamespace 命名空间下的所有连接推送 bigger-announcement 事件
+$io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
 
-  // sending to a specific room in a specific namespace, including sender
-  // 向 /myNamespace 命名空间下的 room 房间所有连接推送 event 事件
-  $io->of('/myNamespace')->to('room')->emit('event', 'message');
+// sending to a specific room in a specific namespace, including sender
+// 向 /myNamespace 命名空间下的 room 房间所有连接推送 event 事件
+$io->of('/myNamespace')->to('room')->emit('event', 'message');
 
-  // sending to individual socketid (private message)
-  // 向 socketId 单点推送
-  $io->to('socketId')->emit('hey', 'I just met you');
+// sending to individual socketid (private message)
+// 向 socketId 单点推送
+$io->to('socketId')->emit('hey', 'I just met you');
 
-  // sending to all clients on this node (when using multiple nodes)
-  // 向本机所有连接推送
-  $io->local->emit('hi', 'my lovely babies');
+// sending to all clients on this node (when using multiple nodes)
+// 向本机所有连接推送
+$io->local->emit('hi', 'my lovely babies');
 
-  // sending to all connected clients
-  // 向所有连接推送
-  $io->emit('an event sent to all connected clients');
+// sending to all connected clients
+// 向所有连接推送
+$io->emit('an event sent to all connected clients');
 ```
 
 ## 进阶教程
