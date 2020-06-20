@@ -71,10 +71,12 @@ class Example {
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 - [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
 - [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal does not work.
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
 
 ## Optimized
 
 - [#705](https://github.com/hyperf/hyperf/pull/705) Optimized Http Exception.
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io server now only dispatch connect/disconnect events in onOpen and onClose. Also upgrade some class members from private to protected, so users can hack them.
 - [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
 - [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
 - [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.
@@ -90,6 +92,8 @@ return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
 ];
 ```
+
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) Changed method `simpleRequest` to `_simpleRequest`.
 
 ## Removed
 
