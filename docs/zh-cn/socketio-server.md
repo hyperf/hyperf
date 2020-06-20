@@ -180,6 +180,26 @@ $io->local->emit('hi', 'my lovely babies');
 $io->emit('an event sent to all connected clients');
 ```
 
+### 命名空间API
+
+和全局API一样，只不过已经限制了命名空间。
+```php
+// 以下伪码等价
+$foo->emit();
+$io->of('/foo')->emit();
+
+/**
+ * class内使用也等价
+ * @SocketIONamespace("/foo")
+ */
+class FooNamespace extends BaseNamespace {
+    public function onEvent(){
+        $this->emit(); 
+        $this->io->of('/foo')->emit();
+    }
+}
+```
+
 ## 进阶教程
 
 ### 设置 Socket.io 命名空间
