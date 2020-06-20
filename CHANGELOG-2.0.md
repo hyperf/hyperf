@@ -93,7 +93,7 @@ return [
 ];
 ```
 
-- [#1924](https://github.com/hyperf/hyperf/pull/1924) Changed method `Hyperf\GrpcClient\BaseClient::simpleRequest` to `_simpleRequest`.
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) Changed `Hyperf\GrpcClient\BaseClient` methods `simpleRequest, getGrpcClient, clientStreamRequest` to `_simpleRequest, _getGrpcClient, _clientStreamRequest`.
 
 ## Removed
 
