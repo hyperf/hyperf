@@ -111,7 +111,7 @@ class TcpServer extends Server
         return new CoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
-    protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
+    protected function buildResponse(int $fd, $server): ResponseInterface
     {
         $response = new Psr7Response();
         return $response->withAttribute('fd', $fd)->withAttribute('server', $server);

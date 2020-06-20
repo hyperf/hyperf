@@ -14,6 +14,7 @@ namespace Hyperf\Server;
 use Hyperf\Server\Command\StartServer;
 use Hyperf\Server\Listener\AfterWorkerStartListener;
 use Hyperf\Server\Listener\InitProcessTitleListener;
+use Hyperf\Server\Listener\StoreServerNameListener;
 use Swoole\Server as SwooleServer;
 
 class ConfigProvider
@@ -25,6 +26,7 @@ class ConfigProvider
                 SwooleServer::class => SwooleServerFactory::class,
             ],
             'listeners' => [
+                StoreServerNameListener::class,
                 AfterWorkerStartListener::class,
                 InitProcessTitleListener::class,
             ],

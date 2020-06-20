@@ -45,6 +45,7 @@ class QueueLengthListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        $value = 0;
         foreach ($this->level as $level => $value) {
             if ($event->length < $value) {
                 $message = sprintf('Queue lengh of %s is %d.', $event->key, $event->length);

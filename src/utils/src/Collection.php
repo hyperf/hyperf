@@ -226,7 +226,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function mode($key = null)
     {
         if ($this->count() == 0) {
-            return;
+            return null;
         }
         $collection = isset($key) ? $this->pluck($key) : $this;
         $counts = new self();
@@ -1111,7 +1111,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return new static();
         }
         $groups = new static();
-        $groupSize = floor($this->count() / $numberOfGroups);
+        $groupSize = (int) floor($this->count() / $numberOfGroups);
         $remain = $this->count() % $numberOfGroups;
         $start = 0;
         for ($i = 0; $i < $numberOfGroups; ++$i) {
@@ -1347,7 +1347,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
                 return $value->jsonSerialize();
             }
             if ($value instanceof Jsonable) {
-                return json_decode($value->toJson(), true);
+                return json_decode($value->__toString(), true);
             }
             if ($value instanceof Arrayable) {
                 return $value->toArray();
@@ -1534,7 +1534,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $items->toArray();
         }
         if ($items instanceof Jsonable) {
-            return json_decode($items->toJson(), true);
+            return json_decode($items->__toString(), true);
         }
         if ($items instanceof JsonSerializable) {
             return $items->jsonSerialize();

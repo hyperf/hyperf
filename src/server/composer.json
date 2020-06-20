@@ -20,9 +20,9 @@
         "psr/container": "^1.0",
         "psr/log": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/console": "^4.2",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "symfony/console": "^5.0",
+        "hyperf/contract": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -49,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Server\\ConfigProvider"

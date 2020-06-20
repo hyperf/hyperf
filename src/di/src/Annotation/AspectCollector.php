@@ -25,14 +25,49 @@ class AspectCollector extends MetadataCollector
      */
     protected static $aspectRules = [];
 
-    public static function setAround(string $aspect, array $classes, array $annotations): void
+    /**
+     * @var \SplPriorityQueue[]
+     */
+    protected static $aspectQueues = [];
+
+    public static function setAround(string $aspect, array $classes, array $annotations, ?int $priority = null): void
     {
-        static::set('classes.' . $aspect, $classes);
-        static::set('annotations.' . $aspect, $annotations);
-        static::$aspectRules[$aspect] = [
-            'classes' => $classes,
-            'annotations' => $annotations,
-        ];
+        if (! is_int($priority)) {
+            $priority = static::getDefaultPriority();
+        }
+        $setter = function ($key, $value) {
+            if (static::has($key)) {
+                $value = array_merge(static::get($key, []), $value);
+                static::set($key, $value);
+            } else {
+                static::set($key, $value);
+            }
+        };
+        $setter('classes.' . $aspect, $classes);
+        $setter('annotations.' . $aspect, $annotations);
+        if (isset(static::$aspectRules[$aspect])) {
+            static::$aspectRules[$aspect] = [
+                'priority' => $priority,
+                'classes' => array_merge(static::$aspectRules[$aspect]['classes'] ?? [], $classes),
+                'annotations' => array_merge(static::$aspectRules[$aspect]['annotations'] ?? [], $annotations),
+            ];
+        } else {
+            static::$aspectRules[$aspect] = [
+                'priority' => $priority,
+                'classes' => $classes,
+                'annotations' => $annotations,
+            ];
+        }
+    }
+
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            unset(static::$container['classes'][$key], static::$container['annotations'][$key], static::$aspectRules[$key]);
+        } else {
+            static::$container = [];
+            static::$aspectRules = [];
+        }
     }
 
     public static function getRule(string $aspect): array
@@ -40,8 +75,36 @@ class AspectCollector extends MetadataCollector
         return static::$aspectRules[$aspect] ?? [];
     }
 
+    public static function getPriority(string $aspect): int
+    {
+        return static::$aspectRules[$aspect]['priority'] ?? static::getDefaultPriority();
+    }
+
     public static function getRules(): array
     {
         return static::$aspectRules;
+    }
+
+    public static function getContainer(): array
+    {
+        return static::$container;
+    }
+
+    public static function serialize(): string
+    {
+        return serialize([static::$aspectRules, static::$container]);
+    }
+
+    public static function deserialize(string $metadata): bool
+    {
+        [$rules, $container] = unserialize($metadata);
+        static::$aspectRules = $rules;
+        static::$container = $container;
+        return true;
+    }
+
+    private static function getDefaultPriority(): int
+    {
+        return (int) (PHP_INT_MAX / 2);
     }
 }
