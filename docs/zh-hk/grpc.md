@@ -144,8 +144,7 @@ public function hello()
 
     $message = $reply->getMessage();
     $user = $reply->getUser();
-
-    $client->close();
+    
     var_dump(memory_get_usage(true));
     return $message;
 }
