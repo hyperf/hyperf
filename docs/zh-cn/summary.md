@@ -78,7 +78,7 @@
   * [Redis 异步队列](zh-cn/async-queue.md)
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
-  * [Nsq](zh-cn/nsq.md)
+  * [NSQ](zh-cn/nsq.md)
   
 * 其它组件
 
