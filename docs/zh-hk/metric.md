@@ -317,7 +317,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 來統計切面的調用次數和運行時間。
 
-關於註解的使用請參閲[註解章節](https://doc.hyperf.io/#/zh/annotation)。
+關於註解的使用請參閲[註解章節](zh-hk/annotation)。
 
 ### 自定義 Histogram Bucket
 
