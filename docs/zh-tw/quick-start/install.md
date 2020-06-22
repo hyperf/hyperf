@@ -9,7 +9,7 @@ Hyperf 對系統環境有一些要求，僅可運行於 Linux 和 Mac 環境下�
 當您不想採用 Docker 來作為執行的環境基礎時，您需要確保您的執行環境達到了以下的要求：   
 
  - PHP >= 7.2
- - Swoole PHP 擴充套件 >= 4.4，並關閉了 `Short Name`
+ - Swoole PHP 擴充套件 >= 4.5，並關閉了 `Short Name`
  - OpenSSL PHP 擴充套件
  - JSON PHP 擴充套件
  - PDO PHP 擴充套件 （如需要使用到 MySQL 客戶端）
