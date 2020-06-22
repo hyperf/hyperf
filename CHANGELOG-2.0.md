@@ -1,4 +1,10 @@
-# v2.0 - TBD
+# v2.0.1 - TBD
+
+## Optimized
+
+[#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
+
+# v2.0.0 - 2020-06-22
 
 ## Major Changes
 
