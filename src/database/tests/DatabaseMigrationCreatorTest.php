@@ -39,7 +39,7 @@ class DatabaseMigrationCreatorTest extends TestCase
         $creator->getFilesystem()->shouldReceive('get')->once()->with($creator->stubPath() . '/blank.stub')->andReturn('DummyClass');
         $creator->getFilesystem()->shouldReceive('put')->once()->with('foo/foo_create_bar.php', 'CreateBar');
         $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
-        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php')
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create('create_bar', 'foo');
     }
