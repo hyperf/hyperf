@@ -1,4 +1,10 @@
-# v2.0 - TBD
+# v2.0.1 - TBD
+
+## Optimized
+
+[#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
+
+# v2.0.0 - 2020-06-22
 
 ## Major Changes
 
@@ -36,6 +42,7 @@
 - Removed `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`
 - Removed method `dispatch(...$params)` from `Hyperf\Dispatcher\AbstractDispatcher`
 - Removed mapping for `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` from `ConfigProvider` in utils.
+- Removed the typehint of `$server` parameter of `Hyperf\Contract\OnOpenInterface`、`Hyperf\Contract\OnCloseInterface`、`Hyperf\Contract\OnMessageInterface`、`Hyperf\Contract\OnReceiveInterface`;
 
 ## Added
 
@@ -49,11 +56,12 @@
 - [#1805](https://github.com/hyperf/hyperf/pull/1805) Added Coroutine Server.
   - Changed method `bind(Server $server)` to `bind($server)` in `Hyperf\Contract\ProcessInterface`.
   - Changed method `isEnable()` to `isEnable($server)` in `Hyperf\Contract\ProcessInterface`
-  - Process of config-center, crontab, metric must not run in co-server.
-  - `Hyperf\AsyncQueue\Environment` only applies to the current coroutine, not process.
-  - Coroutine Server not support task.
+  - Process mode of config-center, crontab, metric, comsumers of MQ can not running in coroutine server.
+  - Change the life-cycle of `Hyperf\AsyncQueue\Environment`, can only applies in the current coroutine, not the whole current process.
+  - Coroutine Server does not support task mechanism.
   
-- [#1877](https://github.com/hyperf/hyperf/pull/1877) Annotation Inject support typed properties. You can Inject below:
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) Support to use typehint of property on PHP 8 to replace `@var` when using `@Inject` annotation, for example:
+
 ```
 class Example {
     /**
@@ -62,6 +70,7 @@ class Example {
     private ExampleService $exampleService;
 }
 ```
+
 - [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `Hyperf\HttpServer\ResponseEmitter` class to emit any PSR-7 response object with Swoole server, and extracted `Hyperf\Contract\ResponseEmitterInterface`.
 - [#1890](https://github.com/hyperf/hyperf/pull/1890) Added `getTrailers()` and `getTrailer(string $key)` and `withTrailer(string $key, $value)` methods for `Hyperf\HttpMessage\Server\Response`.
 - [#1920](https://github.com/hyperf/hyperf/pull/1920) Added method `Hyperf\WebSocketServer\Sender::close(int $fd, bool $reset = null)`.
@@ -70,17 +79,12 @@ class Example {
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 - [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
-- [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal does not work.
-
-## Optimized
-
-- [#705](https://github.com/hyperf/hyperf/pull/705) Optimized Http Exception.
-- [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
-- [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
-- [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal of Model does not work.
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed `Request::isXmlHttpRequest` does not work.
 
 ## Changed
 
+- [#705](https://github.com/hyperf/hyperf/pull/705) Uniformed the handling of HTTP exceptions, now unified throwing a `Hyperf\HttpMessage\Exception\HttpException` exception class to replace the way of direct response in `Dispatcher`, also provided an `Hyperf\HttpServer\Exception\Handler\ httptionHandler` ExceptionHandler to handle these HTTP Exception;
 - [#1846](https://github.com/hyperf/hyperf/pull/1846) Don't auto change the impl for `Hyperf\Contract\NormalizerInterface` when you require `symfony/serialize`. You can added dependiencies below to use symfony serializer.
 ```php
 use Hyperf\Utils\Serializer\SerializerFactory;
@@ -91,7 +95,16 @@ return [
 ];
 ```
 
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) Changed `Hyperf\GrpcClient\BaseClient` methods `simpleRequest, getGrpcClient, clientStreamRequest` to `_simpleRequest, _getGrpcClient, _clientStreamRequest`.
+
 ## Removed
 
 - [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
 - [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.
+
+## Optimized
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io server now only dispatch connect/disconnect events in onOpen and onClose. Also upgrade some class members from private to protected, so users can hack them.
+- [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
+- [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.

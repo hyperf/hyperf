@@ -63,7 +63,7 @@ class IndexController
 }
 ```
 
-> 注意呼叫方也就是 `IndexController` 必須是由 DI 建立的物件才能完成自動注入，而 Controller 預設是由 DI 建立的，所以可以直接使用建構函式注入
+> 注意使用建構函式注入時，呼叫方也就是 `IndexController` 必須是由 DI 建立的物件才能完成自動注入，而 Controller 預設是由 DI 建立的，所以可以直接使用建構函式注入
 
 當您希望定義一個可選的依賴項時，可以通過給引數定義為 `nullable` 或將引數的預設值定義為 `null`，即表示該引數如果在 DI 容器中沒有找到或無法建立對應的物件時，不丟擲異常而是直接使用 `null` 來注入。*(該功能僅在 1.1.0 或更高版本可用)*
 
@@ -126,13 +126,11 @@ class IndexController
 }
 ```
 
-> 注意呼叫方也就是 `IndexController` 必須是由 DI 建立的物件才能完成自動注入，Controller 預設是由 DI 建立的，直接 `new` 該物件不會生效；
+> 通過 `@Inject` 註解注入可作用於 DI 建立的物件，也可作用於通過 `new` 關鍵詞建立的物件；
 
 > 使用 `@Inject` 註解時需 `use Hyperf\Di\Annotation\Inject;` 名稱空間；
 
 ##### Required 引數
-
-> Required 引數僅可在 1.1.0 版本或更高版本使用
 
 `@Inject` 註解存在一個 `required` 引數，預設值為 `true`，當將該引數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的物件不存在於 DI 容器或不可建立時，將不會丟擲異常而是注入一個 `null`，如下：
 
@@ -316,21 +314,6 @@ Hyperf 的長生命週期依賴注入在專案啟動時完成。這意味著長�
 
 另一個方案是使用 PHP 中常用的惰性代理模式，注入一個代理物件，在使用時再例項化目標物件。Hyperf DI 元件設計了懶載入注入功能。
 
-新增 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` 到 `config/autoload/listeners.php` 中。
-
-監聽器會監聽 `BootApplication` 事件，自動讀取 `lazy_loader` 配置，並通過 `spl_autoload_register` 註冊懶載入模式。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    Hyperf\Di\Listener\LazyLoaderBootApplicationListener::class,
-];
-
-```
-
 新增 `config/autoload/lazy_loader.php` 檔案並繫結懶載入關係：
 
 ```php
@@ -401,7 +384,7 @@ unset($proxy->someProperty);
 
 ## 短生命週期物件
 
-通過 `new` 關鍵詞建立的物件毫無疑問的短生命週期的，那麼如果希望建立一個短生命週期的物件但又希望通過依賴注入容器注入相關的依賴呢？這是我們可以通過 `make(string $name, array $parameters = [])` 函式來建立 `$name` 對應的的例項，程式碼示例如下：   
+通過 `new` 關鍵詞建立的物件毫無疑問的短生命週期的，那麼如果希望建立一個短生命週期的物件但又希望使用 `建構函式依賴自動注入功能` 呢？這時我們可以通過 `make(string $name, array $parameters = [])` 函式來建立 `$name` 對應的的例項，程式碼示例如下：   
 
 ```php
 $userService = make(UserService::class, ['enableCache' => true]);

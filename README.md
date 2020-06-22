@@ -62,11 +62,6 @@ Support this project with your organization or company. Your logo will show up h
           <img height="110px" src="https://hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
         </a>
       </td>
-      <td align="left" valign="middle">
-        <a href="https://1shanghu.com?from=hyperf" target="_blank">
-          <img height="80px" src="https://hyperf.wiki/zh-cn/imgs/1shanghu.jpg">
-        </a>
-      </td>
     </tr><tr></tr>
   </tbody>
 </table>

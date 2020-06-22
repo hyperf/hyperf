@@ -78,7 +78,7 @@
   * [Redis 异步队列](zh-cn/async-queue.md)
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
-  * [Nsq](zh-cn/nsq.md)
+  * [NSQ](zh-cn/nsq.md)
   
 * 其它组件
 
@@ -102,6 +102,7 @@
   * [Snowflake](zh-cn/snowflake.md)
   * [重试](zh-cn/retry.md)
   * [信号处理器](zh-cn/signal.md)
+  * [ReactiveX](zh-cn/reactive-x.md)
 
 * 应用部署
 

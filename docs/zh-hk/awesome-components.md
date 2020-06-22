@@ -5,7 +5,7 @@
 
 ## 如何提交我的組件？
 
-如果您開發的協程組件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 項目的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(./doc/zh/awesome-components.md)`。
+如果您開發的協程組件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 項目的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(./zh-cn/awesome-components.md)`。
 
 ## 如何適配 Hyperf ?
 
@@ -117,6 +117,7 @@
 
 - [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與調試，`xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發調試組件
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
 
 ## 權限認證
 

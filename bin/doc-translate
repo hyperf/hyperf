@@ -43,6 +43,7 @@ foreach ($config as $key => $item) {
         if ($fileInfo->getExtension() === 'md') {
             $translated = opencc_convert($fileInfo->getContents(), $od);
             $translated = str_replace('](zh-cn/', '](' . $key . '/', $translated);
+            $translated = str_replace('](./zh-cn/', '](./' . $key . '/', $translated);
             $targetTranslatedPath = $targetDir . $fileInfo->getRelativePathname();
             @file_put_contents($targetTranslatedPath, $translated);
         } else {
