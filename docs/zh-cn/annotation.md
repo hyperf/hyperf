@@ -137,7 +137,7 @@ class Foo extends AbstractAnnotation
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
 - `public function collectProperty(string $className, ?string $target): void` 当注解定义在类属性时被扫描时会触发该方法
 
-因为框架实现了注解收集器缓存功能，所以需要您将自定义收集器配置到配置到 `annotations.scan.collectors` 中，这样框架才能自动缓存收集好的注解，在下次启动时进行复用。
+因为框架实现了注解收集器缓存功能，所以需要您将自定义收集器配置到 `annotations.scan.collectors` 中，这样框架才能自动缓存收集好的注解，在下次启动时进行复用。
 如果没有配置对应的收集器，就会导致自定义注解只有在首次启动 `server` 时生效，而再次启动时不会生效。
 
 ```php
@@ -165,7 +165,7 @@ return [
 
 比如以下我们实现一个可以自动复制协程上下文的功能
 
-首先，我们实现一个用户复制上下文的 `Coroutine` 类。其中 `create()` 方法，可以将父类的上下文复制到子类当中。
+首先，我们实现一个用于复制上下文的 `Coroutine` 类。其中 `create()` 方法，可以将父类的上下文复制到子类当中。
 
 ```php
 <?php
@@ -345,6 +345,8 @@ return [
 ];
 
 ```
+
+这样 `go()` 和 `parallel()` 等方法，就可以自动拿到父协程，上下文中的数据，比如 `Request`。
 
 ## IDE 注解插件
 
