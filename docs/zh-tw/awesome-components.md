@@ -117,6 +117,7 @@
 
 - [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與除錯，`xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
 
 ## 許可權認證
 
