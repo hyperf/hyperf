@@ -78,7 +78,7 @@
   * [Redis 非同步佇列](zh-tw/async-queue.md)
   * [AMQP](zh-tw/amqp.md)
   * [Nats](zh-tw/nats.md)
-  * [Nsq](zh-tw/nsq.md)
+  * [NSQ](zh-tw/nsq.md)
   
 * 其它元件
 
@@ -102,6 +102,7 @@
   * [Snowflake](zh-tw/snowflake.md)
   * [重試](zh-tw/retry.md)
   * [訊號處理器](zh-tw/signal.md)
+  * [ReactiveX](zh-tw/reactive-x.md)
 
 * 應用部署
 
@@ -124,3 +125,4 @@
 * 版本升級指南
   
   * [1.1 升級指南](zh-tw/upgrade/1.1.md)
+  * [2.0 升級指南](zh-tw/upgrade/2.0.md)

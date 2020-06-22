@@ -90,4 +90,4 @@
 * Component Development Guide
 
   * [Introduction](en/component-guide/intro.md)
-  * [Create a new component](en/zh/component-guide/create.md)
+  * [Create a new component](en/component-guide/create.md)

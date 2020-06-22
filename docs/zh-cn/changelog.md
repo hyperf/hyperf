@@ -1,5 +1,110 @@
 # 版本更新记录
 
+# v2.0 - 2020-06-22
+
+## 主要功能
+
+1. 重构 [hyperf/di](https://github.com/hyperf/di) 组件，特别是对 AOP 和注解的优化，在 2.0 版本，该组件使用了一个全新的加载机制来提供 AOP 功能的支持。
+    1. 对比 1.x 版本来说最显著的一个一个功能就是现在你可以通过 AOP 功能切入任何方式实例化的一个类了，比如说，在 1.x 版本，你只能切入由 DI 容器创建的类，你无法切入一个由 `new` 关键词实例化的类，但在 2.0 版本都可以生效了。不过仍有一些例外的情况，您仍无法切入那些在启动阶段用来提供 AOP 功能的类；
+    2. 在 1.x 版本，AOP 只能作用于普通的类，无法支持 `Final` 类，但在 2.0 版本您可以这么做了；
+    3. 在 1.x 版本，您无法在当前类的构造函数中使用 `@Inject` 或 `@Value` 注解标记的类成员属性的值，但在 2.0 版本里，您可以这么做了；
+    4. 在 1.x 版本，只有通过 DI 容器创建的对象才能使 `@Inject` 和 `@Value` 注解的功能生效，通过 `new` 关键词创建的对象无法生效，但在 2.0 版本，都可以生效了；
+    5. 在 1.x 版本，在使用注解时，您必须定义注解的命名空间来指定使用的注解类，但在 2.0 版本下，您可以为任一注解提供一个别名，这样在使用这个注解时可以直接使用别名而无需引入注解类的命名空间。比如您可以直接在任意类属性上标记 `@Inject` 注解而无需编写 `use Hyperf\Di\Annotation\Inject;`；
+    6. 在 1.x 版本，创建的代理类是一个目标类的子类，这样的实现机制会导致一些魔术常量获得的值返回的是代理类子类的信息，而不是目标类的信息，但在 2.0 版本，代理类会与目标类保持一样的类名和代码结构；
+    7. 在 1.x 版本，当代理类缓存存在时则不会重新生成缓存，就算源代码发生了变化，这样的机制有助于扫描耗时的提升，但与此同时，这也会导致开发阶段的一些不便利，但在 2.0 版本，代理类缓存会根据源代码的变化而自动变化，这一改变会减少很多在开发阶段的心智负担；
+    8. 为 Aspect 类增加了 `priority` 优先级属性，现在您可以组织多个 Aspect 之间的顺序了；
+    9. 在 1.x 版本，您只能通过 `@Aspect` 注解类定义一个 Aspect 类，但在 2.0 版本，您还可以通过配置文件、ConfigProvider 来定义 Aspect 类；
+    10. 在 1.x 版本，您在使用到依赖懒加载功能时，必须注册一个 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` 监听器，但在 2.0 版本，您可以直接使用该功能而无需做任何的注册动作；
+    11. 增加了 `annotations.scan.class_map` 配置项，通过该配置您可以将任意类替换成您自己的类，而使用时无需做任何的改变；
+    
+## 依赖库更新
+
+- 将 `ext-swoole` 升级到了 `>=4.5`;
+- 将 `psr/event-dispatcher` 升级到了 `^1.0`;
+- 将 `monolog/monolog` 升级到了 `^2.0`;
+- 将 `phpstan/phpstan` 升级到了 `^0.12.18`;
+- 将 `vlucas/phpdotenv` 升级到了 `^4.0`;
+- 将 `symfony/finder` 升级到了 `^5.0`;
+- 将 `symfony/event-dispatcher` 升级到了 `^5.0`;
+- 将 `symfony/console` 升级到了 `^5.0`;
+- 将 `symfony/property-access` 升级到了 `^5.0`;
+- 将 `symfony/serializer` 升级到了 `^5.0`;
+- 将 `elasticsearch/elasticsearch` 升级到了 `^7.0`;
+
+## 类和方法的变更
+
+- 移除了 `Hyperf\Di\Aop\AstCollector`；
+- 移除了 `Hyperf\Di\Aop\ProxyClassNameVisitor`；
+- 移除了 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`；
+- 移除了 `Hyperf\Dispatcher\AbstractDispatcher` 类的 `dispatch(...$params)` 方法；
+- 移除了 hyperf/utils 组件中 ConfigProvider 中的 `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` 关系；
+- 移除了 `Hyperf\Contract\OnOpenInterface`、`Hyperf\Contract\OnCloseInterface`、`Hyperf\Contract\OnMessageInterface`、`Hyperf\Contract\OnReceiveInterface` 接口中的 `$server` 参数的强类型声明；
+
+## 新增
+
+- [#992](https://github.com/hyperf/hyperf/pull/992) 新增 [hyperf/reactive-x](https://github.com/hyperf/reactive-x) 组件；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) 为 `ExceptionHandler` 新增了注解的定义方式；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) `ExceptionHandler` 新增了 `priority` 优先级属性，通过配置文件或注解方式均可定义优先级；
+- [#1819](https://github.com/hyperf/hyperf/pull/1819) 新增 [hyperf/signal](https://github.com/hyperf/signal) 组件；
+- [#1844](https://github.com/hyperf/hyperf/pull/1844) 为 [hyperf/model-cache](https://github.com/hyperf/model-cache) 组件中的 `ttl` 属性增加了 `\DateInterval` 类型的支持；
+- [#1855](https://github.com/hyperf/hyperf/pull/1855) 连接池新增了 `ConstantFrequency` 恒定频率策略来释放限制的连接；
+- [#1871](https://github.com/hyperf/hyperf/pull/1871) 为 Guzzle 增加 `sink` 选项支持；
+- [#1805](https://github.com/hyperf/hyperf/pull/1805) 新增 Coroutine Server 协程服务支持；
+  - 变更了 `Hyperf\Contract\ProcessInterface` 中的 `bind(Server $server)` 方法声明为 `bind($server)`；
+  - 变更了 `Hyperf\Contract\ProcessInterface` 中的 `isEnable()` 方法声明为 `isEnable($server)`；
+  - 配置中心、Crontab、服务监控、消息队列消费者现在可以通过协程模式来运行，且在使用协程服务模式时，也必须以协程模式来运行；
+  - `Hyperf\AsyncQueue\Environment` 的作用域改为当前协程内，而不是整个进程；
+  - 协程模式下不再支持 Task 机制；
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) 在 PHP 8 下使用 `@Inject` 注解时支持通过成员属性强类型声明来替代 `@var` 声明，如下所示：
+
+```
+class Example {
+    /**
+    * @Inject
+    */
+    private ExampleService $exampleService;
+}
+```
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 新增 `Hyperf\HttpServer\ResponseEmitter` 类来响应任意符合 PSR-7 标准的 Response 对象，同时抽象了 `Hyperf\Contract\ResponseEmitterInterface` 契约；
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 为 `Hyperf\HttpMessage\Server\Response` 类新增了 `getTrailers()` 和 `getTrailer(string $key)` 和 `withTrailer(string $key, $value)` 方法；
+- [#1920](https://github.com/hyperf/hyperf/pull/1920) 新增方法 `Hyperf\WebSocketServer\Sender::close(int $fd, bool $reset = null)`.
+
+## 修复
+
+- [#1825](https://github.com/hyperf/hyperf/pull/1825) 修复了 `StartServer::execute` 的 `TypeError`；
+- [#1854](https://github.com/hyperf/hyperf/pull/1854) 修复了在 filesystem 中使用 `Runtime::enableCoroutine()` 时，`is_resource` 不能工作的问题；
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) 修复了 `Model` 中的 `asDecimal` 方法类型有可能错误的问题；
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) 修复了 `Request::isXmlHttpRequest` 方法无法正常工作的问题；
+
+## 变更
+
+- [#705](https://github.com/hyperf/hyperf/pull/705) 统一了 HTTP 异常的处理方式，现在统一抛出一个 `Hyperf\HttpMessage\Exception\HttpException` 依赖类来替代在 `Dispatcher` 中直接响应的方式，同时提供了 `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` 异常处理器来处理该类异常；
+- [#1846](https://github.com/hyperf/hyperf/pull/1846) 当您 require 了 `symfony/serializer` 库，不再自动映射 `Hyperf\Contract\NormalizerInterface` 的实现类，您需要手动添加该映射关系，如下：
+
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```
+
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) 重命名 `Hyperf\GrpcClient\BaseClient` 内 `simpleRequest, getGrpcClient, clientStreamRequest` 方法名为 `_simpleRequest, _getGrpcClient, _clientStreamRequest`；
+
+## 移除
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
+- [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.
+
+## 优化
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io 服务现在只在 onOpen and onClose 中触发 connect/disconnect 事件，同时将一些类方法从 private 级别调整到了 protected 级别，以便用户可以方便的重写这些方法；
+- [#1848](https://github.com/hyperf/hyperf/pull/1848) 当 RPC 客户端对应的 Contract 发生变更时，自动重写生成对应的动态代理客户端类；
+- [#1863](https://github.com/hyperf/hyperf/pull/1863) 为 async-queue 组件提供更加安全的停止机制；
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) 当在 constants 组件中使用了同样的 code 时，keys 会被合并起来；
+
 # v1.1.32 - 2020-05-21
 
 ## 修复
