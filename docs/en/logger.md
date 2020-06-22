@@ -173,7 +173,7 @@ class Log
 
 是的, 还是通过强大的 `容器(Container)`.
 
-- 首先, 实现一个 `StdoutLoggerFactory` 类，关于 `Factory` 的用法可在 [依赖注入](zh/di.md) 章节获得更多详细的说明。
+- 首先, 实现一个 `StdoutLoggerFactory` 类，关于 `Factory` 的用法可在 [依赖注入](en/di.md) 章节获得更多详细的说明。
 
 ```php
 <?php
