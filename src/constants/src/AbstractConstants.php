@@ -17,18 +17,12 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 
 /**
- * Class AbstractConstants
- * @package Hyperf\Constants
+ * Class AbstractConstants.
  *
  * @method static getMessage($code, ...$arguments)
  */
 abstract class AbstractConstants
 {
-    public static function getMessageToArray(?Format $format = null)
-    {
-        return ConstantsCollector::getMessageToArray(static::class, $format);
-    }
-
     public static function __callStatic($name, $arguments)
     {
         if (! Str::startsWith($name, 'get')) {
@@ -59,6 +53,11 @@ abstract class AbstractConstants
         }
 
         return $message;
+    }
+
+    public static function getMessageToArray(?Format $format = null)
+    {
+        return ConstantsCollector::getMessageToArray(static::class, $format);
     }
 
     protected static function translate($key, $arguments): ?string

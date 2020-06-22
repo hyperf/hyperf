@@ -36,7 +36,7 @@ class ConstantsCollector extends MetadataCollector
 
         $constants = [];
         foreach (static::get($className, []) as $code => $value) {
-            if (!self::hasValue($className, $code, 'message')) {
+            if (! self::hasValue($className, $code, 'message')) {
                 continue;
             }
 
