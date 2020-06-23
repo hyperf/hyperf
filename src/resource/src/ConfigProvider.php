@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource;
 
-use Hyperf\Resource\Commands\GenResourceCommand;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -23,7 +21,6 @@ class ConfigProvider
             'listeners' => [
             ],
             'commands' => [
-                GenResourceCommand::class,
             ],
         ];
     }

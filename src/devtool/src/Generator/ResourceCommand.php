@@ -9,17 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Resource\Commands;
+namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Devtool\Generator\GeneratorCommand;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
  * @Command
  */
-class GenResourceCommand extends GeneratorCommand
+class ResourceCommand extends GeneratorCommand
 {
     public function __construct()
     {

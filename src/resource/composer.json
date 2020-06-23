@@ -25,14 +25,14 @@
         "php": ">=7.2",
         "ext-swoole": ">=4.5",
         "ext-json": "*",
-        "hyperf/command": "~2.0.0",
-        "hyperf/devtool": "~2.0.0",
         "hyperf/http-message": "~2.0.0",
         "hyperf/paginator": "~2.0.0",
         "hyperf/utils": "~2.0.0",
         "psr/container": "^1.0"
     },
     "require-dev": {
+        "hyperf/command": "~2.0.0",
+        "hyperf/devtool": "~2.0.0",
         "doctrine/common": "^2.9",
         "friendsofphp/php-cs-fixer": "v2.16.1",
         "hyperf/database": "~2.0.0",
