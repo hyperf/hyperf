@@ -1,5 +1,9 @@
 # v2.0.1 - TBD
 
+## Fixed
+
+[#1960](https://github.com/hyperf/hyperf/pull/1960) Fixed `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` method does not works as expected. 
+
 ## Optimized
 
 [#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
