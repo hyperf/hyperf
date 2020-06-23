@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Concerns;
 
 use Hyperf\Paginator\AbstractPaginator;
@@ -46,7 +47,7 @@ trait CollectsResources
 
         $collects = $this->collects();
 
-        $this->collection = $collects && ! $resource->first() instanceof $collects
+        $this->collection = $collects && !$resource->first() instanceof $collects
             ? $resource->mapInto($collects)
             : $resource->toBase();
 
@@ -70,6 +71,8 @@ trait CollectsResources
             class_exists($class = Str::replaceLast('Collection', '', get_class($this)))) {
             return $class;
         }
+
+        return null;
     }
 
     protected function isPaginatorResource($resource): bool

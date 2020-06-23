@@ -89,7 +89,7 @@ class Response
     /**
      * Wrap the given data if necessary.
      *
-     * @param array $data
+     * @param array|Collection $data
      * @param array $with
      * @param array $additional
      * @return array

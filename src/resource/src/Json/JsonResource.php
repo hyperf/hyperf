@@ -51,7 +51,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     /**
      * The "data" wrapper that should be applied.
      *
-     * @var string
+     * @var string|null
      */
     public $wrap = 'data';
 
@@ -104,10 +104,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     public function resolve()
     {
         $data = $this->toArray();
-
-        if ($data instanceof Arrayable) {
-            $data = $data->toArray();
-        }
 
         return $this->filter((array) $data);
     }
