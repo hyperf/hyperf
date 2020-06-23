@@ -116,10 +116,8 @@ class Response
 
     /**
      * Determine if "with" data has been added and our data is unwrapped.
-     *
-     * @return bool
      */
-    protected function haveAdditionalInformationAndDataIsUnwrapped(array $data, array $with, array $additional): array
+    protected function haveAdditionalInformationAndDataIsUnwrapped(array $data, array $with, array $additional): bool
     {
         return (! empty($with) || ! empty($additional)) &&
             (! $this->wrapper() ||

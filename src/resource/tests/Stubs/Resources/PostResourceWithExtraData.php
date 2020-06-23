@@ -13,7 +13,7 @@ namespace HyperfTest\Resource\Stubs\Resources;
 
 class PostResourceWithExtraData extends PostResource
 {
-    public function with()
+    public function with(): array
     {
         return ['foo' => 'bar'];
     }
