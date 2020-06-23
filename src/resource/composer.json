@@ -36,7 +36,6 @@
         "doctrine/common": "^2.9",
         "friendsofphp/php-cs-fixer": "v2.16.1",
         "hyperf/database": "~2.0.0",
-        "hyperf/grpc-server": "~2.0.0",
         "hyperf/http-server": "~2.0.0",
         "mockery/mockery": "^1.0",
         "phpstan/phpstan": "^0.12",
