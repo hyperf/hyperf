@@ -25,7 +25,7 @@ class ConstantsCollector extends MetadataCollector
         return static::$container[$className][$code][$key] ?? '';
     }
 
-    public static function getArray($classname)
+    public static function getArray(string $classname): array
     {
         return static::$container[$classname] ?? [];
     }
