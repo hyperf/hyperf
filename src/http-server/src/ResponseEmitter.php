@@ -82,7 +82,7 @@ class ResponseEmitter implements ResponseEmitterInterface
     {
         foreach ($methods as $method) {
             if (! method_exists($object, $method)) {
-                return true;
+                return false;
             }
         }
         return true;
