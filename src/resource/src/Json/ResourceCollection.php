@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Json;
 
 use Countable;
@@ -62,7 +63,9 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
      */
     public function toArray(): array
     {
-        return $this->collection->map->toArray()->all();
+        /** @var Collection $collection */
+        $collection = $this->collection->map->toArray();
+        return $collection->all();
     }
 
     public function toResponse()
@@ -76,6 +79,9 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
 
     public function toMessage()
     {
-        return $this->collection->map->toMessage()->all();
+        /** @var Collection $collection */
+        $collection = $this->collection->map->toMessage();
+
+        return $collection->all();
     }
 }

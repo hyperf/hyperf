@@ -41,3 +41,5 @@ parameters:
     - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
     - '#gc_status not found#'
+    - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::toMessage().#'
+    - '#Access to an undefined property Hyperf\\Resource\\Json\\JsonResource::\$preserveKeys.#'
