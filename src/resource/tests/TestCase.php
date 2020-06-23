@@ -25,11 +25,9 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
-use HyperfTest\Resource\Stubs\GrpcCoreMiddlewareProxy as GrpcServerCore;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -101,28 +99,5 @@ class TestCase extends \PHPUnit\Framework\TestCase
             ])]);
 
         return HttpResponse::fromBaseResponse($core->process($request, $handle));
-    }
-
-    /**
-     * @param array|callable|string $except
-     * @return PsrResponseInterface
-     */
-    public function grpc($except)
-    {
-        $core = new GrpcServerCore($container = $this->container(), 'grpc');
-
-        $handle = Mockery::mock(RequestHandlerInterface::class);
-
-        $request = Mockery::mock(ServerRequestInterface::class);
-
-        $request->shouldReceive(...['getAttribute'])
-            ->with(...[Dispatched::class])
-            ->andReturn(...[new Dispatched([
-                Dispatcher::FOUND,
-                new Handler($except, '*'),
-                [],
-            ])]);
-
-        return $core->process($request, $handle);
     }
 }

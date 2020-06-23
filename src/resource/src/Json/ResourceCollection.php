@@ -75,12 +75,4 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
 
         return parent::toResponse();
     }
-
-    public function toMessage()
-    {
-        /** @var Collection $collection */
-        $collection = $this->collection->map->toMessage();
-
-        return $collection->all();
-    }
 }

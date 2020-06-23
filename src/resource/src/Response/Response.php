@@ -13,9 +13,6 @@ namespace Hyperf\Resource\Response;
 
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Resource\Json\AnonymousResourceCollection;
-use Hyperf\Resource\Json\JsonResource;
-use Hyperf\Resource\MessageResource;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Context;
@@ -50,40 +47,6 @@ class Response
                 $this->resource->with(),
                 $this->resource->additional
             ))));
-    }
-
-    public function toMessage($resource = false)
-    {
-        if ($resource === false) {
-            $resource = $this->resource;
-        }
-
-        $data = $resource->resolve();
-
-        if ($data instanceof Collection) {
-            $data = $data->all();
-        }
-
-        $wrap = array_merge_recursive($data, $resource->with(), $resource->additional);
-
-        foreach ($wrap as $key => $value) {
-            if (($value instanceof JsonResource && is_null($value->resource)) || is_null($value)) {
-                unset($wrap[$key]);
-                continue;
-            }
-
-            if ($value instanceof AnonymousResourceCollection) {
-                $wrap[$key] = $value->toMessage();
-            }
-
-            if ($value instanceof MessageResource) {
-                $wrap[$key] = $this->toMessage($value);
-            }
-        }
-
-        $except = $resource->expect();
-
-        return new $except($wrap);
     }
 
     /**

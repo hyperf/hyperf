@@ -188,9 +188,4 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     {
         return (new Response($this))->toResponse();
     }
-
-    public function toMessage()
-    {
-        return (new Response($this))->toMessage();
-    }
 }
