@@ -13,7 +13,7 @@ namespace Hyperf\Resource;
 
 use Hyperf\Resource\Grpc\GrpcResource;
 
-class UndefinedGrpcResourceExceptMessage extends \Exception
+class UndefinedGrpcResourceExpectMessage extends \Exception
 {
     public $resource;
 

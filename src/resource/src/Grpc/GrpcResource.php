@@ -13,12 +13,12 @@ namespace Hyperf\Resource\Grpc;
 
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\MessageResource;
-use Hyperf\Resource\UndefinedGrpcResourceExceptMessage;
+use Hyperf\Resource\UndefinedGrpcResourceExpectMessage;
 
 class GrpcResource extends JsonResource implements MessageResource
 {
     public function expect(): string
     {
-        throw new UndefinedGrpcResourceExceptMessage($this);
+        throw new UndefinedGrpcResourceExpectMessage($this);
     }
 }
