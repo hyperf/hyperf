@@ -23,7 +23,6 @@
     ],
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.5",
         "ext-json": "*",
         "hyperf/http-message": "~2.0.0",
         "hyperf/paginator": "~2.0.0",
