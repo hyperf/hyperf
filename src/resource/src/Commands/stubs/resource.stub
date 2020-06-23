@@ -1,0 +1,18 @@
+<?php
+
+namespace %NAMESPACE%;
+
+use Hyperf\Resource\Json\JsonResource;
+
+class %CLASS% extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return parent::toArray();
+    }
+}
