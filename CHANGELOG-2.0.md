@@ -1,8 +1,12 @@
 # v2.0.1 - TBD
 
+## Fixed
+
+- [#1964](https://github.com/hyperf/hyperf/pull/1964) Fixed http status code 500 caused by empty body.
+
 ## Optimized
 
-[#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
+- [#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
 
 # v2.0.0 - 2020-06-22
 
