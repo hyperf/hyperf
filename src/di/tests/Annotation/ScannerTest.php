@@ -71,21 +71,24 @@ class ScannerTest extends TestCase
         $reader = new AnnotationReader();
         $scanner->collect($reader, BetterReflectionManager::reflectClass(Debug2Aspect::class));
 
+        // Don't has aspects.cache or aspects changed.
         [$removed, $changed] = $method->invokeArgs($scanner, [[Debug1Aspect::class, Debug2Aspect::class, Debug3Aspect::class], 0]);
         $this->assertEmpty($removed);
         $this->assertEquals([Debug1Aspect::class, Debug2Aspect::class, Debug3Aspect::class], $changed);
 
-        $times[Debug2Aspect::class] = 20;
+        // Removed aspect, but the aspect has annotation @Aspect.
         [$removed, $changed] = $method->invokeArgs($scanner, [[Debug1Aspect::class, Debug3Aspect::class], 10]);
         $this->assertEmpty($removed);
         $this->assertEmpty($changed);
 
+        // Removed aspect.
         [$removed, $changed] = $method->invokeArgs($scanner, [[Debug3Aspect::class], 10]);
         $this->assertEquals([Debug1Aspect::class], $removed);
         $this->assertEmpty($changed);
 
         $times[Debug3Aspect::class] = 20;
 
+        // Changed aspect.
         [$removed, $changed] = $method->invokeArgs($scanner, [[Debug3Aspect::class], 10]);
         $this->assertEmpty($removed);
         $this->assertEquals([Debug3Aspect::class], $changed);
