@@ -144,6 +144,7 @@ class Foo extends AbstractAnnotation
 <?php
 
 return [
+    // 注意在 config/autoload 文件下的配置文件则无 annotations 这一层
     'annotations' => [
         'scan' => [
             'collectors' => [
