@@ -55,11 +55,9 @@ abstract class AbstractConstants
         return $message;
     }
 
-    public static function toArray()
+    public static function toArray(): array
     {
-        $class = static::class;
-
-        return ConstantsCollector::getArray($class);
+        return ConstantsCollector::getArray(static::class);
     }
 
     protected static function translate($key, $arguments): ?string
