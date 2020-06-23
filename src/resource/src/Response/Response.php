@@ -40,7 +40,7 @@ class Response
         $this->resource = $resource;
     }
 
-    public function toResponse()
+    public function toResponse(): ResponseInterface
     {
         return $this->response()
             ->withStatus($this->calculateStatus())
@@ -90,11 +90,8 @@ class Response
      * Wrap the given data if necessary.
      *
      * @param array|Collection $data
-     * @param array $with
-     * @param array $additional
-     * @return array
      */
-    protected function wrap($data, $with = [], $additional = [])
+    protected function wrap($data, array $with = [], array $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();
@@ -111,11 +108,8 @@ class Response
 
     /**
      * Determine if we have a default wrapper and the given data is unwrapped.
-     *
-     * @param array $data
-     * @return bool
      */
-    protected function haveDefaultWrapperAndDataIsUnwrapped($data)
+    protected function haveDefaultWrapperAndDataIsUnwrapped(array $data): bool
     {
         return $this->wrapper() && ! array_key_exists($this->wrapper(), $data);
     }
@@ -123,12 +117,9 @@ class Response
     /**
      * Determine if "with" data has been added and our data is unwrapped.
      *
-     * @param array $data
-     * @param array $with
-     * @param array $additional
      * @return bool
      */
-    protected function haveAdditionalInformationAndDataIsUnwrapped($data, $with, $additional)
+    protected function haveAdditionalInformationAndDataIsUnwrapped(array $data, array $with, array $additional): array
     {
         return (! empty($with) || ! empty($additional)) &&
             (! $this->wrapper() ||
@@ -138,14 +129,14 @@ class Response
     /**
      * Get the default data wrapper for the resource.
      *
-     * @return string
+     * @return null|string
      */
     protected function wrapper()
     {
         return $this->resource->wrap;
     }
 
-    protected function calculateStatus()
+    protected function calculateStatus(): int
     {
         return $this->resource->resource instanceof Model &&
         $this->resource->resource->wasRecentlyCreated ? 201 : 200;

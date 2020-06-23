@@ -27,11 +27,8 @@ trait ConditionallyLoadsAttributes
 {
     /**
      * Filter the given data, removing any optional values.
-     *
-     * @param array $data
-     * @return array
      */
-    protected function filter($data)
+    protected function filter(array $data): array
     {
         $index = -1;
 
@@ -62,14 +59,8 @@ trait ConditionallyLoadsAttributes
 
     /**
      * Merge the given data in at the given index.
-     *
-     * @param array $data
-     * @param int $index
-     * @param array $merge
-     * @param bool $numericKeys
-     * @return array
      */
-    protected function mergeData($data, $index, $merge, $numericKeys)
+    protected function mergeData(array $data, int $index, array $merge, bool $numericKeys): array
     {
         if ($numericKeys) {
             return $this->removeMissingValues(array_merge(
@@ -85,11 +76,8 @@ trait ConditionallyLoadsAttributes
 
     /**
      * Remove the missing values from the filtered data.
-     *
-     * @param array $data
-     * @return array
      */
-    protected function removeMissingValues($data)
+    protected function removeMissingValues(array $data): array
     {
         $numericKeys = true;
 
@@ -114,12 +102,11 @@ trait ConditionallyLoadsAttributes
     /**
      * Retrieve a value based on a given condition.
      *
-     * @param bool $condition
      * @param mixed $value
      * @param mixed $default
      * @return MissingValue|mixed
      */
-    protected function when($condition, $value, $default = null)
+    protected function when(bool $condition, $value, $default = null)
     {
         if ($condition) {
             return value($value);
@@ -142,22 +129,18 @@ trait ConditionallyLoadsAttributes
     /**
      * Merge a value based on a given condition.
      *
-     * @param bool $condition
      * @param mixed $value
      * @return MergeValue|mixed
      */
-    protected function mergeWhen($condition, $value)
+    protected function mergeWhen(bool $condition, $value)
     {
         return $condition ? new MergeValue(value($value)) : new MissingValue();
     }
 
     /**
      * Merge the given attributes.
-     *
-     * @param array $attributes
-     * @return MergeValue
      */
-    protected function attributes($attributes)
+    protected function attributes(array $attributes): MergeValue
     {
         return new MergeValue(
             Arr::only($this->resource->toArray(), $attributes)
@@ -167,12 +150,11 @@ trait ConditionallyLoadsAttributes
     /**
      * Retrieve a relationship if it has been loaded.
      *
-     * @param string $relationship
      * @param mixed $value
      * @param mixed $default
      * @return MissingValue|mixed
      */
-    protected function whenLoaded($relationship, $value = null, $default = null)
+    protected function whenLoaded(string $relationship, $value = null, $default = null)
     {
         if (func_num_args() < 3) {
             $default = new MissingValue();
@@ -196,12 +178,11 @@ trait ConditionallyLoadsAttributes
     /**
      * Execute a callback if the given pivot table has been loaded.
      *
-     * @param string $table
      * @param mixed $value
      * @param mixed $default
      * @return MissingValue|mixed
      */
-    protected function whenPivotLoaded($table, $value, $default = null)
+    protected function whenPivotLoaded(string $table, $value, $default = null)
     {
         return $this->whenPivotLoadedAs('pivot', ...func_get_args());
     }
@@ -209,13 +190,11 @@ trait ConditionallyLoadsAttributes
     /**
      * Execute a callback if the given pivot table with a custom accessor has been loaded.
      *
-     * @param string $accessor
-     * @param string $table
      * @param mixed $value
      * @param mixed $default
      * @return MissingValue|mixed
      */
-    protected function whenPivotLoadedAs($accessor, $table, $value, $default = null)
+    protected function whenPivotLoadedAs(string $accessor, string $table, $value, $default = null)
     {
         if (func_num_args() === 3) {
             $default = new MissingValue();
@@ -249,7 +228,7 @@ trait ConditionallyLoadsAttributes
         return func_num_args() === 3 ? $default : new MissingValue();
     }
 
-    protected function blank($value)
+    protected function blank($value): bool
     {
         if (is_null($value)) {
             return true;

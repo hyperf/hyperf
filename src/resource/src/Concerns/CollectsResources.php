@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Resource\Concerns;
 
 use Hyperf\Paginator\AbstractPaginator;
@@ -21,10 +20,8 @@ trait CollectsResources
 {
     /**
      * Get an iterator for the resource collection.
-     *
-     * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return $this->collection->getIterator();
     }
@@ -47,7 +44,7 @@ trait CollectsResources
 
         $collects = $this->collects();
 
-        $this->collection = $collects && !$resource->first() instanceof $collects
+        $this->collection = $collects && ! $resource->first() instanceof $collects
             ? $resource->mapInto($collects)
             : $resource->toBase();
 

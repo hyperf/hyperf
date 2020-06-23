@@ -14,10 +14,11 @@ namespace Hyperf\Resource\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Codec\Json;
+use Psr\Http\Message\ResponseInterface;
 
 class PaginatedResponse extends Response
 {
-    public function toResponse()
+    public function toResponse(): ResponseInterface
     {
         return $this->response()
             ->withStatus($this->calculateStatus())
@@ -34,10 +35,8 @@ class PaginatedResponse extends Response
 
     /**
      * Add the pagination information to the response.
-     *
-     * @return array
      */
-    protected function paginationInformation()
+    protected function paginationInformation(): array
     {
         $paginated = $this->resource->resource->toArray();
 
@@ -49,11 +48,8 @@ class PaginatedResponse extends Response
 
     /**
      * Get the pagination links for the response.
-     *
-     * @param array $paginated
-     * @return array
      */
-    protected function paginationLinks($paginated)
+    protected function paginationLinks(array $paginated): array
     {
         return [
             'first' => $paginated['first_page_url'] ?? null,
@@ -65,11 +61,8 @@ class PaginatedResponse extends Response
 
     /**
      * Gather the meta data for the response.
-     *
-     * @param array $paginated
-     * @return array
      */
-    protected function meta($paginated)
+    protected function meta(array $paginated): array
     {
         return Arr::except($paginated, [
             'data',

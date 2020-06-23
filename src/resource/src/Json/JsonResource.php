@@ -51,7 +51,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     /**
      * The "data" wrapper that should be applied.
      *
-     * @var string|null
+     * @var null|string
      */
     public $wrap = 'data';
 
@@ -98,10 +98,8 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 
     /**
      * Resolve the resource to an array.
-     *
-     * @return array
      */
-    public function resolve()
+    public function resolve(): array
     {
         $data = $this->toArray();
 
@@ -125,11 +123,9 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     /**
      * Convert the model instance to JSON.
      *
-     * @param int $options
      * @throws JsonEncodingException
-     * @return string
      */
-    public function toJson($options = 0)
+    public function toJson(int $options = 0): string
     {
         $json = json_encode($this->jsonSerialize(), $options);
 
@@ -142,10 +138,8 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 
     /**
      * Get any additional data that should be returned with the resource array.
-     *
-     * @return array
      */
-    public function with()
+    public function with(): array
     {
         return $this->with;
     }

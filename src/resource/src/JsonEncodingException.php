@@ -19,11 +19,9 @@ class JsonEncodingException extends RuntimeException
     /**
      * Create a new JSON encoding exception for the resource.
      *
-     * @param JsonResource $resource
-     * @param string $message
      * @return static
      */
-    public static function forResource($resource, $message)
+    public static function forResource(JsonResource $resource, string $message)
     {
         $model = $resource->resource;
 
