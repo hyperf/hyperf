@@ -86,7 +86,7 @@ class ClassLoader
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
                     return (bool) $composerClassLoader->findFile($class);
                 });
-                $loader[0] = new ClassLoader($composerClassLoader, $proxyFileDirPath, $configDir);
+                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
             }
             spl_autoload_unregister($unregisterLoader);
         }
@@ -126,7 +126,7 @@ class ClassLoader
         return is_string($file) ? $file : null;
     }
 
-    private function loadDotenv(): void
+    protected function loadDotenv(): void
     {
         $repository = RepositoryBuilder::create()
             ->withReaders([

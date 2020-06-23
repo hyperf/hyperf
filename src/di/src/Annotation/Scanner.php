@@ -238,13 +238,14 @@ class Scanner
         if (! $configDir) {
             return;
         }
-        if ($lastCacheModified > $this->filesystem->lastModified($configDir . '/autoload/aspects.php')
-            && $lastCacheModified > $this->filesystem->lastModified($configDir . '/config.php')
-        ) {
+        $aspectsPath = $configDir . '/autoload/aspects.php';
+        $aspectsLastModified = file_exists($aspectsPath) ? $this->filesystem->lastModified($aspectsPath) : 0;
+        $baseConfigLastModified = $this->filesystem->lastModified($configDir . '/config.php');
+        if ($lastCacheModified > max($aspectsLastModified, $baseConfigLastModified)) {
             return;
         }
 
-        $aspects = require $configDir . '/autoload/aspects.php';
+        $aspects = file_exists($aspectsPath) ? require $aspectsPath : [];
         $baseConfig = require $configDir . '/config.php';
         $providerConfig = ProviderConfig::load();
         if (! isset($aspects) || ! is_array($aspects)) {

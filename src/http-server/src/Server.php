@@ -121,10 +121,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! isset($psr7Request) || ! isset($psr7Response)) {
+            if (! isset($psr7Response)) {
                 return;
             }
-            if ($psr7Request->getMethod() === 'HEAD') {
+            if (! isset($psr7Request) || $psr7Request->getMethod() === 'HEAD') {
                 $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
                 $this->responseEmitter->emit($psr7Response, $response, true);
