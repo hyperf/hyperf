@@ -148,7 +148,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     }
 
     /**
-     * @param SwooleServer|\Swoole\Coroutine\Server\Connection $server
+     * @param \Swoole\Coroutine\Server\Connection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
