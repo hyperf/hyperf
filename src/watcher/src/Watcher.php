@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
@@ -25,6 +24,7 @@ use Hyperf\Watcher\Driver\DriverInterface;
 use Hyperf\Watcher\Driver\FswatchDriver;
 use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
+use Psr\Container\ContainerInterface;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Adapter;
 use Roave\BetterReflection\Reflection\ReflectionClass;

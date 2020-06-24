@@ -1,5 +1,9 @@
 # v2.0.1 - TBD
 
+## Added
+
+- [#1982](https://github.com/hyperf/hyperf/pull/1982) Added watcher component.
+
 ## Fixed
 
 - [#1952](https://github.com/hyperf/hyperf/pull/1952) Fixed bug that migration will be created although class already exists.

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Watcher\Command;
 
 use Hyperf\Command\Command;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Watcher\Option;
 use Hyperf\Watcher\Watcher;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 class WatchCommand extends Command
