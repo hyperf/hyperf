@@ -56,7 +56,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
 
     public function leaveNode(Node $node)
     {
-        if (! $this->visitorMetadata->hasConstructor && $node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) {
+        if ((! $this->visitorMetadata->hasConstructor && $node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) || $node instanceof Node\Stmt\Trait_) {
             $constructor = $this->buildConstructor();
             if ($this->visitorMetadata->hasExtends) {
                 $constructor->stmts[] = $this->buildCallParentConstructorStatement();
