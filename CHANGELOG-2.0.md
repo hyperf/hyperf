@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constants`.
 - [#1982](https://github.com/hyperf/hyperf/pull/1982) Added watcher component.
 
 ## Fixed
