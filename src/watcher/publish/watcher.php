@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Watcher\Driver\FswatchDriver;
+
 return [
-    'driver' => 'fswatch',
+    'driver' => FswatchDriver::class,
+    'bin' => 'php',
     'watch' => [
         'dir' => ['app', 'config'],
         'files' => ['.env'],

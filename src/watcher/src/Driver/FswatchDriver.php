@@ -23,9 +23,15 @@ class FswatchDriver implements DriverInterface
      */
     protected $option;
 
+    /**
+     * @var bool
+     */
+    protected $isDarwin;
+
     public function __construct(Option $option)
     {
         $this->option = $option;
+        $this->isDarwin = PHP_OS === 'Darwin';
         $ret = System::exec('which fswatch');
         if (empty($ret['output'])) {
             throw new \InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
@@ -58,6 +64,11 @@ class FswatchDriver implements DriverInterface
         $dir = $this->option->getWatchDir();
         $file = $this->option->getWatchFile();
 
-        return 'fswatch ' . implode(' ', $dir) . ' ' . implode(' ', $file);
+        $cmd = 'fswatch ';
+        if (! $this->isDarwin) {
+            $cmd .= '-m inotify_monitor ';
+        }
+
+        return $cmd . implode(' ', $dir) . ' ' . implode(' ', $file);
     }
 }
