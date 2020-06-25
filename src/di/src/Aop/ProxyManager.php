@@ -118,7 +118,7 @@ class ProxyManager
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);
         $origin = $this->classMap[$className];
-        if ($time > $this->filesystem->lastModified($origin)) {
+        if ($time >= $this->filesystem->lastModified($origin)) {
             return false;
         }
 
