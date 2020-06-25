@@ -180,7 +180,7 @@ class AnnotationReader implements Reader
 
     public static function addGlobalImports(string $alias, string $annotation)
     {
-        self::$globalImports[$alias] = $annotation;
+        self::$globalImports[strtolower($alias)] = $annotation;
     }
 
     /**
