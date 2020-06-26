@@ -145,7 +145,7 @@ class Watcher
                 // 重写缓存
                 $meta = $this->getMetadata($file);
                 if ($meta) {
-                    $ret = System::exec($this->getPhpPath() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
+                    $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
                     if ($ret['code'] === 0) {
                         $this->output->writeln('Class reload success.');
                     }
@@ -207,7 +207,7 @@ class Watcher
         go(function () {
             $this->channel->pop();
             $this->output->writeln('Start server ...');
-            $ret = System::exec($this->getPhpPath() . ' vendor/bin/watcher.php start');
+            $ret = System::exec($this->option->getBin() . ' vendor/bin/watcher.php start');
             if ($ret['code']) {
                 throw new \RuntimeException($ret['output']);
             }
@@ -233,16 +233,10 @@ class Watcher
     protected function getDriver()
     {
         $driver = $this->option->getDriver();
-        switch (strtolower($driver)) {
-            case 'fswatch':
-                return new FswatchDriver($this->option);
-            default:
-                throw new \InvalidArgumentException('Driver not support.');
+        if (! class_exists($driver)) {
+            throw new \InvalidArgumentException('Driver not support.');
         }
-    }
 
-    protected function getPhpPath()
-    {
-        return $_SERVER['_'] ?? 'php';
+        return make(FswatchDriver::class, ['option' => $this->option]);
     }
 }
