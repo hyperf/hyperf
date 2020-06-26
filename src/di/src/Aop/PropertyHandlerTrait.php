@@ -26,13 +26,8 @@ trait PropertyHandlerTrait
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = ReflectionManager::reflectPropertyNames($className);
 
-        // Inject the properties of parent class
-        $parentReflectionClass = $reflectionClass;
-        while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
-            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
-            $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
-            $properties = array_diff($properties, $parentClassProperties);
-        }
+        // Inject the properties of current class
+        $this->__handle($className, $className, $propertyHandlers, $properties);
 
         // Inject the properties of traits
         $traitNames = $reflectionClass->getTraitNames();
@@ -43,8 +38,15 @@ trait PropertyHandlerTrait
                 $properties = array_diff($properties, $traitProperties);
             }
         }
-        // Inject the properties of current class
-        $this->__handle($className, $className, $propertyHandlers, $properties);
+
+        // Inject the properties of parent class
+        $parentReflectionClass = $reflectionClass;
+        while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
+            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
+            $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
+            $properties = array_diff($properties, $parentClassProperties);
+        }
+
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
