@@ -43,6 +43,9 @@
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
         "hyperf": {
             "config": "Hyperf\\Watcher\\ConfigProvider"
         }

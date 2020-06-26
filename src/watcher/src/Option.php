@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Watcher;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Watcher\Driver\FswatchDriver;
 
 class Option
 {
     /**
      * @var string
      */
-    protected $driver = 'fswatch';
+    protected $driver = FswatchDriver::class;
 
     /**
      * @var string
