@@ -240,8 +240,9 @@ class Scanner
         }
 
         $aspectsPath = $configDir . '/autoload/aspects.php';
+        $basePath = $configDir . '/config.php';
         $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
-        $baseConfig = include $configDir . '/config.php';
+        $baseConfig = file_exists($basePath) ? include $basePath : [];
         $providerConfig = ProviderConfig::load();
         if (! isset($aspects) || ! is_array($aspects)) {
             $aspects = [];
