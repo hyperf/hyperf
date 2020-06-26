@@ -26,14 +26,6 @@ trait PropertyHandlerTrait
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = ReflectionManager::reflectPropertyNames($className);
 
-        // Inject the properties of parent class
-        $parentReflectionClass = $reflectionClass;
-        while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
-            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
-            $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
-            $properties = array_diff($properties, $parentClassProperties);
-        }
-
         // Inject the properties of traits
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
