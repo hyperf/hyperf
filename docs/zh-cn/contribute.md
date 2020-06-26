@@ -3,7 +3,7 @@
 Hyperf 是一个开源项目，一个开源项目的发展离不开开源社区的力量支持，如果您希望参与 Hyperf 的开发，可以先从 [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) 开始，通常来说会有以下的一些步骤：
 
 1. 关注 [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) 的动态，评论回复帮助提出疑问的用户；
-2. 根据 [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) 的内容，找寻根据自己当前对 Hyperf 的了解程度，去修复力所能及的 BUG 或实现功能，并以 [Pull Request](https://https://github.com/hyperf/pulls) 的形式提交至 [hyperf/hyperf](https://github.com/hyperf/hyperf) 仓库；
+2. 根据 [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) 的内容，找寻根据自己当前对 Hyperf 的了解程度，去修复力所能及的 BUG 或实现功能，并以 [Pull Request](https://github.com/hyperf/hyperf/pulls) 的形式提交至 [hyperf/hyperf](https://github.com/hyperf/hyperf) 仓库；
 3. 关注自己提交 Pull Request 的进度和状态，以推动您的 Pull Request 尽快合入主仓库；
 4. 对其他人提交的 Pull Request 进行 Code Review，并给出您的建议和看法。 
 5. 根据他人或自己的需求，研发独立的功能组件；
