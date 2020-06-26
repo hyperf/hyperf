@@ -17,12 +17,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/framework": "~1.1.0",
-        "hyperf/database": "~1.1.0",
-        "hyperf/di": "~1.1.0",
-        "hyperf/model-listener": "~1.1.0",
-        "hyperf/pool": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/framework": "~2.0.0",
+        "hyperf/database": "~2.0.0",
+        "hyperf/di": "~2.0.0",
+        "hyperf/model-listener": "~2.0.0",
+        "hyperf/pool": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -47,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\DbConnection\\ConfigProvider"

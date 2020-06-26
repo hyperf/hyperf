@@ -31,7 +31,7 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $pool;
 
     /**
-     * @var AbstractConnection
+     * @var null|AbstractConnection
      */
     protected $connection;
 
@@ -56,12 +56,12 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $lastHeartbeatTime = 0.0;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
     protected $channel;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
     protected $confirmChannel;
 

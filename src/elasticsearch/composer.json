@@ -20,8 +20,8 @@
     },
     "require": {
         "php": ">=7.0",
-        "hyperf/guzzle": "~1.1.0",
-        "elasticsearch/elasticsearch": "^6.1"
+        "hyperf/guzzle": "~2.0.0",
+        "elasticsearch/elasticsearch": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7",
@@ -29,7 +29,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         }
     },
     "scripts": {
