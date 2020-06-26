@@ -73,7 +73,7 @@ class RegisterServiceListener implements ListenerInterface
     }
 
     /**
-     * @param MainWorkerStart|MainCoroutineServerStart $event
+     * @param MainCoroutineServerStart|MainWorkerStart $event
      */
     public function process(object $event)
     {

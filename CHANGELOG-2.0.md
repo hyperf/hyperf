@@ -1,11 +1,23 @@
 # v2.0.1 - TBD
 
+## Added
+
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constants`.
+- [#1982](https://github.com/hyperf/hyperf/pull/1982) Added watcher component.
+
 ## Fixed
 
+- [#1952](https://github.com/hyperf/hyperf/pull/1952) Fixed bug that migration will be created although class already exists.
+- [#1960](https://github.com/hyperf/hyperf/pull/1960) Fixed `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` method does not works as expected. 
 - [#1961](https://github.com/hyperf/hyperf/pull/1961) Fixed start failed when `config/autoload/aspects.php` does not exists.
 - [#1964](https://github.com/hyperf/hyperf/pull/1964) Fixed http status code 500 caused by empty body.
 - [#1965](https://github.com/hyperf/hyperf/pull/1965) Fixed the wrong http code when `initRequestAndResponse` failed.
 - [#1968](https://github.com/hyperf/hyperf/pull/1968) Fixed aspect does not work when edit in `aspects.php`.
+- [#1985](https://github.com/hyperf/hyperf/pull/1985) Fixed global_imports do not work when the aliases are not all lowercase letters.
+
+## Changed
+
+- [#1986](https://github.com/hyperf/hyperf/pull/1986) Changed exit_code `0` to `SIGTERM` when swoole short name do not set disable.
 
 ## Optimized
 

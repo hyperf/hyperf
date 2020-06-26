@@ -8,4 +8,4 @@ Under `PHP-FPM`, you can get the requested parameters through global variables, 
 
 ## Classes obtained through the container are singletons
 
-Through the dependency injection container, all of the in-process persistence is shared by multiple coroutines, so it cannot contain any data that is unique to the request or unique to the coroutine. This type of data is processed through the coroutine context. Please read the [Dependency Injection] (./en/di.md) and [Coroutine] (./en/coroutine.md) sections carefully.
+Through the dependency injection container, all of the in-process persistence is shared by multiple coroutines, so it cannot contain any data that is unique to the request or unique to the coroutine. This type of data is processed through the coroutine context. Please read the [Dependency Injection] (en/di.md) and [Coroutine] (en/coroutine.md) sections carefully.

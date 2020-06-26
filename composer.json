@@ -224,6 +224,7 @@
             "Hyperf\\Utils\\": "src/utils/src/",
             "Hyperf\\Validation\\": "src/validation/src/",
             "Hyperf\\View\\": "src/view/src/",
+            "Hyperf\\Watcher\\": "src/watcher/src/",
             "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
             "Hyperf\\WebSocketServer\\": "src/websocket-server/src/"
         }
@@ -292,6 +293,7 @@
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
+            "HyperfTest\\Watcher\\": "src/watcher/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
         }
     },
@@ -365,6 +367,7 @@
                 "Hyperf\\Utils\\ConfigProvider",
                 "Hyperf\\Validation\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
+                "Hyperf\\Watcher\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"
             ]
