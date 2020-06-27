@@ -27,7 +27,7 @@ trait PropertyHandlerTrait
         $properties = ReflectionManager::reflectPropertyNames($className);
 
         // Inject the properties of current class
-        $this->__handle($className, $className, $propertyHandlers, $properties);
+        $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
 
         // Inject the properties of traits
         $traitNames = $reflectionClass->getTraitNames();
@@ -42,12 +42,17 @@ trait PropertyHandlerTrait
         $parentReflectionClass = $reflectionClass;
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
             $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
-            $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
+            $parentClassProperties = array_diff($parentClassProperties, $handled);
+            $handled = array_merge(
+                $handled,
+                $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties)
+            );
         }
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
     {
+        $handled = [];
         foreach ($properties as $propertyName) {
             $propertyMetadata = AnnotationCollector::getClassPropertyAnnotation($targetClassName, $propertyName);
             if (! $propertyMetadata) {
@@ -59,8 +64,11 @@ trait PropertyHandlerTrait
                     foreach ($callbacks as $callback) {
                         call($callback, [$this, $currentClassName, $targetClassName, $propertyName, $annotation]);
                     }
+                    $handled[] = $propertyName;
                 }
             }
         }
+
+        return $handled;
     }
 }
