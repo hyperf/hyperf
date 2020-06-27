@@ -12,13 +12,19 @@ declare(strict_types=1);
 namespace Hyperf\Watcher;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Watcher\Driver\FswatchDriver;
 
 class Option
 {
     /**
      * @var string
      */
-    protected $driver = 'fswatch';
+    protected $driver = FswatchDriver::class;
+
+    /**
+     * @var string
+     */
+    protected $bin = 'php';
 
     /**
      * @var string[]
@@ -40,6 +46,7 @@ class Option
         $options = $config->get('watcher', []);
 
         isset($options['driver']) && $this->driver = $options['driver'];
+        isset($options['bin']) && $this->bin = $options['bin'];
         isset($options['watch']['dir']) && $this->watchDir = (array) $options['watch']['dir'];
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['ext']) && $this->ext = (array) $options['ext'];
@@ -51,6 +58,11 @@ class Option
     public function getDriver(): string
     {
         return $this->driver;
+    }
+
+    public function getBin(): string
+    {
+        return $this->bin;
     }
 
     public function getWatchDir(): array

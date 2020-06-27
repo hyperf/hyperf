@@ -5,7 +5,7 @@
 
 ## 如何提交我的组件？
 
-如果您开发的协程组件适配了 Hyperf，那么您可以直接对 [hyperf/hyperf](https://github.com/hyperf/hyperf) 项目的 `master` 分支发起您的 `Pull Request`，也就是更改当前页`(./zh-cn/awesome-components.md)`。
+如果您开发的协程组件适配了 Hyperf，那么您可以直接对 [hyperf/hyperf](https://github.com/hyperf/hyperf) 项目的 `master` 分支发起您的 `Pull Request`，也就是更改当前页`(zh-cn/awesome-components.md)`。
 
 ## 如何适配 Hyperf ?
 
