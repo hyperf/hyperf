@@ -35,7 +35,7 @@ composer create-project hyperf/hyperf-skeleton
 
 ```
 # 下載並運行 hyperf/hyperf 鏡像，並將鏡像內的項目目錄綁定到宿主機的 /tmp/skeleton 目錄
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
 
 # 鏡像容器運行後，在容器內安裝 Composer
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
