@@ -5,7 +5,7 @@
 
 ## 如何提交我的元件？
 
-如果您開發的協程元件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 專案的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(./zh-cn/awesome-components.md)`。
+如果您開發的協程元件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 專案的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(zh-cn/awesome-components.md)`。
 
 ## 如何適配 Hyperf ?
 
