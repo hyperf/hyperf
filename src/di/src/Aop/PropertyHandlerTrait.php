@@ -35,7 +35,6 @@ trait PropertyHandlerTrait
             foreach ($traitNames ?? [] as $traitName) {
                 $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
                 $this->__handle($className, $traitName, $propertyHandlers, $traitProperties);
-                $properties = array_diff($properties, $traitProperties);
             }
         }
 
@@ -44,7 +43,6 @@ trait PropertyHandlerTrait
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
             $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
             $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
-            $properties = array_diff($properties, $parentClassProperties);
         }
     }
 
