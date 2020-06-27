@@ -534,7 +534,7 @@ class Connection
      *
      * @param int $len number of bytes to receive
      *
-     * @return string
+     * @return bool|string
      */
     private function receive(int $len = 0)
     {

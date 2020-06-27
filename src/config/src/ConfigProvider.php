@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Config;
 
+use Hyperf\Config\Annotation\ValueAspect;
 use Hyperf\Config\Listener\RegisterPropertyHandlerListener;
 use Hyperf\Contract\ConfigInterface;
 
@@ -21,6 +22,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ConfigInterface::class => ConfigFactory::class,
+            ],
+            'aspects' => [
+                ValueAspect::class,
             ],
             'listeners' => [
                 RegisterPropertyHandlerListener::class,

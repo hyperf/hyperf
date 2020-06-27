@@ -135,7 +135,7 @@ class SetCookie
     /**
      * Get the cookie value.
      *
-     * @return string
+     * @return null|string
      */
     public function getValue()
     {
@@ -145,7 +145,7 @@ class SetCookie
     /**
      * Set the cookie value.
      *
-     * @param string $value Cookie value
+     * @param null|string $value Cookie value
      */
     public function setValue($value)
     {
@@ -215,7 +215,7 @@ class SetCookie
     /**
      * The UNIX timestamp when the cookie Expires.
      *
-     * @return mixed
+     * @return int|string
      */
     public function getExpires()
     {
@@ -225,7 +225,7 @@ class SetCookie
     /**
      * Set the unix timestamp for which the cookie will expire.
      *
-     * @param int $timestamp Unix timestamp
+     * @param int|string $timestamp Unix timestamp
      */
     public function setExpires($timestamp)
     {

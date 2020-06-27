@@ -60,7 +60,7 @@ class RedisStorage implements Storage, GlobalScope
     public function isBootstrapped()
     {
         try {
-            return $this->redis->exists($this->key);
+            return (bool) $this->redis->exists($this->key);
         } catch (InvalidArgumentException $e) {
             throw new StorageException('Failed to check for key existence', 0, $e);
         }

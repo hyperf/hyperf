@@ -14,7 +14,6 @@ namespace Hyperf\Utils;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
-use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class ConfigProvider
@@ -22,17 +21,17 @@ class ConfigProvider
     public function __invoke()
     {
         return [
-            'dependencies' => value(function () {
-                if (class_exists(Serializer::class)) {
-                    return [
-                        NormalizerInterface::class => SymfonyNormalizer::class,
-                        Serializer::class => SerializerFactory::class,
-                    ];
-                }
-                return [
-                    NormalizerInterface::class => SimpleNormalizer::class,
-                ];
-            }),
+            'dependencies' => [
+                Serializer::class => SerializerFactory::class,
+                NormalizerInterface::class => SimpleNormalizer::class,
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
+            ],
         ];
     }
 }

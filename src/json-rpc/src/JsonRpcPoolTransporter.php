@@ -112,10 +112,9 @@ class JsonRpcPoolTransporter implements TransporterInterface
     {
         $class = spl_object_hash($this) . '.Connection';
         /** @var RpcConnection $connection */
-        if (Context::has($class) && $connection = Context::get($class)) {
-            if ($connection->check()) {
-                return $connection;
-            }
+        $connection = Context::get($class);
+        if (isset($connection) && $connection->check()) {
+            return $connection;
         }
 
         $connection = $this->getPool()->get();
