@@ -46,7 +46,6 @@ trait PropertyHandlerTrait
             $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
             $properties = array_diff($properties, $parentClassProperties);
         }
-
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
