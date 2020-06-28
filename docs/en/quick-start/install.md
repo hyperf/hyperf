@@ -9,7 +9,7 @@ The various versions of Dockerfile have been prepared for you in the [hyperf\hyp
 When you don't want to use Docker as the basis for your running environment, you need to make sure that your operating environment meets the following requirements:  
 
  - PHP >= 7.2
- - Swoole PHP extension >= 4.4，and Disabled `Short Name`
+ - Swoole PHP extension >= 4.5，and Disabled `Short Name`
  - OpenSSL PHP extension
  - JSON PHP extension
  - PDO PHP extension （If you need to use MySQL Client）
@@ -36,7 +36,7 @@ Assuming your native environment does not meet the Hyperf environment requiremen
 
 ```
 # Download and run hyperf/hyperf image，and bind the directory of project with /tmp/skeleton of Host
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
 
 # After the mirror container is running, install Composer in the container
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
