@@ -15,12 +15,6 @@ use PhpParser\Node;
 
 class VisitorMetadata
 {
-    const CLASS_LIKE_CLASS = 'class';
-
-    const CLASS_LIKE_INTERFACE = 'interface';
-
-    const CLASS_LIKE_TRAIT = 'trait';
-
     /**
      * @var string
      */
