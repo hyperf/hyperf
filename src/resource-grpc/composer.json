@@ -1,0 +1,60 @@
+{
+    "name": "hyperf/resource-grpc",
+    "description": "A api resource component for hyperf grpc server.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+      "php",
+      "hyperf",
+      "resource",
+      "grpc"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "authors": [
+        {
+            "name": "nfangxu",
+            "email": "nfangxu@gmail.com"
+        }
+    ],
+    "require": {
+        "hyperf/resource": "~2.0.0",
+        "hyperf/grpc-server": "~2.0.0"
+    },
+    "require-dev": {
+        "hyperf/devtool": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ResourceGrpc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ResourceGrpc\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ResourceGrpc\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always -c phpunit.xml",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./src ./tests"
+    }
+}
