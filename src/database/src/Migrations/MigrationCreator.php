@@ -103,7 +103,7 @@ class MigrationCreator
     protected function ensureMigrationDoesntAlreadyExist(string $name, ?string $migrationPath = null)
     {
         if (! empty($migrationPath)) {
-            $migrationFiles = $this->files->glob($migrationPath.'/*.php');
+            $migrationFiles = $this->files->glob($migrationPath . '/*.php');
 
             foreach ($migrationFiles as $migrationFile) {
                 $this->files->requireOnce($migrationFile);
