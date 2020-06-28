@@ -22,6 +22,7 @@
 ## Optimized
 
 - [#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
+- [#2002](https://github.com/hyperf/hyperf/pull/2002) Support aop in trait when php version >= `7.3`.
 
 # v2.0.0 - 2020-06-22
 
