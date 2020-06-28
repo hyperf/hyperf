@@ -45,10 +45,6 @@ class Parser
      */
     protected static function name(string $expression)
     {
-        if (trim($expression) === '') {
-            throw new InvalidArgumentException('Command definition is empty.');
-        }
-
         if (! preg_match('/[^\s]+/', $expression, $matches)) {
             throw new InvalidArgumentException('Unable to determine command name from signature.');
         }
