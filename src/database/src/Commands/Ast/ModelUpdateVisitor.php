@@ -273,19 +273,19 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     }
                     $name = $expr->name->name;
                     if (array_key_exists($name, self::RELATION_METHODS)) {
-                        if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-                            $related = $expr->args[0]->value->class->toCodeString();
-                        }
-
-                        if (strpos($name, 'Many') !== false) {
-                            // Collection or array of models (because Collection is Arrayable)
-                            $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
-                        } elseif ($name === 'morphTo') {
+                        if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), ['\\' . Model::class], true);
-                        } else {
-                            // Single model is returned
-                            $this->setProperty($method->getName(), [$related], true);
+                            $this->setProperty($method->getName(), [Model::class], true);
+                        }
+                        else if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                            $related = $expr->args[0]->value->class->toCodeString();
+                            if (strpos($name, 'Many') !== false) {
+                                // Collection or array of models (because Collection is Arrayable)
+                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
+                            } else {
+                                // Single model is returned
+                                $this->setProperty($method->getName(), [$related], true);
+                            }
                         }
                     }
                 }
