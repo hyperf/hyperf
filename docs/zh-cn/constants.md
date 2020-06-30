@@ -38,7 +38,7 @@ composer require hyperf/constants
 php bin/hyperf.php gen:constants ErrorCode
 ```
 
-!> 此命令在 [hyperf/constants](https://github.com/hyperf/constants) 组件大于等于 v2.0.1 版本时可用，小于此版本时请手动创建所需的枚举类。
+!> 此生成命令仅在 [hyperf/constants](https://github.com/hyperf/constants) 组件版本大于等于 v2.0.1 版本时可用，小于此版本时请手动创建枚举类。
 
 ```php
 <?php
