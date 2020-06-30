@@ -28,7 +28,6 @@ use Hyperf\Database\Model\Relations\MorphMany;
 use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
-use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
@@ -38,6 +37,7 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\TypesFinder\FindReturnType;
+use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
@@ -263,12 +263,18 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     && isset($expr->args[0])
                     && $expr->args[0] instanceof Node\Arg
                 ) {
+                    $loop = 0;
+                    while($expr->var instanceof Node\Expr\MethodCall) {
+                        if($loop > 32) {
+                            throw new RuntimeException("max loop reached!");
+                        }
+                        $loop ++;
+                        $expr = $expr->var;
+                    }
                     $name = $expr->name->name;
                     if (array_key_exists($name, self::RELATION_METHODS)) {
                         if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
                             $related = $expr->args[0]->value->class->toCodeString();
-                        } else {
-                            $related = (string) ($expr->args[0]->value);
                         }
 
                         if (strpos($name, 'Many') !== false) {
@@ -276,7 +282,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                             $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
                         } elseif ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), [Model::class], true);
+                            $this->setProperty($method->getName(), ['\\' . Model::class], true);
                         } else {
                             // Single model is returned
                             $this->setProperty($method->getName(), [$related], true);
