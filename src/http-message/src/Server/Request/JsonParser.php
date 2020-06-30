@@ -31,7 +31,7 @@ class JsonParser implements RequestParserInterface
     public function parse(string $rawBody, string $contentType): array
     {
         try {
-            $parameters = Json::decode($rawBody, $this->asArray);
+            $parameters = $rawBody ? Json::decode($rawBody, $this->asArray) : [];
             return is_array($parameters) ? $parameters : [];
         } catch (InvalidArgumentException $e) {
             if ($this->throwException) {
