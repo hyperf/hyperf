@@ -16,6 +16,6 @@ return [
     'bin' => 'php',
     'watch' => [
         'dir' => ['app', 'config'],
-        'files' => ['.env'],
+        'file' => ['.env'],
     ],
 ];
