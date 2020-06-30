@@ -16,10 +16,13 @@ use Psr\Container\ContainerInterface;
 class ApplicationContext
 {
     /**
-     * @var ContainerInterface
+     * @var null|ContainerInterface
      */
     private static $container;
 
+    /**
+     * @throws \TypeError
+     */
     public static function getContainer(): ContainerInterface
     {
         return self::$container;

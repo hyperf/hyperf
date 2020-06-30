@@ -255,7 +255,7 @@ class Arr
      * Check if an item or items exist in an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param array|string $keys
+     * @param null|array|string $keys
      */
     public static function has($array, $keys): bool
     {
@@ -390,7 +390,6 @@ class Arr
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param array|\ArrayAccess $array
      * @param null|int|string $key
      * @param mixed $value
      */

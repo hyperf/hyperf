@@ -16,11 +16,13 @@ use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
+use Hyperf\HttpMessage\Exception\NotFoundHttpException;
+use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
@@ -98,6 +100,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
+        $response = null;
         switch ($dispatched->status) {
             case Dispatcher::NOT_FOUND:
                 $response = $this->handleNotFound($request);
@@ -151,7 +154,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             $controllerInstance = $this->container->get($controller);
             if (! method_exists($controller, $action)) {
                 // Route found, but the handler does not exist.
-                return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
+                throw new ServerErrorHttpException('Method of class does not exist.');
             }
             $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
             $response = $controllerInstance->{$action}(...$parameters);
@@ -166,7 +169,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        return $this->response()->withStatus(404);
+        throw new NotFoundHttpException();
     }
 
     /**
@@ -176,7 +179,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        return $this->response()->withStatus(405)->withAddedHeader('Allow', implode(', ', $methods));
+        throw new MethodNotAllowedHttpException('Allow: ' . implode(', ', $methods));
     }
 
     /**
@@ -199,7 +202,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param array|Arrayable|Jsonable|string $response
+     * @param null|array|Arrayable|Jsonable|string $response
      */
     protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
     {

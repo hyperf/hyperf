@@ -20,8 +20,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/guzzle": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
+        "hyperf/guzzle": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
         "start-point/etcd-php": "^1.1"
     },
     "require-dev": {
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Etcd\\ConfigProvider"

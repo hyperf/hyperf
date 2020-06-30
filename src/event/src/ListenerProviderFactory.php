@@ -14,6 +14,7 @@ namespace Hyperf\Event;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
 use Psr\Container\ContainerInterface;
 
 class ListenerProviderFactory
@@ -58,7 +59,7 @@ class ListenerProviderFactory
     private function register(ListenerProvider $provider, ContainerInterface $container, string $listener, int $priority = 1): void
     {
         $instance = $container->get($listener);
-        if (method_exists($instance, 'process') && method_exists($instance, 'listen')) {
+        if ($instance instanceof ListenerInterface) {
             foreach ($instance->listen() as $event) {
                 $provider->on($event, [$instance, 'process'], $priority);
             }
