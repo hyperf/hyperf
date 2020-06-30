@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Adapter\Prometheus;
 
+use Exception;
 use InvalidArgumentException;
 use Prometheus\Counter;
 use Prometheus\Exception\StorageException;
@@ -150,8 +151,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $this->getRedisTag(Histogram::TYPE),
+                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE),
                 json_encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
                 json_encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
                 $data['value'],
@@ -187,8 +188,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $this->getRedisTag(Gauge::TYPE),
+                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE),
                 $this->getRedisCommand($data['command']),
                 json_encode($data['labelValues']),
                 $data['value'],
@@ -218,8 +219,8 @@ return result
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $this->getRedisTag(Counter::TYPE),
+                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE),
                 $this->getRedisCommand($data['command']),
                 $data['value'],
                 json_encode($data['labelValues']),
@@ -268,7 +269,7 @@ LUA
 
     private function collectHistograms(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Histogram::TYPE));
         sort($keys);
         $histograms = [];
         foreach ($keys as $key) {
@@ -336,7 +337,7 @@ LUA
 
     private function collectGauges(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Gauge::TYPE));
         sort($keys);
         $gauges = [];
         foreach ($keys as $key) {
@@ -362,7 +363,7 @@ LUA
 
     private function collectCounters(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Counter::TYPE));
         sort($keys);
         $counters = [];
         foreach ($keys as $key) {
@@ -403,5 +404,46 @@ LUA
     private function toMetricKey(array $data): string
     {
         return implode(':', [self::$prefix, $data['type'], $data['name']]);
+    }
+
+    /**
+     * Adapt redis cluster get tag
+     *
+     * @return string
+     */
+    private function getRedisTag($metric_type): string
+    {
+        switch($metric_type)
+        {
+            case Counter::TYPE:
+                return "{counter}";
+            case Histogram::TYPE:
+                return "{histogram}";
+            case Gauge::TYPE:
+                return "{gauge}";
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Get the indicator collection key
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function getMetricGatherKey($metric_type): string
+    {
+        switch($metric_type)
+        {
+            case Counter::TYPE:
+                return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
+            case Histogram::TYPE:
+                return self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE);
+            case Gauge::TYPE:
+                return self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE);
+            default:
+                throw new Exception('Unknown metric type');
+        }
     }
 }
