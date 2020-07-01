@@ -501,3 +501,13 @@ Schema::enableForeignKeyConstraints();
 // 禁用外键约束
 Schema::disableForeignKeyConstraints();
 ```
+
+## 表注释
+
+您可以使用 `comment` 方法对表进行注释
+
+``` 
+Schema:table('users', function (Blueprint $table) {
+    $table->comment('用户表');
+});
+```
