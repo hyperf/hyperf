@@ -76,6 +76,13 @@ class Blueprint
     protected $commands = [];
 
     /**
+     * The comment of the table.
+     *
+     * @var string
+     */
+    protected $tableComment;
+
+    /**
      * Create a new schema blueprint.
      *
      * @param string $table
@@ -1092,6 +1099,16 @@ class Blueprint
     }
 
     /**
+     * Add this Table comment.
+     *
+     * @param $tableName
+     */
+    public function comment($tableName)
+    {
+        $this->tableComment = $tableName;
+    }
+
+    /**
      * Add a new column to the blueprint.
      *
      * @param string $type
@@ -1174,6 +1191,16 @@ class Blueprint
         return array_filter($this->columns, function ($column) {
             return (bool) $column->change;
         });
+    }
+
+    /**
+     *  Get the table comment.
+     *
+     * @return string
+     */
+    public function getTableComment()
+    {
+        return $this->tableComment;
     }
 
     /**

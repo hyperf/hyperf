@@ -171,4 +171,15 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $this->assertFalse($schema->hasTable('password_resets'));
         $this->assertFalse($schema->hasTable('flights'));
     }
+
+    public function testMigrationsTableCommentIsExist()
+    {
+        $schema = new Schema();
+        $this->migrator->run([__DIR__ . '/migrations/three']);
+        $this->assertTrue($schema->hasTable('comment'));
+        $this->assertTrue($schema->hasTable('not_comment'));
+        $this->migrator->rollback([__DIR__ . '/migrations/three']);
+        $this->assertFalse($schema->hasTable('comment'));
+        $this->assertFalse($schema->hasTable('not_comment'));
+    }
 }
