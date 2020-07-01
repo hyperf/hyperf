@@ -49,10 +49,12 @@ class FswatchDriver implements DriverInterface
         while (true) {
             $ret = fread($pipes[1], 8192);
             go(function () use ($ret, $channel) {
-                $files = array_filter(explode("\n", $ret));
-                foreach ($files as $file) {
-                    if (Str::endsWith($file, $this->option->getExt())) {
-                        $channel->push($file);
+                if (is_string($ret)) {
+                    $files = array_filter(explode("\n", $ret));
+                    foreach ($files as $file) {
+                        if (Str::endsWith($file, $this->option->getExt())) {
+                            $channel->push($file);
+                        }
                     }
                 }
             });
