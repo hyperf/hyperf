@@ -470,7 +470,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     protected function toXml($data, $parentNode = null, $root = 'root'): string
     {
-        return Xml::toXml($data, $parentNode = null, $root);
+        return Xml::toXml($data, $parentNode, $root);
     }
 
     /**
