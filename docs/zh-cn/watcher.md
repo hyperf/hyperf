@@ -12,6 +12,19 @@
 composer require hyperf/watcher --dev
 ```
 
+## 配置
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/watcher
+```
+
+|    配置    |     默认值      |                           备注                            |
+| :--------: | :-------------: | :-------------------------------------------------------: |
+|   driver   | `FswatchDriver` |                        fswatch驱动                        |
+|    bin     |      `php`      | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
+| watch.dir  | 'app', 'config' |                         监听目录                          |
+| watch.file |     '.env'      |                         监听文件                          |
+
 ## 安装驱动
 
 暂时只支持 `fswatch` 驱动。
