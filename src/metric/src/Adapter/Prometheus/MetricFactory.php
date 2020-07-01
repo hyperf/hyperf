@@ -104,7 +104,6 @@ class MetricFactory implements MetricFactoryInterface
                 break;
             default:
                 throw new InvalidArgumentException('Unsupported Prometheus mode encountered');
-                break;
         }
     }
 

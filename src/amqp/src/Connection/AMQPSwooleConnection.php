@@ -47,7 +47,7 @@ class AMQPSwooleConnection extends AbstractConnection
             $locale,
             $io,
             $heartbeat,
-            $connectionTimeout
+            (int) $connectionTimeout
         );
     }
 
