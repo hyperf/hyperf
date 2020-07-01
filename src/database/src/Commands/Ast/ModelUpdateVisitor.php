@@ -260,8 +260,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     $expr instanceof Node\Expr\MethodCall
                     && $expr->name instanceof Node\Identifier
                     && is_string($expr->name->name)
-                    && isset($expr->args[0])
-                    && $expr->args[0] instanceof Node\Arg
                 ) {
                     $loop = 0;
                     while($expr->var instanceof Node\Expr\MethodCall) {
@@ -277,7 +275,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                             // Model isn't specified because relation is polymorphic
                             $this->setProperty($method->getName(), ['\\' . Model::class], true);
                         }
-                        else if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                        else if (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
                             $related = $expr->args[0]->value->class->toCodeString();
                             if (strpos($name, 'Many') !== false) {
                                 // Collection or array of models (because Collection is Arrayable)
