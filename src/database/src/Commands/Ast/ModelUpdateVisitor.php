@@ -262,11 +262,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     && is_string($expr->name->name)
                 ) {
                     $loop = 0;
-                    while($expr->var instanceof Node\Expr\MethodCall) {
-                        if($loop > 32) {
-                            throw new RuntimeException("max loop reached!");
+                    while ($expr->var instanceof Node\Expr\MethodCall) {
+                        if ($loop > 32) {
+                            throw new RuntimeException('max loop reached!');
                         }
-                        $loop ++;
+                        ++$loop;
                         $expr = $expr->var;
                     }
                     $name = $expr->name->name;
@@ -274,8 +274,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
                             $this->setProperty($method->getName(), ['\\' . Model::class], true);
-                        }
-                        else if (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                        } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
                             $related = $expr->args[0]->value->class->toCodeString();
                             if (strpos($name, 'Many') !== false) {
                                 // Collection or array of models (because Collection is Arrayable)
