@@ -1101,9 +1101,9 @@ class Blueprint
     /**
      * Add this Table comment.
      *
-     * @param $tableName
+     * @param string $tableName
      */
-    public function comment($tableName)
+    public function comment(string $tableName)
     {
         $this->tableComment = $tableName;
     }
@@ -1194,11 +1194,11 @@ class Blueprint
     }
 
     /**
-     *  Get the table comment.
+     * Get the table comment.
      *
      * @return string
      */
-    public function getTableComment()
+    public function getTableComment() : string
     {
         return $this->tableComment;
     }

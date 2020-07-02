@@ -478,7 +478,6 @@ class MySqlGrammar extends Grammar
      * Compile this table comment
      *
      * @param string $sql
-     * @param Connection $connection
      * @param Blueprint $blueprint
      * @return string
      */
