@@ -180,7 +180,10 @@ class CoroutineServer implements ServerInterface
                                     $connection->close();
                                     break;
                                 }
-                                $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                //One coroutine at a time, consistent with other servers
+                                go(static function()use ($receiveHandler,$receiveMethod,$connection,$data){
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                });
                             }
                         });
                     }
