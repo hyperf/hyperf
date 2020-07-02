@@ -32,10 +32,10 @@ composer require hyperf/constants
 
 ### 定义枚举类
 
-通过 `gen:constants` 命令可以快速的生成一个枚举类。
+通过 `gen:constant` 命令可以快速的生成一个枚举类。
 
 ```bash
-php bin/hyperf.php gen:constants ErrorCode
+php bin/hyperf.php gen:constant ErrorCode
 ```
 
 !> 此生成命令仅在 [hyperf/constants](https://github.com/hyperf/constants) 组件版本大于等于 v2.0.1 版本时可用，小于此版本时请手动创建枚举类。
