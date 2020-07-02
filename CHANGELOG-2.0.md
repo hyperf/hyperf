@@ -1,8 +1,10 @@
-# v2.0.1 - TBD
+# v2.0.2 - TBD
+
+# v2.0.1 - 2020-07-02
 
 ## Added
 
-- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constants`.
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constant`.
 - [#1982](https://github.com/hyperf/hyperf/pull/1982) Added watcher component.
 
 ## Fixed

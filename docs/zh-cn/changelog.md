@@ -1,5 +1,34 @@
 # 版本更新记录
 
+# v2.0.1 - 2020-07-02
+
+## Added
+
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) 增加脚本 `gen:constant` 用以创建常量类。
+- [#1982](https://github.com/hyperf/hyperf/pull/1982) 添加热更新组件，文件修改后自动收集注解，自动重启。
+
+## Fixed
+
+- [#1952](https://github.com/hyperf/hyperf/pull/1952) 修复数据库迁移类存在时，也会生成同类名类，导致类名冲突的BUG。
+- [#1960](https://github.com/hyperf/hyperf/pull/1960) 修复 `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` 判断错误的BUG。
+- [#1961](https://github.com/hyperf/hyperf/pull/1961) 修复因文件 `config/autoload/aspects.php` 不存在导致服务无法启动的BUG。
+- [#1964](https://github.com/hyperf/hyperf/pull/1964) 修复接口请求时，数据体为空会导致 `500` 错误的BUG。
+- [#1965](https://github.com/hyperf/hyperf/pull/1965) 修复 `initRequestAndResponse` 失败后，会导致请求状态码与实际不符的BUG。
+- [#1968](https://github.com/hyperf/hyperf/pull/1968) 修复当修改 `aspects.php` 文件后，`Aspect` 无法安装修改后的结果运行的BUG。
+- [#1985](https://github.com/hyperf/hyperf/pull/1985) 修复注解全局配置不全为小写时，会导致 `global_imports` 失败的BUG。
+- [#1990](https://github.com/hyperf/hyperf/pull/1990) 修复当父类存在于子类一样的成员变量时， `@Inject` 无法正常使用的BUG。
+- [#2019](https://github.com/hyperf/hyperf/pull/2019) 修复脚本 `gen:model` 因为使用了 `morphTo` 或 `where` 导致生成对应的 `@property` 失败的BUG。
+- [#2026](https://github.com/hyperf/hyperf/pull/2026) 修复当使用了魔术方法时，LazyLoad 代理生成有误的BUG。
+
+## Changed
+
+- [#1986](https://github.com/hyperf/hyperf/pull/1986) 当没有设置正确的 `swoole.use_shortname` 变更脚本 `exit_code` 为 `SIGTERM`。
+
+## Optimized
+
+- [#1959](https://github.com/hyperf/hyperf/pull/1959) 优化类 `ClassLoader` 可以更容易被用户继承并修改。
+- [#2002](https://github.com/hyperf/hyperf/pull/2002) 当 `PHP` 版本大于等于 `7.3` 时，支持 `AOP` 切入 `Trait`。
+
 # v2.0 - 2020-06-22
 
 ## 主要功能
