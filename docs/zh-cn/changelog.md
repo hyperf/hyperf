@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#1934](https://github.com/hyperf/hyperf/pull/1934) 增加脚本 `gen:constants` 用以创建常量类。
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) 增加脚本 `gen:constant` 用以创建常量类。
 - [#1982](https://github.com/hyperf/hyperf/pull/1982) 添加热更新组件，文件修改后自动收集注解，自动重启。
 
 ## Fixed
