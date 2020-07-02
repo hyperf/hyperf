@@ -16,17 +16,17 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
-class ConstantsCommand extends GeneratorCommand
+class ConstantCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('gen:constants');
-        $this->setDescription('Create a new constants class');
+        parent::__construct('gen:constant');
+        $this->setDescription('Create a new constant class');
     }
 
     protected function getStub(): string
     {
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/constants.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/constant.stub';
     }
 
     protected function getDefaultNamespace(): string
