@@ -14,6 +14,8 @@ namespace HyperfTest\ModelCache\Handler;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
+use Hyperf\Redis\RedisProxy;
+use Hyperf\Utils\ApplicationContext;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +40,23 @@ class RedisHandlerTest extends TestCase
         $handler->set($key, ['id' => $id = uniqid()]);
         $data = $handler->get($key);
         $this->assertSame(['id' => $id], $data);
+    }
+
+    public function testSetTtl()
+    {
+        $handler = $this->mockHandler();
+        $key = 'test:model-cache:' . $this->handler . ':1';
+        $handler->set($key, ['id' => $id = uniqid()], 10);
+        $data = $handler->get($key);
+        $this->assertSame(['id' => $id], $data);
+        $redis = ApplicationContext::getContainer()->make(RedisProxy::class, ['pool' => 'default']);
+        $this->assertSame(10, $redis->ttl($key));
+
+        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('PT12S'));
+        $this->assertSame(12, $redis->ttl($key));
+
+        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('P1DT12S'));
+        $this->assertSame(86400 + 12, $redis->ttl($key));
     }
 
     public function testDelete()

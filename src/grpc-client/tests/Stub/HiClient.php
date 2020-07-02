@@ -19,7 +19,7 @@ class HiClient extends BaseClient
 {
     public function sayHello()
     {
-        return $this->simpleRequest(
+        return $this->_simpleRequest(
             '/grpc.hi/sayHello',
             new Info(),
             [UserReply::class, 'decode']
@@ -28,7 +28,7 @@ class HiClient extends BaseClient
 
     public function sayBug()
     {
-        return $this->simpleRequest(
+        return $this->_simpleRequest(
             '/bug',
             new Info(),
             [UserReply::class, 'decode']

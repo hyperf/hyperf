@@ -13,8 +13,4 @@ namespace HyperfTest\Di\Stub;
 
 class AnnotationCollector extends \Hyperf\Di\Annotation\AnnotationCollector
 {
-    public static function clear()
-    {
-        self::$container = [];
-    }
 }

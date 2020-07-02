@@ -20,12 +20,12 @@ use Hyperf\Utils\ApplicationContext;
 trait ProxyTrait
 {
     protected static function __proxyCall(
-        string $originalClassName,
+        string $className,
         string $method,
         array $arguments,
         Closure $closure
     ) {
-        $proceedingJoinPoint = new ProceedingJoinPoint($closure, $originalClassName, $method, $arguments);
+        $proceedingJoinPoint = new ProceedingJoinPoint($closure, $className, $method, $arguments);
         $result = self::handleAround($proceedingJoinPoint);
         unset($proceedingJoinPoint);
         return $result;
@@ -34,7 +34,7 @@ trait ProxyTrait
     /**
      * @TODO This method will be called everytime, should optimize it later.
      */
-    protected static function getParamsMap(string $className, string $method, array $args): array
+    protected static function __getParamsMap(string $className, string $method, array $args): array
     {
         $map = [
             'keys' => [],
@@ -55,30 +55,49 @@ trait ProxyTrait
         return $map;
     }
 
-    private static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
+    protected static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $aspects = self::getAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $annotationAspects = self::getAnnotationAspects($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
-        $aspects = array_unique(array_merge($aspects, $annotationAspects));
-        if (empty($aspects)) {
+        $className = $proceedingJoinPoint->className;
+        $methodName = $proceedingJoinPoint->methodName;
+        if (! AspectManager::has($className, $methodName)) {
+            AspectManager::set($className, $methodName, []);
+            $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
+            $queue = new \SplPriorityQueue();
+            foreach ($aspects as $aspect) {
+                $queue->insert($aspect, AspectCollector::getPriority($aspect));
+            }
+            while ($queue->valid()) {
+                AspectManager::insert($className, $methodName, $queue->current());
+                $queue->next();
+            }
+
+            unset($annotationAspects, $aspects, $queue);
+        }
+
+        if (empty(AspectManager::get($className, $methodName))) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
-        $container = ApplicationContext::getContainer();
-        if (method_exists($container, 'make')) {
-            $pipeline = $container->make(Pipeline::class);
-        } else {
-            $pipeline = new Pipeline($container);
-        }
-        return $pipeline->via('process')
-            ->through($aspects)
+        return static::makePipeline()->via('process')
+            ->through(AspectManager::get($className, $methodName))
             ->send($proceedingJoinPoint)
             ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
                 return $proceedingJoinPoint->processOriginalMethod();
             });
     }
 
-    private static function getAspects(string $className, string $method): array
+    protected static function makePipeline(): Pipeline
+    {
+        $container = ApplicationContext::getContainer();
+        if (method_exists($container, 'make')) {
+            $pipeline = $container->make(Pipeline::class);
+        } else {
+            $pipeline = new Pipeline($container);
+        }
+        return $pipeline;
+    }
+
+    protected static function getClassesAspects(string $className, string $method): array
     {
         $aspects = AspectCollector::get('classes', []);
         $matchedAspect = [];
@@ -94,7 +113,7 @@ trait ProxyTrait
         return $matchedAspect;
     }
 
-    private static function getAnnotationAspects(string $className, string $method): array
+    protected static function getAnnotationAspects(string $className, string $method): array
     {
         $matchedAspect = $annotations = $rules = [];
 
