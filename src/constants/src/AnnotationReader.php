@@ -23,7 +23,7 @@ class AnnotationReader
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
-            if ($docComment) {
+            if ($docComment && (is_int($code) || is_string($code))) {
                 $result[$code] = $this->parse($docComment, $result[$code] ?? []);
             }
         }
