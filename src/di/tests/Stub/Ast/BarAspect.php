@@ -13,11 +13,13 @@ namespace HyperfTest\Di\Stub\Ast;
 
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Stub\Ast\FooTrait;
 
 class BarAspect extends AbstractAspect
 {
     public $classes = [
         Bar3::class,
+        FooTrait::class,
     ];
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
