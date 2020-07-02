@@ -80,7 +80,7 @@ class Blueprint
      *
      * @var string
      */
-    protected $tableComment;
+    protected $tableComment = '';
 
     /**
      * Create a new schema blueprint.
