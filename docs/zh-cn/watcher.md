@@ -14,11 +14,13 @@ composer require hyperf/watcher --dev
 
 ## 配置
 
-#### 发布配置
+### 发布配置
+
 ```bash
 php bin/hyperf.php vendor:publish hyperf/watcher
 ```
-#### 配置说明
+
+### 配置说明
 
 |    配置    |     默认值      |                           备注                            |
 | :--------: | :-------------: | :-------------------------------------------------------: |
@@ -35,14 +37,17 @@ ScanFileDriver：默认驱动，无需扩展
 
 FswatchDriver：需要安装fswatch
 ```
-##### 使用FswatchDriver时需安装`fswatch`驱动扩展
+
+### 使用FswatchDriver时需安装`fswatch`驱动扩展
 
 Mac
+
 ```bash
 brew install fswatch
 ```
 
 其他
+
 ```bash
 wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.14.0.tar.gz \
 && tar -xf fswatch-1.14.0.tar.gz \
