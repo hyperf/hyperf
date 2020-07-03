@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
@@ -8,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -21,7 +21,6 @@ use Swoole\Timer;
 
 class ScanFileDriver implements DriverInterface
 {
-
     /**
      * @var Option
      */
@@ -72,7 +71,9 @@ class ScanFileDriver implements DriverInterface
                     foreach ($changeFilesIdx as $idx) {
                         isset($files[$idx]) && $channel->push($files[$idx]);
                     }
-                } else $this->logger->warning("Delete files must be restarted manually to take effect.");
+                } else {
+                    $this->logger->warning('Delete files must be restarted manually to take effect.');
+                }
                 $lastMD5 = $currentMD5;
             } else {
                 $lastMD5 = $currentMD5;

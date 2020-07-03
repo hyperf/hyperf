@@ -52,10 +52,10 @@ class Option
 
         isset($options['driver']) && $this->driver = $options['driver'];
         isset($options['bin']) && $this->bin = $options['bin'];
-        isset($options['watch']['dir']) && $this->watchDir = (array)$options['watch']['dir'];
-        isset($options['watch']['file']) && $this->watchFile = (array)$options['watch']['file'];
-        isset($options['watch']['scan_interval']) && $this->scanInterval = (int)$options['watch']['scan_interval'];
-        isset($options['ext']) && $this->ext = (array)$options['ext'];
+        isset($options['watch']['dir']) && $this->watchDir = (array) $options['watch']['dir'];
+        isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
+        isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
+        isset($options['ext']) && $this->ext = (array) $options['ext'];
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));

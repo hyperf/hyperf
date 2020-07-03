@@ -17,6 +17,6 @@ return [
     'watch' => [
         'dir' => ['app', 'config'],
         'file' => ['.env'],
-        'scan_interval' => 2000
-    ]
+        'scan_interval' => 2000,
+    ],
 ];
