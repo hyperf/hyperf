@@ -13,15 +13,16 @@ namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
+use Swoole\Coroutine;
 
 class CoroutineStrategy extends AbstractStrategy
 {
     public function dispatch(Crontab $crontab)
     {
-        go(function () use ($crontab) {
+        Coroutine::create(function () use ($crontab) {
             if ($crontab->getExecuteTime() instanceof Carbon) {
                 $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
-                $wait > 0 && \Swoole\Coroutine::sleep($wait);
+                $wait > 0 && Coroutine::sleep($wait);
                 $executor = $this->container->get(Executor::class);
                 $executor->execute($crontab);
             }

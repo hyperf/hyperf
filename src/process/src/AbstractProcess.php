@@ -25,7 +25,6 @@ use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Coroutine\Channel;
-use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
 use Swoole\Timer;
@@ -166,7 +165,7 @@ abstract class AbstractProcess implements ProcessInterface
                 }
             };
 
-            go($handler);
+            Coroutine::create($handler);
         }
     }
 

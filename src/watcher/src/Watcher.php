@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
@@ -128,7 +129,7 @@ class Watcher
         $this->restart(true);
 
         $channel = new Channel(999);
-        go(function () use ($channel) {
+        Coroutine::create(function () use ($channel) {
             $this->driver->watch($channel);
         });
 
@@ -205,7 +206,7 @@ class Watcher
             }
         }
 
-        go(function () {
+        Coroutine::create(function () {
             $this->channel->pop();
             $this->output->writeln('Start server ...');
             $ret = System::exec($this->option->getBin() . ' vendor/bin/watcher.php start');
