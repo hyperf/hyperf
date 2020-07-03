@@ -170,7 +170,7 @@ class CoroutineServer implements ServerInterface
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
                         $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                parallel([function () use ($connectHandler, $connectMethod, $connection) {
+                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
                                 }]);
                             }
@@ -178,7 +178,7 @@ class CoroutineServer implements ServerInterface
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        parallel([function () use ($closeHandler, $closeMethod, $connection) {
+                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
                                             $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
                                         }]);
                                     }
@@ -186,9 +186,9 @@ class CoroutineServer implements ServerInterface
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                Utils\Coroutine::create(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
                                     $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
-                                });
+                                }]);
                             }
                         });
                     }
