@@ -32,9 +32,9 @@ class Frame
 
     public function __construct(SwFrame $frame)
     {
-        foreach ($frame as $key => $val) {
-            $this->{$key} = $val;
-        }
+        $this->finish = $frame->finish;
+        $this->opcode = $frame->opcode;
+        $this->data = $frame->data;
     }
 
     public function __toString()

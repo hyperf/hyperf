@@ -82,12 +82,14 @@ class PublicMethodVisitor extends NodeVisitorAbstract
             ];
             $node->flags &= ~Class_::MODIFIER_ABSTRACT;
         }
+        return null;
     }
 
     public function leaveNode(Node $node)
     {
-        if ($node instanceof ClassMethod && $node->isPublic()) {
+        if ($node instanceof ClassMethod && $node->isPublic() && ! $node->isMagic()) {
             $this->nodes[] = $node;
         }
+        return null;
     }
 }

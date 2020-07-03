@@ -408,6 +408,8 @@ class Translator implements TranslatorInterface
 
             return $line;
         }
+
+        return null;
     }
 
     /**

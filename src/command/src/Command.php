@@ -40,7 +40,7 @@ abstract class Command extends SymfonyCommand
     protected $input;
 
     /**
-     * @var OutputInterface|SymfonyStyle
+     * @var SymfonyStyle
      */
     protected $output;
 
@@ -161,6 +161,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Give the user a multiple choice from an array of answers.
+     * @param null|mixed $default
      */
     public function choiceMultiple(
         string $question,
@@ -178,14 +179,13 @@ abstract class Command extends SymfonyCommand
     /**
      * Give the user a single choice from an array of answers.
      *
-     * @param null|bool $multiple Deprecated: use choiceMultiple method instead.
+     * @param null|mixed $default
      */
     public function choice(
         string $question,
         array $choices,
         $default = null,
-        $attempts = null,
-        $multiple = null
+        ?int $attempts = null
     ): string {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }

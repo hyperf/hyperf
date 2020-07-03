@@ -13,5 +13,7 @@ namespace Hyperf\Pool;
 
 interface LowFrequencyInterface
 {
+    public function __construct(?Pool $pool = null);
+
     public function isLowFrequency(): bool;
 }
