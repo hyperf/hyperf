@@ -16,7 +16,6 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
@@ -84,7 +83,7 @@ class CoroutineServer implements ServerInterface
             $servers = ServerManager::list();
             $config = $this->config->toArray();
             foreach ($servers as $name => [$type, $server]) {
-                Utils\Coroutine::create(function () use ($name, $server, $config) {
+                Coroutine::create(function () use ($name, $server, $config) {
                     if (! $this->mainServerStarted) {
                         $this->mainServerStarted = true;
                         $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
