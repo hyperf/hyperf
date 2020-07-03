@@ -22,23 +22,22 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 
 ### 配置说明
 
-|    配置    |     默认值      |                           备注                            |
-| :--------: | :-------------: | :-------------------------------------------------------: |
-|   driver   | `ScanFileDriver` |                        默认定时扫描文件驱动                        |
-|    bin     |      `php`      | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
-| watch.dir  | 'app', 'config' |                         监听目录                          |
-| watch.file |     '.env'      |                         监听文件                          |
-| watch.interval |     2000      |                       扫描间隔(毫秒)
+|      配置      |      默认值      |                           备注                            |
+| :------------: | :--------------: | :-------------------------------------------------------: |
+|     driver     | `ScanFileDriver` |                   默认定时扫描文件驱动                    |
+|      bin       |      `php`       | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
+|   watch.dir    | `app`, `config`  |                         监听目录                          |
+|   watch.file   |      `.env`      |                         监听文件                          |
+| watch.interval |      `2000`      |                      扫描间隔(毫秒)                       |
 
 ## 支持驱动
 
-```
-ScanFileDriver：默认驱动，无需扩展
+|                 驱动                 |       备注       |
+| :----------------------------------: | :--------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver |     无需扩展     |
+| Hyperf\Watcher\Driver\FswatchDriver  | 需要安装 fswatch |
 
-FswatchDriver：需要安装fswatch
-```
-
-### 使用FswatchDriver时需安装`fswatch`驱动扩展
+### `fswatch` 安装
 
 Mac
 
