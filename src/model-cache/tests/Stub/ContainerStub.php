@@ -42,7 +42,7 @@ use Psr\Log\LogLevel;
 
 class ContainerStub
 {
-    public static function mockContainer()
+    public static function mockContainer($ttl = 86400)
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
@@ -81,7 +81,7 @@ class ContainerStub
                         'cache_key' => '{mc:%s:m:%s}:%s:%s',
                         'prefix' => 'default',
                         'pool' => 'default',
-                        'ttl' => 3600 * 24,
+                        'ttl' => $ttl, // new \DateInterval('P1D'),
                         'empty_model_ttl' => 3600,
                         'load_script' => true,
                         'use_default_value' => true,

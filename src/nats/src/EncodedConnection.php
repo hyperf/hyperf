@@ -80,6 +80,6 @@ class EncodedConnection extends Connection
             $message->setBody($this->encoder->decode($message->getBody()));
             $callback($message);
         };
-        parent::queueSubscribe($subject, $queue, $c);
+        return parent::queueSubscribe($subject, $queue, $c);
     }
 }

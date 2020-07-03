@@ -96,6 +96,17 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('错误信息', $res);
     }
 
+    public function testSameValueDifferentKey()
+    {
+        $container = $this->getContainer(true);
+
+        $this->assertSame('Status enabled', ErrorCodeStub::getStatus(ErrorCodeStub::STATUS_ENABLE));
+        $this->assertSame('Status disabled', ErrorCodeStub::getStatus(ErrorCodeStub::STATUS_DISABLE));
+
+        $this->assertSame('Type enabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_ENABLE));
+        $this->assertSame('Type disabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_DISABLE));
+    }
+
     protected function getContainer($has = false)
     {
         $container = Mockery::mock(ContainerInterface::class);

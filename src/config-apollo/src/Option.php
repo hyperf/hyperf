@@ -95,7 +95,7 @@ class Option
         return $this->namespaces;
     }
 
-    public function setNamespaces(string $namespaces): self
+    public function setNamespaces(array $namespaces): self
     {
         $this->namespaces = $namespaces;
         return $this;

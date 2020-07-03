@@ -94,7 +94,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     /**
      * Determine if messages exist for all of the given keys.
      *
-     * @param array|string $key
+     * @param null|array|string $key
      */
     public function has($key): bool
     {

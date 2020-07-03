@@ -47,6 +47,7 @@
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
+            <directory suffix="Test.php">./src/signal/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
             <directory suffix="Test.php">./src/socketio-server/tests</directory>
@@ -57,6 +58,7 @@
             <directory suffix="Test.php">./src/translation/tests</directory>
             <directory suffix="Test.php">./src/utils/tests</directory>
             <directory suffix="Test.php">./src/validation/tests</directory>
+            <directory suffix="Test.php">./src/watcher/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
             <directory suffix="Test.php">./src/websocket-server/tests</directory>
         </testsuite>
