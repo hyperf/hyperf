@@ -21,7 +21,6 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use Hyperf\Watcher\Driver\DriverInterface;
-use Hyperf\Watcher\Driver\FswatchDriver;
 use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
@@ -159,7 +158,7 @@ class Watcher
     {
         // Parse class annotations
         $classAnnotations = $this->reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
-        if (! empty($classAnnotations)) {
+        if (!empty($classAnnotations)) {
             foreach ($classAnnotations as $classAnnotation) {
                 if ($classAnnotation instanceof AnnotationInterface) {
                     $classAnnotation->collectClass($className);
@@ -170,7 +169,7 @@ class Watcher
         $properties = $reflection->getImmediateProperties();
         foreach ($properties as $property) {
             $propertyAnnotations = $this->reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
-            if (! empty($propertyAnnotations)) {
+            if (!empty($propertyAnnotations)) {
                 foreach ($propertyAnnotations as $propertyAnnotation) {
                     if ($propertyAnnotation instanceof AnnotationInterface) {
                         $propertyAnnotation->collectProperty($className, $property->getName());
@@ -182,7 +181,7 @@ class Watcher
         $methods = $reflection->getImmediateMethods();
         foreach ($methods as $method) {
             $methodAnnotations = $this->reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
-            if (! empty($methodAnnotations)) {
+            if (!empty($methodAnnotations)) {
                 foreach ($methodAnnotations as $methodAnnotation) {
                     if ($methodAnnotation instanceof AnnotationInterface) {
                         $methodAnnotation->collectMethod($className, $method->getName());
@@ -195,11 +194,11 @@ class Watcher
     public function restart($isStart = true)
     {
         $file = BASE_PATH . '/runtime/hyperf.pid';
-        if (! $isStart && $this->filesystem->exists($file)) {
+        if (!$isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                Process::kill((int) $pid, SIGTERM);
+                Process::kill((int)$pid, SIGTERM);
             } catch (\Throwable $exception) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
             }
@@ -212,7 +211,7 @@ class Watcher
             if ($ret['code']) {
                 throw new \RuntimeException($ret['output']);
             }
-            $this->output->writeln('Stop server success');
+            $this->output->writeln('Stop server success.');
             $this->channel->push($ret);
         });
     }
@@ -225,7 +224,7 @@ class Watcher
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new RewriteClassNameVisitor($meta));
         $traverser->traverse($stmts);
-        if (! $meta->isClass()) {
+        if (!$meta->isClass()) {
             return null;
         }
         return $meta;
@@ -234,10 +233,9 @@ class Watcher
     protected function getDriver()
     {
         $driver = $this->option->getDriver();
-        if (! class_exists($driver)) {
+        if (!class_exists($driver)) {
             throw new \InvalidArgumentException('Driver not support.');
         }
-
-        return make(FswatchDriver::class, ['option' => $this->option]);
+        return make($driver, ['option' => $this->option]);
     }
 }
