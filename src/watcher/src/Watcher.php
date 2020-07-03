@@ -137,11 +137,9 @@ class Watcher
             if ($file === false) {
                 if (count($result) > 0) {
                     $result = [];
-                    // 重启服务
                     $this->restart(false);
                 }
             } else {
-                // 重写缓存
                 $meta = $this->getMetadata($file);
                 if ($meta) {
                     $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
