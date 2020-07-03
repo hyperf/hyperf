@@ -168,7 +168,7 @@ class CoroutineServer implements ServerInterface
                         $receiveHandler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
                                 parallel([static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
