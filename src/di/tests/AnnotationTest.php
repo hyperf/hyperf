@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
+use Hyperf\Di\Exception\DirectoryNotExistException;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\Ignore;
 use HyperfTest\Di\Stub\IgnoreDemoAnnotation;
@@ -50,5 +51,20 @@ class AnnotationTest extends TestCase
         $scaner->collect($reader, $ref);
         $annotations = AnnotationCollector::get(Ignore::class . '._c');
         $this->assertNull($annotations);
+    }
+
+    public function testScanAnnotationsDirectoryNotExist()
+    {
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
+
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/', ['/not_exist']));
+        $reader = new AnnotationReader();
+
+        $scanner->collect($reader, $ref = BetterReflectionManager::reflectClass(Ignore::class));
+        try {
+            $scanner->scan();
+        } catch (\Exception $e) {
+            $this->assertSame(true, $e instanceof DirectoryNotExistException);
+        }
     }
 }
