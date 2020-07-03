@@ -1,4 +1,4 @@
-# Watcher
+# 热更新 Watcher
 
 自从 `2.0` 版本使用了 `BetterReflection` 来收集扫描目录内的 `语法树` 和 `反射数据`，导致扫描速度相较 `1.1` 慢了不少。
 
@@ -14,20 +14,28 @@ composer require hyperf/watcher --dev
 
 ## 配置
 
+#### 发布配置
 ```bash
 php bin/hyperf.php vendor:publish hyperf/watcher
 ```
+#### 配置说明
 
 |    配置    |     默认值      |                           备注                            |
 | :--------: | :-------------: | :-------------------------------------------------------: |
-|   driver   | `FswatchDriver` |                        fswatch驱动                        |
+|   driver   | `ScanFileDriver` |                        默认定时扫描文件驱动                        |
 |    bin     |      `php`      | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
 | watch.dir  | 'app', 'config' |                         监听目录                          |
 | watch.file |     '.env'      |                         监听文件                          |
+| watch.interval |     2000      |                       扫描间隔(毫秒)
 
-## 安装驱动
+## 支持驱动
 
-暂时只支持 `fswatch` 驱动。
+```
+ScanFileDriver：默认驱动，无需扩展
+
+FswatchDriver：需要安装fswatch
+```
+##### 使用FswatchDriver时需安装`fswatch`驱动扩展
 
 Mac
 ```bash
@@ -55,3 +63,4 @@ php bin/hyperf.php server:watch
 ## 不足
 
 - 暂时 Alpine Docker 环境下，稍微有点问题，后续会完善。
+- 删除文件需要手动重启才能生效。
