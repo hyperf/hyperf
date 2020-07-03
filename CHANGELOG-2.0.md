@@ -1,5 +1,9 @@
 # v2.0.2 - TBD
 
+## Fixed
+
+[#2037](https://github.com/hyperf/hyperf/pull/2037) Fixed bug that tcp server running in only one coroutine.
+
 # v2.0.1 - 2020-07-02
 
 ## Added
