@@ -16,6 +16,7 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\Utils;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
@@ -83,7 +84,7 @@ class CoroutineServer implements ServerInterface
             $servers = ServerManager::list();
             $config = $this->config->toArray();
             foreach ($servers as $name => [$type, $server]) {
-                Coroutine::create(function () use ($name, $server, $config) {
+                Utils\Coroutine::create(function () use ($name, $server, $config) {
                     if (! $this->mainServerStarted) {
                         $this->mainServerStarted = true;
                         $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
@@ -166,7 +167,9 @@ class CoroutineServer implements ServerInterface
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
                         $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                parallel([function () use ($connectHandler, $connectMethod, $connection) {
+                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                }]);
                             }
                             if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                                 $receiveHandler->initCoreMiddleware($name);
@@ -175,13 +178,15 @@ class CoroutineServer implements ServerInterface
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        parallel([function () use ($closeHandler, $closeMethod, $connection) {
+                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        }]);
                                     }
                                     $connection->close();
                                     break;
                                 }
-                                //One coroutine at a time, consistent with other servers
-                                go(static function()use ($receiveHandler,$receiveMethod,$connection,$data){
+                                // One coroutine at a time, consistent with other servers
+                                Utils\Coroutine::create(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
                                     $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
                                 });
                             }
