@@ -284,7 +284,7 @@ LUA
                 if ($d['b'] == 'sum') {
                     continue;
                 }
-                if (count($d['labelValues']) != count($histogram['labelNames'])) {
+                if (count($d['labelValues']) !== count($histogram['labelNames'])) {
                     continue;
                 }
                 $allLabelValues[] = $d['labelValues'];
@@ -348,7 +348,7 @@ LUA
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
-                if (count($gauge['labelNames']) != count(json_decode($k, true))) {
+                if (count($gauge['labelNames']) !== count(json_decode($k, true))) {
                     continue;
                 }
                 $gauge['samples'][] = [
@@ -377,7 +377,7 @@ LUA
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
-                if (count($counter['labelNames']) != count(json_decode($k, true))) {
+                if (count($counter['labelNames']) !== count(json_decode($k, true))) {
                     continue;
                 }
                 $counter['samples'][] = [
