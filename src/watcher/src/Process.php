@@ -82,6 +82,7 @@ class Process
 
         require $this->file;
 
+        // Collect the annotations.
         $ref = $this->reflection->classReflector()->reflect($this->class);
         BetterReflectionManager::reflectClass($this->class, $ref);
         $this->collect($this->class, $ref);
@@ -97,7 +98,7 @@ class Process
             $this->putCache($this->path, serialize($data));
         }
 
-        // 重做代理类
+        // Reload the proxy class.
         $manager = new ProxyManager([], [$this->class => $this->file], BASE_PATH . '/runtime/container/proxy/');
         $ref = new \ReflectionClass($manager);
         $method = $ref->getMethod('generateProxyFiles');

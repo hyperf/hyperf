@@ -21,7 +21,6 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use Hyperf\Watcher\Driver\DriverInterface;
-use Hyperf\Watcher\Driver\FswatchDriver;
 use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
@@ -138,11 +137,9 @@ class Watcher
             if ($file === false) {
                 if (count($result) > 0) {
                     $result = [];
-                    // 重启服务
                     $this->restart(false);
                 }
             } else {
-                // 重写缓存
                 $meta = $this->getMetadata($file);
                 if ($meta) {
                     $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
@@ -212,7 +209,7 @@ class Watcher
             if ($ret['code']) {
                 throw new \RuntimeException($ret['output']);
             }
-            $this->output->writeln('Stop server success');
+            $this->output->writeln('Stop server success.');
             $this->channel->push($ret);
         });
     }
@@ -237,7 +234,6 @@ class Watcher
         if (! class_exists($driver)) {
             throw new \InvalidArgumentException('Driver not support.');
         }
-
-        return make(FswatchDriver::class, ['option' => $this->option]);
+        return make($driver, ['option' => $this->option]);
     }
 }

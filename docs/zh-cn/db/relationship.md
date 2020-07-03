@@ -473,7 +473,7 @@ $images = Image::query()->with([
 ])->get();
 ```
 
-对应的SQL查询如下：
+对应的 SQL 查询如下：
 
 ```sql
 // 查询所有图片

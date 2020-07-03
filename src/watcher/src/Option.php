@@ -12,14 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Watcher;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Watcher\Driver\FswatchDriver;
+use Hyperf\Watcher\Driver\ScanFileDriver;
 
 class Option
 {
     /**
      * @var string
      */
-    protected $driver = FswatchDriver::class;
+    protected $driver = ScanFileDriver::class;
 
     /**
      * @var string
@@ -41,6 +41,11 @@ class Option
      */
     protected $ext = ['.php', '.env'];
 
+    /**
+     * @var int
+     */
+    protected $scanInterval = 2000;
+
     public function __construct(ConfigInterface $config, array $dir, array $file)
     {
         $options = $config->get('watcher', []);
@@ -49,6 +54,7 @@ class Option
         isset($options['bin']) && $this->bin = $options['bin'];
         isset($options['watch']['dir']) && $this->watchDir = (array) $options['watch']['dir'];
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
+        isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
         isset($options['ext']) && $this->ext = (array) $options['ext'];
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
@@ -78,5 +84,10 @@ class Option
     public function getExt(): array
     {
         return $this->ext;
+    }
+
+    public function getScanInterval()
+    {
+        return $this->scanInterval;
     }
 }
