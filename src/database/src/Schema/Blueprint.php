@@ -1101,7 +1101,7 @@ class Blueprint
     /**
      * Add this Table comment.
      *
-     * @param string $tableName
+     * @param $tableName
      */
     public function comment(string $tableName)
     {
