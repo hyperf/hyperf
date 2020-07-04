@@ -93,8 +93,9 @@ class Parser
                 $nMin > $min && $min = (int) $nMin;
                 $nMax < $max && $max = (int) $nMax;
             }
-            $start > $min && $min = $start;
-            for ($i = $min; $i <= $max;) {
+            // If the value of start is larger than the value of min, the value of start should equal with the value of min.
+            $start < $min && $start = $min;
+            for ($i = $start; $i <= $max;) {
                 $result[] = $i;
                 $i += $exploded[1];
             }
