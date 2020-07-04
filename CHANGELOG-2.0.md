@@ -1,8 +1,22 @@
-# v2.0.1 - TBD
+# v2.0.2 - TBD
+
+## Fixed
+
+- [#2037](https://github.com/hyperf/hyperf/pull/2037) Fixed bug that tcp server running in only one coroutine.
 
 ## Added
 
-- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constants`.
+- [#2042](https://github.com/hyperf/hyperf/pull/2042) Added `ScanFileDriver` to watch file changes for `hyperf/watcher`.
+
+## Optimized
+
+- [#2049](https://github.com/hyperf/hyperf/pull/2049) Optimized stdout when server restart for `hyperf/watcher`.
+
+# v2.0.1 - 2020-07-02
+
+## Added
+
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) Added command `gen:constant`.
 - [#1982](https://github.com/hyperf/hyperf/pull/1982) Added watcher component.
 
 ## Fixed
@@ -16,6 +30,7 @@
 - [#1985](https://github.com/hyperf/hyperf/pull/1985) Fixed global_imports do not work when the aliases are not all lowercase letters.
 - [#1990](https://github.com/hyperf/hyperf/pull/1990) Fixed `@Inject` does not work when the parent class has the same property.
 - [#2019](https://github.com/hyperf/hyperf/pull/2019) Fixed bug that `gen:model` generate property failed, when used `morphTo` or `where`.
+- [#2026](https://github.com/hyperf/hyperf/pull/2026) Fixed invalid lazy proxy generation when magic methods are used.
 
 ## Changed
 
@@ -24,6 +39,7 @@
 ## Optimized
 
 - [#1959](https://github.com/hyperf/hyperf/pull/1959) Make ClassLoader easier to be extended.
+- [#2002](https://github.com/hyperf/hyperf/pull/2002) Support aop in trait when php version >= `7.3`.
 
 # v2.0.0 - 2020-06-22
 

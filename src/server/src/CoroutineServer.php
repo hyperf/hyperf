@@ -163,24 +163,31 @@ class CoroutineServer implements ServerInterface
                     [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
                     [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
                     [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
+                    if ($receiveHandler instanceof MiddlewareInitializerInterface) {
+                        $receiveHandler->initCoreMiddleware($name);
+                    }
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($name, $connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
-                            }
-                            if ($receiveHandler instanceof MiddlewareInitializerInterface) {
-                                $receiveHandler->initCoreMiddleware($name);
+                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
+                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                }]);
                             }
                             while (true) {
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
+                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        }]);
                                     }
                                     $connection->close();
                                     break;
                                 }
-                                $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                // One coroutine at a time, consistent with other servers
+                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                }]);
                             }
                         });
                     }

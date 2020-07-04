@@ -34,4 +34,9 @@ class VisitorMetadata
      * @var bool
      */
     public $hasExtends;
+
+    /**
+     * @var null|string
+     */
+    public $classLike;
 }

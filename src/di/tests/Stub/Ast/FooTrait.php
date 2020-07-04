@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Watcher\Driver\ScanFileDriver;
+namespace HyperfTest\Di\Stub\Ast;
 
-return [
-    'driver' => ScanFileDriver::class,
-    'bin' => 'php',
-    'watch' => [
-        'dir' => ['app', 'config'],
-        'file' => ['.env'],
-        'scan_interval' => 2000,
-    ],
-];
+trait FooTrait
+{
+    public function getString(): string
+    {
+        return uniqid();
+    }
+}
