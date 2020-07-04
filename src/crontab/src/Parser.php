@@ -123,6 +123,9 @@ class Parser
         } elseif ($startTime === null) {
             $startTime = time();
         }
+        if (! is_numeric($startTime)) {
+            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
+        }
         return (int) $startTime;
     }
 

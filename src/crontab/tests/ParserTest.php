@@ -106,6 +106,11 @@ class ParserTest extends TestCase
             '2020-06-10 10:12:14',
             '2020-06-10 10:12:15',
         ], $this->toDatatime($result));
+
+        $last = end($result);
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+
+        $this->assertSame([], $this->toDatatime($result));
     }
 
     public function testParseSecondLevelWithCarbonStartTime()
