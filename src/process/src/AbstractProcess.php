@@ -166,7 +166,7 @@ abstract class AbstractProcess implements ProcessInterface
                 }
             };
 
-            go($handler);
+            Coroutine::create($handler);
         }
     }
 
