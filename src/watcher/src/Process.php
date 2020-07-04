@@ -14,10 +14,14 @@ namespace Hyperf\Watcher;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
+use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Watcher\Ast\Metadata;
+use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
+use PhpParser\NodeTraverser;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Adapter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
@@ -55,6 +59,11 @@ class Process
     protected $filesystem;
 
     /**
+     * @var Ast
+     */
+    protected $ast;
+
+    /**
      * @var string
      */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
@@ -67,6 +76,7 @@ class Process
         $this->reader = new AnnotationReader();
         $this->config = ScanConfig::instance('/');
         $this->filesystem = new Filesystem();
+        $this->ast = new Ast();
     }
 
     public function __invoke()
@@ -150,5 +160,19 @@ class Process
         }
 
         $this->filesystem->put($path, $data);
+    }
+
+    protected function getMetadata(string $file): ?Metadata
+    {
+        $stmts = $this->ast->parse($this->filesystem->get($file));
+        $meta = new Metadata();
+        $meta->path = $file;
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new RewriteClassNameVisitor($meta));
+        $traverser->traverse($stmts);
+        if (! $meta->isClass()) {
+            return null;
+        }
+        return $meta;
     }
 }
