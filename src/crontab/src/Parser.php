@@ -90,10 +90,11 @@ class Parser
             $exploded = explode('/', $string);
             if (strpos($exploded[0], '-') !== false) {
                 [$nMin, $nMax] = explode('-', $exploded[0]);
-                $nMin > $min && $min = $nMin;
-                $nMax < $max && $max = $nMax;
+                $nMin > $min && $min = (int) $nMin;
+                $nMax < $max && $max = (int) $nMax;
             }
-            $start > $min && $min = $start;
+            // If the value of start is larger than the value of min, the value of start should equal with the value of min.
+            $start < $min && $start = $min;
             for ($i = $start; $i <= $max;) {
                 $result[] = $i;
                 $i += $exploded[1];
@@ -119,7 +120,7 @@ class Parser
     {
         if ($startTime instanceof Carbon) {
             $startTime = $startTime->getTimestamp();
-        } else {
+        } elseif ($startTime === null) {
             $startTime = time();
         }
         if (! is_numeric($startTime)) {

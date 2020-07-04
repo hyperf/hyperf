@@ -45,6 +45,12 @@ class ParserCronNumberTest extends TestCase
         $result = $reflectionMethod->invoke($parser, '0-40/11', 0, 59);
         $this->assertSame([0, 11, 22, 33], $result);
 
+        $result = $reflectionMethod->invoke($parser, '2-40/11', 0, 23);
+        $this->assertSame([2, 13], $result);
+
+        $result = $reflectionMethod->invoke($parser, '2-10/3', 0, 11);
+        $this->assertSame([2, 5, 8], $result);
+
         $result = $reflectionMethod->invoke($parser, '11', 0, 59);
         $this->assertSame([11], $result);
 
