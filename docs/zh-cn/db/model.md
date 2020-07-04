@@ -18,19 +18,19 @@ $ php bin/hyperf.php db:model table_name
 
 可选参数如下：
 
-|        参数        |  类型  |      默认值       |                      备注                       |
-|:------------------:|:------:|:-----------------:|:-----------------------------------------------:|
-|       --pool       | string |     `default`     |      连接池，脚本会根据当前连接池配置创建       |
-|       --path       | string |    `app/Model`    |                    模型路径                     |
-|   --force-casts    |  bool  |      `false`      |            是否强制重置 `casts` 参数            |
-|      --prefix      | string |     空字符串       |                     表前缀                      |
-|   --inheritance    | string |      `Model`      |                      父类                       |
-|       --uses       | string | `App\Model\Model` |             配合 `inheritance` 使用             |
-| --refresh-fillable |  bool  |      `false`      |            是否刷新 `fillable` 参数             |
-|  --table-mapping   | array  |       `[]`        | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
-|  --ignore-tables   | array  |       `[]`        |       不需要生成模型的表名 比如 ['users']       |
-|  --with-comments   |  bool  |      `false`      |                是否增加字段注释                 |
-|  --property-case   |  int   |      `0`          |               字段类型 0 蛇形 1 驼峰               |
+|        参数        |  类型  |              默认值               |                       备注                        |
+| :----------------: | :----: | :-------------------------------: | :-----------------------------------------------: |
+|       --pool       | string |             `default`             |       连接池，脚本会根据当前连接池配置创建        |
+|       --path       | string |            `app/Model`            |                     模型路径                      |
+|   --force-casts    |  bool  |              `false`              |             是否强制重置 `casts` 参数             |
+|      --prefix      | string |             空字符串              |                      表前缀                       |
+|   --inheritance    | string |              `Model`              |                       父类                        |
+|       --uses       | string | `Hyperf\DbConnection\Model\Model` |              配合 `inheritance` 使用              |
+| --refresh-fillable |  bool  |              `false`              |             是否刷新 `fillable` 参数              |
+|  --table-mapping   | array  |               `[]`                | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
+|  --ignore-tables   | array  |               `[]`                |        不需要生成模型的表名 比如 ['users']        |
+|  --with-comments   |  bool  |              `false`              |                 是否增加字段注释                  |
+|  --property-case   |  int   |                `0`                |              字段类型 0 蛇形 1 驼峰               |
 
 当使用 `--property-case` 将字段类型转化为驼峰时，还需要手动在模型中加入 `Hyperf\Database\Model\Concerns\CamelCase`。
 
@@ -110,7 +110,7 @@ class User extends Model
 ## 模型成员变量
 
 |     参数     |  类型  | 默认值  |         备注         |
-|:------------:|:------:|:-------:|:--------------------:|
+| :----------: | :----: | :-----: | :------------------: |
 |  connection  | string | default |      数据库连接      |
 |    table     | string |   无    |      数据表名称      |
 |  primaryKey  | string |   id    |       模型主键       |
