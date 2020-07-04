@@ -206,12 +206,17 @@ class Watcher
         Coroutine::create(function () {
             $this->channel->pop();
             $this->output->writeln('Start server ...');
-            $ret = System::exec($this->option->getBin() . ' vendor/bin/watcher.php start');
-            if ($ret['code']) {
-                throw new \RuntimeException($ret['output']);
-            }
+
+            $descriptorspec = [
+                0 => STDIN,
+                1 => STDOUT,
+                2 => STDERR,
+            ];
+
+            proc_open($this->option->getBin() . ' vendor/bin/watcher.php start', $descriptorspec, $pipes);
+
             $this->output->writeln('Stop server success.');
-            $this->channel->push($ret);
+            $this->channel->push(1);
         });
     }
 
