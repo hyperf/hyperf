@@ -18,7 +18,8 @@
         "php": ">=7.2",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "hyperf/contract": "~2.0.0"
+        "hyperf/contract": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
         "hyperf/di": "~2.0.0",

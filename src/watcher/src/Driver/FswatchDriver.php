@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher\Driver;
 
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
 use Swoole\Coroutine\Channel;
@@ -48,7 +49,7 @@ class FswatchDriver implements DriverInterface
 
         while (true) {
             $ret = fread($pipes[1], 8192);
-            go(function () use ($ret, $channel) {
+            Coroutine::create(function () use ($ret, $channel) {
                 if (is_string($ret)) {
                     $files = array_filter(explode("\n", $ret));
                     foreach ($files as $file) {
