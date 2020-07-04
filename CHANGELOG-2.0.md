@@ -13,6 +13,10 @@
 
 - [#2049](https://github.com/hyperf/hyperf/pull/2049) Optimized stdout when server restart for `hyperf/watcher`.
 
+## Changed
+
+- [#2301](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
+
 # v2.0.1 - 2020-07-02
 
 ## Added
