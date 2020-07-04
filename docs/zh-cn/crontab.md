@@ -132,7 +132,7 @@ class FooTask
 
 #### 更改调度分发策略
 
-通过在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 接口类所对应的实例来更改目前所使用的策略，默认情况下使用 `Worker进程执行策略`，对应的类为 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我们希望更改策略为一个新的策略，比如为 `App\Crontab\Strategy\FooStrategy`，那么如下：
+通过在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 接口类所对应的实例来更改目前所使用的策略，默认情况下使用 `Worker 进程执行策略`，对应的类为 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我们希望更改策略为一个新的策略，比如为 `App\Crontab\Strategy\FooStrategy`，那么如下：
 
 ```php
 <?php
