@@ -8,6 +8,10 @@
 
 - [#2042](https://github.com/hyperf/hyperf/pull/2042) Added `ScanFileDriver` to watch file changes for `hyperf/watcher`.
 
+## Optimized
+
+- [#2049](https://github.com/hyperf/hyperf/pull/2049) Optimized stdout when server restart for `hyperf/watcher`.
+
 # v2.0.1 - 2020-07-02
 
 ## Added
