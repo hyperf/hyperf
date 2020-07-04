@@ -44,12 +44,7 @@ abstract class AbstractConstants
 
         $count = count($arguments);
         if ($count > 0) {
-            if ($count === 1 && is_array($arguments[0])) {
-                return sprintf($message, ...$arguments[0]);
-            }
-
-            // TODO: Removed in v1.2
-            return sprintf($message, ...$arguments);
+            return sprintf($message, ...(array) $arguments[0]);
         }
 
         return $message;

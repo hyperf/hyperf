@@ -34,7 +34,7 @@ class ConsumerManager
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
         /**
-         * @var string
+         * @var string $class
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {
@@ -87,7 +87,7 @@ class ConsumerManager
                 return $this->consumerMessage;
             }
 
-            public function isEnable(): bool
+            public function isEnable($server): bool
             {
                 return $this->consumerMessage->isEnable();
             }

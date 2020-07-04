@@ -37,7 +37,7 @@ class Consumer extends Builder
     protected $status = true;
 
     /**
-     * @var EventDispatcherInterface
+     * @var null|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
@@ -87,7 +87,7 @@ class Consumer extends Builder
                     return parallel([$callback]);
                 }
 
-                return $concurrent->create($callback);
+                $concurrent->create($callback);
             }
         );
 

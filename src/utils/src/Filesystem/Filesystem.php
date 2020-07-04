@@ -115,7 +115,7 @@ class Filesystem
     public function put(string $path, $contents, bool $lock = false)
     {
         if ($lock) {
-            return $this->atomic($path, function ($path) use ($contents, $lock) {
+            return $this->atomic($path, function ($path) use ($contents) {
                 $handle = fopen($path, 'w+');
                 if ($handle) {
                     $wouldBlock = false;

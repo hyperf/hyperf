@@ -18,7 +18,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Psr\Container\ContainerInterface;
 
 /**
  * @Aspect
@@ -32,7 +31,7 @@ class FailCacheAspect extends AbstractAspect
     ];
 
     /**
-     * @var ContainerInterface
+     * @var CacheManager
      */
     protected $manager;
 
