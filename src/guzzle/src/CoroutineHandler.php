@@ -96,7 +96,8 @@ class CoroutineHandler
         }
 
         // TODO: Unknown reason, it will cause 400 some time.
-        unset($headers['Content-Length']);
+        // Expect header is not supported by \Swoole\Coroutine\Http\Client
+        unset($headers['Content-Length'], $headers['Expect']);
         $client->setHeaders($headers);
     }
 
