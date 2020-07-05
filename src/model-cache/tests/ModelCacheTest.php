@@ -13,6 +13,7 @@ namespace HyperfTest\ModelCache;
 
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\ModelCache\Listener\EagerLoadListener;
 use Hyperf\Redis\RedisProxy;
 use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
@@ -271,6 +272,23 @@ class ModelCacheTest extends TestCase
         $books = BookModel::query()->get();
         $loader = new EagerLoader($container);
         $loader->load($books, ['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+    }
+
+    public function testEagerLoadMacro()
+    {
+        $container = ContainerStub::mockContainer();
+        $listener = new EagerLoadListener($container);
+        $listener->process(new \stdClass());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $books->loadCache(['user']);
 
         $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
     }

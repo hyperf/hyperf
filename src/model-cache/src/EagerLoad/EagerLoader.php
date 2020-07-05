@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\EagerLoad;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -45,6 +46,7 @@ class EagerLoader
      */
     protected function newBaseQueryBuilder(Model $model)
     {
+        /** @var Connection $connection */
         $connection = $model->getConnection();
 
         return new QueryBuilder($connection, $connection->getQueryGrammar(), $connection->getPostProcessor());
