@@ -12,31 +12,28 @@ declare(strict_types=1);
 namespace Hyperf\ModelCache\EagerLoad;
 
 use Hyperf\Database\Connection;
+use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
-use Psr\Container\ContainerInterface;
 
 class EagerLoader
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function load(Collection $collection, array $relations)
     {
         if ($collection->isNotEmpty()) {
             /** @var Model $first */
             $first = $collection->first();
-            $query = $first->registerGlobalScopes((new EagerLoaderBuilder($this->newBaseQueryBuilder($first)))->setModel($first))->with($relations);
+            $query = $first->registerGlobalScopes($this->newBuilder($first))->with($relations);
             $collection->fill($query->eagerLoadRelations($collection->all()));
         }
+    }
+
+    protected function newBuilder(Model $model): Builder
+    {
+        $builder = new EagerLoaderBuilder($this->newBaseQueryBuilder($model));
+
+        return $builder->setModel($model);
     }
 
     /**

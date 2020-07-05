@@ -270,7 +270,7 @@ class ModelCacheTest extends TestCase
 
         $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
         $books = BookModel::query()->get();
-        $loader = new EagerLoader($container);
+        $loader = new EagerLoader();
         $loader->load($books, ['user']);
 
         $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
