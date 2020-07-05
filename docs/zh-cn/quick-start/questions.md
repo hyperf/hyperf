@@ -100,3 +100,8 @@ composer require "symfony/event-dispatcher:^4.3"
 
 可以在 `config/autoload/amqp.php` 配置文件中将 `close_on_destruct` 改为 `false` 即可。
 
+## 使用 Swoole 4.5 版本和 view 组件时访问接口出现 404
+
+使用 Swoole 4.5 版本和 view 组件如果出现接口 404 的问题，可以尝试删除 `config/autoload/server.php` 文件中的 `static_handler_locations` 配置项。
+
+此配置下的路径都会被认为是静态文件路由，所以如果配置了`/`，就会导致所有接口都会被认为是文件路径，导致接口 404。
