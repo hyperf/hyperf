@@ -321,7 +321,6 @@ class RedisAdapter implements AdapterInterface
 
     private function close(int $fd)
     {
-        // Sender should be able to disconnect fd in the future. For now we have to use server.
-        ApplicationContext::getContainer()->get(Server::class)->disconnect($fd);
+        $this->sender->close($fd);
     }
 }
