@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache;
 
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\Redis\RedisProxy;
+use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use HyperfTest\ModelCache\Stub\UserExtModel;
 use HyperfTest\ModelCache\Stub\UserHiddenModel;
@@ -255,6 +257,22 @@ class ModelCacheTest extends TestCase
         $this->assertSame($model->toArray(), $model3->toArray());
         $this->assertSame($model->getAttributes(), $model2->getAttributes());
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
+    }
+
+    public function testEagerLoad()
+    {
+        $container = ContainerStub::mockContainer();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $loader = new EagerLoader($container);
+        $loader->load($books, ['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
     }
 
     public function testWhenAddedNewColumn()
