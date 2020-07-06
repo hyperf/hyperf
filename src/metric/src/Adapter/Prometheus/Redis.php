@@ -430,9 +430,8 @@ LUA
 
     /**
      * Get the indicator collection key
-     * Exception thrown when the incoming metric type does not exist
      *
-     * @throws \Exception
+     * @throws \Exception Exception thrown when the incoming metric type does not exist
      */
     private function getMetricGatherKey($metricType): string
     {
