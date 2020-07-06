@@ -21,8 +21,8 @@
         "php": ">=7.2",
         "ext-swoole": ">=4.4",
         "fig/http-message-util": "^1.1.2",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
+        "hyperf/contract": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0"
@@ -38,10 +38,7 @@
         "hyperf/di": "Required to use Command annotation.",
         "hyperf/dispatcher": "Required to use BootApplication event.",
         "hyperf/command": "Required to use Command annotation.",
-        "symfony/event-dispatcher": "Required to use symfony event dispatcher (^4.3)."
-    },
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
+        "symfony/event-dispatcher": "Required to use symfony event dispatcher (^5.0)."
     },
     "autoload": {
         "psr-4": {
@@ -58,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Framework\\ConfigProvider"

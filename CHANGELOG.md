@@ -1,8 +1,8 @@
 # v1.1.33 - TBD
 
-## Added
+## Fixed
 
-- [#2018](https://github.com/hyperf/hyperf/pull/2018) Make prometheus use redis to store data to support cluster mode
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
 
 ## Optimized
 

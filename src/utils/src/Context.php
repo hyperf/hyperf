@@ -64,11 +64,9 @@ class Context
      */
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
-        /**
-         * @var \ArrayObject
-         * @var \ArrayObject $current
-         */
+        /** @var \ArrayObject $from */
         $from = SwCoroutine::getContext($fromCoroutineId);
+        /** @var \ArrayObject $current */
         $current = SwCoroutine::getContext();
         $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
     }

@@ -16,12 +16,12 @@ use Composer\Autoload\ClassLoader;
 class Composer
 {
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $content;
 
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $json;
 
@@ -39,6 +39,11 @@ class Composer
      * @var array
      */
     private static $versions = [];
+
+    /**
+     * @var null|ClassLoader
+     */
+    private static $classLoader;
 
     /**
      * @throws \RuntimeException When composer.lock does not exist.
@@ -125,7 +130,16 @@ class Composer
 
     public static function getLoader(): ClassLoader
     {
-        return self::findLoader();
+        if (! self::$classLoader) {
+            self::$classLoader = self::findLoader();
+        }
+        return self::$classLoader;
+    }
+
+    public static function setLoader(ClassLoader $classLoader): ClassLoader
+    {
+        self::$classLoader = $classLoader;
+        return $classLoader;
     }
 
     private static function findLoader(): ClassLoader

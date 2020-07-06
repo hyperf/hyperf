@@ -20,7 +20,7 @@ class SimpleNormalizer implements NormalizerInterface
         return $object;
     }
 
-    public function denormalize($data, $class)
+    public function denormalize($data, string $class)
     {
         switch ($class) {
             case 'int':

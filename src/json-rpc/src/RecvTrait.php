@@ -31,7 +31,7 @@ trait RecvTrait
             throw new RecvException('Connection is closed.');
         }
         if ($data === false) {
-            throw new RecvException('Error receiving data, errno=' . $client->errCode);
+            throw new RecvException('Error receiving data, errno=' . $client->errCode . ' errmsg=' . swoole_strerror($client->errCode));
         }
 
         return $data;

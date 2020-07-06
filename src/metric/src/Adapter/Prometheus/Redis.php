@@ -130,6 +130,7 @@ class Redis implements Adapter
     public function updateHistogram(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Histogram::TYPE);
         $bucketToIncrease = '+Inf';
         foreach ($data['buckets'] as $bucket) {
             if ($data['value'] <= $bucket) {
@@ -151,8 +152,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data) . $this->getRedisTag(Histogram::TYPE),
-                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE),
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 json_encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
                 json_encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
                 $data['value'],
@@ -168,6 +169,7 @@ LUA
     public function updateGauge(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Gauge::TYPE);
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -188,8 +190,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data) . $this->getRedisTag(Gauge::TYPE),
-                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE),
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
                 json_encode($data['labelValues']),
                 $data['value'],
@@ -205,6 +207,7 @@ LUA
     public function updateCounter(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Counter::TYPE);
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -219,8 +222,8 @@ return result
 LUA
             ,
             [
-                $this->toMetricKey($data) . $this->getRedisTag(Counter::TYPE),
-                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE),
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
                 $data['value'],
                 json_encode($data['labelValues']),
@@ -409,11 +412,10 @@ LUA
     /**
      * Adapt redis cluster get tag
      *
-     * @return string
      */
-    private function getRedisTag($metric_type): string
+    protected function getRedisTag($metricType): string
     {
-        switch($metric_type)
+        switch($metricType)
         {
             case Counter::TYPE:
                 return "{counter}";
@@ -428,13 +430,13 @@ LUA
 
     /**
      * Get the indicator collection key
+     * Exception thrown when the incoming metric type does not exist
      *
-     * @return string
      * @throws \Exception
      */
-    private function getMetricGatherKey($metric_type): string
+    private function getMetricGatherKey($metricType): string
     {
-        switch($metric_type)
+        switch($metricType)
         {
             case Counter::TYPE:
                 return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
