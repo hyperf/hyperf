@@ -18,6 +18,10 @@
 
 - [#2301](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
 
+## Fixed
+
+- [#2017](https://github.com/hyperf/hyperf/pull/2017) Fixed when prometheus using the redis record, an error is reported during the rendering of data due to the change in the number of label.
+
 # v2.0.1 - 2020-07-02
 
 ## Added
