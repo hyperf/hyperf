@@ -147,7 +147,7 @@ class RedisAdapter implements AdapterInterface
             retry(PHP_INT_MAX, function () {
                 $container = ApplicationContext::getContainer();
                 try {
-                    $sub = $container->get(Subscriber::class);
+                    $sub = $container->make(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
