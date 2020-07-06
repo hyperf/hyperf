@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "hyperf/utils": "~2.0.0",
         "nesbot/carbon": "^2.0"
     },
     "require-dev": {
