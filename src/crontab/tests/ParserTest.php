@@ -53,6 +53,66 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
     }
 
+    public function testParseSecondLevelBetween(): void
+    {
+        $crontabString = '10-15/1 * * * * *';
+        $parser = new Parser();
+        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $this->assertSame([
+            '2020-06-10 09:58:10',
+            '2020-06-10 09:58:11',
+            '2020-06-10 09:58:12',
+            '2020-06-10 09:58:13',
+            '2020-06-10 09:58:14',
+            '2020-06-10 09:58:15',
+        ], $this->toDatatime($result));
+    }
+
+    public function testParseMinuteLevelBetween(): void
+    {
+        $crontabString = '10-15/1 10-12/1 10 * * *';
+        $parser = new Parser();
+        $startTime = Carbon::createFromTimestamp(1591755010)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $this->assertSame([
+            '2020-06-10 10:10:10',
+            '2020-06-10 10:10:11',
+            '2020-06-10 10:10:12',
+            '2020-06-10 10:10:13',
+            '2020-06-10 10:10:14',
+            '2020-06-10 10:10:15',
+        ], $this->toDatatime($result));
+
+        $last = end($result);
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+        $this->assertSame([
+            '2020-06-10 10:11:10',
+            '2020-06-10 10:11:11',
+            '2020-06-10 10:11:12',
+            '2020-06-10 10:11:13',
+            '2020-06-10 10:11:14',
+            '2020-06-10 10:11:15',
+        ], $this->toDatatime($result));
+
+        $last = end($result);
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+
+        $this->assertSame([
+            '2020-06-10 10:12:10',
+            '2020-06-10 10:12:11',
+            '2020-06-10 10:12:12',
+            '2020-06-10 10:12:13',
+            '2020-06-10 10:12:14',
+            '2020-06-10 10:12:15',
+        ], $this->toDatatime($result));
+
+        $last = end($result);
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+
+        $this->assertSame([], $this->toDatatime($result));
+    }
+
     public function testParseSecondLevelWithCarbonStartTime()
     {
         $crontabString = '*/11 * * * * *';
