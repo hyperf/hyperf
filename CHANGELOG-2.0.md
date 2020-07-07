@@ -6,10 +6,12 @@
 - [#2037](https://github.com/hyperf/hyperf/pull/2037) Fixed bug that tcp server running in only one coroutine.
 - [#2051](https://github.com/hyperf/hyperf/pull/2051) Fixed `hyperf.pid` won't be created in coroutine server.
 - [#2055](https://github.com/hyperf/hyperf/pull/1695) Fixed guzzle auto add `Expect: 100-Continue` header when put a large file.
+- [#2059](https://github.com/hyperf/hyperf/pull/2059) Fixed redis reconnection bug in socket.io server.
 
 ## Added
 
 - [#2042](https://github.com/hyperf/hyperf/pull/2042) Added `ScanFileDriver` to watch file changes for `hyperf/watcher`.
+- [#2054](https://github.com/hyperf/hyperf/pull/2054) Added eager load relation for model-cache.
 
 ## Optimized
 
@@ -17,7 +19,12 @@
 
 ## Changed
 
-- [#2301](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
+- [#2031](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) Changed `Hyperf\WebSocketServer\Sender` which only support `push` and `disconnect`.
+
+## Removed
+
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) Removed methods `send` `sendto` and `close` from `Hyperf\WebSocketServer\Sender`.
 
 # v2.0.1 - 2020-07-02
 

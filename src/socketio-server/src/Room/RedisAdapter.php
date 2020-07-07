@@ -145,9 +145,8 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $container = ApplicationContext::getContainer();
                 try {
-                    $sub = $container->get(Subscriber::class);
+                    $sub = make(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
@@ -155,6 +154,7 @@ class RedisAdapter implements AdapterInterface
                         $this->phpRedisSubscribe();
                     }
                 } catch (\Throwable $e) {
+                    $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
                         $logger->error($this->formatThrowable($e));
@@ -321,7 +321,6 @@ class RedisAdapter implements AdapterInterface
 
     private function close(int $fd)
     {
-        // Sender should be able to disconnect fd in the future. For now we have to use server.
-        ApplicationContext::getContainer()->get(Server::class)->disconnect($fd);
+        $this->sender->disconnect($fd);
     }
 }
