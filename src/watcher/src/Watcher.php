@@ -21,6 +21,7 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use Hyperf\Watcher\Driver\DriverInterface;
+use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
@@ -182,14 +183,18 @@ class Watcher
 
     protected function getMetadata(string $file): ?Metadata
     {
-        $stmts = $this->ast->parse($this->filesystem->get($file));
-        $meta = new Metadata();
-        $meta->path = $file;
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new RewriteClassNameVisitor($meta));
-        $traverser->traverse($stmts);
-        if (! $meta->isClass()) {
-            return null;
+        try {
+            $stmts = $this->ast->parse($this->filesystem->get($file));
+            $meta = new Metadata();
+            $meta->path = $file;
+            $traverser = new NodeTraverser();
+            $traverser->addVisitor(new RewriteClassNameVisitor($meta));
+            $traverser->traverse($stmts);
+            if (! $meta->isClass()) {
+                $meta = null;
+            }
+        } catch (Error $error) {
+            $meta = null;
         }
         return $meta;
     }
