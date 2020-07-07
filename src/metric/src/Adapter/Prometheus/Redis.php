@@ -62,9 +62,6 @@ class Redis implements Adapter
      */
     private $connectionInitialized = false;
 
-    /**
-     * Redis constructor.
-     */
     public function __construct(array $options = [])
     {
         $this->options = array_merge(self::$defaultOptions, $options);
@@ -74,7 +71,6 @@ class Redis implements Adapter
     /**
      * Create an instance from an established redis connection.
      * @param \Hyperf\Redis\Redis|\Redis $redis
-     * @return Redis
      */
     public static function fromExistingConnection($redis): self
     {
@@ -409,14 +405,9 @@ LUA
         return implode(':', [self::$prefix, $data['type'], $data['name']]);
     }
 
-    /**
-     * Adapt redis cluster get tag
-     *
-     */
-    protected function getRedisTag($metricType): string
+    protected function getRedisTag(string $metricType): string
     {
-        switch($metricType)
-        {
+        switch($metricType) {
             case Counter::TYPE:
                 return "{counter}";
             case Histogram::TYPE:
@@ -435,8 +426,7 @@ LUA
      */
     private function getMetricGatherKey($metricType): string
     {
-        switch($metricType)
-        {
+        switch($metricType) {
             case Counter::TYPE:
                 return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
             case Histogram::TYPE:
