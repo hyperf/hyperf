@@ -35,6 +35,11 @@ class CoroutineHandlerStub extends CoroutineHandler
         return parent::createSink($body, $sink);
     }
 
+    public function rewriteHeaders(array $headers): array
+    {
+        return parent::rewriteHeaders($headers);
+    }
+
     protected function execute(Client $client, $path)
     {
         $client->body = json_encode([

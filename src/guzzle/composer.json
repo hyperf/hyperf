@@ -16,8 +16,7 @@
         "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
-        "guzzlehttp/ringphp": "~1.0"
+        "ezimuel/ringphp": "~1.0"
     },
     "suggest": {
         "hyperf/pool": "Required to use pool handler."
