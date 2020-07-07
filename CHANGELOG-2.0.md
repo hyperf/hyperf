@@ -17,7 +17,12 @@
 
 ## Changed
 
-- [#2301](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
+- [#2031](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) Changed `Hyperf\WebSocketServer\Sender` which only support `push` and `disconnect`.
+
+## Removed
+
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) Removed methods `send` `sendto` and `close` from `Hyperf\WebSocketServer\Sender`.
 
 # v2.0.1 - 2020-07-02
 
