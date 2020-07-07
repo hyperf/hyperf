@@ -11,18 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ModelCache\Stub;
 
-use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
+use HyperfTest\Database\Stubs\Model\Model;
 
 /**
  * @property int $id
- * @property string $name
- * @property int $gender
+ * @property string $url
+ * @property int $imageable_id
+ * @property string $imageable_type
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
-class UserModel extends Model implements CacheableInterface
+class ImageModel extends Model implements CacheableInterface
 {
     use Cacheable;
 
@@ -31,24 +32,24 @@ class UserModel extends Model implements CacheableInterface
      *
      * @var string
      */
-    protected $table = 'user';
+    protected $table = 'images';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'url', 'imageable_id', 'imageable_type', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'gender' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected $casts = ['id' => 'integer', 'imageable_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 
-    public function image()
+    public function imageable()
     {
-        return $this->morphOne(ImageModel::class, 'imageable');
+        return $this->morphTo();
     }
 }

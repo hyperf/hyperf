@@ -116,6 +116,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * @param mixed $items
+     */
+    public function fill($items = [])
+    {
+        $this->items = $this->getArrayableItems($items);
+        return $this;
+    }
+
+    /**
      * Create a new collection instance if the value isn't one already.
      * @param mixed $items
      */

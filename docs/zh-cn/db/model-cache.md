@@ -146,3 +146,47 @@ User::query(true)->where('gender', '>', 1)->delete();
 当生产环境使用了模型缓存时，如果已经建立了对应缓存数据，但此时又因为逻辑变更，添加了新的字段，并且默认值不是 `0`、`空字符`、`null` 这类数据时，就会导致在数据查询时，从缓存中查出来的数据与数据库中的数据不一致。
 
 对于这种情况，我们可以修改 `use_default_value` 为 `true`，并添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 应用在启动时主动去获取数据库的字段信息，并在获取缓存数据时与之比较并进行缓存数据修正。
+
+### EagerLoad
+
+当我们使用模型关系时，可以通过 `load` 解决 `N+1` 的问题，但仍然需要查一次数据库。模型缓存通过重写了 `ModelBuilder`，可以让用户尽可能的从缓存中拿到对应的模型。
+
+> 本功能不支持 `morphTo` 和不是只有 `whereIn` 查询的关系模型。
+
+以下提供两种方式：
+
+1. 配置 EagerLoadListener，直接使用 `loadCache` 方法。
+
+修改 `listeners.php` 配置
+
+```php
+return [
+    Hyperf\ModelCache\Listener\EagerLoadListener::class,
+];
+```
+
+通过 `loadCache` 方法，加载对应的模型关系。
+
+```php
+$books = Book::findManyFromCache([1,2,3]);
+$books->loadCache(['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```
+
+2. 使用 EagerLoader
+
+```php
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\Utils\ApplicationContext;
+
+$books = Book::findManyFromCache([1,2,3]);
+$loader = ApplicationContext::getContainer()->get(EagerLoader::class);
+$loader->load($books, ['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```

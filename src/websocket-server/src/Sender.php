@@ -21,7 +21,7 @@ use Swoole\Server;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
- * @method close(int $fd, bool $reset = null)
+ * @method disconnect(int $fd, int $code = null, string $reason = null)
  */
 class Sender
 {
@@ -117,13 +117,10 @@ class Sender
 
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array
     {
-        if (! in_array($method, ['push', 'send', 'sendto', 'close'])) {
+        if (! in_array($method, ['push', 'disconnect'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
         }
 
-        if ($method !== 'close') {
-            $method = 'push';
-        }
         return [(int) $arguments[0], $method];
     }
 
