@@ -51,4 +51,9 @@ class BookModel extends Model implements CacheableInterface
     {
         return $this->belongsTo(UserModel::class, 'user_id', 'id');
     }
+
+    public function image()
+    {
+        return $this->morphOne(ImageModel::class, 'imageable');
+    }
 }

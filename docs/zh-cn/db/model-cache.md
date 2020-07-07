@@ -151,6 +151,8 @@ User::query(true)->where('gender', '>', 1)->delete();
 
 当我们使用模型关系时，可以通过 `load` 解决 `N+1` 的问题，但仍然需要查一次数据库。模型缓存通过重写了 `ModelBuilder`，可以让用户尽可能的从缓存中拿到对应的模型。
 
+> 本功能不支持 `morphTo` 和不是只有 `whereIn` 查询的关系模型。
+
 以下提供两种方式：
 
 1. 配置 EagerLoadListener，直接使用 `loadCache` 方法。
