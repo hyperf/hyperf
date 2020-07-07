@@ -321,6 +321,6 @@ class RedisAdapter implements AdapterInterface
 
     private function close(int $fd)
     {
-        $this->sender->close($fd);
+        $this->sender->disconnect($fd);
     }
 }
