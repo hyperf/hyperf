@@ -65,7 +65,7 @@ class Guzzle
             $request = $client->request($method, $api, $options);
             $code = $request->getStatusCode();
             $content = $request->getBody()->getContents();
-            if (is_json_str($content)) {
+            if (self::isJson($content)) {
                 $content = json_decode($content, true);
             }
             $logger->get('api_request')->info($api, [
@@ -90,5 +90,11 @@ class Guzzle
     protected static function getContainer()
     {
         return ApplicationContext::getContainer();
+    }
+
+    protected static function isJson($string): bool
+    {
+        json_decode($string);
+        return json_last_error() == JSON_ERROR_NONE;
     }
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Model;
 
 use Hyperf\Nacos\Lib\NacosConfig;
+use Hyperf\Utils\Codec\Xml;
 
 class ConfigModel extends AbstractModel
 {
@@ -48,7 +49,7 @@ class ConfigModel extends AbstractModel
             case 'yml':
                 return yaml_parse($config_origin);
             case 'xml':
-                return xml2array($config_origin);
+                return Xml::toArray($config_origin);
             default:
                 return $config_origin;
         }

@@ -19,10 +19,7 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Nacos\\": "src/"
-        },
-        "files": [
-            "./src/Helper/func.php"
-        ]
+        }
     },
     "require": {
         "ext-json": "*",
