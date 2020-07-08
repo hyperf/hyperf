@@ -11,33 +11,46 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Lib;
 
+use Hyperf\Utils\Codec\Json;
+
 class NacosOperator extends AbstractNacos
 {
-    public function getSwitches()
+    public function getSwitches(): array
     {
-        return $this->request('GET', '/nacos/v1/ns/operator/switches');
+        $response = $this->request('GET', '/nacos/v1/ns/operator/switches');
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function updateSwitches($entry, $value, $debug = false)
+    public function updateSwitches($entry, $value, $debug = false): array
     {
         $_debug = $debug ? 'true' : 'false';
-        return $this->request('PUT', "/nacos/v1/ns/operator/switches?entry={$entry}&value={$value}&debug={$_debug}");
+
+        $response = $this->request('PUT', "/nacos/v1/ns/operator/switches?entry={$entry}&value={$value}&debug={$_debug}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function getMetrics()
+    public function getMetrics(): array
     {
-        return $this->request('GET', '/nacos/v1/ns/operator/metrics');
+        $response = $this->request('GET', '/nacos/v1/ns/operator/metrics');
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function getServers($healthy = true)
+    public function getServers($healthy = true): array
     {
         $_healthy = $healthy ? 'true' : 'false';
 
-        return $this->request('GET', "/nacos/v1/ns/operator/servers?healthy={$_healthy}");
+        $response = $this->request('GET', "/nacos/v1/ns/operator/servers?healthy={$_healthy}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function getLeader()
+    public function getLeader(): array
     {
-        return $this->request('GET', '/nacos/v1/ns/raft/leader');
+        $response = $this->request('GET', '/nacos/v1/ns/raft/leader');
+
+        return Json::decode($response->getBody()->getContents());
     }
 }

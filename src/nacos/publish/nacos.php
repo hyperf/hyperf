@@ -32,10 +32,9 @@ return [
         'namespaceId' => 'namespace_id', // 注意此处必须和service保持一致
     ],
     'deleteServiceWhenShutdown' => true, // 默认false
-    // 配置刷新间隔
-    'configReloadInterval' => 3,
+    'config_reload_interval' => 3,
     // 远程配置合并节点, 默认 config 根节点
-    'configAppendNode' => 'custom',
+    'config_append_node' => 'custom',
     'listenerConfig' => [
         // 配置项 dataId, group, tenant, type, content
         [

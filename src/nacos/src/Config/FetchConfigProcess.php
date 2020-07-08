@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Config;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Util\RemoteConfig;
 use Hyperf\Process\AbstractProcess;
 use Swoole\Coroutine\Server as CoServer;
@@ -35,6 +36,7 @@ class FetchConfigProcess extends AbstractProcess
     {
         $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
         $cache = [];
+        $config = $this->container->get(ConfigInterface::class);
         while (true) {
             $remote_config = RemoteConfig::get();
             if ($remote_config != $cache) {
@@ -44,12 +46,13 @@ class FetchConfigProcess extends AbstractProcess
                 }
                 $cache = $remote_config;
             }
-            sleep(config('nacos.configReloadInterval', 3));
+            sleep((int) $config->get('nacos.config_reload_interval', 3));
         }
     }
 
     public function isEnable($server): bool
     {
-        return $server instanceof Server && (bool) config('nacos.configReloadInterval', false);
+        $config = $this->container->get(ConfigInterface::class);
+        return $server instanceof Server && (bool) $config->get('nacos.config_reload_interval', false);
     }
 }

@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 class OnPipeMessageListener implements ListenerInterface
 {
     /**
-     * @var \Hyperf\Config\Config
+     * @var ConfigInterface
      */
     private $config;
 
@@ -45,11 +45,9 @@ class OnPipeMessageListener implements ListenerInterface
     public function process(object $event)
     {
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            $conf_arr = $event->data->configurations ?? [];
-
-            $append_node = config('nacos.configAppendNode');
-            foreach ($conf_arr as $key => $conf) {
-                $this->config->set($append_node ? $append_node . '.' . $key : $key, $conf);
+            $root = $this->config->get('nacos.config_append_node');
+            foreach ($event->data->configurations ?? [] as $key => $conf) {
+                $this->config->set($root ? $root . '.' . $key : $key, $conf);
             }
         }
     }

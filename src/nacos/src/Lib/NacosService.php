@@ -12,34 +12,45 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Lib;
 
 use Hyperf\Nacos\Model\ServiceModel;
+use Hyperf\Utils\Codec\Json;
 
 class NacosService extends AbstractNacos
 {
-    public function create(ServiceModel $serviceModel)
+    public function create(ServiceModel $serviceModel): bool
     {
-        return $this->request('POST', "/nacos/v1/ns/service?{$serviceModel}") == 'ok';
+        $response = $this->request('POST', "/nacos/v1/ns/service?{$serviceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function delete(ServiceModel $serviceModel)
+    public function delete(ServiceModel $serviceModel): bool
     {
-        return $this->request('DELETE', "/nacos/v1/ns/service?{$serviceModel}") == 'ok';
+        $response = $this->request('DELETE', "/nacos/v1/ns/service?{$serviceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function update(ServiceModel $serviceModel)
+    public function update(ServiceModel $serviceModel): bool
     {
-        return $this->request('PUT', "/nacos/v1/ns/service?{$serviceModel}") == 'ok';
+        $response = $this->request('PUT', "/nacos/v1/ns/service?{$serviceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function detail(ServiceModel $serviceModel)
+    public function detail(ServiceModel $serviceModel): array
     {
-        return $this->request('GET', "/nacos/v1/ns/service?{$serviceModel}");
+        $response = $this->request('GET', "/nacos/v1/ns/service?{$serviceModel}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function list($pageNo, $pageSize = 10, $groupName = null, $namespaceId = null)
+    public function list($pageNo, $pageSize = 10, $groupName = null, $namespaceId = null): array
     {
         $params = array_filter(compact('pageNo', 'pageSize', 'groupName', 'namespaceId'));
         $params_str = http_build_query($params);
 
-        return $this->request('GET', "/nacos/v1/ns/service/list?{$params_str}");
+        $response = $this->request('GET', "/nacos/v1/ns/service/list?{$params_str}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 }

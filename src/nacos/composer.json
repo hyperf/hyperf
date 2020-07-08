@@ -26,6 +26,7 @@
         "ext-simplexml": "*",
         "ext-yaml": "*",
         "hyperf/config": "~2.0.0",
+        "hyperf/contract": "~2.0.0",
         "hyperf/event": "~2.0.0",
         "hyperf/framework": "~2.0.0",
         "hyperf/guzzle": "~2.0.0",

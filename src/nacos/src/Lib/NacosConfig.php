@@ -11,26 +11,34 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Lib;
 
+use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\Model\ConfigModel;
+use Hyperf\Utils\Codec\Json;
 
 class NacosConfig extends AbstractNacos
 {
-    public function get(ConfigModel $configModel)
+    public function get(ConfigModel $configModel): array
     {
-        return $this->request('GET', '/nacos/v1/cs/configs', $configModel->toArray());
+        $response = $this->request('GET', '/nacos/v1/cs/configs', [
+            RequestOptions::QUERY => $configModel->toArray(),
+        ]);
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function set(ConfigModel $configModel)
+    public function set(ConfigModel $configModel): array
     {
-        $headers = [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
+        $response = $this->request('POST', '/nacos/v1/cs/configs', [
+            RequestOptions::FORM_PARAMS => $configModel->toArray(),
+        ]);
 
-        return $this->request('POST', '/nacos/v1/cs/configs', $configModel->toArray(), $headers);
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function delete(ConfigModel $configModel)
+    public function delete(ConfigModel $configModel): array
     {
-        return $this->request('DELETE', '/nacos/v1/cs/configs', $configModel->toArray());
+        $response = $this->request('DELETE', '/nacos/v1/cs/configs');
+
+        return Json::decode($response->getBody()->getContents());
     }
 }

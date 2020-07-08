@@ -72,7 +72,7 @@ class BootAppConfListener implements ListenerInterface
         $remote_config = RemoteConfig::get();
         /** @var \Hyperf\Config\Config $config */
         $config = $this->container->get(ConfigInterface::class);
-        $append_node = config('nacos.configAppendNode');
+        $append_node = config('nacos.config_append_node');
         foreach ($remote_config as $key => $conf) {
             $config->set($append_node ? $append_node . '.' . $key : $key, $conf);
         }

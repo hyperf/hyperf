@@ -18,27 +18,34 @@ use Hyperf\LoadBalancer\WeightedRandom;
 use Hyperf\LoadBalancer\WeightedRoundRobin;
 use Hyperf\Nacos\Model\InstanceModel;
 use Hyperf\Nacos\Model\ServiceModel;
+use Hyperf\Utils\Codec\Json;
 
 class NacosInstance extends AbstractNacos
 {
-    public function register(InstanceModel $instanceModel)
+    public function register(InstanceModel $instanceModel): bool
     {
-        return $this->request('POST', "/nacos/v1/ns/instance?{$instanceModel}") == 'ok';
+        $response = $this->request('POST', "/nacos/v1/ns/instance?{$instanceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function delete(InstanceModel $instanceModel)
+    public function delete(InstanceModel $instanceModel): bool
     {
-        return $this->request('DELETE', "/nacos/v1/ns/instance?{$instanceModel}") == 'ok';
+        $response = $this->request('DELETE', "/nacos/v1/ns/instance?{$instanceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function update(InstanceModel $instanceModel)
+    public function update(InstanceModel $instanceModel): bool
     {
         $instanceModel->healthy = null;
 
-        return $this->request('PUT', "/nacos/v1/ns/instance?{$instanceModel}") == 'ok';
+        $response = $this->request('PUT', "/nacos/v1/ns/instance?{$instanceModel}");
+
+        return $response->getBody()->getContents() == 'ok';
     }
 
-    public function list(ServiceModel $serviceModel, array $clusters = [], $healthyOnly = null)
+    public function list(ServiceModel $serviceModel, array $clusters = [], $healthyOnly = null): array
     {
         $serviceName = $serviceModel->serviceName;
         $groupName = $serviceModel->groupName;
@@ -51,7 +58,9 @@ class NacosInstance extends AbstractNacos
         }
         $params_str = http_build_query($params);
 
-        return $this->request('GET', "/nacos/v1/ns/instance/list?{$params_str}");
+        $response = $this->request('GET', "/nacos/v1/ns/instance/list?{$params_str}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
     public function getOptimal(ServiceModel $serviceModel, array $clusters = [])
@@ -70,12 +79,14 @@ class NacosInstance extends AbstractNacos
         return $this->loadBalancer($enabled, $tactics);
     }
 
-    public function detail(InstanceModel $instanceModel)
+    public function detail(InstanceModel $instanceModel): array
     {
-        return $this->request('GET', "/nacos/v1/ns/instance?{$instanceModel}");
+        $response = $this->request('GET', "/nacos/v1/ns/instance?{$instanceModel}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function beat(ServiceModel $serviceModel, InstanceModel $instanceModel)
+    public function beat(ServiceModel $serviceModel, InstanceModel $instanceModel): array
     {
         $serviceName = $serviceModel->serviceName;
         $groupName = $serviceModel->groupName;
@@ -86,16 +97,20 @@ class NacosInstance extends AbstractNacos
         $params['beat'] = $instanceModel->toJson();
         $params_str = http_build_query($params);
 
-        return $this->request('PUT', "/nacos/v1/ns/instance/beat?{$params_str}");
+        $response = $this->request('PUT', "/nacos/v1/ns/instance/beat?{$params_str}");
+
+        return Json::decode($response->getBody()->getContents());
     }
 
-    public function upHealth(InstanceModel $instanceModel)
+    public function upHealth(InstanceModel $instanceModel): bool
     {
         if ($instanceModel->healthy === null) {
             $instanceModel->healthy = true;
         }
 
-        return $this->request('PUT', "/nacos/v1/ns/health/instance?{$instanceModel}") == 'ok';
+        $response = $this->request('PUT', "/nacos/v1/ns/health/instance?{$instanceModel}");
+
+        return $response == 'ok';
     }
 
     protected function loadBalancer($nodes, $tactics = 'random')

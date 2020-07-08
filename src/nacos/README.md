@@ -102,9 +102,9 @@ $optimal = $instance->getOptimal($service);
 
 return [
     // ...other
-    'configReloadInterval' => 3,
+    'config_reload_interval' => 3,
     // 远程配置合并节点, 默认 config 根节点
-    'configAppendNode' => 'nacos_conf',
+    'config_append_node' => 'nacos_conf',
     'listenerConfig' => [
         // 配置项 dataId, group, tenant, type, content
         [
@@ -119,7 +119,7 @@ return [
     ],
 ];
 ```
-系统将自动监听`listenerConfig` 中的配置, 并将其合并入`hyperf Config` 对象的指定(`configAppendNode`) 节点, 可以用`config('nacos_conf.***')` 获取, 若没有配置 `configAppendNode` 项, 将会并入 `Config` 对象根节点. 
+系统将自动监听`listenerConfig` 中的配置, 并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点, 可以用`config('nacos_conf.***')` 获取, 若没有配置 `config_append_node` 项, 将会并入 `Config` 对象根节点. 
 
 #### 依赖扩展
 
