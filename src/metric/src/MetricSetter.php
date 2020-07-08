@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -37,7 +36,6 @@ trait MetricSetter
     /**
      * Create an array of gauges.
      * @param array<string, string> $labels
-     * @param array<int, string> $names
      * @return GaugeInterface[]
      */
     private function factoryMetrics(array $labels, string ...$names): array

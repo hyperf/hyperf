@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Annotation;
 
 use Hyperf\Cache\CacheListenerCollector;
@@ -68,7 +67,7 @@ class Cacheable extends AbstractAnnotation
     public function collectMethod(string $className, ?string $target): void
     {
         if (isset($this->listener)) {
-            CacheListenerCollector::set($this->listener, [
+            CacheListenerCollector::setListener($this->listener, [
                 'className' => $className,
                 'method' => $target,
             ]);

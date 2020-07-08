@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\HttpMessage;
 
 use Hyperf\HttpMessage\Base\Request;
+use Hyperf\HttpMessage\Server\Request as ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,11 +30,22 @@ class MessageTraitTest extends TestCase
             'X-Id' => $id,
             'Version' => 1.0,
             1000 => 1000,
+            'X-Requested-With' => 'XMLHttpRequest',
         ]);
 
         $this->assertSame($token, $request->getHeaderLine('X-Token'));
         $this->assertSame((string) $id, $request->getHeaderLine('X-Id'));
         $this->assertSame('1', $request->getHeaderLine('Version'));
         $this->assertSame('1000', $request->getHeaderLine('1000'));
+        $this->assertSame('XMLHttpRequest', $request->getHeaderLine('X-Requested-With'));
+    }
+
+    public function testIsXmlHttpRequest()
+    {
+        $request = new ServerRequest('GET', '/', [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ]);
+
+        $this->assertTrue($request->isXmlHttpRequest());
     }
 }

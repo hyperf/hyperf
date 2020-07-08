@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcClient;
 
 use BadMethodCallException;
@@ -258,7 +257,7 @@ class GrpcClient
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
             return false;
         }
-        $channel = $this->recvChannelMap[$streamId];
+        $channel = $this->recvChannelMap[$streamId] ?? null;
         if ($channel instanceof Channel) {
             $response = $channel->pop($timeout === null ? $this->timeout : $timeout);
             // Pop timeout

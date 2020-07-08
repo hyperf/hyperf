@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Contract;
 
+use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
 
 interface OnReceiveInterface
 {
-    public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void;
+    /**
+     * @param Connection|SwooleServer $server
+     */
+    public function onReceive($server, int $fd, int $fromId, string $data): void;
 }

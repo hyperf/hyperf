@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ModelCache;
 
 use Hyperf\Contract\ConfigInterface;
@@ -218,7 +217,7 @@ class Manager
     }
 
     /**
-     * @param $id
+     * @param int|string $id
      */
     protected function getCacheKey($id, Model $model, Config $config): string
     {

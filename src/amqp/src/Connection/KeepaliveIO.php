@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Connection;
 
 use InvalidArgumentException;
@@ -173,7 +172,6 @@ class KeepaliveIO extends AbstractIO
      */
     public function check_heartbeat()
     {
-        return true;
     }
 
     public function close()

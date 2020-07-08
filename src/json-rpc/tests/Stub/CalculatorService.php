@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc\Stub;
 
 class CalculatorService implements CalculatorServiceInterface
@@ -40,5 +39,20 @@ class CalculatorService implements CalculatorServiceInterface
     public function error()
     {
         throw new \Error('Not only a exception.');
+    }
+
+    public function getString(): ?string
+    {
+        return uniqid();
+    }
+
+    public function callable(callable $a, ?callable $b): array
+    {
+        return [[], null];
+    }
+
+    public function null()
+    {
+        return null;
     }
 }

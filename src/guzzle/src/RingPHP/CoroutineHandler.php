@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
@@ -114,9 +113,16 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: 不知道为啥，这个扔进来就400
-        unset($headers['Content-Length']);
+        $headers = $this->rewriteHeaders($headers);
+
         $client->setHeaders($headers);
+    }
+
+    protected function rewriteHeaders(array $headers): array
+    {
+        // Unknown reason, Content-Length will cause 400 some time.
+        unset($headers['Content-Length']);
+        return $headers;
     }
 
     protected function getErrorResponse(\Throwable $throwable, $btime, $effectiveUrl)

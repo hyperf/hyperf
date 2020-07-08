@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Psr\Container\ContainerInterface;
@@ -17,10 +16,13 @@ use Psr\Container\ContainerInterface;
 class ApplicationContext
 {
     /**
-     * @var ContainerInterface
+     * @var null|ContainerInterface
      */
     private static $container;
 
+    /**
+     * @throws \TypeError
+     */
     public static function getContainer(): ContainerInterface
     {
         return self::$container;

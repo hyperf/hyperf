@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Bootstrap;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BeforeServerStart;
@@ -48,7 +46,7 @@ class Server implements ServerInterface
     protected $onRequestCallbacks = [];
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -81,7 +79,7 @@ class Server implements ServerInterface
         $this->server->start();
     }
 
-    public function getServer(): SwooleServer
+    public function getServer()
     {
         return $this->server;
     }
@@ -110,7 +108,7 @@ class Server implements ServerInterface
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {
-                /** @var \Swoole\Server\Port $slaveServer */
+                /** @var bool|\Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");
@@ -220,6 +218,7 @@ class Server implements ServerInterface
                 SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
                 SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
                 SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
+                SwooleEvent::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
             ];
         }
 

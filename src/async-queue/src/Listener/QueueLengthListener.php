@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Listener;
 
 use Hyperf\AsyncQueue\Event\QueueLength;
@@ -46,6 +45,7 @@ class QueueLengthListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        $value = 0;
         foreach ($this->level as $level => $value) {
             if ($event->length < $value) {
                 $message = sprintf('Queue lengh of %s is %d.', $event->key, $event->length);

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq;
 
 use Hyperf\Utils\Codec\Json;
@@ -97,6 +96,6 @@ class Subscriber
 
     private function isMatchResponse($response): bool
     {
-        return ! is_null($this->getPayload()) && (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
+        return (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
     }
 }

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue;
 
 use Hyperf\Contract\CompressInterface;
@@ -28,7 +27,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
     }
 
     /**
-     * @return JobInterface
+     * @return static
      */
     public function uncompress(): CompressInterface
     {
@@ -42,7 +41,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
     }
 
     /**
-     * @return JobInterface
+     * @return static
      */
     public function compress(): UnCompressInterface
     {

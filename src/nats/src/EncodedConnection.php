@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nats;
 
 use Hyperf\Nats\Encoders\Encoder;
@@ -81,6 +80,6 @@ class EncodedConnection extends Connection
             $message->setBody($this->encoder->decode($message->getBody()));
             $callback($message);
         };
-        parent::queueSubscribe($subject, $queue, $c);
+        return parent::queueSubscribe($subject, $queue, $c);
     }
 }

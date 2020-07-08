@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -48,7 +47,7 @@ interface RequestInterface extends ServerRequestInterface
 
     /**
      * Determine if the $keys is exist in parameters.
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array;
 

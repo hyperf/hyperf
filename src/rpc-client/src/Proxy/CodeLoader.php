@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient\Proxy;
 
 use Hyperf\Utils\Composer;
@@ -23,5 +22,10 @@ class CodeLoader
             return '';
         }
         return file_get_contents($file);
+    }
+
+    public function getPathByClassName(string $className): string
+    {
+        return Composer::getLoader()->findFile($className);
     }
 }

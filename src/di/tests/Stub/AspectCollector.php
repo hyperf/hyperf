@@ -9,14 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di\Stub;
 
 class AspectCollector extends \Hyperf\Di\Annotation\AspectCollector
 {
-    public static function clear()
-    {
-        self::$container = [];
-        self::$aspectRules = [];
-    }
 }

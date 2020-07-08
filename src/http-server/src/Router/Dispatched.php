@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\Dispatcher;
@@ -34,7 +33,7 @@ class Dispatched
     /**
      * Dispatches against the provided HTTP method verb and URI.
      *
-     * @param array with one of the following formats:
+     * @param array $array with one of the following formats:
      *
      *     [Dispatcher::NOT_FOUND]
      *     [Dispatcher::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]

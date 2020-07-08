@@ -9,17 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\SuperGlobals;
 
 use ArrayAccess;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
 use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use JsonSerializable;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable

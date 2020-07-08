@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -18,6 +17,8 @@ use Hyperf\ConfigApollo\PipeMessage;
 use Hyperf\ConfigApollo\ReleaseKey;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class BootProcessListener extends OnPipeMessageListener
@@ -62,7 +63,9 @@ class BootProcessListener extends OnPipeMessageListener
         $callbacks = [];
         $namespaces = $this->config->get('apollo.namespaces', []);
         foreach ($namespaces as $namespace) {
-            $callbacks[$namespace] = $ipcCallback;
+            if (is_string($namespace)) {
+                $callbacks[$namespace] = $ipcCallback;
+            }
         }
         $this->client->pull($namespaces, $callbacks);
 
@@ -71,7 +74,11 @@ class BootProcessListener extends OnPipeMessageListener
                 $interval = $this->config->get('apollo.interval', 5);
                 retry(INF, function () use ($namespaces, $callbacks, $interval) {
                     while (true) {
-                        sleep($interval);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
                         $this->client->pull($namespaces, $callbacks);
                     }
                 }, $interval * 1000);

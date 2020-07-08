@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Nsq\MessageBuilder;
@@ -78,6 +77,9 @@ class NsqConnection extends KeepaliveConnection
         return $socket;
     }
 
+    /**
+     * @param Socket $connection
+     */
     protected function sendClose($connection): void
     {
         try {

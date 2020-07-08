@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq;
 
 use Jean85\PrettyVersions;
@@ -167,6 +166,7 @@ class MessageBuilder
         $command = "IDENTIFY\n";
         $version = PrettyVersions::getVersion('hyperf/nsq') ?? '1.0';
         $hostname = value(function () {
+            /** @var mixed|string $ip */
             $ip = gethostbyname(gethostname());
             if (is_string($ip)) {
                 return $ip;

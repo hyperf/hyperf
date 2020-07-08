@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Devtool;
 
 class ConfigProvider
@@ -23,6 +22,11 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+            ],
+            'commands' => [
+                Describe\AspectsCommand::class,
+                Describe\ListenersCommand::class,
+                Describe\RoutesCommand::class,
             ],
             'publish' => [
                 [

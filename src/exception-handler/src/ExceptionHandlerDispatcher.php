@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ExceptionHandler;
 
 use Hyperf\Dispatcher\AbstractDispatcher;
@@ -30,18 +29,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch(...$params)
-    {
-        return parent::dispatch(...$params);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(...$params)
     {
         /**
          * @var Throwable
@@ -49,6 +37,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          */
         [$throwable, $handlers] = $params;
         $response = Context::get(ResponseInterface::class);
+
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
                 throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));

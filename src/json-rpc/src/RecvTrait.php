@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\JsonRpc\Pool\RpcConnection;
@@ -32,7 +31,7 @@ trait RecvTrait
             throw new RecvException('Connection is closed.');
         }
         if ($data === false) {
-            throw new RecvException('Error receiving data, errno=' . $client->errCode);
+            throw new RecvException('Error receiving data, errno=' . $client->errCode . ' errmsg=' . swoole_strerror($client->errCode));
         }
 
         return $data;

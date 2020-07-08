@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ModelCache;
 
 class Config
@@ -35,7 +34,7 @@ class Config
 
     /**
      * The lifetime of model cache.
-     * @var int
+     * @var \DateInterval|int
      */
     protected $ttl = 3600;
 
@@ -127,12 +126,18 @@ class Config
         return $this;
     }
 
-    public function getTtl(): int
+    /**
+     * @return \DateInterval|int
+     */
+    public function getTtl()
     {
         return $this->ttl;
     }
 
-    public function setTtl(int $ttl): Config
+    /**
+     * @param \DateInterval|int $ttl
+     */
+    public function setTtl($ttl): Config
     {
         $this->ttl = $ttl;
         return $this;

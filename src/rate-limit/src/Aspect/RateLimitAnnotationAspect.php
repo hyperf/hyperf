@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
@@ -110,6 +109,7 @@ class RateLimitAnnotationAspect implements AroundInterface
     public function getWeightingAnnotation(array $annotations): RateLimit
     {
         $property = array_merge($this->annotationProperty, $this->config);
+        /** @var null|RateLimit $annotation */
         foreach ($annotations as $annotation) {
             if (! $annotation) {
                 continue;

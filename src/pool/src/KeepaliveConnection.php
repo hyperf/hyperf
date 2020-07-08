@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool;
 
 use Closure;
@@ -225,7 +224,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
     /**
      * Send close protocol.
-     * @param $connection
+     * @param mixed $connection
      */
     protected function sendClose($connection): void
     {

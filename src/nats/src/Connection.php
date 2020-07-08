@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nats;
 
 use RandomLib\Factory;
@@ -535,7 +534,7 @@ class Connection
      *
      * @param int $len number of bytes to receive
      *
-     * @return string
+     * @return bool|string
      */
     private function receive(int $len = 0)
     {

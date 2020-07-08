@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
@@ -55,6 +54,8 @@ class StartServer extends Command
         Runtime::enableCoroutine(true, swoole_hook_flags());
 
         $serverFactory->start();
+
+        return 0;
     }
 
     private function checkEnvironment(OutputInterface $output)
@@ -86,7 +87,7 @@ class StartServer extends Command
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));
         if (! in_array($useShortname, ['', 'off', 'false'], true)) {
             $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = off into your php.ini.');
-            exit(0);
+            exit(SIGTERM);
         }
     }
 }

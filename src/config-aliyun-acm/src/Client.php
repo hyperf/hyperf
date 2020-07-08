@@ -9,10 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigAliyunAcm;
 
-use Closure;
+use GuzzleHttp;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
@@ -28,7 +27,7 @@ class Client implements ClientInterface
     public $fetchConfig;
 
     /**
-     * @var Closure
+     * @var null|GuzzleHttp\Client
      */
     private $client;
 
@@ -63,7 +62,7 @@ class Client implements ClientInterface
     public function pull(): array
     {
         $client = $this->client;
-        if (! $client instanceof \GuzzleHttp\Client) {
+        if (! $client instanceof GuzzleHttp\Client) {
             throw new RuntimeException('aliyun acm: Invalid http client.');
         }
 

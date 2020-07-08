@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ExceptionHandler;
 
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\ExceptionHandler\Listener\ExceptionHandlerListener;
 
 class ConfigProvider
 {
@@ -22,6 +22,9 @@ class ConfigProvider
         return [
             'dependencies' => [
                 FormatterInterface::class => DefaultFormatter::class,
+            ],
+            'listeners' => [
+                ExceptionHandlerListener::class,
             ],
             'annotations' => [
                 'scan' => [

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\PackerInterface;
@@ -19,12 +18,12 @@ use InvalidArgumentException;
 class Client
 {
     /**
-     * @var PackerInterface
+     * @var null|PackerInterface
      */
     private $packer;
 
     /**
-     * @var TransporterInterface
+     * @var null|TransporterInterface
      */
     private $transporter;
 

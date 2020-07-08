@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -24,10 +23,13 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
 use Throwable;
 
@@ -100,10 +102,12 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
-    public function onReceive(SwooleServer $server, int $fd, int $fromId, string $data): void
+    public function onReceive($server, int $fd, int $fromId, string $data): void
     {
         $request = $response = null;
         try {
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+
             // Initialize PSR-7 Request and Response objects.
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
@@ -143,16 +147,23 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         ];
     }
 
-    protected function send(SwooleServer $server, int $fd, ResponseInterface $response): void
+    /**
+     * @param \Swoole\Coroutine\Server\Connection|SwooleServer $server
+     */
+    protected function send($server, int $fd, ResponseInterface $response): void
     {
-        $server->send($fd, (string) $response->getBody());
+        if ($server instanceof SwooleServer) {
+            $server->send($fd, (string) $response->getBody());
+        } elseif ($server instanceof Connection) {
+            $server->send((string) $response->getBody());
+        }
     }
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
 
     abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;
 
-    abstract protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface;
+    abstract protected function buildResponse(int $fd, $server): ResponseInterface;
 
     protected function transferToResponse($response): ?ResponseInterface
     {

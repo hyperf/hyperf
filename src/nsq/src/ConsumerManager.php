@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nsq;
 
 use Hyperf\Contract\ConfigInterface;
@@ -41,7 +40,7 @@ class ConsumerManager
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
         /**
-         * @var string
+         * @var string $class
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {
@@ -105,7 +104,7 @@ class ConsumerManager
                 return $this->consumer;
             }
 
-            public function isEnable(): bool
+            public function isEnable($server): bool
             {
                 return $this->config->get(
                     sprintf('nsq.%s.enable', $this->consumer->getPool()),

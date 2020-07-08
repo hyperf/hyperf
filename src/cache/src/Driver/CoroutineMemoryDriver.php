@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Collector\CoroutineMemory;
@@ -52,6 +51,8 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         foreach ($values as $key => $value) {
             $this->set($key, $values, $ttl);
         }
+
+        return true;
     }
 
     public function deleteMultiple($keys)
@@ -59,6 +60,8 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         foreach ($keys as $key) {
             $this->delete($key);
         }
+
+        return true;
     }
 
     public function has($key)

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient\Proxy;
 
 use PhpParser\Node;
@@ -20,7 +19,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-
     /**
      * @var string
      */
@@ -30,11 +28,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
      * @var string
      */
     private $namespace;
-
-    /**
-     * @var array
-     */
-    private $constants = [];
 
     public function __construct(string $classname)
     {
@@ -46,6 +39,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\Namespace_) {
             $this->namespace = $node->name->toCodeString();
         }
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -60,6 +54,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 ],
             ]);
         }
+        return null;
     }
 
     public function generateStmts(Interface_ $node): array
@@ -73,24 +68,32 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $stmts;
     }
 
-    protected function overrideMethod(Node\Stmt\ClassMethod $stmt): Node\Stmt\ClassMethod
+    protected function overrideMethod(Node\FunctionLike $stmt): Node\Stmt\ClassMethod
     {
+        if (! $stmt instanceof Node\Stmt\ClassMethod) {
+            throw new \InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
+        }
         $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(
                 new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
                 new Node\Identifier('__call'),
                 [
-                    new Node\Scalar\MagicConst\Function_(),
-                    new Node\Expr\FuncCall(new Node\Name('func_get_args')),
+                    new Node\Arg(new Node\Scalar\MagicConst\Function_()),
+                    new Node\Arg(new Node\Expr\FuncCall(new Node\Name('func_get_args'))),
                 ]
             );
-            if (((string) $stmt->getReturnType()) !== 'void') {
+            if ($this->shouldReturn($stmt)) {
                 return [new Node\Stmt\Return_($methodCall)];
-            } else {
-                return [new Node\Stmt\Expression($methodCall)];
             }
+            return [new Node\Stmt\Expression($methodCall)];
         });
         return $stmt;
     }
 
+    protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
+    {
+        return $stmt->getReturnType() instanceof Node\NullableType
+            || $stmt->getReturnType() instanceof Node\UnionType
+            || ((string) $stmt->getReturnType()) !== 'void';
+    }
 }

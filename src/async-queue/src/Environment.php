@@ -9,24 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue;
+
+use Hyperf\Utils\Context;
 
 class Environment
 {
-    /**
-     * @var bool
-     */
-    protected $asyncQueue = false;
-
     public function isAsyncQueue(): bool
     {
-        return $this->asyncQueue;
+        return (bool) Context::get($this->getKey(), false);
     }
 
     public function setAsyncQueue(bool $asyncQueue): self
     {
-        $this->asyncQueue = $asyncQueue;
+        Context::set($this->getKey(), $asyncQueue);
         return $this;
+    }
+
+    protected function getKey(): string
+    {
+        return self::class . '::isAsyncQueue';
     }
 }

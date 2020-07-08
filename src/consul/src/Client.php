@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Consul;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -34,7 +32,7 @@ abstract class Client
     private $clientFactory;
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -48,7 +46,7 @@ abstract class Client
     {
         // Add key of ACL token to $availableOptions
         $availableOptions[] = 'token';
-        
+
         return array_intersect_key($options, array_flip($availableOptions));
     }
 

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\JsonRpc\Stub;
 
 use Hyperf\JsonRpc\Pool\RpcConnection;
@@ -40,6 +39,13 @@ class RpcConnectionStub extends RpcConnection
 
     public function reconnect(): bool
     {
+        $this->lastUseTime = microtime(true);
+        return true;
+    }
+
+    public function close(): bool
+    {
+        $this->lastUseTime = 0.0;
         return true;
     }
 }
