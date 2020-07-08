@@ -30,17 +30,6 @@ class ConfigModel extends AbstractModel
         'dataId',
     ];
 
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-        /** @var NacosConfig $nacos_config */
-        $nacos_config = make(NacosConfig::class);
-        $val = $nacos_config->get($this);
-        if ($val) {
-            $this->content = $val;
-        }
-    }
-
     public function parser($config_origin)
     {
         switch ($this->type) {
@@ -52,6 +41,16 @@ class ConfigModel extends AbstractModel
                 return Xml::toArray($config_origin);
             default:
                 return $config_origin;
+        }
+    }
+
+    public function pull()
+    {
+        /** @var NacosConfig $nacos_config */
+        $nacos_config = make(NacosConfig::class);
+        $val = $nacos_config->get($this);
+        if ($val) {
+            $this->content = $val;
         }
     }
 

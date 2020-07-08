@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Config;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Util\RemoteConfig;
+use Hyperf\Nacos\Client;
 use Hyperf\Process\AbstractProcess;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
@@ -37,8 +37,9 @@ class FetchConfigProcess extends AbstractProcess
         $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
         $cache = [];
         $config = $this->container->get(ConfigInterface::class);
+        $client = $this->container->get(Client::class);
         while (true) {
-            $remote_config = RemoteConfig::get();
+            $remote_config = $client->pull();
             if ($remote_config != $cache) {
                 $pipe_message = new PipeMessage($remote_config);
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {

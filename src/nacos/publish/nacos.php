@@ -35,7 +35,7 @@ return [
     'config_reload_interval' => 3,
     // 远程配置合并节点, 默认 config 根节点
     'config_append_node' => 'custom',
-    'listenerConfig' => [
+    'listener_config' => [
         // 配置项 dataId, group, tenant, type, content
         [
             'dataId' => 'hyperf-service-config',
