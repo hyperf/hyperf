@@ -52,6 +52,11 @@ class DispatcherFactory
      */
     private $pathGenerator;
 
+    /**
+     * @var array
+     */
+    protected $routeAnnotations = [RpcService::class];
+
     public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -93,15 +98,17 @@ class DispatcherFactory
 
     protected function initAnnotationRoute(): void
     {
-        $rpcAnnotation = AnnotationCollector::getClassByAnnotation(RpcService::class);
-        foreach ($rpcAnnotation as $className => $annotation) {
-            $middlewaresAnnotation = AnnotationCollector::getClassAnnotation($className, Middlewares::class) ?? [];
-            $middlewareAnnotation = AnnotationCollector::getClassAnnotation($className, Middleware::class) ?? [];
-            $middlewares = $this->handleMiddleware([
-                Middlewares::class => $middlewaresAnnotation,
-                Middleware::class => $middlewareAnnotation,
-            ]);
-            $this->handleRpcService($className, $annotation, $middlewares);
+        foreach ($this->routeAnnotations as $routeAnnotation) {
+            $rpcAnnotation = AnnotationCollector::getClassByAnnotation($routeAnnotation);
+            foreach ($rpcAnnotation as $className => $annotation) {
+                $middlewaresAnnotation = AnnotationCollector::getClassAnnotation($className, Middlewares::class) ?? [];
+                $middlewareAnnotation = AnnotationCollector::getClassAnnotation($className, Middleware::class) ?? [];
+                $middlewares = $this->handleMiddleware([
+                    Middlewares::class => $middlewaresAnnotation,
+                    Middleware::class => $middlewareAnnotation,
+                ]);
+                $this->handleRpcService($className, $annotation, $middlewares);
+            }
         }
     }
 
