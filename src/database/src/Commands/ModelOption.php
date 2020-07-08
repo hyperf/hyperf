@@ -60,6 +60,11 @@ class ModelOption
     /**
      * @var bool
      */
+    protected $softDeletes;
+
+    /**
+     * @var bool
+     */
     protected $withComments;
 
     /**
@@ -182,6 +187,17 @@ class ModelOption
     public function setTimestamps(bool $timestamps): self
     {
         $this->timestamps = $timestamps;
+        return $this;
+    }
+
+    public function getSoftDeletes(): bool
+    {
+        return $this->softDeletes;
+    }
+
+    public function setSoftDeletes(bool $softDeletes): self
+    {
+        $this->softDeletes = $softDeletes;
         return $this;
     }
 

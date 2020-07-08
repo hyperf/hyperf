@@ -14,6 +14,7 @@ namespace Hyperf\Database\Commands;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
+use Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor;
 use Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -99,6 +100,7 @@ class ModelCommand extends Command
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setTimestamps($this->getOption('timestamps', 'commands.gen:model.timestamps', $pool, true))
+            ->setSoftDeletes($this->getOption('soft-deletes', 'commands.gen:model.soft-deletes', $pool, true))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
             ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
@@ -122,7 +124,8 @@ class ModelCommand extends Command
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
         $this->addOption('refresh-fillable', 'R', InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
-        $this->addOption('timestamps', 'T', InputOption::VALUE_NONE, 'Whether check timestamps and softDeletes for model.');
+        $this->addOption('timestamps', 'T', InputOption::VALUE_NONE, 'Whether check timestamps for model.');
+        $this->addOption('soft-deletes', 'S', InputOption::VALUE_NONE, 'Whether check SoftDeletes for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
@@ -195,6 +198,9 @@ class ModelCommand extends Command
         if ($option->getTimestamps()) {
             $traverser->addVisitor(make(ModelRewriteTimestampsVisitor::class, [$class, $columns]));
         }
+        if ($option->getSoftDeletes()) {
+            $traverser->addVisitor(make(ModelRewriteSoftDeletesVisitor::class, [$class, $columns]));
+        }
         foreach ($option->getVisitors() as $visitorClass) {
             $data = make(ModelData::class)->setClass($class)->setColumns($columns);
             $traverser->addVisitor(make($visitorClass, [$option, $data]));
@@ -243,7 +249,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments', 'timestamps'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments', 'timestamps', 'soft-deletes'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {

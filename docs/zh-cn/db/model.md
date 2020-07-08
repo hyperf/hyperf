@@ -27,7 +27,8 @@ $ php bin/hyperf.php db:model table_name
 |   --inheritance    | string |              `Model`              |                       父类                        |
 |       --uses       | string | `Hyperf\DbConnection\Model\Model` |              配合 `inheritance` 使用              |
 | --refresh-fillable |  bool  |              `false`              |             是否刷新 `fillable` 参数              |
-| --timestamps       |  bool  |              `true`               | 自动检查更新 `软删除` Trait 和 `timestamps` 属性  |
+|  --timestamps      |  bool  |              `true`               |         是否自动检查更新 `timestamps` 属性        |
+|  --soft-deletes    |  bool  |              `true`               |         是否自动检查更新 `SoftDeletes` Trait      |
 |  --table-mapping   | array  |               `[]`                | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
 |  --ignore-tables   | array  |               `[]`                |        不需要生成模型的表名 比如 ['users']        |
 |  --with-comments   |  bool  |              `false`              |                 是否增加字段注释                  |
