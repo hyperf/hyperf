@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Util;
 
 use GuzzleHttp\Client;
@@ -9,8 +18,6 @@ use Hyperf\Logger\LoggerFactory;
 class Guzzle
 {
     /**
-     * @param array $config
-     *
      * @return Client
      */
     public static function create(array $config = [])
@@ -45,7 +52,7 @@ class Guzzle
         if ($method == 'POST') {
             $options['headers']['Content-Type'] = $headers['Content-Type'] ?? 'application/json';
             if ($options['headers']['Content-Type'] == 'application/json' && $params) {
-                $options['body'] = \GuzzleHttp\json_encode($params ? $params : (object)[]);
+                $options['body'] = \GuzzleHttp\json_encode($params ? $params : (object) []);
             }
             if ($options['headers']['Content-Type'] == 'application/x-www-form-urlencoded' && $params) {
                 $options['form_params'] = $params;
@@ -71,7 +78,7 @@ class Guzzle
             $logger->get('api_request')->error($api, [
                 'method' => $method,
                 'options' => $options,
-                'exception' => (string)$e,
+                'exception' => (string) $e,
             ]);
 
             return false;

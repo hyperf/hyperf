@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -21,11 +30,11 @@ class OnShutdownListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (!config('nacos')) {
+        if (! config('nacos')) {
             return;
         }
 
-        if (!config('nacos.deleteServiceWhenShutdown', false)) {
+        if (! config('nacos.deleteServiceWhenShutdown', false)) {
             return;
         }
 

@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Model;
 
 abstract class AbstractModel
@@ -15,6 +24,11 @@ abstract class AbstractModel
         }
     }
 
+    public function __toString()
+    {
+        return http_build_query($this->getParams());
+    }
+
     public function getParams()
     {
         $params = array_filter(get_object_vars($this), function ($item) {
@@ -25,15 +39,10 @@ abstract class AbstractModel
         sort($this->required_field);
         sort($intersect);
         if ($intersect !== $this->required_field) {
-            throw new \Exception("缺少关键信息" . implode(',', $this->required_field));
+            throw new \Exception('缺少关键信息' . implode(',', $this->required_field));
         }
 
         return $params;
-    }
-
-    public function __toString()
-    {
-        return http_build_query($this->getParams());
     }
 
     public function toJson()

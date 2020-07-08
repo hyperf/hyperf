@@ -1,19 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 use Hyperf\Utils\ApplicationContext;
 
-if (!function_exists('container')) {
+if (! function_exists('container')) {
     function container(string $id)
     {
         return ApplicationContext::getContainer()->get($id);
     }
 }
 
-if (!function_exists('is_json_str')) {
+if (! function_exists('is_json_str')) {
     function is_json_str($string)
     {
         json_decode($string);
-        return (json_last_error() == JSON_ERROR_NONE);
+        return json_last_error() == JSON_ERROR_NONE;
     }
 }
 
@@ -34,6 +43,5 @@ function xml2array($xml_string)
         return [];
     }
 
-    return (array)@simplexml_load_string($xml_string, 'SimpleXMLElement', LIBXML_NOCDATA);
+    return (array) @simplexml_load_string($xml_string, 'SimpleXMLElement', LIBXML_NOCDATA);
 }
-

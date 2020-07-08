@@ -1,5 +1,14 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Config;
 
 use Hyperf\Nacos\Util\RemoteConfig;
@@ -40,6 +49,6 @@ class FetchConfigProcess extends AbstractProcess
 
     public function isEnable(): bool
     {
-        return (bool)config('nacos.configReloadInterval', false);
+        return (bool) config('nacos.configReloadInterval', false);
     }
 }

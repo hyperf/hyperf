@@ -1,4 +1,14 @@
 <?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -22,7 +32,7 @@ class BootAppConfListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (!config('nacos')) {
+        if (! config('nacos')) {
             return;
         }
         $logger = container(LoggerFactory::class)->get('nacos');
@@ -32,11 +42,10 @@ class BootAppConfListener implements ListenerInterface
         $instance = make(ThisInstance::class);
         /** @var NacosInstance $nacos_instance */
         $nacos_instance = make(NacosInstance::class);
-        if (!$nacos_instance->register($instance)) {
+        if (! $nacos_instance->register($instance)) {
             throw new \Exception("nacos register instance fail: {$instance}");
-        } else {
-            $logger->info('nacos register instance success!', compact('instance'));
         }
+        $logger->info('nacos register instance success!', compact('instance'));
 
         // 注册服务
         /** @var NacosService $nacos_service */
@@ -44,11 +53,10 @@ class BootAppConfListener implements ListenerInterface
         /** @var ServiceModel $service */
         $service = make(ServiceModel::class, ['config' => config('nacos.service')]);
         $exist = $nacos_service->detail($service);
-        if (!$exist && !$nacos_service->create($service)) {
+        if (! $exist && ! $nacos_service->create($service)) {
             throw new \Exception("nacos register service fail: {$service}");
-        } else {
-            $logger->info('nacos register service success!', compact('instance'));
         }
+        $logger->info('nacos register service success!', compact('instance'));
 
         $remote_config = RemoteConfig::get();
         /** @var \Hyperf\Config\Config $config */

@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Nacos\Lib;
 
 use Hyperf\LoadBalancer\Node;
@@ -9,7 +18,6 @@ use Hyperf\LoadBalancer\WeightedRandom;
 use Hyperf\LoadBalancer\WeightedRoundRobin;
 use Hyperf\Nacos\Model\InstanceModel;
 use Hyperf\Nacos\Model\ServiceModel;
-use Hyperf\Utils\Arr;
 
 class NacosInstance extends AbstractNacos
 {
@@ -50,7 +58,7 @@ class NacosInstance extends AbstractNacos
     {
         $list = $this->list($serviceModel, $clusters, true);
         $instance = $list['hosts'] ?? [];
-        if (!$instance) {
+        if (! $instance) {
             return false;
         }
         $enabled = array_filter($instance, function ($item) {
@@ -60,6 +68,34 @@ class NacosInstance extends AbstractNacos
         $tactics = strtolower(config('nacos.loadBalancer', 'random'));
 
         return $this->loadBalancer($enabled, $tactics);
+    }
+
+    public function detail(InstanceModel $instanceModel)
+    {
+        return $this->request('GET', "/nacos/v1/ns/instance?{$instanceModel}");
+    }
+
+    public function beat(ServiceModel $serviceModel, InstanceModel $instanceModel)
+    {
+        $serviceName = $serviceModel->serviceName;
+        $groupName = $serviceModel->groupName;
+        $ephemeral = $instanceModel->ephemeral;
+        $params = array_filter(compact('serviceName', 'beat', 'groupName', 'ephemeral'), function ($item) {
+            return $item !== null;
+        });
+        $params['beat'] = $instanceModel->toJson();
+        $params_str = http_build_query($params);
+
+        return $this->request('PUT', "/nacos/v1/ns/instance/beat?{$params_str}");
+    }
+
+    public function upHealth(InstanceModel $instanceModel)
+    {
+        if ($instanceModel->healthy === null) {
+            $instanceModel->healthy = true;
+        }
+
+        return $this->request('PUT', "/nacos/v1/ns/health/instance?{$instanceModel}") == 'ok';
     }
 
     protected function loadBalancer($nodes, $tactics = 'random')
@@ -91,33 +127,5 @@ class NacosInstance extends AbstractNacos
         $select = $loader->select();
 
         return $nacos_nodes["{$select->host}:{$select->port}"];
-    }
-
-    public function detail(InstanceModel $instanceModel)
-    {
-        return $this->request('GET', "/nacos/v1/ns/instance?{$instanceModel}");
-    }
-
-    public function beat(ServiceModel $serviceModel, InstanceModel $instanceModel)
-    {
-        $serviceName = $serviceModel->serviceName;
-        $groupName = $serviceModel->groupName;
-        $ephemeral = $instanceModel->ephemeral;
-        $params = array_filter(compact('serviceName', 'beat', 'groupName', 'ephemeral'), function ($item) {
-            return $item !== null;
-        });
-        $params['beat'] = $instanceModel->toJson();
-        $params_str = http_build_query($params);
-
-        return $this->request('PUT', "/nacos/v1/ns/instance/beat?{$params_str}");
-    }
-
-    public function upHealth(InstanceModel $instanceModel)
-    {
-        if ($instanceModel->healthy === null) {
-            $instanceModel->healthy = true;
-        }
-
-        return $this->request('PUT', "/nacos/v1/ns/health/instance?{$instanceModel}") == 'ok';
     }
 }
