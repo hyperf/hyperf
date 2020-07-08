@@ -55,6 +55,11 @@ class ModelOption
     /**
      * @var bool
      */
+    protected $timestamps;
+
+    /**
+     * @var bool
+     */
     protected $withComments;
 
     /**
@@ -166,6 +171,17 @@ class ModelOption
             $this->tableMapping[$key] = $name;
         }
 
+        return $this;
+    }
+
+    public function getTimestamps(): bool
+    {
+        return $this->timestamps;
+    }
+
+    public function setTimestamps(bool $timestamps): self
+    {
+        $this->timestamps = $timestamps;
         return $this;
     }
 
