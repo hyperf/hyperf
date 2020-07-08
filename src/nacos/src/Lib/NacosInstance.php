@@ -80,7 +80,7 @@ class NacosInstance extends AbstractNacos
         $serviceName = $serviceModel->serviceName;
         $groupName = $serviceModel->groupName;
         $ephemeral = $instanceModel->ephemeral;
-        $params = array_filter(compact('serviceName', 'beat', 'groupName', 'ephemeral'), function ($item) {
+        $params = array_filter(compact('serviceName', 'groupName', 'ephemeral'), function ($item) {
             return $item !== null;
         });
         $params['beat'] = $instanceModel->toJson();
@@ -104,8 +104,8 @@ class NacosInstance extends AbstractNacos
         $nacos_nodes = [];
         /** @var InstanceModel $node */
         foreach ($nodes as $node) {
-            $load_nodes[] = new Node($node['ip'], $node['port'], $node['weight']);
-            $nacos_nodes["{$node['ip']}:{$node['port']}"] = $node;
+            $load_nodes[] = new Node($node->ip, $node->port, $node->weight);
+            $nacos_nodes["{$node->ip}:{$node->port}"] = $node;
         }
 
         switch ($tactics) {

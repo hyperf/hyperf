@@ -14,6 +14,8 @@ namespace Hyperf\Nacos\Util;
 use GuzzleHttp\Client;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Logger\LoggerFactory;
+use Hyperf\Utils\ApplicationContext;
+use function DI\get;
 
 class Guzzle
 {
@@ -23,7 +25,7 @@ class Guzzle
     public static function create(array $config = [])
     {
         // 如果在协程环境下创建，则会自动使用协程版的 Handler，非协程环境下无改变
-        return container(ClientFactory::class)->create($config);
+        return self::getContainer()->get(ClientFactory::class)->create($config);
     }
 
     public static function get($url, $query = [], $header = [])
@@ -58,7 +60,7 @@ class Guzzle
                 $options['form_params'] = $params;
             }
         }
-        $logger = container(LoggerFactory::class);
+        $logger = self::getContainer()->get(LoggerFactory::class);
         try {
             $request = $client->request($method, $api, $options);
             $code = $request->getStatusCode();
@@ -83,5 +85,10 @@ class Guzzle
 
             return false;
         }
+    }
+
+    protected static function getContainer()
+    {
+        return ApplicationContext::getContainer();
     }
 }

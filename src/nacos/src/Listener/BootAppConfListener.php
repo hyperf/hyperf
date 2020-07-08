@@ -20,9 +20,20 @@ use Hyperf\Nacos\Lib\NacosService;
 use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Nacos\ThisInstance;
 use Hyperf\Nacos\Util\RemoteConfig;
+use Psr\Container\ContainerInterface;
 
 class BootAppConfListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function listen(): array
     {
         return [
@@ -35,7 +46,7 @@ class BootAppConfListener implements ListenerInterface
         if (! config('nacos')) {
             return;
         }
-        $logger = container(LoggerFactory::class)->get('nacos');
+        $logger = $this->container->get(LoggerFactory::class)->get('nacos');
 
         // 注册实例
         /** @var ThisInstance $instance */
@@ -49,7 +60,7 @@ class BootAppConfListener implements ListenerInterface
 
         // 注册服务
         /** @var NacosService $nacos_service */
-        $nacos_service = container(NacosService::class);
+        $nacos_service = $this->container->get(NacosService::class);
         /** @var ServiceModel $service */
         $service = make(ServiceModel::class, ['config' => config('nacos.service')]);
         $exist = $nacos_service->detail($service);
@@ -60,7 +71,7 @@ class BootAppConfListener implements ListenerInterface
 
         $remote_config = RemoteConfig::get();
         /** @var \Hyperf\Config\Config $config */
-        $config = container(ConfigInterface::class);
+        $config = $this->container->get(ConfigInterface::class);
         $append_node = config('nacos.configAppendNode');
         foreach ($remote_config as $key => $conf) {
             $config->set($append_node ? $append_node . '.' . $key : $key, $conf);

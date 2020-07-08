@@ -1,48 +1,54 @@
 {
-  "name": "hyperf/nacos",
-  "license": "Apache-2.0",
-  "description": "nacos php sdk with hyperf framework",
-  "type": "library",
-  "authors": [
-    {
-      "name": "daodao97",
-      "email": "daodao97@foxmail.com"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Hyperf\\Nacos\\": "./src"
+    "name": "hyperf/nacos",
+    "description": "nacos php sdk with hyperf framework",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "nacos"
+    ],
+    "type": "library",
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
-    "files": [
-      "./src/Helper/func.php"
-    ]
-  },
-  "require": {
-    "ext-json": "*",
-    "ext-simplexml": "*",
-    "ext-yaml": "*",
-    "hyperf/config": "^1.1",
-    "hyperf/event": "^1.1",
-    "hyperf/framework": "^1.1",
-    "hyperf/guzzle": "^1.1",
-    "hyperf/http-server": "^1.1",
-    "hyperf/load-balancer": "^1.1",
-    "hyperf/logger": "^1.1",
-    "hyperf/process": "^1.1",
-    "hyperf/utils": "^1.1"
-  },
-  "require-dev": {
-    "symfony/var-dumper": "^5.0"
-  },
-  "config": {
-    "sort-packages": true
-  },
-  "extra": {
-    "hyperf": {
-      "config": "Hyperf\\Nacos\\ConfigProvider"
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Nacos\\": "src/"
+        },
+        "files": [
+            "./src/Helper/func.php"
+        ]
     },
-    "branch-alias": {
-      "dev-master": "*"
+    "require": {
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "ext-yaml": "*",
+        "hyperf/config": "~2.0.0",
+        "hyperf/event": "~2.0.0",
+        "hyperf/framework": "~2.0.0",
+        "hyperf/guzzle": "~2.0.0",
+        "hyperf/http-server": "~2.0.0",
+        "hyperf/load-balancer": "~2.0.0",
+        "hyperf/logger": "~2.0.0",
+        "hyperf/process": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
+    },
+    "require-dev": {
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Nacos\\ConfigProvider"
+        }
     }
-  }
 }

@@ -29,7 +29,7 @@ class InstanceBeatProcess extends AbstractProcess
         $nacos_instance = make(NacosInstance::class);
         $service = make(ThisService::class);
 
-        $logger = container(LoggerFactory::class)->get('nacos');
+        $logger = $this->container->get(LoggerFactory::class)->get('nacos');
         while (true) {
             sleep(config('nacos.client.beatInterval', 5));
             $send = $nacos_instance->beat($service, $instance);
@@ -41,7 +41,7 @@ class InstanceBeatProcess extends AbstractProcess
         }
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         return config('nacos.client.beatEnable', false);
     }

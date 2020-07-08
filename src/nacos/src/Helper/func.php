@@ -9,15 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Utils\ApplicationContext;
-
-if (! function_exists('container')) {
-    function container(string $id)
-    {
-        return ApplicationContext::getContainer()->get($id);
-    }
-}
-
 if (! function_exists('is_json_str')) {
     function is_json_str($string)
     {

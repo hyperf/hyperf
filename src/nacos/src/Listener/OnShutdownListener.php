@@ -18,9 +18,20 @@ use Hyperf\Nacos\Lib\NacosInstance;
 use Hyperf\Nacos\Lib\NacosService;
 use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Nacos\ThisInstance;
+use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function listen(): array
     {
         return [
@@ -38,9 +49,9 @@ class OnShutdownListener implements ListenerInterface
             return;
         }
 
-        $logger = container(LoggerFactory::class)->get('nacos');
+        $logger = $this->container->get(LoggerFactory::class)->get('nacos');
         /** @var NacosService $nacos_service */
-        $nacos_service = container(NacosService::class);
+        $nacos_service = $this->container->get(NacosService::class);
         /** @var ServiceModel $service */
         $service = make(ServiceModel::class, ['config' => config('nacos.service')]);
         $deleted = $nacos_service->delete($service);
