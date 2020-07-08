@@ -25,7 +25,6 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscribe\Subscriber;
 use Redis;
-use Swoole\Server;
 
 class RedisAdapter implements AdapterInterface
 {
