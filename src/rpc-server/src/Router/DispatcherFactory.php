@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -55,7 +56,7 @@ class DispatcherFactory
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->pathGenerator = $pathGenerator;
-        $this->initAnnotationRoute(AnnotationCollector::list());
+        $this->initAnnotationRoute();
         $this->initConfigRoute();
     }
 
@@ -90,25 +91,25 @@ class DispatcherFactory
         return $this->routers[$serverName] = new RouteCollector($parser, $generator);
     }
 
-    private function initAnnotationRoute(array $collector): void
+    protected function initAnnotationRoute(): void
     {
-        foreach ($collector as $className => $metadata) {
-            if (isset($metadata['_c'][RpcService::class])) {
-                $middlewares = $this->handleMiddleware($metadata['_c']);
-                $this->handleRpcService($className, $metadata['_c'][RpcService::class], $metadata['_m'] ?? [], $middlewares);
-            }
+        $rpcAnnotation = AnnotationCollector::getClassByAnnotation(RpcService::class);
+        foreach ($rpcAnnotation as $className => $annotation) {
+            $middlewaresAnnotation = AnnotationCollector::getClassAnnotation($className, Middlewares::class) ?? [];
+            $middlewareAnnotation = AnnotationCollector::getClassAnnotation($className, Middleware::class) ?? [];
+            $middlewares = $this->handleMiddleware([
+                Middlewares::class => $middlewaresAnnotation,
+                Middleware::class => $middlewareAnnotation,
+            ]);
+            $this->handleRpcService($className, $annotation, $middlewares);
         }
     }
 
     /**
      * Register route according to RpcService annotation.
      */
-    private function handleRpcService(
-        string $className,
-        RpcService $annotation,
-        array $methodMetadata,
-        array $middlewares = []
-    ): void {
+    protected function handleRpcService(string $className, RpcService $annotation, array $middlewares = []): void
+    {
         $prefix = $annotation->name ?: $className;
         $router = $this->getRouter($annotation->server);
 
@@ -123,8 +124,9 @@ class DispatcherFactory
             ]);
 
             // Handle method level middlewares.
-            if (isset($methodMetadata[$methodName])) {
-                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
+            $methodAnnotation = AnnotationCollector::getClassMethodAnnotation($className, $methodName);
+            if ($methodAnnotation) {
+                $methodMiddlewares = $this->handleMiddleware($methodAnnotation);
                 $middlewares = array_merge($methodMiddlewares, $middlewares);
             }
             $middlewares = array_unique($middlewares);
@@ -137,29 +139,26 @@ class DispatcherFactory
         }
     }
 
-    private function handleMiddleware(array $metadata): array
+    protected function handleMiddleware(array $metadata): array
     {
-        $hasMiddlewares = isset($metadata[Middlewares::class]);
-        $hasMiddleware = isset($metadata[Middleware::class]);
-        if (! $hasMiddlewares && ! $hasMiddleware) {
+        $middlewares = $metadata[Middlewares::class] ?? [];
+        $middleware = $metadata[Middleware::class] ?? [];
+        if (empty($middlewares) && empty($middleware)) {
             return [];
         }
-        if ($hasMiddlewares && $hasMiddleware) {
-            throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
+        if ($middlewares && $middleware) {
+            throw new ConflictAnnotationException(
+                'Could not use @Middlewares and @Middleware annotation at the same times at same level.'
+            );
         }
-        if ($hasMiddlewares) {
-            // @Middlewares
-            /** @var Middlewares $middlewares */
-            $middlewares = $metadata[Middlewares::class];
+        if ($middlewares) {
             $result = [];
             foreach ($middlewares->middlewares as $middleware) {
                 $result[] = $middleware->middleware;
             }
             return $result;
         }
-        // @Middleware
-        /** @var Middleware $middleware */
-        $middleware = $metadata[Middleware::class];
+
         return [$middleware->middleware];
     }
 }
