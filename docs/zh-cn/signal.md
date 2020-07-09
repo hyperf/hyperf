@@ -44,6 +44,12 @@ class TermSignalHandler implements SignalHandlerInterface
 
 因为 Worker 进程 SIGTERM 信号被捕获后，无法正常退出，所以用户可以直接 Ctrl+C 退出，或者修改 signal.php 配置
 
+可以使用此命令发布配置
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/signal
+```
+
 ```php
 <?php
 
@@ -58,4 +64,4 @@ return [
 
 ```
 
-`WorkerStopHandler` 触发后，会在 `max_wait_time` 时间后，关掉当前进程。
+`WorkerStopHandler` 触发后，会在所设置的`timeout` （即 [max_wait_time](https://wiki.swoole.com/#/server/setting?id=max_wait_time) ） 时间后，关掉当前进程。
