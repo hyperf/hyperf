@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
+use Hyperf\HttpMessage\Base\Response as HttpResponse;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
@@ -20,7 +21,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
 
-class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
+class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;
