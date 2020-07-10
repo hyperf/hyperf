@@ -116,7 +116,7 @@ class Bar3Proxy extends Bar3
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
         return self::__proxyCall(Bar3::class, __FUNCTION__, self::getParamsMap(Bar3::class, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
-            return parent::getId();
+            return Bar::getId();
         });
     }
 }', $code);
