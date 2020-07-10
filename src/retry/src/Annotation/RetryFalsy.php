@@ -39,6 +39,6 @@ class RetryFalsy extends Retry
 
     public static function isFalsy($result)
     {
-        return $result ? true : false;
+        return $result ? false : true;
     }
 }
