@@ -116,8 +116,7 @@ class SessionMiddleware implements MiddlewareInterface
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
         if (! method_exists($response, 'withCookie')) {
-            // @TODO Adapte original response object.
-            throw new \RuntimeException('Unsupport response object.');
+            return $response;
         }
         /* @var \Hyperf\HttpMessage\Server\Response $response */
         return $response->withCookie(new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly));
