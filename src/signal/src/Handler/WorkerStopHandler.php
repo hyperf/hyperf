@@ -44,8 +44,11 @@ class WorkerStopHandler implements SignalHandlerInterface
 
     public function handle(int $signal): void
     {
-        $time = $this->config->get('server.settings.max_wait_time', 3);
-        sleep($time);
+        if ($signal !== SIGINT) {
+            $time = $this->config->get('server.settings.max_wait_time', 3);
+            sleep($time);
+        }
+
         $this->container->get(Server::class)->stop();
     }
 }
