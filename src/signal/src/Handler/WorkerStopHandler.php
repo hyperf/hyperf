@@ -38,6 +38,7 @@ class WorkerStopHandler implements SignalHandlerInterface
     {
         return [
             [self::WORKER, SIGTERM],
+            [self::WORKER, SIGINT],
         ];
     }
 
