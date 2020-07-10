@@ -159,8 +159,8 @@ class FooCommand extends HyperfCommand
     }
 }
 ``` 
-
-执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
+先执行 `composer dumpautoload` 更新下自动加载，使用命令行生效
+再执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
 
 
 ## 命令常用配置介绍
