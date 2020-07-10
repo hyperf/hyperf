@@ -115,11 +115,12 @@ class SessionMiddleware implements MiddlewareInterface
         $domain = $uri->getHost();
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
+        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
         if (! method_exists($response, 'withCookie')) {
-            return $response;
+            return $response->withHeader('setCookie', (string) $cookie);
         }
         /* @var \Hyperf\HttpMessage\Server\Response $response */
-        return $response->withCookie(new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly));
+        return $response->withCookie($cookie);
     }
 
     /**
