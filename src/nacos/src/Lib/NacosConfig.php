@@ -17,13 +17,13 @@ use Hyperf\Utils\Codec\Json;
 
 class NacosConfig extends AbstractNacos
 {
-    public function get(ConfigModel $configModel): string
+    public function get(ConfigModel $configModel): array
     {
         $response = $this->request('GET', '/nacos/v1/cs/configs', [
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents();
+        return $configModel->parser($response->getBody()->getContents());
     }
 
     public function set(ConfigModel $configModel): array

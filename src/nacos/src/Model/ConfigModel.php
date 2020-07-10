@@ -43,19 +43,4 @@ class ConfigModel extends AbstractModel
                 return $config_origin;
         }
     }
-
-    public function pull()
-    {
-        /** @var NacosConfig $nacos_config */
-        $nacos_config = make(NacosConfig::class);
-        $val = $nacos_config->get($this);
-        if ($val) {
-            $this->content = $val;
-        }
-    }
-
-    public function getValue()
-    {
-        return $this->parser($this->content);
-    }
 }
