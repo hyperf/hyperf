@@ -15,6 +15,7 @@ use Hyperf\Di\Aop\Ast;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
+use HyperfTest\Di\Stub\Ast\Bar4;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\Foo;
 use PHPUnit\Framework\TestCase;
@@ -117,6 +118,49 @@ class Bar3Proxy extends Bar3
         $__method__ = __METHOD__;
         return self::__proxyCall(Bar3::class, __FUNCTION__, self::getParamsMap(Bar3::class, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
             return Bar::getId();
+        });
+    }
+}', $code);
+    }
+
+    public function testRewriteParent()
+    {
+        $ast = new Ast();
+        $proxyClass = Bar4::class . 'Proxy';
+        $code = $ast->proxy(Bar4::class, $proxyClass);
+
+        $this->assertEquals('<?php
+
+declare (strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\Di\Stub\Ast;
+
+class Bar4Proxy extends Bar4
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    public function __construct(int $id)
+    {
+        Bar::__construct($id);
+    }
+    public function getId() : int
+    {
+        return Bar::getId();
+    }
+    public static function getItems()
+    {
+        return Bar::$items;
+    }
+    public function closure()
+    {
+        value(function () {
+            Bar::getId();
         });
     }
 }', $code);
