@@ -20,7 +20,7 @@
 - [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
 - [#1764](https://github.com/hyperf/hyperf/pull/1764) Fixed datetime validate failed when the value is null.
 - [#1769](https://github.com/hyperf/hyperf/pull/1769) Fixed a notice when client initiate disconnects in `socketio-server`.
-- [#]
+
 ## Added
 
 - [#1724](https://github.com/hyperf/hyperf/pull/1724) Added `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`.
