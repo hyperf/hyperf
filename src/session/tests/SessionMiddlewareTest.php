@@ -164,7 +164,7 @@ class SessionMiddlewareTest extends TestCase
         $request = new Request('GET', new Uri('http://hyperf.io'));
         $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class), $id);
         $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('withHeader')->once()->andReturnUsing(function ($key, $value) use ($setCookieString, $response) {
+        $response->shouldReceive('withAddedHeader')->once()->andReturnUsing(function ($key, $value) use ($setCookieString, $response) {
             $this->assertSame('Set-Cookie', $key);
             $this->assertSame($setCookieString, $value);
             return $response;
