@@ -89,7 +89,8 @@ class VendorPublishCommand extends SymfonyCommand
             }));
 
             if (empty($item)) {
-                return $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                return SIGTERM;
             }
 
             return $this->copy($package, $item);
