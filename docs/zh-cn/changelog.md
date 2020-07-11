@@ -303,7 +303,7 @@ return [
 
 ## 修复
 
-- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修复命令 `describe:route` 缺失了带参数的路由；
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修复命令 `describe:routes` 缺失了带参数的路由；
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) 修复了高基数请求路径的内存溢出的问题；
 - [#1454](https://github.com/hyperf/hyperf/pull/1454) 修复 Collection 的 `flatten()` 方法因为 `INF` 参数值为 `float` 类型导致无法使用的问题；
 - [#1458](https://github.com/hyperf/hyperf/pull/1458) 修复了 Guzzle 不支持 Elasticsearch 版本大于 7.0 的问题；
