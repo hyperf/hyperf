@@ -19,6 +19,7 @@
 ## Optimized
 
 - [#2049](https://github.com/hyperf/hyperf/pull/2049) Optimized stdout when server restart for `hyperf/watcher`.
+- [#2090](https://github.com/hyperf/hyperf/pull/2090) Adapte original response object for `hyperf/session`. 
 
 ## Changed
 
