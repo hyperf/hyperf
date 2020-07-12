@@ -23,6 +23,7 @@ config
 │   ├── commands.php // Used to manage Custom Command
 │   ├── consul.php // Used to manage Consul Client
 │   ├── databases.php // Used to manage Database
+│   ├── dependencies.php // Used to manage the relationship of dependencies of DI
 │   ├── devtool.php // Used to manage Dev-Tool
 │   ├── exceptions.php // Used to manage Exception Handler
 │   ├── listeners.php // Used to manage Event Listener
@@ -34,7 +35,6 @@ config
 │   └── server.php // Used to manage Server
 ├── config.php // Configuration for managing users or frameworks, such as relatively independent configuration can also be placed in the autoload folder
 ├── container.php // Responsible for the initialization of the container, running as a configuration file and eventually returning a Psr\Container\ContainerInterface object
-├── dependencies.php // Used to manage the relationship of dependencies of DI
 └── routes.php // Used to manage Routing
 ```
 
