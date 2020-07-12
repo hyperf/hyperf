@@ -14,6 +14,7 @@
 
 ## Added
 
+- [#1860](https://github.com/hyperf/hyperf/pull/1860) Added `OnWorkerExit` callback by default for server.
 - [#2042](https://github.com/hyperf/hyperf/pull/2042) Added `ScanFileDriver` to watch file changes for `hyperf/watcher`.
 - [#2054](https://github.com/hyperf/hyperf/pull/2054) Added eager load relation for model-cache.
 
