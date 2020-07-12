@@ -15,11 +15,13 @@ use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Contracts\Arrayable;
 
 /**
+ * @method ServerConfig setType(string $type)
  * @method ServerConfig setMode(int $mode)
  * @method ServerConfig setServers(array $servers)
  * @method ServerConfig setProcesses(array $processes)
  * @method ServerConfig setSettings(array $settings)
  * @method ServerConfig setCallbacks(array $callbacks)
+ * @method string getType()
  * @method int getMode()
  * @method array getServers()
  * @method array getProcesses()
@@ -46,7 +48,8 @@ class ServerConfig implements Arrayable
             $servers[] = Port::build($item);
         }
 
-        $this->setMode($config['mode'] ?? SWOOLE_BASE)
+        $this->setType($config['type'] ?? Server::class)
+            ->setMode($config['mode'] ?? SWOOLE_BASE)
             ->setServers($servers)
             ->setProcesses($config['processes'] ?? [])
             ->setSettings($config['settings'] ?? [])
@@ -96,7 +99,7 @@ class ServerConfig implements Arrayable
     private function isAvailableProperty(string $name)
     {
         return in_array($name, [
-            'mode', 'servers', 'processes', 'settings', 'callbacks',
+            'type', 'mode', 'servers', 'processes', 'settings', 'callbacks',
         ]);
     }
 }

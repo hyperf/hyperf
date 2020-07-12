@@ -77,6 +77,9 @@ class NsqConnection extends KeepaliveConnection
         return $socket;
     }
 
+    /**
+     * @param Socket $connection
+     */
     protected function sendClose($connection): void
     {
         try {

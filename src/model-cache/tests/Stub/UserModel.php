@@ -46,4 +46,9 @@ class UserModel extends Model implements CacheableInterface
      * @var array
      */
     protected $casts = ['id' => 'integer', 'gender' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+
+    public function image()
+    {
+        return $this->morphOne(ImageModel::class, 'imageable');
+    }
 }

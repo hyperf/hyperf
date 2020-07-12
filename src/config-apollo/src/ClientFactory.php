@@ -32,7 +32,7 @@ class ClientFactory
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
             // If does not exist a user-defined callback, then delegate to the dafault callback.
-            if (! is_numeric($namespace) && is_callable($callbacks)) {
+            if (! is_numeric($namespace) && is_callable($callable)) {
                 $callbacks[$namespace] = $callable;
             }
         }

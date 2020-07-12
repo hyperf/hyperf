@@ -63,7 +63,11 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 1));
 
-        $this->assertSame('test.demo.1', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame('test.demo.1', Context::get('test.server.process.title'));
+        }
     }
 
     public function testProcessName()
@@ -81,7 +85,11 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
+        }
     }
 
     public function testUserDefinedDot()
@@ -99,6 +107,10 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
+        }
     }
 }

@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\LazyLoader;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine\Locker as CoLocker;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
@@ -22,7 +21,7 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class LazyLoader
 {
-    public const CONFIG_FILE_NAME = 'lazy_loader';
+    public const CONFIG_FILE_NAME = 'lazy_loader.php';
 
     /**
      * Indicates if a loader has been registered.
@@ -34,7 +33,7 @@ class LazyLoader
     /**
      * The singleton instance of the loader.
      *
-     * @var LazyLoader
+     * @var null|LazyLoader
      */
     protected static $instance;
 
@@ -45,19 +44,27 @@ class LazyLoader
      */
     protected $config;
 
-    private function __construct(ConfigInterface $config)
+    private function __construct(array $config)
     {
-        $this->config = $config->get(self::CONFIG_FILE_NAME, []);
+        $this->config = $config;
         $this->register();
     }
 
     /**
      * Get or create the singleton lazy loader instance.
      */
-    public static function bootstrap(ConfigInterface $config): LazyLoader
+    public static function bootstrap(string $configDir): LazyLoader
     {
+        $path = $configDir . self::CONFIG_FILE_NAME;
+
+        if (file_exists($path)) {
+            $config = include $configDir . self::CONFIG_FILE_NAME;
+        } else {
+            $config = [];
+        }
+
         if (is_null(static::$instance)) {
-            static::$instance = new static($config);
+            static::$instance = new LazyLoader($config);
         }
         return static::$instance;
     }
@@ -69,10 +76,11 @@ class LazyLoader
      */
     public function load(string $proxy)
     {
-        if (array_key_exists($proxy, $this->config) || Str::startsWith($proxy, 'HyperfLazy\\')) {
+        if (array_key_exists($proxy, $this->config) || $this->startsWith($proxy, 'HyperfLazy\\')) {
             $this->loadProxy($proxy);
             return true;
         }
+        return null;
     }
 
     /**
@@ -103,15 +111,17 @@ class LazyLoader
         if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
-        $path = str_replace('\\', '_', $dir . $proxy . '.lazy.php');
+
+        $code = $this->generatorLazyProxy(
+            $proxy,
+            $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
+        );
+
+        $path = str_replace('\\', '_', $dir . $proxy . '_' . crc32($code) . '.php');
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if (! file_exists($path) && CoLocker::lock($key)) {
             $targetPath = $path . '.' . uniqid();
-            $code = $this->generatorLazyProxy(
-                $proxy,
-                $this->config[$proxy] ?? Str::after($proxy, 'HyperfLazy\\')
-            );
             file_put_contents($targetPath, $code);
             rename($targetPath, $path);
             CoLocker::unlock($key);
@@ -145,6 +155,11 @@ class LazyLoader
         /** @var callable(string): void */
         $load = [$this, 'load'];
         spl_autoload_register($load, true, true);
+    }
+
+    private function startsWith($haystack, $needle): bool
+    {
+        return substr($haystack, 0, strlen($needle)) === (string) $needle;
     }
 
     /**

@@ -26,7 +26,7 @@ class RpcConnection extends Connection
     protected $queue;
 
     /**
-     * @var AMQPMessage
+     * @var null|AMQPMessage
      */
     protected $message;
 
