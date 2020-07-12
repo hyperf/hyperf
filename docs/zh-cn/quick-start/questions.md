@@ -8,58 +8,12 @@
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置项
 
-如果您使用的是 1.0.x 版本，这也可能是因为你按以下的方式设置了
-
-```
-// 在 1.0 系列版本下
-// 这些都是错误的，注意 `大小写` 和 `引号`
-swoole.use_shortname = 'off'
-swoole.use_shortname = off
-swoole.use_shortname = Off
-// 下面的才是正确的
-swoole.use_shortname = 'Off'
-```
-
 > 注意该配置必须于 php.ini 内配置，无法通过 ini_set() 函数来重写
 
 当然，也可以通过以下的命令来启动服务，在执行 PHP 命令时关闭掉 Swoole 短名功能
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
-```
-
-## 代理类缓存
-
-代理类缓存一旦生成，将不会再重新覆盖。所以当你修改了已经生成代理类的文件时，需要手动清理。
-
-代理类位置如下
-
-```
-runtime/container/proxy/
-```
-
-重新生成缓存命令，新缓存会覆盖原目录
-
-```bash
-vendor/bin/init-proxy.sh
-```
-
-删除代理类缓存
-
-```bash
-rm -rf ./runtime/container/proxy
-```
-
-所以单测命令可以使用以下代替：
-
-```bash
-vendor/bin/init-proxy.sh && composer test
-```
-
-同理，启动命令可以使用以下代替
-
-```bash
-vendor/bin/init-proxy.sh && php bin/hyperf.php start
 ```
 
 ## 异步队列消息丢失

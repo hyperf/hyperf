@@ -100,7 +100,7 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-> 注意目前的 AOP 机制尚未能直接切入 trait 的方法，您可通过使用类重写该方法，并对使用类进行切入。
+> 2.0 版本已经可以支持切入 Trait，但要求 PHP 版本 >= 7.3。
 
 ## 代理类缓存
 
