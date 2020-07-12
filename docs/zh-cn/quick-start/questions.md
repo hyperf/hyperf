@@ -28,28 +28,6 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 1. killall php
 2. 修改 `async-queue` 配置 `channel`
 
-## 1.1.24 - 1.1.26 版本 SymfonyEventDispatcher 报错
-
-因为 `symfony/console` 默认使用的 `^4.2` 版本，而 `symfony/event-dispatcher` 的 `^4.3` 版本与 `<4.3` 版本不兼容。
-
-`hyperf/framework` 默认推荐使用 `^4.3` 版本的 `symfony/event-dispatcher`，就有一定概率导致实现上的冲突。
-
-如果有类似的情况出现，可以尝试以下操作
-
-```
-rm -rf vendor
-rm -rf composer.lock
-composer require "symfony/event-dispatcher:^4.3"
-```
-
-1.1.27 版本中，会在 `composer.json` 中添加以下配置，来处理这个问题。
-
-```
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
-```
-
 ## 使用 AMQP 组件报 `Swoole\Error: API must be called in the coroutine` 错误
 
 可以在 `config/autoload/amqp.php` 配置文件中将 `close_on_destruct` 改为 `false` 即可。
@@ -59,3 +37,18 @@ composer require "symfony/event-dispatcher:^4.3"
 使用 Swoole 4.5 版本和 view 组件如果出现接口 404 的问题，可以尝试删除 `config/autoload/server.php` 文件中的 `static_handler_locations` 配置项。
 
 此配置下的路径都会被认为是静态文件路由，所以如果配置了`/`，就会导致所有接口都会被认为是文件路径，导致接口 404。
+
+## 代码不生效
+
+当碰到修改后的代码不生效的问题，请执行以下命令
+
+```bash
+composer dump-autoload -o
+```
+
+开发阶段，请不要设置 `scan_cacheable=(true)`，它会导致收集器缓存存在时，不会再次扫描文件。另外，官方骨架包中的 `Dockerfile` 是默认开启这个配置的，
+`Docker` 环境下开发的同学，请注意这里。
+
+> 当环境变量存在 SCAN_CACHEABLE 时，.env 中无法修改这个配置。
+
+`2.0.0` 和 `2.0.1` 两个版本，判断文件是否修改时，没有判断修改时间相等的情况，所以就导致文件修改后，立马生成缓存的情况（比如使用 `watcher` 组件时）,就会导致代码无法及时生效。
