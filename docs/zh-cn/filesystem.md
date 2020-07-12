@@ -16,6 +16,8 @@ composer require hyperf/guzzle
 composer require overtrue/flysystem-qiniu
 # 使用内存适配器时执行
 composer require league/flysystem-memory
+# 使用腾讯云 COS 适配器时执行
+composer require overtrue/flysystem-cos
 ```
 
 安装完成后，执行
@@ -240,6 +242,21 @@ return [
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
             'domain' => env('QINIU_DOMAIN'),
+        ],
+        'cos' => [
+            'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
+            'region' => env('COS_REGION'),
+            'credentials' => [
+                'appId' => env('COS_APPID'),
+                'secretId' => env('COS_SECRET_ID'),
+                'secretKey' => env('COS_SECRET_KEY'),
+            ],
+            'bucket' => env('COS_BUCKET'),
+            'read_from_cdn' => false,
+            // 'timeout'         => 60,
+            // 'connect_timeout' => 60,
+            // 'cdn'             => '',
+            // 'scheme'          => 'https',
         ],
     ],
 ];
