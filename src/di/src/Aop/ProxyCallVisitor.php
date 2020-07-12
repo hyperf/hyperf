@@ -133,7 +133,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 unset($stmts);
                 return $node;
                 break;
-            case $node instanceof StaticPropertyFetch && $this->extends:
+            case ($node instanceof StaticPropertyFetch || $node instanceof StaticCall) && $this->extends:
                 // Rewrite parent::$staticProperty to ParentClass::$staticProperty.
                 if ($node->class instanceof Node\Name && $node->class->toString() === 'parent') {
                     $node->class = new Name($this->extends->toCodeString());
