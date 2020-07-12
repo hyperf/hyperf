@@ -1,5 +1,39 @@
 # 版本更新记录
 
+# v2.0.2 - 2020-07-13
+
+## 修复
+
+- [#1898](https://github.com/hyperf/hyperf/pull/1898) 修复定时器规则 `$min-$max` 解析有误的BUG。
+- [#2037](https://github.com/hyperf/hyperf/pull/2037) 修复 TCP 服务，连接后共用一个协程，导致 DB 等连接池无法正常回收连接的BUG。
+- [#2051](https://github.com/hyperf/hyperf/pull/2051) 修复 `CoroutineServer` 不会生成 `hyperf.pid` 的BUG。
+- [#2055](https://github.com/hyperf/hyperf/pull/1695) 修复 `Guzzle` 在传输大数据包时会自动添加头 `Expect: 100-Continue`，导致请求失败的BUG。
+- [#2059](https://github.com/hyperf/hyperf/pull/2059) 修复 `SocketIOServer` 中 `Redis` 重连失败的BUG。
+- [#2067](https://github.com/hyperf/hyperf/pull/2067) 修复 `hyperf/watcher` 组件 `Syntax` 错误会导致进程异常。
+- [#2085](https://github.com/hyperf/hyperf/pull/2085) 修复注解 `RetryFalsy` 会导致获得正确的结果后，再次重试。
+- [#2089](https://github.com/hyperf/hyperf/pull/2089) 修复使用 `gen:command` 后，脚本必须要进行修改，才能被加载到的BUG。
+- [#2093](https://github.com/hyperf/hyperf/pull/2093) 修复脚本 `vendor:publish` 没有返回码导致报错的BUG。
+
+## 新增
+
+- [#1860](https://github.com/hyperf/hyperf/pull/1860) 为 `Server` 添加默认的 `OnWorkerExit` 回调。
+- [#2042](https://github.com/hyperf/hyperf/pull/2042) 为热更新组件，添加文件扫描驱动。
+- [#2054](https://github.com/hyperf/hyperf/pull/2054) 为模型缓存添加 `Eager Load` 功能。
+
+## 优化
+
+- [#2049](https://github.com/hyperf/hyperf/pull/2049) 优化热更新组件的 Stdout 输出。
+- [#2090](https://github.com/hyperf/hyperf/pull/2090) 为 `hyperf/session` 组件适配非 `Hyperf` 的 `Response`。
+
+## 变更
+
+- [#2031](https://github.com/hyperf/hyperf/pull/2031) 常量组件的错误码只支持 `int` 和 `string`。
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) `WebSocket` 消息发送器 `Hyperf\WebSocketServer\Sender` 支持 `push` 和 `disconnect`。
+
+## 移除
+
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) 移除 `Hyperf\WebSocketServer\Sender` 对方法 `send` `sendto` 和 `close` 的支持，请使用 `push` 和 `disconnect`。
+
 # v2.0.1 - 2020-07-02
 
 ## 新增
