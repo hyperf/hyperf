@@ -1,5 +1,9 @@
 # v2.0.2 - TBD
 
+## Added
+
+- [#2018](https://github.com/hyperf/hyperf/pull/2018) Make prometheus use redis to store data to support cluster mode
+
 ## Fixed
 
 - [#1898](https://github.com/hyperf/hyperf/pull/1898) Fixed crontab rule `$min-$max` parsing errors.
