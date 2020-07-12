@@ -11,10 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\CachedWordInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English;
+use Doctrine\Inflector\RulesetInflector;
 
 class Pluralizer
 {
+    /**
+     * @var null|Inflector
+     */
+    public static $inflector;
+
     /**
      * Uncountable word forms.
      *
@@ -78,7 +86,7 @@ class Pluralizer
             return $value;
         }
 
-        $plural = Inflector::pluralize($value);
+        $plural = static::inflector()->pluralize($value);
 
         return static::matchCase($plural, $value);
     }
@@ -91,9 +99,30 @@ class Pluralizer
      */
     public static function singular($value)
     {
-        $singular = Inflector::singularize($value);
+        $singular = static::inflector()->singularize($value);
 
         return static::matchCase($singular, $value);
+    }
+
+    /**
+     * Get the inflector instance.
+     *
+     * @return Inflector
+     */
+    public static function inflector()
+    {
+        if (is_null(static::$inflector)) {
+            static::$inflector = new Inflector(
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getSingularRuleset()
+                )),
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getPluralRuleset()
+                ))
+            );
+        }
+
+        return static::$inflector;
     }
 
     /**
