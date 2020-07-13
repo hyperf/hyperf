@@ -17,9 +17,6 @@ use Overtrue\Flysystem\Cos\CosAdapter;
 
 class CosAdapterFactory implements AdapterFactoryInterface
 {
-    /**
-     * @throws \Exception
-     */
     public function make(array $options): AdapterInterface
     {
         return new CosAdapter($options);
