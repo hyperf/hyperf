@@ -1,4 +1,10 @@
-# v2.0.2 - TBD
+# v2.0.3 - TBD
+
+# v2.0.2 - 2020-07-13
+
+## Added
+
+- [#2018](https://github.com/hyperf/hyperf/pull/2018) Make prometheus use redis to store data to support cluster mode
 
 ## Fixed
 
@@ -14,6 +20,7 @@
 
 ## Added
 
+- [#1860](https://github.com/hyperf/hyperf/pull/1860) Added `OnWorkerExit` callback by default for server.
 - [#2042](https://github.com/hyperf/hyperf/pull/2042) Added `ScanFileDriver` to watch file changes for `hyperf/watcher`.
 - [#2054](https://github.com/hyperf/hyperf/pull/2054) Added eager load relation for model-cache.
 - [#2097](https://github.com/hyperf/hyperf/pull/2097) Added TencentCloud COS for `hyperf/filesystem`.
@@ -27,6 +34,7 @@
 
 - [#2031](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
 - [#2065](https://github.com/hyperf/hyperf/pull/2065) Changed `Hyperf\WebSocketServer\Sender` which only support `push` and `disconnect`.
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) Upgrade `doctrine/inflector` to `^2.0` for `hyperf/utils`.
 
 ## Removed
 
