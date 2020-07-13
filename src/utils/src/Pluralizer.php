@@ -19,11 +19,6 @@ use Doctrine\Inflector\RulesetInflector;
 class Pluralizer
 {
     /**
-     * @var null|Inflector
-     */
-    public static $inflector;
-
-    /**
      * Uncountable word forms.
      *
      * @var array
@@ -74,6 +69,11 @@ class Pluralizer
         ];
 
     /**
+     * @var null|Inflector
+     */
+    protected static $inflector;
+
+    /**
      * Get the plural form of an English word.
      *
      * @param string $value
@@ -86,7 +86,7 @@ class Pluralizer
             return $value;
         }
 
-        $plural = static::inflector()->pluralize($value);
+        $plural = static::getInflector()->pluralize($value);
 
         return static::matchCase($plural, $value);
     }
@@ -99,17 +99,20 @@ class Pluralizer
      */
     public static function singular($value)
     {
-        $singular = static::inflector()->singularize($value);
+        $singular = static::getInflector()->singularize($value);
 
         return static::matchCase($singular, $value);
     }
 
+    public static function setInflector(?Inflector $inflector): void
+    {
+        static::$inflector = $inflector;
+    }
+
     /**
      * Get the inflector instance.
-     *
-     * @return Inflector
      */
-    public static function inflector()
+    public static function getInflector(): Inflector
     {
         if (is_null(static::$inflector)) {
             static::$inflector = new Inflector(
