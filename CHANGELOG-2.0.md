@@ -2,6 +2,10 @@
 
 # v2.0.2 - 2020-07-13
 
+## Added
+
+- [#2018](https://github.com/hyperf/hyperf/pull/2018) Make prometheus use redis to store data to support cluster mode
+
 ## Fixed
 
 - [#1898](https://github.com/hyperf/hyperf/pull/1898) Fixed crontab rule `$min-$max` parsing errors.
@@ -29,6 +33,7 @@
 
 - [#2031](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
 - [#2065](https://github.com/hyperf/hyperf/pull/2065) Changed `Hyperf\WebSocketServer\Sender` which only support `push` and `disconnect`.
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) Upgrade `doctrine/inflector` to `^2.0` for `hyperf/utils`.
 
 ## Removed
 
