@@ -4,7 +4,7 @@
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
   * [参与开发](zh-cn/contribute.md)
-  
+
 * 版本管理
 
   * [版本计划](zh-cn/release-planning.md)
@@ -17,7 +17,7 @@
   * [快速开始](zh-cn/quick-start/overview.md)
   * [常见问题](zh-cn/quick-start/questions.md)
   * [编程须知](zh-cn/quick-start/important.md)
-  
+
 * 核心架构
 
   * [生命周期](zh-cn/lifecycle.md)
@@ -26,8 +26,7 @@
   * [注解](zh-cn/annotation.md)
   * [依赖注入](zh-cn/di.md)
   * [事件机制](zh-cn/event.md)
-  * [AOP 面向切面编程](zh-cn/aop.md)
-  
+
 * 基础功能
 
   * [路由](zh-cn/router.md)
@@ -46,7 +45,7 @@
   * [验证器](zh-cn/validation.md)
   * [Session 会话管理](zh-cn/session.md)
   * [文件系统](zh-cn/filesystem.md)
-  
+
 * 数据库模型
 
   * [快速开始](zh-cn/db/quick-start.md)
@@ -59,7 +58,7 @@
   * [数据库迁移](zh-cn/db/migration.md)
   * [极简 DB 组件](zh-cn/db/db.md)
   * [修改器](zh-cn/db/mutators.md)
-  
+
 * 微服务
 
   * [架构理念](zh-cn/microservice.md)
@@ -72,14 +71,14 @@
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
-  
+
 * 消息队列
 
   * [Redis 异步队列](zh-cn/async-queue.md)
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
   * [NSQ](zh-cn/nsq.md)
-  
+
 * 其它组件
 
   * [连接池](zh-cn/pool.md)
@@ -112,11 +111,11 @@
   * [Supervisor 部署](zh-cn/tutorial/supervisor.md)
   * [Nginx 反向代理](zh-cn/tutorial/nginx.md)
   * [阿里云日志服务](zh-cn/tutorial/aliyun-logger.md)
-  
+
 * Awesome Hyperf
 
   * [协程组件库](zh-cn/awesome-components.md)
-  
+
 * 组件开发指南
 
   * [指南前言](zh-cn/component-guide/intro.md)
@@ -124,6 +123,6 @@
   * [ConfigProvider 机制](zh-cn/component-guide/configprovider.md)
 
 * 版本升级指南
-  
+
   * [1.1 升级指南](zh-cn/upgrade/1.1.md)
   * [2.0 升级指南](zh-cn/upgrade/2.0.md)
