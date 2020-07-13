@@ -29,6 +29,7 @@
 
 - [#2031](https://github.com/hyperf/hyperf/pull/2031) 常量组件的错误码只支持 `int` 和 `string`。
 - [#2065](https://github.com/hyperf/hyperf/pull/2065) `WebSocket` 消息发送器 `Hyperf\WebSocketServer\Sender` 支持 `push` 和 `disconnect`。
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) 组件 `hyperf/utils` 更新依赖 `doctrine/inflector` 版本到 `^2.0`。
 
 ## 移除
 
