@@ -24,6 +24,7 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
+use Hyperf\RpcServer\Annotation\RpcServices;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
@@ -51,11 +52,6 @@ class DispatcherFactory
      * @var PathGeneratorInterface
      */
     private $pathGenerator;
-
-    /**
-     * @var array
-     */
-    protected $routeAnnotations = [RpcService::class];
 
     public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
     {
@@ -98,18 +94,29 @@ class DispatcherFactory
 
     protected function initAnnotationRoute(): void
     {
-        foreach ($this->routeAnnotations as $routeAnnotation) {
-            $rpcAnnotation = AnnotationCollector::getClassByAnnotation($routeAnnotation);
-            foreach ($rpcAnnotation as $className => $annotation) {
-                $middlewaresAnnotation = AnnotationCollector::getClassAnnotation($className, Middlewares::class) ?? [];
-                $middlewareAnnotation = AnnotationCollector::getClassAnnotation($className, Middleware::class) ?? [];
-                $middlewares = $this->handleMiddleware([
-                    Middlewares::class => $middlewaresAnnotation,
-                    Middleware::class => $middlewareAnnotation,
-                ]);
-                $this->handleRpcService($className, $annotation, $middlewares);
+        $rpcServicesArr = AnnotationCollector::getClassesByAnnotation(RpcServices::class);
+        foreach ($rpcServicesArr as $className => $annotations) {
+            $middlewares = $this->getMiddlewares($className);
+            foreach ($annotations->services as $service) {
+                $this->handleRpcService($className, $service, $middlewares);
             }
         }
+
+        $rpcServiceArr = AnnotationCollector::getClassesByAnnotation(RpcService::class);
+        foreach ($rpcServiceArr as $className => $annotation) {
+            $middlewares = $this->getMiddlewares($className);
+            $this->handleRpcService($className, $annotation, $middlewares);
+        }
+    }
+
+    protected function getMiddlewares(string $className):array
+    {
+        $middlewaresAnnotation = AnnotationCollector::getClassAnnotation($className, Middlewares::class) ?? [];
+        $middlewareAnnotation = AnnotationCollector::getClassAnnotation($className, Middleware::class) ?? [];
+        return $this->handleMiddleware([
+            Middlewares::class => $middlewaresAnnotation,
+            Middleware::class => $middlewareAnnotation,
+        ]);
     }
 
     /**
@@ -154,9 +161,7 @@ class DispatcherFactory
             return [];
         }
         if ($middlewares && $middleware) {
-            throw new ConflictAnnotationException(
-                'Could not use @Middlewares and @Middleware annotation at the same times at same level.'
-            );
+            throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
         if ($middlewares) {
             $result = [];

@@ -15,7 +15,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
- * @Target({"CLASS"})
+ * @Target({"CLASS", "ANNOTATION"})
  */
 class RpcService extends AbstractAnnotation
 {
