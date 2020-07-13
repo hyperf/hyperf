@@ -31,6 +31,7 @@
 
 - [#2031](https://github.com/hyperf/hyperf/pull/2031) The code of constants only support `int` and `string`.
 - [#2065](https://github.com/hyperf/hyperf/pull/2065) Changed `Hyperf\WebSocketServer\Sender` which only support `push` and `disconnect`.
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) Upgrade `doctrine/inflector` to `^2.0` for `hyperf/utils`.
 
 ## Removed
 
