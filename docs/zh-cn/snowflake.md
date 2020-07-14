@@ -151,4 +151,4 @@ class User {
 }
 ```
 
-上述 User 模型在创建时便会默认以 Snowflake 作为主键。
+上述 User 模型在创建时便会默认使用 Snowflake 算法生成主键。
