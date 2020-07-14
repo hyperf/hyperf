@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -158,7 +158,9 @@ class Watcher
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                Process::kill((int) $pid, SIGTERM);
+                if (Process::kill((int) $pid, 0)) {
+                    Process::kill((int) $pid, SIGTERM);
+                }
             } catch (\Throwable $exception) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
             }
