@@ -14,7 +14,7 @@ namespace Hyperf\Snowflake\Concern;
 use Hyperf\Snowflake\IdGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
 
-trait HasSnowflake
+trait Snowflake
 {
     public function creating()
     {
