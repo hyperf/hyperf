@@ -405,6 +405,6 @@ Router::get('/metrics', function(){
 
 > 本節只適用於 Prometheus 驅動
 
-如果您啟用了預設指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制檯。下載控制檯 [json 檔案](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，匯入 Grafana 中即可使用。
+如果您啟用了預設指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制檯。下載控制檯 [json 檔案](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，匯入 Grafana 中即可使用。
 
 ![grafana](imgs/grafana.png)
