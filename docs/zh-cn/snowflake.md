@@ -138,3 +138,17 @@ $userId = 20190620;
 $id = $generator->generate($userId);
 
 ```
+
+## 在数据库模型中应用
+
+配置好 Snowflake 以后，我们可以让数据库模型直接使用雪花 id 作为主键。
+
+```php
+<?php
+
+class User {
+    use \Hyperf\Snowflake\Concern\HasSnowflake;
+}
+```
+
+上述 User 模型在创建时便会默认以 Snowflake 作为主键。
