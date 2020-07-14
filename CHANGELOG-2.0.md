@@ -4,6 +4,10 @@
 
 - [#2097](https://github.com/hyperf/hyperf/pull/2097) Added TencentCloud COS for `hyperf/filesystem`.
 
+## Optimized
+
+- [#2110](https://github.com/hyperf/hyperf/pull/2110) Don't kill `SIGTERM` if the process not exists.
+
 # v2.0.2 - 2020-07-13
 
 ## Added
