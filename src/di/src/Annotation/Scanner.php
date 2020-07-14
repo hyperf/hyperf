@@ -133,7 +133,7 @@ class Scanner
         $this->clearRemovedClasses($collectors, $classes);
 
         foreach ($classes as $reflectionClass) {
-            if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastCacheModified) {
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
                 /** @var MetadataCollector $collector */
                 foreach ($collectors as $collector) {
                     $collector::clear($reflectionClass->getName());

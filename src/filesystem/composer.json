@@ -34,6 +34,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-memory": "^1.0",
         "overtrue/flysystem-qiniu": "^1.0",
+        "overtrue/flysystem-cos": "^2.0",
         "phpstan/phpstan": "^0.10.5",
         "xxtime/flysystem-aliyun-oss": "^1.5"
     },
@@ -42,7 +43,8 @@
         "league/flysystem-memory": "required to use memory adapter",
         "hyperf/guzzle": "required to use s3 adapter",
         "league/flysystem-aws-s3-v3": "required to use s3 adapter",
-        "overtrue/flysystem-qiniu": "required to use qiniu adapter"
+        "overtrue/flysystem-qiniu": "required to use qiniu adapter",
+        "overtrue/flysystem-cos": "required to use cos adapter"
     },
     "config": {
         "sort-packages": true
