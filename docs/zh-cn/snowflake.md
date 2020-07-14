@@ -146,7 +146,7 @@ $id = $generator->generate($userId);
 ```php
 <?php
 
-class User {
+class User extends \Hyperf\Database\Model\Model {
     use \Hyperf\Snowflake\Concern\HasSnowflake;
 }
 ```
