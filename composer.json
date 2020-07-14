@@ -66,7 +66,6 @@
         "overtrue/flysystem-cos": "^2.0",
         "php-amqplib/php-amqplib": "^2.7",
         "php-di/php-di": "^6.0",
-        "php-di/phpdoc-reader": "^2.0.1",
         "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "^7.0.0",
         "predis/predis": "^1.1",

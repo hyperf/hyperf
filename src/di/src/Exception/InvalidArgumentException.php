@@ -9,11 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Di;
+namespace Hyperf\Di\Exception;
 
-interface ClosureDefinitionCollectorInterface
+class InvalidArgumentException extends \InvalidArgumentException
 {
-    public function getParameters(\Closure $closure): array;
-
-    public function getReturnType(\Closure $closure): ReflectionType;
 }

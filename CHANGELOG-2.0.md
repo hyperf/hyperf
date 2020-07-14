@@ -9,6 +9,7 @@
 ## Optimized
 
 - [#2110](https://github.com/hyperf/hyperf/pull/2110) Don't kill `SIGTERM` if the process not exists for `hyperf/watcher`.
+- [#2116](https://github.com/hyperf/hyperf/pull/2116) Optimized requirement for `hyperf/di`.
 
 # v2.0.2 - 2020-07-13
 
