@@ -14,7 +14,6 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\Exception;
 use Hyperf\Di\TypesFinderManager;
-use PhpDocReader\AnnotationException;
 use phpDocumentor\Reflection\Types\Object_;
 
 /**
@@ -70,7 +69,7 @@ class Inject extends AbstractAnnotation
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        } catch (AnnotationException $e) {
+        } catch (Exception\AnnotationException $e) {
             if ($this->required) {
                 throw $e;
             }
