@@ -6,7 +6,7 @@
 
 ## Optimized
 
-- [#2110](https://github.com/hyperf/hyperf/pull/2110) Don't kill `SIGTERM` if the process not exists.
+- [#2110](https://github.com/hyperf/hyperf/pull/2110) Don't kill `SIGTERM` if the process not exists for `hyperf/watcher`.
 
 # v2.0.2 - 2020-07-13
 
