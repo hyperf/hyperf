@@ -13,7 +13,6 @@ namespace Hyperf\Watcher;
 
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
-use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
@@ -148,12 +147,12 @@ class Watcher
     public function restart($isStart = true)
     {
         $file = BASE_PATH . '/runtime/hyperf.pid';
-        if (!$isStart && $this->filesystem->exists($file)) {
+        if (! $isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                if (Process::kill((int)$pid, 0)) {
-                    Process::kill((int)$pid, SIGTERM);
+                if (Process::kill((int) $pid, 0)) {
+                    Process::kill((int) $pid, SIGTERM);
                 }
             } catch (\Throwable $exception) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
@@ -180,7 +179,7 @@ class Watcher
     protected function getDriver()
     {
         $driver = $this->option->getDriver();
-        if (!class_exists($driver)) {
+        if (! class_exists($driver)) {
             throw new \InvalidArgumentException('Driver not support.');
         }
         return make($driver, ['option' => $this->option]);
