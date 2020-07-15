@@ -34,11 +34,6 @@ class Process
     protected $file;
 
     /**
-     * @var string
-     */
-    protected $class;
-
-    /**
      * @var BetterReflection
      */
     protected $reflection;
@@ -84,7 +79,7 @@ class Process
         if ($meta === null) {
             return;
         }
-        $this->class = $meta->toClassName();
+        $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
         $data = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
@@ -97,9 +92,9 @@ class Process
         require $this->file;
 
         // Collect the annotations.
-        $ref = $this->reflection->classReflector()->reflect($this->class);
-        BetterReflectionManager::reflectClass($this->class, $ref);
-        $this->collect($this->class, $ref);
+        $ref = $this->reflection->classReflector()->reflect($class);
+        BetterReflectionManager::reflectClass($class, $ref);
+        $this->collect($class, $ref);
 
         $collectors = $this->config->getCollectors();
         $data = [];
@@ -113,11 +108,11 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager([], [$this->class => $this->file], BASE_PATH . '/runtime/container/proxy/');
+        $manager = new ProxyManager([], [$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
         $ref = new \ReflectionClass($manager);
         $method = $ref->getMethod('generateProxyFiles');
         $method->setAccessible(true);
-        $method->invokeArgs($manager, [$this->class => []]);
+        $method->invokeArgs($manager, [$class => []]);
     }
 
     public function collect($className, ReflectionClass $reflection)
