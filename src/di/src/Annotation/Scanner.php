@@ -256,6 +256,7 @@ class Scanner
         $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
 
         [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
+        // When the aspect removed from config, it should removed from AspectCollector.
         foreach ($removed as $aspect) {
             AspectCollector::clear($aspect);
         }
@@ -294,7 +295,6 @@ class Scanner
             // Priority
             $priority = $priority ?: ($instancePriority ?? null);
             // Save the metadata to AspectCollector
-            // TODO: When the aspect removed from config, it should removed from AspectCollector.
             AspectCollector::setAround($aspect, $classes, $annotations, $priority);
         }
     }
