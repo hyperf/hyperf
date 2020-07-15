@@ -141,7 +141,7 @@ class Watcher
             } else {
                 $meta = $this->getMetadata($file);
                 if ($meta) {
-                    $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
+                    $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
                     if ($ret['code'] === 0) {
                         $this->output->writeln('Class reload success.');
                     }
@@ -176,7 +176,7 @@ class Watcher
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' vendor/bin/watcher.php start', $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' vendor/hyperf/wathcer/watcher.php start', $descriptorspec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);
