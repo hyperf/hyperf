@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -229,6 +229,20 @@ LUA
         );
     }
 
+    protected function getRedisTag(string $metricType): string
+    {
+        switch ($metricType) {
+            case Counter::TYPE:
+                return '{counter}';
+            case Histogram::TYPE:
+                return '{histogram}';
+            case Gauge::TYPE:
+                return '{gauge}';
+            default:
+                return '';
+        }
+    }
+
     /**
      * @throws StorageException
      */
@@ -405,28 +419,15 @@ LUA
         return implode(':', [self::$prefix, $data['type'], $data['name']]);
     }
 
-    protected function getRedisTag(string $metricType): string
-    {
-        switch($metricType) {
-            case Counter::TYPE:
-                return "{counter}";
-            case Histogram::TYPE:
-                return "{histogram}";
-            case Gauge::TYPE:
-                return "{gauge}";
-            default:
-                return '';
-        }
-    }
-
     /**
-     * Get the indicator collection key
+     * Get the indicator collection key.
      *
+     * @param mixed $metricType
      * @throws \Exception Exception thrown when the incoming metric type does not exist
      */
     private function getMetricGatherKey($metricType): string
     {
-        switch($metricType) {
+        switch ($metricType) {
             case Counter::TYPE:
                 return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
             case Histogram::TYPE:
