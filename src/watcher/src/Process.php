@@ -68,19 +68,23 @@ class Process
      */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
-    public function __construct(string $file, string $class)
+    public function __construct(string $file)
     {
         $this->file = $file;
-        $this->class = $class;
+        $this->ast = new Ast();
         $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
         $this->config = ScanConfig::instance('/');
         $this->filesystem = new Filesystem();
-        $this->ast = new Ast();
     }
 
     public function __invoke()
     {
+        $meta = $this->getMetadata($this->file);
+        if ($meta === null) {
+            return;
+        }
+        $this->class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
         $data = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
