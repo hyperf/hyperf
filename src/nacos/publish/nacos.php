@@ -31,7 +31,7 @@ return [
         'beatInterval' => 5,
         'namespaceId' => 'namespace_id', // 注意此处必须和service保持一致
     ],
-    'deleteServiceWhenShutdown' => true, // 默认false
+    'delete_service_when_shutdown' => true, // 默认false
     'config_reload_interval' => 3,
     // 远程配置合并节点, 默认 config 根节点
     'config_append_node' => 'custom',
@@ -48,5 +48,5 @@ return [
         ],
     ],
     // 负载策略 random, RoundRobin, WeightedRandom, WeightedRoundRobin
-    'loadBalancer' => 'random',
+    'load_balancer' => 'random',
 ];

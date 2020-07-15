@@ -20,19 +20,19 @@ use Hyperf\Guzzle\ClientFactory;
 abstract class AbstractNacos
 {
     /**
-     * @var array
-     */
-    protected $baseInfo = [];
-
-    /**
      * @var ContainerInterface
      */
     protected $container;
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->baseInfo = $container->get(ConfigInterface::class)->get('nacos', []);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function request($method, $uri, array $options = [])
@@ -40,9 +40,13 @@ abstract class AbstractNacos
         return $this->client()->request($method, $uri, $options);
     }
 
-    public function getServerUri()
+    public function getServerUri(): string
     {
-        return $this->baseInfo['host'] . ':' . $this->baseInfo['port'];
+        return sprintf(
+            '%s:%d',
+            $this->config->get('nacos.host', '127.0.0.1'),
+            $this->config->get('nacos.port', 8848)
+        );
     }
 
     public function client(): Client

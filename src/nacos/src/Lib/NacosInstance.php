@@ -74,7 +74,7 @@ class NacosInstance extends AbstractNacos
             return $item['enabled'];
         });
 
-        $tactics = strtolower(config('nacos.loadBalancer', 'random'));
+        $tactics = strtolower($this->config->get('nacos.load_balancer', 'random'));
 
         return $this->loadBalancer($enabled, $tactics);
     }

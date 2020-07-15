@@ -11,13 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Model\ServiceModel;
 
 class ThisService extends ServiceModel
 {
-    public function __construct()
+    public function __construct(ConfigInterface $config)
     {
-        $config = config('nacos.service');
+        $config = $config->get('nacos.service', []);
         parent::__construct($config);
     }
 }

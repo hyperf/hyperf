@@ -19,8 +19,8 @@ use Hyperf\Nacos\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Lib\NacosInstance;
 use Hyperf\Nacos\Lib\NacosService;
-use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Nacos\ThisInstance;
+use Hyperf\Nacos\ThisService;
 use Psr\Container\ContainerInterface;
 
 class BootAppConfListener implements ListenerInterface
@@ -64,9 +64,7 @@ class BootAppConfListener implements ListenerInterface
         $this->logger->info('nacos register instance success!', compact('instance'));
 
         $nacosService = $this->container->get(NacosService::class);
-        $service = make(ServiceModel::class, [
-            'config' => $config->get('nacos.service'),
-        ]);
+        $service = $this->container->get(ThisService::class);
         $exist = $nacosService->detail($service);
         if (! $exist && ! $nacosService->create($service)) {
             throw new RuntimeException("nacos register service fail: {$service}");
@@ -74,11 +72,9 @@ class BootAppConfListener implements ListenerInterface
         $this->logger->info('nacos register service success!', compact('service'));
 
         $client = $this->container->get(Client::class);
-        $remote_config = $client->pull();
-        /** @var \Hyperf\Config\Config $config */
         $config = $this->container->get(ConfigInterface::class);
-        $append_node = config('nacos.config_append_node');
-        foreach ($remote_config as $key => $conf) {
+        $append_node = $config->get('nacos.config_append_node');
+        foreach ($client->pull() as $key => $conf) {
             $config->set($append_node ? $append_node . '.' . $key : $key, $conf);
         }
     }

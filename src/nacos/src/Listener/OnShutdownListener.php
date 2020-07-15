@@ -11,13 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Nacos\Lib\NacosInstance;
 use Hyperf\Nacos\Lib\NacosService;
-use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Nacos\ThisInstance;
+use Hyperf\Nacos\ThisService;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -41,19 +42,15 @@ class OnShutdownListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if (! config('nacos')) {
-            return;
-        }
-
-        if (! config('nacos.deleteServiceWhenShutdown', false)) {
+        $config = $this->container->get(ConfigInterface::class);
+        if (! $config->get('nacos.delete_service_when_shutdown', false)) {
             return;
         }
 
         $logger = $this->container->get(LoggerFactory::class)->get('nacos');
         /** @var NacosService $nacos_service */
         $nacos_service = $this->container->get(NacosService::class);
-        /** @var ServiceModel $service */
-        $service = make(ServiceModel::class, ['config' => config('nacos.service')]);
+        $service = $this->container->get(ThisService::class);
         $deleted = $nacos_service->delete($service);
 
         if ($deleted) {
@@ -62,8 +59,7 @@ class OnShutdownListener implements ListenerInterface
             $logger->erro('nacos service delete fail when shutdown!');
         }
 
-        /** @var ThisInstance $instance */
-        $instance = make(ThisInstance::class);
+        $instance = $this->container->get(ThisInstance::class);
         /** @var NacosInstance $nacos_instance */
         $nacos_instance = make(NacosInstance::class);
         $deleted_instance = $nacos_instance->delete($instance);

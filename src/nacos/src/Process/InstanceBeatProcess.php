@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Process;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Nacos\Lib\NacosInstance;
 use Hyperf\Nacos\ThisInstance;
@@ -23,26 +24,26 @@ class InstanceBeatProcess extends AbstractProcess
 
     public function handle(): void
     {
-        /** @var ThisInstance $instance */
-        $instance = make(ThisInstance::class);
-        /** @var NacosInstance $nacos_instance */
-        $nacos_instance = make(NacosInstance::class);
-        $service = make(ThisService::class);
+        $instance = $this->container->get(ThisInstance::class);
+        $nacosInstance = $this->container->get(NacosInstance::class);
+        $service = $this->container->get(ThisService::class);
 
+        $config = $this->container->get(ConfigInterface::class);
         $logger = $this->container->get(LoggerFactory::class)->get('nacos');
         while (true) {
-            sleep(config('nacos.client.beatInterval', 5));
-            $send = $nacos_instance->beat($service, $instance);
+            sleep($config->get('nacos.client.beatInterval', 5));
+            $send = $nacosInstance->beat($service, $instance);
             if ($send) {
                 $logger->info('nacos send beat success!', compact('instance'));
             } else {
-                $logger->error('nacos send beat fail}', compact('instance'));
+                $logger->error('nacos send beat fail!', compact('instance'));
             }
         }
     }
 
     public function isEnable($server): bool
     {
-        return config('nacos.client.beatEnable', false);
+        $config = $this->container->get(ConfigInterface::class);
+        return $config->get('nacos.client.beatEnable', false);
     }
 }

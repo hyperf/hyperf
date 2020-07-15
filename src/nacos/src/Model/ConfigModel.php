@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Model;
 
-use Hyperf\Nacos\Lib\NacosConfig;
 use Hyperf\Utils\Codec\Xml;
 
 class ConfigModel extends AbstractModel

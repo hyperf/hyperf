@@ -11,23 +11,26 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Nacos\Model\InstanceModel;
 
 class ThisInstance extends InstanceModel
 {
-    public function __construct()
+    public function __construct(ConfigInterface $config)
     {
-        $this->ip = current(swoole_get_local_ip());
-        $this->port = config('server.servers.0.port');
-        $client = config('nacos.client', []);
+        $client = $config->get('nacos.client', []);
         if (! isset($client['serviceName'])) {
-            throw new \Exception('nacos.client.serviceName is required');
+            throw new InvalidArgumentException('nacos.client.serviceName is required');
         }
-        unset($client['ip'], $client['port']);
+
         foreach ($client as $key => $val) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $val;
             }
         }
+
+        $this->ip = current(swoole_get_local_ip());
+        $this->port = $config->get('server.servers.0.port');
     }
 }
