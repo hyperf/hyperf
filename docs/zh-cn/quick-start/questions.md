@@ -6,7 +6,8 @@
 
 1. 原类没有使用 `Inject` 或 `Value`，但父类使用了 `Inject` 或 `Value`，且原类写了构造函数，同时又没有调用父类构造函数的情况。
 
-这样就会导致原类不会生成代理类，故没办法执行到父类构造函数里的 `__handlePropertyHandler`，所以父类的 `Inject` 或 `Value` 都不会生效。
+这样就会导致原类不会生成代理类，而实例化的时候又调用了自身的构造函数，故没办法执行到父类的构造函数。
+所以父类代理类中的方法 `__handlePropertyHandler` 就不会执行，那么 `Inject` 或 `Value` 注解就不会生效。
 
 ```php
 class ParentClass {
@@ -25,7 +26,7 @@ class Origin extends ParentClass
 
 2. 原类没有使用 `Inject` 或 `Value`，但 `Trait` 中使用了 `Inject` 或 `Value`。
 
-这样就会导致原类不会生成代理类，故没办法执行造函数里的 `__handlePropertyHandler`，所以 `Trait` 的 `Inject` 或 `Value` 都不会生效。
+这样就会导致原类不会生成代理类，故没办法执行构造函数里的 `__handlePropertyHandler`，所以 `Trait` 的 `Inject` 或 `Value` 注解就不会生效。
 
 ```php
 trait OriginTrait {
