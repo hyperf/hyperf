@@ -1,5 +1,82 @@
 # 常见问题
 
+## `Inject` 或 `Value` 注解不生效
+
+`2.0` 使用了构造函数中注入 `Inject` 和 `Value` 的功能，以下两种场景，可能会导致注入失效，请注意使用。
+
+1. 原类没有使用 `Inject` 或 `Value`，但父类使用了 `Inject` 或 `Value`，且原类写了构造函数，同时又没有调用父类构造函数的情况。
+
+这样就会导致原类不会生成代理类，而实例化的时候又调用了自身的构造函数，故没办法执行到父类的构造函数。
+所以父类代理类中的方法 `__handlePropertyHandler` 就不会执行，那么 `Inject` 或 `Value` 注解就不会生效。
+
+```php
+class ParentClass {
+    /**
+     * @Inject
+     * @var Service
+     */
+    protected $value;
+}
+
+class Origin extends ParentClass
+{
+    public function __construct() {}
+}
+```
+
+2. 原类没有使用 `Inject` 或 `Value`，但 `Trait` 中使用了 `Inject` 或 `Value`。
+
+这样就会导致原类不会生成代理类，故没办法执行构造函数里的 `__handlePropertyHandler`，所以 `Trait` 的 `Inject` 或 `Value` 注解就不会生效。
+
+```php
+trait OriginTrait {
+    /**
+     * @Inject
+     * @var Service
+     */
+    protected $value;
+}
+
+class Origin
+{
+    use OriginTrait;
+}
+```
+
+基于上述两种情况，可见 `原类` 是否生成代理类至关重要，所以，如果使用了带有 `Inject` 或 `Value` 的 `Trait` 和 `父类` 时，给原类添加一个 `Inject`，即可解决上述两种情况。
+
+```php
+
+use Hyperf\Contract\StdoutLoggerInterface;
+
+trait OriginTrait {
+    /**
+     * @Inject
+     * @var Service
+     */
+    protected $trait;
+}
+
+class ParentClass {
+    /**
+     * @Inject
+     * @var Service
+     */
+    protected $value;
+}
+
+class Origin extends ParentClass
+{
+    use OriginTrait;
+
+    /**
+     * @Inject
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+}
+```
+
 ## Swoole 短名未关闭
 
 ```
@@ -8,58 +85,12 @@
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置项
 
-如果您使用的是 1.0.x 版本，这也可能是因为你按以下的方式设置了
-
-```
-// 在 1.0 系列版本下
-// 这些都是错误的，注意 `大小写` 和 `引号`
-swoole.use_shortname = 'off'
-swoole.use_shortname = off
-swoole.use_shortname = Off
-// 下面的才是正确的
-swoole.use_shortname = 'Off'
-```
-
 > 注意该配置必须于 php.ini 内配置，无法通过 ini_set() 函数来重写
 
 当然，也可以通过以下的命令来启动服务，在执行 PHP 命令时关闭掉 Swoole 短名功能
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
-```
-
-## 代理类缓存
-
-代理类缓存一旦生成，将不会再重新覆盖。所以当你修改了已经生成代理类的文件时，需要手动清理。
-
-代理类位置如下
-
-```
-runtime/container/proxy/
-```
-
-重新生成缓存命令，新缓存会覆盖原目录
-
-```bash
-vendor/bin/init-proxy.sh
-```
-
-删除代理类缓存
-
-```bash
-rm -rf ./runtime/container/proxy
-```
-
-所以单测命令可以使用以下代替：
-
-```bash
-vendor/bin/init-proxy.sh && composer test
-```
-
-同理，启动命令可以使用以下代替
-
-```bash
-vendor/bin/init-proxy.sh && php bin/hyperf.php start
 ```
 
 ## 异步队列消息丢失
@@ -74,28 +105,6 @@ vendor/bin/init-proxy.sh && php bin/hyperf.php start
 1. killall php
 2. 修改 `async-queue` 配置 `channel`
 
-## 1.1.24 - 1.1.26 版本 SymfonyEventDispatcher 报错
-
-因为 `symfony/console` 默认使用的 `^4.2` 版本，而 `symfony/event-dispatcher` 的 `^4.3` 版本与 `<4.3` 版本不兼容。
-
-`hyperf/framework` 默认推荐使用 `^4.3` 版本的 `symfony/event-dispatcher`，就有一定概率导致实现上的冲突。
-
-如果有类似的情况出现，可以尝试以下操作
-
-```
-rm -rf vendor
-rm -rf composer.lock
-composer require "symfony/event-dispatcher:^4.3"
-```
-
-1.1.27 版本中，会在 `composer.json` 中添加以下配置，来处理这个问题。
-
-```
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
-```
-
 ## 使用 AMQP 组件报 `Swoole\Error: API must be called in the coroutine` 错误
 
 可以在 `config/autoload/amqp.php` 配置文件中将 `close_on_destruct` 改为 `false` 即可。
@@ -105,3 +114,17 @@ composer require "symfony/event-dispatcher:^4.3"
 使用 Swoole 4.5 版本和 view 组件如果出现接口 404 的问题，可以尝试删除 `config/autoload/server.php` 文件中的 `static_handler_locations` 配置项。
 
 此配置下的路径都会被认为是静态文件路由，所以如果配置了`/`，就会导致所有接口都会被认为是文件路径，导致接口 404。
+
+## 代码不生效
+
+当碰到修改后的代码不生效的问题，请执行以下命令
+
+```bash
+composer dump-autoload -o
+```
+
+开发阶段，请不要设置 `scan_cacheable` 为 `true`，它会导致 `收集器缓存` 存在时，不会再次扫描文件。另外，官方骨架包中的 `Dockerfile` 是默认开启这个配置的，`Docker` 环境下开发的同学，请注意这里。
+
+> 当环境变量存在 SCAN_CACHEABLE 时，.env 中无法修改这个配置。
+
+`2.0.0` 和 `2.0.1` 两个版本，判断文件是否修改时，没有判断修改时间相等的情况，所以文件修改后，立马生成缓存的情况（比如使用 `watcher` 组件时）,会导致代码无法及时生效。

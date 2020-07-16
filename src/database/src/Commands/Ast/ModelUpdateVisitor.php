@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -81,13 +81,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected $properties = [];
 
     /**
-     * @deprecated v2.0
      * @var ClassReflector
      */
     protected static $reflector;
 
     /**
-     * @deprecated v2.0
      * @var FindReturnType
      */
     protected static $return;
@@ -187,6 +185,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $doc = '/**' . PHP_EOL;
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
+            if (array_key_exists($name, $this->properties)) {
+                continue;
+            }
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {

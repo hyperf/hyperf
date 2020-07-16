@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,6 +24,7 @@ use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Utils\Str;
 use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -141,5 +142,33 @@ class SessionMiddlewareTest extends TestCase
         $this->assertSame($path, $result);
         $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1&bar=foo')))]);
         $this->assertSame($path, $result);
+    }
+
+    public function testAddCookieToResponse()
+    {
+        $config = Mockery::mock(ConfigInterface::class);
+        $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('addCookieToResponse');
+        $method->setAccessible(true);
+        $request = new Request('GET', new Uri('http://hyperf.io'));
+        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class), $id = Str::random(40));
+        $response = new Response();
+        /** @var Response $response */
+        $response = $method->invokeArgs($middleware, [$request, $response, $session]);
+        $cookie = $response->getCookies();
+        $this->assertSame($id, $response->getCookies()['hyperf.io']['/']['test']->getValue());
+        $setCookieString = $response->getCookies()['hyperf.io']['/']['test']->__toString();
+
+        $request = new Request('GET', new Uri('http://hyperf.io'));
+        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class), $id);
+        $response = Mockery::mock(ResponseInterface::class);
+        $response->shouldReceive('withHeader')->once()->andReturnUsing(function ($key, $value) use ($setCookieString, $response) {
+            $this->assertSame('Set-Cookie', $key);
+            $this->assertSame($setCookieString, $value);
+            return $response;
+        });
+        $method->invokeArgs($middleware, [$request, $response, $session]);
     }
 }
