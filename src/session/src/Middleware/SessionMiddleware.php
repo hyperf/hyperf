@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -115,12 +115,12 @@ class SessionMiddleware implements MiddlewareInterface
         $domain = $uri->getHost();
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
+        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
         if (! method_exists($response, 'withCookie')) {
-            // @TODO Adapte original response object.
-            throw new \RuntimeException('Unsupport response object.');
+            return $response->withHeader('Set-Cookie', (string) $cookie);
         }
         /* @var \Hyperf\HttpMessage\Server\Response $response */
-        return $response->withCookie(new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly));
+        return $response->withCookie($cookie);
     }
 
     /**

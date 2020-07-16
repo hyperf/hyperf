@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -13,15 +13,11 @@ namespace Hyperf\Watcher;
 
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
-use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Watcher\Ast\Metadata;
-use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use Hyperf\Watcher\Driver\DriverInterface;
-use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use Roave\BetterReflection\BetterReflection;
@@ -83,11 +79,6 @@ class Watcher
     protected $config;
 
     /**
-     * @var Ast
-     */
-    protected $ast;
-
-    /**
      * @var Standard
      */
     protected $printer;
@@ -114,7 +105,6 @@ class Watcher
         $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
         $this->config = ScanConfig::instance('/');
-        $this->ast = new Ast();
         $this->printer = new Standard();
         $this->channel = new Channel(1);
         $this->channel->push(true);
@@ -122,6 +112,7 @@ class Watcher
 
     public function run()
     {
+        $this->dumpautoload();
         $this->restart(true);
 
         $channel = new Channel(999);
@@ -138,16 +129,19 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $meta = $this->getMetadata($file);
-                if ($meta) {
-                    $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
-                    if ($ret['code'] === 0) {
-                        $this->output->writeln('Class reload success.');
-                    }
+                $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
+                if ($ret['code'] === 0) {
+                    $this->output->writeln('Class reload success.');
                 }
                 $result[] = $file;
             }
         }
+    }
+
+    public function dumpautoload()
+    {
+        $ret = System::exec('composer dump-autoload -o --no-scripts');
+        $this->output->writeln($ret['output'] ?? '');
     }
 
     public function restart($isStart = true)
@@ -157,7 +151,9 @@ class Watcher
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                Process::kill((int) $pid, SIGTERM);
+                if (Process::kill((int) $pid, 0)) {
+                    Process::kill((int) $pid, SIGTERM);
+                }
             } catch (\Throwable $exception) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
             }
@@ -173,25 +169,11 @@ class Watcher
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' vendor/bin/watcher.php start', $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);
         });
-    }
-
-    protected function getMetadata(string $file): ?Metadata
-    {
-        $stmts = $this->ast->parse($this->filesystem->get($file));
-        $meta = new Metadata();
-        $meta->path = $file;
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new RewriteClassNameVisitor($meta));
-        $traverser->traverse($stmts);
-        if (! $meta->isClass()) {
-            return null;
-        }
-        return $meta;
     }
 
     protected function getDriver()
