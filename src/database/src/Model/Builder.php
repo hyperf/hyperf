@@ -729,7 +729,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
