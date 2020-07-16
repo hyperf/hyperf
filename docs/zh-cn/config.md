@@ -23,6 +23,7 @@ config
 │   ├── commands.php // 用于管理自定义命令
 │   ├── consul.php // 用于管理 Consul 客户端
 │   ├── databases.php // 用于管理数据库客户端
+│   ├── dependencies.php // 用于管理 DI 的依赖关系和类对应关系
 │   ├── devtool.php // 用于管理开发者工具
 │   ├── exceptions.php // 用于管理异常处理器
 │   ├── listeners.php // 用于管理事件监听者
@@ -34,7 +35,6 @@ config
 │   └── server.php // 用于管理 Server 服务
 ├── config.php // 用于管理用户或框架的配置，如配置相对独立亦可放于 autoload 文件夹内
 ├── container.php // 负责容器的初始化，作为一个配置文件运行并最终返回一个 Psr\Container\ContainerInterface 对象
-├── dependencies.php // 用于管理 DI 的依赖关系和类对应关系
 └── routes.php // 用于管理路由
 ```
 

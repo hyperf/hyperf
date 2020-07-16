@@ -17,8 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.4",
-        "doctrine/inflector": "^1.3",
+        "doctrine/inflector": "^2.0",
         "hyperf/contract": "~2.0.0"
     },
     "require-dev": {
@@ -31,6 +30,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "ext-swoole": "Required to use methods related to swoole (>=4.5).",
         "symfony/var-dumper": "Required to use the dd function (^5.0).",
         "symfony/serializer": "Required to use SymfonyNormalizer (^5.0)",
         "symfony/property-access": "Required to use SymfonyNormalizer (^5.0)",
