@@ -47,9 +47,27 @@ class JsonRpcHttpTransporter implements TransporterInterface
      */
     private $clientFactory;
 
-    public function __construct(ClientFactory $clientFactory)
+    private $config = [
+        'connect_timeout' => 5.0,
+        'settings' => [],
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 32,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => 60.0,
+        ],
+        'recv_timeout' => 5.0,
+    ];
+
+    public function __construct(ClientFactory $clientFactory, array $config = [])
     {
         $this->clientFactory = $clientFactory;
+        $this->config = array_replace_recursive($this->config, $config);
+
+        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
+        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
     }
 
     public function send(string $data)
@@ -123,6 +141,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
     private function getEof()
     {
         return "\r\n";
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 
     /**
