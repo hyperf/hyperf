@@ -15,12 +15,13 @@ use Hyperf\JsonRpcClient\Exception\ServerException;
 use Hyperf\JsonRpcClient\Packer\JsonLengthPacker;
 use Hyperf\JsonRpcClient\Transporter\TransporterInterface;
 use HyperfTest\Stub\IdGenerator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class ClientTest extends AbstractTestCase
+class ClientTest extends TestCase
 {
     protected function tearDown()
     {
