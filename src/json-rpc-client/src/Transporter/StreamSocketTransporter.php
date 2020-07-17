@@ -13,7 +13,7 @@ namespace Hyperf\JsonRpcClient\Transporter;
 
 use Hyperf\JsonRpcClient\Exception\ConnectionException;
 
-class FpmTcpTransporter implements TransporterInterface
+class StreamSocketTransporter implements TransporterInterface
 {
     /**
      * @var null|resource
