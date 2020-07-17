@@ -216,7 +216,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             }
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
+                ->withBody(new SwooleStream((string) json_encode($response, JSON_UNESCAPED_UNICODE)));
         }
 
         if ($response instanceof Jsonable) {
