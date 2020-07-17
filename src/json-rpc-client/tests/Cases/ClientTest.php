@@ -13,8 +13,9 @@ namespace HyperfTest\JsonRpcClient\Cases;
 
 use Hyperf\JsonRpcClient\Exception\ServerException;
 use Hyperf\JsonRpcClient\Packer\JsonLengthPacker;
+use Hyperf\JsonRpcClient\Transporter\FpmTcpTransporter;
 use Hyperf\JsonRpcClient\Transporter\TransporterInterface;
-use HyperfTest\Stub\IdGenerator;
+use HyperfTest\JsonRpcClient\Stub\IdGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,6 +28,19 @@ class ClientTest extends TestCase
     {
         \Mockery::close();
     }
+
+    // public function testRealCall()
+    // {
+    //     $client = new IdGenerator('IdGenerateService', new FpmTcpTransporter('127.0.0.1', 9502), new JsonLengthPacker());
+    //
+    //     $ret = $client->id($id = uniqid());
+    //     $this->assertStringContainsString($id, $ret);
+    //
+    //     $this->expectException(ServerException::class);
+    //     $this->expectExceptionCode(500);
+    //     $this->expectExceptionMessage('Inner Server Error');
+    //     $client->exception();
+    // }
 
     public function testSendAndRecv()
     {

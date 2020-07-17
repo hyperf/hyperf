@@ -13,7 +13,7 @@ namespace Hyperf\JsonRpcClient\Transporter;
 
 use Hyperf\JsonRpcClient\Exception\ConnectionException;
 
-class TcpTransporter implements TransporterInterface
+class FpmTcpTransporter implements TransporterInterface
 {
     /**
      * @var null|resource
@@ -30,10 +30,16 @@ class TcpTransporter implements TransporterInterface
      */
     protected $port;
 
-    public function __construct(string $ip, int $port)
+    /**
+     * @var float
+     */
+    protected $timeout;
+
+    public function __construct(string $ip, int $port, float $timeout = 1.0)
     {
         $this->ip = $ip;
         $this->port = $port;
+        $this->timeout = $timeout;
 
         $this->connect();
     }
@@ -59,9 +65,10 @@ class TcpTransporter implements TransporterInterface
             fclose($this->client);
             unset($this->client);
         }
-        $client = stream_socket_client("tcp://{$this->ip}:{$this->port}");
+
+        $client = stream_socket_client("tcp://{$this->ip}:{$this->port}", $errno, $errstr, $this->timeout);
         if ($client === false) {
-            throw new ConnectionException('Connect failed.');
+            throw new ConnectionException(sprintf('[%d] %s', $errno, $errstr));
         }
 
         $this->client = $client;
