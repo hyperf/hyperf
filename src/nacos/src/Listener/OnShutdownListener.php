@@ -48,10 +48,10 @@ class OnShutdownListener implements ListenerInterface
         }
 
         $logger = $this->container->get(LoggerFactory::class)->get('nacos');
-        /** @var NacosService $nacos_service */
-        $nacos_service = $this->container->get(NacosService::class);
+        /** @var NacosService $nacosService */
+        $nacosService = $this->container->get(NacosService::class);
         $service = $this->container->get(ThisService::class);
-        $deleted = $nacos_service->delete($service);
+        $deleted = $nacosService->delete($service);
 
         if ($deleted) {
             $logger->info('nacos service delete success!');
@@ -60,11 +60,9 @@ class OnShutdownListener implements ListenerInterface
         }
 
         $instance = $this->container->get(ThisInstance::class);
-        /** @var NacosInstance $nacos_instance */
-        $nacos_instance = make(NacosInstance::class);
-        $deleted_instance = $nacos_instance->delete($instance);
-
-        if ($deleted_instance) {
+        /** @var NacosInstance $nacosInstance */
+        $nacosInstance = make(NacosInstance::class);
+        if ($nacosInstance->delete($instance)) {
             $logger->info('nacos instance delete success!');
         } else {
             $logger->erro('nacos instance delete fail when shutdown!');

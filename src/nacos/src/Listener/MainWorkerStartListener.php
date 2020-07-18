@@ -14,7 +14,7 @@ namespace Hyperf\Nacos\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BootApplication;
+use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Lib\NacosInstance;
@@ -23,7 +23,7 @@ use Hyperf\Nacos\ThisInstance;
 use Hyperf\Nacos\ThisService;
 use Psr\Container\ContainerInterface;
 
-class BootAppConfListener implements ListenerInterface
+class MainWorkerStartListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -44,7 +44,7 @@ class BootAppConfListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BootApplication::class,
+            MainWorkerStart::class,
         ];
     }
 

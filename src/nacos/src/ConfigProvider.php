@@ -13,7 +13,7 @@ namespace Hyperf\Nacos;
 
 use Hyperf\Nacos\Config\FetchConfigProcess;
 use Hyperf\Nacos\Config\OnPipeMessageListener;
-use Hyperf\Nacos\Listener\BootAppConfListener;
+use Hyperf\Nacos\Listener\MainWorkerStartListener;
 use Hyperf\Nacos\Listener\OnShutdownListener;
 use Hyperf\Nacos\Process\InstanceBeatProcess;
 
@@ -24,7 +24,7 @@ class ConfigProvider
         return [
             'commands' => [],
             'listeners' => [
-                BootAppConfListener::class,
+                MainWorkerStartListener::class,
                 OnShutdownListener::class,
                 OnPipeMessageListener::class,
             ],
