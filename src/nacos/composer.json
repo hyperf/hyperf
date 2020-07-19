@@ -1,6 +1,6 @@
 {
     "name": "hyperf/nacos",
-    "description": "A PHP implementation of Nacos OpenAPI.",
+    "description": "A PHP implementation of Nacos OpenAPI, particularly adapt for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
