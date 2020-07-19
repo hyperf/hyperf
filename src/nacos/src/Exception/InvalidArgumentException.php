@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Exception;
 
-class InvalidArgumentException extends RuntimeException
+class InvalidArgumentException extends \InvalidArgumentException implements NacosThrowable
 {
 }

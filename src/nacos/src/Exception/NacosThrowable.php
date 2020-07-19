@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Exception;
 
-class RuntimeException extends \RuntimeException implements NacosThrowable
+use Throwable;
+
+interface NacosThrowable extends Throwable
 {
 }
