@@ -13,29 +13,66 @@ namespace Hyperf\Nacos\Model;
 
 class InstanceModel extends AbstractModel
 {
+
+    /**
+     * @var string
+     */
     public $serviceName;
 
+    /**
+     * @var string
+     */
     public $groupName;
 
+    /**
+     * @var string
+     */
     public $ip;
 
+    /**
+     * @var int
+     */
     public $port;
 
+    /**
+     * @var string
+     */
     public $clusterName;
 
+    /**
+     * @var string
+     */
     public $namespaceId;
 
+    /**
+     * @var double|float|int
+     */
     public $weight;
 
+    /**
+     * @var string
+     */
     public $metadata;
 
+    /**
+     * @var bool
+     */
     public $enabled;
 
+    /**
+     * @var bool
+     */
     public $ephemeral;
 
+    /**
+     * @var bool
+     */
     public $healthy;
 
-    public $required_field = [
+    /**
+     * @var string[]
+     */
+    public $requiredFields = [
         'ip',
         'port',
         'serviceName',

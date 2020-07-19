@@ -11,15 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Model;
 
-abstract class AbstractModel
+use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\Str;
+
+abstract class AbstractModel implements Arrayable
 {
-    public $required_field = [];
+    /**
+     * @var array
+     */
+    public $requiredFields = [];
 
     public function __construct($config = [])
     {
-        foreach ($config as $key => $val) {
+        foreach ($config as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->{$key} = $val;
+                $key = Str::camel($key);
+                $this->{$key} = $value;
             }
         }
     }
@@ -29,28 +36,28 @@ abstract class AbstractModel
         return http_build_query($this->getParams());
     }
 
-    public function getParams()
+    public function getParams(): array
     {
         $params = array_filter(get_object_vars($this), function ($item) {
             return $item !== null;
         });
         unset($params['required_field']);
-        $intersect = array_intersect(array_keys($params), $this->required_field);
-        sort($this->required_field);
+        $intersect = array_intersect(array_keys($params), $this->requiredFields);
+        sort($this->requiredFields);
         sort($intersect);
-        if ($intersect !== $this->required_field) {
-            throw new \Exception('缺少关键信息' . implode(',', $this->required_field));
+        if ($intersect !== $this->requiredFields) {
+            throw new \Exception('Missing key information ' . implode(',', $this->requiredFields));
         }
 
         return $params;
     }
 
-    public function toJson()
+    public function toJson(): string
     {
         return json_encode($this->getParams());
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return $this->getParams();
     }

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Lib;
+namespace Hyperf\Nacos\Api;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\Model\ConfigModel;
@@ -23,7 +23,7 @@ class NacosConfig extends AbstractNacos
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
 
-        return $configModel->parser($response->getBody()->getContents());
+        return $configModel->parse($response->getBody()->getContents());
     }
 
     public function set(ConfigModel $configModel): array
@@ -37,7 +37,9 @@ class NacosConfig extends AbstractNacos
 
     public function delete(ConfigModel $configModel): array
     {
-        $response = $this->request('DELETE', '/nacos/v1/cs/configs');
+        $response = $this->request('DELETE', '/nacos/v1/cs/configs', [
+            RequestOptions::QUERY => $configModel->toArray(),
+        ]);
 
         return Json::decode($response->getBody()->getContents());
     }

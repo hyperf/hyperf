@@ -19,12 +19,16 @@ use Swoole\Server;
 
 class FetchConfigProcess extends AbstractProcess
 {
+
+    /**
+     * @var string
+     */
     public $name = 'nacos-fetch-config';
 
     /**
      * @var CoServer|Server
      */
-    private $server;
+    protected $server;
 
     public function bind($server): void
     {
@@ -39,13 +43,13 @@ class FetchConfigProcess extends AbstractProcess
         $config = $this->container->get(ConfigInterface::class);
         $client = $this->container->get(Client::class);
         while (true) {
-            $remote_config = $client->pull();
-            if ($remote_config != $cache) {
-                $pipe_message = new PipeMessage($remote_config);
+            $remoteConfig = $client->pull();
+            if ($remoteConfig != $cache) {
+                $pipeMessage = new PipeMessage($remoteConfig);
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($pipe_message, $workerId);
+                    $this->server->sendMessage($pipeMessage, $workerId);
                 }
-                $cache = $remote_config;
+                $cache = $remoteConfig;
             }
             sleep((int) $config->get('nacos.config_reload_interval', 3));
         }

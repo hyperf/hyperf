@@ -14,11 +14,11 @@ namespace Hyperf\Nacos\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
-use Hyperf\Logger\LoggerFactory;
-use Hyperf\Nacos\Lib\NacosInstance;
-use Hyperf\Nacos\Lib\NacosService;
-use Hyperf\Nacos\ThisInstance;
-use Hyperf\Nacos\ThisService;
+use Hyperf\Nacos\Contract\LoggerInterface;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Api\NacosService;
+use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Service;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -43,29 +43,29 @@ class OnShutdownListener implements ListenerInterface
     public function process(object $event)
     {
         $config = $this->container->get(ConfigInterface::class);
-        if (! $config->get('nacos.delete_service_when_shutdown', false)) {
+        if (! $config->get('nacos.remove_node_when_server_shutdown', false)) {
             return;
         }
 
-        $logger = $this->container->get(LoggerFactory::class)->get('nacos');
+        $logger = $this->container->get(LoggerInterface::class);
         /** @var NacosService $nacosService */
         $nacosService = $this->container->get(NacosService::class);
-        $service = $this->container->get(ThisService::class);
+        $service = $this->container->get(Service::class);
         $deleted = $nacosService->delete($service);
 
         if ($deleted) {
-            $logger->info('nacos service delete success!');
+            $logger && $logger->info('nacos service delete success.');
         } else {
-            $logger->erro('nacos service delete fail when shutdown!');
+            $logger && $logger->erro('nacos service delete fail when shutdown.');
         }
 
-        $instance = $this->container->get(ThisInstance::class);
+        $instance = $this->container->get(Instance::class);
         /** @var NacosInstance $nacosInstance */
         $nacosInstance = make(NacosInstance::class);
         if ($nacosInstance->delete($instance)) {
-            $logger->info('nacos instance delete success!');
+            $logger && $logger->info('nacos instance delete success.');
         } else {
-            $logger->erro('nacos instance delete fail when shutdown!');
+            $logger && $logger->erro('nacos instance delete fail when shutdown.');
         }
     }
 }

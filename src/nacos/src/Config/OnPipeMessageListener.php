@@ -21,7 +21,7 @@ class OnPipeMessageListener implements ListenerInterface
     /**
      * @var ConfigInterface
      */
-    private $config;
+    protected $config;
 
     public function __construct(ContainerInterface $container)
     {

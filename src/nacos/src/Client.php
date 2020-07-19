@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Lib\NacosConfig;
+use Hyperf\Nacos\Api\NacosConfig;
 use Hyperf\Nacos\Model\ConfigModel;
 use Psr\Container\ContainerInterface;
 
@@ -48,7 +48,7 @@ class Client
         foreach ($listener as $item) {
             $model = new ConfigModel($item);
             if ($content = $this->client->get($model)) {
-                $config = array_merge_recursive($config, $model->parser($content));
+                $config = array_merge_recursive($config, $model->parse($content));
             }
         }
 

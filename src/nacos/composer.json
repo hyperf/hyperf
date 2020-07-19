@@ -1,6 +1,6 @@
 {
     "name": "hyperf/nacos",
-    "description": "nacos php sdk with hyperf framework",
+    "description": "A PHP implementation of Nacos OpenAPI.",
     "license": "MIT",
     "keywords": [
         "php",
@@ -22,21 +22,21 @@
         }
     },
     "require": {
-        "ext-json": "*",
-        "ext-simplexml": "*",
-        "ext-yaml": "*",
-        "hyperf/config": "~2.0.0",
         "hyperf/contract": "~2.0.0",
-        "hyperf/event": "~2.0.0",
-        "hyperf/framework": "~2.0.0",
         "hyperf/guzzle": "~2.0.0",
-        "hyperf/http-server": "~2.0.0",
-        "hyperf/load-balancer": "~2.0.0",
-        "hyperf/logger": "~2.0.0",
-        "hyperf/process": "~2.0.0",
+        "hyperf/load-balanscer": "~2.0.0",
         "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
+    },
+    "suggest": {
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "ext-yaml": "*",
+        "hyperf/event": "~2.0.0",
+        "hyperf/process": "~2.0.0",
+        "hyperf/framework": "~2.0.0",
+        "hyperf/logger": "~2.0.0"
     },
     "config": {
         "sort-packages": true

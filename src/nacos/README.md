@@ -1,9 +1,11 @@
-### hyperf-nacos
-> Hyperf 框架下关于 Nacos 微服务的 php SDK
+### Naco
+
+一个 Nacos 的 PHP 协程客户端，特别适用于 Hyperf，与 Hyperf 的配置中心、微服务治理完美结合。
 
 #### 安装
+
 ```shell
-composer require hyperf/hyperf-nacos
+composer require hyperf/nacos
 ```
 
 #### 发布配置文件
@@ -13,33 +15,34 @@ php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 ```
 
 #### 目录结构
-```shell
+
+```
 ./src
-├── Config   配置的自动更新
+├── Config
 │   ├── FetchConfigProcess.php
 │   ├── OnPipeMessageListener.php
 │   └── PipeMessage.php
-├── ConfigProvider.php   Hyperf扩展配置
-├── Helper   辅助函数
+├── ConfigProvider.php
+├── Helper
 │   └── func.php
-├── Lib   Nacos Api 封装
+├── Lib
 │   ├── AbstractNacos.php
 │   ├── NacosConfig.php
 │   ├── NacosInstance.php
 │   ├── NacosOperator.php
 │   └── NacosService.php
 ├── Listener  
-│   ├── BootAppConfListener.php   启动时自动注册
-│   └── OnShutdownListener.php   关闭服务时自动注销
-├── Model   领域模型
+│   ├── BootAppConfListener.php
+│   └── OnShutdownListener.php
+├── Model
 │   ├── AbstractModel.php
 │   ├── ConfigModel.php
 │   ├── InstanceModel.php
 │   └── ServiceModel.php
-├── Process   心跳
+├── Process
 │   └── InstanceBeatProcess.php
-├── ThisInstance.php   当前节点
-├── ThisService.php   当前服务
+├── ThisInstance.php
+├── ThisService.php
 └── Util
     ├── Guzzle.php
     └── RemoteConfig.php
@@ -47,9 +50,9 @@ php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 
 ### 服务与实例
 
-`BootAppConfListener.php` 将在系统启动完成时自动完成`实例注册`, `服务注册` 
+`BootAppConfListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册` 
 
-如果需要在服务下线时自动注销服务, 请增加如下配置, 以监听 `Shutdown` 事件
+如果需要在服务下线时自动注销服务，请增加如下配置，以监听 `Shutdown` 事件
 
 ```php
 // config/autoload/server.php
@@ -81,9 +84,9 @@ $service = new ThisService();
 $instance = make(NacosInstance::class);
 
 $service = new ServiceModel([
-    'serviceName' => 'hyperf',
-    'groupName' => 'api',
-    'namespaceId' => '5ce9d1c1-6732-4ccc-ae1f-5139af86a845'
+    'service_name' => 'hyperf',
+    'group_name' => 'api',
+    'namespace_id' => '5ce9d1c1-6732-4ccc-ae1f-5139af86a845'
 ]);
 
 $optimal = $instance->getOptimal($service);
@@ -108,19 +111,15 @@ return [
     'listener_config' => [
         // 配置项 dataId, group, tenant, type, content
         [
-            'dataId' => 'hyperf-service-config',
+            'data_id' => 'hyperf-service-config',
             'group' => 'DEFAULT_GROUP',
         ],
         [
-            'dataId' => 'hyperf-service-config-yml',
+            'data_id' => 'hyperf-service-config-yml',
             'group' => 'DEFAULT_GROUP',
             'type' => 'yml',
         ],
     ],
 ];
 ```
-系统将自动监听`listener_config` 中的配置, 并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点, 可以用`config('nacos_conf.***')` 获取, 若没有配置 `config_append_node` 项, 将会并入 `Config` 对象根节点. 
-
-#### 依赖扩展
-
-`ext-json`, `ext-yaml`, `ext-simplexml`
+系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_conf.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。

@@ -12,31 +12,34 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Process;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Logger\LoggerFactory;
-use Hyperf\Nacos\Lib\NacosInstance;
-use Hyperf\Nacos\ThisInstance;
-use Hyperf\Nacos\ThisService;
+use Hyperf\Nacos\Contract\LoggerInterface;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Service;
 use Hyperf\Process\AbstractProcess;
 
 class InstanceBeatProcess extends AbstractProcess
 {
+    /**
+     * @var string
+     */
     public $name = 'nacos-beat';
 
     public function handle(): void
     {
-        $instance = $this->container->get(ThisInstance::class);
+        $instance = $this->container->get(Instance::class);
         $nacosInstance = $this->container->get(NacosInstance::class);
-        $service = $this->container->get(ThisService::class);
+        $service = $this->container->get(Service::class);
 
         $config = $this->container->get(ConfigInterface::class);
-        $logger = $this->container->get(LoggerFactory::class)->get('nacos');
+        $logger = $this->container->get(LoggerInterface::class);
         while (true) {
-            sleep($config->get('nacos.client.beatInterval', 5));
+            sleep($config->get('nacos.client.beat_interval', 5));
             $send = $nacosInstance->beat($service, $instance);
             if ($send) {
-                $logger->info('nacos send beat success!', compact('instance'));
+                $logger && $logger->info('nacos send beat success!', compact('instance'));
             } else {
-                $logger->error('nacos send beat fail!', compact('instance'));
+                $logger && $logger->error('nacos send beat fail!', compact('instance'));
             }
         }
     }
@@ -44,6 +47,6 @@ class InstanceBeatProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $config->get('nacos.client.beatEnable', false);
+        return $config->get('nacos.client.beat_enable', false);
     }
 }

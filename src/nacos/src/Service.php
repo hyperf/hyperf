@@ -14,7 +14,7 @@ namespace Hyperf\Nacos;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Model\ServiceModel;
 
-class ThisService extends ServiceModel
+class Service extends ServiceModel
 {
     public function __construct(ConfigInterface $config)
     {

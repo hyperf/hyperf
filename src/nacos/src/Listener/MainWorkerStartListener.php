@@ -17,10 +17,10 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
-use Hyperf\Nacos\Lib\NacosInstance;
-use Hyperf\Nacos\Lib\NacosService;
-use Hyperf\Nacos\ThisInstance;
-use Hyperf\Nacos\ThisService;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Api\NacosService;
+use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Service;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -56,26 +56,26 @@ class MainWorkerStartListener implements ListenerInterface
             return;
         }
 
-        $instance = $this->container->get(ThisInstance::class);
+        $instance = $this->container->get(Instance::class);
         $nacosInstance = $this->container->get(NacosInstance::class);
         if (! $nacosInstance->register($instance)) {
-            throw new RuntimeException("nacos register instance fail: {$instance}");
+            throw new RuntimeException(sprintf('nacos register instance fail: %s', $instance));
         }
-        $this->logger->info('nacos register instance success!', compact('instance'));
+        $this->logger->info('nacos register instance success.', compact('instance'));
 
         $nacosService = $this->container->get(NacosService::class);
-        $service = $this->container->get(ThisService::class);
+        $service = $this->container->get(Service::class);
         $exist = $nacosService->detail($service);
         if (! $exist && ! $nacosService->create($service)) {
-            throw new RuntimeException("nacos register service fail: {$service}");
+            throw new RuntimeException(sprintf('nacos register service fail: %s', $service));
         }
-        $this->logger->info('nacos register service success!', compact('service'));
+        $this->logger->info('nacos register service success.', compact('service'));
 
         $client = $this->container->get(Client::class);
         $config = $this->container->get(ConfigInterface::class);
-        $append_node = $config->get('nacos.config_append_node');
+        $appendNode = $config->get('nacos.config_append_node');
         foreach ($client->pull() as $key => $conf) {
-            $config->set($append_node ? $append_node . '.' . $key : $key, $conf);
+            $config->set($appendNode ? $appendNode . '.' . $key : $key, $conf);
         }
     }
 }

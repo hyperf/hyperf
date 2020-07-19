@@ -13,17 +13,41 @@ namespace Hyperf\Nacos\Model;
 
 class ServiceModel extends AbstractModel
 {
+    /**
+     * @var string
+     */
     public $serviceName;
 
+    /**
+     * @var string
+     */
     public $groupName;
 
+    /**
+     * @var string
+     */
     public $namespaceId;
 
-    public $protectThreshold = 0;
+    /**
+     * Between 0 to 1.
+     * @var float
+     */
+    public $protectThreshold = 0.0;
 
+    /**
+     * @var string
+     */
     public $metadata;
 
+    /**
+     * A JSON string.
+     *
+     * @var string
+     */
     public $selector;
 
-    public $required_field = ['serviceName'];
+    /**
+     * @var string[]
+     */
+    public $requiredFields = ['serviceName'];
 }

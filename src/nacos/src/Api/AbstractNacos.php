@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Lib;
+namespace Hyperf\Nacos\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -45,7 +45,7 @@ abstract class AbstractNacos
         return sprintf(
             '%s:%d',
             $this->config->get('nacos.host', '127.0.0.1'),
-            $this->config->get('nacos.port', 8848)
+            (int) $this->config->get('nacos.port', 8848)
         );
     }
 

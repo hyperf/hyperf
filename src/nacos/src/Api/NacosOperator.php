@@ -9,8 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Lib;
+namespace Hyperf\Nacos\Api;
 
+use GuzzleHttp\RequestOptions;
 use Hyperf\Utils\Codec\Json;
 
 class NacosOperator extends AbstractNacos
@@ -22,11 +23,14 @@ class NacosOperator extends AbstractNacos
         return Json::decode($response->getBody()->getContents());
     }
 
-    public function updateSwitches($entry, $value, $debug = false): array
+    public function updateSwitches($entry, $value, bool $debug = false): array
     {
-        $_debug = $debug ? 'true' : 'false';
+        $debug = $debug ? 'true' : 'false';
+        $params = compact('entry', 'value', 'debug');
 
-        $response = $this->request('PUT', "/nacos/v1/ns/operator/switches?entry={$entry}&value={$value}&debug={$_debug}");
+        $response = $this->request('PUT', '/nacos/v1/ns/operator/switches', [
+            RequestOptions::QUERY => $params,
+        ]);
 
         return Json::decode($response->getBody()->getContents());
     }
@@ -40,9 +44,12 @@ class NacosOperator extends AbstractNacos
 
     public function getServers($healthy = true): array
     {
-        $_healthy = $healthy ? 'true' : 'false';
+        $healthy = $healthy ? 'true' : 'false';
+        $params = compact('healthy');
 
-        $response = $this->request('GET', "/nacos/v1/ns/operator/servers?healthy={$_healthy}");
+        $response = $this->request('GET', '/nacos/v1/ns/operator/servers', [
+            RequestOptions::QUERY => $params,
+        ]);
 
         return Json::decode($response->getBody()->getContents());
     }

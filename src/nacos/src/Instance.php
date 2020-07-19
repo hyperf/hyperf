@@ -14,18 +14,20 @@ namespace Hyperf\Nacos;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Nacos\Model\InstanceModel;
+use Hyperf\Utils\Str;
 
-class ThisInstance extends InstanceModel
+class Instance extends InstanceModel
 {
     public function __construct(ConfigInterface $config)
     {
         $client = $config->get('nacos.client', []);
-        if (! isset($client['serviceName'])) {
-            throw new InvalidArgumentException('nacos.client.serviceName is required');
+        if (! isset($client['service_name'])) {
+            throw new InvalidArgumentException('nacos.client.service_name is required');
         }
 
         foreach ($client as $key => $val) {
             if (property_exists($this, $key)) {
+                $key = Str::camel($key);
                 $this->{$key} = $val;
             }
         }

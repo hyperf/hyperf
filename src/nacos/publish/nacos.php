@@ -11,40 +11,36 @@ declare(strict_types=1);
  */
 return [
     'host' => '127.0.0.1',
-    'port' => '8848',
+    'port' => 8848,
     // The service info.
-    // serviceName, groupName, namespaceId,
-    // protectThreshold, metadata, selector
     'service' => [
-        'serviceName' => 'hyperf',
-        'groupName' => 'api',
-        'namespaceId' => 'namespace_id',
-        'protectThreshold' => 0.5,
+        'service_name' => 'hyperf',
+        'group_name' => 'api',
+        'namespace_id' => 'namespace_id',
+        'protect_threshold' => 0.5,
     ],
     // The client info.
-    // serviceName, groupName, weight, enabled,
-    // healthy, metadata, clusterName, namespaceId, ephemeral
     'client' => [
-        'serviceName' => 'hyperf',
-        'groupName' => 'api',
+        'service_name' => 'hyperf',
+        'group_name' => 'api',
         'weight' => 80,
         'cluster' => 'DEFAULT',
         'ephemeral' => true,
-        'beatEnable' => true,
-        'beatInterval' => 5,
-        'namespaceId' => 'namespace_id', // It must be equal with service.namespaceId.
+        'beat_enable' => true,
+        'beat_interval' => 5,
+        'namespace_id' => 'namespace_id', // It must be equal with service.namespaceId.
     ],
-    'delete_service_when_shutdown' => true,
+    'remove_node_when_server_shutdown' => true,
     'config_reload_interval' => 3,
     'config_append_node' => 'custom',
     'listener_config' => [
         // dataId, group, tenant, type, content
         //[
-        //    'dataId' => 'hyperf-service-config',
+        //    'data_id' => 'hyperf-service-config',
         //    'group' => 'DEFAULT_GROUP',
         //],
         //[
-        //    'dataId' => 'hyperf-service-config-yml',
+        //    'data_id' => 'hyperf-service-config-yml',
         //    'group' => 'DEFAULT_GROUP',
         //    'type' => 'yml',
         //],
