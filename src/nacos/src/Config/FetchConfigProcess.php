@@ -22,7 +22,7 @@ class FetchConfigProcess extends AbstractProcess
     /**
      * @var string
      */
-    public $name = 'nacos-fetch-config';
+    public $name = 'nacos-config-fetcher';
 
     /**
      * @var CoServer|Server
