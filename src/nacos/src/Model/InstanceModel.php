@@ -13,7 +13,6 @@ namespace Hyperf\Nacos\Model;
 
 class InstanceModel extends AbstractModel
 {
-
     /**
      * @var string
      */
@@ -45,7 +44,7 @@ class InstanceModel extends AbstractModel
     public $namespaceId;
 
     /**
-     * @var double|float|int
+     * @var float|float|int
      */
     public $weight;
 

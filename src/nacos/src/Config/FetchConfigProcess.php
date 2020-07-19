@@ -19,7 +19,6 @@ use Swoole\Server;
 
 class FetchConfigProcess extends AbstractProcess
 {
-
     /**
      * @var string
      */

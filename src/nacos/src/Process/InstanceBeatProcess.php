@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Process;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Instance;
 use Hyperf\Nacos\Service;
 use Hyperf\Process\AbstractProcess;
