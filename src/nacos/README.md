@@ -18,21 +18,27 @@ php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 
 ```
 ./src
-├── Config
-│   ├── FetchConfigProcess.php
-│   ├── OnPipeMessageListener.php
-│   └── PipeMessage.php
-├── ConfigProvider.php
-├── Helper
-│   └── func.php
-├── Lib
+├── Api
 │   ├── AbstractNacos.php
 │   ├── NacosConfig.php
 │   ├── NacosInstance.php
 │   ├── NacosOperator.php
 │   └── NacosService.php
-├── Listener  
-│   ├── BootAppConfListener.php
+├── Client.php
+├── Config
+│   ├── FetchConfigProcess.php
+│   ├── OnPipeMessageListener.php
+│   └── PipeMessage.php
+├── ConfigProvider.php
+├── Contract
+│   └── LoggerInterface.php
+├── Exception
+│   ├── InvalidArgumentException.php
+│   ├── NacosThrowable.php
+│   └── RuntimeException.php
+├── Instance.php
+├── Listener
+│   ├── MainWorkerStartListener.php
 │   └── OnShutdownListener.php
 ├── Model
 │   ├── AbstractModel.php
@@ -41,11 +47,7 @@ php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 │   └── ServiceModel.php
 ├── Process
 │   └── InstanceBeatProcess.php
-├── ThisInstance.php
-├── ThisService.php
-└── Util
-    ├── Guzzle.php
-    └── RemoteConfig.php
+└── Service.php
 ```
 
 ### 服务与实例
@@ -69,13 +71,13 @@ return [
 #### 获取当前实例
 
 ```php
-$instance = new ThisInstance();
+$instance = new \Hyperf\Nacos\Instance();
 ```
 
 #### 获取当前服务
 
 ```php
-$service = new ThisService();
+$service = new \Hyperf\Nacos\Service();
 ```
 
 #### 获取一个服务的最优节点
@@ -107,7 +109,7 @@ return [
     // ...other
     'config_reload_interval' => 3,
     // 远程配置合并节点, 默认 config 根节点
-    'config_append_node' => 'nacos_conf',
+    'config_append_node' => 'nacos_config',
     'listener_config' => [
         // 配置项 dataId, group, tenant, type, content
         [
@@ -122,4 +124,6 @@ return [
     ],
 ];
 ```
-系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_conf.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。
+系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_config.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。
+
+> 所有配置的 `键(key)` 在实际发起 API 请求时会自动从下划线风格转换为驼峰风格。

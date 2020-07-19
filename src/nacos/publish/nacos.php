@@ -32,7 +32,7 @@ return [
     ],
     'remove_node_when_server_shutdown' => true,
     'config_reload_interval' => 3,
-    'config_append_node' => 'custom',
+    'config_append_node' => 'nacos_config',
     'listener_config' => [
         // dataId, group, tenant, type, content
         //[
