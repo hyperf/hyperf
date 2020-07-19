@@ -35,7 +35,7 @@ class ConfigModel extends AbstractModel
             case 'json':
                 return is_array($config_origin) ? $config_origin : json_decode($config_origin, true);
             case 'yml':
-                return yaml_parse($config_origin);
+                return is_array($config_origin) ? $config_origin : yaml_parse($config_origin);
             case 'xml':
                 return Xml::toArray($config_origin);
             default:

@@ -26,6 +26,7 @@ return [
     // healthy, metadata, clusterName, namespaceId, ephemeral
     'client' => [
         'serviceName' => 'hyperf',
+        'groupName' => 'api',
         'weight' => 80,
         'cluster' => 'DEFAULT',
         'ephemeral' => true,
@@ -38,15 +39,15 @@ return [
     'config_append_node' => 'custom',
     'listener_config' => [
         // dataId, group, tenant, type, content
-        [
-            'dataId' => 'hyperf-service-config',
-            'group' => 'DEFAULT_GROUP',
-        ],
-        [
-            'dataId' => 'hyperf-service-config-yml',
-            'group' => 'DEFAULT_GROUP',
-            'type' => 'yml',
-        ],
+        //[
+        //    'dataId' => 'hyperf-service-config',
+        //    'group' => 'DEFAULT_GROUP',
+        //],
+        //[
+        //    'dataId' => 'hyperf-service-config-yml',
+        //    'group' => 'DEFAULT_GROUP',
+        //    'type' => 'yml',
+        //],
     ],
     'load_balancer' => 'random',
 ];

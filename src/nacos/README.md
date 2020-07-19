@@ -3,13 +3,13 @@
 
 #### 安装
 ```shell
-composer require daodao97/hyperf-nacos
+composer require hyperf/hyperf-nacos
 ```
 
 #### 发布配置文件
 
 ```shell
-php bin/hyperf.php vendor:publish daodao97/hyperf-nacos
+php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 ```
 
 #### 目录结构
