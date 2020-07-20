@@ -24,8 +24,8 @@ abstract class AbstractModel implements Arrayable
     public function __construct($config = [])
     {
         foreach ($config as $key => $value) {
+            $key = Str::camel($key);
             if (property_exists($this, $key)) {
-                $key = Str::camel($key);
                 $this->{$key} = $value;
             }
         }

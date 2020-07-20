@@ -52,7 +52,7 @@ php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
 
 ### 服务与实例
 
-`BootAppConfListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册` 
+`MainWorkerStartListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册` 
 
 如果需要在服务下线时自动注销服务，请增加如下配置，以监听 `Shutdown` 事件
 

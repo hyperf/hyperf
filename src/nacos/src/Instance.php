@@ -26,8 +26,8 @@ class Instance extends InstanceModel
         }
 
         foreach ($client as $key => $val) {
+            $key = Str::camel($key);
             if (property_exists($this, $key)) {
-                $key = Str::camel($key);
                 $this->{$key} = $val;
             }
         }
