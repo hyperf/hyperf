@@ -472,10 +472,11 @@ class Connection implements ConnectionInterface
      * @param string $query
      * @param array $bindings
      * @param null|float $time
+     * @param array $result
      */
-    public function logQuery($query, $bindings, $time = null)
+    public function logQuery($query, $bindings, $time = null, $result)
     {
-        $this->event(new QueryExecuted($query, $bindings, $time, $this));
+        $this->event(new QueryExecuted($query, $bindings, $time, $this, $result));
 
         if ($this->loggingQueries) {
             $this->queryLog[] = compact('query', 'bindings', 'time');
@@ -1047,12 +1048,13 @@ class Connection implements ConnectionInterface
         }
 
         // Once we have run the query we will calculate the time that it took to run and
-        // then log the query, bindings, and execution time so we will report them on
+        // then log the query, bindings, result and execution time so we will report them on
         // the event that the developer needs them. We'll log time in milliseconds.
         $this->logQuery(
             $query,
             $bindings,
-            $this->getElapsedTime($start)
+            $this->getElapsedTime($start),
+            $result
         );
 
         return $result;

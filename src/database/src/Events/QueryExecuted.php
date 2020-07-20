@@ -51,6 +51,13 @@ class QueryExecuted
     public $connectionName;
 
     /**
+     * The result of query.
+     *
+     * @var array
+     */
+    public $result;
+
+    /**
      * Create a new event instance.
      *
      * @param string $sql
@@ -58,12 +65,13 @@ class QueryExecuted
      * @param null|float $time
      * @param ConnectionInterface $connection
      */
-    public function __construct($sql, $bindings, $time, $connection)
+    public function __construct($sql, $bindings, $time, $connection, $result)
     {
         $this->sql = $sql;
         $this->time = $time;
         $this->bindings = $bindings;
         $this->connection = $connection;
         $this->connectionName = $connection->getName();
+        $this->result = $result;
     }
 }
