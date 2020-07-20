@@ -1086,11 +1086,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Get the elapsed time since a given starting point.
-     *
-     * @param int $start
-     * @return float
      */
-    protected function getElapsedTime($start)
+    protected function getElapsedTime(float $start): float
     {
         return round((microtime(true) - $start) * 1000, 2);
     }

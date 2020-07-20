@@ -1,5 +1,9 @@
 # v2.0.4 - TBD
 
+## Added
+
+- [#2144](https://github.com/hyperf/hyperf/pull/2144) Added filed `$result` for `QueryExecuted`.
+
 # v2.0.3 - 2020-07-20
 
 ## Added
