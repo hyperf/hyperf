@@ -53,14 +53,15 @@ class QueryExecuted
     /**
      * The result of query.
      *
-     * @var array
+     * @var null|array|int|\Throwable
      */
     public $result;
 
     /**
      * Create a new event instance.
+     * @param null|array|int|\Throwable $result
      */
-    public function __construct(string $sql, array $bindings, ?float $time, ConnectionInterface $connection, array $result)
+    public function __construct(string $sql, array $bindings, ?float $time, ConnectionInterface $connection, $result = null)
     {
         $this->sql = $sql;
         $this->time = $time;
