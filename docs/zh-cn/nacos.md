@@ -11,7 +11,7 @@ composer require hyperf/nacos
 #### 发布配置文件
 
 ```shell
-php bin/hyperf.php vendor:publish hyperf/hyperf-nacos
+php bin/hyperf.php vendor:publish hyperf/nacos
 ```
 
 #### 目录结构
@@ -97,7 +97,7 @@ $optimal = $instance->getOptimal($service);
 
 ### 配置中心
 
-`BootAppConfListener.php` 系统启动时将拉取远程配置, 并合入`hyperf` 的 `Config`
+`MainWorkerStartListener.php` 系统启动时将拉取远程配置, 并合入`hyperf` 的 `Config`
 
 `FetchConfigProcess.php` 自定义进程将监听配置, 若有更新将发送`PipeMessage` 到各服务`worker`进程, 并合入当前进程的 `Config`
 
