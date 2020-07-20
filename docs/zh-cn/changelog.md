@@ -15,6 +15,7 @@
 - [#2117](https://github.com/hyperf/hyperf/pull/2117) 修复使用 `server:watch` 时，注解 `@Inject` 有时会失效的 BUG。
 - [#2123](https://github.com/hyperf/hyperf/pull/2123) 修复 `tracer` 会记录两次 `Redis 指令` 的 BUG。
 - [#2139](https://github.com/hyperf/hyperf/pull/2139) 修复 `ValidationMiddleware` 在 `WebSocket` 服务下使用会报错的 BUG。
+- [#2140](https://github.com/hyperf/hyperf/pull/2140) 修复请求抛出异常时，`Session` 无法保存的 BUG。
 
 ## 优化
 
