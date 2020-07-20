@@ -1019,11 +1019,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function run($query, $bindings, Closure $callback)
+    protected function run(string $query, array $bindings, Closure $callback)
     {
         $this->reconnectIfMissingConnection();
 
