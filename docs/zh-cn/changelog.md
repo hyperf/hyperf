@@ -1,5 +1,27 @@
 # 版本更新记录
 
+# v2.0.3 - 2020-07-20
+
+## 新增
+
+- [#2082](https://github.com/hyperf/hyperf/pull/2082) 监听器 `Hyperf\Signal\Handler\WorkerStopHandler` 添加信号 `SIGINT` 监听。
+- [#2097](https://github.com/hyperf/hyperf/pull/2097) `hyperf/filesystem` 新增 TencentCloud COS 支持.
+- [#2122](https://github.com/hyperf/hyperf/pull/2122) 添加 Trait `\Hyperf\Snowflake\Concern\HasSnowflake` 为模型自动生成雪花算法的主键。
+
+## 修复
+
+- [#2017](https://github.com/hyperf/hyperf/pull/2017) 修复 Prometheus 使用 redis 打点时，改变 label 会导致收集报错的 BUG。
+- [#2117](https://github.com/hyperf/hyperf/pull/2117) 修复使用 `server:watch` 时，注解 `@Inject` 有时会失效的 BUG。
+- [#2123](https://github.com/hyperf/hyperf/pull/2123) 修复 `tracer` 会记录两次 `Redis 指令` 的 BUG。
+
+## 优化
+
+- [#2080](https://github.com/hyperf/hyperf/pull/2080) 方法 `Hyperf\Database\Model\Builder::paginate` 中参数 `$perPage` 的类型从 `int` 更改为 `?int`。
+- [#2110](https://github.com/hyperf/hyperf/pull/2110) 在使用 `hyperf/watcher` 时，会先检查进程是否存在，如果不存在，才会发送 `SIGTERM` 信号。
+- [#2116](https://github.com/hyperf/hyperf/pull/2116) 优化组件 `hyperf/di` 的依赖。
+- [#2121](https://github.com/hyperf/hyperf/pull/2121) 在使用 `gen:model` 时，如果用户自定义了与数据库字段一致的字段时，则会替换对应的 `@property`。
+- [#2129](https://github.com/hyperf/hyperf/pull/2129) 当 Response Json 格式化失败时，会抛出更加友好的错误提示。
+
 # v2.0.2 - 2020-07-13
 
 ## 修复
