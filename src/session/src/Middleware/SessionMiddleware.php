@@ -54,16 +54,14 @@ class SessionMiddleware implements MiddlewareInterface
 
         $session = $this->sessionManager->start($request);
 
-        $response = $handler->handle($request);
+        try {
+            $response = $handler->handle($request);
+        } finally {
+            $this->storeCurrentUrl($request, $session);
+            $this->sessionManager->end($session);
+        }
 
-        $this->storeCurrentUrl($request, $session);
-
-        $response = $this->addCookieToResponse($request, $response, $session);
-
-        // @TODO Use defer
-        $this->sessionManager->end($session);
-
-        return $response;
+        return $this->addCookieToResponse($request, $response, $session);
     }
 
     private function isSessionAvailable(): bool
