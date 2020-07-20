@@ -1,20 +1,20 @@
-### Naco
+# Nacos
 
-一个 Nacos 的 PHP 协程客户端，特别适用于 Hyperf，与 Hyperf 的配置中心、微服务治理完美结合。
+一个 `Nacos` 的 `PHP` 协程客户端，与 `Hyperf` 的配置中心、微服务治理完美结合。
 
-#### 安装
+## 安装
 
 ```shell
 composer require hyperf/nacos
 ```
 
-#### 发布配置文件
+### 发布配置文件
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/nacos
 ```
 
-#### 目录结构
+### 目录结构
 
 ```
 ./src
@@ -50,7 +50,7 @@ php bin/hyperf.php vendor:publish hyperf/nacos
 └── Service.php
 ```
 
-### 服务与实例
+## 服务与实例
 
 `MainWorkerStartListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册` 
 
@@ -68,19 +68,19 @@ return [
 ];
 ```
 
-#### 获取当前实例
+### 获取当前实例
 
 ```php
 $instance = new \Hyperf\Nacos\Instance();
 ```
 
-#### 获取当前服务
+### 获取当前服务
 
 ```php
 $service = new \Hyperf\Nacos\Service();
 ```
 
-#### 获取一个服务的最优节点
+### 获取一个服务的最优节点
 
 ```php
 $instance = make(NacosInstance::class);
@@ -95,7 +95,7 @@ $optimal = $instance->getOptimal($service);
 
 ```
 
-### 配置中心
+## 配置中心
 
 `MainWorkerStartListener.php` 系统启动时将拉取远程配置, 并合入`hyperf` 的 `Config`
 
@@ -124,6 +124,7 @@ return [
     ],
 ];
 ```
+
 系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_config.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。
 
 > 所有配置的 `键(key)` 在实际发起 API 请求时会自动从下划线风格转换为驼峰风格。
