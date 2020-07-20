@@ -1,3 +1,9 @@
+# v2.0.4 - TBD
+
+## Fixed
+
+- [#2140](https://github.com/hyperf/hyperf/pull/2140) Fixed a case where session are not saved when exception occurs.
+
 # v2.0.3 - TBD
 
 ## Added
