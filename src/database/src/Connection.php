@@ -468,13 +468,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Log a query in the connection's query log.
-     *
-     * @param string $query
-     * @param array $bindings
-     * @param null|float $time
-     * @param array $result
      */
-    public function logQuery($query, $bindings, $time = null, $result)
+    public function logQuery(string $query, array $bindings, ?float $time = null, array $result = [])
     {
         $this->event(new QueryExecuted($query, $bindings, $time, $this, $result));
 
