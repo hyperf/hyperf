@@ -99,7 +99,7 @@ $optimal = $instance->getOptimal($service);
 
 `MainWorkerStartListener.php` 系统启动时将拉取远程配置, 并合入`hyperf` 的 `Config`
 
-`FetchConfigProcess.php` 自定义进程将监听配置, 若有更新将发送`PipeMessage` 到各服务`worker`进程, 并合入当前进程的 `Config`
+`FetchConfigProcess.php` 自定义进程将监听配置, 若有更新将发送 `PipeMessage` 到各服务`worker` 进程, 并合入当前进程的 `Config`
 
 如果服务如下配置
 ```php

@@ -14,6 +14,7 @@
 - [#2017](https://github.com/hyperf/hyperf/pull/2017) 修复 Prometheus 使用 redis 打点时，改变 label 会导致收集报错的 BUG。
 - [#2117](https://github.com/hyperf/hyperf/pull/2117) 修复使用 `server:watch` 时，注解 `@Inject` 有时会失效的 BUG。
 - [#2123](https://github.com/hyperf/hyperf/pull/2123) 修复 `tracer` 会记录两次 `Redis 指令` 的 BUG。
+- [#2139](https://github.com/hyperf/hyperf/pull/2139) 修复 `ValidationMiddleware` 在 `WebSocket` 服务下使用会报错的 BUG。
 
 ## 优化
 
@@ -27,15 +28,15 @@
 
 ## 修复
 
-- [#1898](https://github.com/hyperf/hyperf/pull/1898) 修复定时器规则 `$min-$max` 解析有误的BUG。
-- [#2037](https://github.com/hyperf/hyperf/pull/2037) 修复 TCP 服务，连接后共用一个协程，导致 DB 等连接池无法正常回收连接的BUG。
-- [#2051](https://github.com/hyperf/hyperf/pull/2051) 修复 `CoroutineServer` 不会生成 `hyperf.pid` 的BUG。
-- [#2055](https://github.com/hyperf/hyperf/pull/1695) 修复 `Guzzle` 在传输大数据包时会自动添加头 `Expect: 100-Continue`，导致请求失败的BUG。
-- [#2059](https://github.com/hyperf/hyperf/pull/2059) 修复 `SocketIOServer` 中 `Redis` 重连失败的BUG。
+- [#1898](https://github.com/hyperf/hyperf/pull/1898) 修复定时器规则 `$min-$max` 解析有误的 BUG。
+- [#2037](https://github.com/hyperf/hyperf/pull/2037) 修复 TCP 服务，连接后共用一个协程，导致 DB 等连接池无法正常回收连接的 BUG。
+- [#2051](https://github.com/hyperf/hyperf/pull/2051) 修复 `CoroutineServer` 不会生成 `hyperf.pid` 的 BUG。
+- [#2055](https://github.com/hyperf/hyperf/pull/1695) 修复 `Guzzle` 在传输大数据包时会自动添加头 `Expect: 100-Continue`，导致请求失败的 BUG。
+- [#2059](https://github.com/hyperf/hyperf/pull/2059) 修复 `SocketIOServer` 中 `Redis` 重连失败的 BUG。
 - [#2067](https://github.com/hyperf/hyperf/pull/2067) 修复 `hyperf/watcher` 组件 `Syntax` 错误会导致进程异常。
 - [#2085](https://github.com/hyperf/hyperf/pull/2085) 修复注解 `RetryFalsy` 会导致获得正确的结果后，再次重试。
-- [#2089](https://github.com/hyperf/hyperf/pull/2089) 修复使用 `gen:command` 后，脚本必须要进行修改，才能被加载到的BUG。
-- [#2093](https://github.com/hyperf/hyperf/pull/2093) 修复脚本 `vendor:publish` 没有返回码导致报错的BUG。
+- [#2089](https://github.com/hyperf/hyperf/pull/2089) 修复使用 `gen:command` 后，脚本必须要进行修改，才能被加载到的 BUG。
+- [#2093](https://github.com/hyperf/hyperf/pull/2093) 修复脚本 `vendor:publish` 没有返回码导致报错的 BUG。
 
 ## 新增
 
