@@ -59,13 +59,8 @@ class QueryExecuted
 
     /**
      * Create a new event instance.
-     *
-     * @param string $sql
-     * @param array $bindings
-     * @param null|float $time
-     * @param ConnectionInterface $connection
      */
-    public function __construct($sql, $bindings, $time, $connection, $result)
+    public function __construct(string $sql, array $bindings, ?float $time, ConnectionInterface $connection, array $result)
     {
         $this->sql = $sql;
         $this->time = $time;
