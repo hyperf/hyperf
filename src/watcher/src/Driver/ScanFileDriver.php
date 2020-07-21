@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -22,6 +23,16 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class ScanFileDriver implements DriverInterface
 {
+    /**
+     * @var int
+     */
+    const FINDER_MODE = 1;
+
+    /**
+     * @var int
+     */
+    const SHELL_MODE = 2;
+
     /**
      * @var Option
      */
@@ -47,33 +58,45 @@ class ScanFileDriver implements DriverInterface
     public function watch(Channel $channel): void
     {
         $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
-        Timer::tick($ms, function () use ($channel) {
-            global $lastMD5;
-            $files = [];
-            $currentMD5 = $this->getWatchMD5($files);
-            if ($lastMD5 && $lastMD5 !== $currentMD5) {
-                $changeFilesMD5 = array_diff(array_values($lastMD5), array_values($currentMD5));
-                $addFiles = array_diff(array_keys($currentMD5), array_keys($lastMD5));
-                foreach ($addFiles as $file) {
+        Timer::tick($ms, function () use ($channel, $ms) {
+            if ($this->option->getWatchModel() == self::FINDER_MODE) {
+                global $lastMD5;
+                $files = [];
+                $currentMD5 = $this->getWatchMD5($files);
+                if ($lastMD5 && $lastMD5 !== $currentMD5) {
+                    $changeFilesMD5 = array_diff(array_values($lastMD5), array_values($currentMD5));
+                    $addFiles = array_diff(array_keys($currentMD5), array_keys($lastMD5));
+                    foreach ($addFiles as $file) {
+                        $channel->push($file);
+                    }
+                    $deleteFiles = array_diff(array_keys($lastMD5), array_keys($currentMD5));
+                    $deleteCount = count($deleteFiles);
+
+                    $watchingLog = sprintf('%s Watching: Total:%d, Change:%d, Add:%d, Delete:%d.', __CLASS__, count($currentMD5), count($changeFilesMD5), count($addFiles), $deleteCount);
+                    $this->logger->debug($watchingLog);
+
+                    if ($deleteCount == 0) {
+                        $changeFilesIdx = array_keys($changeFilesMD5);
+                        foreach ($changeFilesIdx as $idx) {
+                            isset($files[$idx]) && $channel->push($files[$idx]);
+                        }
+                    } else {
+                        $this->logger->warning('Delete files must be restarted manually to take effect.');
+                    }
+                    $lastMD5 = $currentMD5;
+                } else {
+                    $lastMD5 = $currentMD5;
+                }
+            } else {
+                global $updateFiles;
+                // $sTime = microtime(true);
+
+                $pushFiles = $this->shellWatch($updateFiles, $ms);
+                foreach ($pushFiles as $file) {
                     $channel->push($file);
                 }
-                $deleteFiles = array_diff(array_keys($lastMD5), array_keys($currentMD5));
-                $deleteCount = count($deleteFiles);
 
-                $watchingLog = sprintf('%s Watching: Total:%d, Change:%d, Add:%d, Delete:%d.', __CLASS__, count($currentMD5), count($changeFilesMD5), count($addFiles), $deleteCount);
-                $this->logger->debug($watchingLog);
-
-                if ($deleteCount == 0) {
-                    $changeFilesIdx = array_keys($changeFilesMD5);
-                    foreach ($changeFilesIdx as $idx) {
-                        isset($files[$idx]) && $channel->push($files[$idx]);
-                    }
-                } else {
-                    $this->logger->warning('Delete files must be restarted manually to take effect.');
-                }
-                $lastMD5 = $currentMD5;
-            } else {
-                $lastMD5 = $currentMD5;
+                // var_dump('watch files use time:'. (microtime(true) - $sTime));
             }
         });
     }
@@ -110,5 +133,67 @@ class ScanFileDriver implements DriverInterface
             }
         }
         return $filesMD5;
+    }
+
+    protected function shellWatch(&$updateFiles, $ms): array
+    {
+        $pushFiles = [];
+        $dirs = $this->option->getWatchDir();
+        $files = $this->option->getWatchFile();
+        $ext = $this->option->getExt();
+
+        $dirs = array_map(function ($dir) {
+            return BASE_PATH . '/' . $dir;
+        }, $dirs);
+        $seconds = ceil(($ms + 1000) / 1000);
+
+        $minutes = sprintf("%.2f", $seconds / 60);
+        // scan directory files
+        $dest = implode(' ', $dirs);
+        $stdout = shell_exec('find ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
+        if (is_string($stdout)) {
+            $lineArr = explode(PHP_EOL, $stdout);
+            foreach ($lineArr as $line) {
+                $fileArr = explode(' ', $line);
+                if (count($fileArr) == 2) {
+                    $pathName = $fileArr[0];
+                    $modifyTime = $fileArr[1];
+
+                    if (Str::endsWith($pathName, $ext)) {
+                        if (isset($updateFiles[$pathName]) && $updateFiles[$pathName] == $modifyTime) {
+                            continue;
+                        } else {
+                            $updateFiles[$pathName] = $modifyTime;
+                            $pushFiles[] = $pathName;
+                        }
+                    }
+                }
+            }
+        }
+        // scan specify files
+        $files = array_map(function ($file) {
+            return BASE_PATH . '/' . $file;
+        }, $files);
+        $dest = implode(' ', $files);
+        $stdout = shell_exec('find ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
+        if (is_string($stdout)) {
+            $lineArr = explode(PHP_EOL, $stdout);
+            foreach ($lineArr as $line) {
+                $fileArr = explode(' ', $line);
+                if (count($fileArr) == 2) {
+                    $pathName = $fileArr[0];
+                    $modifyTime = $fileArr[1];
+
+                    if (isset($updateFiles[$pathName]) && $updateFiles[$pathName] == $modifyTime) {
+                        continue;
+                    } else {
+                        $updateFiles[$pathName] = $modifyTime;
+                        $pushFiles[] = $pathName;
+                    }
+                }
+            }
+        }
+
+        return $pushFiles;
     }
 }

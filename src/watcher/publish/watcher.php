@@ -18,5 +18,6 @@ return [
         'dir' => ['app', 'config'],
         'file' => ['.env'],
         'scan_interval' => 2000,
+        'mode' => ScanFileDriver::FINDER_MODE // ScanFileDriver::SHELL_MODE 300x faster
     ],
 ];
