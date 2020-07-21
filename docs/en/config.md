@@ -172,7 +172,7 @@ return [
 
 ## Configuration Center
 
-Hyperf provides you with external configuration support for distributed systems, by default we offer an open source project by Ctrip namely [ctripcorp/apollo](https://github.com/ctripcorp/apollo), by [hyper/config-apollo](https://github.com/hyperf/config-apollo) component provides functional support.
+Hyperf provides you with external configuration support for distributed systems, by default we offer an open source project by Ctrip namely [ctripcorp/apollo](https://github.com/ctripcorp/apollo), by [hyperf/config-apollo](https://github.com/hyperf/config-apollo) component provides functional support.
 Details on the usage of the configuration center are explained in the [Configuration Center](en/config-center.md) chapter.
 
 

@@ -38,7 +38,7 @@ message HiReply {
 - 使用 protoc 生成示例程式碼
 
 ```
-# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyper-skeleton 下的 Dockerfile
+# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyperf-skeleton 下的 Dockerfile
 apk add protobuf
 
 # 使用 protoc 自動生成程式碼
