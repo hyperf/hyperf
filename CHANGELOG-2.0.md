@@ -7,7 +7,7 @@
 
 ## Fixed
 
-- [#2159](https://github.com/hyperf/hyperf/pull/2159) Fixed exception when `gen:migration` file exists
+- [#2159](https://github.com/hyperf/hyperf/pull/2159) Fixed fatal exception caused by exist file when using `gen:migration`.
 
 # v2.0.3 - 2020-07-20
 
