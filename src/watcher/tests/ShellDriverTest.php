@@ -16,6 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Watcher\Driver\ShellDriver;
 use Hyperf\Watcher\Option;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Utils\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -39,20 +40,23 @@ class ShellDriverTest extends TestCase
         $this->assertSame(ShellDriver::class, $option->getDriver());
 
         if ($option->getDriver() == ShellDriver::class) {
-            $driver = new ShellDriver($option);
-            $updateFiles = [];
-            // circle 100 times
-            $times = 100;
 
-            $filesystem = new \Hyperf\Utils\Filesystem\Filesystem();
 
+            $filesystem = new Filesystem();
+            $testDir = BASE_PATH . '/test';
+            $this->assertDirectoryExists($testDir);
 
             $method = new \ReflectionMethod(ShellDriver::class, 'shellWatch');
             $method->setAccessible(true);
 
+            $driver = new ShellDriver($option);
+            $updateFiles = [];
+            // circle 100 times
+            $times = 100;
             while ($times--) {
-                $filesystem->append(BASE_PATH . '/test/watch01.php', 'watch01');
-                $filesystem->append(BASE_PATH . '/test/watch02.php', 'watch02');
+
+                $filesystem->append($testDir . '/watch01.php', 'watch01');
+                $filesystem->append($testDir . '/watch02.php', 'watch02');
 
                 $sTime = microtime(true);
 
