@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Migrations;
 
+use Exception;
 use Hyperf\Database\Migrations\MigrationCreator;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Input\InputArgument;
@@ -94,14 +95,17 @@ class GenMigrateCommand extends BaseCommand
      */
     protected function writeMigration(string $name, ?string $table, bool $create): void
     {
-        $file = pathinfo($this->creator->create(
-            $name,
-            $this->getMigrationPath(),
-            $table,
-            $create
-        ), PATHINFO_FILENAME);
-
-        $this->info("<info>[INFO] Created Migration:</info> {$file}");
+        try {
+            $file = pathinfo($this->creator->create(
+                $name,
+                $this->getMigrationPath(),
+                $table,
+                $create
+            ), PATHINFO_FILENAME);
+            $this->info("<info>[INFO] Created Migration:</info> {$file}");
+        } catch (Exception $e) {
+            $this->error("<error>[ERROR] Created Migration:</error> {$e->getMessage()}");
+        }
     }
 
     /**
