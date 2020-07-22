@@ -74,6 +74,15 @@ class Request implements RequestInterface
     }
 
     /**
+     * Retrieve the data from route parameters.
+     */
+    public function routes(): array
+    {
+        $route = $this->getAttribute(Dispatched::class);
+        return is_null($route) ? [] : $route;
+    }
+    
+    /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
      *
      * @param mixed $default
