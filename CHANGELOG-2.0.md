@@ -3,6 +3,7 @@
 ## Added
 
 - [#2144](https://github.com/hyperf/hyperf/pull/2144) Added filed `$result` for `QueryExecuted`.
+- [#2158](https://github.com/hyperf/hyperf/pull/2158) Added route options to route handler.
 
 # v2.0.3 - 2020-07-20
 
